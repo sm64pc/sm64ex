@@ -10,7 +10,7 @@ Run `./extract-assets.py --clean && make clean` or `make distclean` to remove RO
 
 #### 1. Copy baserom(s) for asset extraction
 
-For each version (jp/us/eu) that you want to build a ROM for, put an existing ROM at
+For each version (jp/us/eu) that you want to build an executable for, put an existing ROM at
 `./baserom.<version>.z64` for asset extraction.
 
 #### 2. Install build dependencies
