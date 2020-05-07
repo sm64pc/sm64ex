@@ -1,0 +1,53 @@
+Changes for Audio File Library version 0.3.6:
+
+* Implement FLAC and ALAC encoding and decoding.
+* Update license to LGPL 2.1.
+
+Changes for Audio File Library version 0.3.5:
+
+* Implement IMA ADPCM encoding and decoding for AIFF-C, CAF, and WAVE files.
+* Implement Microsoft ADPCM encoding for WAVE files.
+* Fix calculation of IRCAM frame size.
+* Record marker comments in WAVE files.
+* Improve validation of compressed audio formats.
+* Add support for building without documentation.
+
+Changes for Audio File Library version 0.3.4:
+
+* Use hidden visibility for internal symbols.
+* Add support for Sample Vision format.
+* Update license for extended-precision floating-point conversion routines.
+
+Changes for Audio File Library version 0.3.3:
+
+* Update library's soname version.
+* Link against libm.
+
+Changes for Audio File Library version 0.3.2:
+
+* Fix initialization of byte order in Creative Voice File format.
+* Fix calculation of frame count in NIST SPHERE sound files.
+* Remove duplicate definition of AFvirtualfile.
+* Don't treat compiler warnings as errors by default.
+
+Changes for Audio File Library version 0.3.1:
+
+* Fix installation of man pages.
+* Add support for Creative Voice File format.
+* Support u-law and A-law compression in Core Audio Format files.
+
+Changes for Audio File Library version 0.3.0:
+
+* Define AFframecount and AFfileoffset as 64-bit integers regardless of
+  whether system specifies off_t as 64 bits.
+* Added support for Core Audio Format.
+* Added support for extensible WAVE format files.
+* Fixed leak of miscellaneous data buffers. (Thanks to Stefano Magni
+  for finding and fixing this problem.)
+* Fixed default mapping between integer and floating-point audio data.
+* Fix handling of NeXT sound files with unspecified or inconsistent length.
+* Added support for miscellaneous data in IFF/8SVX files.
+* Added support for byte-swapped IRCAM sound files.
+* Refactored file parsing and writing.
+* Refactored audio conversion.
+* Updated and expanded documentation.

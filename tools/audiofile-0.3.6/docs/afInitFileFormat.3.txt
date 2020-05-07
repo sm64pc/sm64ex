@@ -1,0 +1,56 @@
+afInitFileFormat(3)
+===================
+
+NAME
+----
+afInitFileFormat - initialize file format of an audio file setup
+
+SYNOPSIS
+--------
+  #include <audiofile.h>
+
+  void afInitFileFormat(AFfilesetup setup, int fileFormat);
+
+PARAMETERS
+----------
+`setup` is a valid file setup created by linkaf:afNewFileSetup[3].
+
+`fileFormat` is an integer constant specifying a file format.
+
+DESCRIPTION
+-----------
+Given an `AFfilesetup` structure created with linkaf:afNewFileSetup[3],
+`afInitFileFormat` initializes the file format to that specified by
+`fileFormat`.
+
+The following file formats are currently supported:
+
+`AF_FILE_RAWDATA`:: raw audio data
+`AF_FILE_AIFF`:: Audio Interchange File Format
+`AF_FILE_AIFFC`:: Audio Interchange File Format AIFF-C
+`AF_FILE_NEXTSND`:: NeXT .snd/Sun .au
+`AF_FILE_WAVE`:: Microsoft RIFF WAVE
+`AF_FILE_BICSF`:: Berkeley/IRCAM/CARL Sound File
+`AF_FILE_AVR`:: Audio Visual Research
+`AF_FILE_IFF_8SVX`:: Amiga IFF/8SVX
+`AF_FILE_SAMPLEVISION`:: Sample Vision
+`AF_FILE_VOC`:: Creative Voice File
+`AF_FILE_NIST_SPHERE`:: NIST SPHERE
+`AF_FILE_CAF`:: Core Audio Format
+
+ERRORS
+------
+`afInitFileFormat` can produce the following errors:
+
+`AF_BAD_FILESETUP`:: `setup` represents an invalid file setup.
+`AF_BAD_FILEFMT`:: `fileFormat` represents an unknown file format.
+`AF_BAD_NOT_IMPLEMENTED`:: `fileFormat` represents a file format which
+is not currently implemented.
+
+SEE ALSO
+--------
+linkaf:afNewFileSetup[3]
+
+AUTHOR
+------
+Michael Pruett <michael@68k.org>

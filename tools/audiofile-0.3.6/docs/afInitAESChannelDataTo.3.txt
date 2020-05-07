@@ -1,0 +1,51 @@
+afInitAESChannelDataTo(3)
+=========================
+
+NAME
+----
+afInitAESChannelDataTo, afInitAESChannelData - initialize AES non-audio
+data in an audio file setup
+
+SYNOPSIS
+--------
+  #include <audiofile.h>
+
+  void afInitAESChannelDataTo(AFfilesetup setup, int track, int willHaveData);
+  void afInitAESChannelData(AFfilesetup setup, int track);
+
+PARAMETERS
+----------
+`setup` is a valid file setup returned by linkaf:afNewFileSetup[3].
+
+`track` specifies a track within the audio file setup. `track` is always
+`AF_DEFAULT_TRACK` for all currently supported file formats.
+
+`willHaveData` is a boolean-valued integer indicating whether AES
+non-audio data will be present.
+
+DESCRIPTION
+-----------
+Given an `AFfilesetup` structure created with linkaf:afNewFileSetup[3]
+and a track identified by `track` (`AF_DEFAULT_TRACK` for all currently
+supported file formats), `afInitAESChannelDataTo` initializes the track to
+contain or not contain AES non-audio data. `afInitAESChannelData` behaves
+similarly but always initializes the track to contain AES non-audio data.
+
+Currently only AIFF and AIFF-C file formats can store AES non-audio data;
+this data is ignored in all other file formats.
+
+ERRORS
+------
+`afInitAESChannelDataTo` and `afInitAESChannelData` can produce the
+following errors:
+
+`AF_BAD_FILESETUP`:: `setup` represents an invalid file setup.
+`AF_BAD_TRACKID`:: `track` represents an invalid track identifier.
+
+SEE ALSO
+--------
+linkaf:afNewFileSetup[3]
+
+AUTHOR
+------
+Michael Pruett <michael@68k.org>

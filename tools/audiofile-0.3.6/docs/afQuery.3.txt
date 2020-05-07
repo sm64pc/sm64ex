@@ -1,0 +1,124 @@
+afQuery(3)
+==========
+
+NAME
+----
+afQuery, afQueryLong, afQueryDouble, afQueryPointer - query the
+capabilities of the Audio File Library
+
+SYNOPSIS
+--------
+  #include <audiofile.h>
+
+  AUpvlist afQuery (int querytype, int arg1, int arg2, int arg3, int arg4);
+
+  long afQueryLong (int querytype, int arg1, int arg2, int arg3, int arg4);
+
+  double afQueryDouble (int querytype, int arg1, int arg2, int arg3,
+      int arg4);
+
+  void *afQueryPointer (int querytype, int arg1, int arg2, int arg3,
+      int arg4);
+
+PARAMETERS
+----------
+'querytype' can be one of the following:
+
+* `AF_QUERYTYPE_FILEFMT`
+* `AF_QUERYTYPE_INST`
+* `AF_QUERYTYPE_INSTPARAM`
+* `AF_QUERYTYPE_COMPRESSION`
+* `AF_QUERYTYPE_COMPRESSIONPARAM`
+* `AF_QUERYTYPE_MISC`
+* `AF_QUERYTYPE_MARK`
+* `AF_QUERYTYPE_LOOP`
+
+'arg1', 'arg2', 'arg3', and 'arg4' are integer selectors whose
+meaning depends upon 'querytype'.
+
+
+RETURN VALUE
+------------
+Upon success, `afQuery` will return a non-null `AUpvlist` value.
+Upon failure, `afQuery` will return null while `afQueryLong` and
+`afQueryDouble` will return -1 and `afQueryPointer` will return
+null.
+
+Pointers representing character strings are owned by the Audio File
+Library and must not be freed; all other pointer values must be
+freed by the caller.
+
+DESCRIPTION
+-----------
+For `AF_QUERYTYPE_FILEFMT`, the following selectors are valid values for 'arg1':
+
+`AF_QUERY_LABEL`:: Request a short label string for the format (e.g., "aiff").
+
+`AF_QUERY_NAME`:: Request a short name for the format (e.g., "MS RIFF WAVE").
+
+`AF_QUERY_DESC`:: Request a descriptive name for the format (e.g., "Audio
+Interchange File Format").
+
+`AF_QUERY_IMPLEMENTED`:: Request a boolean value indicating whether the
+format is implemented for reading and writing in the Audio File Library.
+
+`AF_QUERY_ID_COUNT`:: Request the total number of formats implemented.
+
+`AF_QUERY_IDS`:: Request an integer array of the id token values of all
+implemented file formats.
+
+`AF_QUERY_COMPRESSION_TYPES`:: Used with the selector AF_QUERY_VALUE_COUNT
+in 'arg2', this will return a long integer containing the number of
+compression schemes available for use within the format specified in 'arg3'.
+Used with selector `AF_QUERY_VALUES`, it returns a pointer to an integer
+array containing the compression id values of the compression schemes
+supported by the format specified in 'arg3'.
+
+`AF_QUERY_SAMPLE_FORMATS`:: Used with the selector AF_QUERY_DEFAULT in 'arg2',
+this will return the default sample format for the file format specified in
+'arg3'.
+
+`AF_QUERY_SAMPLE_SIZES`:: Used with selector AF_QUERY_DEFAULT in 'arg2', this
+will return the default sample width for the file format specified in 'arg3'.
+
+
+For `AF_QUERYTYPE_INST`, the following selectors are valid for 'arg1':
+
+`AF_QUERY_SUPPORTED`:: Request a boolean value indicating whether
+the file format in 'arg2' supports instruments.
+
+`AF_QUERY_MAX_NUMBER`:: Request an integer value indicating the
+maximum number of instruments supported by the file format in 'arg2'.
+
+
+For `AF_QUERYTYPE_INSTPARAM`, the following selectors are valid for 'arg1':
+
+`AF_QUERY_SUPPORTED`:: Request a boolean value indicating whether
+the file format in 'arg2' supports instrument parameters.
+
+`AF_QUERY_ID_COUNT`:: Request an integer value indicating the number
+of instrument parameters supported by the file format in 'arg2'.
+
+`AF_QUERY_IDS`:: Request an integer array containing the instrument
+parameter values for the file format in 'arg2'.
+
+`AF_QUERY_TYPE`:: For the file format in 'arg2', request the type
+of the instrument parameter in 'arg3'.
+
+`AF_QUERY_NAME`:: For the file format in 'arg2', request the name
+of the instrument parameter in 'arg3'.
+
+`AF_QUERY_DEFAULT`:: For the file format in 'arg2', request the
+default value of the instrument parameter in 'arg3'.
+
+
+ERRORS
+------
+afQuery can produce the following errors:
+
+`AF_BAD_QUERYTYPE`:: The query type is unsupported.
+`AF_BAD_QUERY`:: The arguments to the query are bad.
+
+AUTHOR
+------
+Michael Pruett <michael@68k.org>

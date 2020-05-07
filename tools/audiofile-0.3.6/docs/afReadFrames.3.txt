@@ -1,0 +1,49 @@
+afReadFrames(3)
+===============
+
+NAME
+----
+afReadFrames - read sample frames from a track in an audio file
+
+SYNOPSIS
+--------
+  #include <audiofile.h>
+
+  AFframecount afReadFrames(AFfilehandle file, int track, void *data,
+      int count);
+
+DESCRIPTION
+-----------
+`afReadFrames` attempts to read up to 'count' frames of audio data from
+the audio file handle 'file' into the buffer at 'data'.
+
+PARAMETERS
+----------
+'file' is a valid file handle returned by linkaf:afOpenFile[3].
+
+'track' is always `AF_DEFAULT_TRACK` for all currently supported file formats.
+
+'data' is a buffer of storing 'count' frames of audio sample data.
+
+'count' is the number of sample frames to be read.
+
+RETURN VALUE
+------------
+`afReadFrames` returns the number of frames successfully read from 'file'.
+
+ERRORS
+------
+`afReadFrames` can produce these errors:
+
+`AF_BAD_FILEHANDLE`:: the file handle was invalid
+`AF_BAD_TRACKID`:: the track parameter is not `AF_DEFAULT_TRACK`
+`AF_BAD_READ`:: reading audio data from the file failed
+`AF_BAD_LSEEK`:: seeking within the file failed
+
+SEE ALSO
+--------
+linkaf:afWriteFrames[3]
+
+AUTHOR
+------
+Michael Pruett <michael@68k.org>

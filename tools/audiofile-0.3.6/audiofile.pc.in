@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: audiofile
+Description: audiofile
+Requires:
+Version: @VERSION@
+Libs: -L${libdir} -laudiofile
+Libs.private: -lm
+Cflags: -I${includedir}

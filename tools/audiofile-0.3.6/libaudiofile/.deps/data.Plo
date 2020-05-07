@@ -1,0 +1,379 @@
+data.lo: data.cpp ../config.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/assert.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/crtdefs.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_mac.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_secapi.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/vadefs.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sdks/_mingw_ddk.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/stdlib.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/cstdlib \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/c++config.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/os_defines.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/cpu_defines.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stdlib.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt_wstdlib.h \
+ C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include-fixed/limits.h \
+ C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include-fixed/syslimits.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/limits.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sec_api/stdlib_s.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/malloc.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/std_abs.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/string.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sec_api/string_s.h File.h \
+ Shared.h C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sys/types.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_off_t.h \
+ FileHandle.h afinternal.h audiofile.h aupvlist.h \
+ C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include/stdint.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stdint.h \
+ C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include/stddef.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stddef.h error.h Setup.h \
+ Track.h AudioFormat.h aupvlist.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/string \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stringfwd.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/memoryfwd.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/char_traits.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_algobase.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/functexcept.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/exception_defines.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/cpp_type_traits.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/ext/type_traits.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/ext/numeric_traits.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_pair.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/move.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/concept_check.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/type_traits \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_iterator_base_types.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_iterator_base_funcs.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/debug/assertions.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_iterator.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/ptr_traits.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/debug/debug.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/predefined_ops.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/postypes.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/cwchar \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/wchar.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_stat64.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/swprintf.inl \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sec_api/wchar_s.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/cstdint \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/allocator.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/c++allocator.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/ext/new_allocator.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/new \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/exception \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/exception.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/exception_ptr.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/cxxabi_init_exception.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/typeinfo \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/hash_bytes.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/nested_exception.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/localefwd.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/c++locale.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/clocale \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/locale.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stdio.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt_stdio_config.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sec_api/stdio_s.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/iosfwd \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/cctype \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/ctype.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/ostream_insert.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/cxxabi_forced.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_function.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/backward/binders.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/range_access.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/initializer_list \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/basic_string.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/ext/atomicity.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/gthr.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/gthr-default.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/pthread.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/errno.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/process.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt_startup.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/signal.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/pthread_signal.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sys/timeb.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sec_api/sys/timeb_s.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/pthread_compat.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/pthread_unistd.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/atomic_word.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/ext/alloc_traits.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/alloc_traits.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/ext/string_conversions.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/cstdio \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/cerrno \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/functional_hash.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/basic_string.tcc \
+ modules/Module.h AudioFormat.h Shared.h afinternal.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/vector \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_construct.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_uninitialized.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_vector.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_bvector.h \
+ C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/vector.tcc \
+ modules/ModuleState.h modules/Module.h util.h
+
+../config.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/assert.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/crtdefs.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_mac.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_secapi.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/vadefs.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sdks/_mingw_ddk.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/stdlib.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/cstdlib:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/c++config.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/os_defines.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/cpu_defines.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stdlib.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt_wstdlib.h:
+
+C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include-fixed/limits.h:
+
+C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include-fixed/syslimits.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/limits.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sec_api/stdlib_s.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/malloc.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/std_abs.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/string.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sec_api/string_s.h:
+
+File.h:
+
+Shared.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sys/types.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_off_t.h:
+
+FileHandle.h:
+
+afinternal.h:
+
+audiofile.h:
+
+aupvlist.h:
+
+C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include/stdint.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stdint.h:
+
+C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include/stddef.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stddef.h:
+
+error.h:
+
+Setup.h:
+
+Track.h:
+
+AudioFormat.h:
+
+aupvlist.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/string:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stringfwd.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/memoryfwd.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/char_traits.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_algobase.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/functexcept.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/exception_defines.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/cpp_type_traits.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/ext/type_traits.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/ext/numeric_traits.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_pair.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/move.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/concept_check.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/type_traits:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_iterator_base_types.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_iterator_base_funcs.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/debug/assertions.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_iterator.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/ptr_traits.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/debug/debug.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/predefined_ops.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/postypes.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/cwchar:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/wchar.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_stat64.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/swprintf.inl:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sec_api/wchar_s.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/cstdint:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/allocator.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/c++allocator.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/ext/new_allocator.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/new:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/exception:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/exception.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/exception_ptr.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/cxxabi_init_exception.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/typeinfo:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/hash_bytes.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/nested_exception.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/localefwd.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/c++locale.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/clocale:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/locale.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stdio.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt_stdio_config.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sec_api/stdio_s.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/iosfwd:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/cctype:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/ctype.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/ostream_insert.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/cxxabi_forced.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_function.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/backward/binders.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/range_access.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/initializer_list:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/basic_string.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/ext/atomicity.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/gthr.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/gthr-default.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/pthread.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/errno.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/process.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt_startup.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/signal.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/pthread_signal.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sys/timeb.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sec_api/sys/timeb_s.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/pthread_compat.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/pthread_unistd.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/atomic_word.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/ext/alloc_traits.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/alloc_traits.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/ext/string_conversions.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/cstdio:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/cerrno:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/functional_hash.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/basic_string.tcc:
+
+modules/Module.h:
+
+AudioFormat.h:
+
+Shared.h:
+
+afinternal.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/vector:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_construct.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_uninitialized.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_vector.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/stl_bvector.h:
+
+C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/vector.tcc:
+
+modules/ModuleState.h:
+
+modules/Module.h:
+
+util.h:

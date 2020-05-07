@@ -1,0 +1,4 @@
+This directory contains Google Test version 1.6.0. The fused-source
+implementation is used here for simplicity and compactness.
+
+http://code.google.com/p/googletest/

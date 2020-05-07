@@ -1,0 +1,57 @@
+afInitByteOrder(3)
+==================
+
+NAME
+----
+afInitCompression - initialize compression for a track in an audio
+file setup
+
+SYNOPSIS
+--------
+  #include <audiofile.h>
+
+  void afInitCompression(AFfilesetup setup, int track, int compression);
+
+PARAMETERS
+----------
+`setup` is a valid file setup returned by linkaf:afNewFileSetup[3].
+
+`track` specifies a track within the audio file setup. `track` is always
+`AF_DEFAULT_TRACK` for all currently supported file formats.
+
+`compression` is an identifier specifying the compression type (such as
+`AF_COMPRESSION_G711_ULAW`) to be used for audio data in the track.
+
+DESCRIPTION
+-----------
+Given an `AFfilesetup` structure created with linkaf:afNewFileSetup[3]
+and a track identified by `track` (`AF_DEFAULT_TRACK` for all currently
+supported file formats), `afInitCompression` initializes the track to
+the specified compression.
+
+The following compression types are currently supported:
+
+`AF_COMPRESSION_NONE`:: no compression
+`AF_COMPRESSION_G711_ULAW`:: CCITT G.711 mu-law encoding
+`AF_COMPRESSION_G711_ALAW`:: CCITT G.711 A-law encoding
+`AF_COMPRESSION_IMA`:: IMA ADPCM encoding
+`AF_COMPRESSION_MS_ADPCM`:: MS ADPCM encoding
+`AF_COMPRESSION_FLAC`:: FLAC
+`AF_COMPRESSION_ALAC`:: Apple Lossless Audio Codec
+
+ERRORS
+------
+`afInitCompression` can produce the following errors:
+
+`AF_BAD_FILESETUP`:: `setup` represents an invalid file setup.
+`AF_BAD_TRACKID`:: `track` represents an invalid track identifier.
+`AF_BAD_COMPTYPE`:: `compression` represents an invalid compression type.
+
+SEE ALSO
+--------
+linkaf:afNewFileSetup[3],
+linkaf:afInitSampleFormat[3]
+
+AUTHOR
+------
+Michael Pruett <michael@68k.org>

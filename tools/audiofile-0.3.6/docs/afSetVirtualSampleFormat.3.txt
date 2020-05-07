@@ -1,0 +1,62 @@
+afSetVirtualSampleFormat(3)
+===========================
+
+NAME
+----
+afSetVirtualByteOrder, afSetVirtualChannels, afSetVirtualPCMMapping,
+afSetVirtualSampleFormat - set the virtual data format for a track in
+an audio file
+
+SYNOPSIS
+--------
+  #include <audiofile.h>
+
+  int afSetVirtualByteOrder (AFfilehandle file, int track, int byteOrder);
+
+  int afSetVirtualChannels (AFfilehandle file, int track, int channels);
+
+  int afSetVirtualSampleFormat (AFfilehandle file, int track,
+      int sampleFormat, int sampleWidth);
+
+  int afSetVirtualPCMMapping (AFfilehandle file, int track,
+      double slope, double intercept, double minclip, double maxclip);
+
+PARAMETERS
+----------
+* 'file' is an AFfilehandle which refers to an open audio file and is
+  usually created by afOpenFile.
+
+* 'track' is an integer which identifies a particular track in an open
+  audio file.  The only valid track is `AF_DEFAULT_TRACK` for all
+  currently supported file formats.
+
+* 'sampleFormat' is an integer which denotes a virtual sample format.
+  Valid values are `AF_SAMPFMT_TWOSCOMP`, `AF_SAMPFMT_UNSIGNED`,
+  `AF_SAMPFMT_FLOAT`, and `AF_SAMPFMT_DOUBLE`.
+
+* 'sampleWidth' is a positive integer which specifies the number of bits
+  in a sample.
+
+* 'channels' is a positive integer which specifies the number of
+  interleaved audio channels in the given audio track.
+
+* 'byteOrder' is an integer which specifies the virtual byte order of
+  samples in the given audio track.  'byteOrder' can be either
+  `AF_BYTEORDER_BIGENDIAN` or `AF_BYTEORDER_LITTLEENDIAN`.
+
+* 'slope' and 'intercept' are double-precision floating point values which
+  indicate the audio data sample slope and zero-crossing value,
+  respectively, for the given sample format.
+
+* 'minclip' and 'maxclip' are double-precision floating point values
+  which indicates the minimum or maximum sample values to be returned.
+  Any values less than 'minclip' will be set to 'minclip', and any values
+  greater than 'maxclip' will be set to 'maxclip'.
+
+RETURN VALUE
+------------
+These functions return 0 for success and -1 for failure.
+
+AUTHOR
+------
+Michael Pruett <michael@68k.org>

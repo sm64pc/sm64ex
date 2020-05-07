@@ -1,0 +1,70 @@
+sfconvert(1)
+============
+
+NAME
+----
+sfconvert - convert audio files
+
+SYNOPSIS
+--------
+*sfconvert* 'infile' 'outfile' ['output options']
+
+DESCRIPTION
+-----------
+The `sfconvert` command converts an audio file to another file format or data format.
+
+OPTIONS
+-------
+The following keywords specify the format of the output sound file:
+
+`format` 'f'::
+  Output file format. 'f' must be one of the following:
+[horizontal]
+    `aiff`::: Audio Interchange File Format
+    `aifc`::: AIFF-C
+    `next`::: NeXT/Sun .snd/.au Format
+    `wave`::: MS RIFF WAVE
+    `bicsf`::: Berkeley/IRCAM/CARL Sound File Format
+    `smp`::: Sample Vision Format
+    `voc`::: Creative Voice File Format
+    `nist`::: NIST SPHERE Format
+    `caf`::: Core Audio Format
+    `flac`::: FLAC
+`compression` 'c'::
+[horizontal]
+    `ulaw`::: G.711 mu-law
+    `alaw`::: G.711 A-law
+    `ima`::: IMA ADPCM
+    `msadpcm`::: Microsoft ADPCM
+    `flac`::: FLAC
+    `alac`::: Apple Lossless Audio Codec
+`byteorder` 'e'::
+  Output byte order. 'e' may be either `big` or `little`.
+`channels` 'n'::
+  Number of output channels. 'n' is 1 for mono, and 2 for stereo.
+`integer` 'n' 's'::
+  Convert to integer audio data. 'n' indicates the output sample width
+  in bits. 's' specifies the sample format and may be either `2scomp`
+  for 2's complement signed data or `unsigned` for unsigned data.
+`float` 'm'::
+  Convert to floating-point audio data with a maximum amplitude of
+  'm' (usually `1.0`). The `integer` and `float` options are mutually
+  exclusive.
+
+The following options take no additional arguments:
+
+`--help`::
+`-h`::
+Print help message.
+
+`--version`::
+`-v`::
+Print version information.
+
+SEE ALSO
+--------
+linkaf:sfinfo[1]
+
+AUTHOR
+------
+Michael Pruett <michael@68k.org>

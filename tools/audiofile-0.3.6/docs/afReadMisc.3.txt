@@ -1,0 +1,55 @@
+afReadMisc(3)
+=============
+
+NAME
+----
+afReadMisc, afWriteMisc, afSeekMisc - access miscellaneous metadata in an audio file
+
+SYNOPSIS
+--------
+  #include <audiofile.h>
+
+  int afReadMisc (AFfilehandle file, int miscid, void *buffer, int nbytes);
+
+  int afWriteMisc (AFfilehandle file, int miscid, const void *buffer, int nbytes);
+
+  int afSeekMisc (AFfilehandle file, int miscid, int offbytes);
+
+DESCRIPTION
+-----------
+`afReadMisc` reads up to 'nbytes' from the miscellaneous data chunk
+identified by 'miscid' in 'file'.
+
+`afWriteMisc` writes up to 'nbytes' to the miscellaneous data chunk
+identified by 'miscid' in 'file'.
+
+`afSeekMisc` changes the current offset within the miscellaneous data
+chunk identified by 'miscid' to the offset 'offbytes'.
+
+RETURN VALUE
+------------
+`afReadMisc` returns the number of bytes read from the specified
+miscellaneous chunk into the buffer referred to by 'buffer'.
+
+`afWriteMisc` returns the number of bytes written to the specified
+miscellaneous chunk from the buffer referred to by 'buffer'.
+
+`afSeekMisc` returns the new location of the logical data pointer as
+measured as an offset in bytes from the beginning of the miscellaneous
+chunk's data area.
+
+ERRORS
+------
+`afReadMisc`, `afWriteMisc`, and `afSeekMisc` can produce the following
+error codes:
+
+* `AF_BAD_READ`
+* `AF_BAD_WRITE`
+* `AF_BAD_MISCSEEK`
+* `AF_BAD_MISCID`
+* `AF_BAD_TRACKID`
+* `AF_BAD_FILEHANDLE`
+
+AUTHOR
+------
+Michael Pruett <michael@68k.org>

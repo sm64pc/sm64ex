@@ -1,0 +1,1949 @@
+diff --git a/Makefile b/Makefile
+index 2c7ca6c..7c9e954 100644
+--- a/Makefile
++++ b/Makefile
+@@ -173,7 +173,7 @@ else
+ ifeq ($(VERSION),sh)
+   OPT_FLAGS := -O2
+ else
+-  OPT_FLAGS := -g
++  OPT_FLAGS := -O2
+ endif
+ endif
+ 
+@@ -366,6 +366,9 @@ asm/boot.s: $(BUILD_DIR)/lib/bin/ipl3_font.bin
+ 
+ $(BUILD_DIR)/lib/bin/ipl3_font.bin: lib/ipl3_font.png
+ 	$(IPLFONTUTIL) e $< $@
++	
++#Required so the compiler doesn't complain about this not existing.
++$(BUILD_DIR)/src/game/camera.o: $(BUILD_DIR)/include/text_strings.h
+ 
+ $(BUILD_DIR)/include/text_strings.h: include/text_strings.h.in
+ 	$(TEXTCONV) charmap.txt $< $@
+diff --git a/enhancements/bettercamera.h b/enhancements/bettercamera.h
+new file mode 100644
+index 0000000..2896103
+--- /dev/null
++++ b/enhancements/bettercamera.h
+@@ -0,0 +1,48 @@
++enum newcam_flagvalues
++{
++    NC_FLAG_XTURN = 0x0001,//If this flag is set, the camera's yaw can be moved by the player.
++    NC_FLAG_YTURN = 0x0002, //If this flag is set, the camera's pitch can be moved by the player.
++    NC_FLAG_ZOOM = 0x0004, //If this flag is set, the camera's distance can be set by the player.
++    NC_FLAG_8D = 0x0008, //If this flag is set, the camera will snap to an 8 directional axis
++    NC_FLAG_4D = 0x0010, //If this flag is set, the camera will snap to a 4 directional axis
++    NC_FLAG_2D = 0x0020, //If this flag is set, the camera will stick to 2D.
++    NC_FLAG_FOCUSX = 0x0040, //If this flag is set, the camera will point towards its focus on the X axis.
++    NC_FLAG_FOCUSY = 0x0080, //If this flag is set, the camera will point towards its focus on the Y axis.
++    NC_FLAG_FOCUSZ = 0x0100, //If this flag is set, the camera will point towards its focus on the Z axis.
++    NC_FLAG_POSX = 0x0200, //If this flag is set, the camera will move along the X axis.
++    NC_FLAG_POSY = 0x0400, //If this flag is set, the camera will move along the Y axis.
++    NC_FLAG_POSZ = 0x0800, //If this flag is set, the camera will move along the Z axis.
++    NC_FLAG_COLLISION = 0x1000, //If this flag is set, the camera will collide and correct itself with terrain.
++    NC_FLAG_SLIDECORRECT = 0x2000, //If this flag is set, the camera will attempt to centre itself behind Mario whenever he's sliding.
++
++    NC_MODE_NORMAL = NC_FLAG_XTURN | NC_FLAG_YTURN | NC_FLAG_ZOOM | NC_FLAG_FOCUSX | NC_FLAG_FOCUSY | NC_FLAG_FOCUSZ | NC_FLAG_POSX | NC_FLAG_POSY | NC_FLAG_POSZ | NC_FLAG_COLLISION,
++    NC_MODE_SLIDE = NC_FLAG_XTURN | NC_FLAG_YTURN | NC_FLAG_ZOOM | NC_FLAG_FOCUSX | NC_FLAG_FOCUSY | NC_FLAG_FOCUSZ | NC_FLAG_POSX | NC_FLAG_POSY | NC_FLAG_POSZ | NC_FLAG_COLLISION | NC_FLAG_SLIDECORRECT,
++    NC_MODE_FIXED = NC_FLAG_XTURN | NC_FLAG_YTURN | NC_FLAG_ZOOM | NC_FLAG_FOCUSX | NC_FLAG_FOCUSY | NC_FLAG_FOCUSZ,
++    NC_MODE_2D = NC_FLAG_XTURN | NC_FLAG_YTURN | NC_FLAG_ZOOM | NC_FLAG_FOCUSX | NC_FLAG_FOCUSY | NC_FLAG_FOCUSZ | NC_FLAG_POSX | NC_FLAG_POSY | NC_FLAG_POSZ | NC_FLAG_COLLISION,
++    NC_MODE_8D = NC_FLAG_XTURN | NC_FLAG_YTURN | NC_FLAG_ZOOM | NC_FLAG_8D | NC_FLAG_FOCUSX | NC_FLAG_FOCUSY | NC_FLAG_FOCUSZ | NC_FLAG_POSX | NC_FLAG_POSY | NC_FLAG_POSZ | NC_FLAG_COLLISION,
++    NC_MODE_FIXED_NOMOVE = 0x0000,
++    NC_MODE_NOTURN = NC_FLAG_ZOOM | NC_FLAG_FOCUSX | NC_FLAG_FOCUSY | NC_FLAG_FOCUSZ | NC_FLAG_POSX | NC_FLAG_POSY | NC_FLAG_POSZ | NC_FLAG_COLLISION,
++    NC_MODE_NOROTATE = NC_FLAG_YTURN | NC_FLAG_ZOOM | NC_FLAG_FOCUSX | NC_FLAG_FOCUSY | NC_FLAG_FOCUSZ | NC_FLAG_POSX | NC_FLAG_POSY | NC_FLAG_POSZ | NC_FLAG_COLLISION
++
++};
++
++extern void newcam_display_options(void);
++extern void newcam_check_pause_buttons(void);
++extern void newcam_init_settings(void);
++extern void newcam_render_option_text(void);
++extern void newcam_diagnostics(void);
++
++extern u8 newcam_option_open;
++
++extern u8 newcam_sensitivityX; //How quick the camera works.
++extern u8 newcam_sensitivityY;
++extern u8 newcam_invertX;
++extern u8 newcam_invertY;
++extern u8 newcam_panlevel; //How much the camera sticks out a bit in the direction you're looking.
++extern u8 newcam_aggression; //How much the camera tries to centre itself to Mario's facing and movement.
++extern u8 newcam_active; // basically the thing that governs if newcam is on.
++extern u8 newcam_analogue;
++extern u16 newcam_intendedmode;
++
++extern u16 newcam_mode;
++extern s16 newcam_yaw;
+diff --git a/enhancements/bettercamera.inc.c b/enhancements/bettercamera.inc.c
+new file mode 100644
+index 0000000..7320aa9
+--- /dev/null
++++ b/enhancements/bettercamera.inc.c
+@@ -0,0 +1,882 @@
++#include "sm64.h"
++#include "game/camera.h"
++#include "game/level_update.h"
++#include "game/print.h"
++#include "engine/math_util.h"
++#include "game/segment2.h"
++#include "game/save_file.h"
++#include "bettercamera.h"
++#include "include/text_strings.h"
++#include "engine/surface_collision.h"
++
++
++
++/**
++Quick explanation of the camera modes
++
++NC_MODE_NORMAL: Standard mode, allows dualaxial movement and free control of the camera.
++NC_MODE_FIXED: Disables control of camera, and the actual position of the camera doesn't update.
++NC_MODE_2D: Disables horizontal control of the camera and locks Mario's direction to the X axis. NYI though.
++NC_MODE_8D: 8 directional movement. Similar to standard, except the camera direction snaps to 8 directions.
++NC_MODE_FIXED_NOMOVE: Disables control and movement of the camera.
++NC_MODE_NOTURN: Disables horizontal and vertical control of the camera.
++**/
++
++//!A bunch of developer intended options, to cover every base, really.
++//#define NEWCAM_DEBUG //Some print values for puppycam. Not useful anymore, but never hurts to keep em around.
++//#define nosound //If for some reason you hate the concept of audio, you can disable it.
++//#define noaccel //Disables smooth movement of the camera with the C buttons.
++#define DEGRADE 0.1f //What percent of the remaining camera movement is degraded. Default is 10%
++
++
++//!Hardcoded camera angle stuff. They're essentially area boxes that when Mario is inside, will trigger some view changes.
++///Don't touch this btw, unless you know what you're doing, this has to be above for religious reasons.
++struct newcam_hardpos
++{
++    u8 newcam_hard_levelID;
++    u8 newcam_hard_areaID;
++    u8 newcam_hard_permaswap;
++    u16 newcam_hard_modeset;
++    s16 newcam_hard_X1;
++    s16 newcam_hard_Y1;
++    s16 newcam_hard_Z1;
++    s16 newcam_hard_X2;
++    s16 newcam_hard_Y2;
++    s16 newcam_hard_Z2;
++    s16 newcam_hard_camX;
++    s16 newcam_hard_camY;
++    s16 newcam_hard_camZ;
++    s16 newcam_hard_lookX;
++    s16 newcam_hard_lookY;
++    s16 newcam_hard_lookZ;
++};
++
++///This is the bit that defines where the angles happen. They're basically environment boxes that dictate camera behaviour.
++//Permaswap is a boolean that simply determines wether or not when the camera changes at this point it stays changed. 0 means it resets when you leave, and 1 means it stays changed.
++//The camera position fields accept "32767" as an ignore flag.
++struct newcam_hardpos newcam_fixedcam[] =
++{
++{/*Level ID*/ 16,/*Area ID*/ 1,/*Permaswap*/ 0,/*Mode*/ NC_MODE_FIXED_NOMOVE, //Standard params.
++/*X begin*/ -540,/*Y begin*/ 800,/*Z begin*/ -3500, //Where the activation box begins
++/*X end*/ 540,/*Y end*/ 2000,/*Z end*/ -1500, //Where the activation box ends.
++/*Cam X*/ 0,/*Cam Y*/ 1500,/*Cam Z*/ -1000, //The position the camera gets placed for NC_MODE_FIXED and NC_MODE_FIXED_NOMOVE
++/*Look X*/ 0,/*Look Y*/ 800,/*Look Z*/ -2500}, //The position the camera looks at for NC_MODE_FIXED_NOMOVE
++};
++
++
++#ifdef noaccel
++    u8 accel = 255;
++    #else
++    u8 accel = 10;
++#endif // noaccel
++
++s16 newcam_yaw; //Z axis rotation
++s8 newcam_yaw_acc;
++s16 newcam_tilt = 1500; //Y axis rotation
++s8 newcam_tilt_acc;
++u16 newcam_distance = 750; //The distance the camera stays from the player
++u16 newcam_distance_target = 750; //The distance the player camera tries to reach.
++f32 newcam_pos_target[3]; //The position the camera is basing calculations off. *usually* Mario.
++f32 newcam_pos[3]; //Position the camera is in the world
++f32 newcam_lookat[3]; //Position the camera is looking at
++f32 newcam_framessincec[2];
++f32 newcam_extheight = 125;
++u8 newcam_centering = 0; // The flag that depicts wether the camera's goin gto try centering.
++s16 newcam_yaw_target; // The yaw value the camera tries to set itself to when the centre flag is active. Is set to Mario's face angle.
++f32 newcam_turnwait; // The amount of time to wait after landing before allowing the camera to turn again
++f32 newcam_pan_x;
++f32 newcam_pan_z;
++u8 newcam_cstick_down = 0; //Just a value that triggers true when the player 2 stick is moved in 8 direction move to prevent holding it down.
++u8 newcam_target;
++
++u8 newcam_sensitivityX; //How quick the camera works.
++u8 newcam_sensitivityY;
++u8 newcam_invertX; //Reverses movement of the camera axis.
++u8 newcam_invertY;
++u8 newcam_panlevel; //How much the camera sticks out a bit in the direction you're looking.
++u8 newcam_aggression; //How much the camera tries to centre itself to Mario's facing and movement.
++u8 newcam_analogue; //Wether to accept inputs from a player 2 joystick, and then disables C button input.
++s16 newcam_distance_values[] = {750,1250,2000};
++u8 newcam_active = 1; // basically the thing that governs if newcam is on.
++u16 newcam_mode;
++u16 newcam_intendedmode = 0; // which camera mode the camera's going to try to be in when not forced into another.
++u16 newcam_modeflags;
++
++u8 newcam_option_open = 0;
++s8 newcam_option_selection = 0;
++f32 newcam_option_timer = 0;
++u8 newcam_option_index = 0;
++u8 newcam_option_scroll = 0;
++u8 newcam_option_scroll_last = 0;
++u8 newcam_total = 7; //How many options there are in newcam_uptions.
++
++u8 newcam_options[][64] = {{NC_ANALOGUE}, {NC_CAMX}, {NC_CAMY}, {NC_INVERTX}, {NC_INVERTY}, {NC_CAMC}, {NC_CAMP}};
++u8 newcam_flags[][64] = {{NC_DISABLED}, {NC_ENABLED}};
++u8 newcam_strings[][64] = {{NC_BUTTON}, {NC_BUTTON2}, {NC_OPTION}, {NC_HIGHLIGHT}};
++
++///This is called at every level initialisation.
++void newcam_init(struct Camera *c, u8 dv)
++{
++    newcam_tilt = 1500;
++    newcam_distance_target = newcam_distance_values[dv];
++    newcam_yaw = -c->yaw+0x4000; //Mario and the camera's yaw have this offset between them.
++    newcam_mode = NC_MODE_NORMAL;
++    ///This here will dictate what modes the camera will start in at the beginning of a level. Below are some examples.
++    switch (gCurrLevelNum)
++    {
++        case LEVEL_BITDW: newcam_yaw = 0x4000; newcam_mode = NC_MODE_8D; newcam_tilt = 4000; newcam_distance_target = newcam_distance_values[2]; break;
++        case LEVEL_BITFS: newcam_yaw = 0x4000; newcam_mode = NC_MODE_8D; newcam_tilt = 4000; newcam_distance_target = newcam_distance_values[2]; break;
++        case LEVEL_BITS: newcam_yaw = 0x4000; newcam_mode = NC_MODE_8D; newcam_tilt = 4000; newcam_distance_target = newcam_distance_values[2]; break;
++        case LEVEL_WF: newcam_yaw = 0x4000; newcam_tilt = 2000; newcam_distance_target = newcam_distance_values[1]; break;
++        case LEVEL_RR: newcam_yaw = 0x6000; newcam_tilt = 2000; newcam_distance_target = newcam_distance_values[2]; break;
++        case LEVEL_CCM: if (gCurrAreaIndex == 1) {newcam_yaw = -0x4000; newcam_tilt = 2000; newcam_distance_target = newcam_distance_values[1];} else newcam_mode = NC_MODE_SLIDE; break;
++        case LEVEL_WDW: newcam_yaw = 0x2000; newcam_tilt = 3000; newcam_distance_target = newcam_distance_values[1]; break;
++        case 27: newcam_mode = NC_MODE_SLIDE; break;
++        case LEVEL_THI: if (gCurrAreaIndex == 2) newcam_mode = NC_MODE_SLIDE; break;
++    }
++
++    newcam_distance = newcam_distance_target;
++    newcam_intendedmode = newcam_mode;
++    newcam_modeflags = newcam_mode;
++}
++static f32 newcam_clamp(f32 value, f32 max, f32 min)
++{
++    if (value > max)
++        value = max;
++    if (value < min)
++        value = min;
++    return value;
++}
++///These are the default settings for Puppycam. You may change them to change how they'll be set for first timers.
++void newcam_init_settings()
++{
++    if (save_check_firsttime())
++    {
++        save_file_get_setting();
++        newcam_clamp(newcam_sensitivityX, 10, 250);
++        newcam_clamp(newcam_sensitivityY, 10, 250);
++        newcam_clamp(newcam_aggression, 0, 100);
++        newcam_clamp(newcam_panlevel, 0, 100);
++        newcam_clamp(newcam_invertX, 0, 1);
++        newcam_clamp(newcam_invertY, 0, 1);
++    }
++    else
++    {
++        newcam_sensitivityX = 75;
++        newcam_sensitivityY = 75;
++        newcam_aggression = 0;
++        newcam_panlevel = 75;
++        newcam_invertX = 0;
++        newcam_invertY = 0;
++        save_set_firsttime();
++    }
++}
++
++/** Mathematic calculations. This stuffs so basic even *I* understand it lol
++Basically, it just returns a position based on angle */
++static s16 lengthdir_x(f32 length, s16 dir)
++{
++    return (s16) (length * coss(dir));
++}
++static s16 lengthdir_y(f32 length, s16 dir)
++{
++    return (s16) (length * sins(dir));
++}
++
++void newcam_diagnostics(void)
++{
++    print_text_fmt_int(32,192,"Lv %d",gCurrLevelNum);
++    print_text_fmt_int(32,176,"Area %d",gCurrAreaIndex);
++    print_text_fmt_int(32,160,"X %d",gMarioState->pos[0]);
++    print_text_fmt_int(32,144,"Y %d",gMarioState->pos[1]);
++    print_text_fmt_int(32,128,"Z %d",gMarioState->pos[2]);
++    print_text_fmt_int(32,112,"FLAGS %d",newcam_modeflags);
++    print_text_fmt_int(180,112,"INTM %d",newcam_intendedmode);
++    print_text_fmt_int(32,96,"TILT UP %d",newcam_tilt_acc);
++    print_text_fmt_int(32,80,"YAW UP %d",newcam_yaw_acc);
++    print_text_fmt_int(32,64,"YAW %d",newcam_yaw);
++    print_text_fmt_int(32,48,"TILT  %d",newcam_tilt);
++    print_text_fmt_int(32,32,"DISTANCE %d",newcam_distance);
++}
++
++static s16 newcam_adjust_value(s16 var, s16 val)
++{
++    var += val;
++    if (var > 100)
++        var = 100;
++    if (var < -100)
++        var = -100;
++
++    return var;
++}
++
++static f32 newcam_approach_float(f32 var, f32 val, f32 inc)
++{
++    if (var < val)
++        return min(var + inc, val);
++        else
++        return max(var - inc, val);
++}
++
++static s16 newcam_approach_s16(s16 var, s16 val, s16 inc)
++{
++    if (var < val)
++        return max(var + inc, val);
++        else
++        return min(var - inc, val);
++}
++
++static u8 ivrt(u8 axis)
++{
++    if (axis == 0)
++    {
++        if (newcam_invertX == 0)
++            return 1;
++        else
++            return -1;
++    }
++    else
++    {
++        if (newcam_invertY == 0)
++            return 1;
++        else
++            return -1;
++    }
++}
++
++static void newcam_rotate_button(void)
++{
++    if ((newcam_modeflags & NC_FLAG_8D || newcam_modeflags & NC_FLAG_4D) && newcam_modeflags & NC_FLAG_XTURN) //8 directional camera rotation input for buttons.
++    {
++        if ((gPlayer1Controller->buttonPressed & L_CBUTTONS) && newcam_analogue == 0)
++        {
++            #ifndef nosound
++            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
++            #endif
++            if (newcam_modeflags & NC_FLAG_8D)
++                newcam_yaw_target = newcam_yaw_target+0x2000;
++            else
++                newcam_yaw_target = newcam_yaw_target+0x4000;
++            newcam_centering = 1;
++        }
++        else
++        if ((gPlayer1Controller->buttonPressed & R_CBUTTONS) && newcam_analogue == 0)
++        {
++            #ifndef nosound
++            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
++            #endif
++            if (newcam_modeflags & NC_FLAG_8D)
++                newcam_yaw_target = newcam_yaw_target-0x2000;
++            else
++                newcam_yaw_target = newcam_yaw_target-0x4000;
++            newcam_centering = 1;
++        }
++    }
++    else //Standard camera movement
++    if (newcam_modeflags & NC_FLAG_XTURN)
++    {
++        if ((gPlayer1Controller->buttonDown & L_CBUTTONS) && newcam_analogue == 0)
++            newcam_yaw_acc = newcam_adjust_value(newcam_yaw_acc,accel);
++        else if ((gPlayer1Controller->buttonDown & R_CBUTTONS) && newcam_analogue == 0)
++            newcam_yaw_acc = newcam_adjust_value(newcam_yaw_acc,-accel);
++        else
++            #ifdef noaccel
++            newcam_yaw_acc = 0;
++            #else
++            newcam_yaw_acc -= (newcam_yaw_acc*(DEGRADE));
++            #endif
++    }
++
++    if (gPlayer1Controller->buttonDown & U_CBUTTONS && newcam_modeflags & NC_FLAG_YTURN && newcam_analogue == 0)
++        newcam_tilt_acc = newcam_adjust_value(newcam_tilt_acc,accel);
++    else if (gPlayer1Controller->buttonDown & D_CBUTTONS && newcam_modeflags & NC_FLAG_YTURN && newcam_analogue == 0)
++        newcam_tilt_acc = newcam_adjust_value(newcam_tilt_acc,-accel);
++    else
++        #ifdef noaccel
++        newcam_tilt_acc = 0;
++        #else
++        newcam_tilt_acc -= (newcam_tilt_acc*(DEGRADE));
++        #endif
++
++    newcam_framessincec[0] += 1;
++    newcam_framessincec[1] += 1;
++    if ((gPlayer1Controller->buttonPressed & L_CBUTTONS) && newcam_modeflags & NC_FLAG_XTURN && !(newcam_modeflags & NC_FLAG_8D) && newcam_analogue == 0)
++    {
++        if (newcam_framessincec[0] < 6)
++        {
++            newcam_yaw_target = newcam_yaw+0x3000;
++            newcam_centering = 1;
++            #ifndef nosound
++            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
++            #endif
++        }
++        newcam_framessincec[0] = 0;
++    }
++    if ((gPlayer1Controller->buttonPressed & R_CBUTTONS) && newcam_modeflags & NC_FLAG_XTURN && !(newcam_modeflags & NC_FLAG_8D) && newcam_analogue == 0)
++    {
++        if (newcam_framessincec[1] < 6)
++            {
++            newcam_yaw_target = newcam_yaw-0x3000;
++            newcam_centering = 1;
++            #ifndef nosound
++            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
++            #endif
++        }
++        newcam_framessincec[1] = 0;
++    }
++
++
++    if (newcam_analogue == 1) //There's not much point in keeping this behind a check, but it wouldn't hurt, just incase any 2player shenanigans ever happen, it makes it easy to disable.
++    { //The joystick values cap at 80, so divide by 8 to get the same net result at maximum turn as the button
++        if (ABS(gPlayer2Controller->rawStickX) > 20 && newcam_modeflags & NC_FLAG_XTURN)
++        {
++            if (newcam_modeflags & NC_FLAG_8D)
++            {
++                if (newcam_cstick_down == 0)
++                    {
++                    newcam_cstick_down = 1;
++                    newcam_centering = 1;
++                    #ifndef nosound
++                    play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
++                    #endif
++                    if (gPlayer2Controller->rawStickX > 20)
++                    {
++                        if (newcam_modeflags & NC_FLAG_8D)
++                            newcam_yaw_target = newcam_yaw_target+0x2000;
++                        else
++                            newcam_yaw_target = newcam_yaw_target+0x4000;
++                    }
++                    else
++                    {
++                        if (newcam_modeflags & NC_FLAG_8D)
++                            newcam_yaw_target = newcam_yaw_target-0x2000;
++                        else
++                            newcam_yaw_target = newcam_yaw_target-0x4000;
++                    }
++                }
++            }
++            else
++                newcam_yaw_acc = newcam_adjust_value(newcam_yaw_acc,(-gPlayer2Controller->rawStickX/4));
++        }
++        else
++        {
++            newcam_cstick_down = 0;
++            newcam_yaw_acc -= (newcam_yaw_acc*(DEGRADE));
++        }
++
++        if (ABS(gPlayer2Controller->rawStickY) > 20 && newcam_modeflags & NC_FLAG_YTURN)
++            newcam_tilt_acc = newcam_adjust_value(newcam_tilt_acc,(-gPlayer2Controller->rawStickY/4));
++        else
++            newcam_tilt_acc -= (newcam_tilt_acc*(DEGRADE));
++    }
++}
++
++static void newcam_zoom_button(void)
++{
++    //Smoothly move the camera to the new spot.
++    if (newcam_distance > newcam_distance_target)
++    {
++        newcam_distance -= 250;
++        if (newcam_distance < newcam_distance_target)
++            newcam_distance = newcam_distance_target;
++    }
++    if (newcam_distance < newcam_distance_target)
++    {
++        newcam_distance += 250;
++        if (newcam_distance > newcam_distance_target)
++            newcam_distance = newcam_distance_target;
++    }
++
++    //When you press L and R together, set the flag for centering the camera. Afterwards, start setting the yaw to the Player's yaw at the time.
++    if (gPlayer1Controller->buttonDown & L_TRIG && gPlayer1Controller->buttonDown & R_TRIG && newcam_modeflags & NC_FLAG_ZOOM)
++    {
++        newcam_yaw_target = -gMarioState->faceAngle[1]-0x4000;
++        newcam_centering = 1;
++    }
++    else //Each time the player presses R, but NOT L the camera zooms out more, until it hits the limit and resets back to close view.
++    if (gPlayer1Controller->buttonPressed & R_TRIG && newcam_modeflags & NC_FLAG_XTURN)
++    {
++        #ifndef nosound
++        play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gDefaultSoundArgs);
++        #endif
++
++        if (newcam_distance_target == newcam_distance_values[0])
++            newcam_distance_target = newcam_distance_values[1];
++        else
++        if (newcam_distance_target == newcam_distance_values[1])
++            newcam_distance_target = newcam_distance_values[2];
++        else
++            newcam_distance_target = newcam_distance_values[0];
++
++    }
++    if (newcam_centering && newcam_modeflags & NC_FLAG_XTURN)
++    {
++        newcam_yaw = approach_s16_symmetric(newcam_yaw,newcam_yaw_target,0x800);
++        if (newcam_yaw = newcam_yaw_target)
++            newcam_centering = 0;
++    }
++    else
++        newcam_yaw_target = newcam_yaw;
++}
++
++static void newcam_update_values(void)
++{//For tilt, this just limits it so it doesn't go further than 90 degrees either way. 90 degrees is actually 16384, but can sometimes lead to issues, so I just leave it shy of 90.
++    u8 waterflag = 0;
++    if (newcam_modeflags & NC_FLAG_XTURN)
++        newcam_yaw += (ivrt(0)*(newcam_yaw_acc*(newcam_sensitivityX/10)));
++    if (((newcam_tilt < 12000 && newcam_tilt_acc*ivrt(1) > 0) || (newcam_tilt > -12000 && newcam_tilt_acc*ivrt(1) < 0)) && newcam_modeflags & NC_FLAG_YTURN)
++        newcam_tilt += (ivrt(1)*(newcam_tilt_acc*(newcam_sensitivityY/10)));
++    else
++    {
++        if (newcam_tilt > 12000)
++            newcam_tilt = 12000;
++        if (newcam_tilt < -12000)
++            newcam_tilt = -12000;
++    }
++
++        if (newcam_turnwait > 0 && gMarioState->vel[1] == 0)
++        {
++            newcam_turnwait -= 1;
++            if (newcam_turnwait < 0)
++                newcam_turnwait = 0;
++        }
++        else
++        {
++        if (gMarioState->intendedMag > 0 && gMarioState->vel[1] == 0 && newcam_modeflags & NC_FLAG_XTURN)
++            newcam_yaw = (approach_s16_symmetric(newcam_yaw,-gMarioState->faceAngle[1]-0x4000,((newcam_aggression*(ABS(gPlayer1Controller->rawStickX/10)))*(gMarioState->forwardVel/32))));
++        else
++            newcam_turnwait = 10;
++        }
++
++        if (newcam_modeflags & NC_FLAG_SLIDECORRECT)
++        {
++            switch (gMarioState->action)
++            {
++                case ACT_BUTT_SLIDE: if (gMarioState->forwardVel > 8) waterflag = 1; break;
++                case ACT_STOMACH_SLIDE: if (gMarioState->forwardVel > 8) waterflag = 1; break;
++                case ACT_HOLD_BUTT_SLIDE: if (gMarioState->forwardVel > 8) waterflag = 1; break;
++                case ACT_HOLD_STOMACH_SLIDE: if (gMarioState->forwardVel > 8) waterflag = 1; break;
++            }
++        }
++        switch (gMarioState->action)
++        {
++            case ACT_SHOT_FROM_CANNON: waterflag = 1; break;
++            case ACT_FLYING: waterflag = 1; break;
++        }
++
++        if (gMarioState->action & ACT_FLAG_SWIMMING)
++        {
++            if (gMarioState->forwardVel > 2)
++            waterflag = 1;
++        }
++
++        if (waterflag && newcam_modeflags & NC_FLAG_XTURN)
++        {
++            newcam_yaw = (approach_s16_symmetric(newcam_yaw,-gMarioState->faceAngle[1]-0x4000,(gMarioState->forwardVel*128)));
++            if ((signed)gMarioState->forwardVel > 1)
++                newcam_tilt = (approach_s16_symmetric(newcam_tilt,(-gMarioState->faceAngle[0]*0.8)+3000,(gMarioState->forwardVel*32)));
++            else
++                newcam_tilt = (approach_s16_symmetric(newcam_tilt,3000,32));
++        }
++}
++
++static void newcam_collision(void)
++{
++    struct Surface *surf;
++    Vec3f camdir;
++    Vec3f hitpos;
++
++    camdir[0] = newcam_pos[0]-newcam_lookat[0];
++    camdir[1] = newcam_pos[1]-newcam_lookat[1];
++    camdir[2] = newcam_pos[2]-newcam_lookat[2];
++
++
++
++    find_surface_on_ray(newcam_pos_target, camdir, &surf, &hitpos);
++
++    if (surf)
++    {
++        newcam_pos[0] = hitpos[0];
++        newcam_pos[1] = approach_f32(hitpos[1],newcam_pos[1],25,-25);
++        newcam_pos[2] = hitpos[2];
++        newcam_pan_x = 0;
++        newcam_pan_z = 0;
++    }
++}
++
++static void newcam_set_pan(void)
++{
++    //Apply panning values based on Mario's direction.
++    if (gMarioState->action != ACT_HOLDING_BOWSER && gMarioState->action != ACT_SLEEPING && gMarioState->action != ACT_START_SLEEPING)
++    {
++        approach_f32_asymptotic_bool(&newcam_pan_x, lengthdir_x((160*newcam_panlevel)/100, -gMarioState->faceAngle[1]-0x4000), 0.05);
++        approach_f32_asymptotic_bool(&newcam_pan_z, lengthdir_y((160*newcam_panlevel)/100, -gMarioState->faceAngle[1]-0x4000), 0.05);
++    }
++    else
++    {
++        approach_f32_asymptotic_bool(&newcam_pan_x, 0, 0.05);
++        approach_f32_asymptotic_bool(&newcam_pan_z, 0, 0.05);
++    }
++
++    newcam_pan_x = newcam_pan_x*(min(newcam_distance/newcam_distance_target,1));
++    newcam_pan_z = newcam_pan_z*(min(newcam_distance/newcam_distance_target,1));
++}
++
++static void newcam_position_cam(void)
++{
++    f32 floorY = 0;
++    f32 floorY2 = 0;
++    s16 shakeX;
++    s16 shakeY;
++
++    if (!(gMarioState->action & ACT_FLAG_SWIMMING))
++        calc_y_to_curr_floor(&floorY, 1.f, 200.f, &floorY2, 0.9f, 200.f);
++
++    newcam_update_values();
++    shakeX = gLakituState.shakeMagnitude[1];
++    shakeY = gLakituState.shakeMagnitude[0];
++    //Fetch Mario's current position. Not hardcoded just for the sake of flexibility, though this specific bit is temp, because it won't always want to be focusing on Mario.
++    newcam_pos_target[0] = gMarioState->pos[0];
++    newcam_pos_target[1] = gMarioState->pos[1]+newcam_extheight;
++    newcam_pos_target[2] = gMarioState->pos[2];
++    //These will set the position of the camera to where Mario is supposed to be, minus adjustments for where the camera should be, on top of.
++    if (newcam_modeflags & NC_FLAG_POSX)
++        newcam_pos[0] = newcam_pos_target[0]+lengthdir_x(lengthdir_x(newcam_distance,newcam_tilt+shakeX),newcam_yaw+shakeY);
++    if (newcam_modeflags & NC_FLAG_POSY)
++        newcam_pos[2] = newcam_pos_target[2]+lengthdir_y(lengthdir_x(newcam_distance,newcam_tilt+shakeX),newcam_yaw+shakeY);
++    if (newcam_modeflags & NC_FLAG_POSZ)
++        newcam_pos[1] = newcam_pos_target[1]+lengthdir_y(newcam_distance,newcam_tilt+gLakituState.shakeMagnitude[0])+floorY;
++    if ((newcam_modeflags & NC_FLAG_FOCUSX) && (newcam_modeflags & NC_FLAG_FOCUSY) && (newcam_modeflags & NC_FLAG_FOCUSZ))
++        newcam_set_pan();
++    //Set where the camera wants to be looking at. This is almost always the place it's based off, too.
++    if (newcam_modeflags & NC_FLAG_FOCUSX)
++        newcam_lookat[0] = newcam_pos_target[0]-newcam_pan_x;
++    if (newcam_modeflags & NC_FLAG_FOCUSY)
++        newcam_lookat[1] = newcam_pos_target[1]+floorY2;
++    if (newcam_modeflags & NC_FLAG_FOCUSZ)
++        newcam_lookat[2] = newcam_pos_target[2]-newcam_pan_z;
++
++    if (newcam_modeflags & NC_FLAG_COLLISION)
++    newcam_collision();
++
++}
++
++//Nested if's baybeeeee
++static void newcam_find_fixed(void)
++{
++    u8 i = 0;
++    newcam_mode = newcam_intendedmode;
++    newcam_modeflags = newcam_mode;
++    for (i = 0; i < sizeof(newcam_fixedcam); i++)
++    {
++        if (newcam_fixedcam[i].newcam_hard_levelID == gCurrLevelNum && newcam_fixedcam[i].newcam_hard_areaID == gCurrAreaIndex)
++        {//I didn't wanna just obliterate the horizontal plane of the IDE with a beefy if statement, besides, I think this runs slightly better anyway?
++            if (newcam_pos_target[0] > newcam_fixedcam[i].newcam_hard_X1)
++            if (newcam_pos_target[0] < newcam_fixedcam[i].newcam_hard_X2)
++            if (newcam_pos_target[1] > newcam_fixedcam[i].newcam_hard_Y1)
++            if (newcam_pos_target[1] < newcam_fixedcam[i].newcam_hard_Y2)
++            if (newcam_pos_target[2] > newcam_fixedcam[i].newcam_hard_Z1)
++            if (newcam_pos_target[2] < newcam_fixedcam[i].newcam_hard_Z2)
++            {
++                if (newcam_fixedcam[i].newcam_hard_permaswap)
++                    newcam_intendedmode = newcam_fixedcam[i].newcam_hard_modeset;
++                newcam_mode = newcam_fixedcam[i].newcam_hard_modeset;
++                newcam_modeflags = newcam_mode;
++
++                if (newcam_fixedcam[i].newcam_hard_camX != 32767 && !(newcam_modeflags & NC_FLAG_POSX))
++                    newcam_pos[0] = newcam_fixedcam[i].newcam_hard_camX;
++                if (newcam_fixedcam[i].newcam_hard_camY != 32767 && !(newcam_modeflags & NC_FLAG_POSY))
++                    newcam_pos[1] = newcam_fixedcam[i].newcam_hard_camY;
++                if (newcam_fixedcam[i].newcam_hard_camZ != 32767 && !(newcam_modeflags & NC_FLAG_POSZ))
++                    newcam_pos[2] = newcam_fixedcam[i].newcam_hard_camZ;
++
++                if (newcam_fixedcam[i].newcam_hard_lookX != 32767 && !(newcam_modeflags & NC_FLAG_FOCUSX))
++                    newcam_lookat[0] = newcam_fixedcam[i].newcam_hard_lookX;
++                if (newcam_fixedcam[i].newcam_hard_lookY != 32767 && !(newcam_modeflags & NC_FLAG_FOCUSY))
++                    newcam_lookat[1] = newcam_fixedcam[i].newcam_hard_lookY;
++                if (newcam_fixedcam[i].newcam_hard_lookZ != 32767 && !(newcam_modeflags & NC_FLAG_FOCUSZ))
++                    newcam_lookat[2] = newcam_fixedcam[i].newcam_hard_lookZ;
++
++                newcam_yaw = atan2s(newcam_pos[0]-newcam_pos_target[0],newcam_pos[2]-newcam_pos_target[2]);
++            }
++        }
++    }
++}
++
++static void newcam_apply_values(struct Camera *c)
++{
++
++    c->pos[0] = newcam_pos[0];
++    c->pos[1] = newcam_pos[1];
++    c->pos[2] = newcam_pos[2];
++
++    c->focus[0] = newcam_lookat[0];
++    c->focus[1] = newcam_lookat[1];
++    c->focus[2] = newcam_lookat[2];
++
++    gLakituState.pos[0] = newcam_pos[0];
++    gLakituState.pos[1] = newcam_pos[1];
++    gLakituState.pos[2] = newcam_pos[2];
++
++    gLakituState.focus[0] = newcam_lookat[0];
++    gLakituState.focus[1] = newcam_lookat[1];
++    gLakituState.focus[2] = newcam_lookat[2];
++
++    c->yaw = -newcam_yaw+0x4000;
++    gLakituState.yaw = -newcam_yaw+0x4000;
++
++    //Adds support for wing mario tower
++    if (gMarioState->floor->type == SURFACE_LOOK_UP_WARP) {
++        if (save_file_get_total_star_count(gCurrSaveFileNum - 1, 0, 0x18) >= 10) {
++            if (newcam_tilt < -8000 && gMarioState->forwardVel == 0) {
++                level_trigger_warp(gMarioState, 1);
++            }
++        }
++    }
++
++}
++
++//The ingame cutscene system is such a spaghetti mess I actually have to resort to something as stupid as this to cover every base.
++void newcam_apply_outside_values(struct Camera *c, u8 bit)
++{
++    if (newcam_modeflags == NC_FLAG_XTURN)
++    {
++        if (bit)
++            newcam_yaw = -gMarioState->faceAngle[1]-0x4000;
++        else
++            newcam_yaw = -c->yaw+0x4000;
++    }
++}
++
++//Main loop.
++void newcam_loop(struct Camera *c)
++{
++    newcam_rotate_button();
++    newcam_zoom_button();
++    newcam_position_cam();
++    newcam_find_fixed();
++    if (gMarioObject)
++    newcam_apply_values(c);
++
++    //Just some visual information on the values of the camera. utilises ifdef because it's better at runtime.
++    #ifdef NEWCAM_DEBUG
++    newcam_diagnostics();
++    #endif // NEWCAM_DEBUG
++}
++
++
++
++//Displays a box.
++void newcam_display_box(s16 x1, s16 y1, s16 x2, s16 y2, u8 r, u8 g, u8 b)
++{
++    gDPPipeSync(gDisplayListHead++);
++    gDPSetRenderMode(gDisplayListHead++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
++    gDPSetCycleType(gDisplayListHead++, G_CYC_FILL);
++    gDPSetFillColor(gDisplayListHead++, GPACK_RGBA5551(r, g, b, 255));
++    gDPFillRectangle(gDisplayListHead++, x1, y1, x2 - 1, y2 - 1);
++    gDPPipeSync(gDisplayListHead++);
++    gDPSetCycleType(gDisplayListHead++, G_CYC_1CYCLE);
++}
++
++//I actually took the time to redo this, properly. Lmao. Please don't bully me over this anymore :(
++void newcam_change_setting(u8 toggle)
++{
++    switch (newcam_option_selection)
++    {
++    case 0:
++        newcam_analogue ^= 1;
++        break;
++    case 1:
++        if (newcam_sensitivityX > 10 && newcam_sensitivityX < 250)
++            newcam_sensitivityX += toggle;
++            break;
++    case 2:
++        if (newcam_sensitivityY > 10 && newcam_sensitivityY < 250)
++            newcam_sensitivityY += toggle;
++            break;
++    case 3:
++        newcam_invertX ^= 1;
++        break;
++    case 4:
++        newcam_invertY ^= 1;
++        break;
++    case 5:
++        if (newcam_aggression > 0 && newcam_aggression < 100)
++            newcam_aggression += toggle;
++            break;
++    case 6:
++        if (newcam_panlevel > 0 && newcam_panlevel < 100)
++            newcam_panlevel += toggle;
++            break;
++    }
++}
++
++void newcam_text(s16 x, s16 y, u8 str[], u8 col)
++{
++    u8 textX;
++    textX = get_str_x_pos_from_center(x,str,10.0f);
++    gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, 255);
++    print_generic_string(textX+1,y-1,str);
++    if (col != 0)
++    {
++        gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
++    }
++    else
++    {
++        gDPSetEnvColor(gDisplayListHead++, 255, 32, 32, 255);
++    }
++    print_generic_string(textX,y,str);
++}
++
++//Options menu
++void newcam_display_options()
++{
++    u8 i = 0;
++    u8 newstring[32];
++    s16 scroll;
++    s16 scrollpos;
++    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
++    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
++    print_hud_lut_string(HUD_LUT_GLOBAL, 118, 40, newcam_strings[2]);
++    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
++
++    if (newcam_total>4)
++    {
++        newcam_display_box(272,90,280,208,0x80,0x80,0x80);
++        scrollpos = (54)*((f32)newcam_option_scroll/(newcam_total-4));
++        newcam_display_box(272,90+scrollpos,280,154+scrollpos,0xFF,0xFF,0xFF);
++    }
++
++
++    gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
++    gDPSetScissor(gDisplayListHead++, G_SC_NON_INTERLACE, 0, 80, SCREEN_WIDTH, SCREEN_HEIGHT);
++    for (i = 0; i < newcam_total; i++)
++    {
++        scroll = 140-(32*i)+(newcam_option_scroll*32);
++        if (scroll <= 140 && scroll > 32)
++        {
++        newcam_text(160,scroll,newcam_options[i],newcam_option_selection-i);
++        switch (i)
++        {
++        case 0:
++            newcam_text(160,scroll-12,newcam_flags[newcam_analogue],newcam_option_selection-i);
++            break;
++        case 1:
++            int_to_str(newcam_sensitivityX,newstring);
++            newcam_text(160,scroll-12,newstring,newcam_option_selection-i);
++            break;
++        case 2:
++            int_to_str(newcam_sensitivityY,newstring);
++            newcam_text(160,scroll-12,newstring,newcam_option_selection-i);
++            break;
++        case 3:
++            newcam_text(160,scroll-12,newcam_flags[newcam_invertX],newcam_option_selection-i);
++            break;
++        case 4:
++            newcam_text(160,scroll-12,newcam_flags[newcam_invertY],newcam_option_selection-i);
++            break;
++        case 5:
++            int_to_str(newcam_aggression,newstring);
++            newcam_text(160,scroll-12,newstring,newcam_option_selection-i);
++            break;
++        case 6:
++            int_to_str(newcam_panlevel,newstring);
++            newcam_text(160,scroll-12,newstring,newcam_option_selection-i);
++            break;
++        }
++        }
++    }
++    gDPSetScissor(gDisplayListHead++, G_SC_NON_INTERLACE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
++    gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
++    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
++    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
++    print_hud_lut_string(HUD_LUT_GLOBAL, 80, 90+(32*(newcam_option_selection-newcam_option_scroll)),  newcam_strings[3]);
++    print_hud_lut_string(HUD_LUT_GLOBAL, 224, 90+(32*(newcam_option_selection-newcam_option_scroll)), newcam_strings[3]);
++    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
++}
++
++//This has been separated for interesting reasons. Don't question it.
++void newcam_render_option_text(void)
++{
++    gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
++    newcam_text(278,212,newcam_strings[newcam_option_open],1);
++    gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
++}
++
++void newcam_check_pause_buttons()
++{
++    if (gPlayer1Controller->buttonPressed & R_TRIG)
++    {
++            #ifndef nosound
++            play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
++            #endif
++        if (newcam_option_open == 0)
++            newcam_option_open = 1;
++        else
++        {
++            newcam_option_open = 0;
++            save_file_set_setting();
++        }
++    }
++
++    if (newcam_option_open)
++    {
++        if (ABS(gPlayer1Controller->rawStickY) > 60)
++        {
++            newcam_option_timer -= 1;
++            if (newcam_option_timer <= 0)
++            {
++                switch (newcam_option_index)
++                {
++                    case 0: newcam_option_index++; newcam_option_timer += 10; break;
++                    default: newcam_option_timer += 5; break;
++                }
++                #ifndef nosound
++                play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
++                #endif
++                if (gPlayer1Controller->rawStickY >= 60)
++                {
++                    newcam_option_selection--;
++                    if (newcam_option_selection < 0)
++                        newcam_option_selection = newcam_total-1;
++                }
++                else
++                {
++                    newcam_option_selection++;
++                    if (newcam_option_selection >= newcam_total)
++                        newcam_option_selection = 0;
++                }
++            }
++        }
++        else
++        if (ABS(gPlayer1Controller->rawStickX) > 60)
++        {
++            newcam_option_timer -= 1;
++            if (newcam_option_timer <= 0)
++            {
++                switch (newcam_option_index)
++                {
++                    case 0: newcam_option_index++; newcam_option_timer += 10; break;
++                    default: newcam_option_timer += 5; break;
++                }
++                #ifndef nosound
++                play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
++                #endif
++                if (gPlayer1Controller->rawStickX >= 60)
++                    newcam_change_setting(1);
++                else
++                    newcam_change_setting(-1);
++            }
++        }
++        else
++        {
++            newcam_option_timer = 0;
++            newcam_option_index = 0;
++        }
++
++        while (newcam_option_scroll - newcam_option_selection < -3 && newcam_option_selection > newcam_option_scroll)
++            newcam_option_scroll +=1;
++        while (newcam_option_scroll + newcam_option_selection > 0 && newcam_option_selection < newcam_option_scroll)
++            newcam_option_scroll -=1;
++    }
++}
+diff --git a/enhancements/readme.txt b/enhancements/readme.txt
+new file mode 100644
+index 0000000..9cdad73
+--- /dev/null
++++ b/enhancements/readme.txt
+@@ -0,0 +1,7 @@
++Puppycam 2.0 release notes:
++
++- Reworked Camera mode system, utilising behaviour flags, allowing for new camera modes to be created easier than ever before. bettercamera.h contains all modes, with their appropriate flags.
++
++- Reworked Collision. Puppycam now utilises CuckyDev's Raycasting system, which offers far more reliable collision checking as well as increased performance. The major change that comes with this however, is that the game must now be compiled with -O2 optimisation. This shouldn't be a problem for most people however, because if you're doing anything remotely creative, you want this enabled anyways.
++
++- Improved Code inside bettercamera.inc.c. A lot of the code inside this file has been cleaned up, which cuts down on bloat, and improves readability, as well as performance. Most of it's stuff you'd generally leave alone anyway, but it's good to not write YandereDev tier code.
+\ No newline at end of file
+diff --git a/include/segments.h b/include/segments.h
+index c98040a..f6bfa63 100644
+--- a/include/segments.h
++++ b/include/segments.h
+@@ -1,6 +1,8 @@
+ #ifndef _SEGMENTS_H
+ #define _SEGMENTS_H
+ 
++#define USE_EXT_RAM
++
+ /*
+  * Memory addresses for segments. Ideally, this header file would not be
+  * needed, and the addresses would be defined in sm64.ld and linker-inserted
+@@ -44,10 +46,10 @@
+  */
+ 
+ #define SEG_BUFFERS      0x8005C000 // 0x0085000 in size
+-#define SEG_MAIN         0x800E1000 // 0x1328000 in size
+-#define SEG_ENGINE       0x80213800 // 0x0017000 in size
+-#define SEG_FRAMEBUFFERS 0x8022A800 // 0x0070800 in size
+-#define SEG_POOL_START   0x8029B000 // 0x0165000 in size
++#define SEG_MAIN         0x800F1000 // 0x1328000 in size
++#define SEG_ENGINE       0x80223800 // 0x0017000 in size
++#define SEG_FRAMEBUFFERS 0x8023A800 // 0x0070800 in size
++#define SEG_POOL_START   0x802AB000 // 0x0165000 in size
+ #define SEG_POOL_END     0x80800000
+ #define SEG_POOL_END_4MB 0x80400000 // For the error message screen enhancement.
+ #define SEG_GODDARD      SEG_POOL_START + 0x113000
+diff --git a/include/text_strings.h.in b/include/text_strings.h.in
+index 4e36eb9..db30839 100644
+--- a/include/text_strings.h.in
++++ b/include/text_strings.h.in
+@@ -3,6 +3,20 @@
+ 
+ #include "text_menu_strings.h"
+ 
++#define NC_CAMX 				_("Camera X Sensitivity")
++    #define NC_CAMY 				_("Camera Y Sensitivity")
++	#define NC_INVERTX				_("Invert X Axis")
++	#define NC_INVERTY				_("Invert Y Axis")
++    #define NC_CAMC 				_("Camera Centre Aggression")
++    #define NC_CAMP 				_("Camera Pan Level")
++    #define NC_ENABLED 				_("Enabled")
++    #define NC_DISABLED 			_("Disabled")
++    #define NC_BUTTON 				_("[R]: Options")
++    #define NC_BUTTON2 				_("[R]: Return")
++	#define NC_OPTION 				_("OPTIONS")
++	#define NC_HIGHLIGHT 			_("O")
++	#define NC_ANALOGUE				_("Analogue Camera")
++
+ /**
+  * Global Symbols
+  */
+diff --git a/sm64.ld.rej b/sm64.ld.rej
+new file mode 100644
+index 0000000..2c27c42
+--- /dev/null
++++ b/sm64.ld.rej
+@@ -0,0 +1,10 @@
++--- sm64.ld
+++++ sm64.ld
++@@ -112,7 +112,6 @@ SECTIONS
++       BUILD_DIR/src/game/rendering_graph_node.o(.text);
++       BUILD_DIR/src/game/profiler.o(.text);
++       BUILD_DIR/asm/decompress.o(.text);
++-      BUILD_DIR/asm/crash.o(.text);
++       BUILD_DIR/src/game/camera.o(.text);
++       BUILD_DIR/src/game/debug_course.o(.text);
++       BUILD_DIR/src/game/object_list_processor.o(.text);
+diff --git a/src/engine/math_util.c b/src/engine/math_util.c
+index 61a095d..8643f5e 100644
+--- a/src/engine/math_util.c
++++ b/src/engine/math_util.c
+@@ -49,6 +49,15 @@ void *vec3f_sum(Vec3f dest, Vec3f a, Vec3f b) {
+     return &dest; //! warning: function returns address of local variable
+ }
+ 
++/// Multiply vector 'dest' by a
++void *vec3f_mul(Vec3f dest, f32 a)
++{
++    dest[0] *= a;
++    dest[1] *= a;
++    dest[2] *= a;
++    return &dest; //! warning: function returns address of local variable
++}
++
+ /// Copy vector src to dest
+ void *vec3s_copy(Vec3s dest, Vec3s src) {
+     dest[0] = src[0];
+@@ -81,11 +90,11 @@ void *vec3s_sum(Vec3s dest, Vec3s a, Vec3s b) {
+     return &dest; //! warning: function returns address of local variable
+ }
+ 
+-/// Subtract vector a from 'dest'
+-void *vec3s_sub(Vec3s dest, Vec3s a) {
+-    dest[0] -= a[0];
+-    dest[1] -= a[1];
+-    dest[2] -= a[2];
++/// Make 'dest' the difference of vectors a and b.
++void *vec3f_dif(Vec3f dest, Vec3f a, Vec3f b) {
++    dest[0] = a[0] - b[0];
++    dest[1] = a[1] - b[1];
++    dest[2] = a[2] - b[2];
+     return &dest; //! warning: function returns address of local variable
+ }
+ 
+@@ -140,6 +149,18 @@ void *vec3f_normalize(Vec3f dest) {
+     return &dest; //! warning: function returns address of local variable
+ }
+ 
++/// Get length of vector 'a'
++f32 vec3f_length(Vec3f a)
++{
++	return sqrtf(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
++}
++
++/// Get dot product of vectors 'a' and 'b'
++f32 vec3f_dot(Vec3f a, Vec3f b)
++{
++	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
++}
++
+ #pragma GCC diagnostic pop
+ 
+ /// Copy matrix 'src' to 'dest'
+diff --git a/src/engine/math_util.h b/src/engine/math_util.h
+index b36498c..650fe97 100644
+--- a/src/engine/math_util.h
++++ b/src/engine/math_util.h
+@@ -29,10 +29,14 @@ extern f32 gCosineTable[];
+ 
+ #define sqr(x) ((x) * (x))
+ 
++#define abs(x) ((x) < 0 ? -(x) : (x))
++
+ void *vec3f_copy(Vec3f dest, Vec3f src);
+ void *vec3f_set(Vec3f dest, f32 x, f32 y, f32 z);
+ void *vec3f_add(Vec3f dest, Vec3f a);
+ void *vec3f_sum(Vec3f dest, Vec3f a, Vec3f b);
++void *vec3f_dif(Vec3f dest, Vec3f a, Vec3f b);
++void *vec3f_mul(Vec3f dest, f32 a);
+ void *vec3s_copy(Vec3s dest, Vec3s src);
+ void *vec3s_set(Vec3s dest, s16 x, s16 y, s16 z);
+ void *vec3s_add(Vec3s dest, Vec3s a);
+@@ -43,6 +47,8 @@ void *vec3f_to_vec3s(Vec3s dest, Vec3f a);
+ void *find_vector_perpendicular_to_plane(Vec3f dest, Vec3f a, Vec3f b, Vec3f c);
+ void *vec3f_cross(Vec3f dest, Vec3f a, Vec3f b);
+ void *vec3f_normalize(Vec3f dest);
++f32 vec3f_length(Vec3f a);
++f32 vec3f_dot(Vec3f a, Vec3f b);
+ void mtxf_copy(f32 dest[4][4], f32 src[4][4]);
+ void mtxf_identity(f32 mtx[4][4]);
+ void mtxf_translate(f32 a[4][4], Vec3f b);
+diff --git a/src/engine/surface_collision.c b/src/engine/surface_collision.c
+index 7672187..5eee60e 100644
+--- a/src/engine/surface_collision.c
++++ b/src/engine/surface_collision.c
+@@ -9,6 +9,7 @@
+ #include "surface_collision.h"
+ #include "surface_load.h"
+ #include "game/object_list_processor.h"
++#include "math_util.h"
+ 
+ /**************************************************
+  *                      WALLS                      *
+@@ -779,3 +780,167 @@ s32 unused_resolve_floor_or_ceil_collisions(s32 checkCeil, f32 *px, f32 *py, f32
+ 
+     return 0;
+ }
++
++/**
++ * Raycast functions
++ */
++s32 ray_surface_intersect(Vec3f orig, Vec3f dir, f32 dir_length, struct Surface *surface, Vec3f hit_pos, f32 *length)
++{
++    Vec3f v0, v1, v2, e1, e2, h, s, q;
++    f32 a, f, u, v;
++    Vec3f add_dir;
++    
++    // Get surface normal and some other stuff
++    vec3s_to_vec3f(v0, surface->vertex1);
++    vec3s_to_vec3f(v1, surface->vertex2);
++    vec3s_to_vec3f(v2, surface->vertex3);
++    
++    vec3f_dif(e1, v1, v0);
++    vec3f_dif(e2, v2, v0);
++    
++    vec3f_cross(h, dir, e2);
++    
++    // Check if we're perpendicular from the surface
++    a = vec3f_dot(e1, h);
++    if (a > -0.00001f && a < 0.00001f)
++        return FALSE;
++    
++    // Check if we're making contact with the surface
++    f = 1.0f / a;
++    
++    vec3f_dif(s, orig, v0);
++    u = f * vec3f_dot(s, h);
++    if (u < 0.0f || u > 1.0f)
++        return FALSE;
++    
++    vec3f_cross(q, s, e1);
++    v = f * vec3f_dot(dir, q);
++    if (v < 0.0f || u + v > 1.0f)
++        return FALSE;
++    
++    // Get the length between our origin and the surface contact point
++    *length = f * vec3f_dot(e2, q);
++    if (*length <= 0.00001 || *length > dir_length)
++        return FALSE;
++    
++    // Successful contact
++    vec3f_copy(add_dir, dir);
++    vec3f_mul(add_dir, *length);
++    vec3f_sum(hit_pos, orig, add_dir);
++    return TRUE;
++}
++
++void find_surface_on_ray_list(struct SurfaceNode *list, Vec3f orig, Vec3f dir, f32 dir_length, struct Surface **hit_surface, Vec3f hit_pos, f32 *max_length)
++{
++    s32 hit;
++    f32 length;
++    Vec3f chk_hit_pos;
++    f32 top, bottom;
++    
++    // Get upper and lower bounds of ray
++    if (dir[1] >= 0.0f)
++    {
++        top = orig[1] + dir[1] * dir_length;
++        bottom = orig[1];
++    }
++    else
++    {
++        top = orig[1];
++        bottom = orig[1] + dir[1] * dir_length;
++    }
++    
++    // Iterate through every surface of the list
++    for (; list != NULL; list = list->next)
++    {
++        // Reject surface if out of vertical bounds
++        if (list->surface->lowerY > top || list->surface->upperY < bottom)
++            continue;
++        
++        // Check intersection between the ray and this surface
++        if ((hit = ray_surface_intersect(orig, dir, dir_length, list->surface, chk_hit_pos, &length)) != 0)
++        {            
++            if (length <= *max_length)
++            {
++                *hit_surface = list->surface;
++                vec3f_copy(hit_pos, chk_hit_pos);
++                *max_length = length;
++            }
++        }
++    }
++}
++
++
++void find_surface_on_ray_cell(s16 cellX, s16 cellZ, Vec3f orig, Vec3f normalized_dir, f32 dir_length, struct Surface **hit_surface, Vec3f hit_pos, f32 *max_length)
++{
++	// Skip if OOB
++	if (cellX >= 0 && cellX <= 0xF && cellZ >= 0 && cellZ <= 0xF)
++	{
++		// Iterate through each surface in this partition
++		if (normalized_dir[1] > -0.99f)
++		{
++			find_surface_on_ray_list(gStaticSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_CEILS].next, orig, normalized_dir, dir_length, hit_surface, hit_pos, max_length);
++			find_surface_on_ray_list(gDynamicSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_CEILS].next, orig, normalized_dir, dir_length, hit_surface, hit_pos, max_length);
++		}
++		if (normalized_dir[1] < 0.99f)
++		{
++			find_surface_on_ray_list(gStaticSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_FLOORS].next, orig, normalized_dir, dir_length, hit_surface, hit_pos, max_length);
++			find_surface_on_ray_list(gDynamicSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_FLOORS].next, orig, normalized_dir, dir_length, hit_surface, hit_pos, max_length);
++		}
++		find_surface_on_ray_list(gStaticSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_WALLS].next, orig, normalized_dir, dir_length, hit_surface, hit_pos, max_length);
++		find_surface_on_ray_list(gDynamicSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_WALLS].next, orig, normalized_dir, dir_length, hit_surface, hit_pos, max_length);
++	}
++}
++
++void find_surface_on_ray(Vec3f orig, Vec3f dir, struct Surface **hit_surface, Vec3f hit_pos)
++{
++    f32 max_length;
++    s16 cellZ, cellX;
++    f32 fCellZ, fCellX;
++    f32 dir_length;
++    Vec3f normalized_dir;
++    f32 step, dx, dz;
++    u32 i;
++    
++    // Set that no surface has been hit
++    *hit_surface = NULL;
++    vec3f_sum(hit_pos, orig, dir);
++    
++    // Get normalized direction
++    dir_length = vec3f_length(dir);
++    max_length = dir_length;
++    vec3f_copy(normalized_dir, dir);
++    vec3f_normalize(normalized_dir);
++    
++    // Get our cell coordinate
++    fCellX = (orig[0] + LEVEL_BOUNDARY_MAX) / CELL_SIZE;
++    fCellZ = (orig[2] + LEVEL_BOUNDARY_MAX) / CELL_SIZE;
++    cellX = (s16)fCellX;
++    cellZ = (s16)fCellZ;
++    
++    // Don't do DDA if straight down
++    if (normalized_dir[1] >= 1.0f || normalized_dir[1] <= -1.0f)
++    {
++		find_surface_on_ray_cell(cellX, cellZ, orig, normalized_dir, dir_length, hit_surface, hit_pos, &max_length);
++		return;
++	}
++    
++    // Get cells we cross using DDA
++    if (abs(dir[0]) >= abs(dir[2]))
++        step = abs(dir[0]) / CELL_SIZE;
++    else
++        step = abs(dir[2]) / CELL_SIZE;
++    
++    dx = dir[0] / step / CELL_SIZE;
++    dz = dir[2] / step / CELL_SIZE;
++    
++    for (i = 0; i < step && *hit_surface == NULL; i++)
++    {
++		find_surface_on_ray_cell(cellX, cellZ, orig, normalized_dir, dir_length, hit_surface, hit_pos, &max_length);
++        
++        // Move cell coordinate
++        fCellX += dx;
++        fCellZ += dz;
++        cellX = (s16)fCellX;
++        cellZ = (s16)fCellZ;
++    }
++}
+diff --git a/src/engine/surface_collision.h b/src/engine/surface_collision.h
+index 82ba862..6e79dca 100644
+--- a/src/engine/surface_collision.h
++++ b/src/engine/surface_collision.h
+@@ -32,6 +32,6 @@ f32 find_floor(f32 xPos, f32 yPos, f32 zPos, struct Surface **pfloor);
+ f32 find_water_level(f32 x, f32 z);
+ f32 find_poison_gas_level(f32 x, f32 z);
+ void debug_surface_list_info(f32 xPos, f32 zPos);
+-
++void find_surface_on_ray(Vec3f orig, Vec3f dir, struct Surface **hit_surface, Vec3f hit_pos);
+ 
+ #endif /* _SURFACE_COLLISION_H */
+diff --git a/src/game/camera.c b/src/game/camera.c
+index e0bf05f..050e6ba 100644
+--- a/src/game/camera.c
++++ b/src/game/camera.c
+@@ -701,6 +701,8 @@ f32 calc_y_to_curr_floor(f32 *posOff, f32 posMul, f32 posBound, f32 *focOff, f32
+         *focOff = -focBound;
+     }
+ }
++//Compiler gets mad if I put this any further above. thanks refresh 7
++#include "../../enhancements/bettercamera.inc.c"
+ 
+ void focus_on_mario(Vec3f focus, Vec3f pos, f32 posYOff, f32 focYOff, f32 dist, s16 pitch, s16 yaw) {
+     Vec3f marioPos;
+@@ -2853,6 +2855,8 @@ void set_camera_mode(struct Camera *c, s16 mode, s16 frames) {
+     struct LinearTransitionPoint *start = &sModeInfo.transitionStart;
+     struct LinearTransitionPoint *end = &sModeInfo.transitionEnd;
+ 
++    if (mode != CAM_MODE_NEWCAM && gLakituState.mode != CAM_MODE_NEWCAM)
++    {
+     if (mode == CAMERA_MODE_WATER_SURFACE && gCurrLevelArea == AREA_TTM_OUTSIDE) {
+     } else {
+         // Clear movement flags that would affect the transition
+@@ -2896,6 +2900,7 @@ void set_camera_mode(struct Camera *c, s16 mode, s16 frames) {
+         vec3f_get_dist_and_angle(start->focus, start->pos, &start->dist, &start->pitch, &start->yaw);
+         vec3f_get_dist_and_angle(end->focus, end->pos, &end->dist, &end->pitch, &end->yaw);
+     }
++    }
+ }
+ 
+ /**
+@@ -2980,7 +2985,7 @@ void update_lakitu(struct Camera *c) {
+         gLakituState.roll += sHandheldShakeRoll;
+         gLakituState.roll += gLakituState.keyDanceRoll;
+ 
+-        if (c->mode != CAMERA_MODE_C_UP && c->cutscene == 0) {
++        if (c->mode != CAMERA_MODE_C_UP && c->cutscene == 0 && c->mode != CAM_MODE_NEWCAM) {
+             gCheckingSurfaceCollisionsForCamera = TRUE;
+             distToFloor = find_floor(gLakituState.pos[0],
+                                      gLakituState.pos[1] + 20.0f,
+@@ -3013,7 +3018,7 @@ void update_camera(struct Camera *c) {
+     update_camera_hud_status(c);
+     if (c->cutscene == 0) {
+         // Only process R_TRIG if 'fixed' is not selected in the menu
+-        if (cam_select_alt_mode(0) == CAM_SELECTION_MARIO) {
++        if (cam_select_alt_mode(0) == CAM_SELECTION_MARIO && c->mode != CAM_MODE_NEWCAM) {
+             if (gPlayer1Controller->buttonPressed & R_TRIG) {
+                 if (set_cam_angle(0) == CAM_ANGLE_LAKITU) {
+                     set_cam_angle(CAM_ANGLE_MARIO);
+@@ -3051,10 +3056,12 @@ void update_camera(struct Camera *c) {
+     c->mode = gLakituState.mode;
+     c->defMode = gLakituState.defMode;
+ 
++    if (c->mode != CAM_MODE_NEWCAM)
++    {
+     camera_course_processing(c);
+     stub_camera_3(c);
+-    sCButtonsPressed = find_c_buttons_pressed(sCButtonsPressed, gPlayer1Controller->buttonPressed,
+-                                              gPlayer1Controller->buttonDown);
++    sCButtonsPressed = find_c_buttons_pressed(sCButtonsPressed, gPlayer1Controller->buttonPressed,gPlayer1Controller->buttonDown);
++    }
+ 
+     if (c->cutscene != 0) {
+         sYawSpeed = 0;
+@@ -3092,6 +3099,10 @@ void update_camera(struct Camera *c) {
+                     mode_cannon_camera(c);
+                     break;
+ 
++                case CAM_MODE_NEWCAM:
++                    newcam_loop(c);
++                    break;
++
+                 default:
+                     mode_mario_camera(c);
+             }
+@@ -3151,6 +3162,10 @@ void update_camera(struct Camera *c) {
+                 case CAMERA_MODE_SPIRAL_STAIRS:
+                     mode_spiral_stairs_camera(c);
+                     break;
++
++                case CAM_MODE_NEWCAM:
++                    newcam_loop(c);
++                    break;
+             }
+         }
+     }
+@@ -3426,6 +3441,13 @@ void init_camera(struct Camera *c) {
+     gLakituState.nextYaw = gLakituState.yaw;
+     c->yaw = gLakituState.yaw;
+     c->nextYaw = gLakituState.yaw;
++
++    if (newcam_active == 1)
++    {
++        gLakituState.mode = CAM_MODE_NEWCAM;
++        gLakituState.defMode = CAM_MODE_NEWCAM;
++        newcam_init(c, 0);
++    }
+ }
+ 
+ /**
+@@ -5514,6 +5536,8 @@ void set_camera_mode_8_directions(struct Camera *c) {
+         s8DirModeBaseYaw = 0;
+         s8DirModeYawOffset = 0;
+     }
++    if (newcam_active == 1)
++        c->mode = CAM_MODE_NEWCAM;
+ }
+ 
+ /**
+@@ -5532,6 +5556,8 @@ void set_camera_mode_close_cam(u8 *mode) {
+         sStatusFlags &= ~CAM_FLAG_SMOOTH_MOVEMENT;
+         *mode = CAMERA_MODE_CLOSE;
+     }
++    if (newcam_active == 1)
++        *mode = CAM_MODE_NEWCAM;
+ }
+ 
+ /**
+@@ -5556,6 +5582,8 @@ void set_camera_mode_radial(struct Camera *c, s16 transitionTime) {
+         }
+         sModeOffsetYaw = 0;
+     }
++    if (newcam_active == 1)
++        c->mode = CAM_MODE_NEWCAM;
+ }
+ 
+ /**
+@@ -6934,6 +6962,7 @@ s16 cutscene_object(u8 cutscene, struct Object *o) {
+ void update_camera_yaw(struct Camera *c) {
+     c->nextYaw = calculate_yaw(c->focus, c->pos);
+     c->yaw = c->nextYaw;
++    newcam_apply_outside_values(c,0);
+ }
+ 
+ void cutscene_reset_spline(void) {
+@@ -9202,7 +9231,12 @@ BAD_RETURN(s32) cutscene_non_painting_end(struct Camera *c) {
+ 
+     if (c->defMode == CAMERA_MODE_CLOSE) {
+         c->mode = CAMERA_MODE_CLOSE;
+-    } else {
++    } else
++    if (c->defMode == CAM_MODE_NEWCAM) {
++        c->mode = CAM_MODE_NEWCAM;
++    }
++    else
++    {
+         c->mode = CAMERA_MODE_FREE_ROAM;
+     }
+ 
+@@ -9958,6 +9992,7 @@ BAD_RETURN(s32) cutscene_sliding_doors_follow_mario(struct Camera *c) {
+ BAD_RETURN(s32) cutscene_sliding_doors_open(struct Camera *c) {
+     UNUSED u32 pad[2];
+ 
++    newcam_apply_outside_values(c,1);
+     reset_pan_distance(c);
+     cutscene_event(cutscene_sliding_doors_open_start, c, 0, 8);
+     cutscene_event(cutscene_sliding_doors_open_set_cvars, c, 8, 8);
+@@ -10154,7 +10189,10 @@ BAD_RETURN(s32) cutscene_unused_exit_focus_mario(struct Camera *c) {
+  * Give control back to the player.
+  */
+ BAD_RETURN(s32) cutscene_exit_painting_end(struct Camera *c) {
+-    c->mode = CAMERA_MODE_CLOSE;
++    if (newcam_active == 1)
++        c->mode = CAM_MODE_NEWCAM;
++        else
++        c->mode = CAMERA_MODE_CLOSE;
+     c->cutscene = 0;
+     gCutsceneTimer = CUTSCENE_STOP;
+     sStatusFlags |= CAM_FLAG_SMOOTH_MOVEMENT;
+@@ -10314,10 +10352,15 @@ BAD_RETURN(s32) cutscene_door_follow_mario(struct Camera *c) {
+  * Ends the door cutscene. Sets the camera mode to close mode unless the default is free roam.
+  */
+ BAD_RETURN(s32) cutscene_door_end(struct Camera *c) {
+-    if (c->defMode == CAMERA_MODE_FREE_ROAM) {
+-        c->mode = CAMERA_MODE_FREE_ROAM;
+-    } else {
++    if (c->defMode == CAMERA_MODE_CLOSE) {
+         c->mode = CAMERA_MODE_CLOSE;
++    } else
++    if (c->defMode == CAM_MODE_NEWCAM) {
++        c->mode = CAM_MODE_NEWCAM;
++    }
++    else
++    {
++        c->mode = CAMERA_MODE_FREE_ROAM;
+     }
+ 
+     c->cutscene = 0;
+diff --git a/src/game/camera.h b/src/game/camera.h
+index b9aecbe..47032da 100644
+--- a/src/game/camera.h
++++ b/src/game/camera.h
+@@ -110,6 +110,7 @@
+ #define CAMERA_MODE_8_DIRECTIONS      0x0E // AKA Parallel Camera, Bowser Courses & Rainbow Road
+ #define CAMERA_MODE_FREE_ROAM         0x10
+ #define CAMERA_MODE_SPIRAL_STAIRS     0x11
++#define CAM_MODE_NEWCAM 0x12
+ 
+ #define CAM_MOVE_RETURN_TO_MIDDLE       0x0001
+ #define CAM_MOVE_ZOOMED_OUT             0x0002
+@@ -655,7 +656,6 @@ struct LakituState
+ };
+ 
+ // bss order hack to not affect BSS order. if possible, remove me, but it will be hard to match otherwise
+-#ifndef INCLUDED_FROM_CAMERA_C
+ // BSS
+ extern s16 sSelectionFlags;
+ extern s16 sCameraSideCFlags;
+@@ -666,7 +666,6 @@ extern struct LakituState gLakituState;
+ extern s16 gCameraMovementFlags;
+ extern s32 gObjCutsceneDone;
+ extern struct Camera *gCamera;
+-#endif
+ 
+ extern struct Object *gCutsceneFocus;
+ extern struct Object *gSecondCameraFocus;
+diff --git a/src/game/game_init.c b/src/game/game_init.c
+index d5e5eb3..3f480bb 100644
+--- a/src/game/game_init.c
++++ b/src/game/game_init.c
+@@ -19,6 +19,7 @@
+ #include "main_entry.h"
+ #include "thread6.h"
+ #include <prevent_bss_reordering.h>
++#include "../../enhancements/bettercamera.h"
+ 
+ // FIXME: I'm not sure all of these variables belong in this file, but I don't
+ // know of a good way to split them
+@@ -223,7 +224,7 @@ void create_task_structure(void) {
+     gGfxSPTask->task.t.dram_stack_size = SP_DRAM_STACK_SIZE8;
+     #ifdef VERSION_EU
+     // terrible hack
+-    gGfxSPTask->task.t.output_buff = 
++    gGfxSPTask->task.t.output_buff =
+         (u64 *)((u8 *) gGfxSPTaskOutputBuffer - 0x670 + 0x280);
+     gGfxSPTask->task.t.output_buff_size =
+         (u64 *)((u8 *) gGfxSPTaskOutputBuffer+ 0x280 + 0x17790);
+@@ -601,6 +602,7 @@ void thread5_game_loop(UNUSED void *arg) {
+     play_music(SEQ_PLAYER_SFX, SEQUENCE_ARGS(0, SEQ_SOUND_PLAYER), 0);
+     set_sound_mode(save_file_get_sound_mode());
+     rendering_init();
++    newcam_init_settings();
+ 
+     while (1) {
+         // if the reset timer is active, run the process to reset the game.
+diff --git a/src/game/ingame_menu.c b/src/game/ingame_menu.c
+index 00db061..6088621 100644
+--- a/src/game/ingame_menu.c
++++ b/src/game/ingame_menu.c
+@@ -18,6 +18,7 @@
+ #include "print.h"
+ #include "engine/math_util.h"
+ #include "course_table.h"
++#include "../../enhancements/bettercamera.h"
+ 
+ extern Gfx *gDisplayListHead;
+ extern s16 gCurrCourseNum;
+@@ -131,7 +132,7 @@ void create_dl_identity_matrix(void) {
+     matrix->m[0][1] = 0x00000000;    matrix->m[1][1] = 0x00010000;    matrix->m[2][1] = 0x00000000;    matrix->m[3][1] = 0x00000000;
+     matrix->m[0][2] = 0x00000001;    matrix->m[1][2] = 0x00000000;    matrix->m[2][2] = 0x00000000;    matrix->m[3][2] = 0x00000000;
+     matrix->m[0][3] = 0x00000000;    matrix->m[1][3] = 0x00000001;    matrix->m[2][3] = 0x00000000;    matrix->m[3][3] = 0x00000000;
+-    
++
+     gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(matrix), G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
+     gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(matrix), G_MTX_PROJECTION | G_MTX_LOAD | G_MTX_NOPUSH);
+ }
+@@ -688,7 +689,7 @@ void print_credits_string(s16 x, s16 y, const u8 *str) {
+     gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0,
+                 G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD, G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD);
+     gDPTileSync(gDisplayListHead++);
+-    gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 2, 0, G_TX_RENDERTILE, 0, 
++    gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 2, 0, G_TX_RENDERTILE, 0,
+                 G_TX_CLAMP, 3, G_TX_NOLOD, G_TX_CLAMP, 3, G_TX_NOLOD);
+     gDPSetTileSize(gDisplayListHead++, G_TX_RENDERTILE, 0, 0, (8 - 1) << G_TEXTURE_IMAGE_FRAC, (8 - 1) << G_TEXTURE_IMAGE_FRAC);
+ 
+@@ -2587,7 +2588,8 @@ s16 render_pause_courses_and_castle(void) {
+ #ifdef VERSION_EU
+     gInGameLanguage = eu_get_language();
+ #endif
+-
++    if (newcam_option_open == 0)
++    {
+     switch (gDialogBoxState) {
+         case DIALOG_STATE_OPENING:
+             gDialogLineNum = 1;
+@@ -2663,6 +2665,14 @@ s16 render_pause_courses_and_castle(void) {
+     if (gDialogTextAlpha < 250) {
+         gDialogTextAlpha += 25;
+     }
++    }
++    else
++    {
++        shade_screen();
++        newcam_display_options();
++    }
++    newcam_check_pause_buttons();
++    newcam_render_option_text();
+ 
+     return 0;
+ }
+diff --git a/src/game/mario.c b/src/game/mario.c
+index aace34f..2729478 100644
+--- a/src/game/mario.c
++++ b/src/game/mario.c
+@@ -31,6 +31,7 @@
+ #include "engine/surface_collision.h"
+ #include "level_table.h"
+ #include "thread6.h"
++#include "../../enhancements/bettercamera.h"
+ 
+ u32 unused80339F10;
+ s8 filler80339F1C[20];
+@@ -350,7 +351,7 @@ void play_mario_heavy_landing_sound_once(struct MarioState *m, u32 soundBits) {
+ void play_mario_sound(struct MarioState *m, s32 actionSound, s32 marioSound) {
+     if (actionSound == SOUND_ACTION_TERRAIN_JUMP) {
+         play_mario_action_sound(
+-                m, (m->flags & MARIO_METAL_CAP) ? (s32)SOUND_ACTION_METAL_JUMP 
++                m, (m->flags & MARIO_METAL_CAP) ? (s32)SOUND_ACTION_METAL_JUMP
+                                                 : (s32)SOUND_ACTION_TERRAIN_JUMP, 1);
+     } else {
+         play_sound_if_no_flag(m, actionSound, MARIO_ACTION_SOUND_PLAYED);
+@@ -1306,7 +1307,10 @@ void update_mario_joystick_inputs(struct MarioState *m) {
+     }
+ 
+     if (m->intendedMag > 0.0f) {
+-        m->intendedYaw = atan2s(-controller->stickY, controller->stickX) + m->area->camera->yaw;
++        if (gLakituState.mode != CAM_MODE_NEWCAM)
++            m->intendedYaw = atan2s(-controller->stickY, controller->stickX) + m->area->camera->yaw;
++        else
++            m->intendedYaw = atan2s(-controller->stickY, controller->stickX)-newcam_yaw+0x4000;
+         m->input |= INPUT_NONZERO_ANALOG;
+     } else {
+         m->intendedYaw = m->faceAngle[1];
+diff --git a/src/game/mario_actions_airborne.c b/src/game/mario_actions_airborne.c
+index 92e5dab..2431fc0 100644
+--- a/src/game/mario_actions_airborne.c
++++ b/src/game/mario_actions_airborne.c
+@@ -13,6 +13,7 @@
+ #include "audio/external.h"
+ #include "engine/graph_node.h"
+ #include "thread6.h"
++#include "../../enhancements/bettercamera.h"
+ 
+ void play_flip_sounds(struct MarioState *m, s16 frame1, s16 frame2, s16 frame3) {
+     s32 animFrame = m->marioObj->header.gfx.unk38.animFrame;
+@@ -455,8 +456,8 @@ s32 act_jump(struct MarioState *m) {
+ }
+ 
+ s32 act_double_jump(struct MarioState *m) {
+-    s32 animation = (m->vel[1] >= 0.0f) 
+-        ? MARIO_ANIM_DOUBLE_JUMP_RISE 
++    s32 animation = (m->vel[1] >= 0.0f)
++        ? MARIO_ANIM_DOUBLE_JUMP_RISE
+         : MARIO_ANIM_DOUBLE_JUMP_FALL;
+ 
+     if (check_kick_or_dive_in_air(m)) {
+@@ -1676,7 +1677,13 @@ s32 act_shot_from_cannon(struct MarioState *m) {
+         case AIR_STEP_LANDED:
+             set_mario_action(m, ACT_DIVE_SLIDE, 0);
+             m->faceAngle[0] = 0;
+-            set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
++            if (newcam_active == 0)
++                set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
++            else
++            {
++                m->area->camera->mode = CAM_MODE_NEWCAM;
++                gLakituState.mode = CAM_MODE_NEWCAM;
++            }
+ #ifdef VERSION_SH
+             queue_rumble_data(5, 80);
+ #endif
+@@ -1692,7 +1699,13 @@ s32 act_shot_from_cannon(struct MarioState *m) {
+ 
+             m->particleFlags |= PARTICLE_VERTICAL_STAR;
+             set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
+-            set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
++            if (newcam_active == 0)
++                set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
++            else
++            {
++                m->area->camera->mode = CAM_MODE_NEWCAM;
++                gLakituState.mode = CAM_MODE_NEWCAM;
++            }
+             break;
+ 
+         case AIR_STEP_HIT_LAVA_WALL:
+@@ -1722,20 +1735,38 @@ s32 act_flying(struct MarioState *m) {
+ 
+     if (m->input & INPUT_Z_PRESSED) {
+         if (m->area->camera->mode == CAMERA_MODE_BEHIND_MARIO) {
+-            set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
++            if (newcam_active == 0)
++                set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
++            else
++            {
++                m->area->camera->mode = CAM_MODE_NEWCAM;
++                gLakituState.mode = CAM_MODE_NEWCAM;
++            }
+         }
+         return set_mario_action(m, ACT_GROUND_POUND, 1);
+     }
+ 
+     if (!(m->flags & MARIO_WING_CAP)) {
+         if (m->area->camera->mode == CAMERA_MODE_BEHIND_MARIO) {
+-            set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
++            if (newcam_active == 0)
++                set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
++            else
++            {
++                m->area->camera->mode = CAM_MODE_NEWCAM;
++                gLakituState.mode = CAM_MODE_NEWCAM;
++            }
+         }
+         return set_mario_action(m, ACT_FREEFALL, 0);
+     }
+ 
+     if (m->area->camera->mode != CAMERA_MODE_BEHIND_MARIO) {
+-        set_camera_mode(m->area->camera, CAMERA_MODE_BEHIND_MARIO, 1);
++            if (newcam_active == 0)
++                set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
++            else
++            {
++                m->area->camera->mode = CAM_MODE_NEWCAM;
++                gLakituState.mode = CAM_MODE_NEWCAM;
++            }
+     }
+ 
+     if (m->actionState == 0) {
+@@ -1775,7 +1806,13 @@ s32 act_flying(struct MarioState *m) {
+             set_anim_to_frame(m, 7);
+ 
+             m->faceAngle[0] = 0;
+-            set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
++            if (newcam_active == 0)
++                set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
++            else
++            {
++                m->area->camera->mode = CAM_MODE_NEWCAM;
++                gLakituState.mode = CAM_MODE_NEWCAM;
++            }
+ #ifdef VERSION_SH
+             queue_rumble_data(5, 80);
+ #endif
+@@ -1796,7 +1833,13 @@ s32 act_flying(struct MarioState *m) {
+ 
+                 m->particleFlags |= PARTICLE_VERTICAL_STAR;
+                 set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
++            if (newcam_active == 0)
+                 set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
++            else
++            {
++                m->area->camera->mode = CAM_MODE_NEWCAM;
++                gLakituState.mode = CAM_MODE_NEWCAM;
++            }
+             } else {
+                 if (m->actionTimer++ == 0) {
+                     play_sound(SOUND_ACTION_HIT, m->marioObj->header.gfx.cameraToObject);
+@@ -1877,7 +1920,13 @@ s32 act_flying_triple_jump(struct MarioState *m) {
+ #ifndef VERSION_JP
+     if (m->input & (INPUT_B_PRESSED | INPUT_Z_PRESSED)) {
+         if (m->area->camera->mode == CAMERA_MODE_BEHIND_MARIO) {
+-            set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
++            if (newcam_active == 0)
++                set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
++            else
++            {
++                m->area->camera->mode = CAM_MODE_NEWCAM;
++                gLakituState.mode = CAM_MODE_NEWCAM;
++            }
+         }
+         if (m->input & INPUT_B_PRESSED) {
+             return set_mario_action(m, ACT_DIVE, 0);
+@@ -1918,7 +1967,13 @@ s32 act_flying_triple_jump(struct MarioState *m) {
+ 
+     if (m->vel[1] < 4.0f) {
+         if (m->area->camera->mode != CAMERA_MODE_BEHIND_MARIO) {
+-            set_camera_mode(m->area->camera, CAMERA_MODE_BEHIND_MARIO, 1);
++            if (newcam_active == 0)
++                set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
++            else
++            {
++                m->area->camera->mode = CAM_MODE_NEWCAM;
++                gLakituState.mode = CAM_MODE_NEWCAM;
++            }
+         }
+ 
+         if (m->forwardVel < 32.0f) {
+@@ -1928,10 +1983,6 @@ s32 act_flying_triple_jump(struct MarioState *m) {
+         set_mario_action(m, ACT_FLYING, 1);
+     }
+ 
+-    if (m->actionTimer++ == 10 && m->area->camera->mode != CAMERA_MODE_BEHIND_MARIO) {
+-        set_camera_mode(m->area->camera, CAMERA_MODE_BEHIND_MARIO, 1);
+-    }
+-
+     update_air_without_turn(m);
+ 
+     switch (perform_air_step(m, 0)) {
+diff --git a/src/game/save_file.c b/src/game/save_file.c
+index 6803fb6..a577ff1 100644
+--- a/src/game/save_file.c
++++ b/src/game/save_file.c
+@@ -11,11 +11,13 @@
+ #include "level_table.h"
+ #include "course_table.h"
+ #include "thread6.h"
++#include "../../enhancements/bettercamera.h"
+ 
+ #define MENU_DATA_MAGIC 0x4849
+ #define SAVE_FILE_MAGIC 0x4441
+ 
+-STATIC_ASSERT(sizeof(struct SaveBuffer) == EEPROM_SIZE, "eeprom buffer size must match");
++STATIC_ASSERT(sizeof(struct SaveBuffer) <= EEPROM_SIZE, "eeprom buffer size higher than intended");
++STATIC_ASSERT(sizeof(struct SaveBuffer) >= EEPROM_SIZE, "eeprom buffer size lower than intended");
+ 
+ extern struct SaveBuffer gSaveBuffer;
+ 
+@@ -565,6 +567,48 @@ u16 save_file_get_sound_mode(void) {
+     return gSaveBuffer.menuData[0].soundMode;
+ }
+ 
++void save_file_set_setting(void) {
++
++    gSaveBuffer.menuData[0].camx = newcam_sensitivityX;
++    gSaveBuffer.menuData[0].camy = newcam_sensitivityY;
++    gSaveBuffer.menuData[0].invertx = newcam_invertX;
++    gSaveBuffer.menuData[0].inverty = newcam_invertY;
++    gSaveBuffer.menuData[0].camc = newcam_aggression;
++    gSaveBuffer.menuData[0].camp = newcam_panlevel;
++    gSaveBuffer.menuData[0].analogue = newcam_analogue;
++
++    gSaveBuffer.menuData[0].firsttime = 1;
++
++
++    gMainMenuDataModified = TRUE;
++    save_main_menu_data();
++}
++
++void save_file_get_setting(void) {
++        newcam_sensitivityX = gSaveBuffer.menuData[0].camx;
++        newcam_sensitivityY = gSaveBuffer.menuData[0].camy;
++        newcam_invertX = gSaveBuffer.menuData[0].invertx;
++        newcam_invertY = gSaveBuffer.menuData[0].inverty;
++        newcam_aggression = gSaveBuffer.menuData[0].camc;
++        newcam_panlevel = gSaveBuffer.menuData[0].camp;
++        newcam_analogue = gSaveBuffer.menuData[0].analogue;
++
++}
++
++u8 save_check_firsttime(void)
++{
++    return gSaveBuffer.menuData[0].firsttime;
++}
++
++
++void save_set_firsttime(void)
++{
++    gSaveBuffer.menuData[0].firsttime = 1;
++
++    gMainMenuDataModified = TRUE;
++    save_main_menu_data();
++}
++
+ void save_file_move_cap_to_default_location(void) {
+     if (save_file_get_flags() & SAVE_FLAG_CAP_ON_GROUND) {
+         switch (gSaveBuffer.files[gCurrSaveFileNum - 1][0].capLevel) {
+diff --git a/src/game/save_file.h b/src/game/save_file.h
+index 198748d..b88e7da 100644
+--- a/src/game/save_file.h
++++ b/src/game/save_file.h
+@@ -6,7 +6,7 @@
+ 
+ #include "course_table.h"
+ 
+-#define EEPROM_SIZE 0x200
++#define EEPROM_SIZE 0x800
+ #define NUM_SAVE_FILES 4
+ 
+ struct SaveBlockSignature
+@@ -50,16 +50,24 @@ struct MainMenuSaveData
+     // on the high score screen.
+     u32 coinScoreAges[NUM_SAVE_FILES];
+     u16 soundMode;
+-
++    u8 camx;
++    u8 camy;
++    u8 analogue;
++    u8 invertx;
++    u8 inverty;
++    u8 camc;
++    u8 camp;
++    u8 firsttime;
+ #ifdef VERSION_EU
+     u16 language;
+ #define SUBTRAHEND 8
+ #else
+-#define SUBTRAHEND 6
++#define SUBTRAHEND 15
+ #endif
+ 
++
+     // Pad to match the EEPROM size of 0x200 (10 bytes on JP/US, 8 bytes on EU)
+-    u8 filler[EEPROM_SIZE / 2 - SUBTRAHEND - NUM_SAVE_FILES * (4 + sizeof(struct SaveFile))];
++    //u8 filler[EEPROM_SIZE / 2 - SUBTRAHEND - NUM_SAVE_FILES * (4 + sizeof(struct SaveFile))];
+ 
+     struct SaveBlockSignature signature;
+ };
+@@ -70,6 +78,7 @@ struct SaveBuffer
+     struct SaveFile files[NUM_SAVE_FILES][2];
+     // The main menu data has two copies. If one is bad, the other is used as a backup.
+     struct MainMenuSaveData menuData[2];
++    u8 filler[1535]; //!I still haven't done an algorithm for this yet lol
+ };
+ 
+ struct WarpNode;
+@@ -144,6 +153,10 @@ s32 save_file_get_cap_pos(Vec3s capPos);
+ void save_file_set_sound_mode(u16 mode);
+ u16 save_file_get_sound_mode(void);
+ void save_file_move_cap_to_default_location(void);
++void save_set_firsttime(void);
++u8 save_check_firsttime(void);
++void save_file_get_setting(void);
++void save_file_set_setting(void);
+ 
+ void disable_warp_checkpoint(void);
+ void check_if_should_set_warp_checkpoint(struct WarpNode *a);
