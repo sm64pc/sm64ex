@@ -18,11 +18,14 @@
 
 #include "gfx_window_manager_api.h"
 #include "gfx_screen_config.h"
+#include "../configfile.h"
 
 #include "src/pc/controller/controller_keyboard.h"
 
 static SDL_Window *wnd;
 static int inverted_scancode_table[512];
+
+extern bool configFullscreen;
 
 const SDL_Scancode windows_scancode_table[] =
 { 
@@ -86,6 +89,11 @@ static void gfx_sdl_init(void) {
     
     wnd = SDL_CreateWindow("Super Mario 64 PC-Port", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
             DESIRED_SCREEN_WIDTH, DESIRED_SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+
+    if (configFullscreen)
+    {
+        SDL_SetWindowFullscreen(wnd, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    }
     
     SDL_GL_CreateContext(wnd);
     SDL_GL_SetSwapInterval(2); // TODO 0, 1 or 2 or remove this line
@@ -131,6 +139,22 @@ static int translate_scancode(int scancode) {
 
 static void gfx_sdl_onkeydown(int scancode) {
     keyboard_on_key_down(translate_scancode(scancode));
+
+    const Uint8 *state = SDL_GetKeyboardState(NULL);
+
+    if (state[SDL_SCANCODE_LALT] && state[SDL_SCANCODE_RETURN])
+    {
+        if (!configFullscreen)
+        {
+            SDL_SetWindowFullscreen(wnd, SDL_WINDOW_FULLSCREEN_DESKTOP);
+        }
+        else
+        {
+            SDL_SetWindowFullscreen(wnd, 0);
+        }
+
+        configFullscreen = !configFullscreen;
+    }
 }
 
 static void gfx_sdl_onkeyup(int scancode) {
