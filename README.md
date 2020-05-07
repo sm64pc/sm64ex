@@ -31,11 +31,8 @@ sudo apt install build-essential git python3 libaudiofile-dev libglew-dev libsdl
 
 __Arch Linux__
 ```
-sudo pacman -S base-devel python audiofile
+sudo pacman -S base-devel python audiofile sdl2 glew
 ```
-Install the following AUR packages:
-* [glew](https://www.archlinux.org/packages/extra/x86_64/glew/)
-* [sdl2](https://www.archlinux.org/packages/extra/x86_64/sdl2/)
 
 #### 3. Build the executable.
 
