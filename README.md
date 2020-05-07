@@ -22,11 +22,11 @@ The build system has the following package requirements:
 
 __Debian / Ubuntu - targeting 32 bits__
 ```
-sudo apt install build-essential git python3 libaudiofile-dev libglew-dev:i386 libglfw3-dev:i386 libsdl2-dev:i386 libusb-dev
+sudo apt install build-essential git python3 libaudiofile-dev libglew-dev:i386 libsdl2-dev:i386
 ```
 __Debian / Ubuntu - targeting 64 bits__
 ```
-sudo apt install build-essential git python3 libaudiofile-dev libglew-dev libglfw3-dev libsdl2-dev libusb-dev
+sudo apt install build-essential git python3 libaudiofile-dev libglew-dev libsdl2-dev
 ```
 
 
