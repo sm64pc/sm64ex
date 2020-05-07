@@ -54,7 +54,7 @@ Then follow the instructions of the Linux section above. It's also possible to b
 
 ### For the web
 
-The game can be compiled for web browsers that support webassembly using emscripten. To do so, install [emsdk](https://github.com/emscripten-core/emsdk) and run `make TARGET_WEB=1`.
+The game can be compiled for web browsers that support WebGL using [Emscripten](https://github.com/emscripten-core). To do so, install [emsdk](https://github.com/emscripten-core/emsdk) and run `make TARGET_WEB=1`.
 
 ### Current issues
 
