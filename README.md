@@ -50,8 +50,11 @@ make VERSION=us WINDOWS-BUILD=1     # builds a (U) Windows executable
 
 Install WSL with a distro of your choice (Ubuntu 18.04 recommended) following [the official guide](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
 
-
 Then follow the instructions of the Linux section above. It's also possible to build using [MinGW](http://www.mingw.org/), but it tends to be considerably more difficult.
+
+### For the web
+
+The game can be compiled for web browsers that support webassembly using emscripten. To do so, install [emsdk](https://github.com/emscripten-core/emsdk) and run `make TARGET_WEB=1`.
 
 ### Current issues
 
