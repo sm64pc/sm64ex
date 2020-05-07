@@ -1,5 +1,5 @@
 # sm64pc
-OpenGL adaptations of [n64decomp/sm64](https://github.com/n64decomp/sm64). 
+OpenGL adaptation of [n64decomp/sm64](https://github.com/n64decomp/sm64). 
 
 ## Building
 
