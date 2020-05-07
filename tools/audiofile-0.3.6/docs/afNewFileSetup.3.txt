@@ -1,0 +1,33 @@
+afNewFileSetup(3)
+=================
+
+NAME
+----
+afNewFileSetup - create and initialize a new AFfilesetup structure
+
+SYNOPSIS
+--------
+  #include <audiofile.h>
+
+  AFfilesetup afNewFileSetup(void);
+
+RETURN VALUE
+------------
+`afNewFileSetup` returns, upon success, a valid AFfilesetup structure.
+
+Upon failure, `afNewFileSetup` returns a null `AFfilesetup`. This case
+should only occur when no memory is available.
+
+DESCRIPTION
+-----------
+The opaque `AFfilesetup` structure returned by `afNewFileSetup` can
+be used to specify parameters for a file to be opened for writing by
+linkaf:afOpenFile[3].
+
+SEE ALSO
+--------
+linkaf:afOpenFile[3]
+
+AUTHOR
+------
+Michael Pruett <michael@68k.org>

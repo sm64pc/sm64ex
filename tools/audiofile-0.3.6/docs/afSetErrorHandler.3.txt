@@ -1,0 +1,30 @@
+afSetErrorHandler(3)
+====================
+
+NAME
+----
+afSetErrorHandler - install a custom error handling routine
+
+SYNOPSIS
+--------
+  #include <audiofile.h>
+
+  AFerrfunc afSetErrorHandler (AFerrfunc errorFunction);
+
+PARAMETERS
+----------
+'errorFunction' is a pointer to an error handling function.
+
+DESCRIPTION
+-----------
+`afSetErrorHandler` allows the user to install an error handling function
+overriding the default function.
+
+RETURN VALUE
+------------
+The value returned from `afSetErrorHandler` is a pointer to the previous
+error handling function.
+
+AUTHOR
+------
+Michael Pruett <michael@68k.org>

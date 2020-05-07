@@ -1,0 +1,94 @@
+afInitSampleFormat(3)
+=====================
+
+NAME
+----
+afInitSampleFormat, afInitByteOrder, afInitChannels, afInitRate -
+initialize audio data format for a track in an audio file setup
+
+SYNOPSIS
+--------
+  #include <audiofile.h>
+
+  void afInitSampleFormat(AFfilesetup setup, int track, int sampleFormat,
+      int sampleWidth);
+  void afInitByteOrder(AFfilesetup setup, int track, int byteOrder);
+  void afInitChannels(AFfilesetup setup, int track, int channels);
+  void afInitRate(AFfilesetup setup, int track, double rate);
+
+PARAMETERS
+----------
+`setup` is a valid file setup returned by linkaf:afNewFileSetup[3].
+
+`track` specifies a track within the audio file setup. `track` is always
+`AF_DEFAULT_TRACK` for all currently supported file formats.
+
+`sampleFormat` is a symbolic constant specifying the sample format
+for the audio data in the track. `sampleFormat` must be one of
+`AF_SAMPFMT_TWOSCOMP`, `AF_SAMPFMT_UNSIGNED`, `AF_SAMPFMT_FLOAT`, or
+`AF_SAMPFMT_DOUBLE`.
+
+`sampleWidth` is a positive integer specifying the number of bits for
+each sample in the track.
+
+`byteOrder` is a symbolic constant specifying the byte order of
+the track. `byteOrder` must be one of `AF_BYTEORDER_BIGENDIAN` or
+`AF_BYTEORDER_LITTLEENDIAN`.
+
+`channels` is a positive integer specifying the number of channels in
+the track.
+
+`rate` is a positive double-precision floating-point number specifying
+the sample rate of the track.
+
+DESCRIPTION
+-----------
+`afInitSampleFormat` initializes the track to the specified sample format
+and sample width.
+
+`afInitByteOrder` initializes the track to the specified byte order.
+
+`afInitChannels` initializes the track to the specified number of channels.
+
+`afInitRate` initializes the track to the specified sample rate.
+
+ERRORS
+------
+`afInitSampleFormat`, `afInitByteOrder`, `afInitChannels`, and
+`afInitRate` can produce the following errors:
+
+[horizontal]
+`AF_BAD_FILESETUP`:: `setup` represents an invalid file setup.
+`AF_BAD_TRACK`:: `track` represents an invalid track identifier.
+
+`afInitSampleFormat` can also produce the following errors:
+
+[horizontal]
+`AF_BAD_SAMPFMT`:: `sampleFormat` does not represent a valid sample format.
+`AF_BAD_WIDTH`:: `sampleWidth` is not a valid sample width.
+
+`afInitByteOrder` can also produce the following error:
+
+[horizontal]
+`AF_BAD_BYTEORDER`:: `byteOrder` does not represent a valid byte order. 
+
+`afInitChannels` can also produce the following error:
+
+[horizontal]
+`AF_BAD_CHANNELS`:: `channels` specifies an invalid number of channels.
+
+`afInitRate` can also produce the following error:
+
+[horizontal]
+`AF_BAD_RATE`:: `rate` specifies an invalid sample rate.
+
+SEE ALSO
+--------
+linkaf:afNewFileSetup[3],
+linkaf:afInitFileFormat[3],
+linkaf:afInitCompression[3],
+linkaf:afOpenFile[3]
+
+AUTHOR
+------
+Michael Pruett <michael@68k.org>

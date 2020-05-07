@@ -1,0 +1,25 @@
+enum {
+    CC_0,
+    CC_TEXEL0,
+    CC_TEXEL1,
+    CC_PRIM,
+    CC_SHADE,
+    CC_ENV,
+    CC_TEXEL0A,
+    CC_LOD
+};
+
+enum {
+    SHADER_0,
+    SHADER_INPUT_1,
+    SHADER_INPUT_2,
+    SHADER_INPUT_3,
+    SHADER_INPUT_4,
+    SHADER_TEXEL0,
+    SHADER_TEXEL0A,
+    SHADER_TEXEL1
+};
+
+#define SHADER_OPT_ALPHA (1 << 24)
+#define SHADER_OPT_FOG (1 << 25)
+#define SHADER_OPT_TEXTURE_EDGE (1 << 26)

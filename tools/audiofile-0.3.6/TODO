@@ -1,0 +1,32 @@
+Audio File Library
+To Do List
+
+Michael Pruett <michael@68k.org>
+
+Short-term
+----------
+
+Handle more compressed data formats, most importantly Ogg Vorbis.
+GSM 06.10 would also be nice.
+
+Handle sample rate conversion.
+
+More comprehensive tests should be developed to stress-test the
+library.  Tests are needed most for the following sets of functions:
+	* af{Get,Set}VirtualChannels/afSetChannelMatrix
+	* afGetSampleFormat/af{Get,Set}VirtualSampleFormat
+	* af{Get,Set}Loop{IDs,Mode,Count,Start,End,StartFrame,EndFrame,Track}
+
+Support for auxiliary data in IRCAM files (maximum amplitude, comments,
+etc.) should be added.
+
+Long-term
+---------
+
+It would be nice to support some more file formats.
+
+Add locale support for error messages.
+
+Whenever a compression format is requested, the library should scan
+through /usr/lib/audiofile/*.so to see if any DSOs support the requested
+format.

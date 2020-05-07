@@ -1,0 +1,6 @@
+Name: audiofile
+Description: audiofile
+Requires:
+Version: 0.3.6
+Libs: ${pc_top_builddir}/${pcfiledir}/libaudiofile/libaudiofile.la -lm
+Cflags: -I${pc_top_builddir}/${pcfiledir}/libaudiofile
