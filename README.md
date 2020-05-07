@@ -1,9 +1,9 @@
 # sm64pc
 OpenGL adaptations of [n64decomp/sm64](https://github.com/n64decomp/sm64). 
 
-# Building
+## Building
 
-## On Linux
+### On Linux
 
 #### 1. Copy baserom(s) for asset extraction
 
