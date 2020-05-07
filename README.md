@@ -17,8 +17,6 @@ The build system has the following package requirements:
   * libsdl2-dev
   * [audiofile](https://audiofile.68k.org/)
   * libglew-dev
-  * libglfw3-dev
-  * libusb
   * git
 
 
