@@ -303,7 +303,9 @@ void convert_gd_verts_to_Vn(struct ObjGroup *grp) {
     u8 nx, ny, nz; // 24, 25, 26
     UNUSED u32 pad20;
     register struct VtxLink *vtxlink; // a1
+#ifdef TARGET_N64
     register s16 *vnPos;              // a2
+#endif
     register s16 x;                   // a3
     register s16 y;                   // t0
     register s16 z;                   // t1
@@ -323,11 +325,18 @@ void convert_gd_verts_to_Vn(struct ObjGroup *grp) {
         nz = (u8)(vtx->normal.z * 255.0f);
 
         for (vtxlink = vtx->gbiVerts; vtxlink != NULL; vtxlink = vtxlink->prev) {
+#ifdef TARGET_N64
             vnPos = vtxlink->data->n.ob;
             vn = vtxlink->data;
             *vnPos++ = x;
             *vnPos++ = y;
             *vnPos++ = z;
+#else
+            vn = vtxlink->data;
+            vn->n.ob[0] = x;
+            vn->n.ob[1] = y;
+            vn->n.ob[2] = z;
+#endif
             vn->n.n[0] = nx;
             vn->n.n[1] = ny;
             vn->n.n[2] = nz;
@@ -339,7 +348,9 @@ void convert_gd_verts_to_Vn(struct ObjGroup *grp) {
 void convert_gd_verts_to_Vtx(struct ObjGroup *grp) {
     UNUSED u32 pad24[6];
     register struct VtxLink *vtxlink; // a1
+#ifdef TARGET_N64
     register s16 *vtxcoords;          // a2
+#endif
     register s16 x;                   // a3
     register s16 y;                   // t0
     register s16 z;                   // t1
@@ -355,10 +366,16 @@ void convert_gd_verts_to_Vtx(struct ObjGroup *grp) {
         z = (s16) vtx->pos.z;
 
         for (vtxlink = vtx->gbiVerts; vtxlink != NULL; vtxlink = vtxlink->prev) {
+#ifdef TARGET_N64
             vtxcoords = vtxlink->data->v.ob;
             vtxcoords[0] = x;
             vtxcoords[1] = y;
             vtxcoords[2] = z;
+#else
+            vtxlink->data->v.ob[0] = x;
+            vtxlink->data->v.ob[1] = y;
+            vtxlink->data->v.ob[2] = z;
+#endif
         }
     }
 }

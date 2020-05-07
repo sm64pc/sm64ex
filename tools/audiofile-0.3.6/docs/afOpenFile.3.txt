@@ -1,0 +1,63 @@
+afOpenFile(3)
+=============
+
+NAME
+----
+afOpenFile - open an audio file and create a file handle structure used
+for subsequent calls to the Audio File Library
+
+SYNOPSIS
+--------
+  #include <audiofile.h>
+
+  AFfilehandle afOpenFile(const char *path, const char *mode,
+      AFfilesetup setup);
+
+PARAMETERS
+----------
+'path' is the path to the file to be opened.
+
+'mode' specifies a mode for opening the file: `"r"` for reading or
+`"w"` for writing.
+
+'setup' is an AFfilesetup created by linkaf:afNewFileSetup[3]. This value
+is ignored for files opened for reading except when the file format is
+`AF_FILE_RAWDATA`.
+
+RETURN VALUE
+------------
+Upon success, `afOpenFile` returns a valid `AFfilehandle` which can
+be used in subsequent calls to the Audio File Library. Upon failure,
+`afOpenFile` returns NULL and generates an error.
+
+linkaf:afCloseFile[3] is used to close the file when it is no longer
+needed.
+
+ERRORS
+------
+`afOpenFile` can produce the following errors:
+
+`AF_BAD_OPEN`:: A call to `open` failed.
+`AF_BAD_READ`:: A call to `read` failed
+`AF_BAD_WRITE`:: A call to `write` failed.
+`AF_BAD_LSEEK`:: A call to `lseek` failed.
+`AF_BAD_MALLOC`:: Memory allocation failed.
+`AF_BAD_FILEFMT`:: `setup` specifies a file format which is unsupported for `mode`.
+`AF_BAD_SAMPFMT`:: The file's sample format is not supported.
+`AF_BAD_WIDTH`:: The file's sample width is not supported.
+`AF_BAD_RATE`:: The file's sample rate is not supported.
+`AF_BAD_CHANNELS`:: The number of channels in the file is not supported.
+`AF_BAD_FILESETUP`:: `setup` specifies an invalid or unsupported configuration.
+
+SEE ALSO
+--------
+linkaf:afCloseFile[3],
+linkaf:afNewFileSetup[3],
+linkaf:afInitFileFormat[3],
+linkaf:afInitSampleFormat[3],
+linkaf:afReadFrames[3],
+linkaf:afWriteFrames[3]
+
+AUTHOR
+------
+Michael Pruett <michael@68k.org>

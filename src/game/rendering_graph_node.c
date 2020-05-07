@@ -1,6 +1,7 @@
 #include <ultra64.h>
 
 #include "sm64.h"
+#include "gfx_dimensions.h"
 #include "main.h"
 #include "print.h"
 #include "engine/math_util.h"
@@ -505,13 +506,18 @@ static void geo_process_background(struct GraphNodeBackground *node) {
     if (list != 0) {
         geo_append_display_list((void *) VIRTUAL_TO_PHYSICAL(list), node->fnNode.node.flags >> 8);
     } else if (gCurGraphNodeMasterList != NULL) {
+#ifdef TARGET_N64
         Gfx *gfxStart = alloc_display_list(sizeof(Gfx) * 7);
+#else
+        Gfx *gfxStart = alloc_display_list(sizeof(Gfx) * 8);
+#endif
         Gfx *gfx = gfxStart;
 
         gDPPipeSync(gfx++);
         gDPSetCycleType(gfx++, G_CYC_FILL);
         gDPSetFillColor(gfx++, node->background);
-        gDPFillRectangle(gfx++, 0, BORDER_HEIGHT, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1 - BORDER_HEIGHT);
+        gDPFillRectangle(gfx++, GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(0), BORDER_HEIGHT,
+        GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(0) - 1, SCREEN_HEIGHT - BORDER_HEIGHT - 1);
         gDPPipeSync(gfx++);
         gDPSetCycleType(gfx++, G_CYC_1CYCLE);
         gSPEndDisplayList(gfx++);
@@ -750,6 +756,10 @@ static int obj_is_in_view(struct GraphNodeObject *node, Mat4 matrix) {
     // -matrix[3][2] is the depth, which gets multiplied by tan(halfFov) to get
     // the amount of units between the center of the screen and the horizontal edge
     // given the distance from the object to the camera.
+
+#ifndef TARGET_N64
+    hScreenEdge *= GFX_DIMENSIONS_ASPECT_RATIO;
+#endif
 
     if (geo != NULL && geo->type == GRAPH_NODE_TYPE_CULLING_RADIUS) {
         cullingRadius =

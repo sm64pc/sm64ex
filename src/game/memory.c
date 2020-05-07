@@ -1,4 +1,7 @@
 #include <ultra64.h>
+#ifndef TARGET_N64
+#include <string.h>
+#endif
 
 #include "sm64.h"
 
@@ -75,6 +78,7 @@ void *get_segment_base_addr(s32 segment) {
     return (void *) (sSegmentTable[segment] | 0x80000000);
 }
 
+#ifdef TARGET_N64
 void *segmented_to_virtual(const void *addr) {
     size_t segment = (uintptr_t) addr >> 24;
     size_t offset = (uintptr_t) addr & 0x00FFFFFF;
@@ -94,6 +98,18 @@ void move_segment_table_to_dmem(void) {
     for (i = 0; i < 16; i++)
         gSPSegment(gDisplayListHead++, i, sSegmentTable[i]);
 }
+#else
+void *segmented_to_virtual(const void *addr) {
+    return (void *) addr;
+}
+
+void *virtual_to_segmented(u32 segment, const void *addr) {
+    return (void *) addr;
+}
+
+void move_segment_table_to_dmem(void) {
+}
+#endif
 
 /**
  * Initialize the main memory pool. This pool is conceptually a pair of stacks
@@ -232,7 +248,7 @@ u32 main_pool_pop_state(void) {
  */
 static void dma_read(u8 *dest, u8 *srcStart, u8 *srcEnd) {
     u32 size = ALIGN16(srcEnd - srcStart);
-
+#ifdef TARGET_N64
     osInvalDCache(dest, size);
     while (size != 0) {
         u32 copySize = (size >= 0x1000) ? 0x1000 : size;
@@ -245,6 +261,9 @@ static void dma_read(u8 *dest, u8 *srcStart, u8 *srcEnd) {
         srcStart += copySize;
         size -= copySize;
     }
+#else
+    memcpy(dest, srcStart, srcEnd - srcStart);
+#endif
 }
 
 /**
@@ -262,6 +281,7 @@ static void *dynamic_dma_read(u8 *srcStart, u8 *srcEnd, u32 side) {
     return dest;
 }
 
+#ifdef TARGET_N64
 /**
  * Load data from ROM into a newly allocated block, and set the segment base
  * address to this block.
@@ -356,6 +376,7 @@ void load_engine_code_segment(void) {
     osInvalICache(startAddr, totalSize);
     osInvalDCache(startAddr, totalSize);
 }
+#endif
 
 /**
  * Allocate an allocation-only pool from the main pool. This pool doesn't

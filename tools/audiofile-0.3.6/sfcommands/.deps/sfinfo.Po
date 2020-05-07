@@ -1,0 +1,95 @@
+sfinfo.o: sfinfo.c ../config.h ../libaudiofile/audiofile.h \
+ ../libaudiofile/aupvlist.h \
+ C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include/stdint.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stdint.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/crtdefs.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_mac.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_secapi.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/vadefs.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sdks/_mingw_ddk.h \
+ C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include/stddef.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stddef.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sys/types.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_off_t.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/getopt.h \
+ C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include/stdbool.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stdio.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt_stdio_config.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/swprintf.inl \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sec_api/stdio_s.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stdlib.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt_wstdlib.h \
+ C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include-fixed/limits.h \
+ C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include-fixed/syslimits.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/limits.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sec_api/stdlib_s.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/malloc.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/string.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sec_api/string_s.h \
+ printinfo.h
+
+../config.h:
+
+../libaudiofile/audiofile.h:
+
+../libaudiofile/aupvlist.h:
+
+C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include/stdint.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stdint.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/crtdefs.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_mac.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_secapi.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/vadefs.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sdks/_mingw_ddk.h:
+
+C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include/stddef.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stddef.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sys/types.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_off_t.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/getopt.h:
+
+C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include/stdbool.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stdio.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt_stdio_config.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/swprintf.inl:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sec_api/stdio_s.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stdlib.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt_wstdlib.h:
+
+C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include-fixed/limits.h:
+
+C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include-fixed/syslimits.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/limits.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sec_api/stdlib_s.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/malloc.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/string.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sec_api/string_s.h:
+
+printinfo.h:

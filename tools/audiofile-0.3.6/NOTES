@@ -1,0 +1,41 @@
+Audio File Library 0.3.6
+Development Notes
+Michael Pruett <michael@68k.org>
+
+----
+
+Large file support is now enabled by default on all systems.  This change
+has no effect on systems where off_t is always 64 bits (e.g. IRIX,
+FreeBSD, NetBSD, OpenBSD, Mac OS X).
+
+Many compressed data formats are not supported.  This is currently the
+most important issue to address.
+
+Error handling is at the present quite robust, but more work can always
+be done in this area.
+
+SGI's Audio File Library on IRIX implements the following formats which
+this version of the library does not:
+
+	MPEG1 audio bitstream
+	Sound Designer II
+	SoundFont2
+
+I plan to implement some of these as time permits.  Sound Designer
+II is out of the question because of its dependency upon Macintosh
+resource forks.  Handling these files on Unix systems is simply not
+worth the effort.
+
+----
+
+This version of the Audio File Library has been tested under the following
+operating environments:
+
+	i686-pc-linux-gnu / Ubuntu 12.10 (gcc 4.7.2)
+	x86_64-pc-linux-gnu / Ubuntu 12.10 (gcc 4.7.2)
+	x86_64-pc-linux-gnu / Ubuntu 12.10 (clang 3.0)
+	armv6l-raspberrypi-linux-gnueabihf / Raspbian Wheezy (gcc 4.6.3)
+	i386-apple-darwin10.8.0 / Mac OS X 10.6.8 (gcc 4.2.1)
+	x86_64-apple-darwin10.8.0 / Mac OS X 10.6.8 (gcc 4.2.1)
+	i386-pc-freebsd9.1 / FreeBSD 9.1 (gcc 4.2.1)
+	sparc64-sun-freebsd9.1 / FreeBSD 9.1 (gcc 4.2.1)

@@ -34,6 +34,7 @@ void decrease_sample_dma_ttls(void);
 s32 audio_shut_down_and_reset_step(void);
 void func_802ad7ec(u32);
 
+#ifdef TARGET_N64 
 struct SPTask *create_next_audio_frame_task(void) {
     u32 samplesRemainingInAI;
     s32 writtenCmds;
@@ -114,12 +115,14 @@ struct SPTask *create_next_audio_frame_task(void) {
     task = &gAudioTask->task.t;
     task->type = M_AUDTASK;
     task->flags = flags;
+#if TARGET_N64
     task->ucode_boot = rspF3DBootStart;
     task->ucode_boot_size = (u8 *) rspF3DBootEnd - (u8 *) rspF3DBootStart;
     task->ucode = rspAspMainStart;
     task->ucode_data = rspAspMainDataStart;
     task->ucode_size = 0x800; // (this size is ignored)
     task->ucode_data_size = (rspAspMainDataEnd - rspAspMainDataStart) * sizeof(u64);
+#endif
     task->dram_stack = NULL;
     task->dram_stack_size = 0;
     task->output_buff = NULL;
@@ -130,6 +133,7 @@ struct SPTask *create_next_audio_frame_task(void) {
     task->yield_data_size = 0;
     return gAudioTask;
 }
+#endif
 
 void eu_process_audio_cmd(struct EuAudioCmd *cmd) {
     s32 i;

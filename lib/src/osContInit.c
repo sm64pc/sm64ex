@@ -61,8 +61,8 @@ void __osContGetInitData(u8 *a0, OSContStatus *status) {
     sp14 = &(D_80365CE0[0].request);
     for (i = 0; i < _osCont_numControllers; i++, sp14++, status++) {
         spc = *(OSContPackedRequest *) sp14;
-        status->errno = (spc.unk02 & 0xc0) >> 4;
-        if (status->errno == 0) {
+        status->errnum = (spc.unk02 & 0xc0) >> 4;
+        if (status->errnum == 0) {
             status->type = spc.unk05 << 8 | spc.unk04;
             status->status = spc.unk06;
 

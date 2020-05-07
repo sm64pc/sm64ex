@@ -1,0 +1,12 @@
+prefix=/mingw32
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: audiofile
+Description: audiofile
+Requires:
+Version: 0.3.6
+Libs: -L${libdir} -laudiofile
+Libs.private: -lm
+Cflags: -I${includedir}

@@ -215,7 +215,7 @@ def main():
             input = image[pos : pos + size]
             os.makedirs(os.path.dirname(asset), exist_ok=True)
             if asset.endswith(".png"):
-                with tempfile.NamedTemporaryFile(prefix="asset") as png_file:
+                with tempfile.NamedTemporaryFile(prefix="asset", delete=False) as png_file:
                     png_file.write(input)
                     png_file.flush()
                     if asset.startswith("textures/skyboxes/") or asset.startswith("levels/ending/cake"):

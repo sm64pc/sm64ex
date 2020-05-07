@@ -275,4 +275,10 @@
 #define GET_OR_SET(op, var) \
     CMD_BBBB(0x3C, 0x04, op, var)
 
+#define ADV_DEMO() \
+    CMD_BBH(0x3D, 0x04, 0x0000)
+    
+#define CLEAR_DEMO_PTR() \
+    CMD_BBH(0x3E, 0x04, 0x0000)
+
 #endif

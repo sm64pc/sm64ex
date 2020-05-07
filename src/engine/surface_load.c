@@ -533,6 +533,57 @@ void alloc_surface_pools(void) {
     reset_red_coins_collected();
 }
 
+#ifndef TARGET_N64
+/**
+ * Get the size of the terrain data, to get the correct size when copying later.
+ */
+u32 get_area_terrain_size(s16 *data) {
+    s16 *startPos = data;
+    s32 end = FALSE;
+    s16 terrainLoadType;
+    s32 numVertices;
+    s32 numRegions;
+    s32 numSurfaces;
+    s16 hasForce;
+
+    while (!end) {
+        terrainLoadType = *data++;
+
+        switch (terrainLoadType) {
+            case TERRAIN_LOAD_VERTICES:
+                numVertices = *data++;
+                data += 3 * numVertices;
+                break;
+
+            case TERRAIN_LOAD_OBJECTS:
+                data += get_special_objects_size(data);
+                break;
+
+            case TERRAIN_LOAD_ENVIRONMENT:
+                numRegions = *data++;
+                data += 6 * numRegions;
+                break;
+
+            case TERRAIN_LOAD_CONTINUE:
+                continue;
+
+            case TERRAIN_LOAD_END:
+                end = TRUE;
+                break;
+
+            default:
+                numSurfaces = *data++;
+                hasForce = surface_has_force(terrainLoadType);
+                data += (3 + hasForce) * numSurfaces;
+                break;
+        }
+    }
+
+    return data - startPos;
+}
+#endif
+
+
 /**
  * Process the level file, loading in vertices, surfaces, some objects, and environmental
  * boxes (water, gas, JRB fog).

@@ -1,0 +1,41 @@
+matrix_enc.lo: matrix_enc.c matrixlib.h \
+ C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include/stdint.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stdint.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/crtdefs.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_mac.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_secapi.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/vadefs.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sdks/_mingw_ddk.h \
+ C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include/stddef.h \
+ C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stddef.h ALACAudioTypes.h \
+ ../../config.h
+
+matrixlib.h:
+
+C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include/stdint.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stdint.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/crtdefs.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_mac.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_secapi.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/vadefs.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sdks/_mingw_ddk.h:
+
+C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include/stddef.h:
+
+C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stddef.h:
+
+ALACAudioTypes.h:
+
+../../config.h:

@@ -28,6 +28,9 @@ extern struct Surface *sSurfacePool;
 extern s16 sSurfacePoolSize;
 
 void alloc_surface_pools(void);
+#ifndef TARGET_N64
+u32 get_area_terrain_size(s16 *data);
+#endif
 void load_area_terrain(s16 index, s16 *data, s8 *surfaceRooms, s16 *macroObjects);
 void clear_dynamic_surfaces(void);
 void load_object_collision_model(void);

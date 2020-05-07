@@ -1102,7 +1102,6 @@ void move_ddd_painting(struct Painting *painting, f32 frontPos, f32 backPos, f32
         gDddPaintingStatus = BOWSERS_SUB_BEATEN | DDD_BACK;
     }
 }
-
 /**
  * Set the painting's node's layer based on its alpha
  */

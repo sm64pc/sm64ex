@@ -16,5 +16,8 @@ extern void spawn_macro_abs_special(u32 model, const BehaviorScript *behavior, s
 extern void spawn_macro_objects(s16 areaIndex, s16 * macroObjList);
 extern void spawn_macro_objects_hardcoded(s16 areaIndex, s16 * macroObjList);
 extern void spawn_special_objects(s16 areaIndex, s16 ** specialObjList);
+#ifndef TARGET_N64
+extern u32 get_special_objects_size(s16 *data);
+#endif
 
 #endif /* MACRO_SPECIAL_OBJECTS_H */

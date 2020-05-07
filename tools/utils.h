@@ -8,6 +8,7 @@
 // printing size_t varies by compiler
 #if defined(_MSC_VER) || defined(__MINGW32__)
   #define SIZE_T_FORMAT "%Iu"
+  #define realpath(N,R) _fullpath((R),(N),_MAX_PATH)
 #else
   #define SIZE_T_FORMAT "%zu"
 #endif

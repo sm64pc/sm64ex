@@ -22,12 +22,20 @@
 #include "gd_math.h"
 #include "shape_helper.h"
 
+#include "gfx_dimensions.h"
+
 #define MAX_GD_DLS 1000
 #define OS_MESG_SI_COMPLETE 0x33333333
 
+#ifdef TARGET_N64
 #define GD_VIRTUAL_TO_PHYSICAL(addr) ((uintptr_t)(addr) &0x0FFFFFFF)
 #define GD_LOWER_24(addr) ((uintptr_t)(addr) &0x00FFFFFF)
 #define GD_LOWER_29(addr) (((uintptr_t)(addr)) & 0x1FFFFFFF)
+#else
+#define GD_VIRTUAL_TO_PHYSICAL(addr) (addr)
+#define GD_LOWER_24(addr) ((uintptr_t)(addr))
+#define GD_LOWER_29(addr) (((uintptr_t)(addr)))
+#endif
 
 #define MTX_INTPART_PACK(w1, w2) (((w1) &0xFFFF0000) | (((w2) >> 16) & 0xFFFF))
 #define MTX_FRACPART_PACK(w1, w2) ((((w1) << 16) & 0xFFFF0000) | ((w2) &0xFFFF))
@@ -1683,6 +1691,7 @@ u32 Unknown8019EC88(Gfx *dl, UNUSED s32 arg1) {
 
 /* 24D4C4 -> 24D63C; orig name: func_8019ECF4 */
 void mat4_to_mtx(const Mat4f *src, Mtx *dst) {
+#ifdef TARGET_N64
     s32 i; // 14
     s32 j; // 10
     s32 w1;
@@ -1700,6 +1709,9 @@ void mat4_to_mtx(const Mat4f *src, Mtx *dst) {
             mtxFrc++;
         }
     }
+#else
+    guMtxF2L(src, dst);
+#endif
 }
 
 /* 24D63C -> 24D6E4; orig name: func_8019EE6C */
@@ -2333,7 +2345,9 @@ void parse_p1_controller(void) {
     OSContPad *p1contPrev;    // 30
     u8 *gdCtrlBytes;          // 2C
     u8 *prevGdCtrlBytes;      // 28
-
+    f32 aspect = GFX_DIMENSIONS_ASPECT_RATIO;
+    aspect *= 0.75;
+	
     gdctrl = &gGdCtrl;
     gdCtrlBytes = (u8 *) gdctrl;
     prevGdCtrlBytes = (u8 *) gdctrl->prevFrame;
@@ -2430,14 +2444,14 @@ void parse_p1_controller(void) {
         gdctrl->csrY -= gdctrl->stickY * 0.1; //? 0.1f
     }
     // border checks? is this for the cursor finger movement?
-    if ((f32) gdctrl->csrX < (sScreenView2->parent->upperLeft.x + 16.0f)) {
-        gdctrl->csrX = (s32)(sScreenView2->parent->upperLeft.x + 16.0f);
+    if ((f32) gdctrl->csrX < (sScreenView2->parent->upperLeft.x + (16.0f/aspect))) {
+        gdctrl->csrX = (s32)(sScreenView2->parent->upperLeft.x + (16.0f/aspect));
     }
 
     if ((f32) gdctrl->csrX
-        > (sScreenView2->parent->upperLeft.x + sScreenView2->parent->lowerRight.x - 48.0f)) {
+        > (sScreenView2->parent->upperLeft.x + sScreenView2->parent->lowerRight.x - (48.0/aspect))) {
         gdctrl->csrX =
-            (s32)(sScreenView2->parent->upperLeft.x + sScreenView2->parent->lowerRight.x - 48.0f);
+            (s32)(sScreenView2->parent->upperLeft.x + sScreenView2->parent->lowerRight.x - (48.0/aspect));
     }
 
     if ((f32) gdctrl->csrY < (sScreenView2->parent->upperLeft.y + 16.0f)) {
@@ -3425,10 +3439,13 @@ void Unknown801A5FF8(struct ObjGroup *arg0) {
 }
 
 /* 254AC0 -> 254DFC; orig name: PutSprite */
+// thanks to gamemasterplc again for fixing this
 void gd_put_sprite(u16 *sprite, s32 x, s32 y, s32 wx, s32 wy) {
     s32 c; // 5c
     s32 r; // 58
-
+    f32 aspect = GFX_DIMENSIONS_ASPECT_RATIO * 0.75;
+    x *= aspect;
+    
     gSPDisplayList(next_gfx(), osVirtualToPhysical(gd_dl_sprite_start_tex_block));
     for (r = 0; r < wy; r += 32) {
         for (c = 0; c < wx; c += 32) {
@@ -3615,6 +3632,7 @@ void Unknown801A6E30(UNUSED u32 a0) {
 void Unknown801A6E44(UNUSED u32 a0) {
 }
 
+#ifdef TARGET_N64
 /* 255628 -> 255704; orig name: func_801A6E58 */
 void gd_block_dma(u32 devAddr, void *vAddr, s32 size) {
     s32 transfer; // 2c
@@ -3692,6 +3710,11 @@ struct GdObj *load_dynlist(struct DynList *dynlist) {
 
     return loadedList;
 }
+#else
+struct GdObj *load_dynlist(struct DynList *dynlist) {
+    return proc_dynlist(dynlist);
+}
+#endif
 
 /* 255988 -> 25599C */
 void stub_801A71B8(UNUSED u32 a0) {

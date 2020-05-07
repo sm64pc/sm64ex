@@ -1,0 +1,76 @@
+sfinfo(1)
+=========
+
+NAME
+----
+sfinfo - display information about audio files
+
+SYNOPSIS
+--------
+*sfinfo* ['options'] 'audio files'...
+
+DESCRIPTION
+-----------
+`sfinfo` prints information about the specified audio files, including
+file format, sample rate, duration, and audio data format.
+
+By default `sfinfo` displays information in a longer, multi-line format;
+specifying the --short or -s option produces a short, single-line summary.
+
+Any files which are not recognized as valid audio files will be ignored
+unless the --reporterror or -r option is given. The file formats
+currently supported by `sfinfo` are AIFF, AIFF-C, NeXT/Sun .snd/.au,
+WAVE, Berkeley/IRCAM/CARL Sound File, AVR, Amiga IFF/8SVX, Sample Vision,
+Creative Voice File, NIST SPHERE, and Core Audio Format.
+
+OPTIONS
+-------
+
+`--short`::
+`-s`::
+Print short single-line summary of each recognized audio file.
+
+`--reporterror`::
+`-r`::
+Print an error message if any of the specified files are not recognized
+as valid audio files.
+
+`--help`::
+`-h`::
+Print help message.
+
+`--version`::
+`-v`::
+Print version information.
+
+EXAMPLES
+--------
+Display summary of an audio file:
+
+----
+% sfinfo drum.aiff
+File Name      drum.aiff
+File Format    Audio Interchange File Format (aiff)
+Data Format    16-bit integer (2's complement, big endian)
+Audio Data     1569972 bytes begins at offset 54 (36 hex)
+               2 channels, 392493 frames
+Sampling Rate  44100.00 Hz
+Duration       8.900 seconds
+----
+
+List all recognized audio files in the current directory using
+the short output format:
+
+----
+% sfinfo -s *
+    9.60s 44100.00 aiff  1ch 16b -- bass.aiff
+    8.90s 44100.00 aiff  2ch 16b -- drum.aiff
+----
+
+SEE ALSO
+--------
+linkaf:sfconvert[1]
+
+AUTHOR
+------
+Michael Pruett <michael@68k.org>

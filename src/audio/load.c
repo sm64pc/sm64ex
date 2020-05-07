@@ -884,7 +884,7 @@ void audio_init() {
     s32 lim2, lim3;
 #endif
     u32 size;
-    u64 *ptr64;
+    UNUSED u64 *ptr64;
     void *data;
     UNUSED s32 pad2;
 
@@ -902,6 +902,7 @@ void audio_init() {
         ((u64 *) gAudioHeap)[i] = 0;
     }
 
+#ifndef AVOID_UB
     i = 0;
     lim3 = ((uintptr_t) &gAudioGlobalsEndMarker - (uintptr_t) &gAudioGlobalsStartMarker) / 8;
     ptr64 = &gAudioGlobalsStartMarker - 1;
@@ -909,6 +910,7 @@ void audio_init() {
         i++;
         ptr64[i] = 0;
     }
+#endif
 #else
     for (i = 0; i < gAudioHeapSize / 8; i++) {
         ((u64 *) gAudioHeap)[i] = 0;

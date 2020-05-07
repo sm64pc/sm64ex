@@ -481,7 +481,7 @@ def write_aifc(entry, out):
 
 
 def write_aiff(entry, filename):
-    with tempfile.NamedTemporaryFile(suffix=".aifc") as temp:
+    with tempfile.NamedTemporaryFile(suffix=".aifc", delete=False) as temp:
         write_aifc(entry, temp)
         temp.flush()
         aifc_decode = os.path.join(os.path.dirname(__file__), "aifc_decode")

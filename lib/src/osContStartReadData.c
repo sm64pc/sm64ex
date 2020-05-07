@@ -41,8 +41,8 @@ void osContGetReadData(OSContPad *pad) {
     spc = &D_80365CE0[0].read;
     for (i = 0; i < _osCont_numControllers; i++, spc++, pad++) {
         sp4 = *spc;
-        pad->errno = (sp4.unk02 & 0xc0) >> 4;
-        if (pad->errno == 0) {
+        pad->errnum = (sp4.unk02 & 0xc0) >> 4;
+        if (pad->errnum == 0) {
             pad->button = sp4.button;
             pad->stick_x = sp4.rawStickX;
             pad->stick_y = sp4.rawStickY;

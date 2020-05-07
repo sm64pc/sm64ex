@@ -327,3 +327,49 @@ void spawn_special_objects(s16 areaIndex, s16 **specialObjList) {
         }
     }
 }
+
+#ifndef TARGET_N64
+u32 get_special_objects_size(s16 *data) {
+    s16 *startPos = data;
+    s32 numOfSpecialObjects;
+    s32 i;
+    u8 presetID;
+    s32 offset;
+
+    numOfSpecialObjects = *data++;
+
+    for (i = 0; i < numOfSpecialObjects; i++) {
+        presetID = (u8) *data++;
+        data += 3;
+        offset = 0;
+
+        while (TRUE) {
+            if (SpecialObjectPresets[offset].preset_id == presetID) {
+                break;
+            }
+            offset++;
+        }
+
+        switch (SpecialObjectPresets[offset].type) {
+            case SPTYPE_NO_YROT_OR_PARAMS:
+                break;
+            case SPTYPE_YROT_NO_PARAMS:
+                data++;
+                break;
+            case SPTYPE_PARAMS_AND_YROT:
+                data += 2;
+                break;
+            case SPTYPE_UNKNOWN:
+                data += 3;
+                break;
+            case SPTYPE_DEF_PARAM_AND_YROT:
+                data++;
+                break;
+            default:
+                break;
+        }
+    }
+
+    return data - startPos;
+}
+#endif

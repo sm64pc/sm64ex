@@ -1,0 +1,42 @@
+afCloseFile(3)
+==============
+
+NAME
+----
+afCloseFile - close an open audio file
+
+SYNOPSIS
+--------
+  #include <audiofile.h>
+
+  int afCloseFile(AFfilehandle file);
+
+PARAMETERS
+----------
+`file` is a valid file handle created by linkaf:afOpenFile[3].
+
+DESCRIPTION
+-----------
+`afCloseFile` closes the audio file 'file', updating the file if it was
+opened for writing.
+
+RETURN VALUE
+------------
+`afCloseFile` returns 0 if the file was closed properly and -1 if an
+error occurred while closing the file.
+
+ERRORS
+------
+`afCloseFile` can generate these possible errors:
+
+* `AF_BAD_FILEHANDLE`
+* `AF_BAD_LSEEK`
+* `AF_BAD_WRITE`
+
+SEE ALSO
+--------
+linkaf:afOpenFile[3]
+
+AUTHOR
+------
+Michael Pruett <michael@68k.org>
