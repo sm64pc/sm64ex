@@ -46,7 +46,14 @@ make VERSION=jp -j6                 # build (J) version instead with 6 jobs
 make VERSION=us WINDOWS-BUILD=1     # builds a (U) Windows executable 
 ```
 
-## Current issues
+### On Windows
+
+Install WSL with a distro of your choice (Ubuntu 18.04 recommended) following [the official guide](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
+
+
+Then follow the instructions of the Linux section above. It's also possible to build using [MinGW](http://www.mingw.org/), but it tends to be considerably more difficult.
+
+### Current issues
 
  * Support for the EU version is still experimental.
  * There seems to be savedata-related problems on some 64-bits builds.
