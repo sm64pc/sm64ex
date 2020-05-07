@@ -1,7 +1,8 @@
 # sm64pc
 OpenGL adaptation of [n64decomp/sm64](https://github.com/n64decomp/sm64). 
 
-Feel free to relate bugs and contribute, but remember, there must be **no upload of any copyrighted asset**.
+Feel free to relate bugs and contribute, but remember, there must be **no upload of any copyrighted asset**. 
+Run `./extract-assets.py --clean` to remove ROM-originated content.
 
 ## Building
 
