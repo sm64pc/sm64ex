@@ -29,6 +29,7 @@ __Debian / Ubuntu - targeting 64 bits__
 sudo apt install build-essential git python3 libaudiofile-dev libglew-dev libsdl2-dev
 ```
 
-
-
 ## Current issues
+
+ * Support for the EU version is still experimental.
+ * There seems to be savedata-related problems on some 64-bits builds.
