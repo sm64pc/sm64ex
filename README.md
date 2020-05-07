@@ -1,13 +1,16 @@
 # sm64pc
 OpenGL adaptation of [n64decomp/sm64](https://github.com/n64decomp/sm64). 
 
+Feel free to report bugs and contribute, but remember, there must be **no upload of any copyrighted asset**. 
+Run `./extract-assets.py --clean && make clean` or `make distclean` to remove ROM-originated content.
+
 ## Building
 
 ### On Linux
 
 #### 1. Copy baserom(s) for asset extraction
 
-For each version (jp/us/eu) that you want to build a ROM for, put an existing ROM at
+For each version (jp/us/eu) that you want to build an executable for, put an existing ROM at
 `./baserom.<version>.z64` for asset extraction.
 
 #### 2. Install build dependencies
@@ -39,7 +42,7 @@ sudo pacman -S base-devel python audiofile sdl2 glew
 Run `make` to build (defaults to `VERSION=us`)
 
 ```
-make VERSION=jp -j6                 # build (J) version instead with 6 jobs
+make VERSION=jp -j6                 # build (J) version with 6 jobs
 make VERSION=us WINDOWS-BUILD=1     # builds a (U) Windows executable 
 ```
 
@@ -54,3 +57,4 @@ Then follow the instructions of the Linux section above. It's also possible to b
 
  * Support for the EU version is still experimental.
  * There seems to be savedata-related problems on some 64-bits builds.
+ * Camera controls are also bugged for some.
