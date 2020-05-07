@@ -39,7 +39,7 @@ sudo pacman -S base-devel python audiofile sdl2 glew
 Run `make` to build (defaults to `VERSION=us`)
 
 ```
-make VERSION=jp -j6                 # build (J) version instead with 6 jobs
+make VERSION=jp -j6                 # build (J) version with 6 jobs
 make VERSION=us WINDOWS-BUILD=1     # builds a (U) Windows executable 
 ```
 
