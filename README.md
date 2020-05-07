@@ -39,7 +39,7 @@ Install the following AUR packages:
 
 #### 3. Build the executable.
 
-Run `make` to build the ROM (defaults to `VERSION=us`)
+Run `make` to build (defaults to `VERSION=us`)
 
 ```
 make VERSION=jp -j6                 # build (J) version instead with 6 jobs
