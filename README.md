@@ -37,6 +37,16 @@ __Arch Linux__
 sudo pacman -S base-devel python audiofile sdl2 glew
 ```
 
+__Void Linux - targeting 64 bits__
+```
+sudo xbps-install -S base-devel python3 audiofile-devel SDL2-devel glew-devel
+```
+
+__Void Linux - targeting 32 bits__
+```
+sudo xbps-install -S base-devel python3 audiofile-devel-32bit SDL2-devel-32bit glew-devel-32bit
+```
+
 #### 3. Build the executable.
 
 Run `make` to build (defaults to `VERSION=us`)
