@@ -143,7 +143,7 @@ void configfile_load(const char *filename) {
     FILE *file;
     char *line;
 
-    printf("This is a testing build from github.com/sm64pc/sm64pc. Report bugs there.\n\n");
+    printf("This is a testing build from github.com/sm64pc/sm64pc. Report bugs there.\n\n");    
     printf("Loading configuration from '%s'\n", filename);
 
     file = fopen(filename, "r");

@@ -7,6 +7,11 @@
 
 #include "controller_sdl.h"
 
+int16_t rightx;
+int16_t righty;
+int c_rightx;
+int c_righty;
+
 // Analog camera movement by Pathétique (github.com/vrmiguel), y0shin and Mors
 // Contribute or communicate bugs at github.com/vrmiguel/sm64-analog-camera
 

@@ -13,11 +13,5 @@ struct ControllerAPI {
     void (*read)(OSContPad *pad);
 };
 
-    // Declaring these variables here save them for later use. They were originally declared in controller_sdl.c.
-int16_t rightx;
-int16_t righty;
-
-int c_rightx;   // Will be converted into [-128 ~ 128] range. 
-int c_righty;   
 
 #endif

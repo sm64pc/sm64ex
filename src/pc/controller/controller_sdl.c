@@ -12,6 +12,9 @@
 
 #include "controller_api.h"
 
+extern int16_t rightx;
+extern int16_t righty;
+
 static bool init_ok;
 static SDL_GameController *sdl_cntrl;
 

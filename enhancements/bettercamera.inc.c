@@ -8,7 +8,6 @@
 #include "bettercamera.h"
 #include "include/text_strings.h"
 #include "engine/surface_collision.h"
-#include <stdio.h>
 
 
 
@@ -139,8 +138,9 @@ void newcam_init(struct Camera *c, u8 dv)
     newcam_distance = newcam_distance_target;
     newcam_intendedmode = newcam_mode;
     newcam_modeflags = newcam_mode;
+    newcam_init_settings();
 }
-static f32 newcam_clamp(f32 value, f32 max, f32 min)
+static u8 newcam_clamp(u8 value, u8 min, u8 max)
 {
     if (value > max)
         value = max;
@@ -154,12 +154,12 @@ void newcam_init_settings()
     if (save_check_firsttime())
     {
         save_file_get_setting();
-        newcam_clamp(newcam_sensitivityX, 10, 250);
-        newcam_clamp(newcam_sensitivityY, 10, 250);
-        newcam_clamp(newcam_aggression, 0, 100);
-        newcam_clamp(newcam_panlevel, 0, 100);
-        newcam_clamp(newcam_invertX, 0, 1);
-        newcam_clamp(newcam_invertY, 0, 1);
+        newcam_sensitivityX = newcam_clamp(newcam_sensitivityX, 10, 250);
+        newcam_sensitivityY = newcam_clamp(newcam_sensitivityY, 10, 250);
+        newcam_aggression = newcam_clamp(newcam_aggression, 0, 100);
+        newcam_panlevel = newcam_clamp(newcam_panlevel, 0, 100);
+        newcam_invertX = newcam_clamp(newcam_invertX, 0, 1);
+        newcam_invertY = newcam_clamp(newcam_invertY, 0, 1);
     }
     else
     {
@@ -227,7 +227,7 @@ static s16 newcam_approach_s16(s16 var, s16 val, s16 inc)
         return min(var - inc, val);
 }
 
-static u8 ivrt(u8 axis)
+static s8 ivrt(u8 axis)
 {
     if (axis == 0)
     {
@@ -423,8 +423,6 @@ static void newcam_zoom_button(void)
 static void newcam_update_values(void)
 {//For tilt, this just limits it so it doesn't go further than 90 degrees either way. 90 degrees is actually 16384, but can sometimes lead to issues, so I just leave it shy of 90.
     u8 waterflag = 0;
-    newcam_sensitivityX = 75;
-    newcam_sensitivityY = 75;
     if (newcam_modeflags & NC_FLAG_XTURN)
         newcam_yaw += (ivrt(0)*(newcam_yaw_acc*(newcam_sensitivityX/10)));
     if (((newcam_tilt < 12000 && newcam_tilt_acc*ivrt(1) > 0) || (newcam_tilt > -12000 && newcam_tilt_acc*ivrt(1) < 0)) && newcam_modeflags & NC_FLAG_YTURN)
@@ -690,13 +688,11 @@ void newcam_change_setting(u8 toggle)
         newcam_analogue ^= 1;
         break;
     case 1:
-        if (newcam_sensitivityX > 10 && newcam_sensitivityX < 250)
-            newcam_sensitivityX += toggle;
-            break;
+        newcam_sensitivityX = newcam_clamp(newcam_sensitivityX + toggle, 10, 250);
+        break;
     case 2:
-        if (newcam_sensitivityY > 10 && newcam_sensitivityY < 250)
-            newcam_sensitivityY += toggle;
-            break;
+        newcam_sensitivityY = newcam_clamp(newcam_sensitivityY + toggle, 10, 250);
+        break;
     case 3:
         newcam_invertX ^= 1;
         break;
@@ -704,13 +700,11 @@ void newcam_change_setting(u8 toggle)
         newcam_invertY ^= 1;
         break;
     case 5:
-        if (newcam_aggression > 0 && newcam_aggression < 100)
-            newcam_aggression += toggle;
-            break;
+        newcam_aggression = newcam_clamp(newcam_aggression + toggle, 1, 100);
+        break;
     case 6:
-        if (newcam_panlevel > 0 && newcam_panlevel < 100)
-            newcam_panlevel += toggle;
-            break;
+        newcam_panlevel = newcam_clamp(newcam_panlevel + toggle, 1, 100);
+        break;
     }
 }
 

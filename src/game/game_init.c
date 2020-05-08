@@ -22,6 +22,9 @@
 #include "../../enhancements/bettercamera.h"
 #include "pc/controller/controller_api.h"
 
+extern int c_rightx;
+extern int c_righty;
+
 // FIXME: I'm not sure all of these variables belong in this file, but I don't
 // know of a good way to split them
 struct Controller gControllers[3];
@@ -486,6 +489,10 @@ void read_controller_inputs(void) {
         osContGetReadData(&gControllerPads[0]);
     }
     run_demo_inputs();
+
+    //printf("P2: %d, %d\n", c_rightx, c_righty); // is righty broken?
+
+    //struct Controller *controller_backup;
 
     for (i = 0; i < 2; i++) 
     {
