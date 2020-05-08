@@ -265,7 +265,7 @@ ifeq ($(TARGET_RPI),1)
                 OPT_FLAGS := -march=armv6zk+fp -mfpu=vfp -Ofast
         endif
 
-# Raspberry Pi 2 and 3
+# Raspberry Pi 2 and 3 in ARM 32bit mode
         ifneq (,$(findstring armv7l,$(machine)))
                 model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
 
@@ -276,9 +276,15 @@ ifeq ($(TARGET_RPI),1)
                 endif
         endif
 
-# RPi4 / ARM A64 NEEDS TESTING 32BIT.
+# RPi3 or RPi4, in ARM64 (aarch64) mode. NEEDS TESTING 32BIT.
+# DO NOT pass -mfpu stuff here, thats for 32bit ARM only and will fail for 64bit ARM.
         ifneq (,$(findstring aarch64,$(machine)))
-                 OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -O3
+                model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
+                ifneq (,$(findstring 3,$(model)))
+                         OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -O3
+                else ifneq (,$(findstring 4,$(model)))
+                         OPT_FLAGS := -march=armv8-a+crc+simd -mtune=cortex-a72 -O3
+                endif
         endif
 endif
 
