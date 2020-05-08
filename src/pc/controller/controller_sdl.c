@@ -14,15 +14,19 @@
 
 extern int16_t rightx;
 extern int16_t righty;
+int mouse_x;
+int mouse_y;
 
 static bool init_ok;
 static SDL_GameController *sdl_cntrl;
 
 static void controller_sdl_init(void) {
-    if (SDL_Init(SDL_INIT_GAMECONTROLLER) != 0) {
+    if (SDL_Init(SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS) != 0) {
         fprintf(stderr, "SDL init error: %s\n", SDL_GetError());
         return;
     }
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+    SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
 
     init_ok = true;
 }
@@ -33,6 +37,7 @@ static void controller_sdl_read(OSContPad *pad) {
     }
 
     SDL_GameControllerUpdate();
+    SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
 
     if (sdl_cntrl != NULL && !SDL_GameControllerGetAttached(sdl_cntrl)) {
         SDL_GameControllerClose(sdl_cntrl);

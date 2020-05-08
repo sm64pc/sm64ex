@@ -16,6 +16,7 @@
 	#define NC_OPTION 				_("OPTIONS")
 	#define NC_HIGHLIGHT 			_("O")
 	#define NC_ANALOGUE				_("Analogue Camera")
+	#define NC_MOUSE				_("Mouse Look")
 
 /**
  * Global Symbols

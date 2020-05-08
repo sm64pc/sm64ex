@@ -96,6 +96,7 @@ u8 newcam_invertY;
 u8 newcam_panlevel; //How much the camera sticks out a bit in the direction you're looking.
 u8 newcam_aggression; //How much the camera tries to centre itself to Mario's facing and movement.
 u8 newcam_analogue; //Wether to accept inputs from a player 2 joystick, and then disables C button input.
+u8 newcam_mouse; // Whether to accept mouse input
 s16 newcam_distance_values[] = {750,1250,2000};
 u8 newcam_active = 1; // basically the thing that governs if newcam is on.
 u16 newcam_mode;
@@ -108,11 +109,14 @@ f32 newcam_option_timer = 0;
 u8 newcam_option_index = 0;
 u8 newcam_option_scroll = 0;
 u8 newcam_option_scroll_last = 0;
-u8 newcam_total = 7; //How many options there are in newcam_uptions.
+u8 newcam_total = 8; //How many options there are in newcam_uptions.
 
-u8 newcam_options[][64] = {{NC_ANALOGUE}, {NC_CAMX}, {NC_CAMY}, {NC_INVERTX}, {NC_INVERTY}, {NC_CAMC}, {NC_CAMP}};
+u8 newcam_options[][64] = {{NC_ANALOGUE}, {NC_MOUSE}, {NC_CAMX}, {NC_CAMY}, {NC_INVERTX}, {NC_INVERTY}, {NC_CAMC}, {NC_CAMP}};
 u8 newcam_flags[][64] = {{NC_DISABLED}, {NC_ENABLED}};
 u8 newcam_strings[][64] = {{NC_BUTTON}, {NC_BUTTON2}, {NC_OPTION}, {NC_HIGHLIGHT}};
+
+extern int mouse_x;
+extern int mouse_y;
 
 ///This is called at every level initialisation.
 void newcam_init(struct Camera *c, u8 dv)
@@ -369,6 +373,13 @@ static void newcam_rotate_button(void)
             newcam_tilt_acc = newcam_adjust_value(newcam_tilt_acc,(-gPlayer2Controller->stickY/4));
         else
             newcam_tilt_acc -= (newcam_tilt_acc*(DEGRADE));
+
+    }
+    
+    if (newcam_mouse == 1)
+    {
+        newcam_yaw += mouse_x * 16;
+        newcam_tilt += mouse_y * 16;
     }
 }
 
@@ -688,21 +699,24 @@ void newcam_change_setting(u8 toggle)
         newcam_analogue ^= 1;
         break;
     case 1:
-        newcam_sensitivityX = newcam_clamp(newcam_sensitivityX + toggle, 10, 250);
+        newcam_mouse ^= 1;
         break;
     case 2:
-        newcam_sensitivityY = newcam_clamp(newcam_sensitivityY + toggle, 10, 250);
+        newcam_sensitivityX = newcam_clamp(newcam_sensitivityX + toggle, 10, 250);
         break;
     case 3:
-        newcam_invertX ^= 1;
+        newcam_sensitivityY = newcam_clamp(newcam_sensitivityY + toggle, 10, 250);
         break;
     case 4:
-        newcam_invertY ^= 1;
+        newcam_invertX ^= 1;
         break;
     case 5:
-        newcam_aggression = newcam_clamp(newcam_aggression + toggle, 1, 100);
+        newcam_invertY ^= 1;
         break;
     case 6:
+        newcam_aggression = newcam_clamp(newcam_aggression + toggle, 1, 100);
+        break;
+    case 7:
         newcam_panlevel = newcam_clamp(newcam_panlevel + toggle, 1, 100);
         break;
     }
@@ -759,24 +773,27 @@ void newcam_display_options()
             newcam_text(160,scroll-12,newcam_flags[newcam_analogue],newcam_option_selection-i);
             break;
         case 1:
+            newcam_text(160,scroll-12,newcam_flags[newcam_mouse],newcam_option_selection-i);
+            break;
+        case 2:
             int_to_str(newcam_sensitivityX,newstring);
             newcam_text(160,scroll-12,newstring,newcam_option_selection-i);
             break;
-        case 2:
+        case 3:
             int_to_str(newcam_sensitivityY,newstring);
             newcam_text(160,scroll-12,newstring,newcam_option_selection-i);
             break;
-        case 3:
+        case 4:
             newcam_text(160,scroll-12,newcam_flags[newcam_invertX],newcam_option_selection-i);
             break;
-        case 4:
+        case 5:
             newcam_text(160,scroll-12,newcam_flags[newcam_invertY],newcam_option_selection-i);
             break;
-        case 5:
+        case 6:
             int_to_str(newcam_aggression,newstring);
             newcam_text(160,scroll-12,newstring,newcam_option_selection-i);
             break;
-        case 6:
+        case 7:
             int_to_str(newcam_panlevel,newstring);
             newcam_text(160,scroll-12,newstring,newcam_option_selection-i);
             break;
