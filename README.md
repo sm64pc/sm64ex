@@ -123,9 +123,6 @@ PATH=/mingw64/bin:/mingw32/bin:$PATH make
 PATH=/mingw32/bin:/mingw64/bin:$PATH make
 ```
 
-This guide is a courtesy of [XNBlank](https://github.com/XNBlank).
-
-
 ### For the web
 
 The game can be compiled for web browsers that support WebGL using [Emscripten](https://github.com/emscripten-core). To do so, install [emsdk](https://github.com/emscripten-core/emsdk) and run `make TARGET_WEB=1`.
