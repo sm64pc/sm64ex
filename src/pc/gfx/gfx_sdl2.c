@@ -167,6 +167,11 @@ static void gfx_sdl_onkeydown(int scancode) {
 
         configFullscreen = !configFullscreen;
     }
+    else if (state[SDL_SCANCODE_ESCAPE] && configFullscreen)
+    {
+        SDL_SetWindowFullscreen(wnd, 0);
+        configFullscreen = false;
+    }
 }
 
 static void gfx_sdl_onkeyup(int scancode) {
