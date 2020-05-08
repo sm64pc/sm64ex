@@ -61,6 +61,7 @@ Run `make` to build (defaults to `VERSION=us`)
 ```
 make VERSION=jp -j6                 # build (J) version with 6 jobs
 make VERSION=us WINDOWS_BUILD=1     # builds a (U) Windows executable 
+make TARGET_RPI=1                   # targets an executable for a Raspberry Pi
 ```
 
 ### On Windows
@@ -114,7 +115,10 @@ PATH=/mingw64/bin:/mingw32/bin:$PATH make
 
 #### 11. Navigate back to the sm64pc root directory.
 
-#### 12.  Finally, run `make` once more. (Note that mingw32 and mingw64 have been swapped. This is so you can build the 32bit application successfully.)
+#### 12.  Finally, run `make` once more. 
+
+(Note that mingw32 and mingw64 have been swapped. This is so you can build the 32bit application successfully.)
+
 ```
 PATH=/mingw32/bin:/mingw64/bin:$PATH make
 ```
