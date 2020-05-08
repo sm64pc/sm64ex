@@ -27,13 +27,12 @@ ifeq ($(COMPILER),gcc)
 endif
 # Build for Emscripten/WebGL
 TARGET_WEB ?= 0
-# Specify the target you are building for, 0 means native
-TARGET_ARCH ?= native
-TARGET_BITS ?= 0
-TARGET_RPI ?= 0
+
+TARGET_ARCH ?= i686
+TARGET_BITS ?= 32
 
 ifneq ($(TARGET_BITS),0)
-  BITS := -m$(TARGET_BITS)
+  BITS := -march=native -mfpu=vfp -Ofast
 else
   BITS :=
 endif
@@ -80,7 +79,7 @@ ifeq ($(VERSION),sh)
   GRUCODE_ASFLAGS := --defsym F3D_NEW=1
   TARGET := sm64.sh
 # TODO: GET RID OF THIS!!! We should mandate assets for Shindou like EU but we dont have the addresses extracted yet so we'll just pretend you have everything extracted for now.
-  NOEXTRACT := 1
+  NOEXTRACT := 1 
 else
   $(error unknown version "$(VERSION)")
 endif
@@ -226,15 +225,7 @@ endif
 ifeq ($(VERSION),eu)
   OPT_FLAGS := -O2
 else
-ifeq ($(VERSION),sh)
-  OPT_FLAGS := -O2
-else
-  OPT_FLAGS := -g
-endif
-endif
-
-ifeq ($(TARGET_N64),0)
-  OPT_FLAGS += $(BITS)
+  OPT_FLAGS := -g $(BITS)
 endif
 
 ifeq ($(TARGET_WEB),1)
@@ -243,32 +234,8 @@ endif
 endif
 
 # Use a default opt flag for gcc
-ifeq ($(NON_MATCHING),1)
-	OPT_FLAGS := -O2
-endif
-
-ifeq ($(TARGET_RPI),1)
-           machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
-# Raspberry Pi B+, Zero, etc
-        ifneq (,$(findstring armv6l,$(machine)))
-                OPT_FLAGS := -march=armv6zk -mfpu=vfp -Ofast
-        endif
-
-# Raspberry Pi 2 and 3
-        ifneq (,$(findstring armv7l,$(machine)))
-                model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
-
-                ifneq (,$(findstring 3,$(model)))
-                         OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -O3
-                         else
-                         OPT_FLAGS := -march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4 -O3
-                endif
-        endif
-
-# RPi4 / ARM A64 NEEDS TESTING 32BIT.
-        ifneq (,$(findstring aarch64,$(machine)))
-                 OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -O3
-        endif
+ifeq ($(COMPILER),gcc)
+  OPT_FLAGS := $(BITS)
 endif
 
 # File dependencies and variables for specific files
@@ -303,7 +270,6 @@ ifneq ($(TARGET_N64),1)
     func_802F71F0.c \
     func_802F4A20.c \
     EU_D_802f4330.c \
-    D_802F4380.c \
     osLeoDiskInit.c \
     osCreateThread.c \
     osDestroyThread.c \
@@ -345,8 +311,7 @@ ifneq ($(TARGET_N64),1)
     __osAtomicDec.c \
     __osSiRawStartDma.c \
     __osViSwapContext.c \
-    __osViGetCurrentContext.c \
-    __osDevMgrMain.c
+    __osViGetCurrentContext.c
 
   C_FILES := $(filter-out src/game/main.c,$(C_FILES))
   ULTRA_C_FILES := $(filter-out $(addprefix lib/src/,$(ULTRA_C_FILES_SKIP)),$(ULTRA_C_FILES))
@@ -491,10 +456,9 @@ CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fn
 else ifeq ($(TARGET_WEB),1)
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
 CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv -s USE_SDL=2
-# Linux / Pi builds below
 else
-CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(CROSS)sdl2-config --cflags`
-CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(CROSS)sdl2-config --cflags`
+CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(CROSS)pkg-config --cflags libusb-1.0 glfw3` `$(CROSS)sdl2-config --cflags`
+CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(CROSS)pkg-config --cflags libusb-1.0 glfw3` `$(CROSS)sdl2-coonfig --cflags --libs`
 endif
 
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
@@ -505,14 +469,9 @@ else
 ifeq ($(WINDOWS_BUILD),1)
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(CROSS)sdl2-config --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -no-pie -static
 else
-# Linux / Other Builds below
-ifeq ($(TARGET_RPI),1)
-LDFLAGS := $(OPT_FLAGS) -lm -lGLESv2 `$(CROSS)sdl2-config --libs` -no-pie
-else
-LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(CROSS)sdl2-config --libs` -no-pie -lpthread
+LDFLAGS := $(BITS) -lm -lGLESv2 `$(CROSS)sdl2-config --cflags --libs` -no-pie `$(CROSS)pkg-config --libs libusb-1.0 glfw3`
 endif
 endif
-endif #Added for Pi ifeq
 
 endif
 
@@ -569,9 +528,6 @@ endif
 clean:
 	$(RM) -r $(BUILD_DIR_BASE)
 
-cleantools:
-	$(MAKE) -s -C tools clean
-
 distclean:
 	$(RM) -r $(BUILD_DIR_BASE)
 	./extract_assets.py --clean
@@ -588,6 +544,9 @@ asm/boot.s: $(BUILD_DIR)/lib/bin/ipl3_font.bin
 
 $(BUILD_DIR)/lib/bin/ipl3_font.bin: lib/ipl3_font.png
 	$(IPLFONTUTIL) e $< $@
+	
+#Required so the compiler doesn't complain about this not existing.
+$(BUILD_DIR)/src/game/camera.o: $(BUILD_DIR)/include/text_strings.h
 
 $(BUILD_DIR)/include/text_strings.h: include/text_strings.h.in
 	$(TEXTCONV) charmap.txt $< $@
@@ -624,7 +583,6 @@ $(BUILD_DIR)/bin/segment2.o: $(BUILD_DIR)/text/$(VERSION)/define_text.inc.c
 endif
 endif
 
-
 $(BUILD_DIR)/text/%/define_courses.inc.c: text/define_courses.inc.c text/%/courses.h
 	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/$*/
 	$(TEXTCONV) charmap.txt $@ $@
@@ -632,8 +590,6 @@ $(BUILD_DIR)/text/%/define_courses.inc.c: text/define_courses.inc.c text/%/cours
 $(BUILD_DIR)/text/%/define_text.inc.c: text/define_text.inc.c text/%/courses.h text/%/dialogs.h
 	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/$*/
 	$(TEXTCONV) charmap.txt $@ $@
-
-O_FILES += $(wildcard $(BUILD_DIR)/bin/$(VERSION)/*.o)
 
 ALL_DIRS := $(BUILD_DIR) $(addprefix $(BUILD_DIR)/,$(SRC_DIRS) $(ASM_DIRS) $(GODDARD_SRC_DIRS) $(ULTRA_SRC_DIRS) $(ULTRA_ASM_DIRS) $(ULTRA_BIN_DIRS) $(BIN_DIRS) $(TEXTURE_DIRS) $(TEXT_DIRS) $(SOUND_SAMPLE_DIRS) $(addprefix levels/,$(LEVEL_DIRS)) include) $(MIO0_DIR) $(addprefix $(MIO0_DIR)/,$(VERSION)) $(SOUND_BIN_DIR) $(SOUND_BIN_DIR)/sequences/$(VERSION)
 

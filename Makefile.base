@@ -80,7 +80,7 @@ ifeq ($(VERSION),sh)
   GRUCODE_ASFLAGS := --defsym F3D_NEW=1
   TARGET := sm64.sh
 # TODO: GET RID OF THIS!!! We should mandate assets for Shindou like EU but we dont have the addresses extracted yet so we'll just pretend you have everything extracted for now.
-  NOEXTRACT := 1
+  NOEXTRACT := 1 
 else
   $(error unknown version "$(VERSION)")
 endif
@@ -243,32 +243,8 @@ endif
 endif
 
 # Use a default opt flag for gcc
-ifeq ($(NON_MATCHING),1)
-	OPT_FLAGS := -O2
-endif
-
-ifeq ($(TARGET_RPI),1)
-           machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
-# Raspberry Pi B+, Zero, etc
-        ifneq (,$(findstring armv6l,$(machine)))
-                OPT_FLAGS := -march=armv6zk -mfpu=vfp -Ofast
-        endif
-
-# Raspberry Pi 2 and 3
-        ifneq (,$(findstring armv7l,$(machine)))
-                model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
-
-                ifneq (,$(findstring 3,$(model)))
-                         OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -O3
-                         else
-                         OPT_FLAGS := -march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4 -O3
-                endif
-        endif
-
-# RPi4 / ARM A64 NEEDS TESTING 32BIT.
-        ifneq (,$(findstring aarch64,$(machine)))
-                 OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -O3
-        endif
+ifeq ($(COMPILER),gcc)
+  OPT_FLAGS := -O2
 endif
 
 # File dependencies and variables for specific files
@@ -491,7 +467,6 @@ CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fn
 else ifeq ($(TARGET_WEB),1)
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
 CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv -s USE_SDL=2
-# Linux / Pi builds below
 else
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(CROSS)sdl2-config --cflags`
 CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(CROSS)sdl2-config --cflags`
@@ -505,14 +480,9 @@ else
 ifeq ($(WINDOWS_BUILD),1)
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(CROSS)sdl2-config --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -no-pie -static
 else
-# Linux / Other Builds below
-ifeq ($(TARGET_RPI),1)
-LDFLAGS := $(OPT_FLAGS) -lm -lGLESv2 `$(CROSS)sdl2-config --libs` -no-pie
-else
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(CROSS)sdl2-config --libs` -no-pie -lpthread
 endif
 endif
-endif #Added for Pi ifeq
 
 endif
 

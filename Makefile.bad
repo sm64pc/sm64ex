@@ -25,6 +25,7 @@ COMPILER ?= ido
 ifeq ($(COMPILER),gcc)
   NON_MATCHING := 1
 endif
+
 # Build for Emscripten/WebGL
 TARGET_WEB ?= 0
 # Specify the target you are building for, 0 means native
@@ -80,7 +81,7 @@ ifeq ($(VERSION),sh)
   GRUCODE_ASFLAGS := --defsym F3D_NEW=1
   TARGET := sm64.sh
 # TODO: GET RID OF THIS!!! We should mandate assets for Shindou like EU but we dont have the addresses extracted yet so we'll just pretend you have everything extracted for now.
-  NOEXTRACT := 1
+  NOEXTRACT := 1 
 else
   $(error unknown version "$(VERSION)")
 endif
@@ -243,7 +244,8 @@ endif
 endif
 
 # Use a default opt flag for gcc
-ifeq ($(NON_MATCHING),1)
+# We can't remove 'ido' to gcc or else other dependencies break
+ifeq ($(NON_MATCHING),1) 
 	OPT_FLAGS := -O2
 endif
 
@@ -251,7 +253,7 @@ ifeq ($(TARGET_RPI),1)
            machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
 # Raspberry Pi B+, Zero, etc
         ifneq (,$(findstring armv6l,$(machine)))
-                OPT_FLAGS := -march=armv6zk -mfpu=vfp -Ofast
+                OPT_FLAGS := -march=armv6zk -mfpu=vfp -Ofast $(COMPILER)
         endif
 
 # Raspberry Pi 2 and 3

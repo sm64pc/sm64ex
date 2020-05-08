@@ -80,7 +80,7 @@ ifeq ($(VERSION),sh)
   GRUCODE_ASFLAGS := --defsym F3D_NEW=1
   TARGET := sm64.sh
 # TODO: GET RID OF THIS!!! We should mandate assets for Shindou like EU but we dont have the addresses extracted yet so we'll just pretend you have everything extracted for now.
-  NOEXTRACT := 1
+  NOEXTRACT := 1 
 else
   $(error unknown version "$(VERSION)")
 endif
@@ -243,7 +243,7 @@ endif
 endif
 
 # Use a default opt flag for gcc
-ifeq ($(NON_MATCHING),1)
+ifeq ($(COMPILER),gcc)
 	OPT_FLAGS := -O2
 endif
 

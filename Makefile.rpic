@@ -80,7 +80,7 @@ ifeq ($(VERSION),sh)
   GRUCODE_ASFLAGS := --defsym F3D_NEW=1
   TARGET := sm64.sh
 # TODO: GET RID OF THIS!!! We should mandate assets for Shindou like EU but we dont have the addresses extracted yet so we'll just pretend you have everything extracted for now.
-  NOEXTRACT := 1
+  NOEXTRACT := 1 
 else
   $(error unknown version "$(VERSION)")
 endif
@@ -243,9 +243,7 @@ endif
 endif
 
 # Use a default opt flag for gcc
-ifeq ($(NON_MATCHING),1)
-	OPT_FLAGS := -O2
-endif
+ifeq ($(COMPILER),gcc)
 
 ifeq ($(TARGET_RPI),1)
            machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
@@ -255,10 +253,10 @@ ifeq ($(TARGET_RPI),1)
         endif
 
 # Raspberry Pi 2 and 3
-        ifneq (,$(findstring armv7l,$(machine)))
+        ifeq (,$(findstring armv7l,$(machine)))
                 model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
 
-                ifneq (,$(findstring 3,$(model)))
+                ifeq (,$(findstring 3,$(model)))
                          OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -O3
                          else
                          OPT_FLAGS := -march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4 -O3
@@ -266,10 +264,21 @@ ifeq ($(TARGET_RPI),1)
         endif
 
 # RPi4 / ARM A64 NEEDS TESTING 32BIT.
-        ifneq (,$(findstring aarch64,$(machine)))
+        ifeq (,$(findstring aarch64,$(machine)))
                  OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -O3
         endif
+
+else
+   OPT_FLAGS := NotPi
+
 endif
+   #OPT_FLAGS := -O2
+# End of RPi Opti/Config fixes for ARM GCC
+#else
+   #OPT_FLAGS := lol  #God please help me here.
+endif
+    #OPT_FLAGS := -O2
+
 
 # File dependencies and variables for specific files
 include Makefile.split
