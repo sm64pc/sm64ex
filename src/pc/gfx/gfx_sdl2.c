@@ -80,6 +80,7 @@ const SDL_Scancode scancode_rmapping_nonextended[][2] = {
 
 static void gfx_sdl_init(void) {
     SDL_Init(SDL_INIT_VIDEO);
+    SDL_ShowCursor(SDL_DISABLE); 		            // Removes the cursor from view when upon the game's window.
 	
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
