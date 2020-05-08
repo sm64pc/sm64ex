@@ -80,7 +80,6 @@ const SDL_Scancode scancode_rmapping_nonextended[][2] = {
 
 static void gfx_sdl_init(void) {
     SDL_Init(SDL_INIT_VIDEO);
-    SDL_ShowCursor(SDL_DISABLE); 		            // Removes the cursor from view when upon the game's window.
 	
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -105,6 +104,7 @@ static void gfx_sdl_init(void) {
     if (configFullscreen)
     {
         SDL_SetWindowFullscreen(wnd, SDL_WINDOW_FULLSCREEN_DESKTOP);
+        SDL_ShowCursor(SDL_DISABLE);
     }
     
     SDL_GL_CreateContext(wnd);
@@ -159,13 +159,21 @@ static void gfx_sdl_onkeydown(int scancode) {
         if (!configFullscreen)
         {
             SDL_SetWindowFullscreen(wnd, SDL_WINDOW_FULLSCREEN_DESKTOP);
+            SDL_ShowCursor(SDL_DISABLE);
         }
         else
         {
             SDL_SetWindowFullscreen(wnd, 0);
+            SDL_ShowCursor(SDL_ENABLE);
         }
 
         configFullscreen = !configFullscreen;
+    }
+    else if (state[SDL_SCANCODE_ESCAPE] && configFullscreen)
+    {
+        SDL_SetWindowFullscreen(wnd, 0);
+        SDL_ShowCursor(SDL_ENABLE);
+        configFullscreen = false;
     }
 }
 
