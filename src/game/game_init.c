@@ -19,6 +19,9 @@
 #include "main_entry.h"
 #include "thread6.h"
 #include <prevent_bss_reordering.h>
+#ifdef BETTERCAMERA
+#include "bettercamera.h"
+#endif
 
 // FIXME: I'm not sure all of these variables belong in this file, but I don't
 // know of a good way to split them
@@ -58,6 +61,8 @@ struct DemoInput *gCurrDemoInput = NULL; // demo input sequence
 u16 gDemoInputListID = 0;
 struct DemoInput gRecordedDemoInput = { 0 }; // possibly removed in EU. TODO: Check
 
+extern int c_rightx;
+extern int c_righty;
 /**
  * Initializes the Reality Display Processor (RDP).
  * This function initializes settings such as texture filtering mode,
@@ -225,7 +230,7 @@ void create_task_structure(void) {
     gGfxSPTask->task.t.dram_stack_size = SP_DRAM_STACK_SIZE8;
     #ifdef VERSION_EU
     // terrible hack
-    gGfxSPTask->task.t.output_buff = 
+    gGfxSPTask->task.t.output_buff =
         (u64 *)((u8 *) gGfxSPTaskOutputBuffer - 0x670 + 0x280);
     gGfxSPTask->task.t.output_buff_size =
         (u64 *)((u8 *) gGfxSPTaskOutputBuffer+ 0x280 + 0x17790);
@@ -490,6 +495,7 @@ void read_controller_inputs(void) {
 
     for (i = 0; i < 2; i++) {
         struct Controller *controller = &gControllers[i];
+#ifndef BETTERCAMERA
 
         // if we're receiving inputs, update the controller struct
         // with the new button info.
@@ -511,6 +517,47 @@ void read_controller_inputs(void) {
             controller->stickY = 0;
             controller->stickMag = 0;
         }
+#else
+        if (i==1)   // This is related to the analog camera control, using a P2 controller hack. P2 will no longer be correctly available for multiplayer.
+        {
+            if (c_rightx != 0 || c_righty !=0)
+            {
+                controller->rawStickX = c_rightx;
+                controller->rawStickY = c_righty;
+                controller->stickX = c_rightx;
+                controller->stickY = c_righty;
+                //printf("P2 = {%d, %d}\n", controller->rawStickX, controller->rawStickY);
+                continue;            
+            } else
+            {
+                controller->rawStickX = 0;
+                controller->rawStickY = 0;
+            }
+        }
+        else
+        {
+            // if we're receiving inputs, update the controller struct
+            // with the new button info.
+            if (controller->controllerData != NULL) {
+                controller->rawStickX = controller->controllerData->stick_x;
+                controller->rawStickY = controller->controllerData->stick_y;
+                controller->buttonPressed = controller->controllerData->button
+                                        & (controller->controllerData->button ^ controller->buttonDown);
+                // 0.5x A presses are a good meme
+                controller->buttonDown = controller->controllerData->button;
+                adjust_analog_stick(controller);
+            } else // otherwise, if the controllerData is NULL, 0 out all of the inputs.
+            {
+                controller->rawStickX = 0;
+                controller->rawStickY = 0;
+                controller->buttonPressed = 0;
+                controller->buttonDown = 0;
+                controller->stickX = 0;
+                controller->stickY = 0;
+                controller->stickMag = 0;
+            }
+        }
+#endif
     }
 
     // For some reason, player 1's inputs are copied to player 3's port. This

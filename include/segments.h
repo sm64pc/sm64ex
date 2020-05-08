@@ -1,6 +1,10 @@
 #ifndef _SEGMENTS_H
 #define _SEGMENTS_H
 
+#ifdef BETTERCAMERA
+#define USE_EXT_RAM
+#endif
+
 /*
  * Memory addresses for segments. Ideally, this header file would not be
  * needed, and the addresses would be defined in sm64.ld and linker-inserted
@@ -44,10 +48,17 @@
  */
 
 #define SEG_BUFFERS      0x8005C000 // 0x0085000 in size
+#ifdef BETTERCAMERA
+#define SEG_MAIN         0x800F1000 // 0x1328000 in size
+#define SEG_ENGINE       0x80223800 // 0x0017000 in size
+#define SEG_FRAMEBUFFERS 0x8023A800 // 0x0070800 in size
+#define SEG_POOL_START   0x802AB000 // 0x0165000 in size
+#else
 #define SEG_MAIN         0x800E1000 // 0x1328000 in size
 #define SEG_ENGINE       0x80213800 // 0x0017000 in size
 #define SEG_FRAMEBUFFERS 0x8022A800 // 0x0070800 in size
 #define SEG_POOL_START   0x8029B000 // 0x0165000 in size
+#endif
 #define SEG_POOL_END     0x80800000
 #define SEG_POOL_END_4MB 0x80400000 // For the error message screen enhancement.
 #define SEG_GODDARD      SEG_POOL_START + 0x113000

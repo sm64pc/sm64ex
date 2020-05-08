@@ -19,6 +19,9 @@
 #include "print.h"
 #include "engine/math_util.h"
 #include "course_table.h"
+#ifdef BETTERCAMERA
+#include "bettercamera.h"
+#endif
 
 extern Gfx *gDisplayListHead;
 extern s16 gCurrCourseNum;
@@ -693,7 +696,7 @@ void print_credits_string(s16 x, s16 y, const u8 *str) {
     gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0,
                 G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD, G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD);
     gDPTileSync(gDisplayListHead++);
-    gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 2, 0, G_TX_RENDERTILE, 0, 
+    gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 2, 0, G_TX_RENDERTILE, 0,
                 G_TX_CLAMP, 3, G_TX_NOLOD, G_TX_CLAMP, 3, G_TX_NOLOD);
     gDPSetTileSize(gDisplayListHead++, G_TX_RENDERTILE, 0, 0, (8 - 1) << G_TEXTURE_IMAGE_FRAC, (8 - 1) << G_TEXTURE_IMAGE_FRAC);
 
@@ -2615,7 +2618,10 @@ s16 render_pause_courses_and_castle(void) {
 #ifdef VERSION_EU
     gInGameLanguage = eu_get_language();
 #endif
-
+#ifdef BETTERCAMERA
+    if (newcam_option_open == 0)
+    {
+#endif
     switch (gDialogBoxState) {
         case DIALOG_STATE_OPENING:
             gDialogLineNum = 1;
@@ -2691,6 +2697,16 @@ s16 render_pause_courses_and_castle(void) {
     if (gDialogTextAlpha < 250) {
         gDialogTextAlpha += 25;
     }
+#ifdef BETTERCAMERA
+    }
+    else
+    {
+        shade_screen();
+        newcam_display_options();
+    }
+    newcam_check_pause_buttons();
+    newcam_render_option_text();
+#endif
 
     return 0;
 }

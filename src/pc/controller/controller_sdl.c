@@ -5,11 +5,15 @@
 
 #include <SDL2/SDL.h>
 
+// Analog camera movement by Pathétique (github.com/vrmiguel), y0shin and Mors
+// Contribute or communicate bugs at github.com/vrmiguel/sm64-analog-camera
+
 #include <ultra64.h>
 
 #include "controller_api.h"
 
-#define DEADZONE 4960
+extern int16_t rightx;
+extern int16_t righty;
 
 static bool init_ok;
 static SDL_GameController *sdl_cntrl;
@@ -56,8 +60,8 @@ static void controller_sdl_read(OSContPad *pad) {
 
     int16_t leftx = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_LEFTX);
     int16_t lefty = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_LEFTY);
-    int16_t rightx = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_RIGHTX);
-    int16_t righty = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_RIGHTY);
+    rightx = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_RIGHTX);
+    righty = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_RIGHTY);
 
     int16_t ltrig = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_TRIGGERLEFT);
     int16_t rtrig = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_TRIGGERRIGHT);

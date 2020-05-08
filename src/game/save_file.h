@@ -6,7 +6,11 @@
 
 #include "course_table.h"
 
+#ifndef BETTERCAMERA
 #define EEPROM_SIZE 0x200
+#else
+#define EEPROM_SIZE 0x800
+#endif
 #define NUM_SAVE_FILES 4
 
 struct SaveBlockSignature
@@ -50,7 +54,16 @@ struct MainMenuSaveData
     // on the high score screen.
     u32 coinScoreAges[NUM_SAVE_FILES];
     u16 soundMode;
-
+#ifdef BETTERCAMERA
+    u8 camx;
+    u8 camy;
+    u8 analogue;
+    u8 invertx;
+    u8 inverty;
+    u8 camc;
+    u8 camp;
+    u8 firsttime;
+#endif
 #ifdef VERSION_EU
     u16 language;
 #define SUBTRAHEND 8
@@ -58,8 +71,11 @@ struct MainMenuSaveData
 #define SUBTRAHEND 6
 #endif
 
+
     // Pad to match the EEPROM size of 0x200 (10 bytes on JP/US, 8 bytes on EU)
+    #ifndef BETTERCAMERA
     u8 filler[EEPROM_SIZE / 2 - SUBTRAHEND - NUM_SAVE_FILES * (4 + sizeof(struct SaveFile))];
+    #endif
 
     struct SaveBlockSignature signature;
 };
@@ -70,6 +86,9 @@ struct SaveBuffer
     struct SaveFile files[NUM_SAVE_FILES][2];
     // The main menu data has two copies. If one is bad, the other is used as a backup.
     struct MainMenuSaveData menuData[2];
+    #ifdef BETTERCAMERA
+    u8 filler[1535]; //!I still haven't done an algorithm for this yet lol
+    #endif
 };
 
 struct WarpNode;
@@ -144,6 +163,12 @@ s32 save_file_get_cap_pos(Vec3s capPos);
 void save_file_set_sound_mode(u16 mode);
 u16 save_file_get_sound_mode(void);
 void save_file_move_cap_to_default_location(void);
+#ifdef BETTERCAMERA
+void save_set_firsttime(void);
+u8 save_check_firsttime(void);
+void save_file_get_setting(void);
+void save_file_set_setting(void);
+#endif
 
 void disable_warp_checkpoint(void);
 void check_if_should_set_warp_checkpoint(struct WarpNode *a);
