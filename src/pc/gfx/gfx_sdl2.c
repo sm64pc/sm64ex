@@ -101,8 +101,7 @@ static void gfx_sdl_init(void) {
     wnd = SDL_CreateWindow("Super Mario 64 RPi (GLES2)", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
             DESIRED_SCREEN_WIDTH, DESIRED_SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
     #endif
-
-
+  
     if (configFullscreen)
     {
         SDL_SetWindowFullscreen(wnd, SDL_WINDOW_FULLSCREEN_DESKTOP);
