@@ -1,143 +1,145 @@
-# Super Mario 64
+# sm64pc-testing
+OpenGL adaptation of [n64decomp/sm64](https://github.com/n64decomp/sm64). 
 
-This repo contains a full decompilation of Super Mario 64 (J), (U), and (E).
-The source and data have been decompiled but complete naming and documentation
-all of the code and data is still a work in progress. Decompiling the Shindou ROM
-is also an ongoing effort.
+Feel free to report bugs and contribute, but remember, there must be **no upload of any copyrighted asset**. 
+Run `./extract-assets.py --clean && make clean` or `make distclean` to remove ROM-originated content.
 
-It builds the following ROMs:
+## The testing branch
 
-* sm64.jp.z64 `sha1: 8a20a5c83d6ceb0f0506cfc9fa20d8f438cafe51`
-* sm64.us.z64 `sha1: 9bef1128717f958171a4afac3ed78ee2bb4e86ce`
-* sm64.eu.z64 `sha1: 4ac5721683d0e0b6bbb561b58a71740845dceea9`
+This branch is mostly about different control systems, at the moment. A new camera system, `better_camera.c`, made by n64decomp dev Fazana, allows for full xy camera movement, both on C-buttons as well as on the right analog stick. PC controller support has been implemented by [vrmiguel](https://github.com/vrmiguel/sm64-analog-camera), and a deadzone fix has been made by [IvanDSM](https://github.com/IvanDSM/).
 
-This repo does not include all assets necessary for compiling the ROMs.
-A prior copy of the game is required to extract the required assets.
+[IvanDSM](https://github.com/IvanDSM/) has also implemented a new mouse look functionality, currently in experimental phase.
 
-## Installation
+## Building
 
-### Docker
+### On Linux
 
 #### 1. Copy baserom(s) for asset extraction
 
-For each version (jp/us/eu) that you want to build a ROM for, put an existing ROM at
-`./baserom.<version>.z64` for asset extraction.
-
-#### 2. Create docker image
-
-```bash
-docker build -t sm64 .
-```
-
-#### 3. Build
-
-To build we simply have to mount our local filesystem into the docker container and build.
-
-```bash
-# for example if you have baserom.us.z64 in the project root
-docker run --rm --mount type=bind,source="$(pwd)",destination=/sm64 sm64 make VERSION=us -j4
-
-# if your host system is linux you need to tell docker what user should own the output files
-docker run --rm --mount type=bind,source="$(pwd)",destination=/sm64 --user $UID:$UID sm64 make VERSION=us -j4
-```
-
-Resulting artifacts can be found in the `build` directory.
-
-### Linux
-
-#### 1. Copy baserom(s) for asset extraction
-
-For each version (jp/us/eu) that you want to build a ROM for, put an existing ROM at
+For each version (jp/us/eu) that you want to build an executable for, put an existing ROM at
 `./baserom.<version>.z64` for asset extraction.
 
 #### 2. Install build dependencies
 
 The build system has the following package requirements:
- * binutils-mips >= 2.27
- * python3 >= 3.6
- * libaudiofile
- * qemu-irix
+  * python3 >= 3.6
+  * libsdl2-dev
+  * [audiofile](https://audiofile.68k.org/)
+  * libglew-dev
+  * git
 
-__Debian / Ubuntu__
-```
-sudo apt install build-essential pkg-config git binutils-mips-linux-gnu python3 zlib1g-dev libaudiofile-dev
-```
 
-Download latest package from [qemu-irix Releases](https://github.com/n64decomp/qemu-irix/releases)
+__Debian / Ubuntu - targeting 32 bits__
 ```
-sudo dpkg -i qemu-irix-2.11.0-2169-g32ab296eef_amd64.deb
+sudo apt install build-essential git python3 libaudiofile-dev libglew-dev:i386 libglfw3-dev:i386 libusb-1.0.0:i386 libsdl2-dev:i386
 ```
-
-(Optional) Clone https://github.com/n64decomp/qemu-irix and follow the install instructions in the README.
+__Debian / Ubuntu - targeting 64 bits__
+```
+sudo apt install build-essential git python3 libaudiofile-dev libglew-dev libglfw3-dev libusb-1.0.0  libsdl2-dev
+```
 
 __Arch Linux__
 ```
-sudo pacman -S base-devel python audiofile
-```
-Install the following AUR packages:
-* [mips64-elf-binutils](https://aur.archlinux.org/packages/mips64-elf-binutils) (AUR)
-* [qemu-irix-git](https://aur.archlinux.org/packages/qemu-irix-git) (AUR)
-
-#### 3. Build ROM
-
-Run `make` to build the ROM (defaults to `VERSION=us`). Make sure your path to the repo 
-is not too long or else this process will error, as the emulated IDO compiler cannot 
-handle paths longer than 255 characters.
-Examples:
-```
-make VERSION=jp -j4       # build (J) version instead with 4 jobs
-make VERSION=eu COMPARE=0 # non-matching EU version still WIP
+sudo pacman -S base-devel python audiofile sdl2 glew
 ```
 
-## Windows
-
-For Windows, install WSL and a distro of your choice following
-[Windows Subsystem for Linux Installation Guide for Windows 10](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
-We recommend either Debian or Ubuntu 18.04 Linux distributions under WSL.
-
-Then follow the directions in the [Linux](#linux) installation section above.
-
-## macOS
-
-macOS is currently unsupported as qemu-irix is unable to be built for macOS host.
-The recommended path is installing a Linux distribution under a VM.
-
-## Project Structure
-
+__Void Linux - targeting 64 bits__
 ```
-sm64
-├── actors: object behaviors, geo layout, and display lists
-├── asm: handwritten assembly code, rom header
-│   └── non_matchings: asm for non-matching sections
-├── assets: animation and demo data
-│   ├── anims: animation data
-│   └── demos: demo data
-├── bin: asm files for ordering display lists and textures
-├── build: output directory
-├── data: behavior scripts, misc. data
-├── doxygen: documentation infrastructure
-├── enhancements: example source modifications
-├── include: header files
-├── levels: level scripts, geo layout, and display lists
-├── lib: SDK library code
-├── sound: sequences, sound samples, and sound banks
-├── src: C source code for game
-│   ├── audio: audio code
-│   ├── buffers: stacks, heaps, and task buffers
-│   ├── engine: script processing engines and utils
-│   ├── game: behaviors and rest of game source
-│   ├── goddard: Mario intro screen
-│   └── menu: title screen and file, act, and debug level selection menus
-├── text: dialog, level names, act names
-├── textures: skybox and generic texture data
-└── tools: build tools
+sudo xbps-install -S base-devel python3 audiofile-devel SDL2-devel glew-devel
 ```
 
-## Contributing
+__Void Linux - targeting 32 bits__
+```
+sudo xbps-install -S base-devel python3 audiofile-devel-32bit SDL2-devel-32bit glew-devel-32bit
+```
 
-Pull requests are welcome. For major changes, please open an issue first to
-discuss what you would like to change.
+#### 3. Build the executable.
 
-Run clang-format on your code to ensure it meets the project's coding standards.
+Run `make` to build (defaults to `VERSION=us`)
 
-Official Discord: https://discord.gg/27JtCWs
+```
+make VERSION=jp -j6                 # build (J) version with 6 jobs
+make VERSION=us WINDOWS_BUILD=1     # builds a (U) Windows executable 
+make TARGET_RPI=1                   # targets an executable for a Raspberry Pi
+```
+
+### On Windows
+
+#### 1. Set up MSYS2, following [this  guide](https://github.com/orlp/dev-on-windows/wiki/Installing-GCC--&-MSYS2).
+
+#### 2. Install dependencies
+```
+pacman -S mingw-w64-i686-glew mingw-w64-x86_64-glew mingw-w64-i686-SDL2 mingw-w64-x86_64-SDL2 python3
+```
+#### 3. Copy baserom(s) for asset extraction
+
+For each version (jp/us/eu) that you want to build an executable for, put an existing ROM at
+`./baserom.<version>.z64` for asset extraction.
+
+#### 4. On MSYS2, navigate to the sm64pc folder and then enter `./tools/audiofile-0.3.6/`. Inside this directory, run
+```
+autoreconf -i
+```
+
+Only leave this directory on step 9.
+
+#### 5. Run the `configure` script
+```
+PATH=/mingw64/bin:/mingw32/bin:$PATH LIBS=-lstdc++ ./configure --disable-docs
+```
+#### 6. Run the `make` script
+```
+PATH=/mingw64/bin:/mingw32/bin:$PATH make
+```
+#### 7. Create a lib directory in `tools/`
+```
+mkdir ../lib
+```
+
+#### 8. Copy the compiled libaudiofile to `tools/lib/`
+```
+cp libaudiofile/.libs/libaudiofile.a ../lib/
+cp libaudiofile/.libs/libaudiofile.la ../lib/
+```
+
+#### 9. Navigate back to `tools/`, then alter the `Makefile` and add `-lstdc++` on the following line
+```
+tabledesign_CFLAGS := -Wno-uninitialized -laudiofile -lstdc++
+```
+
+#### 10. Run `make`
+```
+PATH=/mingw64/bin:/mingw32/bin:$PATH make
+```
+
+#### 11. Navigate back to the sm64pc root directory.
+
+#### 12.  Finally, run `make` once more. 
+
+(Note that mingw32 and mingw64 have been swapped. This is so you can build the 32bit application successfully.)
+
+```
+PATH=/mingw32/bin:/mingw64/bin:$PATH make
+```
+
+### For the web
+
+The game can be compiled for web browsers that support WebGL using [Emscripten](https://github.com/emscripten-core). To do so, install [emsdk](https://github.com/emscripten-core/emsdk) and run `make TARGET_WEB=1`.
+
+## Optional enhancements
+
+On the `./enhancements` folder, you'll find several .patch files, which can be applied in the following manner:
+
+```
+ git apply fps.patch --ignore-whitespace --reject
+```
+If any rejections occur, you can search for them with `find | grep .rej`.
+Try to solve rejections through [wiggle](https://github.com/neilbrown/wiggle).
+```
+wiggle rejection.rej --replace
+```
+
+### Current issues
+
+ * Some Windows builds have been crashing when booting up from an existing save. Linux builds have not yet shown this issue.
+ * The Invert Axis option on the in-game menu is broken.
