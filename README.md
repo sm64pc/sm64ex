@@ -65,7 +65,62 @@ make VERSION=us WINDOWS_BUILD=1     # builds a (U) Windows executable
 
 ### On Windows
 
-A full guide is to be written. You can use [mxe](https://mxe.cc/) and MinGW.
+#### 1. Set up MSYS2, following [this  guide](https://github.com/orlp/dev-on-windows/wiki/Installing-GCC--&-MSYS2).
+
+#### 2. Install dependencies
+```
+pacman -S mingw-w64-i686-glew mingw-w64-x86_64-glew mingw-w64-i686-SDL2 mingw-w64-x86_64-SDL2 python3
+```
+#### 3. Copy baserom(s) for asset extraction
+
+For each version (jp/us/eu) that you want to build an executable for, put an existing ROM at
+`./baserom.<version>.z64` for asset extraction.
+
+#### 4. On MSYS2, navigate to the sm64pc folder and then enter `./tools/audiofile-0.3.6/`. Inside this directory, run
+```
+autoreconf -i
+```
+
+Only leave this directory on step 9.
+
+#### 5. Run the `configure` script
+```
+PATH=/mingw64/bin:/mingw32/bin:$PATH LIBS=-lstdc++ ./configure --disable-docs
+```
+#### 6. Run the `make` script
+```
+PATH=/mingw64/bin:/mingw32/bin:$PATH make
+```
+#### 7. Create a lib directory in `tools/`
+```
+mkdir ../lib
+```
+
+#### 8. Copy the compiled libaudiofile to `tools/lib/`
+```
+cp libaudiofile/.libs/libaudiofile.a ../lib/
+cp libaudiofile/.libs/libaudiofile.la ../lib/
+```
+
+#### 9. Navigate back to `tools/`, then alter the `Makefile` and add `-lstdc++` on the following line
+```
+tabledesign_CFLAGS := -Wno-uninitialized -laudiofile -lstdc++
+```
+
+#### 10. Run `make`
+```
+PATH=/mingw64/bin:/mingw32/bin:$PATH make
+```
+
+#### 11. Navigate back to the sm64pc root directory.
+
+#### 12.  Finally, run `make` once more. (Note that mingw32 and mingw64 have been swapped. This is so you can build the 32bit application successfully.)
+```
+PATH=/mingw32/bin:/mingw64/bin:$PATH make
+```
+
+This guide is a courtesy of [XNBlank](https://github.com/XNBlank).
+
 
 ### For the web
 
