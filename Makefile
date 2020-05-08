@@ -133,7 +133,8 @@ endif
 ifeq ($(NON_MATCHING),1)
   VERSION_CFLAGS := $(VERSION_CFLAGS) -DNON_MATCHING -DAVOID_UB
     ifeq ($(TARGET_RPI),1) # Define RPi to change SDL2 title & GLES2 hints
-      VERSION_CFLAGS += -DTARGET_RPI
+      # Other platforms will use GLES2 eventually, not only RPis.
+      VERSION_CFLAGS += -DUSE_GLES
     endif
   VERSION_ASFLAGS := --defsym AVOID_UB=1
   COMPARE := 0
