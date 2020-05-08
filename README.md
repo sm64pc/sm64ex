@@ -26,6 +26,7 @@ The build system has the following package requirements:
   * libsdl2-dev
   * [audiofile](https://audiofile.68k.org/)
   * libglew-dev
+  * libglgw3-dev
   * git
 
 
@@ -40,19 +41,19 @@ sudo apt install build-essential git python3 libaudiofile-dev libglew-dev libglf
 
 __Arch Linux__
 ```
-sudo pacman -S base-devel python audiofile sdl2 glew
+sudo pacman -S base-devel python audiofile sdl2 glew 
 ```
-
+(Note: also install glfw3 and libusb for testing)
 __Void Linux - targeting 64 bits__
 ```
 sudo xbps-install -S base-devel python3 audiofile-devel SDL2-devel glew-devel
 ```
-
+(Note: also install glfw3 and libusb for testing)
 __Void Linux - targeting 32 bits__
 ```
 sudo xbps-install -S base-devel python3 audiofile-devel-32bit SDL2-devel-32bit glew-devel-32bit
 ```
-
+(Note: also install glfw3 and libusb for testing)
 #### 3. Build the executable.
 
 Run `make` to build (defaults to `VERSION=us`)
