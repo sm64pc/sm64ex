@@ -14,8 +14,22 @@ add_custom_command(
         COMMENT "Extracting assets from: baserom.${ROM_VERSION}.z64"
 )
 
+add_custom_target(
+        clean_textures
+)
+
+add_custom_command(
+        TARGET clean_textures
+        COMMAND python ${CMAKE_SOURCE_DIR}/extract_assets.py --clean
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        DEPENDS ${N64_TOOLS}
+        COMMENT "Cleaning textures.."
+)
+
+
 file(GLOB_RECURSE TEXTURE_PNGS "${PROJECT_SOURCE_DIR}/*.*.png")
 set(OUTPUT_DUMPED)
+set(OUTPUT_HEX)
 
 foreach(TEXTURE_PNG ${TEXTURE_PNGS})
     file(RELATIVE_PATH TEXTURE_REL_PATH ${PROJECT_SOURCE_DIR} ${TEXTURE_PNG})
@@ -31,14 +45,17 @@ foreach(TEXTURE_PNG ${TEXTURE_PNGS})
             DEPENDS ${PROJECT_SOURCE_DIR}/${TEXTURE_REL_PATH}
     )
     list(APPEND OUTPUT_DUMPED ${PROJECT_BINARY_DIR}/${REL_PATH}/${TEXTURE_DUMPED})
+    set(TEXTURE_HEX ${TEXTURE_DUMPED}.inc.c)
+    add_custom_command(
+            OUTPUT ${PROJECT_BINARY_DIR}/${REL_PATH}/${TEXTURE_HEX}
+            COMMAND ${HEXDUMP_PATH} -v -e '1/1 \"0x%%X,\"' ${PROJECT_BINARY_DIR}/${REL_PATH}/${TEXTURE_DUMPED} > ${PROJECT_BINARY_DIR}/${REL_PATH}/${TEXTURE_HEX}
+            COMMENT "dumping ${PROJECT_BINARY_DIR}/${REL_PATH}/${TEXTURE_DUMPED} to ${PROJECT_BINARY_DIR}/${REL_PATH}/${TEXTURE_HEX}"
+            DEPENDS ${PROJECT_BINARY_DIR}/${REL_PATH}/${TEXTURE_DUMPED}
+    )
+    list(APPEND OUTPUT_HEX ${PROJECT_BINARY_DIR}/${REL_PATH}/${TEXTURE_HEX})
 endforeach()
 
 add_custom_target(
-        dump_assets
-        DEPENDS extract_assets ${OUTPUT_DUMPED}
-)
-
-add_custom_target(
         ${PROJECT_NAME}
-        DEPENDS extract_assets dump_assets
-)
+        DEPENDS extract_assets ${OUTPUT_DUMPED} ${OUTPUT_HEX}
+)

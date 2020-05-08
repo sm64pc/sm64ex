@@ -42,4 +42,6 @@ set(HEADERS
         skin_movement.h
         )
 
-add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADERS})
+add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADERS})
+
+add_dependencies(${PROJECT_NAME} textures)
