@@ -492,26 +492,17 @@ void read_controller_inputs(void) {
 
     //printf("P2: %d, %d\n", c_rightx, c_righty); // is righty broken?
 
-    //struct Controller *controller_backup;
-
     for (i = 0; i < 2; i++) 
     {
         struct Controller *controller = &gControllers[i];
+
         if (i==1)   // This is related to the analog camera control, using a P2 controller hack. P2 will no longer be correctly available for multiplayer.
         {
-            if (c_rightx != 0 || c_righty !=0)
-            {
-                controller->rawStickX = c_rightx;
-                controller->rawStickY = c_righty;
-                controller->stickX = c_rightx;
-                controller->stickY = c_righty;
-                //printf("P2 = {%d, %d}\n", controller->rawStickX, controller->rawStickY);
-                continue;            
-            } else
-            {
-                controller->rawStickX = 0;
-                controller->rawStickY = 0;
-            }
+            //printf("P2 = {%d, %d}\n", controller->rawStickX, controller->rawStickY);
+            controller->rawStickX = c_rightx;
+            controller->rawStickY = c_righty;
+            controller->stickX = c_rightx;
+            controller->stickY = c_righty;
         }
         else
         {
