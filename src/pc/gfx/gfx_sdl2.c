@@ -78,6 +78,22 @@ const SDL_Scancode scancode_rmapping_nonextended[][2] = {
     {SDL_SCANCODE_KP_MULTIPLY, SDL_SCANCODE_PRINTSCREEN}
 };
 
+static void gfx_sdl_set_fullscreen(bool fullscreen)
+{
+    if (fullscreen)
+    {
+        SDL_SetWindowFullscreen(wnd, SDL_WINDOW_FULLSCREEN_DESKTOP);
+        SDL_ShowCursor(SDL_DISABLE);
+    }
+    else
+    {
+        SDL_SetWindowFullscreen(wnd, 0);
+        SDL_ShowCursor(SDL_ENABLE);
+    }
+
+    configFullscreen = fullscreen;
+}
+
 static void gfx_sdl_init(void) {
     SDL_Init(SDL_INIT_VIDEO);
 	
@@ -101,11 +117,7 @@ static void gfx_sdl_init(void) {
             DESIRED_SCREEN_WIDTH, DESIRED_SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
     #endif
   
-    if (configFullscreen)
-    {
-        SDL_SetWindowFullscreen(wnd, SDL_WINDOW_FULLSCREEN_DESKTOP);
-        SDL_ShowCursor(SDL_DISABLE);
-    }
+    gfx_sdl_set_fullscreen(configFullscreen);
     
     SDL_GL_CreateContext(wnd);
     SDL_GL_SetSwapInterval(2); // TODO 0, 1 or 2 or remove this line
@@ -156,24 +168,11 @@ static void gfx_sdl_onkeydown(int scancode) {
 
     if (state[SDL_SCANCODE_LALT] && state[SDL_SCANCODE_RETURN])
     {
-        if (!configFullscreen)
-        {
-            SDL_SetWindowFullscreen(wnd, SDL_WINDOW_FULLSCREEN_DESKTOP);
-            SDL_ShowCursor(SDL_DISABLE);
-        }
-        else
-        {
-            SDL_SetWindowFullscreen(wnd, 0);
-            SDL_ShowCursor(SDL_ENABLE);
-        }
-
-        configFullscreen = !configFullscreen;
+        gfx_sdl_set_fullscreen(!configFullscreen);
     }
     else if (state[SDL_SCANCODE_ESCAPE] && configFullscreen)
     {
-        SDL_SetWindowFullscreen(wnd, 0);
-        SDL_ShowCursor(SDL_ENABLE);
-        configFullscreen = false;
+        gfx_sdl_set_fullscreen(false);
     }
 }
 
