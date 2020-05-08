@@ -19,6 +19,8 @@ COMPARE ?= 1
 NON_MATCHING ?= 0
 # Build for the N64 (turn this off for ports)
 TARGET_N64 ?= 0
+# Build and optimize for Raspberry Pi(s)
+TARGET_RPI ?= 0
 # Compiler to use (ido or gcc)
 COMPILER ?= ido
 
@@ -79,7 +81,7 @@ ifeq ($(VERSION),sh)
   GRUCODE_ASFLAGS := --defsym F3D_NEW=1
   TARGET := sm64.sh
 # TODO: GET RID OF THIS!!! We should mandate assets for Shindou like EU but we dont have the addresses extracted yet so we'll just pretend you have everything extracted for now.
-  NOEXTRACT := 1 
+  NOEXTRACT := 1
 else
   $(error unknown version "$(VERSION)")
 endif
@@ -130,6 +132,9 @@ endif
 
 ifeq ($(NON_MATCHING),1)
   VERSION_CFLAGS := $(VERSION_CFLAGS) -DNON_MATCHING -DAVOID_UB
+    ifeq ($(TARGET_RPI),1) # Define RPi to change SDL2 title & GLES2 hints
+      VERSION_CFLAGS += -DTARGET_RPI
+    endif
   VERSION_ASFLAGS := --defsym AVOID_UB=1
   COMPARE := 0
 endif
@@ -185,10 +190,17 @@ EXE := $(BUILD_DIR)/$(TARGET).html
 else
 ifeq ($(WINDOWS_BUILD),1)
 EXE := $(BUILD_DIR)/$(TARGET).exe
+
+else #Linux builds here
+ifeq ($(TARGET_RPI),1)
+EXE := $(BUILD_DIR)/$(TARGET).arm
 else
 EXE := $(BUILD_DIR)/$(TARGET)
 endif
 endif
+
+endif
+
 ROM := $(BUILD_DIR)/$(TARGET).z64
 ELF := $(BUILD_DIR)/$(TARGET).elf
 LD_SCRIPT := sm64.ld
@@ -242,8 +254,32 @@ endif
 endif
 
 # Use a default opt flag for gcc
-ifeq ($(COMPILER),gcc)
-  OPT_FLAGS := -O2
+ifeq ($(NON_MATCHING),1)
+	OPT_FLAGS := -O2
+endif
+
+ifeq ($(TARGET_RPI),1)
+           machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
+# Raspberry Pi B+, Zero, etc
+        ifneq (,$(findstring armv6l,$(machine)))
+                OPT_FLAGS := -march=armv6zk+fp -mfpu=vfp -Ofast
+        endif
+
+# Raspberry Pi 2 and 3
+        ifneq (,$(findstring armv7l,$(machine)))
+                model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
+
+                ifneq (,$(findstring 3,$(model)))
+                         OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -O3
+                         else
+                         OPT_FLAGS := -march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4 -O3
+                endif
+        endif
+
+# RPi4 / ARM A64 NEEDS TESTING 32BIT.
+        ifneq (,$(findstring aarch64,$(machine)))
+                 OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -O3
+        endif
 endif
 
 # File dependencies and variables for specific files
@@ -466,6 +502,7 @@ CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fn
 else ifeq ($(TARGET_WEB),1)
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
 CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv -s USE_SDL=2
+# Linux / Other builds below
 else
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(CROSS)sdl2-config --cflags`
 CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(CROSS)sdl2-config --cflags`
@@ -479,9 +516,14 @@ else
 ifeq ($(WINDOWS_BUILD),1)
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(CROSS)sdl2-config --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -no-pie -static
 else
+# Linux / Other builds below
+ifeq ($(TARGET_RPI),1)
+LDFLAGS := $(OPT_FLAGS) -lm -lGLESv2 `$(CROSS)sdl2-config --libs` -no-pie
+else
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(CROSS)sdl2-config --libs` -no-pie -lpthread
 endif
 endif
+endif #Added for Pi ifeq
 
 endif
 
@@ -837,7 +879,6 @@ else
 $(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES)
 	$(LD) -L $(BUILD_DIR) -o $@ $(O_FILES) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(LDFLAGS)
 endif
-
 
 
 .PHONY: all clean distclean default diff test load libultra
