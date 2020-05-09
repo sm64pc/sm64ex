@@ -5,7 +5,7 @@
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
-
+#include "engine/math_util.h"
 #include "configfile.h"
 
 #define ARRAY_LEN(arr) (sizeof(arr) / sizeof(arr[0]))
@@ -14,6 +14,7 @@ enum ConfigOptionType {
     CONFIG_TYPE_BOOL,
     CONFIG_TYPE_UINT,
     CONFIG_TYPE_FLOAT,
+    CONFIG_TYPE_U8
 };
 
 struct ConfigOption {
@@ -23,8 +24,10 @@ struct ConfigOption {
         bool *boolValue;
         unsigned int *uintValue;
         float *floatValue;
+        u8 *u8Value;
     };
 };
+
 
 /*
  *Config options and default values
@@ -45,9 +48,17 @@ unsigned int configKeyStickDown  = 0x1F;
 unsigned int configKeyStickLeft  = 0x1E;
 unsigned int configKeyStickRight = 0x20;
 
+u8 configCameraXSens            = 50;
+u8 configCameraYSens            = 50;
+u8 configCameraAggr             = 0;
+u8 configCameraPan              = 0;
+u8 configCameraInvertX          = 0;
+u8 configCameraInvertY          = 0;
+u8 configEnableCamera           = 0;
+u8 configCameraMouse            = 0;
 
 static const struct ConfigOption options[] = {
-    {.name = "fullscreen",     .type = CONFIG_TYPE_BOOL, .boolValue = &configFullscreen},
+    //{.name = "fullscreen",     .type = CONFIG_TYPE_BOOL, .boolValue = &configFullscreen},
     {.name = "key_a",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyA},
     {.name = "key_b",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyB},
     {.name = "key_start",      .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStart},
@@ -61,6 +72,14 @@ static const struct ConfigOption options[] = {
     {.name = "key_stickdown",  .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStickDown},
     {.name = "key_stickleft",  .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStickLeft},
     {.name = "key_stickright", .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStickRight},
+    {.name = "bettercam_enable",    .type = CONFIG_TYPE_U8, .u8Value = &configEnableCamera},
+    {.name = "bettercam_invertx",   .type = CONFIG_TYPE_U8, .u8Value = &configCameraInvertX},
+    {.name = "bettercam_inverty",   .type = CONFIG_TYPE_U8, .u8Value = &configCameraInvertY},
+    {.name = "bettercam_xsens",     .type = CONFIG_TYPE_U8, .u8Value = &configCameraXSens},
+    {.name = "bettercam_ysens",     .type = CONFIG_TYPE_U8, .u8Value = &configCameraYSens},
+    {.name = "bettercam_aggression",.type = CONFIG_TYPE_U8, .u8Value = &configCameraAggr},
+    {.name = "bettercam_pan_level", .type = CONFIG_TYPE_U8, .u8Value = &configCameraPan},
+    {.name = "bettercam_mouse_look", .type = CONFIG_TYPE_U8, .u8Value = &configCameraMouse},
 };
 
 // Reads an entire line from a file (excluding the newline character) and returns an allocated string
@@ -143,7 +162,6 @@ void configfile_load(const char *filename) {
     FILE *file;
     char *line;
 
-    printf("This is a testing build from github.com/sm64pc/sm64pc. Report bugs there.\n\n");    
     printf("Loading configuration from '%s'\n", filename);
 
     file = fopen(filename, "r");
@@ -189,6 +207,9 @@ void configfile_load(const char *filename) {
                         case CONFIG_TYPE_FLOAT:
                             sscanf(tokens[1], "%f", option->floatValue);
                             break;
+                        case CONFIG_TYPE_U8:
+                            sscanf(tokens[1], "%u", option->u8Value);
+                            break;
                         default:
                             assert(0); // bad type
                     }
@@ -227,6 +248,9 @@ void configfile_save(const char *filename) {
                 break;
             case CONFIG_TYPE_FLOAT:
                 fprintf(file, "%s %f\n", option->name, *option->floatValue);
+                break;
+            case CONFIG_TYPE_U8:
+                fprintf(file, "%s %u\n", option->name, *option->u8Value);
                 break;
             default:
                 assert(0); // unknown type

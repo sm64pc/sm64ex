@@ -153,10 +153,6 @@ s32 save_file_get_cap_pos(Vec3s capPos);
 void save_file_set_sound_mode(u16 mode);
 u16 save_file_get_sound_mode(void);
 void save_file_move_cap_to_default_location(void);
-void save_set_firsttime(void);
-u8 save_check_firsttime(void);
-void save_file_get_setting(void);
-void save_file_set_setting(void);
 
 void disable_warp_checkpoint(void);
 void check_if_should_set_warp_checkpoint(struct WarpNode *a);

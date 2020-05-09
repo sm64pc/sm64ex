@@ -8,8 +8,9 @@
 #include "bettercamera.h"
 #include "include/text_strings.h"
 #include "engine/surface_collision.h"
+#include "pc/configfile.h"
 
-
+#define CONFIG_FILE "sm64config.txt"
 
 /**
 Quick explanation of the camera modes
@@ -155,26 +156,39 @@ static u8 newcam_clamp(u8 value, u8 min, u8 max)
 ///These are the default settings for Puppycam. You may change them to change how they'll be set for first timers.
 void newcam_init_settings()
 {
-    if (save_check_firsttime())
-    {
-        save_file_get_setting();
-        newcam_sensitivityX = newcam_clamp(newcam_sensitivityX, 10, 250);
-        newcam_sensitivityY = newcam_clamp(newcam_sensitivityY, 10, 250);
-        newcam_aggression = newcam_clamp(newcam_aggression, 0, 100);
-        newcam_panlevel = newcam_clamp(newcam_panlevel, 0, 100);
-        newcam_invertX = newcam_clamp(newcam_invertX, 0, 1);
-        newcam_invertY = newcam_clamp(newcam_invertY, 0, 1);
-    }
-    else
-    {
-        newcam_sensitivityX = 75;
-        newcam_sensitivityY = 75;
-        newcam_aggression = 0;
-        newcam_panlevel = 75;
-        newcam_invertX = 0;
-        newcam_invertY = 0;
-        save_set_firsttime();
-    }
+    configfile_load(CONFIG_FILE);
+
+    newcam_sensitivityX = configCameraXSens;
+    newcam_sensitivityY = configCameraYSens;
+    newcam_aggression   = configCameraAggr;
+    newcam_panlevel     = configCameraPan;
+    newcam_invertX      = configCameraInvertX;
+    newcam_invertY      = configCameraInvertY;
+    newcam_mouse        = configCameraMouse;
+    newcam_analogue     = configEnableCamera;
+
+    newcam_clamp(newcam_sensitivityX, 10, 250);
+    newcam_clamp(newcam_sensitivityY, 10, 250);
+    newcam_clamp(newcam_aggression, 0, 100);
+    newcam_clamp(newcam_panlevel, 0, 100);
+    newcam_clamp(newcam_invertX, 0, 1);
+    newcam_clamp(newcam_invertY, 0, 1);
+    newcam_clamp(newcam_mouse, 0, 1);
+    newcam_clamp(newcam_analogue, 0, 1);
+}
+
+extern void newcam_save_settings()
+{
+    configCameraXSens = newcam_sensitivityX;
+    configCameraYSens = newcam_sensitivityY;
+    configCameraAggr = newcam_aggression;
+    configCameraPan = newcam_panlevel;
+    configCameraInvertX = newcam_invertX;
+    configCameraInvertY = newcam_invertY;
+    configCameraMouse = newcam_mouse;
+    configEnableCamera = newcam_analogue;
+
+    configfile_save(CONFIG_FILE);
 }
 
 /** Mathematic calculations. This stuffs so basic even *I* understand it lol
@@ -375,7 +389,7 @@ static void newcam_rotate_button(void)
             newcam_tilt_acc -= (newcam_tilt_acc*(DEGRADE));
 
     }
-    
+
     if (newcam_mouse == 1)
     {
         newcam_yaw += mouse_x * 16;
@@ -714,10 +728,10 @@ void newcam_change_setting(u8 toggle)
         newcam_invertY ^= 1;
         break;
     case 6:
-        newcam_aggression = newcam_clamp(newcam_aggression + toggle, 1, 100);
+        newcam_aggression = newcam_clamp(newcam_aggression + toggle, 0, 100);
         break;
     case 7:
-        newcam_panlevel = newcam_clamp(newcam_panlevel + toggle, 1, 100);
+        newcam_panlevel = newcam_clamp(newcam_panlevel + toggle, 0, 100);
         break;
     }
 }
@@ -821,15 +835,20 @@ void newcam_check_pause_buttons()
 {
     if (gPlayer1Controller->buttonPressed & R_TRIG)
     {
+        if (newcam_option_open == 0)
+        {
             #ifndef nosound
             play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
             #endif
-        if (newcam_option_open == 0)
             newcam_option_open = 1;
+        }
         else
         {
+            #ifndef nosound
+            play_sound(SOUND_MENU_MARIO_CASTLE_WARP2, gDefaultSoundArgs);
+            #endif
             newcam_option_open = 0;
-            save_file_set_setting();
+            newcam_save_settings();
         }
     }
 
@@ -843,7 +862,7 @@ void newcam_check_pause_buttons()
                 switch (newcam_option_index)
                 {
                     case 0: newcam_option_index++; newcam_option_timer += 10; break;
-                    default: newcam_option_timer += 5; break;
+                    default: newcam_option_timer += 3; break;
                 }
                 #ifndef nosound
                 play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
@@ -871,7 +890,7 @@ void newcam_check_pause_buttons()
                 switch (newcam_option_index)
                 {
                     case 0: newcam_option_index++; newcam_option_timer += 10; break;
-                    default: newcam_option_timer += 5; break;
+                    default: newcam_option_timer += 3; break;
                 }
                 #ifndef nosound
                 play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
