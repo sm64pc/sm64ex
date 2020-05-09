@@ -3,7 +3,7 @@
 * Change the dinput(?) scancodes for SDL scancodes.
 * Enable saving the configuration file and savedata on XDG_DATA_HOME/sm64pc.
 * Shindou features
-* DOOM-like WAD System
+* Improve LOD distance.
 * Update testing's Makefile
 * A text-based saving system and a save editor
 * Fix issues related to camera saves creating crashes on Windows builds
