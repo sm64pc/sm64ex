@@ -17,6 +17,8 @@ extern int16_t righty;
 int mouse_x;
 int mouse_y;
 
+extern u8 newcam_mouse;
+
 static bool init_ok;
 static SDL_GameController *sdl_cntrl;
 
@@ -25,7 +27,9 @@ static void controller_sdl_init(void) {
         fprintf(stderr, "SDL init error: %s\n", SDL_GetError());
         return;
     }
-    SDL_SetRelativeMouseMode(SDL_TRUE); //!This should be toggled based on newcam_mouse, or at least allow some form of escape without alt+tab;
+
+    if (newcam_mouse == 1)
+        SDL_SetRelativeMouseMode(SDL_TRUE);
     SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
 
     init_ok = true;
@@ -35,6 +39,11 @@ static void controller_sdl_read(OSContPad *pad) {
     if (!init_ok) {
         return;
     }
+
+    if (newcam_mouse == 1)
+        SDL_SetRelativeMouseMode(SDL_TRUE);
+    else
+        SDL_SetRelativeMouseMode(SDL_FALSE);
 
     SDL_GameControllerUpdate();
     SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
