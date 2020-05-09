@@ -263,14 +263,11 @@ ifeq ($(TARGET_RPI),1)
                 endif
         endif
 
-
 # RPi3 or RPi4, in ARM64 (aarch64) mode. NEEDS TESTING 32BIT.
 # DO NOT pass -mfpu stuff here, thats for 32bit ARM only and will fail for 64bit ARM.
-
-	ifneq (,$(findstring aarch64,$(machine)))
+        ifneq (,$(findstring aarch64,$(machine)))
                 model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
-
-		ifneq (,$(findstring 3,$(model)))
+                ifneq (,$(findstring 3,$(model)))
                          OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -O3
                 else ifneq (,$(findstring 4,$(model)))
                          OPT_FLAGS := -march=armv8-a+crc+simd -mtune=cortex-a72 -O3
@@ -553,7 +550,6 @@ $(BUILD_DIR)/text/%/define_courses.inc.c: text/define_courses.inc.c text/%/cours
 $(BUILD_DIR)/text/%/define_text.inc.c: text/define_text.inc.c text/%/courses.h text/%/dialogs.h
 	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/$*/
 	$(TEXTCONV) charmap.txt $@ $@
-
 
 ALL_DIRS := $(BUILD_DIR) $(addprefix $(BUILD_DIR)/,$(SRC_DIRS) $(ASM_DIRS) $(GODDARD_SRC_DIRS) $(ULTRA_SRC_DIRS) $(ULTRA_ASM_DIRS) $(ULTRA_BIN_DIRS) $(BIN_DIRS) $(TEXTURE_DIRS) $(TEXT_DIRS) $(SOUND_SAMPLE_DIRS) $(addprefix levels/,$(LEVEL_DIRS)) include) $(MIO0_DIR) $(addprefix $(MIO0_DIR)/,$(VERSION)) $(SOUND_BIN_DIR) $(SOUND_BIN_DIR)/sequences/$(VERSION)
 
