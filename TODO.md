@@ -11,5 +11,8 @@
 * GUI Control Setting
 * Merge EU-PAL language options, and add jp_JP and eng_US
 * HD Texture Support 
-* Tree camera fix (potentially actual models)
+* Billboarding fix for various objects like trees(potentially actual models)
 * Add support for Spanish and Portuguese special characters as to allow for correct translation
+* Allow for dynamic text lengths to aid in translations
+* Rework LOD System to work better for modern systems
+* Fix sound cutout issues when loading levels
