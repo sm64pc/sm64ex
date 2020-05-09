@@ -5,6 +5,7 @@ extern bool         configFullscreen;
 extern unsigned int configKeyA;
 extern unsigned int configKeyB;
 extern unsigned int configKeyStart;
+extern unsigned int configKeyL;
 extern unsigned int configKeyR;
 extern unsigned int configKeyZ;
 extern unsigned int configKeyCUp;
