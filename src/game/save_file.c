@@ -567,48 +567,6 @@ u16 save_file_get_sound_mode(void) {
     return gSaveBuffer.menuData[0].soundMode;
 }
 
-void save_file_set_setting(void) {
-
-    gSaveBuffer.menuData[0].camx = newcam_sensitivityX;
-    gSaveBuffer.menuData[0].camy = newcam_sensitivityY;
-    gSaveBuffer.menuData[0].invertx = newcam_invertX;
-    gSaveBuffer.menuData[0].inverty = newcam_invertY;
-    gSaveBuffer.menuData[0].camc = newcam_aggression;
-    gSaveBuffer.menuData[0].camp = newcam_panlevel;
-    gSaveBuffer.menuData[0].analogue = newcam_analogue;
-
-    gSaveBuffer.menuData[0].firsttime = 1;
-
-
-    gMainMenuDataModified = TRUE;
-    save_main_menu_data();
-}
-
-void save_file_get_setting(void) {
-        newcam_sensitivityX = gSaveBuffer.menuData[0].camx;
-        newcam_sensitivityY = gSaveBuffer.menuData[0].camy;
-        newcam_invertX = gSaveBuffer.menuData[0].invertx;
-        newcam_invertY = gSaveBuffer.menuData[0].inverty;
-        newcam_aggression = gSaveBuffer.menuData[0].camc;
-        newcam_panlevel = gSaveBuffer.menuData[0].camp;
-        newcam_analogue = gSaveBuffer.menuData[0].analogue;
-
-}
-
-u8 save_check_firsttime(void)
-{
-    return gSaveBuffer.menuData[0].firsttime;
-}
-
-
-void save_set_firsttime(void)
-{
-    gSaveBuffer.menuData[0].firsttime = 1;
-
-    gMainMenuDataModified = TRUE;
-    save_main_menu_data();
-}
-
 void save_file_move_cap_to_default_location(void) {
     if (save_file_get_flags() & SAVE_FLAG_CAP_ON_GROUND) {
         switch (gSaveBuffer.files[gCurrSaveFileNum - 1][0].capLevel) {

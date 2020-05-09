@@ -25,7 +25,7 @@ static void controller_sdl_init(void) {
         fprintf(stderr, "SDL init error: %s\n", SDL_GetError());
         return;
     }
-    SDL_SetRelativeMouseMode(SDL_TRUE);
+    SDL_SetRelativeMouseMode(SDL_TRUE); //!This should be toggled based on newcam_mouse, or at least allow some form of escape without alt+tab;
     SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
 
     init_ok = true;
