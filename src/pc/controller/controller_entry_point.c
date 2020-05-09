@@ -44,6 +44,10 @@ void osContGetReadData(OSContPad *pad) {
         c_rightx = rightx / 0x100;
         int stick_y = -righty / 0x100;
         c_righty = stick_y == 128 ? 127 : stick_y;
+    } else
+    {
+        c_rightx = 0;
+        c_righty = 0;
     }
 #endif
 

@@ -487,52 +487,20 @@ void read_controller_inputs(void) {
     if (gControllerBits) {
         osRecvMesg(&gSIEventMesgQueue, &D_80339BEC, OS_MESG_BLOCK);
         osContGetReadData(&gControllerPads[0]);
-#ifdef VERSION_SH
-        release_rumble_pak_control();
-#endif
     }
     run_demo_inputs();
 
-    for (i = 0; i < 2; i++) {
+    #ifdef BETTERCAMERA
+    for (i = 0; i < 2; i++) 
+    {
         struct Controller *controller = &gControllers[i];
-#ifndef BETTERCAMERA
 
-        // if we're receiving inputs, update the controller struct
-        // with the new button info.
-        if (controller->controllerData != NULL) {
-            controller->rawStickX = controller->controllerData->stick_x;
-            controller->rawStickY = controller->controllerData->stick_y;
-            controller->buttonPressed = controller->controllerData->button
-                                        & (controller->controllerData->button ^ controller->buttonDown);
-            // 0.5x A presses are a good meme
-            controller->buttonDown = controller->controllerData->button;
-            adjust_analog_stick(controller);
-        } else // otherwise, if the controllerData is NULL, 0 out all of the inputs.
-        {
-            controller->rawStickX = 0;
-            controller->rawStickY = 0;
-            controller->buttonPressed = 0;
-            controller->buttonDown = 0;
-            controller->stickX = 0;
-            controller->stickY = 0;
-            controller->stickMag = 0;
-        }
-#else
         if (i==1)   // This is related to the analog camera control, using a P2 controller hack. P2 will no longer be correctly available for multiplayer.
         {
-            if (c_rightx != 0 || c_righty !=0)
-            {
-                controller->rawStickX = c_rightx;
-                controller->rawStickY = c_righty;
-                controller->stickX = c_rightx;
-                controller->stickY = c_righty;
-                //printf("P2 = {%d, %d}\n", controller->rawStickX, controller->rawStickY);
-                continue;            
-            } else
-            {
-                controller->rawStickX = 0;
-                controller->rawStickY = 0;
-            }
+            controller->rawStickX = c_rightx;
+            controller->rawStickY = c_righty;
+            controller->stickX = c_rightx;
+            controller->stickY = c_righty;
         }
         else
         {
@@ -557,8 +525,34 @@ void read_controller_inputs(void) {
                 controller->stickMag = 0;
             }
         }
-#endif
+        
     }
+    #else
+    for (i = 0; i < 2; i++) {
+            struct Controller *controller = &gControllers[i];
+
+            // if we're receiving inputs, update the controller struct
+            // with the new button info.
+            if (controller->controllerData != NULL) {
+                controller->rawStickX = controller->controllerData->stick_x;
+                controller->rawStickY = controller->controllerData->stick_y;
+                controller->buttonPressed = controller->controllerData->button
+                                            & (controller->controllerData->button ^ controller->buttonDown);
+                // 0.5x A presses are a good meme
+                controller->buttonDown = controller->controllerData->button;
+                adjust_analog_stick(controller);
+            } else // otherwise, if the controllerData is NULL, 0 out all of the inputs.
+            {
+                controller->rawStickX = 0;
+                controller->rawStickY = 0;
+                controller->buttonPressed = 0;
+                controller->buttonDown = 0;
+                controller->stickX = 0;
+                controller->stickY = 0;
+                controller->stickMag = 0;
+            }
+        }
+    #endif
 
     // For some reason, player 1's inputs are copied to player 3's port. This
     // potentially may have been a way the developers "recorded" the inputs
