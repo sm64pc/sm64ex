@@ -158,8 +158,8 @@ s32 osEepromLongRead(UNUSED OSMesgQueue *mq, u8 address, u8 *buffer, int nbytes)
             chdir(cur_dir);                
             closedir(conf_dir);                 // We didn't find a save file in XDG_DATA_HOME/sm64pc
             return -1;
-        } else 
-            //printf("Loading save data from '%s%s'\n", SDL_GetPrefPath("", "sm64pc"), "sm64_save_file.bin"); // We've found a file in XDG_DATA_HOME/sm64pc!
+        } else printf("Loading save data from '%s%s'\n", SDL_GetPrefPath("", "sm64pc"), "sm64_save_file.bin"); // We've found a file in XDG_DATA_HOME/sm64pc!
+            
     }
 
     
