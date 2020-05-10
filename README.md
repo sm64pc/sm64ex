@@ -12,4 +12,4 @@ Run `./extract-assets.py --clean && make clean` or `make distclean` to remove RO
  * True analog camera control is now available on our [testing branch](https://github.com/sm64pc/sm64pc/tree/testing).
 
 ## Building
-For building instructions, please refer to the [wiki](https://github.com/sm64pc/sm64pc/wiki)
+For building instructions, please refer to the [wiki](https://github.com/sm64pc/sm64pc/wiki).
