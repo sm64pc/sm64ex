@@ -60,7 +60,8 @@ Run `make` to build (defaults to `VERSION=us`)
 
 ```
 make VERSION=jp -j6                 # build (J) version with 6 jobs
-make VERSION=us WINDOWS_BUILD=1     # builds a (U) Windows executable 
+make VERSION=us WINDOWS_BUILD=1     # builds a (U) Windows executable (under Windows, compiling for Windows under Linux is not supported)
+make BETTERCAMERA=0                 # builds an executable with the original SM64 camera (no analog/mouse support)
 make TARGET_RPI=1                   # targets an executable for a Raspberry Pi
 ```
 

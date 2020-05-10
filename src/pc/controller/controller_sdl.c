@@ -14,10 +14,13 @@
 
 extern int16_t rightx;
 extern int16_t righty;
+
+#ifdef BETTERCAMERA
 int mouse_x;
 int mouse_y;
 
 extern u8 newcam_mouse;
+#endif
 
 static bool init_ok;
 static SDL_GameController *sdl_cntrl;
@@ -28,9 +31,11 @@ static void controller_sdl_init(void) {
         return;
     }
 
+#ifdef BETTERCAMERA
     if (newcam_mouse == 1)
         SDL_SetRelativeMouseMode(SDL_TRUE);
     SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
+#endif
 
     init_ok = true;
 }
@@ -40,15 +45,16 @@ static void controller_sdl_read(OSContPad *pad) {
         return;
     }
 
+#ifdef BETTERCAMERA
     if (newcam_mouse == 1)
         SDL_SetRelativeMouseMode(SDL_TRUE);
     else
         SDL_SetRelativeMouseMode(SDL_FALSE);
     
-    
+    SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
+#endif
 
     SDL_GameControllerUpdate();
-    SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
 
     if (sdl_cntrl != NULL && !SDL_GameControllerGetAttached(sdl_cntrl)) {
         SDL_GameControllerClose(sdl_cntrl);
