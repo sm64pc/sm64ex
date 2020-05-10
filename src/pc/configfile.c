@@ -34,6 +34,7 @@ bool configFullscreen            = false;
 unsigned int configKeyA          = 0x26;
 unsigned int configKeyB          = 0x33;
 unsigned int configKeyStart      = 0x39;
+unsigned int configKeyL          = 0x34;
 unsigned int configKeyR          = 0x36;
 unsigned int configKeyZ          = 0x25;
 unsigned int configKeyCUp        = 0x148;
@@ -51,6 +52,7 @@ static const struct ConfigOption options[] = {
     {.name = "key_a",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyA},
     {.name = "key_b",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyB},
     {.name = "key_start",      .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStart},
+    {.name = "key_l",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyL},
     {.name = "key_r",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyR},
     {.name = "key_z",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyZ},
     {.name = "key_cup",        .type = CONFIG_TYPE_UINT, .uintValue = &configKeyCUp},
