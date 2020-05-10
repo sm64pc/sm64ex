@@ -58,35 +58,55 @@ unsigned int configMouseB        = 1;
 unsigned int configMouseL        = 4;
 unsigned int configMouseR        = 5;
 unsigned int configMouseZ        = 2;
-
+#ifdef BETTERCAMERA
+// BetterCamera settings
+unsigned int configCameraXSens   = 50;
+unsigned int configCameraYSens   = 50;
+unsigned int configCameraAggr    = 0;
+unsigned int configCameraPan     = 0;
+bool         configCameraInvertX = false;
+bool         configCameraInvertY = false;
+bool         configEnableCamera  = false;
+bool         configCameraMouse   = false;
+#endif
 
 static const struct ConfigOption options[] = {
-    {.name = "fullscreen",     .type = CONFIG_TYPE_BOOL, .boolValue = &configFullscreen},
-    {.name = "key_a",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyA},
-    {.name = "key_b",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyB},
-    {.name = "key_start",      .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStart},
-    {.name = "key_l",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyL},
-    {.name = "key_r",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyR},
-    {.name = "key_z",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyZ},
-    {.name = "key_cup",        .type = CONFIG_TYPE_UINT, .uintValue = &configKeyCUp},
-    {.name = "key_cdown",      .type = CONFIG_TYPE_UINT, .uintValue = &configKeyCDown},
-    {.name = "key_cleft",      .type = CONFIG_TYPE_UINT, .uintValue = &configKeyCLeft},
-    {.name = "key_cright",     .type = CONFIG_TYPE_UINT, .uintValue = &configKeyCRight},
-    {.name = "key_stickup",    .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStickUp},
-    {.name = "key_stickdown",  .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStickDown},
-    {.name = "key_stickleft",  .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStickLeft},
-    {.name = "key_stickright", .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStickRight},
-    {.name = "joy_a",          .type = CONFIG_TYPE_UINT, .uintValue = &configJoyA},
-    {.name = "joy_b",          .type = CONFIG_TYPE_UINT, .uintValue = &configJoyB},
-    {.name = "joy_start",      .type = CONFIG_TYPE_UINT, .uintValue = &configJoyStart},
-    {.name = "joy_l",          .type = CONFIG_TYPE_UINT, .uintValue = &configJoyL},
-    {.name = "joy_r",          .type = CONFIG_TYPE_UINT, .uintValue = &configJoyR},
-    {.name = "joy_z",          .type = CONFIG_TYPE_UINT, .uintValue = &configJoyZ},
-    {.name = "mouse_a",        .type = CONFIG_TYPE_UINT, .uintValue = &configMouseA},
-    {.name = "mouse_b",        .type = CONFIG_TYPE_UINT, .uintValue = &configMouseB},
-    {.name = "mouse_l",        .type = CONFIG_TYPE_UINT, .uintValue = &configMouseL},
-    {.name = "mouse_r",        .type = CONFIG_TYPE_UINT, .uintValue = &configMouseR},
-    {.name = "mouse_z",        .type = CONFIG_TYPE_UINT, .uintValue = &configMouseZ},
+    {.name = "fullscreen",           .type = CONFIG_TYPE_BOOL, .boolValue = &configFullscreen},
+    {.name = "key_a",                .type = CONFIG_TYPE_UINT, .uintValue = &configKeyA},
+    {.name = "key_b",                .type = CONFIG_TYPE_UINT, .uintValue = &configKeyB},
+    {.name = "key_start",            .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStart},
+    {.name = "key_l",                .type = CONFIG_TYPE_UINT, .uintValue = &configKeyL},
+    {.name = "key_r",                .type = CONFIG_TYPE_UINT, .uintValue = &configKeyR},
+    {.name = "key_z",                .type = CONFIG_TYPE_UINT, .uintValue = &configKeyZ},
+    {.name = "key_cup",              .type = CONFIG_TYPE_UINT, .uintValue = &configKeyCUp},
+    {.name = "key_cdown",            .type = CONFIG_TYPE_UINT, .uintValue = &configKeyCDown},
+    {.name = "key_cleft",            .type = CONFIG_TYPE_UINT, .uintValue = &configKeyCLeft},
+    {.name = "key_cright",           .type = CONFIG_TYPE_UINT, .uintValue = &configKeyCRight},
+    {.name = "key_stickup",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStickUp},
+    {.name = "key_stickdown",        .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStickDown},
+    {.name = "key_stickleft",        .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStickLeft},
+    {.name = "key_stickright",       .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStickRight},
+    {.name = "joy_a",                .type = CONFIG_TYPE_UINT, .uintValue = &configJoyA},
+    {.name = "joy_b",                .type = CONFIG_TYPE_UINT, .uintValue = &configJoyB},
+    {.name = "joy_start",            .type = CONFIG_TYPE_UINT, .uintValue = &configJoyStart},
+    {.name = "joy_l",                .type = CONFIG_TYPE_UINT, .uintValue = &configJoyL},
+    {.name = "joy_r",                .type = CONFIG_TYPE_UINT, .uintValue = &configJoyR},
+    {.name = "joy_z",                .type = CONFIG_TYPE_UINT, .uintValue = &configJoyZ},
+    {.name = "mouse_a",              .type = CONFIG_TYPE_UINT, .uintValue = &configMouseA},
+    {.name = "mouse_b",              .type = CONFIG_TYPE_UINT, .uintValue = &configMouseB},
+    {.name = "mouse_l",              .type = CONFIG_TYPE_UINT, .uintValue = &configMouseL},
+    {.name = "mouse_r",              .type = CONFIG_TYPE_UINT, .uintValue = &configMouseR},
+    {.name = "mouse_z",              .type = CONFIG_TYPE_UINT, .uintValue = &configMouseZ},
+    #ifdef BETTERCAMERA
+    {.name = "bettercam_enable",     .type = CONFIG_TYPE_BOOL, .boolValue = &configEnableCamera},
+    {.name = "bettercam_mouse_look", .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraMouse},
+    {.name = "bettercam_invertx",    .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraInvertX},
+    {.name = "bettercam_inverty",    .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraInvertY},
+    {.name = "bettercam_xsens",      .type = CONFIG_TYPE_UINT, .uintValue = &configCameraXSens},
+    {.name = "bettercam_ysens",      .type = CONFIG_TYPE_UINT, .uintValue = &configCameraYSens},
+    {.name = "bettercam_aggression", .type = CONFIG_TYPE_UINT, .uintValue = &configCameraAggr},
+    {.name = "bettercam_pan_level",  .type = CONFIG_TYPE_UINT, .uintValue = &configCameraPan},
+    #endif
 };
 
 // Reads an entire line from a file (excluding the newline character) and returns an allocated string
