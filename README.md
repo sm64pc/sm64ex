@@ -9,7 +9,7 @@ Run `./extract-assets.py --clean && make clean` or `make distclean` to remove RO
  * Native rendering. You can now play SM64 without the need of an emulator. 
  * Variable aspect ratio and resolution. The game can now correctly render at basically any window size.
  * Native xinput controller support. On Linux, DualShock 4 has been confirmed to work plug-and-play.
- * True analog camera control is now available on our [testing branch](https://github.com/sm64pc/sm64pc/tree/testing).
+ * Analog camera control and mouse look. (Activate with `make BETTERCAMERA=1`.)
 
 ## Building
 For building instructions, please refer to the [wiki](https://github.com/sm64pc/sm64pc/wiki).
