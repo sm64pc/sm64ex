@@ -41,6 +41,7 @@ else
 endif
 
 # Automatic settings for PC port(s)
+# WINDOWS_BUILD IS NOT FOR COMPILING A WINDOWS EXECUTABLE UNDER LINUX!
 
 NON_MATCHING := 1
 GRUCODE := f3dex2e
