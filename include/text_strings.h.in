@@ -3,21 +3,6 @@
 
 #include "text_menu_strings.h"
 
-#define NC_CAMX 				_("Camera X Sensitivity")
-#define NC_CAMY 				_("Camera Y Sensitivity")
-#define NC_INVERTX				_("Invert X Axis")
-#define NC_INVERTY				_("Invert Y Axis")
-#define NC_CAMC 				_("Camera Centre Aggression")
-#define NC_CAMP 				_("Camera Pan Level")
-#define NC_ENABLED 				_("Enabled")
-#define NC_DISABLED 			_("Disabled")
-#define NC_BUTTON 				_("[R]: Options")
-#define NC_BUTTON2 				_("[R]: Return")
-#define NC_OPTION 				_("OPTIONS")
-#define NC_HIGHLIGHT 			_("O")
-#define NC_ANALOGUE				_("Analogue Camera")
-#define NC_MOUSE				_("Mouse Look")
-
 /**
  * Global Symbols
  */
@@ -122,6 +107,7 @@
 // Save Options
 #define TEXT_SAVE_AND_CONTINUE _("セーブしてつづける？")
 #define TEXT_SAVE_AND_QUIT _("セーブしておわる？")
+#define TEXT_EXIT_GAME
 #define TEXT_CONTINUE_WITHOUT_SAVING _("セーブしないでつづける？")
 
 /**
@@ -204,7 +190,9 @@
 #define TEXT_MYSCORE _("MYSCORE")
 #define TEXT_CONTINUE _("CONTINUE")
 #define TEXT_EXIT_COURSE _("EXIT COURSE")
+#define TEXT_EXIT_GAME _("EXIT GAME")
 #ifndef VERSION_EU // "R" text is different in EU
+#define TEXT_EXIT_GAME _("EXIT GAME")
 #define TEXT_CAMERA_ANGLE_R _("SET CAMERA ANGLE WITH R")
 #endif
 

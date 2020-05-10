@@ -19,9 +19,6 @@
 #include "print.h"
 #include "engine/math_util.h"
 #include "course_table.h"
-#ifdef BETTERCAMERA
-#include "bettercamera.h"
-#endif
 
 extern Gfx *gDisplayListHead;
 extern s16 gCurrCourseNum;
@@ -696,7 +693,7 @@ void print_credits_string(s16 x, s16 y, const u8 *str) {
     gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0,
                 G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD, G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD);
     gDPTileSync(gDisplayListHead++);
-    gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 2, 0, G_TX_RENDERTILE, 0,
+    gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 2, 0, G_TX_RENDERTILE, 0, 
                 G_TX_CLAMP, 3, G_TX_NOLOD, G_TX_CLAMP, 3, G_TX_NOLOD);
     gDPSetTileSize(gDisplayListHead++, G_TX_RENDERTILE, 0, 0, (8 - 1) << G_TEXTURE_IMAGE_FRAC, (8 - 1) << G_TEXTURE_IMAGE_FRAC);
 
@@ -2394,23 +2391,25 @@ void render_pause_course_options(s16 x, s16 y, s8 *index, s16 yIndex) {
     };
 #define textContinue     textContinue[gInGameLanguage]
 #define textExitCourse   textExitCourse[gInGameLanguage]
+#define textExitGame     textExitGame
 #define textCameraAngleR textCameraAngleR[gInGameLanguage]
 #else
     u8 textContinue[] = { TEXT_CONTINUE };
     u8 textExitCourse[] = { TEXT_EXIT_COURSE };
+    u8 textExitGame[] = { TEXT_EXIT_GAME };
     u8 textCameraAngleR[] = { TEXT_CAMERA_ANGLE_R };
 #endif
 
-    handle_menu_scrolling(MENU_SCROLL_VERTICAL, index, 1, 3);
+    handle_menu_scrolling(MENU_SCROLL_VERTICAL, index, 1, 4);
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
 
     print_generic_string(x + 10, y - 2, textContinue);
     print_generic_string(x + 10, y - 17, textExitCourse);
-
-    if (index[0] != 3) {
-        print_generic_string(x + 10, y - 33, textCameraAngleR);
+    print_generic_string(x + 10, y - 33, textExitGame);
+    if (index[0] != 4) {
+        print_generic_string(x + 10, y - 48, textCameraAngleR);
         gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 
         create_dl_translation_matrix(MENU_MTX_PUSH, x - X_VAL8, (y - ((index[0] - 1) * yIndex)) - Y_VAL8, 0);
@@ -2420,7 +2419,7 @@ void render_pause_course_options(s16 x, s16 y, s8 *index, s16 yIndex) {
         gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
     }
 
-    if (index[0] == 3) {
+    if (index[0] == 4) {
         render_pause_camera_options(x - 42, y - 42, &gDialogCameraAngleIndex, 110);
     }
 }
@@ -2618,10 +2617,7 @@ s16 render_pause_courses_and_castle(void) {
 #ifdef VERSION_EU
     gInGameLanguage = eu_get_language();
 #endif
-#ifdef BETTERCAMERA
-    if (newcam_option_open == 0)
-    {
-#endif
+
     switch (gDialogBoxState) {
         case DIALOG_STATE_OPENING:
             gDialogLineNum = 1;
@@ -2662,7 +2658,7 @@ s16 render_pause_courses_and_castle(void) {
                 gDialogBoxState = DIALOG_STATE_OPENING;
                 gMenuMode = -1;
 
-                if (gDialogLineNum == 2) {
+                if (gDialogLineNum == 2 || gDialogLineNum == 3) {
                     num = gDialogLineNum;
                 } else {
                     num = 1;
@@ -2697,16 +2693,6 @@ s16 render_pause_courses_and_castle(void) {
     if (gDialogTextAlpha < 250) {
         gDialogTextAlpha += 25;
     }
-#ifdef BETTERCAMERA
-    }
-    else
-    {
-        shade_screen();
-        newcam_display_options();
-    }
-    newcam_check_pause_buttons();
-    newcam_render_option_text();
-#endif
 
     return 0;
 }
@@ -2953,7 +2939,8 @@ void render_course_complete_lvl_info_and_hud_str(void) {
 #else
 #define TXT_SAVECONT_Y 0
 #define TXT_SAVEQUIT_Y 20
-#define TXT_CONTNOSAVE_Y 40
+#define TXT_EXIT_GAME_Y 40
+#define TXT_CONTNOSAVE_Y 60
 #endif
 
 #ifdef VERSION_EU
@@ -2987,16 +2974,18 @@ void render_save_confirmation(s16 x, s16 y, s8 *index, s16 sp6e)
 #else
     u8 textSaveAndContinue[] = { TEXT_SAVE_AND_CONTINUE };
     u8 textSaveAndQuit[] = { TEXT_SAVE_AND_QUIT };
+    u8 textExitGame[] = { TEXT_EXIT_GAME };
     u8 textContinueWithoutSave[] = { TEXT_CONTINUE_WITHOUT_SAVING };
 #endif
 
-    handle_menu_scrolling(MENU_SCROLL_VERTICAL, index, 1, 3);
+    handle_menu_scrolling(MENU_SCROLL_VERTICAL, index, 1, 4);
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
 
     print_generic_string(TXT_SAVEOPTIONS_X, y + TXT_SAVECONT_Y, textSaveAndContinue);
     print_generic_string(TXT_SAVEOPTIONS_X, y - TXT_SAVEQUIT_Y, textSaveAndQuit);
+    print_generic_string(TXT_SAVEOPTIONS_X, y - TXT_EXIT_GAME_Y, textExitGame);
     print_generic_string(TXT_SAVEOPTIONS_X, y - TXT_CONTNOSAVE_Y, textContinueWithoutSave);
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);

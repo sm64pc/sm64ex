@@ -27,6 +27,7 @@
 #include "level_table.h"
 #include "course_table.h"
 #include "thread6.h"
+#include <stdlib.h>
 
 #define PLAY_MODE_NORMAL 0
 #define PLAY_MODE_PAUSED 2
@@ -1017,19 +1018,29 @@ s32 play_mode_paused(void) {
         raise_background_noise(1);
         gCameraMovementFlags &= ~CAM_MOVE_PAUSE_SCREEN;
         set_play_mode(PLAY_MODE_NORMAL);
-    } else {
+    }
+
+	else if (gPauseScreenMode == 2) {
         // Exit level
 
         if (gDebugLevelSelect) {
             fade_into_special_warp(-9, 1);
-        } else {
+       	 }
+
+	else {
             initiate_warp(LEVEL_CASTLE, 1, 0x1F, 0);
             fade_into_special_warp(0, 0);
             gSavedCourseNum = COURSE_NONE;
         }
 
+      } //gPauseScreenMode == 2
+
+      if (gPauseScreenMode == 3) { // We should only be getting "int 3" to here
+	    exit(0);
+	}
+
         gCameraMovementFlags &= ~CAM_MOVE_PAUSE_SCREEN;
-    }
+    // there was a } here? Hmm. 
 
     return 0;
 }
