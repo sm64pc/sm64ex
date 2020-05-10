@@ -43,6 +43,10 @@ __Arch Linux__
 ```
 sudo pacman -S base-devel python audiofile sdl2 glew
 ```
+or just install this package: [sm64pc-git](https://aur.archlinux.org/packages/sm64pc-git/)
+```
+yay -S sm64pc-git
+```
 
 __Void Linux - targeting 64 bits__
 ```
