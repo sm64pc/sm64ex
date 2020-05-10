@@ -49,9 +49,9 @@ unsigned int configKeyStickRight = 0x20;
 unsigned int configJoyA          = 0;
 unsigned int configJoyB          = 2;
 unsigned int configJoyStart      = 6;
-unsigned int configJoyL          = 9;
+unsigned int configJoyL          = 7;
 unsigned int configJoyR          = 10;
-unsigned int configJoyZ          = 7;
+unsigned int configJoyZ          = 9;
 // Mouse button mappings (0 for none, 1 for left, 2 for middle, 3 for right)
 unsigned int configMouseA        = 3;
 unsigned int configMouseB        = 1;
