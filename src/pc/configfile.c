@@ -34,6 +34,7 @@ bool configFullscreen            = false;
 unsigned int configKeyA          = 0x26;
 unsigned int configKeyB          = 0x33;
 unsigned int configKeyStart      = 0x39;
+unsigned int configKeyL          = 0x34;
 unsigned int configKeyR          = 0x36;
 unsigned int configKeyZ          = 0x25;
 unsigned int configKeyCUp        = 0x148;
@@ -44,6 +45,19 @@ unsigned int configKeyStickUp    = 0x11;
 unsigned int configKeyStickDown  = 0x1F;
 unsigned int configKeyStickLeft  = 0x1E;
 unsigned int configKeyStickRight = 0x20;
+// Gamepad mappings (SDL_GameControllerButton values)
+unsigned int configJoyA          = 0;
+unsigned int configJoyB          = 2;
+unsigned int configJoyStart      = 6;
+unsigned int configJoyL          = 7;
+unsigned int configJoyR          = 10;
+unsigned int configJoyZ          = 9;
+// Mouse button mappings (0 for none, 1 for left, 2 for middle, 3 for right)
+unsigned int configMouseA        = 3;
+unsigned int configMouseB        = 1;
+unsigned int configMouseL        = 4;
+unsigned int configMouseR        = 5;
+unsigned int configMouseZ        = 2;
 
 
 static const struct ConfigOption options[] = {
@@ -51,6 +65,7 @@ static const struct ConfigOption options[] = {
     {.name = "key_a",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyA},
     {.name = "key_b",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyB},
     {.name = "key_start",      .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStart},
+    {.name = "key_l",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyL},
     {.name = "key_r",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyR},
     {.name = "key_z",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyZ},
     {.name = "key_cup",        .type = CONFIG_TYPE_UINT, .uintValue = &configKeyCUp},
@@ -61,6 +76,17 @@ static const struct ConfigOption options[] = {
     {.name = "key_stickdown",  .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStickDown},
     {.name = "key_stickleft",  .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStickLeft},
     {.name = "key_stickright", .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStickRight},
+    {.name = "joy_a",          .type = CONFIG_TYPE_UINT, .uintValue = &configJoyA},
+    {.name = "joy_b",          .type = CONFIG_TYPE_UINT, .uintValue = &configJoyB},
+    {.name = "joy_start",      .type = CONFIG_TYPE_UINT, .uintValue = &configJoyStart},
+    {.name = "joy_l",          .type = CONFIG_TYPE_UINT, .uintValue = &configJoyL},
+    {.name = "joy_r",          .type = CONFIG_TYPE_UINT, .uintValue = &configJoyR},
+    {.name = "joy_z",          .type = CONFIG_TYPE_UINT, .uintValue = &configJoyZ},
+    {.name = "mouse_a",        .type = CONFIG_TYPE_UINT, .uintValue = &configMouseA},
+    {.name = "mouse_b",        .type = CONFIG_TYPE_UINT, .uintValue = &configMouseB},
+    {.name = "mouse_l",        .type = CONFIG_TYPE_UINT, .uintValue = &configMouseL},
+    {.name = "mouse_r",        .type = CONFIG_TYPE_UINT, .uintValue = &configMouseR},
+    {.name = "mouse_z",        .type = CONFIG_TYPE_UINT, .uintValue = &configMouseZ},
 };
 
 // Reads an entire line from a file (excluding the newline character) and returns an allocated string

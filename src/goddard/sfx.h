@@ -20,6 +20,6 @@ enum GdSfx {
 extern void gd_reset_sfx(void);
 extern u32 gd_new_sfx_to_play(void);
 extern void gd_sfx_played(void);
-extern void gd_play_sfx(u32);
+extern void gd_play_sfx(enum GdSfx sfx);
 
 #endif /* GD_MARIO_HEAD_SFX_H */

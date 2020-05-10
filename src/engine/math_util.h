@@ -29,10 +29,14 @@ extern f32 gCosineTable[];
 
 #define sqr(x) ((x) * (x))
 
+#define abs(x) ((x) < 0 ? -(x) : (x))
+
 void *vec3f_copy(Vec3f dest, Vec3f src);
 void *vec3f_set(Vec3f dest, f32 x, f32 y, f32 z);
 void *vec3f_add(Vec3f dest, Vec3f a);
 void *vec3f_sum(Vec3f dest, Vec3f a, Vec3f b);
+void *vec3f_dif(Vec3f dest, Vec3f a, Vec3f b);
+void *vec3f_mul(Vec3f dest, f32 a);
 void *vec3s_copy(Vec3s dest, Vec3s src);
 void *vec3s_set(Vec3s dest, s16 x, s16 y, s16 z);
 void *vec3s_add(Vec3s dest, Vec3s a);
@@ -43,6 +47,8 @@ void *vec3f_to_vec3s(Vec3s dest, Vec3f a);
 void *find_vector_perpendicular_to_plane(Vec3f dest, Vec3f a, Vec3f b, Vec3f c);
 void *vec3f_cross(Vec3f dest, Vec3f a, Vec3f b);
 void *vec3f_normalize(Vec3f dest);
+f32 vec3f_length(Vec3f a);
+f32 vec3f_dot(Vec3f a, Vec3f b);
 void mtxf_copy(f32 dest[4][4], f32 src[4][4]);
 void mtxf_identity(f32 mtx[4][4]);
 void mtxf_translate(f32 a[4][4], Vec3f b);
