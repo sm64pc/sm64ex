@@ -113,8 +113,10 @@ static void gfx_sdl_init(void) {
     wnd = SDL_CreateWindow("Super Mario 64 PC port (OpenGL)", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
             DESIRED_SCREEN_WIDTH, DESIRED_SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
     #else
+    /* GLES platforms generally run without a window server like Xorg. Just use the system video mode,
+       instead of trying to set a new video mode, which does not make any sense in modern displays. */
     wnd = SDL_CreateWindow("Super Mario 64 PC port (OpenGL_ES2)", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            DESIRED_SCREEN_WIDTH, DESIRED_SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+            0, 0, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP);
     #endif
   
     gfx_sdl_set_fullscreen(configFullscreen);
