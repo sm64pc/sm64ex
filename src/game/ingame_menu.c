@@ -19,6 +19,9 @@
 #include "print.h"
 #include "engine/math_util.h"
 #include "course_table.h"
+#ifdef BETTERCAMERA
+#include "bettercamera.h"
+#endif
 
 extern Gfx *gDisplayListHead;
 extern s16 gCurrCourseNum;
@@ -2420,7 +2423,7 @@ void render_pause_course_options(s16 x, s16 y, s8 *index, s16 yIndex) {
     }
 
     if (index[0] == 4) {
-        render_pause_camera_options(x - 42, y - 42, &gDialogCameraAngleIndex, 110);
+        render_pause_camera_options(x - 42, y - 59, &gDialogCameraAngleIndex, 110);
     }
 }
 
@@ -2618,6 +2621,11 @@ s16 render_pause_courses_and_castle(void) {
     gInGameLanguage = eu_get_language();
 #endif
 
+#ifdef BETTERCAMERA
+    if (newcam_option_open == 0)
+    {
+#endif
+
     switch (gDialogBoxState) {
         case DIALOG_STATE_OPENING:
             gDialogLineNum = 1;
@@ -2693,6 +2701,18 @@ s16 render_pause_courses_and_castle(void) {
     if (gDialogTextAlpha < 250) {
         gDialogTextAlpha += 25;
     }
+
+#ifdef BETTERCAMERA
+    }
+    else
+    {
+        shade_screen();
+        newcam_display_options();
+    }
+    newcam_check_pause_buttons();
+    newcam_render_option_text();
+#endif
+
 
     return 0;
 }
