@@ -12,6 +12,8 @@
 
 #include "controller_api.h"
 
+#include "../configfile.h"
+
 extern int16_t rightx;
 extern int16_t righty;
 
@@ -53,9 +55,11 @@ static void controller_sdl_read(OSContPad *pad) {
     
     const u32 mbuttons = SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
     
-    if (mbuttons & SDL_BUTTON_LMASK) pad->button |= B_BUTTON;
-    if (mbuttons & SDL_BUTTON_RMASK) pad->button |= A_BUTTON;
-    if (mbuttons & SDL_BUTTON_MMASK) pad->button |= Z_TRIG;
+    if (configMouseA && (mbuttons & SDL_BUTTON(configMouseA))) pad->button |= A_BUTTON;
+    if (configMouseB && (mbuttons & SDL_BUTTON(configMouseB))) pad->button |= B_BUTTON;
+    if (configMouseL && (mbuttons & SDL_BUTTON(configMouseL))) pad->button |= L_TRIG;
+    if (configMouseR && (mbuttons & SDL_BUTTON(configMouseR))) pad->button |= R_TRIG;
+    if (configMouseZ && (mbuttons & SDL_BUTTON(configMouseZ))) pad->button |= Z_TRIG;
 #endif
 
     SDL_GameControllerUpdate();
@@ -78,11 +82,11 @@ static void controller_sdl_read(OSContPad *pad) {
         }
     }
 
-    if (SDL_GameControllerGetButton(sdl_cntrl, SDL_CONTROLLER_BUTTON_START)) pad->button |= START_BUTTON;
-    if (SDL_GameControllerGetButton(sdl_cntrl, SDL_CONTROLLER_BUTTON_LEFTSHOULDER)) pad->button |= Z_TRIG;
-    if (SDL_GameControllerGetButton(sdl_cntrl, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)) pad->button |= R_TRIG;
-    if (SDL_GameControllerGetButton(sdl_cntrl, SDL_CONTROLLER_BUTTON_A)) pad->button |= A_BUTTON;
-    if (SDL_GameControllerGetButton(sdl_cntrl, SDL_CONTROLLER_BUTTON_X)) pad->button |= B_BUTTON;
+    if (SDL_GameControllerGetButton(sdl_cntrl, configJoyStart)) pad->button |= START_BUTTON;
+    if (SDL_GameControllerGetButton(sdl_cntrl, configJoyL))     pad->button |= Z_TRIG;
+    if (SDL_GameControllerGetButton(sdl_cntrl, configJoyR))     pad->button |= R_TRIG;
+    if (SDL_GameControllerGetButton(sdl_cntrl, configJoyA))     pad->button |= A_BUTTON;
+    if (SDL_GameControllerGetButton(sdl_cntrl, configJoyB))     pad->button |= B_BUTTON;
 
     int16_t leftx = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_LEFTX);
     int16_t lefty = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_LEFTY);
