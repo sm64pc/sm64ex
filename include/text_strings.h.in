@@ -124,6 +124,7 @@
 // Save Options
 #define TEXT_SAVE_AND_CONTINUE _("セーブしてつづける？")
 #define TEXT_SAVE_AND_QUIT _("セーブしておわる？")
+#define TEXT_EXIT_GAME _("Exit Game")
 #define TEXT_CONTINUE_WITHOUT_SAVING _("セーブしないでつづける？")
 
 /**
