@@ -83,7 +83,7 @@ static void controller_sdl_read(OSContPad *pad) {
     }
 
     if (SDL_GameControllerGetButton(sdl_cntrl, configJoyStart)) pad->button |= START_BUTTON;
-    if (SDL_GameControllerGetButton(sdl_cntrl, configJoyL))     pad->button |= Z_TRIG;
+    if (SDL_GameControllerGetButton(sdl_cntrl, configJoyZ))     pad->button |= Z_TRIG;
     if (SDL_GameControllerGetButton(sdl_cntrl, configJoyR))     pad->button |= R_TRIG;
     if (SDL_GameControllerGetButton(sdl_cntrl, configJoyA))     pad->button |= A_BUTTON;
     if (SDL_GameControllerGetButton(sdl_cntrl, configJoyB))     pad->button |= B_BUTTON;
