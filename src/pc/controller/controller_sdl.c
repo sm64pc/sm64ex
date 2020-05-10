@@ -51,7 +51,11 @@ static void controller_sdl_read(OSContPad *pad) {
     else
         SDL_SetRelativeMouseMode(SDL_FALSE);
     
-    SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
+    const u32 mbuttons = SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
+    
+    if (mbuttons & SDL_BUTTON_LMASK) pad->button |= B_BUTTON;
+    if (mbuttons & SDL_BUTTON_RMASK) pad->button |= A_BUTTON;
+    if (mbuttons & SDL_BUTTON_MMASK) pad->button |= Z_TRIG;
 #endif
 
     SDL_GameControllerUpdate();
