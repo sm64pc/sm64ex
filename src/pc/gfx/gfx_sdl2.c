@@ -117,19 +117,23 @@ static void gfx_sdl_init(void) {
         window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
     }
 
- 
-    #ifndef USE_GLES
-    wnd = SDL_CreateWindow("Super Mario 64 PC port (OpenGL)", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            DESIRED_SCREEN_WIDTH, DESIRED_SCREEN_HEIGHT, window_flags);
-    #else
-    /* GLES platforms generally run without a window server like Xorg. Just use the system video mode,
-       instead of trying to set a new video mode, which does not make any sense in modern displays. */
     SDL_DisplayMode sdl_displaymode;
     SDL_GetCurrentDisplayMode(0, &sdl_displaymode); 
 
-    wnd = SDL_CreateWindow("Super Mario 64 PC port (OpenGL_ES2)", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            sdl_displaymode.w, sdl_displaymode.h, window_flags);
+    const char* window_title = 
+    #ifndef USE_GLES
+    "Super Mario 64 PC port (OpenGL)";
+    #else
+    "Super Mario 64 PC port (OpenGL_ES2)";
     #endif
+
+    if (configFullscreen) {
+        wnd = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                sdl_displaymode.w, sdl_displaymode.h, window_flags);
+    } else {
+        wnd = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                DESIRED_SCREEN_WIDTH, DESIRED_SCREEN_HEIGHT, window_flags);
+    }
   
     SDL_GL_CreateContext(wnd);
     SDL_GL_SetSwapInterval(1); // We have a double buffered GL context, it makes no sense to want tearing.
