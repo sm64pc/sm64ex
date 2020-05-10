@@ -50,6 +50,7 @@ ifeq ($(TARGET_WEB),0)
 ifeq ($(OS),Windows_NT)
 WINDOWS_BUILD := 1
 endif
+endif
 
 # Release (version) flag defs
 
@@ -240,7 +241,6 @@ OPT_FLAGS += $(BITS)
 
 ifeq ($(TARGET_WEB),1)
   OPT_FLAGS := -O2 -g4 --source-map-base http://localhost:8080/
-endif
 endif
 
 # Use a default opt flag for gcc, then override if RPi
