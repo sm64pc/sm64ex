@@ -95,6 +95,8 @@ static void gfx_sdl_set_fullscreen(bool fullscreen)
 }
 
 static void gfx_sdl_init(void) {
+    Uint32 window_flags = 0;
+
     SDL_Init(SDL_INIT_VIDEO);
 	
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -108,17 +110,31 @@ static void gfx_sdl_init(void) {
     
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
-    
+
+    window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
+
+    if (configFullscreen) {
+        window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    }
+
+    SDL_DisplayMode sdl_displaymode;
+    SDL_GetCurrentDisplayMode(0, &sdl_displaymode); 
+
+    const char* window_title = 
     #ifndef USE_GLES
-    wnd = SDL_CreateWindow("Super Mario 64 PC port (OpenGL)", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            DESIRED_SCREEN_WIDTH, DESIRED_SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+    "Super Mario 64 PC port (OpenGL)";
     #else
-    wnd = SDL_CreateWindow("Super Mario 64 PC port (OpenGL_ES2)", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            DESIRED_SCREEN_WIDTH, DESIRED_SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+    "Super Mario 64 PC port (OpenGL_ES2)";
     #endif
+
+    if (configFullscreen) {
+        wnd = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                sdl_displaymode.w, sdl_displaymode.h, window_flags);
+    } else {
+        wnd = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                DESIRED_SCREEN_WIDTH, DESIRED_SCREEN_HEIGHT, window_flags);
+    }
   
-    gfx_sdl_set_fullscreen(configFullscreen);
-    
     SDL_GL_CreateContext(wnd);
     SDL_GL_SetSwapInterval(1); // We have a double buffered GL context, it makes no sense to want tearing.
     
