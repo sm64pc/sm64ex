@@ -599,6 +599,11 @@ void init_controllers(void) {
             gControllers[cont++].controllerData = &gControllerPads[port];
         }
     }
+
+#ifdef BETTERCAMERA
+    // load bettercam settings from the config file
+    newcam_init_settings();
+#endif
 }
 
 void setup_game_memory(void) {
