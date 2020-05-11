@@ -64,7 +64,6 @@ ifeq ($(VERSION),jp)
   TARGET := sm64.jp
 else
 ifeq ($(VERSION),us)
-ifeq ($(VERSION),ml)
   VERSION_CFLAGS := -DVERSION_US
   VERSION_ASFLAGS := --defsym VERSION_US=1
   GRUCODE_CFLAGS := -DF3D_OLD
@@ -88,7 +87,15 @@ ifeq ($(VERSION),sh)
 # TODO: GET RID OF THIS!!! We should mandate assets for Shindou like EU but we dont have the addresses extracted yet so we'll just pretend you have everything extracted for now.
   NOEXTRACT := 1
 else
+ifeq ($(VERSION),ml)
+  VERSION_CFLAGS := -DVERSION_ML
+  VERSION_ASFLAGS := --defsym VERSION_ML=1
+  GRUCODE_CFLAGS := -DF3D_OLD
+  GRUCODE_ASFLAGS := --defsym F3D_OLD=1
+  TARGET := sm64.ml
+else
   $(error unknown version "$(VERSION)")
+endif
 endif
 endif
 endif
@@ -538,7 +545,7 @@ TEXT_DIRS := text/de text/us text/fr
 
 # EU encoded text inserted into individual segment 0x19 files,
 # and course data also duplicated in leveldata.c
-$(BUILD_DIR)/bin/eu/translation_en.o: $(BUILD_DIR)/text/us/define_text.inc.c
+$(BUILD_DIR)/bin/eu/translation_uk_en.o: $(BUILD_DIR)/text/us/define_text.inc.c
 $(BUILD_DIR)/bin/eu/translation_de.o: $(BUILD_DIR)/text/de/define_text.inc.c
 $(BUILD_DIR)/bin/eu/translation_fr.o: $(BUILD_DIR)/text/fr/define_text.inc.c
 $(BUILD_DIR)/levels/menu/leveldata.o: $(BUILD_DIR)/text/us/define_courses.inc.c
