@@ -102,8 +102,6 @@ static void gfx_sdl_set_fullscreen(bool fullscreen) {
 }
 
 static void gfx_sdl_init(void) {
-    Uint32 window_flags = 0;
-
     SDL_Init(SDL_INIT_VIDEO);
 
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -118,35 +116,33 @@ static void gfx_sdl_init(void) {
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
-    window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
-
     if (gCLIOpts.FullScreen) {
         configFullscreen = true;
     }
 
-    if (configFullscreen) {
-        window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-    }
-
-    SDL_DisplayMode sdl_displaymode;
-    SDL_GetCurrentDisplayMode(0, &sdl_displaymode);
-
-    const char* window_title =
+    const char* window_title = 
     #ifndef USE_GLES
     "Super Mario 64 PC port (OpenGL)";
     #else
     "Super Mario 64 PC port (OpenGL_ES2)";
     #endif
 
+    Uint32 window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
+    int width, height;
+
     if (configFullscreen) {
-        wnd = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                sdl_displaymode.w, sdl_displaymode.h, window_flags);
+        width = 0;
+        height = 0;
+        window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
         SDL_ShowCursor(SDL_DISABLE);
     } else {
-        wnd = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                DESIRED_SCREEN_WIDTH, DESIRED_SCREEN_HEIGHT, window_flags);
+        width = DESIRED_SCREEN_WIDTH;
+        height = DESIRED_SCREEN_HEIGHT;
         SDL_ShowCursor(SDL_ENABLE);
     }
+
+    wnd = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+            width, height, window_flags);
 
     SDL_GL_CreateContext(wnd);
     SDL_GL_SetSwapInterval(1); // We have a double buffered GL context, it makes no sense to want tearing.
@@ -154,11 +150,11 @@ static void gfx_sdl_init(void) {
     for (size_t i = 0; i < sizeof(windows_scancode_table) / sizeof(SDL_Scancode); i++) {
         inverted_scancode_table[windows_scancode_table[i]] = i;
     }
-    
+
     for (size_t i = 0; i < sizeof(scancode_rmapping_extended) / sizeof(scancode_rmapping_extended[0]); i++) {
         inverted_scancode_table[scancode_rmapping_extended[i][0]] = inverted_scancode_table[scancode_rmapping_extended[i][1]] + 0x100;
     }
-    
+
     for (size_t i = 0; i < sizeof(scancode_rmapping_nonextended) / sizeof(scancode_rmapping_nonextended[0]); i++) {
         inverted_scancode_table[scancode_rmapping_nonextended[i][0]] = inverted_scancode_table[scancode_rmapping_nonextended[i][1]];
         inverted_scancode_table[scancode_rmapping_nonextended[i][1]] += 0x100;
