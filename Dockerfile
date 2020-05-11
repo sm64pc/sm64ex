@@ -21,16 +21,14 @@ RUN wget \
     dpkg -i qemu.deb && \
     rm qemu.deb
 
-RUN cd /tmp && \
-    git clone https://github.com/emscripten-core/emsdk.git && \
-    cd emsdk && \
-    ./emsdk install latest && \
-    cd .. && \
-    rm -rf emsdk
+RUN git clone --depth 1 https://github.com/emscripten-core/emsdk.git && \
+    ./emsdk/emsdk install latest && \
+    ./emsdk/emsdk activate latest && \
+    ln -s $(ls -d -1 /emsdk/node/**) /emsdk/node/latest
 
 RUN mkdir /sm64
 WORKDIR /sm64
-ENV PATH="/sm64/tools:/emsdk:${PATH}"
+ENV PATH="/sm64/tools:/emsdk:/emsdk/node/latest/bin:/emsdk/upstream/emscripten:${PATH}"
 
 CMD echo 'usage: docker run --rm --mount type=bind,source="$(pwd)",destination=/sm64 sm64 make VERSION=${VERSION:-us} -j4\n' \
          'see https://github.com/n64decomp/sm64/blob/master/README.md for advanced usage'
