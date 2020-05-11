@@ -14,4 +14,4 @@ Run `./extract-assets.py --clean && make clean` or `make distclean` to remove RO
 ## Building
 For building instructions, please refer to the [wiki](https://github.com/sm64pc/sm64pc/wiki).
 
-Windows users: do not attempt to compile with `WINDOWS_BUILD=1` under WSL. It will NOT work. Follow the guide on the wiki.
+**Do NOT attempt to compile Windows executables with `WINDOWS_BUILD=1` under Linux or WSL. It will NOT work. Follow the guide on the wiki.**
