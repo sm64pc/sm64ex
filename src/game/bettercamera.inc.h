@@ -232,7 +232,7 @@ static s16 newcam_approach_s16(s16 var, s16 val, s16 inc)
         return min(var - inc, val);
 }
 
-static u8 ivrt(u8 axis)
+static int ivrt(u8 axis)
 {
     if (axis == 0)
     {
@@ -378,8 +378,8 @@ static void newcam_rotate_button(void)
 
     if (newcam_mouse == 1)
     {
-        newcam_yaw += mouse_x * 16;
-        newcam_tilt += mouse_y * 16;
+        newcam_yaw += ivrt(0) * mouse_x * 16;
+        newcam_tilt += ivrt(1) * mouse_y * 16;
     }
 }
 
