@@ -23,12 +23,11 @@ RUN wget \
 
 RUN git clone --depth 1 https://github.com/emscripten-core/emsdk.git && \
     ./emsdk/emsdk install latest && \
-    ./emsdk/emsdk activate latest && \
-    ln -s $(ls -d -1 /emsdk/node/**) /emsdk/node/latest
+    ./emsdk/emsdk activate latest
 
 RUN mkdir /sm64
 WORKDIR /sm64
-ENV PATH="/sm64/tools:/emsdk:/emsdk/node/latest/bin:/emsdk/upstream/emscripten:${PATH}"
+ENV PATH="/sm64/tools:/emsdk:/emsdk/upstream/emscripten:${PATH}"
 
 CMD echo 'usage: docker run --rm --mount type=bind,source="$(pwd)",destination=/sm64 sm64 make VERSION=${VERSION:-us} -j4\n' \
          'see https://github.com/n64decomp/sm64/blob/master/README.md for advanced usage'
