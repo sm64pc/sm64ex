@@ -21,7 +21,8 @@
 #include "dialog_ids.h"
 
 #include "eu_translation.h"
-#ifdef VERSION_EU
+#include "ml_translations.h"
+#if defined(VERSION_EU) || defined(VERSION_ML)
 #undef LANGUAGE_FUNCTION
 #define LANGUAGE_FUNCTION sLanguageMode
 #endif
@@ -33,7 +34,7 @@
  * special menu messages and phases, button states and button clicked checks.
  */
 
-#ifdef VERSION_US
+#if defined(VERSION_US) || defined(VERSION_EU) || defined(VERSION_ML)
 // The current sound mode is automatically centered on US due to
 // the large length difference between options.
 // sSoundTextY unused (EU supports its existence).
@@ -51,20 +52,16 @@ static s16 sSoundTextY;
         #define NUM_BUTTONS 34
     #endif
 #else
+#ifdef VERSION_ML
+    #define NUM_BUTTONS 39
+#endif
+#else
 #define NUM_BUTTONS 32
 #endif
 
 // Amount of main menu buttons defined in the code called by spawn_object_rel_with_rot.
 // See file_select.h for the names in MenuButtonTypes.
 static struct Object *sMainMenuButtons[NUM_BUTTONS];
-
-#ifdef VERSION_EU
-// The current sound mode is automatically centered on US due to
-// the large length difference between options.
-// sSoundTextY is unused
-static s16 sSoundTextX;
-static s16 sSoundTextY;
-#endif
 
 // Used to defined yes/no fade colors after a file is selected in the erase menu.
 // sYesNoColor[0]: YES | sYesNoColor[1]: NO
@@ -117,9 +114,10 @@ static s16 sMainMenuTimer = 0;
 // 0: gSoundMode = 0 (Stereo) | 1: gSoundMode = 3 (Mono) | 2: gSoundMode = 1 (Headset)
 static s8 sSoundMode = 0;
 
-// Active language for PAL arrays, values defined similar to sSoundMode
-// 0: English | 1: French | 2: German
-#ifdef VERSION_EU
+// Active language for PAL/multilang arrays, values defined similar to sSoundMode
+// In PAL: 0: English | 1: French | 2: German
+// In multilang: 0: US English | 1: UK English | 2: Japanese | 3: French | 4: German
+#if defined(VERSION_EU) || defined(VERSION_ML)
 static s8 sLanguageMode = LANGUAGE_ENGLISH;
 #endif
 
@@ -139,42 +137,86 @@ static s8 sSelectedFileNum = 0;
 static s8 sScoreFileCoinScoreMode = 0;
 
 // In PAL, if no save file exists, open the language menu so the user can find it.
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
 static s8 sOpenLangSettings = FALSE;
 #endif
 
-#ifndef VERSION_EU
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textReturn[] = { TEXT_RETURN_JP };
+#elif VERSION_US
 static unsigned char textReturn[] = { TEXT_RETURN };
-#else
+#elif VERSION_EU
 static unsigned char textReturn[][8] = {{ TEXT_RETURN }, { TEXT_RETURN_FR }, { TEXT_RETURN_DE }};
+#elif VERSION_ML 
+static unsigned char textReturn[][8] = {{ TEXT_RETURN }, { TEXT_RETURN }, { TEXT_RETURN_JP }, { TEXT_RETURN_FR }, { TEXT_RETURN_DE }};
 #endif
 
-#ifndef VERSION_EU
-static unsigned char textViewScore[] = { TEXT_CHECK_SCORE };
-#else
-static unsigned char textViewScore[][12] = {{ TEXT_CHECK_SCORE }, {TEXT_CHECK_SCORE_FR}, {TEXT_CHECK_SCORE_DE}};
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textviewScore[] = { TEXT_CHECK_SCORE_JP };
+#elif VERSION_US
+static unsigned char textviewScore[] = { TEXT_CHECK_SCORE };
+#elif VERSION_EU
+static unsigned char textViewScore[][12] = {{ TEXT_CHECK_SCORE }, { TEXT_CHECK_SCORE_FR }, { TEXT_CHECK_SCORE_DE }};
+#elif VERSION_ML
+static unsigned char textViewScore[][12] = {{ TEXT_CHECK_SCORE }, { TEXT_CHECK_SCORE }, { TEXT_CHECK_SCORE_JP }, { TEXT_CHECK_SCORE_FR }, { TEXT_CHECK_SCORE_DE }};
 #endif
 
-#ifndef VERSION_EU
-static unsigned char textCopyFileButton[] = { TEXT_COPY_FILE_BUTTON };
-#else
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textCopyFileButton[] = { TEXT_COPY_FILE_JP };
+#elif VERSION_US
+static unsigned char textCopyFileButton[] = { TEXT_COPY_FILE };
+#elif VERSION_EU
 static unsigned char textCopyFileButton[][15] = {{ TEXT_COPY_FILE }, { TEXT_COPY_FILE_FR }, { TEXT_COPY_FILE_DE }};
+#elif VERSION_ML
+static unsigned char textCopyFileButton[][15] = {{ TEXT_COPY_FILE }, { TEXT_COPY_FILE }, { TEXT_COPY_FILE_JP }, { TEXT_COPY_FILE_FR }, { TEXT_COPY_FILE_DE }};
 #endif
 
-#ifndef VERSION_EU
-static unsigned char textEraseFileButton[] = { TEXT_ERASE_FILE_BUTTON };
-#else
-static unsigned char textEraseFileButton[][16] = { {TEXT_ERASE_FILE}, {TEXT_ERASE_FILE_FR}, {TEXT_ERASE_FILE_DE} };
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textEraseFileButton[] = { TEXT_ERASE_FILE_JP };
+#elif VERSION_US
+static unsigned char textEraseFileButton[] = { TEXT_ERASE_FILE };
+#elif VERSION_EU
+static unsigned char textEraseFileButton[][16] = {{ TEXT_ERASE_FILE }, { TEXT_ERASE_FILE_FR }, { TEXT_ERASE_FILE_DE }};
+#elif VERSION_ML
+static unsigned char textEraseFileButton[][16] = {{ TEXT_ERASE_FILE }, { TEXT_ERASE_FILE }, { TEXT_ERASE_FILE_JP }, { TEXT_ERASE_FILE_FR }, { TEXT_ERASE_FILE_DE }};
 #endif
 
-#ifndef VERSION_EU
-static unsigned char textSoundModes[][8] = { { TEXT_STEREO }, { TEXT_MONO }, { TEXT_HEADSET } };
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textSoundModes[][8] = {{ TEXT_STEREO_JP }, { TEXT_MONO_JP }, { TEXT_HEADSET_JP }};
+#elif VERSION_US
+static unsigned char textSoundModes[][8] = {{ TEXT_STEREO }, { TEXT_MONO }, { TEXT_HEADSET }};
+#elif VERSION_EU
+static unsigned char textSoundModes[][10] = {
+    { TEXT_STEREO }, { TEXT_MONO }, { TEXT_HEADSET },
+    { TEXT_STEREO_FR }, { TEXT_MONO_FR }, { TEXT_HEADSET_FR },
+    { TEXT_STEREO_DE }, { TEXT_MONO_DE }, { TEXT_HEADSET_DE }
+};
+#elif VERSION_ML
+static unsigned char textSoundModes[][10] = {
+    { TEXT_STEREO }, { TEXT_MONO }, { TEXT_HEADSET },
+    { TEXT_STEREO }, { TEXT_MONO }, { TEXT_HEADSET },
+    { TEXT_STEREO_JP }, { TEXT_MONO_JP }, { TEXT_HEADSET_JP },
+    { TEXT_STEREO_FR }, { TEXT_MONO_FR }, { TEXT_HEADSET_FR },
+    { TEXT_STEREO_DE }, { TEXT_MONO_DE }, { TEXT_HEADSET_DE }
+};
 #endif
 
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textMarioA[] = { TEXT_FILE_MARIO_A_JP };
+static unsigned char textMarioB[] = { TEXT_FILE_MARIO_B_JP };
+static unsigned char textMarioC[] = { TEXT_FILE_MARIO_C_JP };
+static unsigned char textMarioD[] = { TEXT_FILE_MARIO_D_JP };
+#elif defined (VERSION_US) || defined(VERSION_EU)
 static unsigned char textMarioA[] = { TEXT_FILE_MARIO_A };
 static unsigned char textMarioB[] = { TEXT_FILE_MARIO_B };
 static unsigned char textMarioC[] = { TEXT_FILE_MARIO_C };
 static unsigned char textMarioD[] = { TEXT_FILE_MARIO_D };
+#elif VERSION_ML
+static unsigned char textMarioA[] = {{ TEXT_FILE_MARIO_A }, { TEXT_FILE_MARIO_A }, { TEXT_FILE_MARIO_A_JP }, { TEXT_FILE_MARIO_A }, { TEXT_FILE_MARIO_A }};
+static unsigned char textMarioB[] = {{ TEXT_FILE_MARIO_B }, { TEXT_FILE_MARIO_A }, { TEXT_FILE_MARIO_B_JP }, { TEXT_FILE_MARIO_B }, { TEXT_FILE_MARIO_B }};
+static unsigned char textMarioC[] = {{ TEXT_FILE_MARIO_C }, { TEXT_FILE_MARIO_A }, { TEXT_FILE_MARIO_C_JP }, { TEXT_FILE_MARIO_C }, { TEXT_FILE_MARIO_C }};
+static unsigned char textMarioD[] = {{ TEXT_FILE_MARIO_D }, { TEXT_FILE_MARIO_A }, { TEXT_FILE_MARIO_D_JP }, { TEXT_FILE_MARIO_D }, { TEXT_FILE_MARIO_D }};
+#endif
 
 #ifndef VERSION_EU
 static unsigned char textNew[] = { TEXT_NEW };
@@ -182,96 +224,154 @@ static unsigned char starIcon[] = { GLYPH_STAR, GLYPH_SPACE };
 static unsigned char xIcon[] = { GLYPH_MULTIPLY, GLYPH_SPACE };
 #endif
 
-#ifndef VERSION_EU
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textSelectFile[] = { TEXT_SELECT_FILE_JP };
+#elif VERSION_US
 static unsigned char textSelectFile[] = { TEXT_SELECT_FILE };
-#else
+#elif VERSION_EU
 static unsigned char textSelectFile[][17] = {{ TEXT_SELECT_FILE }, { TEXT_SELECT_FILE_FR }, { TEXT_SELECT_FILE_DE }};
+#elif VERSION_ML
+static unsigned char textSelectFile[][17] = {{ TEXT_SELECT_FILE }, { TEXT_SELECT_FILE }, { TEXT_SELECT_FILE_JP }, { TEXT_SELECT_FILE_FR }, { TEXT_SELECT_FILE_DE }};
 #endif
 
-#ifndef VERSION_EU
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textScore[] = { TEXT_SCORE_JP };
+#elif VERSION_US
 static unsigned char textScore[] = { TEXT_SCORE };
-#else
+#elif VERSION_EU
 static unsigned char textScore[][9] = {{ TEXT_SCORE }, { TEXT_SCORE_FR }, { TEXT_SCORE_DE }};
+#elif VERSION_ML
+static unsigned char textScore[][9] = {{ TEXT_SCORE }, { TEXT_SCORE }, { TEXT_SCORE_JP }, { TEXT_SCORE_FR }, { TEXT_SCORE_DE }};
 #endif
 
-#ifndef VERSION_EU
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textCopy[] = { TEXT_COPY_JP };
+#elif VERSION_US
 static unsigned char textCopy[] = { TEXT_COPY };
-#else
+#elif VERSION_EU
 static unsigned char textCopy[][9] = {{ TEXT_COPY }, { TEXT_COPY_FR }, { TEXT_COPY_DE }};
+#elif VERSION_ML
+static unsigned char textCopy[][9] = {{ TEXT_COPY }, { TEXT_COPY }, { TEXT_COPY_JP }, { TEXT_COPY_FR }, { TEXT_COPY_DE }};
 #endif
 
-#ifndef VERSION_EU
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textErase[] = { TEXT_ERASE_JP };
+#elif VERSION_US
 static unsigned char textErase[] = { TEXT_ERASE };
-#else
+#elif VERSION_EU
 static unsigned char textErase[][8] = {{ TEXT_ERASE }, { TEXT_ERASE_FR }, { TEXT_ERASE_DE }};
+#elif VERSION_ML
+static unsigned char textErase[][8] = {{ TEXT_ERASE }, { TEXT_ERASE }, { TEXT_ERASE_JP }, { TEXT_ERASE_FR }, { TEXT_ERASE_DE }};
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU)
 static unsigned char textOption[][9] = {{ TEXT_OPTION }, { TEXT_OPTION_FR }, { TEXT_OPTION_DE } };
+#elif VERSION_ML
+static unsigned char textOption[][9] = {{ TEXT_OPTION }, { TEXT_OPTION }, { TEXT_OPTION_JP }, { TEXT_OPTION_FR }, { TEXT_OPTION_DE } };
 #endif
 
-#ifndef VERSION_EU
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textCheckFile[] = { TEXT_CHECK_FILE_JP };
+#elif VERSION_US
 static unsigned char textCheckFile[] = { TEXT_CHECK_FILE };
-#else
+#elif VERSION_EU
 static unsigned char textCheckFile[][18] = {{ TEXT_CHECK_FILE }, { TEXT_CHECK_FILE_FR }, { TEXT_CHECK_FILE_DE }};
+#elif VERSION_ML
+static unsigned char textCheckFile[][18] = {{ TEXT_CHECK_FILE }, { TEXT_CHECK_FILE }, { TEXT_CHECK_FILE_JP }, { TEXT_CHECK_FILE_FR }, { TEXT_CHECK_FILE_DE }};
 #endif
 
-#ifndef VERSION_EU
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textNoSavedDataExists[] = { TEXT_NO_SAVED_DATA_EXISTS_JP };
+#elif VERSION_US
 static unsigned char textNoSavedDataExists[] = { TEXT_NO_SAVED_DATA_EXISTS };
-#else
+#elif VERSION_EU
 static unsigned char textNoSavedDataExists[][30] = {{ TEXT_NO_SAVED_DATA_EXISTS }, { TEXT_NO_SAVED_DATA_EXISTS_FR }, { TEXT_NO_SAVED_DATA_EXISTS_DE }};
+#elif VERSION_ML
+static unsigned char textNoSavedDataExists[][30] = {{ TEXT_NO_SAVED_DATA_EXISTS }, { TEXT_NO_SAVED_DATA_EXISTS }, { TEXT_NO_SAVED_DATA_EXISTS_JP }, { TEXT_NO_SAVED_DATA_EXISTS_FR }, { TEXT_NO_SAVED_DATA_EXISTS_DE }};
 #endif
 
-#ifndef VERSION_EU
+#if defined(VERSION_JP) || (VERSION_SH)
+static unsigned char textCopyFile[] = { TEXT_COPY_FILE_JP };
+#elif VERSION_US
 static unsigned char textCopyFile[] = { TEXT_COPY_FILE };
-#else
-static unsigned char textCopyFile[][16] = {{ TEXT_COPY_FILE_BUTTON }, { TEXT_COPY_FILE_BUTTON_FR }, { TEXT_COPY_FILE_BUTTON_DE }};
+#elif VERSION_EU
+static unsigned char textCopyFile[][16] = {{ TEXT_COPY_FILE }, { TEXT_COPY_FILE_BUTTON_FR }, { TEXT_COPY_FILE_BUTTON_DE }};
+#elif VERSION_ML
+static unsigned char textCopyFile[][16] = {{ TEXT_COPY_FILE }, { TEXT_COPY_FILE }, { TEXT_COPY_FILE_JP }, { TEXT_COPY_FILE_BUTTON_FR }, { TEXT_COPY_FILE_BUTTON_DE }};
 #endif
 
-#ifndef VERSION_EU
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textCopyItToWhere[] = { TEXT_COPY_IT_TO_WHERE_JP };
+#elif VERSION_US
 static unsigned char textCopyItToWhere[] = { TEXT_COPY_IT_TO_WHERE };
-#else
+#elif VERSION_EU
 static unsigned char textCopyItToWhere[][18] = {{ TEXT_COPY_IT_TO_WHERE }, { TEXT_COPY_IT_TO_WHERE_FR }, { TEXT_COPY_IT_TO_WHERE_DE }};
+#elif VERSION_ML
+static unsigned char textCopyItToWhere[][18] = {{ TEXT_COPY_IT_TO_WHERE }, { TEXT_COPY_IT_TO_WHERE }, { TEXT_COPY_IT_TO_WHERE_JP }, { TEXT_COPY_IT_TO_WHERE_FR }, { TEXT_COPY_IT_TO_WHERE_DE }};
 #endif
 
-#ifndef VERSION_EU
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textNoSavedDataExistsCopy[] = { TEXT_NO_SAVED_DATA_EXISTS_JP };
+#elif VERSION_US
 static unsigned char textNoSavedDataExistsCopy[] = { TEXT_NO_SAVED_DATA_EXISTS };
+#elif VERSION_ML
+static unsigned char textNoSavedDataExistsCopy[] = {{ TEXT_NO_SAVED_DATA_EXISTS }, { TEXT_NO_SAVED_DATA_EXISTS }, { TEXT_NO_SAVED_DATA_EXISTS_JP }, { TEXT_NO_SAVED_DATA_EXISTS_FR }, { TEXT_NO_SAVED_DATA_EXISTS_DE }};
 #endif
 
-#ifndef VERSION_EU
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textCopyCompleted[] = { TEXT_COPYING_COMPLETED_JP };
+#elif VERSION_US
 static unsigned char textCopyCompleted[] = { TEXT_COPYING_COMPLETED };
-#else
+#elif VERSION_EU
 static unsigned char textCopyCompleted[][18] = {{ TEXT_COPYING_COMPLETED }, { TEXT_COPYING_COMPLETED_FR }, { TEXT_COPYING_COMPLETED_DE }};
+#elif VERSION_ML
+static unsigned char textCopyCompleted[][18] = {{ TEXT_COPYING_COMPLETED }, { TEXT_COPYING_COMPLETED }, { TEXT_COPYING_COMPLETED_JP }, { TEXT_COPYING_COMPLETED_FR }, { TEXT_COPYING_COMPLETED_DE }};
 #endif
 
-#ifndef VERSION_EU
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textSavedDataExists[] = { TEXT_SAVED_DATA_EXISTS_JP };
+#elif VERSION_US
 static unsigned char textSavedDataExists[] = { TEXT_SAVED_DATA_EXISTS };
-#else
+#elif VERSION_EU
 static unsigned char textSavedDataExists[][20] = {{ TEXT_SAVED_DATA_EXISTS }, { TEXT_SAVED_DATA_EXISTS_FR }, { TEXT_SAVED_DATA_EXISTS_DE }};
+#elif VERSION_ML
+static unsigned char textSavedDataExists[][20] = {{ TEXT_SAVED_DATA_EXISTS }, { TEXT_SAVED_DATA_EXISTS }, { TEXT_SAVED_DATA_EXISTS_JP }, { TEXT_SAVED_DATA_EXISTS_FR }, { TEXT_SAVED_DATA_EXISTS_DE }};
 #endif
 
-#ifndef VERSION_EU
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textNoFileToCopyFrom[] = { TEXT_NO_FILE_TO_COPY_FROM_JP };
+#elif VERSION_US
 static unsigned char textNoFileToCopyFrom[] = { TEXT_NO_FILE_TO_COPY_FROM };
-#else
+#elif VERSION_EU
 static unsigned char textNoFileToCopyFrom[][21] = {{ TEXT_NO_FILE_TO_COPY_FROM }, { TEXT_NO_FILE_TO_COPY_FROM_FR }, { TEXT_NO_FILE_TO_COPY_FROM_DE }};
+#elif VERSION_ML
+static unsigned char textNoFileToCopyFrom[][21] = {{ TEXT_NO_FILE_TO_COPY_FROM }, { TEXT_NO_FILE_TO_COPY_FROM }, { TEXT_NO_FILE_TO_COPY_FROM_JP }, { TEXT_NO_FILE_TO_COPY_FROM_FR }, { TEXT_NO_FILE_TO_COPY_FROM_DE }};
 #endif
 
-#ifndef VERSION_EU
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textYes[] = { TEXT_YES_JP };
+#elif VERSION_US
 static unsigned char textYes[] = { TEXT_YES };
-#else
+#elif VERSION_EU
 static unsigned char textYes[][4] = {{ TEXT_YES }, { TEXT_YES_FR }, { TEXT_YES_DE }};
+#elif VERSION_ML
+static unsigned char textYes[][4] = {{ TEXT_YES }, { TEXT_YES }, { TEXT_YES_JP }, { TEXT_YES_FR }, { TEXT_YES_DE }};
 #endif
 
-#ifndef VERSION_EU
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textNo[] = { TEXT_NO_JP };
+#elif VERSION_US
 static unsigned char textNo[] = { TEXT_NO };
-#else
+#elif VERSION_EU
 static unsigned char textNo[][5] = {{ TEXT_NO }, { TEXT_NO_FR }, { TEXT_NO_DE }};
+#elif VERSION_ML
+static unsigned char textNo[][5] = {{ TEXT_NO }, { TEXT_NO }, { TEXT_NO_JP }, { TEXT_NO_FR }, { TEXT_NO_DE }};
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU)
 // In EU, Erase File and Sound Select strings are outside it's print string function
 static unsigned char textEraseFile[][17] = {
-    { TEXT_ERASE_FILE_BUTTON }, { TEXT_ERASE_FILE_BUTTON_FR }, { TEXT_ERASE_FILE_BUTTON_DE }
+    { TEXT_ERASE_FILE }, { TEXT_ERASE_FILE_BUTTON_FR }, { TEXT_ERASE_FILE_BUTTON_DE }
 };
 static unsigned char textSure[][8] = {{ TEXT_SURE }, { TEXT_SURE_FR }, { TEXT_SURE_DE }};
 static unsigned char textMarioAJustErased[][20] = {
@@ -286,12 +386,6 @@ static unsigned char textLanguageSelect[][17] = {
     { TEXT_LANGUAGE_SELECT }, { TEXT_LANGUAGE_SELECT_FR }, { TEXT_LANGUAGE_SELECT_DE }
 };
 
-static unsigned char textSoundModes[][10] = {
-    { TEXT_STEREO }, { TEXT_MONO }, { TEXT_HEADSET },
-    { TEXT_STEREO_FR }, { TEXT_MONO_FR }, { TEXT_HEADSET_FR },
-    { TEXT_STEREO_DE }, { TEXT_MONO_DE }, { TEXT_HEADSET_DE }
-};
-
 static unsigned char textLanguage[][9] = {{ TEXT_ENGLISH }, { TEXT_FRENCH }, { TEXT_GERMAN }};
 
 static unsigned char textMario[] = { TEXT_MARIO };
@@ -299,6 +393,31 @@ static unsigned char textHiScore[][15] = {{ TEXT_HI_SCORE }, { TEXT_HI_SCORE_FR 
 static unsigned char textMyScore[][10] = {{ TEXT_MY_SCORE }, { TEXT_MY_SCORE_FR }, { TEXT_MY_SCORE_DE }};
 
 static unsigned char textNew[][5] = {{ TEXT_NEW }, { TEXT_NEW_FR }, { TEXT_NEW_DE }};
+#elif VERSION_ML
+static unsigned char textEraseFile[][17] = {
+    { TEXT_ERASE_FILE }, { TEXT_ERASE_FILE }, { TEXT_ERASE_FILE_JP }, { TEXT_ERASE_FILE_BUTTON_FR }, { TEXT_ERASE_FILE_BUTTON_DE }
+};
+static unsigned char textSure[][8] = {{ TEXT_SURE }, { TEXT_SURE_JP }, { TEXT_SURE_FR }, { TEXT_SURE_DE }};
+static unsigned char textMarioAJustErased[][20] = {
+    { TEXT_FILE_MARIO_A_JUST_ERASED }, { TEXT_FILE_MARIO_A_JUST_ERASED }, { TEXT_FILE_MARIO_A_JUST_ERASED_JP }, { TEXT_FILE_MARIO_A_JUST_ERASED_FR }, { TEXT_FILE_MARIO_A_JUST_ERASED_DE }
+};
+
+static unsigned char textSoundSelect[][13] = {
+    { TEXT_SOUND_SELECT }, { TEXT_SOUND_SELECT }, { TEXT_SOUND_SELECT_JP }, { TEXT_SOUND_SELECT_FR }, { TEXT_SOUND_SELECT_DE }
+};
+
+static unsigned char textLanguageSelect[][17] = {
+    { TEXT_LANGUAGE_SELECT }, { TEXT_LANGUAGE_SELECT }, { TEXT_LANGUAGE_SELECT_JP }, { TEXT_LANGUAGE_SELECT_FR }, { TEXT_LANGUAGE_SELECT_DE }
+};
+
+static unsigned char textLanguage[][9] = {{ TEXT_US_ENGLISH }, { TEXT_UK_ENGLISH }, { TEXT_JAPANESE }, { TEXT_FRENCH }, { TEXT_GERMAN }};
+
+static unsigned char textMario[] = { TEXT_MARIO };
+static unsigned char textHiScore[][15] = {{ TEXT_HI_SCORE }, { TEXT_HI_SCORE }, { TEXT_HI_SCORE_JP }, { TEXT_HI_SCORE_FR }, { TEXT_HI_SCORE_DE }};
+static unsigned char textMyScore[][10] = {{ TEXT_MY_SCORE }, { TEXT_MY_SCORE }, { TEXT_MY_SCORE_JP }, { TEXT_MY_SCORE_FR }, { TEXT_MY_SCORE_DE }};
+
+static unsigned char textNew[][5] = {{ TEXT_NEW }, { TEXT_NEW }, { TEXT_NEW_JP }, { TEXT_NEW_FR }, { TEXT_NEW_DE }};
+#endif
 static unsigned char starIcon[] = { GLYPH_STAR, GLYPH_SPACE };
 static unsigned char xIcon[] = { GLYPH_MULTIPLY, GLYPH_SPACE };
 #endif
@@ -1030,7 +1149,7 @@ void render_sound_mode_menu_buttons(struct Object *soundModeButton) {
         soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, -533, SOUND_BUTTON_Y, -100, 0, -0x8000, 0);
     sMainMenuButtons[MENU_BUTTON_HEADSET]->oMenuButtonScale = 0.11111111f;
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU)
     // English option button
     sMainMenuButtons[MENU_BUTTON_LANGUAGE_ENGLISH] = spawn_object_rel_with_rot(
         soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, 533, -111, -100, 0, -0x8000, 0);
@@ -1042,6 +1161,32 @@ void render_sound_mode_menu_buttons(struct Object *soundModeButton) {
     // German option button
     sMainMenuButtons[MENU_BUTTON_LANGUAGE_GERMAN] = spawn_object_rel_with_rot(
         soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, -533, -111, -100, 0, -0x8000, 0);
+    sMainMenuButtons[MENU_BUTTON_LANGUAGE_GERMAN]->oMenuButtonScale = 0.11111111f;
+
+    // Return button
+    sMainMenuButtons[MENU_BUTTON_LANGUAGE_RETURN] = spawn_object_rel_with_rot(
+        soundModeButton, MODEL_MAIN_MENU_YELLOW_FILE_BUTTON, bhvMenuButton, 0, -533, -100, 0, -0x8000, 0);
+    sMainMenuButtons[MENU_BUTTON_LANGUAGE_RETURN]->oMenuButtonScale = 0.11111111f;
+#elif VERSION_ML
+    // US English option button
+    sMainMenuButtons[MENU_BUTTON_LANGUAGE_US_ENGLISH] = spawn_object_rel_with_rot(
+        soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, 600, -111, -100, 0, -0x8000, 0);
+    sMainMenuButtons[MENU_BUTTON_LANGUAGE_US_ENGLISH]->oMenuButtonScale = 0.11111111f;
+    // UK English option button
+    sMainMenuButtons[MENU_BUTTON_LANGUAGE_UK_ENGLISH] = spawn_object_rel_with_rot(
+        soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, 600, -111, -100, 0, -0x8000, 0);
+    sMainMenuButtons[MENU_BUTTON_LANGUAGE_UK_ENGLISH]->oMenuButtonScale = 0.11111111f;
+    // Japanese option button
+    sMainMenuButtons[MENU_BUTTON_LANGUAGE_JAPANESE] = spawn_object_rel_with_rot(
+        soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, 400, -111, -100, 0 -0x8000, 0);
+    sMainMenuButtons[MENU_BUTTON_LANGUAGE_JAPANESE]->oMenuButtonScale = 0.11111111f;
+    // French option button
+    sMainMenuButtons[MENU_BUTTON_LANGUAGE_FRENCH] = spawn_object_rel_with_rot(
+        soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, 200, -111, -100, 0, -0x8000, 0);
+    sMainMenuButtons[MENU_BUTTON_LANGUAGE_FRENCH]->oMenuButtonScale = 0.11111111f;
+    // German option button
+    sMainMenuButtons[MENU_BUTTON_LANGUAGE_GERMAN] = spawn_object_rel_with_rot(
+        soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, 0, -111, -100, 0, -0x8000, 0);
     sMainMenuButtons[MENU_BUTTON_LANGUAGE_GERMAN]->oMenuButtonScale = 0.11111111f;
 
     // Return button
@@ -1083,7 +1228,7 @@ void check_sound_mode_menu_clicked_buttons(struct Object *soundModeButton) {
                         save_file_set_sound_mode(sSoundMode);
                     }
                 }
-#ifdef VERSION_EU
+#if defined(VERSION_EU)
                 // If language mode button clicked, select it and change language
                 if (buttonID == MENU_BUTTON_LANGUAGE_ENGLISH || buttonID == MENU_BUTTON_LANGUAGE_FRENCH
                          || buttonID == MENU_BUTTON_LANGUAGE_GERMAN) {
@@ -1100,6 +1245,22 @@ void check_sound_mode_menu_clicked_buttons(struct Object *soundModeButton) {
                     sMainMenuButtons[buttonID]->oMenuButtonState = MENU_BUTTON_STATE_ZOOM_IN_OUT;
                     sSelectedButtonID = buttonID;
                 }
+#elif VERSION_ML
+                // If language mode button clicked, select it and change language
+                if (buttonID == MENU_BUTTON_LANGUAGE_US_ENGLISH || buttonID == MENU_BUTTON_LANGUAGE_UK_ENGLISH || buttonID == MENU_BUTTON_LANGUAGE_JAPANESE || buttonID == MENU_BUTTON_LANGUAGE_FRENCH
+                         || buttonID == MENU_BUTTON_LANGUAGE_GERMAN) {
+                    if (soundModeButton->oMenuButtonActionPhase == SOUND_MODE_PHASE_MAIN) {
+                        play_sound(SOUND_MENU_CLICK_FILE_SELECT, gDefaultSoundArgs);
+                        sMainMenuButtons[buttonID]->oMenuButtonState = MENU_BUTTON_STATE_ZOOM_IN_OUT;
+                        sLanguageMode = buttonID - MENU_BUTTON_LANGUAGE_MIN;
+                        eu_set_language(sLanguageMode);
+                    }
+                }
+                // If neither of the buttons above are pressed, return to main menu
+                if (buttonID == MENU_BUTTON_LANGUAGE_RETURN) {
+                    play_sound(SOUND_MENU_CLICK_FILE_SELECT, gDefaultSoundArgs);
+                    sMainMenuButtons[buttonID]->oMenuButtonState = MENU_BUTTON_STATE_ZOOM_IN_OUT;
+                    sSelectedButtonID = buttonID;
 #endif
                 sCurrentMenuLevel = MENU_LAYER_SUBMENU;
 
@@ -1388,7 +1549,7 @@ void check_main_menu_clicked_buttons(void) {
                 }
             }
         }
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
         // Open Options Menu if sOpenLangSettings is TRUE (It's TRUE when there's no saves)
         if (sOpenLangSettings == TRUE) {
             sMainMenuButtons[MENU_BUTTON_SOUND_MODE]->oMenuButtonState = MENU_BUTTON_STATE_GROWING;
@@ -1538,7 +1699,7 @@ void bhv_menu_button_manager_loop(void) {
 
         // STEREO, MONO and HEADSET buttons are undefined so they can be selected without
         // exiting the Options menu, as a result they added a return button
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
         case MENU_BUTTON_LANGUAGE_RETURN:
             return_to_main_menu(MENU_BUTTON_SOUND_MODE, sMainMenuButtons[MENU_BUTTON_LANGUAGE_RETURN]);
             break;
@@ -1735,7 +1896,7 @@ void print_save_file_star_count(s8 fileIndex, s16 x, s16 y) {
     #define SAVEFILE_X2 209
     #define MARIOTEXT_X1 92
     #define MARIOTEXT_X2 207
-#elif VERSION_US
+#elif defined(VERSION_US) || defined(VERSION_ML)
     #define SELECT_FILE_X 93
     #define SCORE_X 52
     #define COPY_X 117
@@ -1768,7 +1929,7 @@ void print_main_menu_strings(void) {
     // Print "SELECT FILE" text
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
-#ifndef VERSION_EU
+#if !defined(VERSION_EU) || !defined(VERSION_ML)
     print_hud_lut_string(HUD_LUT_DIFF, SELECT_FILE_X, 35, textSelectFile);
 #endif
     // Print file star counts
@@ -1777,7 +1938,7 @@ void print_main_menu_strings(void) {
     print_save_file_star_count(SAVE_FILE_C, SAVEFILE_X1, 118);
     print_save_file_star_count(SAVE_FILE_D, SAVEFILE_X2, 118);
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
-#ifndef VERSION_EU
+#if !defined(VERSION_EU) || !defined(VERSION_ML)
    // Print menu names
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
@@ -1800,7 +1961,7 @@ void print_main_menu_strings(void) {
     gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_end);
 }
 
-#ifdef VERSION_EU
+#if defined (VERSION_EU) || defined(VERSION_ML)
 /**
  * Prints the first part main menu strings that shows on the yellow background menu screen.
  * Has the strings for the 4 buttons below the save buttons that get changed depending of the language.
@@ -1836,7 +1997,7 @@ void print_main_lang_strings(void) {
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
 #define CHECK_FILE_X checkFileX
 #define NOSAVE_DATA_X1 noSaveDataX
 #elif VERSION_JP
@@ -1851,19 +2012,19 @@ void print_main_lang_strings(void) {
  * Defines IDs for the top message of the score menu and displays it if the ID is called in messageID.
  */
 void score_menu_display_message(s8 messageID) {
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     s16 checkFileX, noSaveDataX;
 #endif
 
     switch (messageID) {
         case SCORE_MSG_CHECK_FILE:
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
             checkFileX = get_str_x_pos_from_center_scale(160, LANGUAGE_ARRAY(textCheckFile), 12.0f);
 #endif
             print_hud_lut_string_fade(HUD_LUT_DIFF, CHECK_FILE_X, 35, LANGUAGE_ARRAY(textCheckFile));
             break;
         case SCORE_MSG_NOSAVE_DATA:
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
             noSaveDataX = get_str_x_pos_from_center(160, LANGUAGE_ARRAY(textNoSavedDataExists), 10.0f);
 #endif
             print_generic_string_fade(NOSAVE_DATA_X1, 190, LANGUAGE_ARRAY(textNoSavedDataExists));
@@ -1875,7 +2036,7 @@ void score_menu_display_message(s8 messageID) {
     #define RETURN_X     45
     #define COPYFILE_X1  128
     #define ERASEFILE_X1 228
-#elif VERSION_EU
+#elif defined(VERSION_EU) || defined(VERSION_ML)
     #define RETURN_X     centeredX
     #define COPYFILE_X1  centeredX
     #define ERASEFILE_X1 centeredX
@@ -1895,7 +2056,7 @@ void score_menu_display_message(s8 messageID) {
  * Prints score menu strings that shows on the green background menu screen.
  */
 void print_score_menu_strings(void) {
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     s16 centeredX;
 #endif
 
@@ -1927,21 +2088,21 @@ void print_score_menu_strings(void) {
     // Print menu names
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     centeredX = get_str_x_pos_from_center(69, textReturn[sLanguageMode], 10.0f);
 #endif
     print_generic_string(RETURN_X, 35, LANGUAGE_ARRAY(textReturn));
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     centeredX = get_str_x_pos_from_center(159, textCopyFileButton[sLanguageMode], 10.0f);
 #endif
     print_generic_string(COPYFILE_X1, 35, LANGUAGE_ARRAY(textCopyFileButton));
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     centeredX = get_str_x_pos_from_center(249, textEraseFileButton[sLanguageMode], 10.0f);
 #endif
     print_generic_string(ERASEFILE_X1, 35, LANGUAGE_ARRAY(textEraseFileButton));
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     print_main_menu_strings();
 #else
     // Print file names
@@ -1962,7 +2123,7 @@ void print_score_menu_strings(void) {
     #define NOSAVE_DATA_X2 90
     #define COPYCOMPLETE_X 90
     #define SAVE_EXISTS_X1 90
-#elif VERSION_EU
+#elif defined(VERSION_EU) || defined(VERSION_ML)
     #define NOFILE_COPY_X  centeredX
     #define COPY_FILE_X    centeredX
     #define COPYIT_WHERE_X centeredX
@@ -1982,32 +2143,32 @@ void print_score_menu_strings(void) {
  * Defines IDs for the top message of the copy menu and displays it if the ID is called in messageID.
  */
 void copy_menu_display_message(s8 messageID) {
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     s16 centeredX;
 #endif
 
     switch (messageID) {
         case COPY_MSG_MAIN_TEXT:
             if (sAllFilesExist == TRUE) {
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
                 centeredX = get_str_x_pos_from_center(160, textNoFileToCopyFrom[sLanguageMode], 10.0f);
 #endif
                 print_generic_string_fade(NOFILE_COPY_X, 190, LANGUAGE_ARRAY(textNoFileToCopyFrom));
             } else {
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
                 centeredX = get_str_x_pos_from_center_scale(160, textCopyFile[sLanguageMode], 12.0f);
 #endif
                 print_hud_lut_string_fade(HUD_LUT_DIFF, COPY_FILE_X, 35, LANGUAGE_ARRAY(textCopyFile));
             }
             break;
         case COPY_MSG_COPY_WHERE:
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
             centeredX = get_str_x_pos_from_center(160, textCopyItToWhere[sLanguageMode], 10.0f);
 #endif
             print_generic_string_fade(COPYIT_WHERE_X, 190, LANGUAGE_ARRAY(textCopyItToWhere));
             break;
         case COPY_MSG_NOSAVE_EXISTS:
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
             centeredX = get_str_x_pos_from_center(160, textNoSavedDataExists[sLanguageMode], 10.0f);
             print_generic_string_fade(NOSAVE_DATA_X2, 190, textNoSavedDataExists[sLanguageMode]);
 #else
@@ -2015,13 +2176,13 @@ void copy_menu_display_message(s8 messageID) {
 #endif
             break;
         case COPY_MSG_COPY_COMPLETE:
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
             centeredX = get_str_x_pos_from_center(160, textCopyCompleted[sLanguageMode], 10.0f);
 #endif
             print_generic_string_fade(COPYCOMPLETE_X, 190, LANGUAGE_ARRAY(textCopyCompleted));
             break;
         case COPY_MSG_SAVE_EXISTS:
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
             centeredX = get_str_x_pos_from_center(160, textSavedDataExists[sLanguageMode], 10.0f);
 #endif
             print_generic_string_fade(SAVE_EXISTS_X1, 190, LANGUAGE_ARRAY(textSavedDataExists));
@@ -2077,7 +2238,7 @@ void copy_menu_update_message(void) {
 #if defined(VERSION_JP) || defined(VERSION_SH)
     #define VIEWSCORE_X1 133
     #define ERASEFILE_X2 220
-#elif VERSION_EU
+#elif defined(VERSION_EU) || defined(VERSION_ML)
     #define VIEWSCORE_X1 centeredX
     #define ERASEFILE_X2 centeredX
 #else
@@ -2089,7 +2250,7 @@ void copy_menu_update_message(void) {
  * Prints copy menu strings that shows on the blue background menu screen.
  */
 void print_copy_menu_strings(void) {
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     s16 centeredX;
 #endif
 
@@ -2097,7 +2258,7 @@ void print_copy_menu_strings(void) {
     copy_menu_update_message();
     // Print messageID called inside a copy_menu_update_message case
     copy_menu_display_message(sStatusMessageID);
-#ifndef VERSION_EU
+#if !defined(VERSION_EU) || !defined(VERSION_ML)
     // Print file star counts
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
@@ -2110,20 +2271,20 @@ void print_copy_menu_strings(void) {
     // Print menu names
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     centeredX = get_str_x_pos_from_center(69, textReturn[sLanguageMode], 10.0f);
 #endif
     print_generic_string(RETURN_X, 35, LANGUAGE_ARRAY(textReturn));
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     centeredX = get_str_x_pos_from_center(159, textViewScore[sLanguageMode], 10.0f);
 #endif
     print_generic_string(VIEWSCORE_X1, 35, LANGUAGE_ARRAY(textViewScore));
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     centeredX = get_str_x_pos_from_center(249, textEraseFileButton[sLanguageMode], 10.0f);
 #endif
     print_generic_string(ERASEFILE_X2, 35, LANGUAGE_ARRAY(textEraseFileButton));
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     print_main_menu_strings();
 #else
     // Print file names
@@ -2224,7 +2385,7 @@ void print_erase_menu_prompt(s16 x, s16 y) {
     #define MARIO_ERASED_VAR 3
     #define MARIO_ERASED_X   90
     #define SAVE_EXISTS_X2   90
-#elif VERSION_EU
+#elif defined(VERSION_EU) || defined(VERSION_ML)
     #define ERASE_FILE_X     centeredX
     #define NOSAVE_DATA_X3   centeredX
     #define MARIO_ERASED_VAR 6
@@ -2242,11 +2403,11 @@ void print_erase_menu_prompt(s16 x, s16 y) {
  * Defines IDs for the top message of the erase menu and displays it if the ID is called in messageID.
  */
 void erase_menu_display_message(s8 messageID) {
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     s16 centeredX;
 #endif
 
-#ifndef VERSION_EU
+#if !defined(VERSION_EU) || !defined(VERSION_ML)
     unsigned char textEraseFile[] = { TEXT_ERASE_FILE };
     unsigned char textSure[] = { TEXT_SURE };
     unsigned char textNoSavedDataExists[] = { TEXT_NO_SAVED_DATA_EXISTS };
@@ -2256,7 +2417,7 @@ void erase_menu_display_message(s8 messageID) {
 
     switch (messageID) {
         case ERASE_MSG_MAIN_TEXT:
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
             centeredX = get_str_x_pos_from_center_scale(160, textEraseFile[sLanguageMode], 12.0f);
 #endif
             print_hud_lut_string_fade(HUD_LUT_DIFF, ERASE_FILE_X, 35, LANGUAGE_ARRAY(textEraseFile));
@@ -2266,20 +2427,20 @@ void erase_menu_display_message(s8 messageID) {
             print_erase_menu_prompt(90, 190); // YES NO, has functions for it too
             break;
         case ERASE_MSG_NOSAVE_EXISTS:
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
             centeredX = get_str_x_pos_from_center(160, textNoSavedDataExists[sLanguageMode], 10.0f);
 #endif
             print_generic_string_fade(NOSAVE_DATA_X3, 190, LANGUAGE_ARRAY(textNoSavedDataExists));
             break;
         case ERASE_MSG_MARIO_ERASED:
             LANGUAGE_ARRAY(textMarioAJustErased)[MARIO_ERASED_VAR] = sSelectedFileIndex + 10;
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
             centeredX = get_str_x_pos_from_center(160, textMarioAJustErased[sLanguageMode], 10.0f);
 #endif
             print_generic_string_fade(MARIO_ERASED_X, 190, LANGUAGE_ARRAY(textMarioAJustErased));
             break;
         case ERASE_MSG_SAVE_EXISTS: // unused
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
             centeredX = get_str_x_pos_from_center(160, textSavedDataExists[sLanguageMode], 10.0f);
 #endif
             print_generic_string_fade(SAVE_EXISTS_X2, 190, LANGUAGE_ARRAY(textSavedDataExists));
@@ -2341,7 +2502,7 @@ void erase_menu_update_message(void) {
  * Prints erase menu strings that shows on the red background menu screen.
  */
 void print_erase_menu_strings(void) {
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     s16 centeredX;
 #endif
 
@@ -2351,7 +2512,7 @@ void print_erase_menu_strings(void) {
     // Print messageID called inside a erase_menu_update_message case
     erase_menu_display_message(sStatusMessageID);
 
-#ifndef VERSION_EU
+#if !defined(VERSION_EU) || !defined(VERSION_ML)
     // Print file star counts
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
@@ -2366,7 +2527,7 @@ void print_erase_menu_strings(void) {
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     centeredX = get_str_x_pos_from_center(69, textReturn[sLanguageMode], 10.0f);
     print_generic_string(centeredX, 35, textReturn[sLanguageMode]);
     centeredX = get_str_x_pos_from_center(159, textViewScore[sLanguageMode], 10.0f);
@@ -2380,7 +2541,7 @@ void print_erase_menu_strings(void) {
 #endif
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     print_main_menu_strings();
 #else
     // Print file names
@@ -2410,11 +2571,11 @@ void print_sound_mode_menu_strings(void) {
 
 #ifdef VERSION_US
     s16 textX;
-#elif VERSION_EU
+#elif defined(VERSION_EU) || defined(VERSION_ML)
     s32 textX;
 #endif
 
-#ifndef VERSION_EU
+#if !defined(VERSION_EU) || !defined(VERSION_ML)
     unsigned char textSoundSelect[] = { TEXT_SOUND_SELECT };
 #endif
 
@@ -2422,7 +2583,7 @@ void print_sound_mode_menu_strings(void) {
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     print_hud_lut_string(HUD_LUT_DIFF, 47, 32, textSoundSelect[sLanguageMode]);
     print_hud_lut_string(HUD_LUT_DIFF, 47, 101, textLanguageSelect[sLanguageMode]);
 #else
@@ -2433,7 +2594,7 @@ void print_sound_mode_menu_strings(void) {
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
 
-#ifdef VERSION_EU // In EU their X position get increased each string
+#if defined(VERSION_EU) || defined(VERSION_ML) // In EU their X position get increased each string
     // Print sound mode names
     for (mode = 0, textX = 90; mode < 3; textX += 70, mode++) {
         if (mode == sSoundMode) {
@@ -2465,7 +2626,7 @@ void print_sound_mode_menu_strings(void) {
         } else {
             gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, sTextBaseAlpha);
         }
-        #ifdef VERSION_US
+        #if defined(VERSION_US) || defined(VERSION_ML)
             // Mode names are centered correctly on US
             textX = get_str_x_pos_from_center(mode * 74 + 87, textSoundModes[mode], 10.0f);
             print_generic_string(textX, 87, textSoundModes[mode]);
@@ -2475,7 +2636,7 @@ void print_sound_mode_menu_strings(void) {
     }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
     print_generic_string(182, 29, textReturn[sLanguageMode]);
 #endif
@@ -2495,7 +2656,7 @@ void print_score_file_castle_secret_stars(s8 fileIndex, s16 x, s16 y) {
     print_menu_generic_string(x, y, textStarX);
     // Print number of castle secret stars
     int_to_str(save_file_get_total_star_count(fileIndex, 15, 24), secretStarsText);
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     print_menu_generic_string(x + 20, y, secretStarsText);
 #else
     print_menu_generic_string(x + 16, y, secretStarsText);
@@ -2592,7 +2753,7 @@ void print_score_file_star_score(s8 fileIndex, s16 courseIndex, s16 x, s16 y) {
     #define HISCORE_X 231
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
 #include "game/segment7.h"
 #endif
 
@@ -2600,7 +2761,7 @@ void print_score_file_star_score(s8 fileIndex, s16 courseIndex, s16 x, s16 y) {
  * Prints save file score strings that shows when a save file is chosen inside the score menu.
  */
  void print_save_file_scores(s8 fileIndex) {
-#ifndef VERSION_EU
+#if !defined(VERSION_EU) || !defined(VERSION_ML)
     unsigned char textMario[] = { TEXT_MARIO };
 #endif
 #ifndef VERSION_US
@@ -2609,18 +2770,37 @@ void print_score_file_star_score(s8 fileIndex, s16 courseIndex, s16 x, s16 y) {
 #if defined(VERSION_JP) || defined(VERSION_SH)
     void **levelNameTable = segmented_to_virtual(seg2_course_name_table);
 #endif
-#ifndef VERSION_EU
+#if !defined(VERSION_EU) || !defined(VERSION_ML)
     unsigned char textHiScore[] = { TEXT_HI_SCORE };
     unsigned char textMyScore[] = { TEXT_MY_SCORE };
     #ifdef VERSION_US
         unsigned char textFileLetter[] = { TEXT_ZERO };
         void **levelNameTable = segmented_to_virtual(seg2_course_name_table);
     #endif
-#else
+#elif VERSION_EU
     void **levelNameTable;
     switch (sLanguageMode) {
         case LANGUAGE_ENGLISH:
             levelNameTable = segmented_to_virtual(eu_course_strings_en_table);
+            break;
+        case LANGUAGE_FRENCH:
+            levelNameTable = segmented_to_virtual(eu_course_strings_fr_table);
+            break;
+        case LANGUAGE_GERMAN:
+            levelNameTable = segmented_to_virtual(eu_course_strings_de_table);
+            break;
+    }
+#elif VERSION_ML
+    void **levelNameTable;
+    switch (sLanguageMode) {
+        case LANGUAGE_US_ENGLISH:
+            levelNameTable = segmented_to_virtual(us_course_strings_en_table);
+            break;
+        case LANGUAGE_UK_ENGLISH:
+            levelNameTable = segmented_to_virtual(eu_course_strings_en_table);
+            break;
+        case LANGUAGE_JAPANESE:
+            levelNameTable = segmented_to_virtual(jp_course_strings_jp_table);
             break;
         case LANGUAGE_FRENCH:
             levelNameTable = segmented_to_virtual(eu_course_strings_fr_table);
@@ -2688,14 +2868,14 @@ void print_score_file_star_score(s8 fileIndex, s16 courseIndex, s16 x, s16 y) {
 
     // Print current coin score mode
     if (sScoreFileCoinScoreMode == 0) {
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
         print_menu_generic_string(get_str_x_pos_from_center(257, textMyScore[sLanguageMode], 10.0f),
             24, textMyScore[sLanguageMode]);
 #else
         print_menu_generic_string(MYSCORE_X, 24, textMyScore);
 #endif
     } else {
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
         print_menu_generic_string(get_str_x_pos_from_center(257, textHiScore[sLanguageMode], 10.0f),
             24,textHiScore[sLanguageMode]);
 #else
@@ -2782,7 +2962,7 @@ Gfx *geo_file_select_strings_and_menu_cursor(s32 callContext, UNUSED struct Grap
  * either completing a course choosing "SAVE & QUIT" or having a game over.
  */
 s32 lvl_init_menu_values_and_cursor_pos(UNUSED s32 arg, UNUSED s32 unused) {
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     s8 fileNum;
 #endif
     sSelectedButtonID = MENU_BUTTON_NONE;
@@ -2820,7 +3000,7 @@ s32 lvl_init_menu_values_and_cursor_pos(UNUSED s32 arg, UNUSED s32 unused) {
     sMainMenuTimer = 0;
     sEraseYesNoHoverState = MENU_ERASE_HOVER_NONE;
     sSoundMode = save_file_get_sound_mode();
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     sLanguageMode = eu_get_language();
 
     for (fileNum = 0; fileNum < 4; fileNum++) {

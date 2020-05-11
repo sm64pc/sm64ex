@@ -11,13 +11,19 @@ extern u8 menu_font_lut[];
 extern u8 dl_menu_ia8_text_begin[];
 extern u8 dl_menu_ia8_text_end[];
 extern u8 dl_menu_rgba16_wood_course[];
-#ifdef VERSION_EU
+#if defined(VERSION_EU)
 extern u8 dl_menu_rgba16_wood_course_end[];
 extern u8 dl_menu_texture_course_upper[];
 extern u8 dl_menu_texture_niveau_upper[];
 extern u8 dl_menu_texture_kurs_upper[];
 
 extern const u8 eu_course_strings_en_table[];
+extern const u8 eu_course_strings_fr_table[];
+extern const u8 eu_course_strings_de_table[];
+#elif VERSION_ML
+extern const u8 us_course_strings_en_table[];
+extern const u8 eu_course_strings_en_table[];
+extern const u8 jp_course_strings_jp_table[];
 extern const u8 eu_course_strings_fr_table[];
 extern const u8 eu_course_strings_de_table[];
 #endif
