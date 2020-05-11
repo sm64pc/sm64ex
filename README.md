@@ -1,4 +1,7 @@
-# sm64pc
+# sm64pc  - skipintro branch
+
+This is a testing branch featuring a new CLI interface and support to skip the introductory Peach & Lakitu cutscenes, useful for development tests.
+
 OpenGL adaptation of [n64decomp/sm64](https://github.com/n64decomp/sm64). 
 
 Feel free to report bugs and contribute, but remember, there must be **no upload of any copyrighted asset**. 
