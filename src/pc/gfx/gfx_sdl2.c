@@ -130,9 +130,11 @@ static void gfx_sdl_init(void) {
     if (configFullscreen) {
         wnd = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                 sdl_displaymode.w, sdl_displaymode.h, window_flags);
+        SDL_ShowCursor(SDL_DISABLE);
     } else {
         wnd = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                 DESIRED_SCREEN_WIDTH, DESIRED_SCREEN_HEIGHT, window_flags);
+        SDL_ShowCursor(SDL_ENABLE);
     }
   
     SDL_GL_CreateContext(wnd);
