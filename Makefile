@@ -546,7 +546,7 @@ $(BUILD_DIR)/include/text_menu_strings.h: include/text_menu_strings.h.in
 	$(TEXTCONV) charmap_menu.txt $< $@
 
 ifeq ($(VERSION),eu)
-TEXT_DIRS := text/de text/eu text/fr
+TEXT_DIRS := text/de text/uk text/fr
 
 # EU encoded text inserted into individual segment 0x19 files,
 # and course data also duplicated in leveldata.c
