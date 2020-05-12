@@ -20,11 +20,6 @@
 
 #include "configfile.h"
 
-#ifdef DISCORDRPC
-#include "discord/discordrpc.h"
-#endif
-
-
 OSMesg D_80339BEC;
 OSMesgQueue gSIEventMesgQueue;
 
@@ -127,10 +122,6 @@ void main_func(void) {
     configfile_load(CONFIG_FILE);
     atexit(save_config);
 
-#ifdef DISCORDRPC
-    discordInit();
-#endif
-
 #ifdef TARGET_WEB
     emscripten_set_main_loop(em_main_loop, 0, 0);
     request_anim_frame(on_anim_frame);
@@ -161,10 +152,6 @@ void main_func(void) {
         wm_api->main_loop(produce_one_frame);
     }
 #endif
-#ifdef DISCORDRPC
-    discordShutdown();
-#endif
-
 }
 
 int main(int argc, char *argv[]) {

@@ -31,6 +31,13 @@ void InitializeDiscord()
     discordReset();
 }
 
+void SetState()
+{
+    // TODO set detail to current level name
+    m_sDiscordRichPresence.details = ""; 
+    m_sDiscordRichPresence.state = "";
+}
+
 void SetLogo()
 {
     m_sDiscordRichPresence.largeImageKey = "head";
@@ -41,9 +48,8 @@ void SetLogo()
 
 void discordUpdateRichPresence()
 {   
-
+    SetState();
     SetLogo();
-
     Discord_UpdatePresence(&m_sDiscordRichPresence);
 }
 
@@ -61,10 +67,8 @@ void discordInit()
 void discordReset()
 {
     memset( &m_sDiscordRichPresence, 0, sizeof( m_sDiscordRichPresence ) );
-    m_sDiscordRichPresence.details = "Super Mario 64 PC"; 
-    // TODO set detail to current level name
-    m_sDiscordRichPresence.state = "";
 
+    SetState();
     SetLogo();
     Discord_UpdatePresence( &m_sDiscordRichPresence );
 }
