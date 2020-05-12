@@ -215,7 +215,7 @@ void configfile_load(const char *filename) {
                             break;
                         case CONFIG_TYPE_BIND:
                             for (int i = 0; i < MAX_BINDS && i < numTokens - 1; ++i)
-                                sscanf(tokens[i + 1], "%u", option->uintValue + i);
+                                sscanf(tokens[i + 1], "%x", option->uintValue + i);
                             break;
                         case CONFIG_TYPE_FLOAT:
                             sscanf(tokens[1], "%f", option->floatValue);
@@ -262,8 +262,7 @@ void configfile_save(const char *filename) {
             case CONFIG_TYPE_BIND:
                 fprintf(file, "%s ", option->name);
                 for (int i = 0; i < MAX_BINDS; ++i)
-                    if (option->uintValue[i] != VK_INVALID)
-                        fprintf(file, "%u ", option->uintValue[i]);
+                    fprintf(file, "%04x ", option->uintValue[i]);
                 fprintf(file, "\n");
                 break;
             default:
