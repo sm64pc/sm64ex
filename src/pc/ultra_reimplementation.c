@@ -3,6 +3,20 @@
 #include "lib/src/libultra_internal.h"
 #include "macros.h"
 
+#ifdef USERCONFIG
+// These five next libraries are required for saving in the correct folders.
+#include <unistd.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <SDL2/SDL.h>
+#include <errno.h>
+
+s16 DONT_POLLUTE_SAVE = 0;       // Stops save-data pollution on the terminal.
+s16 DONT_POLLUTE_READ = 0;
+#endif
+
+#include "compatibility.h"
+
 #ifdef TARGET_WEB
 #include <emscripten.h>
 #endif
@@ -118,8 +132,30 @@ s32 osEepromLongRead(UNUSED OSMesgQueue *mq, u8 address, u8 *buffer, int nbytes)
         memcpy(buffer, content + address * 8, nbytes);
         ret = 0;
     }
+#else // TARGET_WEB
+    FILE *fp;
+#ifdef USERCONFIG
+    fp = fopen("sm64_save_file.bin", "rb");
+
+    if (fp != NULL)
+    {
+        printf("Loading sava data from '%s'\n", "sm64_save_file.bin"); // We've found a file in cwd!
+    }
+    else
+    {
+        char * cur_dir = SDL_GetBasePath();  // Saves the current working directory so we can return to it later.
+        chdir(SDL_GetPrefPath("", "sm64pc"));
+
+        fp = fopen("sm64_save_file.bin", "rb");  
+        chdir(cur_dir);
+        if (fp != NULL)
+        {
+            printf("Loading sava data from '%s%s'\n", SDL_GetPrefPath("", "sm64pc"), "sm64_save_file.bin"); // We've found a file in cwd!
+        }
+    }
 #else
-    FILE *fp = fopen("sm64_save_file.bin", "rb");
+    fp = fopen("sm64_save_file.bin", "rb");
+#endif // USERCONFIG
     if (fp == NULL) {
         return -1;
     }
@@ -128,7 +164,7 @@ s32 osEepromLongRead(UNUSED OSMesgQueue *mq, u8 address, u8 *buffer, int nbytes)
         ret = 0;
     }
     fclose(fp);
-#endif
+#endif // TARGET_WEB
     return ret;
 }
 
@@ -148,13 +184,48 @@ s32 osEepromLongWrite(UNUSED OSMesgQueue *mq, u8 address, u8 *buffer, int nbytes
         localStorage.sm64_save_file = btoa(str);
     }, content);
     s32 ret = 0;
-#else
-    FILE* fp = fopen("sm64_save_file.bin", "wb");
+#else // TARGET_WEB
+    FILE *fp;
+#ifdef USERCONFIG
+    fp = fopen("sm64_save_file.bin", "rb");
+    
+    char * cur_dir = SDL_GetBasePath();                         // Current working directory
+    if (fp == NULL)
+    {
+        DIR* conf_dir = opendir(SDL_GetPrefPath("", "sm64pc"));     // Checks if there's already an 'sm64pc' folder
+        if (ENOENT == errno)  // Directory does not exist
+        { 
+            _mkdir(SDL_GetPrefPath("", "sm64pc"), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);    // If there isn't, we'll make one.
+            conf_dir = opendir(SDL_GetPrefPath("", "sm64pc"));
+            if (ENOENT == errno) 
+            {
+                printf("Error: Couldn't get save path.\n");                      // If it still doesn't exist, bail out
+                exit(ENOENT);
+            }
+        }
+
+        closedir(conf_dir);
+        chdir(SDL_GetPrefPath("", "sm64pc"));                                           // Go to the pref folder
+    }
+
+    if (!DONT_POLLUTE_SAVE) {
+        printf("Save data is in '%s%s'\n",SDL_GetPrefPath("", "sm64pc"),  "sm64_save_file.bin");
+        DONT_POLLUTE_SAVE = 1;       // This is a bad solution to only print this message once.
+    }
+    else
+    {
+        DONT_POLLUTE_SAVE = 0;
+    }
+#endif // USERCONFIG
+    fp = fopen("sm64_save_file.bin", "wb");
+#ifdef USERCONFIG
+    chdir(cur_dir);        
+#endif // USERCONFIG
     if (fp == NULL) {
         return -1;
     }
     s32 ret = fwrite(content, 1, 512, fp) == 512 ? 0 : -1;
     fclose(fp);
-#endif
+#endif // TARGET_WEB
     return ret;
 }

@@ -27,6 +27,8 @@ COMPILER ?= ido
 
 # Disable better camera by default
 BETTERCAMERA ?= 0
+# Save configs in the users directory
+USERCONFIG ?= 0
 
 # Build for Emscripten/WebGL
 TARGET_WEB ?= 0
@@ -447,6 +449,11 @@ endif
 ifeq ($(BETTERCAMERA),1)
 CC_CHECK += -DBETTERCAMERA
 CFLAGS += -DBETTERCAMERA
+endif
+
+ifeq ($(USERCONFIG),1)
+CC_CHECK += -DUSERCONFIG
+CFLAGS += -DUSERCONFIG
 endif
 
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)

@@ -6,6 +6,17 @@
 #include <assert.h>
 #include <ctype.h>
 
+#ifdef USERCONFIG
+// These five next libraries are required for saving in the correct folders.
+#include <unistd.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <SDL2/SDL.h>
+#include <errno.h>
+#endif
+
+#include "compatibility.h"
+
 #include "configfile.h"
 
 #define ARRAY_LEN(arr) (sizeof(arr) / sizeof(arr[0]))
@@ -189,6 +200,7 @@ void configfile_load(const char *filename) {
     FILE *file;
     char *line;
 
+#ifndef USERCONFIG
     printf("Loading configuration from '%s'\n", filename);
 
     file = fopen(filename, "r");
@@ -198,6 +210,31 @@ void configfile_load(const char *filename) {
         configfile_save(filename);
         return;
     }
+#else
+
+    file = fopen(filename, "r"); // load local config first, then look in $XDG_DATA_HOME
+    if (file != NULL) {
+        printf("Loading configuration from '%s'\n", filename);
+        configfile_save(filename);
+    }
+    else
+    {
+        char * cur_dir = SDL_GetBasePath();  // Saves the current working directory so we can return to it later.
+        chdir(SDL_GetPrefPath("", "sm64pc")); 
+
+        file = fopen(filename, "r");   
+        chdir(cur_dir);
+        if (file == NULL)
+        {
+            printf("Config file '%s%s' not found. Creating it.\n", SDL_GetPrefPath("", "sm64pc"), filename);
+            configfile_save(filename);
+            return;
+        }
+        else printf("Loading configuration from '%s%s'\n", SDL_GetPrefPath("", "sm64pc"), filename); // We've found a file in cwd!
+
+    }
+
+#endif
 
     // Go through each line in the file
     while ((line = read_file_line(file)) != NULL) {
@@ -252,9 +289,40 @@ void configfile_load(const char *filename) {
 void configfile_save(const char *filename) {
     FILE *file;
 
+#ifdef USERCONFIG
+    file = fopen(filename, "r"); // check if local config exists if not fall back to XDG_CONFIG_DIR
+    if (file != NULL)
+    {
+#endif // USERCONFIG
     printf("Saving configuration to '%s'\n", filename);
 
     file = fopen(filename, "w");
+#ifdef USERCONFIG
+    }
+    else
+    {
+        printf("Saving configuration to '%s%s'\n",SDL_GetPrefPath("", "sm64pc"),  filename);
+        
+        char * cur_dir = SDL_GetBasePath();                     // Current working directory
+        DIR* conf_dir = opendir(SDL_GetPrefPath("", "sm64pc")); // Checks if there's already an 'sm64pc' folder
+        if (ENOENT == errno)  // Directory does not exist
+        { 
+            _mkdir(SDL_GetPrefPath("", "sm64pc"), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); // If there isn't, we'll make one.
+            conf_dir = opendir(SDL_GetPrefPath("", "sm64pc"));
+            if (errno == ENOENT) 
+            {
+                printf("Error: Couldn't get config path.\n"); // If it still doesn't exist, bail out
+                exit(ENOENT);
+            }
+        }
+
+        closedir(conf_dir);
+        chdir(SDL_GetPrefPath("", "sm64pc"));  // Go to the pref folder
+        file = fopen(filename, "w");           // Write the config file
+        chdir(cur_dir);                        // Come back. 
+    }
+#endif // USERCONFIG
+
     if (file == NULL) {
         // error
         return;
