@@ -39,9 +39,7 @@ static const u8 Debug1[] = {
       "STOP?")
 };
 #endif
-
 #ifndef VERSION_EU
-
 static const struct DialogEntry debug_text_entry_0 = {
     1, 8, 30, 200, Debug0
 };
@@ -53,9 +51,7 @@ static const struct DialogEntry debug_text_entry_1 = {
 const struct DialogEntry *const seg2_debug_text_table[] = {
     &debug_text_entry_0, &debug_text_entry_1, NULL,
 };
-
 #endif
-
 
 // == dialog ==
 // (defines en_dialog_table etc.)
