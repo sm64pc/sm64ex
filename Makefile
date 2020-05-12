@@ -92,7 +92,7 @@ ifeq ($(VERSION),ml)
   VERSION_ASFLAGS := --defsym VERSION_ML=1
   GRUCODE_CFLAGS := -DF3D_OLD
   GRUCODE_ASFLAGS := --defsym F3D_OLD=1
-  TARGET := sm64.ml
+  TARGET := sm64.jp sm64.us sm64.eu
 else
   $(error unknown version "$(VERSION)")
 endif
