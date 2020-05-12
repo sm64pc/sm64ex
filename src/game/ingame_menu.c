@@ -39,7 +39,7 @@ u16 gDialogColorFadeTimer;
 s8 gLastDialogLineNum;
 s32 gDialogVariable;
 u16 gDialogTextAlpha;
-#if defined(VERSION_EU)
+#if defined(VERSION_EU) || defined(VERSION_ML)
 s16 gDialogX; // D_8032F69A
 s16 gDialogY; // D_8032F69C
 #endif
@@ -390,7 +390,7 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
 
     while (str[strPos] != DIALOG_CHAR_TERMINATOR) {
         switch (str[strPos]) {
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
             case DIALOG_CHAR_SPACE:
                 xCoord += 5;
                 break;
@@ -402,9 +402,13 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
             case DIALOG_CHAR_LOWER_A_GRAVE:
             case DIALOG_CHAR_LOWER_A_CIRCUMFLEX:
             case DIALOG_CHAR_LOWER_A_UMLAUT:
+            case DIALOG_CHAR_LOWER_A_ACUTE:
                 render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('a'), str[strPos] & 0xF);
                 break;
-            case DIALOG_CHAR_UPPER_A_UMLAUT: // @bug grave and circumflux (0x64-0x65) are absent here
+            case DIALOG_CHAR_UPPER_A_GRAVE:
+            case DIALOG_CHAR_UPPER_A_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_A_UMLAUT:
+            case DIALOG_CHAR_UPPER_A_ACUTE:
                 render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('A'), str[strPos] & 0xF);
                 break;
             case DIALOG_CHAR_LOWER_E_GRAVE:
@@ -419,24 +423,53 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
             case DIALOG_CHAR_UPPER_E_ACUTE:
                 render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('E'), str[strPos] & 0xF);
                 break;
+            case DIALOG_CHAR_LOWER_I_GRAVE:
+            case DIALOG_CHAR_LOWER_I_CIRCUMFLEX:
+            case DIALOG_CHAR_LOWER_I_UMLAUT:
+            case DIALOG_CHAR_LOWER_I_ACUTE:
+                render_lowercase_diacritic(&xCoord, &yCoord, DIALOG_CHAR_I_NO_DIA, str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_UPPER_I_GRAVE:
+            case DIALOG_CHAR_UPPER_I_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_I_UMLAUT:
+            case DIALOG_CHAR_UPPER_I_ACUTE:
+                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('I'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_LOWER_O_GRAVE:
+            case DIALOG_CHAR_LOWER_O_CIRCUMFLEX:
+            case DIALOG_CHAR_LOWER_O_UMLAUT:
+            case DIALOG_CHAR_LOWER_O_ACUTE:
+                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('o'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_UPPER_O_GRAVE:
+            case DIALOG_CHAR_UPPER_O_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_O_UMLAUT:
+            case DIALOG_CHAR_UPPER_O_ACUTE:
+                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('O'), str[strPos] & 0xF);
+                break;
             case DIALOG_CHAR_LOWER_U_GRAVE:
             case DIALOG_CHAR_LOWER_U_CIRCUMFLEX:
             case DIALOG_CHAR_LOWER_U_UMLAUT:
+            case DIALOG_CHAR_LOWER_U_ACUTE:
                 render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('u'), str[strPos] & 0xF);
                 break;
-            case DIALOG_CHAR_UPPER_U_UMLAUT: // @bug grave and circumflex (0x84-0x85) are absent here
+            case DIALOG_CHAR_UPPER_U_GRAVE:
+            case DIALOG_CHAR_UPPER_U_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_U_UMLAUT:
+            case DIALOG_CHAR_UPPER_U_ACUTE:
                 render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('U'), str[strPos] & 0xF);
                 break;
-            case DIALOG_CHAR_LOWER_O_CIRCUMFLEX:
-            case DIALOG_CHAR_LOWER_O_UMLAUT:
-                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('o'), str[strPos] & 0xF);
+            case DIALOG_CHAR_LOWER_N_TILDE:
+                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('n'), str[strPos] & 0xF);
                 break;
-            case DIALOG_CHAR_UPPER_O_UMLAUT: // @bug circumflex (0x95) is absent here
-                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('O'), str[strPos] & 0xF);
+            case DIALOG_CHAR_UPPER_N_TILDE:
+                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('N'), str[strPos] & 0xF);
                 break;
-            case DIALOG_CHAR_LOWER_I_CIRCUMFLEX:
-            case DIALOG_CHAR_LOWER_I_UMLAUT:
-                render_lowercase_diacritic(&xCoord, &yCoord, DIALOG_CHAR_I_NO_DIA, str[strPos] & 0xF);
+            case DIALOG_CHAR_UPSIDE_DOWN_QUESTION_MARK:
+                mark = DIALOG_CHAR_UPSIDE_DOWN_QUESTION_MARK;
+                break;
+            case DIALOG_CHAR_UPSIDE_DOWN_EXCLAMATION_MARK
+                mark = DIALOG_CHAR_UPSIDE_DOWN_EXCLAMATION_MARK;
                 break;
 #else // i.e. not EU
             case DIALOG_CHAR_DAKUTEN:
@@ -458,7 +491,7 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
 #endif
 #if !defined(VERSION_JP) && !defined(VERSION_SH)
             case DIALOG_CHAR_SLASH:
-#ifdef VERSION_US
+#if defined(VERSION_US) || defined(VERSION_ML)
                 create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[DIALOG_CHAR_SPACE] * 2), 0.0f, 0.0f);
 #elif defined(VERSION_EU)
                 xCoord += gDialogCharWidths[DIALOG_CHAR_SPACE] * 2;
@@ -520,7 +553,7 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
 #endif
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
 void print_hud_char_umlaut(s16 x, s16 y, u8 chr) {
     void **fontLUT = segmented_to_virtual(main_hud_lut);
 

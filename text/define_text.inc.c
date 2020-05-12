@@ -1,9 +1,9 @@
 // == debug table ==
 
-#ifndef VERSION_EU
 
 // (this wasn't translated for US, and was removed in EU)
 
+#if defined(VERSION_JP) || defined(VERSION_SH)
 static const u8 Debug0[] = {
     _("ＳＴＡＧＥ　ＳＥＬＥＣＴ\n"
       "　つづける？\n"
@@ -20,6 +20,26 @@ static const u8 Debug1[] = {
       "　つづける？\n"
       "　やめる　？")
 };
+#elif VERSION_US
+static const u8 Debug0[] = {
+    _("STAGE SELECT\n"
+      "CONTINUE?\n"
+      "1 COOL COOL MOUNTAIN\n"
+      "2 BOWSER AND THE FIRE SEA\n"
+      "3 COOL COOL MOUNTAIN SNOW SLIDE\n"
+      "4 WET-DRY WORLD\n"
+      "BOWSER AND THE DARK WORLD\n"
+      "RETURN")
+};
+
+static const u8 Debug1[] = {
+    _("PAUSE\n"
+      "CONTINUE?\n"
+      "STOP?")
+};
+#endif
+
+#ifndef VERSION_EU
 
 static const struct DialogEntry debug_text_entry_0 = {
     1, 8, 30, 200, Debug0
