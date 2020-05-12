@@ -313,7 +313,7 @@
 #define TEXT_LANGUAGE_SELECT_FR _("SELECTION LANGUE")
 #define TEXT_LANGUAGE_SELECT_DE _("WwHLE SPRACHE")
 #ifdef VERSION_ML
-#define TEXT_LANGUAGE_SELECT_JP _("言語選択") // TODO: find what this is in a format the game will accept
+#define TEXT_LANGUAGE_SELECT_JP _("げんごセレクト")
 #endif
 
 #define TEXT_STEREO_FR _("STÉRÉO")
@@ -328,7 +328,7 @@
 #define TEXT_FRENCH _("FRANÇAIS")
 #define TEXT_GERMAN _("DEUTSCH")
 #ifdef VERSION_ML
-#define TEXT_JAPANESE _("日本語") // TODO: find what this is in a format the game will accept
+#define TEXT_JAPANESE _("にほんご")
 #endif
 
 #define TEXT_HI_SCORE_FR _("MEILLEUR SCORE")
