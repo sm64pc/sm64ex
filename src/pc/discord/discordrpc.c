@@ -7,7 +7,7 @@
 #include "discordrpc.h"
 
 #define DISCORD_APP_ID  "709083908708237342"
-#define DISCORD_UPDATE_RATE 10
+#define DISCORD_UPDATE_RATE 5
 
 time_t m_flLastUpdatedTime;
 int m_bErrored;
@@ -39,7 +39,7 @@ char* chars[0xFF] = {
     ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', // 87
     ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', // 95
     ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', // 103
-    ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', // 111
+    ' ', ' ', ' ', ' ', ' ', ' ', ' ', ',', // 111
     ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', // 119
     ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', // 127
     ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', // 135
@@ -56,7 +56,7 @@ char* chars[0xFF] = {
     ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', // 223
     ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', // 231
     ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', // 239
-    ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', // 247
+    ' ', ' ', '!', ' ', ' ', ' ', ' ', ' ', // 247
     ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '  // 255
 };
 
@@ -163,9 +163,9 @@ void SetState()
 {
     if (lastActNum != gCurrActNum || lastCourseNum != gCurrCourseNum)
     {
-        if (gCurrCourseNum)
+        if (gCurrActNum && gCurrCourseNum)
         {
-            if (gCurrActNum)
+            if (gCurrCourseNum < 19) // any stage over 19 is a special stage without acts
             {
                 void **actNameTbl = segmented_to_virtual(seg2_act_name_table);
                 u8 *actName = actName = segmented_to_virtual(actNameTbl[(gCurrCourseNum - 1) * 6 + gCurrActNum - 1]);
@@ -174,13 +174,13 @@ void SetState()
 
                 m_sDiscordRichPresence.state = act;
             }
-            else act[0] = '\0';
+            else
+            {
+                act[0] = '\0';
+                gCurrActNum = 0;
+            }
         }
-        else
-        {
-            act[0] = '\0';
-            gCurrActNum = 0;
-        }
+        else act[0] = '\0';
 
         lastActNum = gCurrActNum;
     }
@@ -192,18 +192,20 @@ void SetLogo()
     {
         itoa(lastCourseNum, largeImageKey);
     }
-    else strcpy(largeImageKey, "head");
+    else strcpy(largeImageKey, "0");
 
 
-    if (lastCourseNum)
+    /*
+    if (lastActNum)
     {
-        itoa(lastCourseNum, smallImageKey);
+        itoa(lastActNum, smallImageKey);
     }
     else smallImageKey[0] = '\0';
+    */
 
     m_sDiscordRichPresence.largeImageKey = largeImageKey;
     //m_sDiscordRichPresence.largeImageText = "";
-    m_sDiscordRichPresence.smallImageKey = smallImageKey;
+    //m_sDiscordRichPresence.smallImageKey = smallImageKey;
     //m_sDiscordRichPresence.smallImageText = "";
 }
 
