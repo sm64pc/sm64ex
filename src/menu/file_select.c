@@ -51,12 +51,10 @@ static s16 sSoundTextY;
     #else
         #define NUM_BUTTONS 34
     #endif
-#else
-#ifdef VERSION_ML
+#elif VERSION_ML
     #define NUM_BUTTONS 39
-#endif
 #else
-#define NUM_BUTTONS 32
+    #define NUM_BUTTONS 32
 #endif
 
 // Amount of main menu buttons defined in the code called by spawn_object_rel_with_rot.
@@ -417,7 +415,6 @@ static unsigned char textHiScore[][15] = {{ TEXT_HI_SCORE }, { TEXT_HI_SCORE }, 
 static unsigned char textMyScore[][10] = {{ TEXT_MY_SCORE }, { TEXT_MY_SCORE }, { TEXT_MY_SCORE_JP }, { TEXT_MY_SCORE_FR }, { TEXT_MY_SCORE_DE }};
 
 static unsigned char textNew[][5] = {{ TEXT_NEW }, { TEXT_NEW }, { TEXT_NEW_JP }, { TEXT_NEW_FR }, { TEXT_NEW_DE }};
-#endif
 static unsigned char starIcon[] = { GLYPH_STAR, GLYPH_SPACE };
 static unsigned char xIcon[] = { GLYPH_MULTIPLY, GLYPH_SPACE };
 #endif
@@ -2278,7 +2275,7 @@ void print_copy_menu_strings(void) {
 #if defined(VERSION_EU) || defined(VERSION_ML)
     centeredX = get_str_x_pos_from_center(159, textViewScore[sLanguageMode], 10.0f);
 #endif
-    print_generic_string(VIEWSCORE_X1, 35, LANGUAGE_ARRAY(textViewScore));
+    print_generic_string(VIEWSCORE_X1, 35, LANGUAGE_ARRAY(textviewScore));
 #if defined(VERSION_EU) || defined(VERSION_ML)
     centeredX = get_str_x_pos_from_center(249, textEraseFileButton[sLanguageMode], 10.0f);
 #endif
@@ -2536,7 +2533,7 @@ void print_erase_menu_strings(void) {
     print_generic_string(centeredX, 35, textCopyFileButton[sLanguageMode]);
 #else
     print_generic_string(RETURN_X, 35, textReturn);
-    print_generic_string(VIEWSCORE_X2, 35, textViewScore);
+    print_generic_string(VIEWSCORE_X2, 35, textviewScore);
     print_generic_string(COPYFILE_X2, 35, textCopyFileButton);
 #endif
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);

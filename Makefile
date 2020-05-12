@@ -62,22 +62,19 @@ ifeq ($(VERSION),jp)
   GRUCODE_CFLAGS := -DF3D_OLD
   GRUCODE_ASFLAGS := --defsym F3D_OLD=1
   TARGET := sm64.jp
-else
-ifeq ($(VERSION),us)
+else ifeq ($(VERSION),us)
   VERSION_CFLAGS := -DVERSION_US
   VERSION_ASFLAGS := --defsym VERSION_US=1
   GRUCODE_CFLAGS := -DF3D_OLD
   GRUCODE_ASFLAGS := --defsym F3D_OLD=1
   TARGET := sm64.us
-else
-ifeq ($(VERSION),eu)
+else ifeq ($(VERSION),eu)
   VERSION_CFLAGS := -DVERSION_EU
   VERSION_ASFLAGS := --defsym VERSION_EU=1
   GRUCODE_CFLAGS := -DF3D_NEW
   GRUCODE_ASFLAGS := --defsym F3D_NEW=1
   TARGET := sm64.eu
-else
-ifeq ($(VERSION),sh)
+else ifeq ($(VERSION),sh)
   $(warning Building SH is experimental and is prone to breaking. Try at your own risk.)
   VERSION_CFLAGS := -DVERSION_SH
   VERSION_ASFLAGS := --defsym VERSION_SH=1
@@ -86,8 +83,7 @@ ifeq ($(VERSION),sh)
   TARGET := sm64.sh
 # TODO: GET RID OF THIS!!! We should mandate assets for Shindou like EU but we dont have the addresses extracted yet so we'll just pretend you have everything extracted for now.
   NOEXTRACT := 1
-else
-ifeq ($(VERSION),ml)
+else ifeq ($(VERSION),ml)
   VERSION_CFLAGS := -DVERSION_ML
   VERSION_ASFLAGS := --defsym VERSION_ML=1
   GRUCODE_CFLAGS := -DF3D_OLD
@@ -95,10 +91,6 @@ ifeq ($(VERSION),ml)
   TARGET := sm64.ml
 else
   $(error unknown version "$(VERSION)")
-endif
-endif
-endif
-endif
 endif
 
 # Microcode
@@ -108,34 +100,26 @@ ifeq ($(GRUCODE),f3dex) # Fast3DEX
   GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1 --defsym F3DEX_GBI=1
   TARGET := $(TARGET).f3dex
   COMPARE := 0
-else
-ifeq ($(GRUCODE), f3dex2) # Fast3DEX2
+else ifeq ($(GRUCODE), f3dex2) # Fast3DEX2
   GRUCODE_CFLAGS := -DF3DEX_GBI_2
   GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1 --defsym F3DEX_GBI_2=1
   TARGET := $(TARGET).f3dex2
   COMPARE := 0
-else
-ifeq ($(GRUCODE), f3dex2e) # Fast3DEX2 Extended (PC default)
+else ifeq ($(GRUCODE), f3dex2e) # Fast3DEX2 Extended (PC default)
   GRUCODE_CFLAGS := -DF3DEX_GBI_2E
   TARGET := $(TARGET).f3dex2e
   COMPARE := 0
-else
-ifeq ($(GRUCODE),f3d_new) # Fast3D 2.0H (Shindou)
+else ifeq ($(GRUCODE),f3d_new) # Fast3D 2.0H (Shindou)
   GRUCODE_CFLAGS := -DF3D_NEW
   GRUCODE_ASFLAGS := --defsym F3D_NEW=1
   TARGET := $(TARGET).f3d_new
   COMPARE := 0
-else
-ifeq ($(GRUCODE),f3dzex) # Fast3DZEX (2.0J / Animal Forest - Dōbutsu no Mori)
+else ifeq ($(GRUCODE),f3dzex) # Fast3DZEX (2.0J / Animal Forest - Dōbutsu no Mori)
   $(warning Fast3DZEX is experimental. Try at your own risk.)
   GRUCODE_CFLAGS := -DF3DEX_GBI_2
   GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1 --defsym F3DZEX_GBI=1
   TARGET := $(TARGET).f3dzex
   COMPARE := 0
-endif
-endif
-endif
-endif
 endif
 
 # Default build is for PC now
@@ -199,17 +183,12 @@ LIBULTRA := $(BUILD_DIR)/libultra.a
 
 ifeq ($(TARGET_WEB),1)
 EXE := $(BUILD_DIR)/$(TARGET).html
-	else
-	ifeq ($(WINDOWS_BUILD),1)
-		EXE := $(BUILD_DIR)/$(TARGET).exe
-
-		else # Linux builds/binary namer
-		ifeq ($(TARGET_RPI),1)
-			EXE := $(BUILD_DIR)/$(TARGET).arm
-		else
-			EXE := $(BUILD_DIR)/$(TARGET)
-		endif
-	endif
+else ifeq ($(WINDOWS_BUILD),1)
+EXE := $(BUILD_DIR)/$(TARGET).exe
+else ifeq ($(TARGET_RPI),1)
+EXE := $(BUILD_DIR)/$(TARGET).arm
+else
+EXE := $(BUILD_DIR)/$(TARGET)
 endif
 
 ELF := $(BUILD_DIR)/$(TARGET).elf
@@ -243,12 +222,10 @@ endif
 
 ifeq ($(VERSION),eu)
   OPT_FLAGS := -O2
-else
-ifeq ($(VERSION),sh)
+else ifeq ($(VERSION),sh)
   OPT_FLAGS := -O2
 else
   OPT_FLAGS := -g
-endif
 endif
 
 # Set BITS (32/64) to compile for
@@ -466,20 +443,14 @@ ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
 
 ifeq ($(TARGET_WEB),1)
 LDFLAGS := -lm -lGL -lSDL2 -no-pie -s TOTAL_MEMORY=20MB -g4 --source-map-base http://localhost:8080/ -s "EXTRA_EXPORTED_RUNTIME_METHODS=['callMain']"
-else
-
-ifeq ($(WINDOWS_BUILD),1)
+else ifeq ($(WINDOWS_BUILD),1)
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(CROSS)sdl2-config --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -no-pie -static
-else
-
+else ifeq ($(TARGET_RPI),1)
 # Linux / Other builds below
-ifeq ($(TARGET_RPI),1)
 LDFLAGS := $(OPT_FLAGS) -lm -lGLESv2 `$(CROSS)sdl2-config --libs` -no-pie
 else
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(CROSS)sdl2-config --libs` -no-pie -lpthread
 endif
-endif
-endif #Added for Pi ifeq
 
 
 # Prevent a crash with -sopt
@@ -607,8 +578,7 @@ $(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h $(BUILD
 $(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
 $(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
 O_FILES += $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
-else
-ifeq ($(VERSION),ml)
+else ifeq ($(VERSION),ml)
 $(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/us/translation_us_en.o $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/jp/translation_jp.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
 $(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/us/translation_us_en.o $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/jp/translation_jp.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
 $(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/us/translation_us_en.o $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/jp/translation_jp.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
@@ -617,7 +587,6 @@ else
 $(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h
 $(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h
 $(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h
-endif
 endif
 
 ################################################################

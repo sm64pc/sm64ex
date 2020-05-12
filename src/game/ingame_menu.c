@@ -2801,7 +2801,7 @@ void render_pause_camera_options(s16 x, s16 y, s8 *index, s16 xIndex) {
     u8 textLakituStop[] = { TEXT_LAKITU_STOP_JP };
     u8 textNormalUpClose[] = { TEXT_NORMAL_UPCLOSE_JP };
     u8 textNormalFixed[] = { TEXT_NORMAL_FIXED_JP };
-#if defined(VERSION_EU)
+#elif defined(VERSION_EU)
     u8 textLakituMario[] = { TEXT_LAKITU_MARIO };
     u8 textLakituStop[] = { TEXT_LAKITU_STOP };
     u8 textNormalUpClose[][20] = {
