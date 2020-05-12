@@ -65,7 +65,7 @@ void convertstring(const u8 *str, char* output)
     s32 strPos = 0;
     bool capitalizeChar = true;
 
-    while (str[strPos] != DIALOG_CHAR_TERMINATOR) 
+    while (str[strPos] != 0xFF) 
     {
         if (str[strPos] < 0xFF)
         {
