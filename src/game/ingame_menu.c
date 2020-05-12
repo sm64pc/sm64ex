@@ -22,6 +22,9 @@
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif
+#ifdef EXT_OPTIONS_MENU
+#include "options_menu.h"
+#endif
 
 extern Gfx *gDisplayListHead;
 extern s16 gCurrCourseNum;
@@ -2618,9 +2621,8 @@ s16 render_pause_courses_and_castle(void) {
 #ifdef VERSION_EU
     gInGameLanguage = eu_get_language();
 #endif
-#ifdef BETTERCAMERA
-    if (newcam_option_open == 0)
-    {
+#ifdef EXT_OPTIONS_MENU
+    if (optmenu_open == 0) {
 #endif
     switch (gDialogBoxState) {
         case DIALOG_STATE_OPENING:
@@ -2697,15 +2699,13 @@ s16 render_pause_courses_and_castle(void) {
     if (gDialogTextAlpha < 250) {
         gDialogTextAlpha += 25;
     }
-#ifdef BETTERCAMERA
-    }
-    else
-    {
+#ifdef EXT_OPTIONS_MENU
+    } else {
         shade_screen();
-        newcam_display_options();
+        optmenu_draw();
     }
-    newcam_check_pause_buttons();
-    newcam_render_option_text();
+    optmenu_check_buttons();
+    optmenu_draw_prompt();
 #endif
 
     return 0;
