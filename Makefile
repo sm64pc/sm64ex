@@ -557,8 +557,7 @@ $(BUILD_DIR)/levels/menu/leveldata.o: $(BUILD_DIR)/text/uk/define_courses.inc.c
 $(BUILD_DIR)/levels/menu/leveldata.o: $(BUILD_DIR)/text/de/define_courses.inc.c
 $(BUILD_DIR)/levels/menu/leveldata.o: $(BUILD_DIR)/text/fr/define_courses.inc.c
 
-else
-ifeq ($(VERSION),ml)
+else ifeq ($(VERSION),ml)
 
 TEXT_DIRS := text/de text/uk text/us text/fr text/jp
 
@@ -576,8 +575,7 @@ $(BUILD_DIR)/levels/menu/leveldata.o: $(BUILD_DIR)/text/fr/define_courses.inc.c
 $(BUILD_DIR)/levels/menu/leveldata.o: $(BUILD_DIR)/text/jp/define_courses.inc.c
 
 
-else
-ifeq ($(VERSION),sh)
+else ifeq ($(VERSION),sh)
 TEXT_DIRS := text/jp
 $(BUILD_DIR)/bin/segment2.o: $(BUILD_DIR)/text/jp/define_text.inc.c
 

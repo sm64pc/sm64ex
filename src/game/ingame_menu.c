@@ -267,7 +267,7 @@ void render_generic_char(u8 c) {
 #endif
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
 u8 *alloc_ia4_tex_from_i1(u8 *in, s16 width, s16 height) {
     u32 size = (u32) width * (u32) height;
     u8 *out;
@@ -343,7 +343,7 @@ enum MultiStringIDs { STRING_THE, STRING_YOU };
  */
 #ifdef VERSION_US
 void render_multi_text_string(s8 multiTextID) // US: 802D76C8
-#elif defined(VERSION_EU)
+#elif defined(VERSION_EU) || defined(VERSION_ML)
 void render_multi_text_string(s16 *xPos, s16 *yPos, s8 multiTextID) // EU: 802AD650
 #endif
 {
@@ -357,7 +357,7 @@ void render_multi_text_string(s16 *xPos, s16 *yPos, s8 multiTextID) // EU: 802AD
 #ifdef VERSION_US
         render_generic_char(textLengths[multiTextID].str[i]);
         create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[textLengths[multiTextID].str[i]]), 0.0f, 0.0f);
-#elif defined(VERSION_EU)
+#elif defined(VERSION_EU) || defined(VERSION_ML)
         render_generic_char_at_pos(*xPos, *yPos, textLengths[multiTextID].str[i]);
         *xPos += gDialogCharWidths[textLengths[multiTextID].str[i]];
 #endif
@@ -384,13 +384,13 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
     s16 yCoord = 240 - y;
 #endif
 
-#ifndef VERSION_EU
+#if !defined(VERSION_EU) || !defined(VERSION_ML)
     create_dl_translation_matrix(MENU_MTX_PUSH, x, y, 0.0f);
 #endif
 
     while (str[strPos] != DIALOG_CHAR_TERMINATOR) {
         switch (str[strPos]) {
-#if defined(VERSION_EU) || defined(VERSION_ML)
+#if defined(VERSION_EU)
             case DIALOG_CHAR_SPACE:
                 xCoord += 5;
                 break;
@@ -471,6 +471,93 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
             case DIALOG_CHAR_UPSIDE_DOWN_EXCLAMATION_MARK:
                 mark = DIALOG_CHAR_UPSIDE_DOWN_EXCLAMATION_MARK;
                 break;
+#elif VERSION_ML
+            case DIALOG_CHAR_SPACE:
+                xCoord += 5;
+                break;
+            case DIALOG_CHAR_NEWLINE:
+                yCoord += 16;
+                xCoord = x;
+                lineNum++;
+                break;
+            case DIALOG_CHAR_LOWER_A_GRAVE:
+            case DIALOG_CHAR_LOWER_A_CIRCUMFLEX:
+            case DIALOG_CHAR_LOWER_A_UMLAUT:
+            case DIALOG_CHAR_LOWER_A_ACUTE:
+                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('a'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_UPPER_A_GRAVE:
+            case DIALOG_CHAR_UPPER_A_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_A_UMLAUT:
+            case DIALOG_CHAR_UPPER_A_ACUTE:
+                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('A'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_LOWER_E_GRAVE:
+            case DIALOG_CHAR_LOWER_E_CIRCUMFLEX:
+            case DIALOG_CHAR_LOWER_E_UMLAUT:
+            case DIALOG_CHAR_LOWER_E_ACUTE:
+                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('e'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_UPPER_E_GRAVE:
+            case DIALOG_CHAR_UPPER_E_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_E_UMLAUT:
+            case DIALOG_CHAR_UPPER_E_ACUTE:
+                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('E'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_LOWER_I_GRAVE:
+            case DIALOG_CHAR_LOWER_I_CIRCUMFLEX:
+            case DIALOG_CHAR_LOWER_I_UMLAUT:
+            case DIALOG_CHAR_LOWER_I_ACUTE:
+                render_lowercase_diacritic(&xCoord, &yCoord, DIALOG_CHAR_I_NO_DIA, str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_UPPER_I_GRAVE:
+            case DIALOG_CHAR_UPPER_I_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_I_UMLAUT:
+            case DIALOG_CHAR_UPPER_I_ACUTE:
+                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('I'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_LOWER_O_GRAVE:
+            case DIALOG_CHAR_LOWER_O_CIRCUMFLEX:
+            case DIALOG_CHAR_LOWER_O_UMLAUT:
+            case DIALOG_CHAR_LOWER_O_ACUTE:
+                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('o'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_UPPER_O_GRAVE:
+            case DIALOG_CHAR_UPPER_O_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_O_UMLAUT:
+            case DIALOG_CHAR_UPPER_O_ACUTE:
+                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('O'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_LOWER_U_GRAVE:
+            case DIALOG_CHAR_LOWER_U_CIRCUMFLEX:
+            case DIALOG_CHAR_LOWER_U_UMLAUT:
+            case DIALOG_CHAR_LOWER_U_ACUTE:
+                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('u'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_UPPER_U_GRAVE:
+            case DIALOG_CHAR_UPPER_U_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_U_UMLAUT:
+            case DIALOG_CHAR_UPPER_U_ACUTE:
+                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('U'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_LOWER_N_TILDE:
+                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('n'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_UPPER_N_TILDE:
+                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('N'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_UPSIDE_DOWN_QUESTION_MARK:
+                mark = DIALOG_CHAR_UPSIDE_DOWN_QUESTION_MARK;
+                break;
+            case DIALOG_CHAR_UPSIDE_DOWN_EXCLAMATION_MARK:
+                mark = DIALOG_CHAR_UPSIDE_DOWN_EXCLAMATION_MARK;
+                break;
+            case DIALOG_CHAR_DAKUTEN:
+                mark = DIALOG_MARK_DAKUTEN;
+                break;
+            case DIALOG_CHAR_PERIOD_OR_HANDAKUTEN:
+                mark = DIALOG_MARK_HANDAKUTEN;
+                break;
 #else // i.e. not EU
             case DIALOG_CHAR_DAKUTEN:
                 mark = DIALOG_MARK_DAKUTEN;
@@ -491,9 +578,9 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
 #endif
 #if !defined(VERSION_JP) && !defined(VERSION_SH)
             case DIALOG_CHAR_SLASH:
-#if defined(VERSION_US) || defined(VERSION_ML)
+#if defined(VERSION_US)
                 create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[DIALOG_CHAR_SPACE] * 2), 0.0f, 0.0f);
-#elif defined(VERSION_EU)
+#elif defined(VERSION_EU) || defined(VERSION_ML)
                 xCoord += gDialogCharWidths[DIALOG_CHAR_SPACE] * 2;
 #endif
                 break;
@@ -523,7 +610,7 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
 #endif
                 break; // ? needed to match
             default:
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
                 render_generic_char_at_pos(xCoord, yCoord, str[strPos]);
                 xCoord += gDialogCharWidths[str[strPos]];
                 break;
@@ -632,7 +719,7 @@ void print_hud_lut_string(s8 hudLUT, s16 x, s16 y, const u8 *str) {
                                 (curY + 16) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
 
             curX += xStride;
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
             break;
         }
 #endif
@@ -643,7 +730,7 @@ void print_hud_lut_string(s8 hudLUT, s16 x, s16 y, const u8 *str) {
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
 void print_menu_char_umlaut(s16 x, s16 y, u8 chr) {
     void **fontLUT = segmented_to_virtual(menu_font_lut);
 
@@ -668,7 +755,7 @@ void print_menu_generic_string(s16 x, s16 y, const u8 *str) {
 
     while (str[strPos] != DIALOG_CHAR_TERMINATOR) {
         switch (str[strPos]) {
-#if defined(VERSION_EU) || defined(VERSION_ML)
+#if defined(VERSION_EU)
             case DIALOG_CHAR_UPPER_A_UMLAUT:
                 print_menu_char_umlaut(curX, curY, ASCII_TO_DIALOG('A'));
                 curX += gDialogCharWidths[str[strPos]];
@@ -680,6 +767,25 @@ void print_menu_generic_string(s16 x, s16 y, const u8 *str) {
             case DIALOG_CHAR_UPPER_O_UMLAUT:
                 print_menu_char_umlaut(curX, curY, ASCII_TO_DIALOG('O'));
                 curX += gDialogCharWidths[str[strPos]];
+                break;
+#elif VERSION_ML
+            case DIALOG_CHAR_UPPER_A_UMLAUT:
+                print_menu_char_umlaut(curX, curY, ASCII_TO_DIALOG('A'));
+                curX += gDialogCharWidths[str[strPos]];
+                break;
+            case DIALOG_CHAR_UPPER_U_UMLAUT:
+                print_menu_char_umlaut(curX, curY, ASCII_TO_DIALOG('U'));
+                curX += gDialogCharWidths[str[strPos]];
+                break;
+            case DIALOG_CHAR_UPPER_O_UMLAUT:
+                print_menu_char_umlaut(curX, curY, ASCII_TO_DIALOG('O'));
+                curX += gDialogCharWidths[str[strPos]];
+                break;
+            case DIALOG_CHAR_DAKUTEN:
+                mark = DIALOG_MARK_DAKUTEN;
+                break;
+            case DIALOG_CHAR_PERIOD_OR_HANDAKUTEN:
+                mark = DIALOG_MARK_HANDAKUTEN;
                 break;
 #else
             case DIALOG_CHAR_DAKUTEN:
@@ -1040,7 +1146,7 @@ void change_and_flash_dialog_text_color_lines(s8 colorMode, s8 lineNum) {
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
 void render_generic_dialog_char_at_pos(struct DialogEntry *dialog, s16 x, s16 y, u8 c) {
     s16 width;  // sp26
     s16 height; // sp24
@@ -1118,7 +1224,7 @@ void adjust_pos_and_print_period_char(s8 *xMatrix, s16 *linePos) {
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
 void render_star_count_dialog_text(struct DialogEntry *dialog, s8 *linePos)
 #else
 void render_star_count_dialog_text(s8 *xMatrix, s16 *linePos)
@@ -1131,7 +1237,7 @@ void render_star_count_dialog_text(s8 *xMatrix, s16 *linePos)
 #if defined(VERSION_JP) || defined(VERSION_SH)
         create_dl_translation_matrix(MENU_MTX_NOPUSH, xMatrix[0] * 10, 0, 0);
         render_generic_char(tensDigit);
-#elif defined(VERSION_EU)
+#elif defined(VERSION_EU) || defined(VERSION_ML)
         render_generic_dialog_char_at_pos(dialog, gDialogX, gDialogY, tensDigit);
         gDialogX += gDialogCharWidths[tensDigit];
         linePos[0] = 1;
@@ -1154,7 +1260,7 @@ void render_star_count_dialog_text(s8 *xMatrix, s16 *linePos)
     }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     render_generic_dialog_char_at_pos(dialog, gDialogX, gDialogY, onesDigit);
     gDialogX += gDialogCharWidths[onesDigit];
     linePos[0] = 1;
@@ -1178,7 +1284,7 @@ void render_star_count_dialog_text(s8 *xMatrix, s16 *linePos)
 }
 
 #if !defined(VERSION_JP) && !defined(VERSION_SH)
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
 void render_multi_text_string_lines(s8 multiTextId, s8 lineNum, s8 linesPerBox, UNUSED s16 linePos, s8 lowerBound, struct DialogEntry *dialog)
 #else
 void render_multi_text_string_lines(s8 multiTextId, s8 lineNum, s16 *linePos, s8 linesPerBox, s8 xMatrix, s8 lowerBound)
@@ -1197,7 +1303,7 @@ void render_multi_text_string_lines(s8 multiTextId, s8 lineNum, s16 *linePos, s8
         }
 #endif
         for (i = 0; i < textLengths[multiTextId].length; i++) {
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
             render_generic_dialog_char_at_pos(dialog, gDialogX, gDialogY, textLengths[multiTextId].str[i]);
             gDialogX += gDialogCharWidths[textLengths[multiTextId].str[i]];
 #else
@@ -1212,7 +1318,7 @@ void render_multi_text_string_lines(s8 multiTextId, s8 lineNum, s16 *linePos, s8
 }
 #endif
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
 void render_dialog_lowercase_diacritic(struct DialogEntry *dialog, u8 chr, u8 diacritic) {
     render_generic_dialog_char_at_pos(dialog, gDialogX, gDialogY, chr);
     render_generic_dialog_char_at_pos(dialog, gDialogX, gDialogY, diacritic + 0xE7);
@@ -1241,7 +1347,7 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
 #endif
 {
     UNUSED s32 pad[2];
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     s16 startY = 14;
 #endif
 
@@ -1273,13 +1379,13 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     strIdx = gDialogTextPos;
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     gDialogX = 0;
     gDialogY = startY;
 #endif
 
     if (gDialogBoxState == DIALOG_STATE_HORIZONTAL) {
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
         gDialogY -= gDialogScrollOffsetY;
 #else
         create_dl_translation_matrix(MENU_MTX_NOPUSH, 0, (f32) gDialogScrollOffsetY, 0);
@@ -1303,14 +1409,14 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
                 break;
             case DIALOG_CHAR_NEWLINE:
                 lineNum++;
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
                 handle_dialog_scroll_page_state(lineNum, totalLines, &pageState, &xMatrix);
                 gDialogX = 0;
 #else
                 handle_dialog_scroll_page_state(lineNum, totalLines, &pageState, &xMatrix, &linePos);
 #endif
                 break;
-#if defined(VERSION_EU) || defined(VERSION_ML)
+#if defined(VERSION_EU)
             case DIALOG_CHAR_LOWER_A_GRAVE:
             case DIALOG_CHAR_LOWER_A_CIRCUMFLEX:
             case DIALOG_CHAR_LOWER_A_UMLAUT:
@@ -1383,6 +1489,85 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
             case DIALOG_CHAR_UPSIDE_DOWN_EXCLAMATION_MARK:
                 mark = DIALOG_CHAR_UPSIDE_DOWN_EXCLAMATION_MARK;
                 break;
+#elif VERSION_ML
+            case DIALOG_CHAR_LOWER_A_GRAVE:
+            case DIALOG_CHAR_LOWER_A_CIRCUMFLEX:
+            case DIALOG_CHAR_LOWER_A_UMLAUT:
+            case DIALOG_CHAR_LOWER_A_ACUTE:
+                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('a'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_UPPER_A_GRAVE:
+            case DIALOG_CHAR_UPPER_A_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_A_UMLAUT:
+            case DIALOG_CHAR_UPPER_A_ACUTE:
+                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('A'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_LOWER_E_GRAVE:
+            case DIALOG_CHAR_LOWER_E_CIRCUMFLEX:
+            case DIALOG_CHAR_LOWER_E_UMLAUT:
+            case DIALOG_CHAR_LOWER_E_ACUTE:
+                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('e'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_UPPER_E_GRAVE:
+            case DIALOG_CHAR_UPPER_E_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_E_UMLAUT:
+            case DIALOG_CHAR_UPPER_E_ACUTE:
+                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('E'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_LOWER_I_GRAVE:
+            case DIALOG_CHAR_LOWER_I_CIRCUMFLEX:
+            case DIALOG_CHAR_LOWER_I_UMLAUT:
+            case DIALOG_CHAR_LOWER_I_ACUTE:
+                render_lowercase_diacritic(&xCoord, &yCoord, DIALOG_CHAR_I_NO_DIA, str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_UPPER_I_GRAVE:
+            case DIALOG_CHAR_UPPER_I_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_I_UMLAUT:
+            case DIALOG_CHAR_UPPER_I_ACUTE:
+                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('I'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_LOWER_O_GRAVE:
+            case DIALOG_CHAR_LOWER_O_CIRCUMFLEX:
+            case DIALOG_CHAR_LOWER_O_UMLAUT:
+            case DIALOG_CHAR_LOWER_O_ACUTE:
+                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('o'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_UPPER_O_GRAVE:
+            case DIALOG_CHAR_UPPER_O_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_O_UMLAUT:
+            case DIALOG_CHAR_UPPER_O_ACUTE:
+                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('O'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_LOWER_U_GRAVE:
+            case DIALOG_CHAR_LOWER_U_CIRCUMFLEX:
+            case DIALOG_CHAR_LOWER_U_UMLAUT:
+            case DIALOG_CHAR_LOWER_U_ACUTE:
+                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('u'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_UPPER_U_GRAVE:
+            case DIALOG_CHAR_UPPER_U_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_U_UMLAUT:
+            case DIALOG_CHAR_UPPER_U_ACUTE:
+                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('U'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_LOWER_N_TILDE:
+                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('n'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_UPPER_N_TILDE:
+                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('N'), str[strPos] & 0xF);
+                break;
+            case DIALOG_CHAR_UPSIDE_DOWN_QUESTION_MARK:
+                mark = DIALOG_CHAR_UPSIDE_DOWN_QUESTION_MARK;
+                break;
+            case DIALOG_CHAR_UPSIDE_DOWN_EXCLAMATION_MARK:
+                mark = DIALOG_CHAR_UPSIDE_DOWN_EXCLAMATION_MARK;
+                break;
+            case DIALOG_CHAR_DAKUTEN:
+                mark = DIALOG_MARK_DAKUTEN;
+                break;
+            case DIALOG_CHAR_PERIOD_OR_HANDAKUTEN:
+                mark = DIALOG_MARK_HANDAKUTEN;
+                break;
 #else
             case DIALOG_CHAR_DAKUTEN:
                 mark = DIALOG_MARK_DAKUTEN;
@@ -1392,7 +1577,7 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
                 break;
 #endif
             case DIALOG_CHAR_SPACE:
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
                 gDialogX += gDialogCharWidths[DIALOG_CHAR_SPACE];
 #else
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -1412,7 +1597,7 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
                 break;
 #else
             case DIALOG_CHAR_SLASH:
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
                 gDialogX += gDialogCharWidths[DIALOG_CHAR_SPACE] * 2;
 #else
                 xMatrix += 2;
@@ -1420,7 +1605,7 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
 #endif
                 break;
             case DIALOG_CHAR_MULTI_THE:
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
                 render_multi_text_string_lines(STRING_THE, lineNum, linesPerBox, xMatrix, lowerBound, dialog);
 #else
                 render_multi_text_string_lines(STRING_THE, lineNum, &linePos, linesPerBox, xMatrix, lowerBound);
@@ -1428,7 +1613,7 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
                 xMatrix = 1;
                 break;
             case DIALOG_CHAR_MULTI_YOU:
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
                 render_multi_text_string_lines(STRING_YOU, lineNum, linesPerBox, xMatrix, lowerBound, dialog);
 #else
                 render_multi_text_string_lines(STRING_YOU, lineNum, &linePos, linesPerBox, xMatrix, lowerBound);
@@ -1437,13 +1622,13 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
                 break;
 #endif
             case DIALOG_CHAR_STAR_COUNT:
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
                 render_star_count_dialog_text(dialog, &xMatrix);
 #else
                 render_star_count_dialog_text(&xMatrix, &linePos);
 #endif
                 break;
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
             case DIALOG_CHAR_DOUBLE_LOW_QUOTE:
                 render_generic_dialog_char_at_pos(dialog, gDialogX, gDialogY + 8, 0xF6);
                 gDialogX += gDialogCharWidths[0xF6];
@@ -1477,6 +1662,11 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
                     xMatrix = 1;
                     linePos++;
                 }
+#elif defined(VERSION_ML)
+                if (lineNum >= lowerBound && lineNum <= lowerBound + linesPerBox) {
+                    render_generic_dialog_char_at_pos(dialog, gDialogX, gDialogY, strChar);
+                }
+                gDialogX += gDialogCharWidths[strChar];
 #else // VERSION_EU
                 if (lineNum >= lowerBound && lineNum <= lowerBound + linesPerBox) {
                     render_generic_dialog_char_at_pos(dialog, gDialogX, gDialogY, strChar);
@@ -1719,26 +1909,49 @@ u8 *gEndCutsceneStringsDe[] = {
 };
 #elif VERSION_ML
 
-u8 gEndCutsceneStrEn0[] = { TEXT_FILE_MARIO_EXCLAMATION };
-u8 gEndCutsceneStrEn1[] = { TEXT_POWER_STARS_RESTORED };
-u8 gEndCutsceneStrEn2[] = { TEXT_THANKS_TO_YOU };
-u8 gEndCutsceneStrEn3[] = { TEXT_THANK_YOU_MARIO };
-u8 gEndCutsceneStrEn4[] = { TEXT_SOMETHING_SPECIAL };
-u8 gEndCutsceneStrEn5[] = { TEXT_LISTEN_EVERYBODY };
-u8 gEndCutsceneStrEn6[] = { TEXT_LETS_HAVE_CAKE };
-u8 gEndCutsceneStrEn7[] = { TEXT_FOR_MARIO };
-u8 gEndCutsceneStrEn8[] = { TEXT_FILE_MARIO_QUESTION };
+u8 gEndCutsceneStrUsEn0[] = { TEXT_FILE_MARIO_EXCLAMATION };
+u8 gEndCutsceneStrUsEn1[] = { TEXT_POWER_STARS_RESTORED };
+u8 gEndCutsceneStrUsEn2[] = { TEXT_THANKS_TO_YOU };
+u8 gEndCutsceneStrUsEn3[] = { TEXT_THANK_YOU_MARIO };
+u8 gEndCutsceneStrUsEn4[] = { TEXT_SOMETHING_SPECIAL };
+u8 gEndCutsceneStrUsEn5[] = { TEXT_LISTEN_EVERYBODY };
+u8 gEndCutsceneStrUsEn6[] = { TEXT_LETS_HAVE_CAKE };
+u8 gEndCutsceneStrUsEn7[] = { TEXT_FOR_MARIO };
+u8 gEndCutsceneStrUsEn8[] = { TEXT_FILE_MARIO_QUESTION };
 
-u8 *gEndCutsceneStringsEn[] = {
-    gEndCutsceneStrEn0,
-    gEndCutsceneStrEn1,
-    gEndCutsceneStrEn2,
-    gEndCutsceneStrEn3,
-    gEndCutsceneStrEn4,
-    gEndCutsceneStrEn5,
-    gEndCutsceneStrEn6,
-    gEndCutsceneStrEn7,
-    gEndCutsceneStrEn8,
+u8 *gEndCutsceneStringsUsEn[] = {
+    gEndCutsceneStrUsEn0,
+    gEndCutsceneStrUsEn1,
+    gEndCutsceneStrUsEn2,
+    gEndCutsceneStrUsEn3,
+    gEndCutsceneStrUsEn4,
+    gEndCutsceneStrUsEn5,
+    gEndCutsceneStrUsEn6,
+    gEndCutsceneStrUsEn7,
+    gEndCutsceneStrUsEn8,
+    NULL
+
+};
+u8 gEndCutsceneStrUkEn0[] = { TEXT_FILE_MARIO_EXCLAMATION };
+u8 gEndCutsceneStrUkEn1[] = { TEXT_POWER_STARS_RESTORED };
+u8 gEndCutsceneStrUkEn2[] = { TEXT_THANKS_TO_YOU };
+u8 gEndCutsceneStrUkEn3[] = { TEXT_THANK_YOU_MARIO };
+u8 gEndCutsceneStrUkEn4[] = { TEXT_SOMETHING_SPECIAL };
+u8 gEndCutsceneStrUkEn5[] = { TEXT_LISTEN_EVERYBODY };
+u8 gEndCutsceneStrUkEn6[] = { TEXT_LETS_HAVE_CAKE };
+u8 gEndCutsceneStrUkEn7[] = { TEXT_FOR_MARIO };
+u8 gEndCutsceneStrUkEn8[] = { TEXT_FILE_MARIO_QUESTION };
+
+u8 *gEndCutsceneStringsUkEn[] = {
+    gEndCutsceneStrUkEn0,
+    gEndCutsceneStrUkEn1,
+    gEndCutsceneStrUkEn2,
+    gEndCutsceneStrUkEn3,
+    gEndCutsceneStrUkEn4,
+    gEndCutsceneStrUkEn5,
+    gEndCutsceneStrUkEn6,
+    gEndCutsceneStrUkEn7,
+    gEndCutsceneStrUkEn8,
     NULL
 };
 
@@ -1840,7 +2053,7 @@ void render_dialog_entries(void) {
 #endif
     void **dialogTable;
     struct DialogEntry *dialog;
-#ifdef VERSION_US
+#if defined(VERSION_US) || defined(VERSION_ML)
     s8 lowerBound;
 #endif
 #if defined(VERSION_EU)
@@ -1886,7 +2099,7 @@ void render_dialog_entries(void) {
         return;
     }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     gDialogX = 0;
     gDialogY = 0;
 #endif
@@ -2005,12 +2218,12 @@ void render_dialog_entries(void) {
     if (gLastDialogPageStrPos == -1 && gLastDialogResponse == 1) {
         render_dialog_triangle_choice();
     }
-    #ifdef VERSION_EU
+    #if defined(VERSION_EU) || defined(VERSION_ML)
     #undef BORDER_HEIGHT
     #define BORDER_HEIGHT 8
     #endif
     gDPSetScissor(gDisplayListHead++, G_SC_NON_INTERLACE, 2, 2, SCREEN_WIDTH - BORDER_HEIGHT/2, SCREEN_HEIGHT - BORDER_HEIGHT/2);
-    #ifdef VERSION_EU
+    #if defined(VERSION_EU) || defined(VERSION_ML)
     #undef BORDER_HEIGHT
     #define BORDER_HEIGHT 1
     #endif
@@ -2443,6 +2656,9 @@ void render_pause_my_score_coins(void) {
         { TEXT_MY_SCORE_DE }
     };
 #define textMyScore textMyScore[gInGameLanguage]
+#elif defined(VERSION_JP) || defined(VERSION_SH)
+    u8 textCourse[] = { TEXT_COURSE_JP };
+    u8 textMyScore[] = { TEXT_MY_SCORE_JP };
 #else
     u8 textCourse[] = { TEXT_COURSE };
     u8 textMyScore[] = { TEXT_MY_SCORE };
@@ -2552,9 +2768,9 @@ void render_pause_my_score_coins(void) {
     }
 #ifndef VERSION_JP
     else {
-#if defined(VERSION_US) || defined(VERSION_ML)
+#if defined(VERSION_US)
         print_generic_string(94, 157, &courseName[3]);
-#elif defined(VERSION_EU)
+#elif defined(VERSION_EU) || defined(VERSION_ML)
         print_generic_string(get_str_x_pos_from_center(159, &courseName[3], 10.0f), 157, &courseName[3]);
 #endif
     }
@@ -2629,7 +2845,7 @@ void render_pause_camera_options(s16 x, s16 y, s8 *index, s16 xIndex) {
     };
 #define textNormalUpClose textNormalUpClose[gInGameLanguage]
 #define textNormalFixed   textNormalFixed[gInGameLanguage]
-#else
+#else // these are failsafes now
     u8 textNormalUpClose[] = { TEXT_NORMAL_UPCLOSE };
     u8 textNormalFixed[] = { TEXT_NORMAL_FIXED };
 #endif
@@ -2935,7 +3151,7 @@ void render_pause_castle_main_strings(s16 x, s16 y) {
         print_generic_string(x + 40, y + 13, textStarX);
         int_to_str(save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_BONUS_STAGES - 1, COURSE_MAX - 1), strVal);
         print_generic_string(x + 60, y + 13, strVal);
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
         print_generic_string(get_str_x_pos_from_center(x + 51, courseName, 10.0f), y + 30, courseName);
 #endif
     }
@@ -3091,6 +3307,9 @@ void print_hud_course_complete_string(s8 str) {
         { TEXT_HUD_CONGRATULATIONS_FR },
         { TEXT_HUD_CONGRATULATIONS_DE }
     };
+#elif defined(VERSION_JP) || defined(VERSION_SH)
+    u8 textHiScore[] = { TEXT_HUD_HI_SCORE_JP };
+    u8 textCongratulations[] = { TEXT_HUD_CONGRATULATIONS_JP };
 #else
     u8 textHiScore[] = { TEXT_HUD_HI_SCORE };
     u8 textCongratulations[] = { TEXT_HUD_CONGRATULATIONS };
@@ -3167,7 +3386,7 @@ void play_star_fanfare_and_flash_hud(s32 arg, u8 starNum) {
     }
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
 #define TXT_NAME_X1 centerX
 #define TXT_NAME_X2 centerX - 1
 #else
@@ -3189,7 +3408,7 @@ void play_star_fanfare_and_flash_hud(s32 arg, u8 starNum) {
 void render_course_complete_lvl_info_and_hud_str(void) {
 #if defined(VERSION_JP) || defined(VERSION_SH)
     u8 textSymStar[] = { GLYPH_STAR, GLYPH_SPACE };
-    u8 textCourse[] = { TEXT_COURSE };
+    u8 textCourse[] = { TEXT_COURSE_JP };
     u8 textCatch[] = { TEXT_CATCH };
     u8 textClear[] = { TEXT_CLEAR };
 #elif defined(VERSION_EU)
@@ -3280,7 +3499,7 @@ void render_course_complete_lvl_info_and_hud_str(void) {
         name = segmented_to_virtual(courseNameTbl[gLastCompletedCourseNum - 1]);
         gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
         gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, gDialogTextAlpha);
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
         centerX = get_str_x_pos_from_center(153, name, 12.0f);
 #endif
         print_generic_string(TXT_NAME_X1, 130, name);
