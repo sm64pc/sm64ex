@@ -1,4 +1,5 @@
 #include <ultra64.h>
+#include <stdbool.h>
 #include "prevent_bss_reordering.h"
 #include "sm64.h"
 #include "gfx_dimensions.h"
@@ -27,9 +28,12 @@
 #include "level_table.h"
 #include "dialog_ids.h"
 #include "thread6.h"
+#include "../../include/libc/stdlib.h"
+#include "../pc/configfile.h"
+#define CONFIG_FILE "sm64config.txt"
 
 // TODO: put this elsewhere
-enum SaveOption { SAVE_OPT_SAVE_AND_CONTINUE = 1, SAVE_OPT_SAVE_AND_QUIT, SAVE_OPT_CONTINUE_DONT_SAVE };
+enum SaveOption { SAVE_OPT_SAVE_AND_CONTINUE = 1, SAVE_OPT_SAVE_AND_QUIT, SAVE_OPT_SAVE_EXIT_GAME, SAVE_OPT_CONTINUE_DONT_SAVE };
 
 static struct Object *sIntroWarpPipeObj;
 static struct Object *sEndPeachObj;
@@ -254,16 +258,26 @@ void handle_save_menu(struct MarioState *m) {
     // mario_finished_animation(m) ? (not my file, not my problem)
     if (is_anim_past_end(m) && gSaveOptSelectIndex != 0) {
         // save and continue / save and quit
-        if (gSaveOptSelectIndex == SAVE_OPT_SAVE_AND_CONTINUE || gSaveOptSelectIndex == SAVE_OPT_SAVE_AND_QUIT) {
+        if (gSaveOptSelectIndex == SAVE_OPT_SAVE_AND_CONTINUE || gSaveOptSelectIndex == SAVE_OPT_SAVE_EXIT_GAME || gSaveOptSelectIndex == SAVE_OPT_SAVE_AND_QUIT) {
             save_file_do_save(gCurrSaveFileNum - 1);
 
             if (gSaveOptSelectIndex == SAVE_OPT_SAVE_AND_QUIT) {
                 fade_into_special_warp(-2, 0); // reset game
             }
+
+		if (gSaveOptSelectIndex == SAVE_OPT_SAVE_EXIT_GAME) {
+                //configfile_save(CONFIG_FILE); //Redundant, save_file implies save_config? Save config file before fully exiting
+           	//initiate_warp(LEVEL_CASTLE, 1, 0x1F, 0);
+           	fade_into_special_warp(0, 0);
+
+	    	//fade_into_special_warp(-2, 0); // do the reset game thing
+                exit(0);  // exit after saving game
+            }
+
         }
 
         // not quitting
-        if (gSaveOptSelectIndex != SAVE_OPT_SAVE_AND_QUIT) {
+        if (gSaveOptSelectIndex != SAVE_OPT_SAVE_EXIT_GAME) {
             disable_time_stop();
             m->faceAngle[1] += 0x8000;
             // figure out what dialog to show, if we should
