@@ -609,10 +609,10 @@ $(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h $(BUILD
 O_FILES += $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
 else
 ifeq ($(VERSION),ml)
-$(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_us_en.o $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/jp/translation_jp.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
-$(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_us_en.o $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/jp/translation_jp.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
-$(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_us_en.o $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/jp/translation_jp.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
-O_FILES += $(BUILD_DIR)/bin/eu/translation_us_en.o $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/jp/translation_jp.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
+$(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/us/translation_us_en.o $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/jp/translation_jp.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
+$(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/us/translation_us_en.o $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/jp/translation_jp.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
+$(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/us/translation_us_en.o $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/jp/translation_jp.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
+O_FILES += $(BUILD_DIR)/bin/us/translation_us_en.o $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/jp/translation_jp.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
 else
 $(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h
 $(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h

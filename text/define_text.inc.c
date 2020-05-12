@@ -38,8 +38,6 @@ static const u8 Debug1[] = {
       "CONTINUE?\n"
       "STOP?")
 };
-#endif
-#ifndef VERSION_EU
 static const struct DialogEntry debug_text_entry_0 = {
     1, 8, 30, 200, Debug0
 };
