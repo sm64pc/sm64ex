@@ -12,12 +12,17 @@
 
 #include "controller_api.h"
 
+#include "../configfile.h"
+
 extern int16_t rightx;
 extern int16_t righty;
+
+#ifdef BETTERCAMERA
 int mouse_x;
 int mouse_y;
 
 extern u8 newcam_mouse;
+#endif
 
 static bool init_ok;
 static SDL_GameController *sdl_cntrl;
@@ -28,9 +33,11 @@ static void controller_sdl_init(void) {
         return;
     }
 
+#ifdef BETTERCAMERA
     if (newcam_mouse == 1)
         SDL_SetRelativeMouseMode(SDL_TRUE);
     SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
+#endif
 
     init_ok = true;
 }
@@ -40,13 +47,22 @@ static void controller_sdl_read(OSContPad *pad) {
         return;
     }
 
+#ifdef BETTERCAMERA
     if (newcam_mouse == 1)
         SDL_SetRelativeMouseMode(SDL_TRUE);
     else
         SDL_SetRelativeMouseMode(SDL_FALSE);
+    
+    const u32 mbuttons = SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
+    
+    if (configMouseA && (mbuttons & SDL_BUTTON(configMouseA))) pad->button |= A_BUTTON;
+    if (configMouseB && (mbuttons & SDL_BUTTON(configMouseB))) pad->button |= B_BUTTON;
+    if (configMouseL && (mbuttons & SDL_BUTTON(configMouseL))) pad->button |= L_TRIG;
+    if (configMouseR && (mbuttons & SDL_BUTTON(configMouseR))) pad->button |= R_TRIG;
+    if (configMouseZ && (mbuttons & SDL_BUTTON(configMouseZ))) pad->button |= Z_TRIG;
+#endif
 
     SDL_GameControllerUpdate();
-    SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
 
     if (sdl_cntrl != NULL && !SDL_GameControllerGetAttached(sdl_cntrl)) {
         SDL_GameControllerClose(sdl_cntrl);
@@ -66,15 +82,16 @@ static void controller_sdl_read(OSContPad *pad) {
         }
     }
 
-    if (SDL_GameControllerGetButton(sdl_cntrl, SDL_CONTROLLER_BUTTON_START)) pad->button |= START_BUTTON;
-    if (SDL_GameControllerGetButton(sdl_cntrl, SDL_CONTROLLER_BUTTON_LEFTSHOULDER)) pad->button |= Z_TRIG;
-    if (SDL_GameControllerGetButton(sdl_cntrl, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)) pad->button |= R_TRIG;
-    if (SDL_GameControllerGetButton(sdl_cntrl, SDL_CONTROLLER_BUTTON_A)) pad->button |= A_BUTTON;
-    if (SDL_GameControllerGetButton(sdl_cntrl, SDL_CONTROLLER_BUTTON_X)) pad->button |= B_BUTTON;
+    if (SDL_GameControllerGetButton(sdl_cntrl, configJoyStart)) pad->button |= START_BUTTON;
+    if (SDL_GameControllerGetButton(sdl_cntrl, configJoyZ))     pad->button |= Z_TRIG;
+    if (SDL_GameControllerGetButton(sdl_cntrl, configJoyL))     pad->button |= L_TRIG;
+    if (SDL_GameControllerGetButton(sdl_cntrl, configJoyR))     pad->button |= R_TRIG;
+    if (SDL_GameControllerGetButton(sdl_cntrl, configJoyA))     pad->button |= A_BUTTON;
+    if (SDL_GameControllerGetButton(sdl_cntrl, configJoyB))     pad->button |= B_BUTTON;
 
     int16_t leftx = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_LEFTX);
     int16_t lefty = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_LEFTY);
-    rightx = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_RIGHTX);  // These are being defined in controller_api.h in order to keep their values for analog camera use.
+    rightx = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_RIGHTX);
     righty = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_RIGHTY);
 
     int16_t ltrig = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_TRIGGERLEFT);

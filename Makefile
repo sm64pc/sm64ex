@@ -25,7 +25,7 @@ TARGET_RPI ?= 0
 # Compiler to use (ido or gcc)
 COMPILER ?= ido
 
-# Enable better camera by default
+# Enable better camera by default, on testing
 BETTERCAMERA ?= 1
 
 # Build for Emscripten/WebGL

@@ -31,7 +31,9 @@
 #include "engine/surface_collision.h"
 #include "level_table.h"
 #include "thread6.h"
-#include "../../enhancements/bettercamera.h"
+#ifdef BETTERCAMERA
+#include "bettercamera.h"
+#endif
 
 u32 unused80339F10;
 s8 filler80339F1C[20];
@@ -1307,10 +1309,14 @@ void update_mario_joystick_inputs(struct MarioState *m) {
     }
 
     if (m->intendedMag > 0.0f) {
-        if (gLakituState.mode != CAM_MODE_NEWCAM)
+#ifndef BETTERCAMERA
+        m->intendedYaw = atan2s(-controller->stickY, controller->stickX) + m->area->camera->yaw;
+#else
+        if (gLakituState.mode != CAMERA_MODE_NEWCAM)
             m->intendedYaw = atan2s(-controller->stickY, controller->stickX) + m->area->camera->yaw;
         else
             m->intendedYaw = atan2s(-controller->stickY, controller->stickX)-newcam_yaw+0x4000;
+#endif
         m->input |= INPUT_NONZERO_ANALOG;
     } else {
         m->intendedYaw = m->faceAngle[1];

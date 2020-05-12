@@ -18,11 +18,14 @@
 
 #include "gfx_window_manager_api.h"
 #include "gfx_screen_config.h"
+#include "../configfile.h"
 
 #include "src/pc/controller/controller_keyboard.h"
 
 static SDL_Window *wnd;
 static int inverted_scancode_table[512];
+
+extern bool configFullscreen;
 
 const SDL_Scancode windows_scancode_table[] =
 { 
@@ -75,20 +78,67 @@ const SDL_Scancode scancode_rmapping_nonextended[][2] = {
     {SDL_SCANCODE_KP_MULTIPLY, SDL_SCANCODE_PRINTSCREEN}
 };
 
+static void gfx_sdl_set_fullscreen(bool fullscreen)
+{
+    if (fullscreen)
+    {
+        SDL_SetWindowFullscreen(wnd, SDL_WINDOW_FULLSCREEN_DESKTOP);
+        SDL_ShowCursor(SDL_DISABLE);
+    }
+    else
+    {
+        SDL_SetWindowFullscreen(wnd, 0);
+        SDL_ShowCursor(SDL_ENABLE);
+    }
+
+    configFullscreen = fullscreen;
+}
+
 static void gfx_sdl_init(void) {
+    Uint32 window_flags = 0;
+
     SDL_Init(SDL_INIT_VIDEO);
-    
+	
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+    #ifdef USE_GLES
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);  // These attributes allow for hardware acceleration on RPis.
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0); 
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    #endif
     
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
-    
-    wnd = SDL_CreateWindow("Super Mario 64 - testing", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            DESIRED_SCREEN_WIDTH, DESIRED_SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-    
+
+    window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
+
+    if (configFullscreen) {
+        window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    }
+
+    SDL_DisplayMode sdl_displaymode;
+    SDL_GetCurrentDisplayMode(0, &sdl_displaymode); 
+
+    const char* window_title = 
+    #ifndef USE_GLES
+    "Super Mario 64 PC port (OpenGL) - testing";
+    #else
+    "Super Mario 64 PC port (OpenGL_ES2) - testing";
+    #endif
+
+    if (configFullscreen) {
+        wnd = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                sdl_displaymode.w, sdl_displaymode.h, window_flags);
+        SDL_ShowCursor(SDL_DISABLE);
+    } else {
+        wnd = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                DESIRED_SCREEN_WIDTH, DESIRED_SCREEN_HEIGHT, window_flags);
+        SDL_ShowCursor(SDL_ENABLE);
+    }
+  
     SDL_GL_CreateContext(wnd);
-    SDL_GL_SetSwapInterval(2); // TODO 0, 1 or 2 or remove this line
+    SDL_GL_SetSwapInterval(1); // We have a double buffered GL context, it makes no sense to want tearing.
     
     for (size_t i = 0; i < sizeof(windows_scancode_table) / sizeof(SDL_Scancode); i++) {
         inverted_scancode_table[windows_scancode_table[i]] = i;
@@ -131,6 +181,17 @@ static int translate_scancode(int scancode) {
 
 static void gfx_sdl_onkeydown(int scancode) {
     keyboard_on_key_down(translate_scancode(scancode));
+
+    const Uint8 *state = SDL_GetKeyboardState(NULL);
+
+    if (state[SDL_SCANCODE_LALT] && state[SDL_SCANCODE_RETURN])
+    {
+        gfx_sdl_set_fullscreen(!configFullscreen);
+    }
+    else if (state[SDL_SCANCODE_ESCAPE] && configFullscreen)
+    {
+        gfx_sdl_set_fullscreen(false);
+    }
 }
 
 static void gfx_sdl_onkeyup(int scancode) {

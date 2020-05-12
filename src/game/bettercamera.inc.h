@@ -9,8 +9,9 @@
 #include "include/text_strings.h"
 #include "engine/surface_collision.h"
 #include "pc/configfile.h"
+#include <stdio.h>
 
-#define CONFIG_FILE "sm64config.txt"
+
 
 /**
 Quick explanation of the camera modes
@@ -143,8 +144,8 @@ void newcam_init(struct Camera *c, u8 dv)
     newcam_distance = newcam_distance_target;
     newcam_intendedmode = newcam_mode;
     newcam_modeflags = newcam_mode;
-    newcam_init_settings();
 }
+
 static u8 newcam_clamp(u8 value, u8 min, u8 max)
 {
     if (value > max)
@@ -153,42 +154,30 @@ static u8 newcam_clamp(u8 value, u8 min, u8 max)
         value = min;
     return value;
 }
+
 ///These are the default settings for Puppycam. You may change them to change how they'll be set for first timers.
-void newcam_init_settings()
+void newcam_init_settings(void)
 {
-    configfile_load(CONFIG_FILE);
-
-    newcam_sensitivityX = configCameraXSens;
-    newcam_sensitivityY = configCameraYSens;
-    newcam_aggression   = configCameraAggr;
-    newcam_panlevel     = configCameraPan;
-    newcam_invertX      = configCameraInvertX;
-    newcam_invertY      = configCameraInvertY;
-    newcam_mouse        = configCameraMouse;
-    newcam_analogue     = configEnableCamera;
-
-    newcam_clamp(newcam_sensitivityX, 10, 250);
-    newcam_clamp(newcam_sensitivityY, 10, 250);
-    newcam_clamp(newcam_aggression, 0, 100);
-    newcam_clamp(newcam_panlevel, 0, 100);
-    newcam_clamp(newcam_invertX, 0, 1);
-    newcam_clamp(newcam_invertY, 0, 1);
-    newcam_clamp(newcam_mouse, 0, 1);
-    newcam_clamp(newcam_analogue, 0, 1);
+    newcam_sensitivityX = newcam_clamp(configCameraXSens, 10, 250);
+    newcam_sensitivityY = newcam_clamp(configCameraYSens, 10, 250);
+    newcam_aggression   = newcam_clamp(configCameraAggr, 0, 100);
+    newcam_panlevel     = newcam_clamp(configCameraPan, 0, 100);
+    newcam_invertX      = (u8)configCameraInvertX;
+    newcam_invertY      = (u8)configCameraInvertY;
+    newcam_mouse        = (u8)configCameraMouse;
+    newcam_analogue     = (u8)configEnableCamera;
 }
 
-extern void newcam_save_settings()
+void newcam_save_settings(void)
 {
-    configCameraXSens = newcam_sensitivityX;
-    configCameraYSens = newcam_sensitivityY;
-    configCameraAggr = newcam_aggression;
-    configCameraPan = newcam_panlevel;
-    configCameraInvertX = newcam_invertX;
-    configCameraInvertY = newcam_invertY;
-    configCameraMouse = newcam_mouse;
-    configEnableCamera = newcam_analogue;
-
-    configfile_save(CONFIG_FILE);
+    configCameraXSens   = newcam_sensitivityX;
+    configCameraYSens   = newcam_sensitivityY;
+    configCameraAggr    = newcam_aggression;
+    configCameraPan     = newcam_panlevel;
+    configCameraInvertX = newcam_invertX != 0;
+    configCameraInvertY = newcam_invertY != 0;
+    configEnableCamera  = newcam_analogue != 0;
+    configCameraMouse   = newcam_mouse != 0;
 }
 
 /** Mathematic calculations. This stuffs so basic even *I* understand it lol
@@ -245,7 +234,7 @@ static s16 newcam_approach_s16(s16 var, s16 val, s16 inc)
         return min(var - inc, val);
 }
 
-static s8 ivrt(u8 axis)
+static int ivrt(u8 axis)
 {
     if (axis == 0)
     {
@@ -387,13 +376,12 @@ static void newcam_rotate_button(void)
             newcam_tilt_acc = newcam_adjust_value(newcam_tilt_acc,(-gPlayer2Controller->stickY/4));
         else
             newcam_tilt_acc -= (newcam_tilt_acc*(DEGRADE));
-
     }
 
     if (newcam_mouse == 1)
     {
-        newcam_yaw += mouse_x * 16;
-        newcam_tilt += mouse_y * 16;
+        newcam_yaw += ivrt(0) * mouse_x * 16;
+        newcam_tilt += ivrt(1) * mouse_y * 16;
     }
 }
 
@@ -438,7 +426,7 @@ static void newcam_zoom_button(void)
     if (newcam_centering && newcam_modeflags & NC_FLAG_XTURN)
     {
         newcam_yaw = approach_s16_symmetric(newcam_yaw,newcam_yaw_target,0x800);
-        if (newcam_yaw = newcam_yaw_target)
+        if (newcam_yaw == newcam_yaw_target)
             newcam_centering = 0;
     }
     else
@@ -518,7 +506,7 @@ static void newcam_collision(void)
 
 
 
-    find_surface_on_ray(newcam_pos_target, camdir, &surf, &hitpos);
+    find_surface_on_ray(newcam_pos_target, camdir, &surf, hitpos);
 
     if (surf)
     {

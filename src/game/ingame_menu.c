@@ -19,7 +19,9 @@
 #include "print.h"
 #include "engine/math_util.h"
 #include "course_table.h"
-#include "../../enhancements/bettercamera.h"
+#ifdef BETTERCAMERA
+#include "bettercamera.h"
+#endif
 
 extern Gfx *gDisplayListHead;
 extern s16 gCurrCourseNum;
@@ -2616,8 +2618,10 @@ s16 render_pause_courses_and_castle(void) {
 #ifdef VERSION_EU
     gInGameLanguage = eu_get_language();
 #endif
+#ifdef BETTERCAMERA
     if (newcam_option_open == 0)
     {
+#endif
     switch (gDialogBoxState) {
         case DIALOG_STATE_OPENING:
             gDialogLineNum = 1;
@@ -2693,6 +2697,7 @@ s16 render_pause_courses_and_castle(void) {
     if (gDialogTextAlpha < 250) {
         gDialogTextAlpha += 25;
     }
+#ifdef BETTERCAMERA
     }
     else
     {
@@ -2701,6 +2706,7 @@ s16 render_pause_courses_and_castle(void) {
     }
     newcam_check_pause_buttons();
     newcam_render_option_text();
+#endif
 
     return 0;
 }

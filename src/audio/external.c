@@ -868,7 +868,10 @@ struct SPTask *create_next_audio_frame_task(void) {
     decrease_sample_dma_ttls();
     return gAudioTask;
 }
-#else
+#endif
+#endif
+
+#ifndef TARGET_N64
 struct SPTask *create_next_audio_frame_task(void) {
     return NULL;
 }
@@ -883,7 +886,6 @@ void create_next_audio_buffer(s16 *samples, u32 num_samples) {
     gAudioRandom = ((gAudioRandom + gAudioFrameCount) * gAudioFrameCount);
     decrease_sample_dma_ttls();
 }
-#endif
 #endif
 
 void play_sound(s32 soundBits, f32 *pos) {

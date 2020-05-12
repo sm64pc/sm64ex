@@ -13,5 +13,4 @@ struct ControllerAPI {
     void (*read)(OSContPad *pad);
 };
 
-
 #endif

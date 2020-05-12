@@ -110,7 +110,9 @@
 #define CAMERA_MODE_8_DIRECTIONS      0x0E // AKA Parallel Camera, Bowser Courses & Rainbow Road
 #define CAMERA_MODE_FREE_ROAM         0x10
 #define CAMERA_MODE_SPIRAL_STAIRS     0x11
-#define CAM_MODE_NEWCAM 0x12
+#ifdef BETTERCAMERA
+#define CAMERA_MODE_NEWCAM            0x12
+#endif
 
 #define CAM_MOVE_RETURN_TO_MIDDLE       0x0001
 #define CAM_MOVE_ZOOMED_OUT             0x0002
@@ -656,6 +658,7 @@ struct LakituState
 };
 
 // bss order hack to not affect BSS order. if possible, remove me, but it will be hard to match otherwise
+#ifndef INCLUDED_FROM_CAMERA_C
 // BSS
 extern s16 sSelectionFlags;
 extern s16 sCameraSideCFlags;
@@ -666,6 +669,7 @@ extern struct LakituState gLakituState;
 extern s16 gCameraMovementFlags;
 extern s32 gObjCutsceneDone;
 extern struct Camera *gCamera;
+#endif
 
 extern struct Object *gCutsceneFocus;
 extern struct Object *gSecondCameraFocus;

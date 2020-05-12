@@ -7,6 +7,10 @@
 *.ilk
 *.exp
 
+# Patch and wiggle related residdue
+*.rej
+*.porig
+
 # Precompiled Headers
 *.gch
 *.pch
@@ -41,6 +45,7 @@
 # Text editor remnants
 *.swp
 .vscode/*
+.idea/*
 
 # General project-specific ignores
 doxygen/doxygen/*
