@@ -1,20 +1,11 @@
 // Parameters: dialog enum ID, (unused), lines per box, left offset, width
 
-#ifdef VERSION_EU
 #define COMRADES "friends"
 #define PLASTERED "splattered"
 #define SCAM_ME "cheat!\n"
 #define SCRAM "get lost"
 #define YOU_CANT_SWIM_IN_IT "Its too heavy to swim\nwith."
 #define GIVE_UP "give up"
-#else
-#define COMRADES "comrades"
-#define PLASTERED "plastered"
-#define SCAM_ME "scam\nME. "
-#define SCRAM "scram--"
-#define YOU_CANT_SWIM_IN_IT "You can't swim in it."
-#define GIVE_UP "give"
-#endif
 
 DEFINE_DIALOG(DIALOG_000, 1, 6, 30, 200, _("\
 Wow! You're smack in the\n\

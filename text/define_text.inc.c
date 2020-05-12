@@ -2,6 +2,7 @@
 
 
 // (this wasn't translated for US, and was removed in EU)
+// is now thanks to multilang support
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
 static const u8 Debug0[] = {
