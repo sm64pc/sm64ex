@@ -27,6 +27,8 @@ COMPILER ?= ido
 
 # Disable better camera by default
 BETTERCAMERA ?= 0
+# Enable Discord Rich Presence
+DISCORDRPC ?= 0
 
 # Build for Emscripten/WebGL
 TARGET_WEB ?= 0
@@ -212,6 +214,9 @@ LEVEL_DIRS := $(patsubst levels/%,%,$(dir $(wildcard levels/*/header.h)))
 # Hi, I'm a PC
 SRC_DIRS := src src/engine src/game src/audio src/menu src/buffers actors levels bin data assets src/pc src/pc/gfx src/pc/audio src/pc/controller
 ASM_DIRS :=
+ifeq ($(DISCORDRPC),1)
+  SRC_DIRS += src/pc/discord
+endif
 
 BIN_DIRS := bin bin/$(VERSION)
 
@@ -397,6 +402,16 @@ ULTRA_O_FILES := $(foreach file,$(ULTRA_S_FILES),$(BUILD_DIR)/$(file:.s=.o)) \
 
 GODDARD_O_FILES := $(foreach file,$(GODDARD_C_FILES),$(BUILD_DIR)/$(file:.c=.o))
 
+RPC_LIBS :=
+ifeq ($(DISCORDRPC),1)
+  ifeq ($(WINDOWS_BUILD),1)
+    RPC_LIBS := src/pc/discord/libdiscord-rpc.lib
+  else
+    RPC_LIBS := src/pc/discord/libdiscord-rpc.a
+  endif
+endif
+
+
 # Automatic dependency files
 DEP_FILES := $(O_FILES:.o=.d) $(ULTRA_O_FILES:.o=.d) $(GODDARD_O_FILES:.o=.d) $(BUILD_DIR)/$(LD_SCRIPT).d
 
@@ -419,6 +434,8 @@ else
 endif
 
 ifeq ($(WINDOWS_BUILD),1)
+  LD := $(CXX)
+else ifeq ($(DISCORDRPC),1)
   LD := $(CXX)
 else
   LD := $(CC)
@@ -447,6 +464,11 @@ endif
 ifeq ($(BETTERCAMERA),1)
 CC_CHECK += -DBETTERCAMERA
 CFLAGS += -DBETTERCAMERA
+endif
+
+ifeq ($(DISCORDRPC),1)
+CC_CHECK += -DDISCORDRPC
+CFLAGS += -DDISCORDRPC
 endif
 
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
@@ -746,7 +768,7 @@ $(BUILD_DIR)/%.o: %.s
 
 
 $(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES)
-	$(LD) -L $(BUILD_DIR) -o $@ $(O_FILES) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(LDFLAGS)
+	$(LD) -L $(BUILD_DIR) -o $@ $(O_FILES) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(RPC_LIBS) $(LDFLAGS)
 
 .PHONY: all clean distclean default diff test load libultra
 .PRECIOUS: $(BUILD_DIR)/bin/%.elf $(SOUND_BIN_DIR)/%.ctl $(SOUND_BIN_DIR)/%.tbl $(SOUND_SAMPLE_TABLES) $(SOUND_BIN_DIR)/%.s $(BUILD_DIR)/%
