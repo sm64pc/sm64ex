@@ -184,17 +184,23 @@ void bhv_coin_formation_loop(void) {
     s32 bitIndex;
     switch (o->oAction) {
         case 0:
+#ifndef NODRAWINGDISTANCE
             if (o->oDistanceToMario < 2000.0f) {
+#endif
                 for (bitIndex = 0; bitIndex < 8; bitIndex++) {
                     if (!(o->oCoinUnkF4 & (1 << bitIndex)))
                         spawn_coin_in_formation(bitIndex, o->oBehParams2ndByte);
                 }
                 o->oAction++;
+#ifndef NODRAWINGDISTANCE
             }
+#endif
             break;
         case 1:
+#ifndef NODRAWINGDISTANCE
             if (o->oDistanceToMario > 2100.0f)
                 o->oAction++;
+#endif
             break;
         case 2:
             o->oAction = 0;

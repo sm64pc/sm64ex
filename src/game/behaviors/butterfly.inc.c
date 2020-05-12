@@ -107,6 +107,7 @@ void bhv_butterfly_loop(void) {
             butterfly_act_return_home();
             break;
     }
-
+#ifndef NODRAWINGDISTANCE
     set_object_visibility(o, 3000);
+#endif
 }
