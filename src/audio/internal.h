@@ -507,9 +507,6 @@ struct Note
     /* U/J, EU  */
     /*0xA4, 0x00*/ struct AudioListItem listItem;
     /*      0x10*/ struct NoteSynthesisState synthesisState;
-#ifdef TARGET_N64
-    u8 pad0[12];
-#endif
     /*0x04, 0x30*/ u8 priority;
     /*      0x31*/ u8 waveId;
     /*      0x32*/ u8 sampleCountIndex;

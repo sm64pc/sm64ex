@@ -533,7 +533,6 @@ void alloc_surface_pools(void) {
     reset_red_coins_collected();
 }
 
-#ifndef TARGET_N64
 /**
  * Get the size of the terrain data, to get the correct size when copying later.
  */
@@ -581,8 +580,6 @@ u32 get_area_terrain_size(s16 *data) {
 
     return data - startPos;
 }
-#endif
-
 
 /**
  * Process the level file, loading in vertices, surfaces, some objects, and environmental

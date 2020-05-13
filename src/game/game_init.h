@@ -51,7 +51,7 @@ extern struct MarioAnimation gDemo;
 extern u8 gMarioAnims[];
 extern u8 gDemoInputs[];
 
-#define GFX_POOL_SIZE 6400
+#define GFX_POOL_SIZE 64000
 
 struct GfxPool {
     Gfx buffer[GFX_POOL_SIZE];
@@ -71,7 +71,7 @@ extern void clear_viewport(Vp *, s32);
 void make_viewport_clip_rect(Vp *viewport);
 extern void init_render_image(void);
 extern void end_master_display_list(void);
-extern void draw_reset_bars(void);
+//extern void draw_reset_bars(void);  Target_64 only. Not used
 extern void rendering_init(void);
 extern void config_gfx_pool(void);
 extern void display_and_vsync(void);

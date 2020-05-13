@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-#define GFX_POOL_SIZE 6400
+#define GFX_POOL_SIZE 64000
 
 extern u16 frameBufferIndex;
 extern u32 gGlobalTimer;
