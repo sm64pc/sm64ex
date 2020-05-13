@@ -4,20 +4,28 @@
 #include <time.h>
 #include "PR/ultratypes.h"
 #include "memory.h"
+#include "pc/configfile.h"
 #include "discordrpc.h"
 
 #define DISCORD_APP_ID  "709083908708237342"
 #define DISCORD_UPDATE_RATE 5
 
-time_t m_flLastUpdatedTime;
-int m_bErrored;
-DiscordRichPresence m_sDiscordRichPresence;
+bool initialized = false;
+time_t lastUpdatedTime;
+
+DiscordRichPresence discordRichPresence;
+
 extern s16 gCurrCourseNum;
 extern s16 gCurrActNum;
-s16 lastCourseNum = 0;
-s16 lastActNum = 0;
+s16 lastCourseNum = -1;
+s16 lastActNum = -1;
+
 extern u8 seg2_course_name_table[];
 extern u8 seg2_act_name_table[];
+
+#ifdef VERSION_EU
+extern s32 gInGameLanguage;
+#endif
 
 char stage[188];
 char act[188];
@@ -25,7 +33,7 @@ char act[188];
 char smallImageKey[5];
 char largeImageKey[5];
 
-char* chars[0xFF] = {
+char charset[0xFF+1] = {
     ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', // 7
     ' ', ' ', 'a', 'b', 'c', 'd', 'e', 'f', // 15
     'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', // 23
@@ -69,8 +77,9 @@ void convertstring(const u8 *str, char* output)
     {
         if (str[strPos] < 0xFF)
         {
-            output[strPos] = chars[str[strPos]];
+            output[strPos] = charset[str[strPos]];
 
+            // if the char is a letter we can capatalize it
             if (capitalizeChar && 0x0A <= str[strPos] && str[strPos] <= 0x23)
             {
                 output[strPos] -= ('a' - 'A');
@@ -80,8 +89,11 @@ void convertstring(const u8 *str, char* output)
         }
         else output[strPos] = ' ';
 
-        if (output[strPos] == ' ' && str[strPos] != 158) fprintf(stdout, "Unknown Character (%i)\n", str[strPos]);
-        if (output[strPos] == ' ') capitalizeChar = true;
+        if (output[strPos] == ' ')
+        {
+            if (str[strPos] != 158) printf(stdout, "Unknown Character (%i)\n", str[strPos]); // inform that an unknown char was found
+            capitalizeChar = true;
+        }
         else capitalizeChar = false;
         strPos++;
     }
@@ -105,15 +117,13 @@ void itoa(int n, char s[])
 {
     int i, sign;
 
-    if ((sign = n) < 0)
+    if (n < 0)
     n = -n;
     i = 0;
     do {
         s[i++] = n % 10 + '0';
     } while ((n /= 10) > 0);
 
-    if (sign < 0)
-        s[i++] = '-';
     s[i] = '\0';
     reverse(s);
 }
@@ -123,37 +133,44 @@ void OnReady( const DiscordUser* user )
     discordReset();
 }
 
-void OnDiscordError(int errorCode, const char *szMessage)
-{
-    m_bErrored = true;
-}
-
-
 void InitializeDiscord()
 {
     DiscordEventHandlers handlers;
     memset(&handlers, 0, sizeof(handlers));
     handlers.ready          = OnReady;
-    handlers.errored        = OnDiscordError;
 
     Discord_Initialize( DISCORD_APP_ID, &handlers, false, "" );
-    discordReset();
 }
 
 void SetDetails()
 {
     if (lastCourseNum != gCurrCourseNum)
     {
+        // If we are in in Course 0 we are in the castle which doesn't have a string
         if (gCurrCourseNum)
         {
-            void **courseNameTbl = segmented_to_virtual(seg2_course_name_table);
+            void **courseNameTbl;
+
+#ifndef VERSION_EU
+            courseNameTbl = segmented_to_virtual(seg2_course_name_table);
+#else
+            switch (gInGameLanguage) {
+                case LANGUAGE_ENGLISH:
+                    courseNameTbl = segmented_to_virtual(course_name_table_eu_en);
+                    break;
+                case LANGUAGE_FRENCH:
+                    courseNameTbl = segmented_to_virtual(course_name_table_eu_fr);
+                    break;
+                case LANGUAGE_GERMAN:
+                    courseNameTbl = segmented_to_virtual(course_name_table_eu_de);
+                    break;
+            }
+#endif
             u8 *courseName = segmented_to_virtual(courseNameTbl[gCurrCourseNum - 1]);
 
             convertstring(&courseName[3], stage);
-
-            m_sDiscordRichPresence.details = stage;
         }
-        else stage[0] = '\0';
+        else strcpy(stage, "Peach's Castle");
 
         lastCourseNum = gCurrCourseNum;
     }
@@ -163,16 +180,30 @@ void SetState()
 {
     if (lastActNum != gCurrActNum || lastCourseNum != gCurrCourseNum)
     {
+        // when exiting a stage the act doesn't get reset
         if (gCurrActNum && gCurrCourseNum)
         {
             if (gCurrCourseNum < 19) // any stage over 19 is a special stage without acts
             {
-                void **actNameTbl = segmented_to_virtual(seg2_act_name_table);
+                void **actNameTbl;
+#ifndef VERSION_EU
+                actNameTbl = segmented_to_virtual(seg2_act_name_table);
+#else
+                switch (gInGameLanguage) {
+                    case LANGUAGE_ENGLISH:
+                        actNameTbl = segmented_to_virtual(act_name_table_eu_en);
+                        break;
+                    case LANGUAGE_FRENCH:
+                        actNameTbl = segmented_to_virtual(act_name_table_eu_fr);
+                        break;
+                    case LANGUAGE_GERMAN:
+                        actNameTbl = segmented_to_virtual(act_name_table_eu_de);
+                        break;
+                }
+#endif
                 u8 *actName = actName = segmented_to_virtual(actNameTbl[(gCurrCourseNum - 1) * 6 + gCurrActNum - 1]);
 
                 convertstring(actName, act);
-
-                m_sDiscordRichPresence.state = act;
             }
             else
             {
@@ -203,22 +234,22 @@ void SetLogo()
     else smallImageKey[0] = '\0';
     */
 
-    m_sDiscordRichPresence.largeImageKey = largeImageKey;
-    //m_sDiscordRichPresence.largeImageText = "";
-    //m_sDiscordRichPresence.smallImageKey = smallImageKey;
-    //m_sDiscordRichPresence.smallImageText = "";
+    discordRichPresence.largeImageKey = largeImageKey;
+    //discordRichPresence.largeImageText = "";
+    //discordRichPresence.smallImageKey = smallImageKey;
+    //discordRichPresence.smallImageText = "";
 }
 
 void discordUpdateRichPresence()
 {   
-    if (time(NULL) < m_flLastUpdatedTime + DISCORD_UPDATE_RATE) return;
+    if (initialized && time(NULL) < lastUpdatedTime + DISCORD_UPDATE_RATE) return;
 
-    m_flLastUpdatedTime = time(NULL);
+    lastUpdatedTime = time(NULL);
 
     SetState();
     SetDetails();
     SetLogo();
-    Discord_UpdatePresence(&m_sDiscordRichPresence);
+    Discord_UpdatePresence(&discordRichPresence);
 }
 
 void discordShutdown()
@@ -228,16 +259,25 @@ void discordShutdown()
 
 void discordInit()
 {
-    InitializeDiscord();
-    m_flLastUpdatedTime = 0;
+    if (configDiscordRPC)
+    {
+        InitializeDiscord();
+
+        discordRichPresence.details = stage;
+        discordRichPresence.state = act;
+
+
+        lastUpdatedTime = 0;
+        initialized = true;
+    }
 };
 
 void discordReset()
 {
-    memset( &m_sDiscordRichPresence, 0, sizeof( m_sDiscordRichPresence ) );
+    memset( &discordRichPresence, 0, sizeof( discordRichPresence ) );
 
     SetState();
     SetDetails();
     SetLogo();
-    Discord_UpdatePresence( &m_sDiscordRichPresence );
+    Discord_UpdatePresence( &discordRichPresence );
 }
