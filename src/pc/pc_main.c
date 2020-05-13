@@ -77,6 +77,20 @@ void produce_one_frame(void) {
     gfx_end_frame();
 }
 
+void audio_shutdown(void) {
+    if (audio_api) {
+        if (audio_api->shutdown) audio_api->shutdown();
+        audio_api = NULL;
+    }
+}
+
+void game_shutdown(void) {
+    configfile_save(CONFIG_FILE);
+    controller_shutdown();
+    audio_shutdown();
+    gfx_shutdown();
+}
+
 #ifdef TARGET_WEB
 static void em_main_loop(void) {
 }
@@ -110,17 +124,13 @@ static void on_anim_frame(double time) {
 }
 #endif
 
-static void save_config(void) {
-    configfile_save(CONFIG_FILE);
-}
-
 void main_func(void) {
     static u64 pool[0x165000/8 / 4 * sizeof(void *)];
     main_pool_init(pool, pool + sizeof(pool) / sizeof(pool[0]));
     gEffectsMemoryPool = mem_pool_init(0x4000, MEMORY_POOL_LEFT);
 
     configfile_load(CONFIG_FILE);
-    atexit(save_config);
+    atexit(game_shutdown);
 
 #ifdef TARGET_WEB
     emscripten_set_main_loop(em_main_loop, 0, 0);

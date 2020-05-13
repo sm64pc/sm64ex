@@ -107,10 +107,14 @@ static u32 keyboard_rawkey(void) {
     return ret;
 }
 
+static void keyboard_shutdown(void) {
+}
+
 struct ControllerAPI controller_keyboard = {
     VK_BASE_KEYBOARD,
     keyboard_init,
     keyboard_read,
     keyboard_rawkey,
     keyboard_bindkeys,
+    keyboard_shutdown
 };

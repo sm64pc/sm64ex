@@ -16,10 +16,13 @@ struct ControllerAPI {
     void (*read)(OSContPad *pad); // read controller and update N64 pad values
     u32  (*rawkey)(void);         // returns last pressed virtual key or VK_INVALID if none
     void (*reconfig)(void);       // (optional) call when bindings have changed
+    void (*shutdown)(void);       // (optional) call in osContReset
 };
 
 // used for binding keys
 u32 controller_get_raw_key(void);
 void controller_reconfigure(void);
+// calls the shutdown() function of all controller subsystems
+void controller_shutdown(void);
 
 #endif

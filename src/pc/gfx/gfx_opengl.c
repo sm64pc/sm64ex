@@ -480,6 +480,9 @@ static void gfx_opengl_start_frame(void) {
     glEnable(GL_SCISSOR_TEST);
 }
 
+static void gfx_opengl_shutdown(void) {
+}
+
 struct GfxRenderingAPI gfx_opengl_api = {
     gfx_opengl_z_is_from_0_to_1,
     gfx_opengl_unload_shader,
@@ -499,5 +502,6 @@ struct GfxRenderingAPI gfx_opengl_api = {
     gfx_opengl_set_use_alpha,
     gfx_opengl_draw_triangles,
     gfx_opengl_init,
-    gfx_opengl_start_frame
+    gfx_opengl_start_frame,
+    gfx_opengl_shutdown
 };
