@@ -1,4 +1,8 @@
 #!/bin/bash
+# Super Mario 64 PC on Raspberry Pi
+# Find latest updates and code on https://www.github.com/sm64pc/sm64pc 
+# ToDo: Test on more Pi models with fresh Raspbian and allow existing src folders to be updated.
+#
 clear
 echo "This script will assist with compiling Super Mario 64 on Raspbian 10"
 echo "Note that accelerated OpenGL (vc4_drm) is required for maximum performance"
@@ -65,7 +69,8 @@ clear
 echo "Super Mario 64 RPi Initial Setup"
 
 if [[ $pi != 4 ]]
-then #Dumb idea, but quick hack. We CANNOT enable VC4 for Pi4.
+then #Dumb idea, but quick hack. 
+     #We CANNOT enable VC4 for Pi4 as it uses VC6
 
 inxinf=$(inxi -Gx)
 echo "Checking for pre-enabled VC4 acceleration (inxi -Gx)"
@@ -119,24 +124,24 @@ fixmem=$(cat /boot/cmdline.txt | grep cma=128M)
 
 		else
 		echo ""
-		echo "Warning: VC4 enabled, but your Rasp Pi has 512MB or less RAM"
+		echo "Warning: VC4 enabled, but your RasPi has 512MB or less RAM"
 		echo "To ensure VC4_DRM and game compilation is succesful, video memory will be reduced"
 		echo "gpu_mem=48M (config.txt) | cma=128M (cmdline.txt) will be written to /boot "
 		echo ""
 		read -p "Fix mem? (Y/N): " fixmem
 
-		if [[ $fixmem =~ "Y" ]]
-		then
-		sudo sh -c "echo 'gpu_mem=48' >> /boot/config.txt"
-		sudo sh -c "echo 'cma=128M' >> /boot/cmdline.txt"
-		sync
-		echo "Wrote configuration changes to SD card."
-	        sleep 2
-		else
-		echo ""
-		echo "Warning: Compilation freezes & errors are likely to occur on your Pi"
-		echo ""
-		sleep 3
+			if [[ $fixmem =~ "Y" ]]
+			then
+			sudo sh -c "echo 'gpu_mem=48' >> /boot/config.txt"
+			sudo sh -c "echo 'cma=128M' >> /boot/cmdline.txt"
+			sync
+			echo "Wrote configuration changes to SD card."
+	       	 	sleep 2
+			else
+			echo ""
+			echo "Warning: Compilation freezes & errors are likely to occur on your Pi"
+			echo ""
+			sleep 3
 		fi
 	fi
 fi
@@ -149,11 +154,12 @@ read -p "Reboot to enable changes? (Y/N): " fixstart
 	if [[ $fixstart =~ "Y" ]]
 	then
 	echo ""
-	echo "Rebooting RasPi!"
+	echo "Rebooting RasPi in 4 seconds! Press Control-C to cancel."
+	sleep 4
 	sudo reboot
 	fi
-fi
-fi #This should never run on a Pi 4
+	fi
+fi # "Should never run on a Pi 4" part ends here
 
 #--------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -182,7 +188,7 @@ fi
 #-------------------------------------------------------------------------------------
 clear
 echo "Optional: Compile SDL2 with 'KMSDRM' for enhanced performance?"
-echo "KMSDRM allows Super Mario 64 to be run without GUI/Desktop enabled on boot."
+echo "KMSDRM allows Super Mario 64 to be run without GUI/Desktop (Xorg) enabled on boot"
 echo ""
 echo "Warning: Compile could take up to an hour on older Raspberry Pi models"
 read -p "Proceed? (Y/N): " sdlcomp
@@ -293,7 +299,12 @@ echo ""
 echo "Step 3. Compiling Super Mario 64 for the Raspberry Pi"
 echo ""
 echo "Warning: Super Mario 64 assets are required in order to compile"
+if [[ $curdir ==1 ]]
+then
+echo "Assets will be extracted from "$PWD" "
+else
 echo "Assets will be extracted from $HOME/src/sm64pi/sm64pc/baserom.(us/eu/jp).z64 "
+fi
 
 if [[ $curdir == 1 ]]
 then
@@ -312,12 +323,15 @@ else
 echo ""
 echo "Please satisfy this requirement before continuing."
 echo "Exiting Super Mario 64 RasPi setup and compilation script."
+echo ""
 echo "Note: Re-run script once baserom(s) are inserted into"
 
 if [[ $curdir == 1 ]]
 then
 echo $PWD
+echo ""
 else
+echo ""
 echo $HOME/src/sm64pi/sm64pc/
 fi
 
