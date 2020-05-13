@@ -31,6 +31,8 @@ BETTERCAMERA ?= 0
 NODRAWINGDISTANCE ?= 0
 # Disable texture fixes by default (helps with them purists)
 TEXTURE_FIX ?= 0
+# Enable extended options menu by default
+EXT_OPTIONS_MENU ?= 1
 
 # Build for Emscripten/WebGL
 TARGET_WEB ?= 0
@@ -448,22 +450,31 @@ CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -W
 CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags`
 endif
 
-# Check for better camera option
+# Check for enhancement options
+
+# Check for Puppycam option
 ifeq ($(BETTERCAMERA),1)
-CC_CHECK += -DBETTERCAMERA -DEXT_OPTIONS_MENU
-CFLAGS += -DBETTERCAMERA -DEXT_OPTIONS_MENU
+  CC_CHECK += -DBETTERCAMERA
+  CFLAGS += -DBETTERCAMERA
+  EXT_OPTIONS_MENU := 1
 endif
 
 # Check for no drawing distance option
 ifeq ($(NODRAWINGDISTANCE),1)
-CC_CHECK += -DNODRAWINGDISTANCE
-CFLAGS += -DNODRAWINGDISTANCE
+  CC_CHECK += -DNODRAWINGDISTANCE
+  CFLAGS += -DNODRAWINGDISTANCE
 endif
 
 # Check for texture fix option
 ifeq ($(TEXTURE_FIX),1)
-CC_CHECK += -DTEXTURE_FIX
-CFLAGS += -DTEXTURE_FIX
+  CC_CHECK += -DTEXTURE_FIX
+  CFLAGS += -DTEXTURE_FIX
+endif
+
+# Check for extended options menu option
+ifeq ($(EXT_OPTIONS_MENU),1)
+  CC_CHECK += -DEXT_OPTIONS_MENU
+  CFLAGS += -DEXT_OPTIONS_MENU
 endif
 
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
