@@ -40,9 +40,20 @@ static void audio_sdl_play(const uint8_t *buf, size_t len) {
     }
 }
 
+static void audio_sdl_shutdown(void) {
+    if (SDL_WasInit(SDL_INIT_AUDIO)) {
+        if (dev != 0) {
+            SDL_CloseAudioDevice(dev);
+            dev = 0;
+        }
+        SDL_QuitSubSystem(SDL_INIT_AUDIO);
+    }
+}
+
 struct AudioAPI audio_sdl = {
     audio_sdl_init,
     audio_sdl_buffered,
     audio_sdl_get_desired_buffered,
-    audio_sdl_play
+    audio_sdl_play,
+    audio_sdl_shutdown
 };

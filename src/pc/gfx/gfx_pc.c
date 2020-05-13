@@ -1545,3 +1545,14 @@ void gfx_end_frame(void) {
         gfx_wapi->swap_buffers_end();
     }
 }
+
+void gfx_shutdown(void) {
+    if (gfx_rapi) {
+        if (gfx_rapi->shutdown) gfx_rapi->shutdown();
+        gfx_rapi = NULL;
+    }
+    if (gfx_wapi) {
+        if (gfx_wapi->shutdown) gfx_wapi->shutdown();
+        gfx_wapi = NULL;
+    }
+}

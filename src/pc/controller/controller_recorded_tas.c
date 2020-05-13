@@ -23,6 +23,13 @@ static void tas_read(OSContPad *pad) {
     }
 }
 
+static void tas_shutdown(void) {
+    if (fp != NULL) {
+        fclose(fp);
+        fp = NULL;
+    }
+}
+
 static u32 tas_rawkey(void) {
     return VK_INVALID;
 }
@@ -33,4 +40,5 @@ struct ControllerAPI controller_recorded_tas = {
     tas_read,
     tas_rawkey,
     NULL, // no rebinding
+    tas_shutdown
 };
