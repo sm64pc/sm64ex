@@ -203,7 +203,7 @@
 #define TEXT_MYSCORE _("MYSCORE")
 #define TEXT_CONTINUE _("CONTINUE")
 #define TEXT_EXIT_COURSE _("EXIT COURSE")
-#ifndef VERSION_EU // "R" text is different in EU
+#if !defined(VERSION_EU) // "R" text is different in EU
 #define TEXT_CAMERA_ANGLE_R _("SET CAMERA ANGLE WITH R")
 #endif
 

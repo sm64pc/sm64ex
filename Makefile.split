@@ -226,17 +226,19 @@ $(BUILD_DIR)/bin/machine.elf: SEGMENT_ADDRESS := 0x09000000
 $(BUILD_DIR)/bin/mountain.elf: SEGMENT_ADDRESS := 0x09000000
 $(BUILD_DIR)/bin/grass.elf: SEGMENT_ADDRESS := 0x09000000
 
-ifeq($(VERSION),eu)
+ifeq ($(VERSION),eu)
 # EU segment 19 translations
     $(BUILD_DIR)/bin/eu/translation_de.elf: SEGMENT_ADDRESS := 0x19000000
     $(BUILD_DIR)/bin/eu/translation_uk_en.elf: SEGMENT_ADDRESS := 0x19000000
     $(BUILD_DIR)/bin/eu/translation_fr.elf: SEGMENT_ADDRESS := 0x19000000
-else ifeq($(VERSION),ml)
+else ifeq ($(VERSION),ml)
+# Multilang segment 19 translations
     $(BUILD_DIR)/bin/eu/translation_de.elf: SEGMENT_ADDRESS := 0x19000000
     $(BUILD_DIR)/bin/eu/translation_uk_en.elf: SEGMENT_ADDRESS := 0x19000000
     $(BUILD_DIR)/bin/us/translation_us_en.elf: SEGMENT_ADDRESS := 0x19000000
     $(BUILD_DIR)/bin/jp/translation_jp.elf: SEGMENT_ADDRESS := 0x19000000
     $(BUILD_DIR)/bin/eu/translation_fr.elf: SEGMENT_ADDRESS := 0x19000000
+endif
 endif
 
 # --------------------------------------

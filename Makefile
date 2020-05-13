@@ -186,8 +186,12 @@ ifeq ($(TARGET_WEB),1)
 EXE := $(BUILD_DIR)/$(TARGET).html
 else ifeq ($(WINDOWS_BUILD),1)
 EXE := $(BUILD_DIR)/$(TARGET).exe
-else ifeq ($(WINDOWS_ON_LINUX_BUILD),1)
-EXE := $(BUILD_DIR)/$(TARGET).exe
+else ifeq ($(CROSS_BUILD),1)
+  ifeq ($(TARGET),windows)
+  EXE := $(BUILD_DIR)/$(TARGET).exe
+  else ifeq ($(TARGET),linux)
+  EXE := $(BUILD_DIR)/$(TARGET)
+  endif
 else ifeq ($(TARGET_RPI),1)
 EXE := $(BUILD_DIR)/$(TARGET).arm
 else
@@ -208,7 +212,11 @@ LEVEL_DIRS := $(patsubst levels/%,%,$(dir $(wildcard levels/*/header.h)))
 SRC_DIRS := src src/engine src/game src/audio src/menu src/buffers actors levels bin data assets src/pc src/pc/gfx src/pc/audio src/pc/controller
 ASM_DIRS :=
 
+ifeq ($(VERSION),ml)
+BIN_DIRS := bin bin/us bin/eu bin/jp
+else
 BIN_DIRS := bin bin/$(VERSION)
+endif
 
 ULTRA_SRC_DIRS := lib/src lib/src/math
 ULTRA_ASM_DIRS := lib/asm lib/data
@@ -290,7 +298,7 @@ GENERATED_C_FILES := $(BUILD_DIR)/assets/mario_anim_data.c $(BUILD_DIR)/assets/d
 
 ifeq ($(WINDOWS_BUILD),0)
   CXX_FILES :=
-else ifeq ($(WINDOWS_ON_LINUX_BUILD),0)
+else ifeq ($(CROSS_BUILD),0)
   CXX_FILES :=
 endif
 
@@ -421,7 +429,7 @@ endif
 
 ifeq ($(WINDOWS_BUILD),1)
   LD := $(CXX)
-else ifeq ($(WINDOWS_ON_LINUX_BUILD),1)
+else ifeq ($(CROSS_BUILD),1)
   LD := $(CROSS)ld
 else
   LD := $(CC)
@@ -435,7 +443,7 @@ PYTHON := python3
 ifeq ($(WINDOWS_BUILD),1)
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(CROSS)sdl2-config --cflags`
 CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(CROSS)sdl2-config --cflags`
-else ifeq ($(WINDOWS_ON_LINUX_BUILD),1)
+else ifeq ($(CROSS_BUILD),1)
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(CROSS)sdl2-config --cflags`
 CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(CROSS)sdl2-config --cflags`
 else ifeq ($(TARGET_WEB),1)
@@ -462,11 +470,14 @@ else ifeq ($(WINDOWS_BUILD),1)
   ifeq ($(WINDOWS_CONSOLE),1)
     LDFLAGS += -mconsole 
   endif
-else ifeq ($(WINDOWS_ON_LINUX_BUILD),1)
-# Linux builds/binary namer
-  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(CROSS)sdl2-config --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -lasound -no-pie -static
-  ifeq ($(WINDOWS_CONSOLE),1)
-    LDFLAGS += -mconsole 
+else ifeq ($(CROSS_BUILD),1)
+  ifeq ($(TARGET),windows)
+    LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(CROSS)sdl2-config --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -lasound -no-pie -static
+    ifeq ($(WINDOWS_CONSOLE),1)
+      LDFLAGS += -mconsole 
+    endif
+  else ifeq ($(TARGET),linux)
+    LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(CROSS)sdl2-config --libs` -no-pie -lpthread
   endif
 else ifeq ($(TARGET_RPI),1)
 # Linux / Other builds below
@@ -518,10 +529,11 @@ distclean:
 	$(RM) -r $(BUILD_DIR_BASE)
 	./extract_assets.py --clean
 
-cleanall:
-  $(RM) -r $(BUILD_DIR_BASE)
-  ./extract_assets.py --clean
-  $(MAKE) -s -C tools clean
+# temporarily disabled
+#cleanall:
+#  $(RM) -r $(BUILD_DIR_BASE)
+#  ./extract_assets.py --clean
+#  $(MAKE) -s -C tools clean
 
 test: $(ROM)
 	$(EMULATOR) $(EMU_FLAGS) $<

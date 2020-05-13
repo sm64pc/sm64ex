@@ -332,10 +332,28 @@ void render_hud_timer(void) {
 
     hudLUT = segmented_to_virtual(&main_hud_lut);
     timerValFrames = gHudDisplay.timer;
-#ifdef VERSION_EU
+#if defined(VERSION_EU)
     switch (eu_get_language()) {
         case LANGUAGE_ENGLISH:
             print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(150), 185, "TIME");
+            break;
+        case LANGUAGE_FRENCH:
+            print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(155), 185, "TEMPS");
+            break;
+        case LANGUAGE_GERMAN:
+            print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(150), 185, "ZEIT");
+            break;
+    }
+#elif defined(VERSION_ML)
+    switch (eu_get_language()) {
+        case LANGUAGE_US_ENGLISH:
+            print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(150), 185, "TIME");
+            break;
+        case LANGUAGE_UK_ENGLISH:
+            print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(150), 185, "TIME");
+            break;
+        case LANGUAGE_JAPANESE:
+            print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(150), 185, "じかん");
             break;
         case LANGUAGE_FRENCH:
             print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(155), 185, "TEMPS");
@@ -349,8 +367,10 @@ void render_hud_timer(void) {
     timerSecs = (timerValFrames - (timerMins * 1800)) / 30;
 
     timerFracSecs = ((timerValFrames - (timerMins * 1800) - (timerSecs * 30)) & 0xFFFF) / 3;
-#ifndef VERSION_EU
+#if defined(VERSION_US)
     print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(150), 185, "TIME");
+#elif defined(VERSION_JP) || defined(VERSION_SH)
+    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(150), 185, "じかん");
 #endif
     print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(91), 185, "%0d", timerMins);
     print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(71), 185, "%02d", timerSecs);

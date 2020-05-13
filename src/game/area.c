@@ -113,7 +113,7 @@ static int scale_x_to_correct_aspect_center(int x) {
 }
 
 void print_intro_text(void) {
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     int language = eu_get_language();
 #endif
     if ((gGlobalTimer & 0x1F) < 20) {

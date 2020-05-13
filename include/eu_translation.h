@@ -12,8 +12,8 @@
 #endif
 
 // EU/multilang translations are contained in three segment 0x19 compressed data blocks
-extern u8 _translation_en_mio0SegmentRomStart[];
-extern u8 _translation_en_mio0SegmentRomEnd[];
+extern u8 _translation_uk_en_mio0SegmentRomStart[];
+extern u8 _translation_uk_en_mio0SegmentRomEnd[];
 extern u8 _translation_fr_mio0SegmentRomStart[];
 extern u8 _translation_fr_mio0SegmentRomEnd[];
 extern u8 _translation_de_mio0SegmentRomStart[];

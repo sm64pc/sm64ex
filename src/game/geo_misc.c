@@ -219,10 +219,28 @@ Gfx *geo_exec_cake_end_screen(s32 callContext, struct GraphNode *node, UNUSED f3
 #else
         gSPDisplayList(displayListHead++, dl_proj_mtx_fullscreen);
 #endif
-#ifdef VERSION_EU
+#if defined(VERSION_EU)
         switch (eu_get_language()) {
             case LANGUAGE_ENGLISH:
                 gSPDisplayList(displayListHead++, dl_cake_end_screen_eu_070296F8);
+                break;
+            case LANGUAGE_FRENCH:
+                gSPDisplayList(displayListHead++, dl_cake_end_screen_eu_07029768);
+                break;
+            case LANGUAGE_GERMAN:
+                gSPDisplayList(displayListHead++, dl_cake_end_screen_eu_070297D8);
+                break;
+        }
+#elif defined(VERSION_ML)
+        switch (eu_get_language()) {
+            case LANGUAGE_US_ENGLISH:
+                gSPDisplayList(displayListHead++, dl_cake_end_screen_eu_070296F8);
+                break;
+            case LANGUAGE_UK_ENGLISH:
+                gSPDisplayList(displayListHead++, dl_cake_end_screen);
+                break;
+            case LANGUAGE_JAPANESE:
+                gSPDisplayList(displayListHead++, dl_cake_end_screen);
                 break;
             case LANGUAGE_FRENCH:
                 gSPDisplayList(displayListHead++, dl_cake_end_screen_eu_07029768);

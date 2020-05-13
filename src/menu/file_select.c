@@ -115,8 +115,10 @@ static s8 sSoundMode = 0;
 // Active language for PAL/multilang arrays, values defined similar to sSoundMode
 // In PAL: 0: English | 1: French | 2: German
 // In multilang: 0: US English | 1: UK English | 2: Japanese | 3: French | 4: German
-#if defined(VERSION_EU) || defined(VERSION_ML)
+#if defined(VERSION_EU)
 static s8 sLanguageMode = LANGUAGE_ENGLISH;
+#elif defined(VERSION_ML)
+static s8 sLanguageMode = LANGUAGE_US_ENGLISH;
 #endif
 
 // Tracks which button will be pressed in the erase confirmation prompt (yes/no).
