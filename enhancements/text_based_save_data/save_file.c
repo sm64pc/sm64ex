@@ -15,6 +15,7 @@
     // Libraries needed for the text-based savefiles
 #include <stdlib.h>
 #include <stdio.h>
+#include <SDL2/SDL.h>
 
 #define MENU_DATA_MAGIC 0x4849
 #define SAVE_FILE_MAGIC 0x4441
@@ -25,7 +26,12 @@ extern struct SaveBuffer gSaveBuffer;
 
 struct WarpCheckpoint gWarpCheckpoint;
 
-static u8 write_text_data(void);
+    // Next four are text-based savedata related functions
+static s32 write_text_data(void);
+static s32 read_text_data(void);
+#define r_t_d_error(config_name) { fprintf(stderr, "There's been a problem loading " #config_name ".\n"); return -1; } // read_text_data's error function
+#define probe_read()             { memset(probe,0,sizeof(probe)); fscanf(fp, "%s\n", probe); }                        
+
 
 s8 gMainMenuDataModified;
 s8 gSaveFileModified;
@@ -86,11 +92,15 @@ static s32 read_eeprom_data(void *buffer, s32 size) {
 }
 
 /**
- * Write data to a text-based save. 
+ * Write data to a text-based save. Check .format in basedir to get some info on what is going on here.
  * TODO: make save_file.sm64s be saved in the correct folder
  * TODO: not sure if the u8s should be saved to the file with %c or %d.
+ * 
+ * Functions seemingly needed for loading:
+ * set_coin_score_age
+ * 
  */
-static u8 write_text_data(void)  
+static s32 write_text_data(void)  
 {   
     u8 i, j;
     FILE* fp = fopen("experimental_save_file.sm64s", "w");                       
@@ -116,7 +126,7 @@ static u8 write_text_data(void)
         
         fprintf(fp, "#caplevel\n%d\n", save_file->capLevel);
         fprintf(fp, "#caparea\n%d\n",  save_file->capArea);
-        fprintf(fp, "#cappos (unused)\n");
+        fprintf(fp, "#cappos\n");
         fprintf(fp, "%d %d %d\n", save_file->capPos[0], save_file->capPos[1], save_file->capPos[2]);
         fprintf(fp, "#flags\n%d\n", save_file->flags);
         fprintf(fp, "#coursestars\n");
@@ -129,9 +139,125 @@ static u8 write_text_data(void)
         fprintf(fp, "%d\n", save_file->courseCoinScores[j]);
         fprintf(fp, "#soundmode\n%d\n", gSaveBuffer.menuData[0].soundMode);
         fprintf(fp, "#coinscoreages\n%d\n", gSaveBuffer.menuData[0].coinScoreAges[i]);
-        fprintf(fp, " - - - - - - - - - - - - - - - - \n");
+        fprintf(fp, "------------------\n");
+        printf("i: %d, csa: %d\n", i, gSaveBuffer.menuData[0].coinScoreAges[i]);
     }
     fclose(fp);
+}
+
+static s32 read_text_data(void)  // TODO: add signature
+{
+    u8 i, j;
+    FILE * fp = fopen("experimental_save_file.sm64s", "r");
+    if (fp == NULL) {
+        fprintf(stderr, "Couldn't find or open text-based save data.\n");
+        return -1;
+    }
+
+    struct SaveBuffer gSaveBuffer_t; // Using this for implementation testing, it should be removed when it gSaveBuffer_t is able to match gSaveBuffer.
+
+
+    for (i=0; i < NUM_SAVE_FILES; i++)  // TODO: add the division line reading
+    {
+        char language[5];
+        char comment[20];
+        int probe;
+
+        fscanf(fp, "%s\n", comment);                                         // Reads the '#saveno' comment line
+        if (strncmp(comment, "#saveno", strlen("#saveno")))
+            r_t_d_error(saveno);                                             // The current save_no loaded doesn't match the file number we
+        
+            
+        fscanf(fp, "%d\n", &probe);                                          // Reads the save no.
+        fprintf(stderr, "saveno: %d\n", probe);
+
+        if(probe != (int) i)
+        {
+            fprintf(stderr, "Save number is invalid.\n");                    // Current saveno doesn't match the 
+            return -1;
+        }
+        
+        fscanf(fp, "%s\n", comment);                                            // Reads the '#language' comment line
+        if (strncmp(comment, "#language", strlen("#language")))                 // Checks for '#language'
+            r_t_d_error(language);
+
+        fscanf(fp, "%s\n", language);                                           // Reads the language 
+        #ifdef VERSION_EU                                                       // TODO: add support for jp_JP
+        gSaveBuffer_t.menuData[0].language = language;                          // Add language to gSaveBuffer
+        #endif
+
+        memset(comment, 0, sizeof(comment)); fscanf(fp, "%s\n", comment);       // Reads the '#caplevel' comment line
+        
+        if (strncmp(comment, "#caplevel", strlen("#caplevel")))                 // Checks for '#caplevel'
+            r_t_d_error(caplevel);
+
+        fscanf(fp, "%d\n", &probe);                                             // Reads the cap level value
+        fprintf(stderr, "#caplevel: %d\n", probe);
+        gSaveBuffer_t.files[0][i].capLevel = probe;                             // Adds value to gSaveBuffer
+
+        memset(comment, 0, sizeof(comment)); fscanf(fp, "%s\n", comment);       // Reads the '#caparea' comment line
+
+        if (strncmp(comment, "#caparea", strlen("#caparea")))                   // Checks for '#caparea'
+            r_t_d_error(caparea);
+
+        fscanf(fp, "%d\n", &probe);                                             // Reads the cap area value
+        gSaveBuffer_t.files[0][i].capArea = probe;                              // Adds value to gSaveBuffer
+
+        memset(comment, 0, sizeof(comment)); fscanf(fp, "%s\n", comment);       // Reads the '#cappos' comment line
+        fprintf(stderr, "comment: %s\n", comment);                              // TODO: For some reason this is failing the strncmp
+        if (strncmp(comment, "#cappos", strlen("#cappos")));                    // Checks for '#cappos', an unused array.
+            r_t_d_error(cappos);    // TODO: String problem here
+        
+        fscanf(fp, "%hd %hd %hd\n", &gSaveBuffer_t.files[0][i].capPos[0],       // Adds cap positions to the gSaveBuffer
+            &gSaveBuffer_t.files[0][i].capPos[1], &gSaveBuffer_t.files[0][i].capPos[2]);
+
+        memset(comment, 0, sizeof(comment)); fscanf(fp, "%s\n", comment);       // Reads the '#flags' comment line
+        fprintf(stderr, "comment: %s\n", comment);                              // TODO: For some reason this is failing the strncmp
+
+        if (strncmp(comment, "#flags", strlen("#flags")));                      // Checks for '#flags'
+            r_t_d_error(flags);
+
+        fscanf(fp, "%d\n", &gSaveBuffer_t.files[0][i].flags);                   // Adds the flag value to gSaveBuffer
+
+        memset(comment, 0, sizeof(comment)); fscanf(fp, "%s\n", comment);       // Reads the '#coursestars' comment line
+        if (strncmp(comment, "#coursestars", strlen("#coursestars")));          // Checks for '#coursestars'
+            r_t_d_error(coursestars);
+        
+        for (j=0; j<COURSE_COUNT-1; j++)
+            fscanf(fp, "%hhd ", &gSaveBuffer_t.files[0][i].courseStars[j]);      // Adds course stars to the gSaveBuffer
+        fscanf(fp, "%hhd\n", &gSaveBuffer_t.files[0][i].courseStars[j]);
+
+        memset(comment, 0, sizeof(comment)); fscanf(fp, "%s\n", comment);        // Reads the '#coursecoinscores' comment line
+        if (strncmp(comment, "#coursecoinscores", strlen("#coursecoinscores"))); // Checks for '#coursecoinscores'
+            r_t_d_error(coursecoinscores);
+
+        for (j=0; j<COURSE_STAGES_COUNT-1; j++)
+            fscanf(fp, "%hhd ", &gSaveBuffer_t.files[0][i].courseCoinScores[j]); // Adds course coin scores to the gSaveBuffer
+        fscanf(fp, "%hhd\n", &gSaveBuffer_t.files[0][i].courseCoinScores[j]);
+
+        memset(comment, 0, sizeof(comment)); fscanf(fp, "%s\n", comment);        // Reads the '#soundmode' comment line
+        if (strncmp(comment, "#soundmode", strlen("#soundmode")));               // Checks for '#soundmode'
+            r_t_d_error(soundmode);
+
+        fscanf(fp, "%hd\n", &gSaveBuffer_t.menuData[0].soundMode);               // Adds sound mode to the menu data.
+
+        memset(comment, 0, sizeof(comment)); fscanf(fp, "%s\n", comment);        // Reads the '#coinscoreages' comment line
+        if (strncmp(comment, "#coinscoreages", strlen("#coinscoreages")));       // Checks for '#coinscoreages'
+            r_t_d_error(coinscoreages);
+
+        fscanf(fp, "%d\n",  &gSaveBuffer_t.files[0][i].courseCoinScores);        // Adds sound mode to the menu data.        
+        
+        memset(comment, 0, sizeof(comment)); fscanf(fp, "%s\n", comment);        // Reads the divide comment line
+        
+        if (strncmp(comment, "------------------", strlen("------------------")));  // Checks for the divide
+        {
+            if (i!=3) r_t_d_error(divide);
+        }
+        
+    }
+
+    fclose(fp);
+    return 1;
 }
 
 /**
@@ -353,6 +479,9 @@ void save_file_load_all(void) {
     gSaveFileModified = FALSE;
 
     bzero(&gSaveBuffer, sizeof(gSaveBuffer));
+    read_text_data();   // TODO: make the commented code below work.
+                        // TODO: make the game look for a binary file if read_text_data() fails.
+    
     read_eeprom_data(&gSaveBuffer, sizeof(gSaveBuffer));
 
     // Verify the main menu data and create a backup copy if only one of the slots is valid.
@@ -386,7 +515,7 @@ void save_file_load_all(void) {
                 break;
         }
     }
-
+    
     stub_save_file_1();
 }
 
