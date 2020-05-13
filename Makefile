@@ -518,6 +518,11 @@ distclean:
 	$(RM) -r $(BUILD_DIR_BASE)
 	./extract_assets.py --clean
 
+cleanall:
+  $(RM) -r $(BUILD_DIR_BASE)
+  ./extract_assets.py --clean
+  $(MAKE) -s -C tools clean
+
 test: $(ROM)
 	$(EMULATOR) $(EMU_FLAGS) $<
 
