@@ -1847,7 +1847,29 @@ const Collision main_menu_seg7_collision[] = {
 // enough.
 
 #define COURSE_TABLE eu_course_strings_en_table
+#include "text/uk/define_courses.inc.c"
+#undef COURSE_TABLE
+
+#define COURSE_TABLE eu_course_strings_fr_table
+#include "text/fr/define_courses.inc.c"
+#undef COURSE_TABLE
+
+#define COURSE_TABLE eu_course_strings_de_table
+#include "text/de/define_courses.inc.c"
+#undef COURSE_TABLE
+
+#elif VERSION_ML
+
+#define COURSE_TABLE us_course_strings_en_table
 #include "text/us/define_courses.inc.c"
+#undef COURSE_TABLE
+
+#define COURSE_TABLE eu_course_strings_en_table
+#include "text/uk/define_courses.inc.c"
+#undef COURSE_TABLE
+
+#define COURSE_TABLE jp_course_strings_jp_table
+#include "text/jp/define_courses.inc.c"
 #undef COURSE_TABLE
 
 #define COURSE_TABLE eu_course_strings_fr_table

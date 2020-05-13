@@ -118,6 +118,7 @@
 #define TEXT_CATCH_JP _("キャッチ！")
 #define TEXT_CLEAR_JP _("クリア！")
 #define TEXT_HUD_HI_SCORE_JP _("ＨＩＳＣＯＲＥ")
+//#define TEXT_HUD_CONGRATULATIONS_JP("おめでとう") // this bugs out the compiler for some reason
 
 // Save Options
 #define TEXT_SAVE_AND_CONTINUE_JP _("セーブしてつづける？")

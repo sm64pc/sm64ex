@@ -402,13 +402,11 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
             case DIALOG_CHAR_LOWER_A_GRAVE:
             case DIALOG_CHAR_LOWER_A_CIRCUMFLEX:
             case DIALOG_CHAR_LOWER_A_UMLAUT:
-            case DIALOG_CHAR_LOWER_A_ACUTE:
                 render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('a'), str[strPos] & 0xF);
                 break;
             case DIALOG_CHAR_UPPER_A_GRAVE:
             case DIALOG_CHAR_UPPER_A_CIRCUMFLEX:
             case DIALOG_CHAR_UPPER_A_UMLAUT:
-            case DIALOG_CHAR_UPPER_A_ACUTE:
                 render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('A'), str[strPos] & 0xF);
                 break;
             case DIALOG_CHAR_LOWER_E_GRAVE:
@@ -423,53 +421,27 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
             case DIALOG_CHAR_UPPER_E_ACUTE:
                 render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('E'), str[strPos] & 0xF);
                 break;
-            case DIALOG_CHAR_LOWER_I_GRAVE:
-            case DIALOG_CHAR_LOWER_I_CIRCUMFLEX:
-            case DIALOG_CHAR_LOWER_I_UMLAUT:
-            case DIALOG_CHAR_LOWER_I_ACUTE:
-                render_lowercase_diacritic(&xCoord, &yCoord, DIALOG_CHAR_I_NO_DIA, str[strPos] & 0xF);
-                break;
-            case DIALOG_CHAR_UPPER_I_GRAVE:
-            case DIALOG_CHAR_UPPER_I_CIRCUMFLEX:
-            case DIALOG_CHAR_UPPER_I_UMLAUT:
-            case DIALOG_CHAR_UPPER_I_ACUTE:
-                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('I'), str[strPos] & 0xF);
-                break;
-            case DIALOG_CHAR_LOWER_O_GRAVE:
-            case DIALOG_CHAR_LOWER_O_CIRCUMFLEX:
-            case DIALOG_CHAR_LOWER_O_UMLAUT:
-            case DIALOG_CHAR_LOWER_O_ACUTE:
-                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('o'), str[strPos] & 0xF);
-                break;
-            case DIALOG_CHAR_UPPER_O_GRAVE:
-            case DIALOG_CHAR_UPPER_O_CIRCUMFLEX:
-            case DIALOG_CHAR_UPPER_O_UMLAUT:
-            case DIALOG_CHAR_UPPER_O_ACUTE:
-                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('O'), str[strPos] & 0xF);
-                break;
             case DIALOG_CHAR_LOWER_U_GRAVE:
             case DIALOG_CHAR_LOWER_U_CIRCUMFLEX:
             case DIALOG_CHAR_LOWER_U_UMLAUT:
-            case DIALOG_CHAR_LOWER_U_ACUTE:
                 render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('u'), str[strPos] & 0xF);
                 break;
             case DIALOG_CHAR_UPPER_U_GRAVE:
             case DIALOG_CHAR_UPPER_U_CIRCUMFLEX:
             case DIALOG_CHAR_UPPER_U_UMLAUT:
-            case DIALOG_CHAR_UPPER_U_ACUTE:
                 render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('U'), str[strPos] & 0xF);
                 break;
-            case DIALOG_CHAR_LOWER_N_TILDE:
-                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('n'), str[strPos] & 0xF);
+            case DIALOG_CHAR_LOWER_O_CIRCUMFLEX:
+            case DIALOG_CHAR_LOWER_O_UMLAUT:
+                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('o'), str[strPos] & 0xF);
                 break;
-            case DIALOG_CHAR_UPPER_N_TILDE:
-                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('N'), str[strPos] & 0xF);
+            case DIALOG_CHAR_UPPER_O_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_O_UMLAUT:
+                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('O'), str[strPos] & 0xF);
                 break;
-            case DIALOG_CHAR_UPSIDE_DOWN_QUESTION_MARK:
-                mark = DIALOG_CHAR_UPSIDE_DOWN_QUESTION_MARK;
-                break;
-            case DIALOG_CHAR_UPSIDE_DOWN_EXCLAMATION_MARK:
-                mark = DIALOG_CHAR_UPSIDE_DOWN_EXCLAMATION_MARK;
+            case DIALOG_CHAR_LOWER_I_CIRCUMFLEX:
+            case DIALOG_CHAR_LOWER_I_UMLAUT:
+                render_lowercase_diacritic(&xCoord, &yCoord, DIALOG_CHAR_I_NO_DIA, str[strPos] & 0xF);
                 break;
 #elif VERSION_ML
             case DIALOG_CHAR_SPACE:
@@ -1420,74 +1392,46 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
             case DIALOG_CHAR_LOWER_A_GRAVE:
             case DIALOG_CHAR_LOWER_A_CIRCUMFLEX:
             case DIALOG_CHAR_LOWER_A_UMLAUT:
-            case DIALOG_CHAR_LOWER_A_ACUTE:
-                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('a'), str[strPos] & 0xF);
+                render_dialog_lowercase_diacritic(dialog, ASCII_TO_DIALOG('a'), strChar & 0xF);
                 break;
             case DIALOG_CHAR_UPPER_A_GRAVE:
             case DIALOG_CHAR_UPPER_A_CIRCUMFLEX:
             case DIALOG_CHAR_UPPER_A_UMLAUT:
-            case DIALOG_CHAR_UPPER_A_ACUTE:
-                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('A'), str[strPos] & 0xF);
+                render_dialog_uppercase_diacritic(dialog, ASCII_TO_DIALOG('A'), strChar & 0xF);
                 break;
             case DIALOG_CHAR_LOWER_E_GRAVE:
             case DIALOG_CHAR_LOWER_E_CIRCUMFLEX:
             case DIALOG_CHAR_LOWER_E_UMLAUT:
             case DIALOG_CHAR_LOWER_E_ACUTE:
-                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('e'), str[strPos] & 0xF);
+                render_dialog_lowercase_diacritic(dialog, ASCII_TO_DIALOG('e'), strChar & 0xF);
                 break;
             case DIALOG_CHAR_UPPER_E_GRAVE:
             case DIALOG_CHAR_UPPER_E_CIRCUMFLEX:
             case DIALOG_CHAR_UPPER_E_UMLAUT:
             case DIALOG_CHAR_UPPER_E_ACUTE:
-                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('E'), str[strPos] & 0xF);
-                break;
-            case DIALOG_CHAR_LOWER_I_GRAVE:
-            case DIALOG_CHAR_LOWER_I_CIRCUMFLEX:
-            case DIALOG_CHAR_LOWER_I_UMLAUT:
-            case DIALOG_CHAR_LOWER_I_ACUTE:
-                render_lowercase_diacritic(&xCoord, &yCoord, DIALOG_CHAR_I_NO_DIA, str[strPos] & 0xF);
-                break;
-            case DIALOG_CHAR_UPPER_I_GRAVE:
-            case DIALOG_CHAR_UPPER_I_CIRCUMFLEX:
-            case DIALOG_CHAR_UPPER_I_UMLAUT:
-            case DIALOG_CHAR_UPPER_I_ACUTE:
-                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('I'), str[strPos] & 0xF);
-                break;
-            case DIALOG_CHAR_LOWER_O_GRAVE:
-            case DIALOG_CHAR_LOWER_O_CIRCUMFLEX:
-            case DIALOG_CHAR_LOWER_O_UMLAUT:
-            case DIALOG_CHAR_LOWER_O_ACUTE:
-                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('o'), str[strPos] & 0xF);
-                break;
-            case DIALOG_CHAR_UPPER_O_GRAVE:
-            case DIALOG_CHAR_UPPER_O_CIRCUMFLEX:
-            case DIALOG_CHAR_UPPER_O_UMLAUT:
-            case DIALOG_CHAR_UPPER_O_ACUTE:
-                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('O'), str[strPos] & 0xF);
+                render_dialog_uppercase_diacritic(dialog, ASCII_TO_DIALOG('E'), strChar & 0xF);
                 break;
             case DIALOG_CHAR_LOWER_U_GRAVE:
             case DIALOG_CHAR_LOWER_U_CIRCUMFLEX:
             case DIALOG_CHAR_LOWER_U_UMLAUT:
-            case DIALOG_CHAR_LOWER_U_ACUTE:
-                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('u'), str[strPos] & 0xF);
+                render_dialog_lowercase_diacritic(dialog, ASCII_TO_DIALOG('u'), strChar & 0xF);
                 break;
             case DIALOG_CHAR_UPPER_U_GRAVE:
             case DIALOG_CHAR_UPPER_U_CIRCUMFLEX:
             case DIALOG_CHAR_UPPER_U_UMLAUT:
-            case DIALOG_CHAR_UPPER_U_ACUTE:
-                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('U'), str[strPos] & 0xF);
+                render_dialog_uppercase_diacritic(dialog, ASCII_TO_DIALOG('U'), strChar & 0xF);
                 break;
-            case DIALOG_CHAR_LOWER_N_TILDE:
-                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('n'), str[strPos] & 0xF);
+            case DIALOG_CHAR_LOWER_O_CIRCUMFLEX:
+            case DIALOG_CHAR_LOWER_O_UMLAUT:
+                render_dialog_lowercase_diacritic(dialog, ASCII_TO_DIALOG('o'), strChar & 0xF);
                 break;
-            case DIALOG_CHAR_UPPER_N_TILDE:
-                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('N'), str[strPos] & 0xF);
+            case DIALOG_CHAR_UPPER_O_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_O_UMLAUT:
+                render_dialog_uppercase_diacritic(dialog, ASCII_TO_DIALOG('O'), strChar & 0xF);
                 break;
-            case DIALOG_CHAR_UPSIDE_DOWN_QUESTION_MARK:
-                mark = DIALOG_CHAR_UPSIDE_DOWN_QUESTION_MARK;
-                break;
-            case DIALOG_CHAR_UPSIDE_DOWN_EXCLAMATION_MARK:
-                mark = DIALOG_CHAR_UPSIDE_DOWN_EXCLAMATION_MARK;
+            case DIALOG_CHAR_LOWER_I_CIRCUMFLEX:
+            case DIALOG_CHAR_LOWER_I_UMLAUT:
+                render_dialog_lowercase_diacritic(dialog, DIALOG_CHAR_I_NO_DIA, strChar & 0xF);
                 break;
 #elif VERSION_ML
             case DIALOG_CHAR_LOWER_A_GRAVE:
@@ -1832,36 +1776,83 @@ void handle_special_dialog_text(s16 dialogID) { // dialog ID tables, in order
 }
 
 s16 gMenuMode = -1;
+#if defined(VERSION_JP) || defined(VERSION_SH)
 
-u8 gEndCutsceneStrEn0[] = { TEXT_FILE_MARIO_EXCLAMATION };
-u8 gEndCutsceneStrEn1[] = { TEXT_POWER_STARS_RESTORED };
-u8 gEndCutsceneStrEn2[] = { TEXT_THANKS_TO_YOU };
-u8 gEndCutsceneStrEn3[] = { TEXT_THANK_YOU_MARIO };
-u8 gEndCutsceneStrEn4[] = { TEXT_SOMETHING_SPECIAL };
-u8 gEndCutsceneStrEn5[] = { TEXT_LISTEN_EVERYBODY };
-u8 gEndCutsceneStrEn6[] = { TEXT_LETS_HAVE_CAKE };
-u8 gEndCutsceneStrEn7[] = { TEXT_FOR_MARIO };
-u8 gEndCutsceneStrEn8[] = { TEXT_FILE_MARIO_QUESTION };
+u8 gEndCutsceneStrJp0[] = { TEXT_FILE_MARIO_EXCLAMATION_JP };
+u8 gEndCutsceneStrJp1[] = { TEXT_POWER_STARS_RESTORED_JP };
+u8 gEndCutsceneStrJp2[] = { TEXT_THANKS_TO_YOU_JP };
+u8 gEndCutsceneStrJp3[] = { TEXT_THANK_YOU_MARIO_JP };
+u8 gEndCutsceneStrJp4[] = { TEXT_SOMETHING_SPECIAL_JP };
+u8 gEndCutsceneStrJp5[] = { TEXT_LISTEN_EVERYBODY_JP };
+u8 gEndCutsceneStrJp6[] = { TEXT_LETS_HAVE_CAKE_JP };
+u8 gEndCutsceneStrJp7[] = { TEXT_FOR_MARIO_JP };
+u8 gEndCutsceneStrJp8[] = { TEXT_FILE_MARIO_QUESTION_JP };
 
-u8 *gEndCutsceneStringsEn[] = {
-    gEndCutsceneStrEn0,
-    gEndCutsceneStrEn1,
-    gEndCutsceneStrEn2,
-    gEndCutsceneStrEn3,
-    gEndCutsceneStrEn4,
-    gEndCutsceneStrEn5,
-    gEndCutsceneStrEn6,
-    gEndCutsceneStrEn7,
+u8 *gEndCutsceneStringsJp[] = {
+    gEndCutsceneStrJp0,
+    gEndCutsceneStrJp1,
+    gEndCutsceneStrJp2,
+    gEndCutsceneStrJp3,
+    gEndCutsceneStrJp4,
+    gEndCutsceneStrJp5,
+    gEndCutsceneStrJp6,
+    gEndCutsceneStrJp7,
+    gEndCutsceneStrJp8,
+    NULL
+};
+#elif defined(VERSION_US)
+u8 gEndCutsceneStrUsEn0[] = { TEXT_FILE_MARIO_EXCLAMATION };
+u8 gEndCutsceneStrUsEn1[] = { TEXT_POWER_STARS_RESTORED };
+u8 gEndCutsceneStrUsEn2[] = { TEXT_THANKS_TO_YOU };
+u8 gEndCutsceneStrUsEn3[] = { TEXT_THANK_YOU_MARIO };
+u8 gEndCutsceneStrUsEn4[] = { TEXT_SOMETHING_SPECIAL };
+u8 gEndCutsceneStrUsEn5[] = { TEXT_LISTEN_EVERYBODY };
+u8 gEndCutsceneStrUsEn6[] = { TEXT_LETS_HAVE_CAKE };
+u8 gEndCutsceneStrUsEn7[] = { TEXT_FOR_MARIO };
+u8 gEndCutsceneStrUsEn8[] = { TEXT_FILE_MARIO_QUESTION };
+
+u8 *gEndCutsceneStringsUsEn[] = {
+    gEndCutsceneStrUsEn0,
+    gEndCutsceneStrUsEn1,
+    gEndCutsceneStrUsEn2,
+    gEndCutsceneStrUsEn3,
+    gEndCutsceneStrUsEn4,
+    gEndCutsceneStrUsEn5,
+    gEndCutsceneStrUsEn6,
+    gEndCutsceneStrUsEn7,
     // This [8] string is actually unused. In the cutscene handler, the developers do not
     // set the 8th one, but use the first string again at the very end, so Peach ends up
     // saying "Mario!" twice. It is likely that she was originally meant to say "Mario?" at
     // the end but the developers changed their mind, possibly because the line recorded
     // sounded more like an exclamation than a question.
-    gEndCutsceneStrEn8,
+    gEndCutsceneStrUsEn8,
+    NULL
+};
+#elif defined(VERSION_EU)
+
+u8 gEndCutsceneStrUkEn0[] = { TEXT_FILE_MARIO_EXCLAMATION };
+u8 gEndCutsceneStrUkEn1[] = { TEXT_POWER_STARS_RESTORED };
+u8 gEndCutsceneStrUkEn2[] = { TEXT_THANKS_TO_YOU };
+u8 gEndCutsceneStrUkEn3[] = { TEXT_THANK_YOU_MARIO };
+u8 gEndCutsceneStrUkEn4[] = { TEXT_SOMETHING_SPECIAL };
+u8 gEndCutsceneStrUkEn5[] = { TEXT_LISTEN_EVERYBODY };
+u8 gEndCutsceneStrUkEn6[] = { TEXT_LETS_HAVE_CAKE };
+u8 gEndCutsceneStrUkEn7[] = { TEXT_FOR_MARIO };
+u8 gEndCutsceneStrUkEn8[] = { TEXT_FILE_MARIO_QUESTION };
+
+u8 *gEndCutsceneStringsUkEn[] = {
+    gEndCutsceneStrUkEn0,
+    gEndCutsceneStrUkEn1,
+    gEndCutsceneStrUkEn2,
+    gEndCutsceneStrUkEn3,
+    gEndCutsceneStrUkEn4,
+    gEndCutsceneStrUkEn5,
+    gEndCutsceneStrUkEn6,
+    gEndCutsceneStrUkEn7,
+    gEndCutsceneStrUkEn8,
     NULL
 };
 
-#if defined(VERSION_EU)
 u8 gEndCutsceneStrFr0[] = { TEXT_FILE_MARIO_EXCLAMATION };
 u8 gEndCutsceneStrFr1[] = { TEXT_POWER_STARS_RESTORED_FR };
 u8 gEndCutsceneStrFr2[] = { TEXT_THANKS_TO_YOU_FR };
@@ -1932,6 +1923,7 @@ u8 *gEndCutsceneStringsUsEn[] = {
     NULL
 
 };
+
 u8 gEndCutsceneStrUkEn0[] = { TEXT_FILE_MARIO_EXCLAMATION };
 u8 gEndCutsceneStrUkEn1[] = { TEXT_POWER_STARS_RESTORED };
 u8 gEndCutsceneStrUkEn2[] = { TEXT_THANKS_TO_YOU };
@@ -1960,7 +1952,7 @@ u8 gEndCutsceneStrJp1[] = { TEXT_POWER_STARS_RESTORED_JP };
 u8 gEndCutsceneStrJp2[] = { TEXT_THANKS_TO_YOU_JP };
 u8 gEndCutsceneStrJp3[] = { TEXT_THANK_YOU_MARIO_JP };
 u8 gEndCutsceneStrJp4[] = { TEXT_SOMETHING_SPECIAL_JP };
-u8 gEndCutsceneStrJp5[] = { TEXT_COME_ON_EVERYBODY_JP };
+u8 gEndCutsceneStrJp5[] = { TEXT_LISTEN_EVERYBODY_JP };
 u8 gEndCutsceneStrJp6[] = { TEXT_LETS_HAVE_CAKE_JP };
 u8 gEndCutsceneStrJp7[] = { TEXT_FOR_MARIO_JP };
 u8 gEndCutsceneStrJp8[] = { TEXT_FILE_MARIO_QUESTION_JP };
@@ -2329,8 +2321,8 @@ void do_cutscene_handler(void) {
 #if defined(VERSION_EU)
     switch (eu_get_language()) {
         case LANGUAGE_ENGLISH:
-            x = get_str_x_pos_from_center(gCutsceneMsgXOffset, gEndCutsceneStringsEn[gCutsceneMsgIndex], 10.0f);
-            print_generic_string(x, 240 - gCutsceneMsgYOffset, gEndCutsceneStringsEn[gCutsceneMsgIndex]);
+            x = get_str_x_pos_from_center(gCutsceneMsgXOffset, gEndCutsceneStringsUkEn[gCutsceneMsgIndex], 10.0f);
+            print_generic_string(x, 240 - gCutsceneMsgYOffset, gEndCutsceneStringsUkEn[gCutsceneMsgIndex]);
             break;
         case LANGUAGE_FRENCH:
             x = get_str_x_pos_from_center(gCutsceneMsgXOffset, gEndCutsceneStringsFr[gCutsceneMsgIndex], 10.0f);
@@ -2344,16 +2336,16 @@ void do_cutscene_handler(void) {
 #elif VERSION_ML
     switch (eu_get_language()) {
         case LANGUAGE_US_ENGLISH:
-            x = get_str_x_pos_from_center(gCutsceneMsgXOffset, gEndCutsceneStringsEn[gCutsceneMsgIndex], 10.0f);
-            print_generic_string(x, 240 - gCutsceneMsgYOffset, gEndCutsceneStringsEn[gCutsceneMsgIndex]);
+            x = get_str_x_pos_from_center(gCutsceneMsgXOffset, gEndCutsceneStringsUsEn[gCutsceneMsgIndex], 10.0f);
+            print_generic_string(x, 240 - gCutsceneMsgYOffset, gEndCutsceneStringsUsEn[gCutsceneMsgIndex]);
             break;
         case LANGUAGE_UK_ENGLISH:
-            x = get_str_x_pos_from_center(gCutsceneMsgXOffset, gEndCutsceneStringsEn[gCutsceneMsgIndex], 10.0f);
-            print_generic_string(x, 240 - gCutsceneMsgYOffset, gEndCutsceneStringsEn[gCutsceneMsgIndex]);
+            x = get_str_x_pos_from_center(gCutsceneMsgXOffset, gEndCutsceneStringsUkEn[gCutsceneMsgIndex], 10.0f);
+            print_generic_string(x, 240 - gCutsceneMsgYOffset, gEndCutsceneStringsUkEn[gCutsceneMsgIndex]);
             break;
         case LANGUAGE_JAPANESE:
-            x = get_str_x_pos_from_center(gCutsceneMsgXOffset, gEndCutsceneStringsEn[gCutsceneMsgIndex], 10.0f);
-            print_generic_string(x, 240 - gCutsceneMsgYOffset, gEndCutsceneStringsEn[gCutsceneMsgIndex]);
+            x = get_str_x_pos_from_center(gCutsceneMsgXOffset, gEndCutsceneStringsJp[gCutsceneMsgIndex], 10.0f);
+            print_generic_string(x, 240 - gCutsceneMsgYOffset, gEndCutsceneStringsJp[gCutsceneMsgIndex]);
             break;
         case LANGUAGE_FRENCH:
             x = get_str_x_pos_from_center(gCutsceneMsgXOffset, gEndCutsceneStringsFr[gCutsceneMsgIndex], 10.0f);
@@ -2365,14 +2357,19 @@ void do_cutscene_handler(void) {
             break;
     }
 #else
-#if defined(VERSION_SH)
+#if defined(VERSION_SH) || defined(VERSION_JP)
     // get the x coordinate of where the cutscene string starts.
-    x = get_str_x_pos_from_center_scale(gCutsceneMsgXOffset, gEndCutsceneStringsEn[gCutsceneMsgIndex], 10.0f);
-#else
+    x = get_str_x_pos_from_center(gCutsceneMsgXOffset, gEndCutsceneStringsJp[gCutsceneMsgIndex], 10.0f);
+    print_generic_string(x, 240 - gCutsceneMsgYOffset, gEndCutsceneStringsJp[gCutsceneMsgIndex]);
+#elif defined(VERSION_US) || defined(VERSION_ML)
     // get the x coordinate of where the cutscene string starts.
-    x = get_str_x_pos_from_center(gCutsceneMsgXOffset, gEndCutsceneStringsEn[gCutsceneMsgIndex], 10.0f);
+    x = get_str_x_pos_from_center(gCutsceneMsgXOffset, gEndCutsceneStringsUsEn[gCutsceneMsgIndex], 10.0f);
+    print_generic_string(x, 240 - gCutsceneMsgYOffset, gEndCutsceneStringsUsEn[gCutsceneMsgIndex]);
+#elif defined(VERSION_EU)
+    // get the x coordinate of where the cutscene string starts.
+    x = get_str_x_pos_from_center(gCutsceneMsgXOffset, gEndCutsceneStringsUkEn[gCutsceneMsgIndex], 10.0f);
+    print_generic_string(x, 240 - gCutsceneMsgYOffset, gEndCutsceneStringsUkEn[gCutsceneMsgIndex]);
 #endif
-    print_generic_string(x, 240 - gCutsceneMsgYOffset, gEndCutsceneStringsEn[gCutsceneMsgIndex]);
 #endif
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
@@ -3303,13 +3300,15 @@ void print_hud_course_complete_string(s8 str) {
     u8 textCongratulations[][16] = {
         { TEXT_HUD_CONGRATULATIONS },
         { TEXT_HUD_CONGRATULATIONS },
-        { TEXT_HUD_CONGRATULATIONS_JP },
+        { TEXT_HUD_CONGRATULATIONS }, //{ TEXT_HUD_CONGRATULATIONS_JP },
+        // this bugs out the compiler for some reason
         { TEXT_HUD_CONGRATULATIONS_FR },
         { TEXT_HUD_CONGRATULATIONS_DE }
     };
 #elif defined(VERSION_JP) || defined(VERSION_SH)
     u8 textHiScore[] = { TEXT_HUD_HI_SCORE_JP };
-    u8 textCongratulations[] = { TEXT_HUD_CONGRATULATIONS_JP };
+    //u8 textCongratulations[] = { TEXT_HUD_CONGRATULATIONS_JP }; // this bugs out the compiler for some reason
+    u8 textCongratulations[] = { TEXT_HUD_CONGRATULATIONS };
 #else
     u8 textHiScore[] = { TEXT_HUD_HI_SCORE };
     u8 textCongratulations[] = { TEXT_HUD_CONGRATULATIONS };
@@ -3409,8 +3408,8 @@ void render_course_complete_lvl_info_and_hud_str(void) {
 #if defined(VERSION_JP) || defined(VERSION_SH)
     u8 textSymStar[] = { GLYPH_STAR, GLYPH_SPACE };
     u8 textCourse[] = { TEXT_COURSE_JP };
-    u8 textCatch[] = { TEXT_CATCH };
-    u8 textClear[] = { TEXT_CLEAR };
+    u8 textCatch[] = { TEXT_CATCH_JP };
+    u8 textClear[] = { TEXT_CLEAR_JP };
 #elif defined(VERSION_EU)
     UNUSED u8 textCatch[] = { TEXT_CATCH }; // unused in EU
     u8 textSymStar[] = { GLYPH_STAR, GLYPH_SPACE };

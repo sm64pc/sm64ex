@@ -218,8 +218,6 @@ static unsigned char textMarioD[] = {{ TEXT_FILE_MARIO_D }, { TEXT_FILE_MARIO_A 
 
 #ifndef VERSION_EU
 static unsigned char textNew[] = { TEXT_NEW };
-static unsigned char starIcon[] = { GLYPH_STAR, GLYPH_SPACE };
-static unsigned char xIcon[] = { GLYPH_MULTIPLY, GLYPH_SPACE };
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -415,9 +413,9 @@ static unsigned char textHiScore[][15] = {{ TEXT_HI_SCORE }, { TEXT_HI_SCORE }, 
 static unsigned char textMyScore[][10] = {{ TEXT_MY_SCORE }, { TEXT_MY_SCORE }, { TEXT_MY_SCORE_JP }, { TEXT_MY_SCORE_FR }, { TEXT_MY_SCORE_DE }};
 
 static unsigned char textNew[][5] = {{ TEXT_NEW }, { TEXT_NEW }, { TEXT_NEW_JP }, { TEXT_NEW_FR }, { TEXT_NEW_DE }};
+#endif
 static unsigned char starIcon[] = { GLYPH_STAR, GLYPH_SPACE };
 static unsigned char xIcon[] = { GLYPH_MULTIPLY, GLYPH_SPACE };
-#endif
 
 /**
  * Yellow Background Menu Initial Action
@@ -2275,7 +2273,11 @@ void print_copy_menu_strings(void) {
 #if defined(VERSION_EU) || defined(VERSION_ML)
     centeredX = get_str_x_pos_from_center(159, textViewScore[sLanguageMode], 10.0f);
 #endif
+#if defined(VERSION_US) || defined(VERSION_JP) || defined(VERSION_SH) || defined(VERSION_ML)
     print_generic_string(VIEWSCORE_X1, 35, LANGUAGE_ARRAY(textviewScore));
+#elif defined(VERSION_EU)
+    print_generic_string(VIEWSCORE_X1, 35, LANGUAGE_ARRAY(textViewScore));
+#endif
 #if defined(VERSION_EU) || defined(VERSION_ML)
     centeredX = get_str_x_pos_from_center(249, textEraseFileButton[sLanguageMode], 10.0f);
 #endif
@@ -2404,12 +2406,18 @@ void erase_menu_display_message(s8 messageID) {
     s16 centeredX;
 #endif
 
-#if !defined(VERSION_EU) || !defined(VERSION_ML)
+#if defined(VERSION_US)
     unsigned char textEraseFile[] = { TEXT_ERASE_FILE };
     unsigned char textSure[] = { TEXT_SURE };
     unsigned char textNoSavedDataExists[] = { TEXT_NO_SAVED_DATA_EXISTS };
     unsigned char textMarioAJustErased[] = { TEXT_FILE_MARIO_A_JUST_ERASED };
     unsigned char textSavedDataExists[] = { TEXT_SAVED_DATA_EXISTS };
+#elif defined(VERSION_JP) || defined(VERSION_SH)
+    unsigned char textEraseFile[] = { TEXT_ERASE_FILE_JP };
+    unsigned char textSure[] = { TEXT_SURE_JP };
+    unsigned char textNoSavedDataExists[] = { TEXT_NO_SAVED_DATA_EXISTS_JP };
+    unsigned char textMarioAJustErased[] = { TEXT_FILE_MARIO_A_JUST_ERASED_JP };
+    unsigned char textSavedDataExists[] = { TEXT_SAVED_DATA_EXISTS_JP };
 #endif
 
     switch (messageID) {
@@ -2436,7 +2444,7 @@ void erase_menu_display_message(s8 messageID) {
 #endif
             print_generic_string_fade(MARIO_ERASED_X, 190, LANGUAGE_ARRAY(textMarioAJustErased));
             break;
-        case ERASE_MSG_SAVE_EXISTS: // unused
+        case ERASE_MSG_SAVE_EXISTS:
 #if defined(VERSION_EU) || defined(VERSION_ML)
             centeredX = get_str_x_pos_from_center(160, textSavedDataExists[sLanguageMode], 10.0f);
 #endif
@@ -2572,8 +2580,10 @@ void print_sound_mode_menu_strings(void) {
     s32 textX;
 #endif
 
-#if !defined(VERSION_EU) || !defined(VERSION_ML)
+#if defined(VERSION_US)
     unsigned char textSoundSelect[] = { TEXT_SOUND_SELECT };
+#elif defined(VERSION_JP) || defined(VERSION_SH)
+    unsigned char textSoundSelect[] = { TEXT_SOUND_SELECT_JP };
 #endif
 
     // Print "SOUND SELECT" text
@@ -2683,10 +2693,17 @@ void print_score_file_course_coin_score(s8 fileIndex, s16 courseIndex, s16 x, s1
 #else
     #define LENGTH 8
 #endif
-    unsigned char fileNames[][LENGTH] = {
-        { TEXT_4DASHES }, // huh?
-        { TEXT_SCORE_MARIO_A }, { TEXT_SCORE_MARIO_B }, { TEXT_SCORE_MARIO_C }, { TEXT_SCORE_MARIO_D },
-    };
+    #if defined(VERSION_US) |defined(VERSION_EU) || defined(VERSION_ML)
+        unsigned char fileNames[][LENGTH] = {
+            { TEXT_4DASHES }, // huh?
+            { TEXT_SCORE_MARIO_A }, { TEXT_SCORE_MARIO_B }, { TEXT_SCORE_MARIO_C }, { TEXT_SCORE_MARIO_D },
+        };
+    #elif defined(VERSION_JP) || defined(VERSION_SH)
+        unsigned char fileNames[][LENGTH] = {
+            { TEXT_4DASHES }, // huh?
+            { TEXT_SCORE_MARIO_A_JP }, { TEXT_SCORE_MARIO_B_JP }, { TEXT_SCORE_MARIO_C_JP }, { TEXT_SCORE_MARIO_D_JP },
+        };
+    #endif
 #undef LENGTH
     // MYSCORE
     if (sScoreFileCoinScoreMode == 0) {
@@ -2758,24 +2775,20 @@ void print_score_file_star_score(s8 fileIndex, s16 courseIndex, s16 x, s16 y) {
  * Prints save file score strings that shows when a save file is chosen inside the score menu.
  */
  void print_save_file_scores(s8 fileIndex) {
-#if !defined(VERSION_EU) || !defined(VERSION_ML)
-    unsigned char textMario[] = { TEXT_MARIO };
-#endif
-#ifndef VERSION_US
+    void **levelNameTable;
     unsigned char textFileLetter[] = { TEXT_ZERO };
-#endif
 #if defined(VERSION_JP) || defined(VERSION_SH)
-    void **levelNameTable = segmented_to_virtual(seg2_course_name_table);
-#endif
-#if !defined(VERSION_EU) || !defined(VERSION_ML)
+    unsigned char textMario[] = { TEXT_MARIO_JP };
+    unsigned char textHiScore[] = { TEXT_HI_SCORE_JP };
+    unsigned char textMyScore[] = { TEXT_MY_SCORE_JP };
+#elif !defined(VERSION_EU) || !defined(VERSION_ML)
+    unsigned char textMario[] = { TEXT_MARIO };
     unsigned char textHiScore[] = { TEXT_HI_SCORE };
     unsigned char textMyScore[] = { TEXT_MY_SCORE };
-    #ifdef VERSION_US
-        unsigned char textFileLetter[] = { TEXT_ZERO };
-        void **levelNameTable = segmented_to_virtual(seg2_course_name_table);
+    #if defined(VERSION_US) || defined(VERSION_JP) || defined(VERSION_SH)
+        levelNameTable = segmented_to_virtual(seg2_course_name_table);
     #endif
 #elif VERSION_EU
-    void **levelNameTable;
     switch (sLanguageMode) {
         case LANGUAGE_ENGLISH:
             levelNameTable = segmented_to_virtual(eu_course_strings_en_table);
@@ -2788,7 +2801,6 @@ void print_score_file_star_score(s8 fileIndex, s16 courseIndex, s16 x, s16 y) {
             break;
     }
 #elif VERSION_ML
-    void **levelNameTable;
     switch (sLanguageMode) {
         case LANGUAGE_US_ENGLISH:
             levelNameTable = segmented_to_virtual(us_course_strings_en_table);
