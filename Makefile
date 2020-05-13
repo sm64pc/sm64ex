@@ -458,6 +458,9 @@ else
 
 ifeq ($(WINDOWS_BUILD),1)
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -no-pie -static
+ifeq ($(WINDOWS_CONSOLE),1)
+LDFLAGS += -mconsole
+endif
 else
 
 # Linux / Other builds below
