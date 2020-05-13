@@ -55,11 +55,14 @@ static void controller_sdl_read(OSContPad *pad) {
     
     const u32 mbuttons = SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
     
-    if (configMouseA && (mbuttons & SDL_BUTTON(configMouseA))) pad->button |= A_BUTTON;
-    if (configMouseB && (mbuttons & SDL_BUTTON(configMouseB))) pad->button |= B_BUTTON;
-    if (configMouseL && (mbuttons & SDL_BUTTON(configMouseL))) pad->button |= L_TRIG;
-    if (configMouseR && (mbuttons & SDL_BUTTON(configMouseR))) pad->button |= R_TRIG;
-    if (configMouseZ && (mbuttons & SDL_BUTTON(configMouseZ))) pad->button |= Z_TRIG;
+    if (configCameraMouse)
+    {   
+        if (configMouseA && (mbuttons & SDL_BUTTON(configMouseA))) pad->button |= A_BUTTON;
+        if (configMouseB && (mbuttons & SDL_BUTTON(configMouseB))) pad->button |= B_BUTTON;
+        if (configMouseL && (mbuttons & SDL_BUTTON(configMouseL))) pad->button |= L_TRIG;
+        if (configMouseR && (mbuttons & SDL_BUTTON(configMouseR))) pad->button |= R_TRIG;
+        if (configMouseZ && (mbuttons & SDL_BUTTON(configMouseZ))) pad->button |= Z_TRIG;
+    }
 #endif
 
     SDL_GameControllerUpdate();

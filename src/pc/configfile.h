@@ -26,13 +26,13 @@ extern unsigned int configJoyStart;
 extern unsigned int configJoyL;
 extern unsigned int configJoyR;
 extern unsigned int configJoyZ;
+#ifdef BETTERCAMERA
 extern unsigned int configMouseA;
 extern unsigned int configMouseB;
 extern unsigned int configMouseStart;
 extern unsigned int configMouseL;
 extern unsigned int configMouseR;
 extern unsigned int configMouseZ;
-#ifdef BETTERCAMERA
 extern unsigned int configCameraXSens;
 extern unsigned int configCameraYSens;
 extern unsigned int configCameraAggr;

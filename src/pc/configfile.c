@@ -52,13 +52,13 @@ unsigned int configJoyStart      = 6;
 unsigned int configJoyL          = 7;
 unsigned int configJoyR          = 10;
 unsigned int configJoyZ          = 9;
+#ifdef BETTERCAMERA
 // Mouse button mappings (0 for none, 1 for left, 2 for middle, 3 for right)
 unsigned int configMouseA        = 3;
 unsigned int configMouseB        = 1;
 unsigned int configMouseL        = 4;
 unsigned int configMouseR        = 5;
 unsigned int configMouseZ        = 2;
-#ifdef BETTERCAMERA
 // BetterCamera settings
 unsigned int configCameraXSens   = 50;
 unsigned int configCameraYSens   = 50;
@@ -92,12 +92,12 @@ static const struct ConfigOption options[] = {
     {.name = "joy_l",                .type = CONFIG_TYPE_UINT, .uintValue = &configJoyL},
     {.name = "joy_r",                .type = CONFIG_TYPE_UINT, .uintValue = &configJoyR},
     {.name = "joy_z",                .type = CONFIG_TYPE_UINT, .uintValue = &configJoyZ},
+#ifdef BETTERCAMERA
     {.name = "mouse_a",              .type = CONFIG_TYPE_UINT, .uintValue = &configMouseA},
     {.name = "mouse_b",              .type = CONFIG_TYPE_UINT, .uintValue = &configMouseB},
     {.name = "mouse_l",              .type = CONFIG_TYPE_UINT, .uintValue = &configMouseL},
     {.name = "mouse_r",              .type = CONFIG_TYPE_UINT, .uintValue = &configMouseR},
     {.name = "mouse_z",              .type = CONFIG_TYPE_UINT, .uintValue = &configMouseZ},
-    #ifdef BETTERCAMERA
     {.name = "bettercam_enable",     .type = CONFIG_TYPE_BOOL, .boolValue = &configEnableCamera},
     {.name = "bettercam_mouse_look", .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraMouse},
     {.name = "bettercam_invertx",    .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraInvertX},
@@ -106,7 +106,7 @@ static const struct ConfigOption options[] = {
     {.name = "bettercam_ysens",      .type = CONFIG_TYPE_UINT, .uintValue = &configCameraYSens},
     {.name = "bettercam_aggression", .type = CONFIG_TYPE_UINT, .uintValue = &configCameraAggr},
     {.name = "bettercam_pan_level",  .type = CONFIG_TYPE_UINT, .uintValue = &configCameraPan},
-    #endif
+#endif
 };
 
 // Reads an entire line from a file (excluding the newline character) and returns an allocated string
