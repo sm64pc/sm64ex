@@ -153,7 +153,9 @@ static size_t buf_vbo_num_tris;
 static struct GfxWindowManagerAPI *gfx_wapi;
 static struct GfxRenderingAPI *gfx_rapi;
 
-#if defined(_WIN32) && !defined(__MINGW64_VERSION_MAJOR)
+#if defined(__MINGW32__) 
+#include <_mingw.h>
+#if !defined(__MINGW64_VERSION_MAJOR)
 #include <windows.h>
 #define CLOCK_MONOTONIC 0
 //https://stackoverflow.com/questions/5404277/porting-clock-gettime-to-windows
@@ -167,6 +169,7 @@ int clock_gettime(int arg, struct timespec *spec)      //C-file part
 }
 #else
 #include <time.h>
+#endif
 #endif
 static unsigned long get_time(void) {
     struct timespec ts;
