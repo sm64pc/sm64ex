@@ -1,14 +1,10 @@
 
 static void fire_spitter_act_idle(void) {
     approach_f32_ptr(&o->header.gfx.scale[0], 0.2f, 0.002f);
-#ifndef NODRAWINGDISTANCE
     if (o->oTimer > 150 && o->oDistanceToMario < 800.0f && !(o->oMoveFlags & 0x00000078)) {
-#endif
         o->oAction = FIRE_SPITTER_ACT_SPIT_FIRE;
         o->oFireSpitterScaleVel = 0.05f;
-#ifndef NODRAWINGDISTANCE
     }
-#endif
 }
 
 static void fire_spitter_act_spit_fire(void) {
