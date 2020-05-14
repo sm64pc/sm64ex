@@ -72,19 +72,19 @@ void heave_ho_act_3(void) {
 }
 
 void heave_ho_act_0(void) {
-    cur_obj_set_pos_to_home();
 #ifndef NODRAWINGDISTANCE
     if (find_water_level(o->oPosX, o->oPosZ) < o->oPosY && o->oDistanceToMario < 4000.0f) {
+#else
+    if (find_water_level(o->oPosX, o->oPosZ) < (o->oPosY - 50.0f)) {
 #endif
+        cur_obj_set_pos_to_home();
         cur_obj_become_tangible();
         cur_obj_unhide();
         o->oAction = 1;
-#ifndef NODRAWINGDISTANCE
     } else {
         cur_obj_become_intangible();
         cur_obj_hide();
     }
-#endif
 }
 
 void (*sHeaveHoActions[])(void) = { heave_ho_act_0, heave_ho_act_1, heave_ho_act_2, heave_ho_act_3 };
