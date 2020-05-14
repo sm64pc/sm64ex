@@ -405,7 +405,7 @@ GODDARD_O_FILES := $(foreach file,$(GODDARD_C_FILES),$(BUILD_DIR)/$(file:.c=.o))
 RPC_LIBS :=
 ifeq ($(DISCORDRPC),1)
   ifeq ($(WINDOWS_BUILD),1)
-    RPC_LIBS := src/pc/discord/discord-rpc.lib
+    RPC_LIBS := src/pc/discord/discord-rpc.a
   else
     RPC_LIBS := src/pc/discord/libdiscord-rpc.a
   endif
