@@ -3,6 +3,7 @@
 #include "sm64.h"
 #include "audio/external.h"
 #include "buffers/buffers.h"
+#include "gfx_dimensions.h"
 #include "buffers/gfx_output_buffer.h"
 #include "buffers/framebuffers.h"
 #include "buffers/zbuffer.h"
@@ -152,8 +153,9 @@ void clear_frame_buffer(s32 a) {
     gDPSetCycleType(gDisplayListHead++, G_CYC_FILL);
 
     gDPSetFillColor(gDisplayListHead++, a);
-    gDPFillRectangle(gDisplayListHead++, 0, BORDER_HEIGHT, SCREEN_WIDTH - 1,
-                     SCREEN_HEIGHT - 1 - BORDER_HEIGHT);
+
+    // Ratio-correct borderfill
+    gDPFillRectangle(gDisplayListHead++, GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(0), BORDER_HEIGHT, GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(0) - 1, SCREEN_HEIGHT - BORDER_HEIGHT - 1);
 
     gDPPipeSync(gDisplayListHead++);
 
@@ -495,7 +497,7 @@ void read_controller_inputs(void) {
                 controller->stickMag = 0;
             }
         }
-        
+
     }
     #else
     for (i = 0; i < 2; i++) {
