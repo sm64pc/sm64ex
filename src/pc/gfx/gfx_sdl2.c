@@ -10,11 +10,18 @@
 #include <SDL2/SDL.h>
 #define GL_GLEXT_PROTOTYPES 1
 #include <SDL2/SDL_opengl.h>
-#else
+
+#else // For Non-Windows builds
 #include <SDL2/SDL.h>
 #define GL_GLEXT_PROTOTYPES 1
+
+#ifdef OSX_BUILD
+#include <SDL2/SDL_opengl.h>
+#else
 #include <SDL2/SDL_opengles2.h>
 #endif
+
+#endif // End of OS specific GL defines
 
 #include "gfx_window_manager_api.h"
 #include "gfx_screen_config.h"
@@ -28,7 +35,7 @@ static int inverted_scancode_table[512];
 extern bool configFullscreen;
 
 const SDL_Scancode windows_scancode_table[] =
-{ 
+{
 	/*	0						1							2							3							4						5							6							7 */
 	/*	8						9							A							B							C						D							E							F */
 	SDL_SCANCODE_UNKNOWN,		SDL_SCANCODE_ESCAPE,		SDL_SCANCODE_1,				SDL_SCANCODE_2,				SDL_SCANCODE_3,			SDL_SCANCODE_4,				SDL_SCANCODE_5,				SDL_SCANCODE_6,			/* 0 */
@@ -98,16 +105,16 @@ static void gfx_sdl_init(void) {
     Uint32 window_flags = 0;
 
     SDL_Init(SDL_INIT_VIDEO);
-	
+
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
     #ifdef USE_GLES
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);  // These attributes allow for hardware acceleration on RPis.
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0); 
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
     #endif
-    
+
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
@@ -118,9 +125,9 @@ static void gfx_sdl_init(void) {
     }
 
     SDL_DisplayMode sdl_displaymode;
-    SDL_GetCurrentDisplayMode(0, &sdl_displaymode); 
+    SDL_GetCurrentDisplayMode(0, &sdl_displaymode);
 
-    const char* window_title = 
+    const char* window_title =
     #ifndef USE_GLES
     "Super Mario 64 PC port (OpenGL)";
     #else

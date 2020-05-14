@@ -26,6 +26,9 @@ TARGET_RPI ?= 0
 # Compiler to use (ido or gcc)
 # COMPILER ?= ido // Old Default
 
+# Makeflag to enable OSX stuff
+OSX_BUILD ?= 0
+
 # Disable better camera by default
 BETTERCAMERA ?= 0
 
@@ -136,6 +139,10 @@ VERSION_CFLAGS := $(VERSION_CFLAGS) -DNON_MATCHING -DAVOID_UB
 
 ifeq ($(TARGET_RPI),1) # Define RPi to change SDL2 title & GLES2 hints
       VERSION_CFLAGS += -DUSE_GLES
+endif
+
+ifeq ($(OSX_BUILD),1) # Modify GFX & SDL2 for OSX GL
+     VERSION_CLFAGS += -DOSX_BUILD
 endif
 
 VERSION_ASFLAGS := --defsym AVOID_UB=1
@@ -407,6 +414,10 @@ ENDIAN_BITWIDTH := $(BUILD_DIR)/endian-and-bitwidth
 
 AS := as
 
+ifeq ($(OSX_BUILD),1)
+AS := i686-w64-mingw32-as
+endif
+
 ifneq ($(TARGET_WEB),1) # As in, not-web PC port
   CC := $(CROSS)gcc
   CXX := $(CROSS)g++
@@ -420,11 +431,19 @@ else
   LD := $(CC)
 endif
 
+ifeq ($(OSX_BUILD),0)
 CPP := $(CROSS)cpp -P
 OBJDUMP := $(CROSS)objdump
 OBJCOPY := $(CROSS)objcopy
+else # If building on/for OSX
+CPP := cpp-9 -P
+OBJDUMP := i686-w64-mingw32-objdump
+OBJCOPY := i686-w64-mingw32-objcopy
+endif
+
 PYTHON := python3
 SDLCONFIG := $(CROSS)sdl2-config
+
 
 ifeq ($(WINDOWS_BUILD),1)
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags`
@@ -463,11 +482,15 @@ else
 ifeq ($(TARGET_RPI),1)
 LDFLAGS := $(OPT_FLAGS) -lm -lGLESv2 `$(SDLCONFIG) --libs` -no-pie
 else
+
+ifeq ($(TARGET_MACOS),1)
+LDFLAGS := -lm -framework OpenGL `$(SDLCONFIG) --libs` -no-pie -lpthread `pkg-config --libs libusb-1.0 glfw3 glew`
+else
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(SDLCONFIG) --libs` -no-pie -lpthread
 endif
 endif
-endif #Added for Pi ifeq
-
+endif #Added for OSX
+endif #Added for Pi
 
 # Prevent a crash with -sopt
 export LANG := C
