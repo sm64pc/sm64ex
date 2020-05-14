@@ -18,6 +18,7 @@
 #include "audio/audio_sdl.h"
 #include "audio/audio_null.h"
 
+#include "cliopts.h"
 #include "configfile.h"
 
 OSMesg D_80339BEC;
@@ -165,6 +166,7 @@ void main_func(void) {
 }
 
 int main(int argc, char *argv[]) {
+    parse_cli_opts(argc, argv);
     main_func();
     return 0;
 }
