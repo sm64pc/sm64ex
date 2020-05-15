@@ -3,6 +3,7 @@
 struct PCCLIOptions 
 {
 	u8 SkipIntro;
+    u8 FullScreen;
 };
 
 extern struct PCCLIOptions gCLIOpts;
