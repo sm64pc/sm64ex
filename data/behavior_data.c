@@ -114,7 +114,7 @@
 // Often used to end behavior scripts that do not contain an infinite loop.
 #define BREAK() \
     BC_B(0x0A)
-    
+
 // Exits the behavior script, unused.
 #define BREAK_UNUSED() \
     BC_B(0x0B)
@@ -175,15 +175,15 @@
 #define ADD_INT_RAND_RSHIFT(field, min, rshift) \
     BC_BBH(0x17, field, min), \
     BC_H(rshift)
-    
+
 // No operation. Unused.
 #define CMD_NOP_1(field) \
     BC_BB(0x18, field)
-    
+
 // No operation. Unused.
 #define CMD_NOP_2(field) \
     BC_BB(0x19, field)
-    
+
 // No operation. Unused.
 #define CMD_NOP_3(field) \
     BC_BB(0x1A, field)
@@ -218,6 +218,9 @@
 // Billboards the current object, making it always face the camera.
 #define BILLBOARD() \
     BC_B(0x21)
+
+#define CYLBOARD() \
+    BC_B(0x38)
 
 // Hides the current object.
 #define HIDE() \
@@ -3181,6 +3184,7 @@ const BehaviorScript bhvFloorTrapInCastle[] = {
 const BehaviorScript bhvTree[] = {
     BEGIN(OBJ_LIST_POLELIKE),
     BILLBOARD(),
+    CYLBOARD(),
     OR_INT(oFlags, OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE),
     SET_INT(oInteractType, INTERACT_POLE),
     SET_HITBOX(/*Radius*/ 80, /*Height*/ 500),
@@ -6105,5 +6109,3 @@ const BehaviorScript bhvIntroScene[] = {
         CALL_NATIVE(bhv_intro_scene_loop),
     END_LOOP(),
 };
-
-

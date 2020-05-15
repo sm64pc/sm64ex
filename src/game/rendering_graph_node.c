@@ -803,8 +803,13 @@ static void geo_process_object(struct Object *node) {
             mtxf_mul(gMatStack[gMatStackIndex + 1], (void *) node->header.gfx.throwMatrix,
                      gMatStack[gMatStackIndex]);
         } else if (node->header.gfx.node.flags & GRAPH_RENDER_BILLBOARD) {
-            mtxf_billboard(gMatStack[gMatStackIndex + 1], gMatStack[gMatStackIndex],
-                           node->header.gfx.pos, gCurGraphNodeCamera->roll);
+            if (node->header.gfx.node.flags & GRAPH_RENDER_CYLBOARD){
+              mtxf_cylboard(gMatStack[gMatStackIndex + 1], gMatStack[gMatStackIndex],
+                             node->header.gfx.pos, gCurGraphNodeCamera->roll);
+            } else {
+              mtxf_billboard(gMatStack[gMatStackIndex + 1], gMatStack[gMatStackIndex],
+                             node->header.gfx.pos, gCurGraphNodeCamera->roll);
+            }
         } else {
             mtxf_rotate_zxy_and_translate(mtxf, node->header.gfx.pos, node->header.gfx.angle);
             mtxf_mul(gMatStack[gMatStackIndex + 1], mtxf, gMatStack[gMatStackIndex]);
