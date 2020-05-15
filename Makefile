@@ -622,6 +622,7 @@ $(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h
 ifeq ($(DISCORDRPC),1)
 $(BUILD_DIR)/src/game/discord/discordrpc.o: $(BUILD_DIR)/include/text_strings.h
 endif
+endif
 $(BUILD_DIR)/src/game/options_menu.o: $(BUILD_DIR)/include/text_strings.h
 
 
