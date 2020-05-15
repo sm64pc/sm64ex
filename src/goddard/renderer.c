@@ -2986,9 +2986,9 @@ void update_cursor(void) {
     reset_dlnum_indices(sHandShape->gdDls[gGdFrameBuf]);
 
     if (gGdCtrl.btnApressed) {
-        gd_put_sprite((u16 *) gd_texture_hand_closed, GFX_DIMENSIONS_FROM_LEFT_EDGE(sHandView->upperLeft.x), sHandView->upperLeft.y, 0x20, 0x20);
+        gd_put_sprite((u16 *) gd_texture_hand_closed, sHandView->upperLeft.x, sHandView->upperLeft.y, 32, 32);
     } else {
-        gd_put_sprite((u16 *) gd_texture_hand_open, GFX_DIMENSIONS_FROM_LEFT_EDGE(sHandView->upperLeft.x), sHandView->upperLeft.y, 0x20, 0x20);
+        gd_put_sprite((u16 *) gd_texture_hand_open, sHandView->upperLeft.x, sHandView->upperLeft.y, 32, 32);
     }
     gd_enddlsplist_parent();
 
@@ -3444,7 +3444,8 @@ void Unknown801A5FF8(struct ObjGroup *arg0) {
 void gd_put_sprite(u16 *sprite, s32 x, s32 y, s32 wx, s32 wy) {
     s32 c; // 5c
     s32 r; // 58
-    f32 aspect = GFX_DIMENSIONS_ASPECT_RATIO * 0.75;
+    // Must be game screen aspect ratio, not GFX window aspect ratio
+    f32 aspect = ((float) SCREEN_WIDTH) / ((float) SCREEN_HEIGHT ) * 0.75;
     x *= aspect;
     
     gSPDisplayList(next_gfx(), osVirtualToPhysical(gd_dl_sprite_start_tex_block));
