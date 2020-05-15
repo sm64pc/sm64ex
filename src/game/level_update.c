@@ -179,7 +179,7 @@ u8 unused3[4];
 u8 unused4[2];
 
 // For configfile intro skipping
-//extern unsigned int configSkipIntro;
+extern unsigned int configSkipIntro;
 
 
 void basic_update(s16 *arg);
@@ -1217,7 +1217,7 @@ s32 init_level(void) {
                 if (gMarioState->action != ACT_UNINITIALIZED) {
                     if (save_file_exists(gCurrSaveFileNum - 1)) {
                         set_mario_action(gMarioState, ACT_IDLE, 0);
-                    } else if (gCLIOpts.SkipIntro == 0) {
+                    } else if (gCLIOpts.SkipIntro == 0 && configSkipIntro == 0) {
                         set_mario_action(gMarioState, ACT_INTRO_CUTSCENE, 0);
                         val4 = 1;
                     }

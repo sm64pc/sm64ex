@@ -60,6 +60,7 @@ bool         configCameraInvertY = false;
 bool         configEnableCamera  = false;
 bool         configCameraMouse   = false;
 #endif
+unsigned int configSkipIntro     = 0;
 
 static const struct ConfigOption options[] = {
     {.name = "fullscreen",           .type = CONFIG_TYPE_BOOL, .boolValue = &configFullscreen},
@@ -87,7 +88,7 @@ static const struct ConfigOption options[] = {
     {.name = "bettercam_aggression", .type = CONFIG_TYPE_UINT, .uintValue = &configCameraAggr},
     {.name = "bettercam_pan_level",  .type = CONFIG_TYPE_UINT, .uintValue = &configCameraPan},
     #endif
-    //{.name = "skip_intro",           .type = CONFIG_TYPE_UINT, .uintValue = &configSkipIntro},    // Add this back!
+    {.name = "skip_intro",           .type = CONFIG_TYPE_UINT, .uintValue = &configSkipIntro},    // Add this back!
 };
 
 // Reads an entire line from a file (excluding the newline character) and returns an allocated string
