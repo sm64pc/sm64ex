@@ -101,11 +101,11 @@ cd ..
 
 (Ten en cuenta que mingw32 y mingw64 han sido intercambiados. Esto es para que puedas compilar la versión de 32 bits si quieres.)
 
-Aquí pones las opciones que quieras según la versión que quieras compilar. Por ejemplo, si quieres activar la cámara analógica, añade al final -BETTERCAMERA=1. Si quieres la opción de distancia de renderizado ilimitada, añade -NODRAWINGDISTANCE=1.
+Aquí pones las opciones que quieras según la versión que quieras compilar. Por ejemplo, si quieres activar la cámara analógica, añade al final BETTERCAMERA=1. Si quieres la opción de distancia de renderizado ilimitada, añade NODRAWINGDISTANCE=1.
 
 Por ejemplo:
 ```
-PATH=/mingw32/bin:/mingw64/bin:$PATH make -BETTERCAMERA=1 -NODRAWINGDISTANCE=1
+PATH=/mingw32/bin:/mingw64/bin:$PATH make BETTERCAMERA=1 NODRAWINGDISTANCE=1
 ```
 Listo. El .exe estará en sm64pc\build\. Disfruta.
 ## Compilar en Linux
