@@ -49,11 +49,6 @@ static const Lights1 koopa_seg6_lights_06002630 = gdSPDefLights1(
     0xff, 0xff, 0xff, 0x28, 0x28, 0x28
 );
 
-// //! There is a malformed light entry here pointing to this texture + 0x18.
-//     It results in the koopa actor 'wearing' what appears to be pink shorts
-//     beneath its shell, despite the fact it was intended to be white like
-//     the rest of its body. This is evident because once the mistake is corrected
-//     it turns back to being white like the other polygons.
 // 0x06002648
 ALIGNED8 static const u8 koopa_seg6_texture_06002648[] = {
 #include "actors/koopa/koopa_shell_front.rgba16.inc.c"
@@ -2077,8 +2072,8 @@ const Gfx koopa_seg6_dl_0600C498[] = {
     gsSPVertex(koopa_seg6_vertex_0600B560, 9, 0),
     gsSP2Triangles( 0,  1,  2, 0x0,  3,  4,  5, 0x0),
     gsSP1Triangle( 6,  7,  8, 0x0),
-    gsSPLight(koopa_seg6_texture_06002648 + 0x20, 1), // this malformed light results in a
-    gsSPLight(koopa_seg6_texture_06002648 + 0x18, 2), // koopa appearing to wear pink shorts.
+    gsSPLight(&koopa_seg6_lights_06002630.l, 1),
+    gsSPLight(&koopa_seg6_lights_06002630.a, 2),
     gsSPVertex(koopa_seg6_vertex_0600B5F0, 15, 0),
     gsSP2Triangles( 0,  1,  2, 0x0,  3,  4,  5, 0x0),
     gsSP2Triangles( 6,  7,  0, 0x0,  8,  5,  9, 0x0),
