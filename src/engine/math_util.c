@@ -383,6 +383,11 @@ void mtxf_cylboard(Mat4 dest, Mat4 mtx, Vec3f position, s16 angle) { //straight 
     dest[0][2] = 0;
     dest[0][3] = 0;
 
+    dest[1][0] = mtx[1][0];
+    dest[1][1] = mtx[1][1];
+    dest[1][2] = mtx[1][2];
+    dest[1][3] = 0;
+
     dest[2][0] = 0;
     dest[2][1] = 0;
     dest[2][2] = 1;
