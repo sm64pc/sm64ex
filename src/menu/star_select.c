@@ -15,9 +15,18 @@
 #include "engine/behavior_script.h"
 #include "engine/graph_node.h"
 #include "behavior_data.h"
-#include "text_strings.h"
+#ifndef VERSION_ML
+    #include "text_strings.h"
+#else
+    #include "text_strings_ml.h"
+    #include "text_strings_ml_jp.h"
+#endif
 #include "star_select.h"
-#include "eu_translation.h"
+#if defined (VERSION_EU)
+    #include "eu_translation.h"
+#elif defined (VERSION_ML)
+    #include "ml_translations.h"
+#endif
 #include <prevent_bss_reordering.h>
 
 /**
@@ -228,7 +237,8 @@ void print_course_number(void) {
             gSPDisplayList(gDisplayListHead++, dl_menu_texture_kurs_upper);
             break;
     }
-#elif VERSION_ML
+    gSPDisplayList(gDisplayListHead++, dl_menu_rgba16_wood_course_end);
+#elif defined(VERSION_ML)
     // Change upper part of the wood texture depending of the language defined
     switch (language) {
         case LANGUAGE_US_ENGLISH:
@@ -331,8 +341,8 @@ void print_act_selector_strings(void) {
             levelNameTbl = segmented_to_virtual(course_name_table_us_en);
             break;
         case LANGUAGE_UK_ENGLISH:
-            actNameTbl = segmented_to_virtual(act_name_table_uk_en);
-            levelNameTbl = segmented_to_virtual(course_name_table_uk_en);
+            actNameTbl = segmented_to_virtual(act_name_table_eu_en);
+            levelNameTbl = segmented_to_virtual(course_name_table_eu_en);
             break;
         case LANGUAGE_JAPANESE:
             actNameTbl = segmented_to_virtual(act_name_table_jp);

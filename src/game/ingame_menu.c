@@ -11,11 +11,24 @@
 #include "save_file.h"
 #include "level_update.h"
 #include "camera.h"
-#include "text_strings.h"
+#if !defined(VERSION_ML)
+    #include "text_strings.h"
+#else
+    #include "text_strings_ml.h"
+    #include "text_strings_ml_jp.h"
+#endif
 #include "segment2.h"
 #include "segment7.h"
-#include "eu_translation.h"
-#include "ingame_menu.h"
+#if defined(VERSION_EU)
+    #include "eu_translation.h"
+#elif defined(VERSION_ML)
+    #include "ml_translations.h"
+#endif
+#if !defined(VERSION_ML)
+    #include "ingame_menu.h"
+#else
+    #include "ingame_menu_ml.h"
+#endif
 #include "print.h"
 #include "engine/math_util.h"
 #include "course_table.h"
@@ -3309,8 +3322,7 @@ void print_hud_course_complete_string(s8 str) {
     u8 textCongratulations[][16] = {
         { TEXT_HUD_CONGRATULATIONS },
         { TEXT_HUD_CONGRATULATIONS },
-        { TEXT_HUD_CONGRATULATIONS }, //{ TEXT_HUD_CONGRATULATIONS_JP },
-        // this bugs out the compiler for some reason
+        { TEXT_HUD_CONGRATULATIONS }, //{ TEXT_HUD_CONGRATULATIONS_JP }, this bugs out the compiler for some reason
         { TEXT_HUD_CONGRATULATIONS_FR },
         { TEXT_HUD_CONGRATULATIONS_DE }
     };
@@ -3424,6 +3436,20 @@ void render_course_complete_lvl_info_and_hud_str(void) {
     u8 textSymStar[] = { GLYPH_STAR, GLYPH_SPACE };
 #define textCourse gTextCourseArr[gInGameLanguage]
 #elif defined(VERSION_ML)
+    u8 textCatch[][6] = {
+        { TEXT_CATCH },
+        { TEXT_CATCH },
+        { TEXT_CATCH_JP },
+        { TEXT_CATCH },
+        { TEXT_CATCH }
+    };
+    u8 textClear[][6] = {
+        { TEXT_CLEAR },
+        { TEXT_CLEAR },
+        { TEXT_CLEAR_JP },
+        { TEXT_CLEAR },
+        { TEXT_CLEAR },
+    };
     u8 textSymStar[] = { GLYPH_STAR, GLYPH_SPACE };
 #define textCourse gTextCourseArr[gInGameLanguage]
 #else
@@ -3537,14 +3563,12 @@ void render_course_complete_lvl_info_and_hud_str(void) {
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, gDialogTextAlpha);
     print_generic_string(76, 145, name);
-#if defined(VERSION_JP) || defined(VERSION_SH)
+    #if defined(VERSION_JP) || defined(VERSION_SH) || defined(VERSION_ML)
     print_generic_string(220, 145, textCatch);
-#endif
+    #endif
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
     print_generic_string(74, 147, name);
-#if defined(VERSION_JP) || defined(VERSION_SH)
     print_generic_string(218, 147, textCatch);
-#endif
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 }
 

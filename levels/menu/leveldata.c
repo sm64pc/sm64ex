@@ -1720,7 +1720,7 @@ const Gfx dl_menu_ia8_text_end[] = {
 
 UNUSED static const u64 menu_unused_1 = 0;
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
 
 // 0x0700BDA0 - 0x0700CDA0
 ALIGNED8 static const u8 texture_menu_course_upper[] = {
@@ -1805,7 +1805,7 @@ const Gfx dl_menu_rgba16_wood_course_end[] = {
     gsSPEndDisplayList(),
 };
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
 // 0x0700FEF0 - 0x0700FF00
 const Gfx dl_menu_texture_course_upper[] = {
     gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, texture_menu_course_upper),

@@ -22,6 +22,7 @@
 #include "gd_math.h"
 #include "shape_helper.h"
 
+#include "config.h"
 #include "gfx_dimensions.h"
 
 #define MAX_GD_DLS 1000
@@ -2326,7 +2327,7 @@ void start_view_dl(struct ObjView *view) {
         uly = lry - 1.0f;
     }
 
-    gDPSetScissor(next_gfx(), G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
+    //gDPSetScissor(next_gfx(), G_SC_NON_INTERLACE, ulx, uly, lrx, lry); // breaks cursor on PC, N64 only
     gSPClearGeometryMode(next_gfx(), 0xFFFFFFFF);
     gSPSetGeometryMode(next_gfx(), G_LIGHTING | G_CULL_BACK | G_SHADING_SMOOTH | G_SHADE);
     if (view->flags & VIEW_ALLOC_ZBUF) {
@@ -2985,9 +2986,9 @@ void update_cursor(void) {
     reset_dlnum_indices(sHandShape->gdDls[gGdFrameBuf]);
 
     if (gGdCtrl.btnApressed) {
-        gd_put_sprite((u16 *) gd_texture_hand_closed, sHandView->upperLeft.x, sHandView->upperLeft.y, 0x20, 0x20);
+        gd_put_sprite((u16 *) gd_texture_hand_closed, GFX_DIMENSIONS_FROM_LEFT_EDGE(sHandView->upperLeft.x), sHandView->upperLeft.y, 0x20, 0x20);
     } else {
-        gd_put_sprite((u16 *) gd_texture_hand_open, sHandView->upperLeft.x, sHandView->upperLeft.y, 0x20, 0x20);
+        gd_put_sprite((u16 *) gd_texture_hand_open, GFX_DIMENSIONS_FROM_LEFT_EDGE(sHandView->upperLeft.x), sHandView->upperLeft.y, 0x20, 0x20);
     }
     gd_enddlsplist_parent();
 

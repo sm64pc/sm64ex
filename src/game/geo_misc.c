@@ -194,7 +194,7 @@ Gfx *geo_exec_flying_carpet_create(s32 callContext, struct GraphNode *node, UNUS
     return displayList;
 }
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
 // TODO: Symbolize these
 extern Gfx dl_cake_end_screen_eu_070296F8[];
 extern Gfx dl_cake_end_screen_eu_07029768[];
@@ -234,10 +234,10 @@ Gfx *geo_exec_cake_end_screen(s32 callContext, struct GraphNode *node, UNUSED f3
 #elif defined(VERSION_ML)
         switch (eu_get_language()) {
             case LANGUAGE_US_ENGLISH:
-                gSPDisplayList(displayListHead++, dl_cake_end_screen_eu_070296F8);
+                gSPDisplayList(displayListHead++, dl_cake_end_screen);
                 break;
             case LANGUAGE_UK_ENGLISH:
-                gSPDisplayList(displayListHead++, dl_cake_end_screen);
+                gSPDisplayList(displayListHead++, dl_cake_end_screen_eu_070296F8);
                 break;
             case LANGUAGE_JAPANESE:
                 gSPDisplayList(displayListHead++, dl_cake_end_screen);

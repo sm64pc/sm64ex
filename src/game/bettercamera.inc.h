@@ -111,12 +111,225 @@ f32 newcam_option_timer = 0;
 u8 newcam_option_index = 0;
 u8 newcam_option_scroll = 0;
 u8 newcam_option_scroll_last = 0;
-u8 newcam_total = 8; //How many options there are in newcam_uptions.
+u8 newcam_total = 8; //How many options there are in newcam_options.
 
-u8 newcam_options[][64] = {{NC_ANALOGUE}, {NC_MOUSE}, {NC_CAMX}, {NC_CAMY}, {NC_INVERTX}, {NC_INVERTY}, {NC_CAMC}, {NC_CAMP}};
-u8 newcam_flags[][64] = {{NC_DISABLED}, {NC_ENABLED}};
-u8 newcam_strings[][64] = {{NC_BUTTON}, {NC_BUTTON2}, {NC_OPTION}, {NC_HIGHLIGHT}};
-
+#if defined(VERSION_US)
+    u8 newcam_analoguetext[] = { { NC_ANALOGUE } };
+    u8 newcam_mousetext[] = { { NC_MOUSE } };
+    u8 newcam_camXtext[] = { { NC_CAMX } };
+    u8 newcam_camYtext[] = { { NC_CAMY } };
+    u8 newcam_invertXtext[] = { { NC_INVERTX } };
+    u8 newcam_invertYtext[] = { { NC_INVERTY } };
+    u8 newcam_camCtext[] = { { NC_CAMC } };
+    u8 newcam_camPtext[] = { { NC_CAMP } };
+    u8 newcam_disabledtext[] = { { NC_DISABLED } };
+    u8 newcam_enabledtext[] = { { NC_ENABLED } };
+    u8 newcam_buttontext[] = { { NC_BUTTON } };
+    u8 newcam_button2text[] = { { NC_BUTTON2 } };
+    u8 newcam_optiontext[] = { { NC_OPTION } };
+    u8 newcam_highlighttext[] = { { NC_HIGHLIGHT } };
+    u8 newcam_options[][64] = {{newcam_analoguetext}, {newcam_mousetext}, {newcam_camXtext}, {newcam_camYtext}, {newcam_invertXtext}, {newcam_invertYtext}, {newcam_camCtext}, {newcam_camPtext}};
+    u8 newcam_flags[][64] = {{newcam_disabledtext}, {newcam_enabledtext}};
+    u8 newcam_strings[][64] = {{newcam_buttontext}, {newcam_button2text}, {newcam_optiontext}, {newcam_highlighttext}};
+#elif defined(VERSION_JP) || defined(VERSION_SH)
+    u8 newcam_analoguetext[] = { { NC_ANALOGUE } };
+    u8 newcam_mousetext[] = { { NC_MOUSE } };
+    u8 newcam_camXtext[] = { { NC_CAMX } };
+    u8 newcam_camYtext[] = { { NC_CAMY } };
+    u8 newcam_invertXtext[] = { { NC_INVERTX } };
+    u8 newcam_invertYtext[] = { { NC_INVERTY } };
+    u8 newcam_camCtext[] = { { NC_CAMC } };
+    u8 newcam_camPtext[] = { { NC_CAMP } };
+    u8 newcam_disabledtext[] = { { NC_DISABLED } };
+    u8 newcam_enabledtext[] = { { NC_ENABLED } };
+    u8 newcam_buttontext[] = { { NC_BUTTON } };
+    u8 newcam_button2text[] = { { NC_BUTTON2 } };
+    u8 newcam_optiontext[] = { { NC_OPTION } };
+    u8 newcam_highlighttext[] = { { NC_HIGHLIGHT } };
+    u8 newcam_options[][64] = {{newcam_analoguetext}, {newcam_mousetext}, {newcam_camXtext}, {newcam_camYtext}, {newcam_invertXtext}, {newcam_invertYtext}, {newcam_camCtext}, {newcam_camPtext}};
+    u8 newcam_flags[][64] = {{newcam_disabledtext}, {newcam_enabledtext}};
+    u8 newcam_strings[][64] = {{newcam_buttontext}, {newcam_button2text}, {newcam_optiontext}, {newcam_highlighttext}};
+#elif defined(VERSION_EU)
+    u8 newcam_analoguetext[][] = {
+        { NC_ANALOGUE },
+        { NC_ANALOGUE },
+        { NC_ANALOGUE },
+    };
+    u8 newcam_mousetext[][] = {
+        { NC_MOUSE },
+        { NC_MOUSE },
+        { NC_MOUSE },
+    };
+    u8 newcam_camXtext[][] = {
+        { NC_CAMX },
+        { NC_CAMX },
+        { NC_CAMX },
+    };
+    u8 newcam_camYtext[][] = {
+        { NC_CAMY },
+        { NC_CAMY },
+        { NC_CAMY },
+    };
+    u8 newcam_invertXtext[][] = {
+        { NC_INVERTX },
+        { NC_INVERTX },
+        { NC_INVERTX },
+    };
+    u8 newcam_invertYtext[][] = {
+        { NC_INVERTY },
+        { NC_INVERTY },
+        { NC_INVERTY },
+    };
+    u8 newcam_camCtext[][] = {
+        { NC_CAMC },
+        { NC_CAMC },
+        { NC_CAMC },
+    };
+    u8 newcam_camPtext[][] = {
+        { NC_CAMP },
+        { NC_CAMP },
+        { NC_CAMP },
+    };
+    u8 newcam_disabledtext[][] = {
+        { NC_DISABLED },
+        { NC_DISABLED },
+        { NC_DISABLED },
+    };
+    u8 newcam_enabledtext[][] = {
+        { NC_ENABLED },
+        { NC_ENABLED },
+        { NC_ENABLED },
+    };
+    u8 newcam_buttontext[][] = {
+        { NC_BUTTON },
+        { NC_BUTTON },
+        { NC_BUTTON },
+    };
+    u8 newcam_button2text[][] = {
+        { NC_BUTTON2 },
+        { NC_BUTTON2 },
+        { NC_BUTTON2 },
+    };
+    u8 newcam_optiontext[][] = {
+        { NC_OPTION },
+        { NC_OPTION },
+        { NC_OPTION },
+    };
+    u8 newcam_highlighttext[][] = {
+        { NC_HIGHLIGHT },
+        { NC_HIGHLIGHT },
+        { NC_HIGHLIGHT },
+    };
+    u8 newcam_options[][64] = {{newcam_analoguetext}, {newcam_mousetext}, {newcam_camXtext}, {newcam_camYtext}, {newcam_invertXtext}, {newcam_invertYtext}, {newcam_camCtext}, {newcam_camPtext}};
+    u8 newcam_flags[][64] = {{newcam_disabledtext}, {newcam_enabledtext}};
+    u8 newcam_strings[][64] = {{newcam_buttontext}, {newcam_button2text}, {newcam_optiontext}, {newcam_highlighttext}};
+#elif defined(VERSION_ML)
+    u8 newcam_analoguetext[][] = {
+        { NC_ANALOGUE },
+        { NC_ANALOGUE },
+        { NC_ANALOGUE },
+        { NC_ANALOGUE },
+        { NC_ANALOGUE },
+    };
+    u8 newcam_mousetext[][] = {
+        { NC_MOUSE },
+        { NC_MOUSE },
+        { NC_MOUSE },
+        { NC_MOUSE },
+        { NC_MOUSE },
+    };
+    u8 newcam_camXtext[][] = {
+        { NC_CAMX },
+        { NC_CAMX },
+        { NC_CAMX },
+        { NC_CAMX },
+        { NC_CAMX },
+    };
+    u8 newcam_camYtext[][] = {
+        { NC_CAMY },
+        { NC_CAMY },
+        { NC_CAMY },
+        { NC_CAMY },
+        { NC_CAMY },
+    };
+    u8 newcam_invertXtext[][] = {
+        { NC_INVERTX },
+        { NC_INVERTX },
+        { NC_INVERTX },
+        { NC_INVERTX },
+        { NC_INVERTX },
+    };
+    u8 newcam_invertYtext[][] = {
+        { NC_INVERTY },
+        { NC_INVERTY },
+        { NC_INVERTY },
+        { NC_INVERTY },
+        { NC_INVERTY },
+    };
+    u8 newcam_camCtext[][] = {
+        { NC_CAMC },
+        { NC_CAMC },
+        { NC_CAMC },
+        { NC_CAMC },
+        { NC_CAMC },
+    };
+    u8 newcam_camPtext[][] = {
+        { NC_CAMP },
+        { NC_CAMP },
+        { NC_CAMP },
+        { NC_CAMP },
+        { NC_CAMP },
+    };
+    u8 newcam_disabledtext[][] = {
+        { NC_DISABLED },
+        { NC_DISABLED },
+        { NC_DISABLED },
+        { NC_DISABLED },
+        { NC_DISABLED },
+    };
+    u8 newcam_enabledtext[][] = {
+        { NC_ENABLED },
+        { NC_ENABLED },
+        { NC_ENABLED },
+        { NC_ENABLED },
+        { NC_ENABLED },
+    };
+    u8 newcam_buttontext[][] = {
+        { NC_BUTTON },
+        { NC_BUTTON },
+        { NC_BUTTON },
+        { NC_BUTTON },
+        { NC_BUTTON },
+    };
+    u8 newcam_button2text[][] = {
+        { NC_BUTTON2 },
+        { NC_BUTTON2 },
+        { NC_BUTTON2 },
+        { NC_BUTTON2 },
+        { NC_BUTTON2 },
+    };
+    u8 newcam_optiontext[][] = {
+        { NC_OPTION },
+        { NC_OPTION },
+        { NC_OPTION },
+        { NC_OPTION },
+        { NC_OPTION },
+    };
+    u8 newcam_highlighttext[][] = {
+        { NC_HIGHLIGHT },
+        { NC_HIGHLIGHT },
+        { NC_HIGHLIGHT },
+        { NC_HIGHLIGHT },
+        { NC_HIGHLIGHT },
+    };
+    u8 newcam_options[][64] = {{newcam_analoguetext}, {newcam_mousetext}, {newcam_camXtext}, {newcam_camYtext}, {newcam_invertXtext}, {newcam_invertYtext}, {newcam_camCtext}, {newcam_camPtext}};
+    u8 newcam_flags[][64] = {{newcam_disabledtext}, {newcam_enabledtext}};
+    u8 newcam_strings[][64] = {{newcam_buttontext}, {newcam_button2text}, {newcam_optiontext}, {newcam_highlighttext}};
+#else // as a failsafe
+    u8 newcam_options[][64] = {{NC_ANALOGUE}, {NC_MOUSE}, {NC_CAMX}, {NC_CAMY}, {NC_INVERTX}, {NC_INVERTY}, {NC_CAMC}, {NC_CAMP}};
+    u8 newcam_flags[][64] = {{NC_DISABLED}, {NC_ENABLED}};
+    u8 newcam_strings[][64] = {{NC_BUTTON}, {NC_BUTTON2}, {NC_OPTION}, {NC_HIGHLIGHT}};
+#endif
 extern int mouse_x;
 extern int mouse_y;
 

@@ -82,7 +82,7 @@ ALIGNED8 static const u8 texture_hud_char_I[] = {
 #include "textures/segment2/segment2.02400.rgba16.inc.c"
 };
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
+#if defined(VERSION_JP) || defined(VERSION_SH) || defined(VERSION_ML)
 ALIGNED8 static const u8 texture_hud_char_J[] = {
 #include "textures/segment2/segment2.02600.rgba16.inc.c"
 };
@@ -112,7 +112,7 @@ ALIGNED8 static const u8 texture_hud_char_P[] = {
 #include "textures/segment2/segment2.03200.rgba16.inc.c"
 };
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
+#if defined(VERSION_JP) || defined(VERSION_SH) || defined(VERSION_ML)
 ALIGNED8 static const u8 texture_hud_char_Q[] = {
 #include "textures/segment2/segment2.03400.rgba16.inc.c"
 };
@@ -134,7 +134,7 @@ ALIGNED8 static const u8 texture_hud_char_U[] = {
 #include "textures/segment2/segment2.03C00.rgba16.inc.c"
 };
 
-#if defined(VERSION_JP) || defined(VERSION_EU) || defined(VERSION_SH)
+#if defined(VERSION_JP) || defined(VERSION_EU) || defined(VERSION_SH) || defined(VERSION_ML)
 ALIGNED8 static const u8 texture_hud_char_V[] = {
 #include "textures/segment2/segment2.03E00.rgba16.inc.c"
 };
@@ -144,7 +144,7 @@ ALIGNED8 static const u8 texture_hud_char_W[] = {
 #include "textures/segment2/segment2.04000.rgba16.inc.c"
 };
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
+#if defined(VERSION_JP) || defined(VERSION_SH) || defined(VERSION_ML)
 ALIGNED8 static const u8 texture_hud_char_X[] = {
 #include "textures/segment2/segment2.04200.rgba16.inc.c"
 };
@@ -154,7 +154,7 @@ ALIGNED8 static const u8 texture_hud_char_Y[] = {
 #include "textures/segment2/segment2.04400.rgba16.inc.c"
 };
 
-#if defined(VERSION_JP) || defined(VERSION_EU) || defined(VERSION_SH)
+#if defined(VERSION_JP) || defined(VERSION_EU) || defined(VERSION_SH) || defined(VERSION_ML)
 ALIGNED8 static const u8 texture_hud_char_Z[] = {
 #include "textures/segment2/segment2.04600.rgba16.inc.c"
 };
@@ -168,13 +168,13 @@ ALIGNED8 static const u8 texture_hud_char_double_quote[] = {
 #include "textures/segment2/segment2.04A00.rgba16.inc.c"
 };
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
 ALIGNED8 static const u8 texture_hud_char_umlaut[] = {
 #include "textures/segment2/segment2.umlaut.rgba16.inc.c"// EU ¨
 };
 #endif
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
+#if defined(VERSION_JP) || defined(VERSION_SH) || defined(VERSION_ML)
 ALIGNED8 static const u8 texture_hud_char_exclamation[] = {
 #include "textures/segment2/segment2.04C00.rgba16.inc.c"// JP !
 };
@@ -212,13 +212,13 @@ ALIGNED8 static const u8 texture_hud_char_star[] = {
 #include "textures/segment2/segment2.05C00.rgba16.inc.c"
 };
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
+#if defined(VERSION_JP) || defined(VERSION_SH) || defined(VERSION_ML)
 ALIGNED8 static const u8 texture_hud_char_decimal_point[] = {
 #include "textures/segment2/segment2.05E00.rgba16.inc.c"
 };
 #endif
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
+#if defined(VERSION_JP) || defined(VERSION_SH) || defined(VERSION_ML)
 ALIGNED8 static const u8 texture_hud_char_beta_key[] = {
 #include "textures/segment2/segment2.06000.rgba16.inc.c"
 };
@@ -345,7 +345,7 @@ ALIGNED8 static const u8 texture_credits_char_period[] = {
 };
 
 // JP Small Font
-#if defined(VERSION_JP) || defined(VERSION_SH)
+#if defined(VERSION_JP) || defined(VERSION_SH) || defined(VERSION_ML)
 ALIGNED8 static const u8 texture_font_char_jp_0[] = {
 #include "textures/segment2/segment2.07100.ia1.inc.c"
 };
@@ -1007,7 +1007,7 @@ ALIGNED8 static const u8 texture_font_char_jp_ellipsis[] = {
 };
 
 // EU Small Font
-#elif defined(VERSION_EU)
+#elif defined(VERSION_EU) || defined(VERSION_ML)
 
 ALIGNED8 static const u8 texture_font_char_eu_0[] = {
 #include "textures/segment2/font_graphics.05F00.ia1.inc.c"
@@ -1410,7 +1410,7 @@ ALIGNED8 static const u8 texture_font_char_eu_eszeet[] = {
 };
 
 // US Small Font
-#else
+#elif defined(VERSION_US) || defined(VERSION_ML)
 ALIGNED8 static const u8 texture_font_char_us_0[] = {
 #include "textures/segment2/font_graphics.05900.ia4.inc.c"
 };
@@ -1833,6 +1833,20 @@ const u8 *const main_hud_lut[] = {
                   0x0,               0x0,               0x0,               0x0,
                   0x0,               0x0, texture_hud_char_multiply, texture_hud_char_coin,
     texture_hud_char_mario_head, texture_hud_char_star,               0x0,               0x0,
+    texture_hud_char_apostrophe, texture_hud_char_double_quote,
+#elif defined(VERSION_ML)
+    texture_hud_char_0, texture_hud_char_1, texture_hud_char_2, texture_hud_char_3,
+    texture_hud_char_4, texture_hud_char_5, texture_hud_char_6, texture_hud_char_7,
+    texture_hud_char_8, texture_hud_char_9, texture_hud_char_A, texture_hud_char_B,
+    texture_hud_char_C, texture_hud_char_D, texture_hud_char_E, texture_hud_char_F,
+    texture_hud_char_G, texture_hud_char_H, texture_hud_char_I, texture_hud_char_J,
+    texture_hud_char_K, texture_hud_char_L, texture_hud_char_M, texture_hud_char_N,
+    texture_hud_char_O, texture_hud_char_P, texture_hud_char_Q, texture_hud_char_R,
+    texture_hud_char_S, texture_hud_char_T, texture_hud_char_U, texture_hud_char_V,
+    texture_hud_char_W, texture_hud_char_X, texture_hud_char_Y, texture_hud_char_Z,
+    texture_hud_char_exclamation, texture_hud_char_double_exclamation, texture_hud_char_question, texture_hud_char_ampersand,
+    texture_hud_char_percent,          0x0, texture_hud_char_multiply, texture_hud_char_coin,
+    texture_hud_char_mario_head, texture_hud_char_star, texture_hud_char_decimal_point, texture_hud_char_beta_key,
     texture_hud_char_apostrophe, texture_hud_char_double_quote,
 #else
     texture_hud_char_0, texture_hud_char_1, texture_hud_char_2, texture_hud_char_3,

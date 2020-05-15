@@ -1,7 +1,8 @@
-#ifndef TEXT_STRINGS_H
-#define TEXT_STRINGS_H
+#ifndef TEXT_STRINGS_ML_H
+#define TEXT_STRINGS_ML_H
 
 #include "text_menu_strings.h"
+#include "text_strings_ml_jp.h"
 
 #define NC_CAMX 				_("Camera X Sensitivity")
 #define NC_CAMY 				_("Camera Y Sensitivity")
@@ -39,122 +40,6 @@
 // Ingame Menu
 #define TEXT_PAUSE _("PAUSE") // Pause text, Castle Courses
 #define TEXT_HUD_CONGRATULATIONS _("CONGRATULATIONS") // Course Complete Text, Bowser Courses
-
-#if defined(VERSION_JP) || defined(VERSION_SH)
-
-/**
- * File Select Text
- */
-// Main Screens
-// JPHUD menu strings are defined in "text_menu_strings.h.in"
-#define TEXT_MARIO_JP TEXT_JPHUD_MARIO // View Score Menu
-#define TEXT_SELECT_FILE_JP TEXT_JPHUD_SELECT_FILE
-#define TEXT_CHECK_FILE_JP TEXT_JPHUD_CHECK_FILE
-#define TEXT_COPY_FILE_JP TEXT_JPHUD_COPY_FILE
-#define TEXT_ERASE_FILE_JP TEXT_JPHUD_ERASE_FILE
-#define TEXT_SOUND_SELECT_JP TEXT_JPHUD_SOUND_SELECT
-
-#define TEXT_FILE_MARIO_A_JP _("マリオＡ")
-#define TEXT_FILE_MARIO_B_JP _("マリオＢ")
-#define TEXT_FILE_MARIO_C_JP _("マリオＣ")
-#define TEXT_FILE_MARIO_D_JP _("マリオＤ")
-
-// Menu Options
-#define TEXT_SCORE_JP _("スコア")
-#define TEXT_COPY_JP _("コピー")
-#define TEXT_ERASE_JP _("けす")
-
-// Sound Options
-#define TEXT_STEREO_JP _("ステレオ")
-#define TEXT_MONO_JP _("モノラル")
-#define TEXT_HEADSET_JP _("ヘッドホン")
-
-// Misc Menu Text
-#define TEXT_SAVED_DATA_EXISTS_JP _("ファイルにデータがはいってます")
-#define TEXT_NO_SAVED_DATA_EXISTS_JP _("ファイルにデータがありません")
-
-// Inside a Menu
-#define TEXT_RETURN_JP _("もどる")
-#define TEXT_CHECK_SCORE_JP _("スコアをみる")
-#define TEXT_COPY_FILE_BUTTON_JP _("ファイルコピー")
-#define TEXT_ERASE_FILE_BUTTON_JP _("ファイルけす")
-
-// Score Menu
-#define TEXT_HI_SCORE_JP _("ハイスコア")
-#define TEXT_MY_SCORE_JP _("マイスコア")
-#define TEXT_SCORE_MARIO_A_JP _("マリオＡ")
-#define TEXT_SCORE_MARIO_B_JP _("マリオＢ")
-#define TEXT_SCORE_MARIO_C_JP _("マリオＣ")
-#define TEXT_SCORE_MARIO_D_JP _("マリオＤ")
-
-// Copy Menu
-#define TEXT_COPY_IT_TO_WHERE_JP _("どこにコピーしますか？")
-#define TEXT_COPYING_COMPLETED_JP _("コピーおわりました")
-#define TEXT_NO_FILE_TO_COPY_FROM_JP _("からのファイルがありません")
-
-// Erase Menu
-#define TEXT_SURE_JP _("ほんと？")
-#define TEXT_YES_JP _("はい")
-#define TEXT_NO_JP _("いいえ")
-#define TEXT_FILE_MARIO_A_JUST_ERASED_JP _("マリオＡをけしました")
-
-/**
- * Menus Text (Pause, Course Completed)
- */
-// Main Courses
-#define TEXT_COURSE_JP _("コース")
-#define TEXT_MYSCORE_JP _("マイスコア")
-#define TEXT_CONTINUE_JP _("つづけて　マリオする？")
-#define TEXT_EXIT_COURSE_JP _("コースからでる？")
-#define TEXT_CAMERA_ANGLE_R_JP _("Ｒボタンのカメラきりかえ")
-
-// Camera Options
-#define TEXT_LAKITU_MARIO_JP _("ジュゲム↔マリオ")
-#define TEXT_LAKITU_STOP_JP _("ジュゲム↔ストップ")
-#define TEXT_NORMAL_UPCLOSE_JP _("（おすすめ）（リアル）")
-#define TEXT_NORMAL_FIXED_JP _("（おすすめ）（とまる）")
-
-// Course Completed Misc Text
-#define TEXT_CATCH_JP _("キャッチ！")
-#define TEXT_CLEAR_JP _("クリア！")
-#define TEXT_HUD_HI_SCORE_JP _("ＨＩＳＣＯＲＥ")
-//#define TEXT_HUD_CONGRATULATIONS_JP("おめでとう") // this bugs out the compiler for some reason
-
-// Save Options
-#define TEXT_SAVE_AND_CONTINUE_JP _("セーブしてつづける？")
-#define TEXT_SAVE_AND_QUIT_JP _("セーブしておわる？")
-#define TEXT_CONTINUE_WITHOUT_SAVING_JP _("セーブしないでつづける？")
-
-/**
- * Ending Peach cutscene text.
- */
-#define TEXT_FILE_MARIO_EXCLAMATION_JP _("マリオ！！")
-#define TEXT_POWER_STARS_RESTORED_JP _("おしろにスターが　もどったのね")
-#define TEXT_THANKS_TO_YOU_JP _("みんな　あなたのおかげだわ！")
-#define TEXT_THANK_YOU_MARIO_JP _("ありがとう　マリオ")
-#define TEXT_SOMETHING_SPECIAL_JP _("なにか　おれいをしなくちゃ・・")
-#define TEXT_LISTEN_EVERYBODY_JP _("さあ　みんな")
-#define TEXT_LETS_HAVE_CAKE_JP _("おいしいケーキを　やきましょう")
-#define TEXT_FOR_MARIO_JP _("マリオの　ために・・・")
-#define TEXT_FILE_MARIO_QUESTION_JP _("マリオ？")
-
-/**
- * Debug screen text.
- */
-#define TEXT_DEBUG_STAGE_SELECT_JP _("ＳＴＡＧＥ　ＳＥＬＥＣＴ")
-#define TEXT_DEBUG_CONTINUE_JP _("　つづける？")
-#define TEXT_DEBUG_MAP_1_JP _("　１　マウンテン")
-#define TEXT_DEBUG_MAP_2_JP _("　２　ファイアーバブル")
-#define TEXT_DEBUG_MAP_3_JP _("　３　スノースライダー")
-#define TEXT_DEBUG_MAP_4_JP _("　４　ウォーターランド")
-#define TEXT_DEBUG_MAP_5_JP _("　　　クッパ１ごう")
-#define TEXT_DEBUG_RETURN_JP _("　もどる")
-#define TEXT_DEBUG_PAUSE_JP _("ＰＡＵＳＥ　　　　")
-#define TEXT_DEBUG_STOP_JP _("　やめる　？")
-
-#endif
-
-#if defined(VERSION_US) || defined(VERSION_EU)
 
 /**
  * File Select Text
@@ -217,9 +102,7 @@
 #define TEXT_MYSCORE _("MYSCORE")
 #define TEXT_CONTINUE _("CONTINUE")
 #define TEXT_EXIT_COURSE _("EXIT COURSE")
-#if !defined(VERSION_EU) // "R" text is different in EU
 #define TEXT_CAMERA_ANGLE_R _("SET CAMERA ANGLE WITH R")
-#endif
 
 // Camera Options
 #define TEXT_LAKITU_MARIO _("LAKITU + MARIO")
@@ -231,6 +114,9 @@
 #define TEXT_CATCH _("CATCH")
 #define TEXT_CLEAR _("CLEAR")
 #define TEXT_HUD_HI_SCORE _("HI SCORE")
+
+// High Score JP Text
+#define TEXT_HUD_HI_SCORE_JP _("ＨＩＳＣＯＲＥ")
 
 // Save Options
 #define TEXT_SAVE_AND_CONTINUE _("SAVE & CONTINUE")
@@ -253,6 +139,8 @@
 /**
  * Debug screen text.
  */
+#define TEXT_DEBUG_STAGE_SELECT_JP _("ＳＴＡＧＥ　ＳＥＬＥＣＴ")
+#define TEXT_DEBUG_PAUSE_JP _("ＰＡＵＳＥ　　　　")
 #define TEXT_DEBUG_STAGE_SELECT _("STAGE SELECT")
 #define TEXT_DEBUG_CONTINUE _("CONTINUE?")
 #define TEXT_DEBUG_MAP_1 _("1 COOL COOL MOUNTAIN")
@@ -263,10 +151,6 @@
 #define TEXT_DEBUG_RETURN _("RETURN")
 #define TEXT_DEBUG_PAUSE _("PAUSE")
 #define TEXT_DEBUG_STOP _("STOP?")
-
-#endif
-
-#if defined(VERSION_EU) || defined(VERSION_ML)
 
 /**
  * File Select Text
@@ -341,9 +225,6 @@
 #define TEXT_LANGUAGE_SELECT _("LANGUAGE SELECT")  // new in EU
 #define TEXT_LANGUAGE_SELECT_FR _("SELECTION LANGUE")
 #define TEXT_LANGUAGE_SELECT_DE _("WwHLE SPRACHE")
-#ifdef VERSION_ML
-#define TEXT_LANGUAGE_SELECT_JP _("げんごセレクト")
-#endif
 
 #define TEXT_STEREO_FR _("STÉRÉO")
 #define TEXT_MONO_FR _("MONO")
@@ -353,12 +234,10 @@
 #define TEXT_MONO_DE _("MONO")
 #define TEXT_HEADSET_DE _("PHONES")
 
-#define TEXT_ENGLISH _("ENGLISH")
+#define TEXT_US_ENGLISH _("US ENGLISH")
+#define TEXT_UK_ENGLISH _("UK ENGLISH")
 #define TEXT_FRENCH _("FRANÇAIS")
 #define TEXT_GERMAN _("DEUTSCH")
-#ifdef VERSION_ML
-#define TEXT_JAPANESE _("にほんご")
-#endif
 
 #define TEXT_HI_SCORE_FR _("MEILLEUR SCORE")
 #define TEXT_HI_SCORE_DE _("BESTLEISTUNG")
@@ -518,6 +397,4 @@
 #define TEXT_MENU_SA_DE _("   VERSTECKTES AQUARIUM")
 #define TEXT_MENU_NONE_DE _("")
 #define TEXT_MENU_STARS_DE _("   GEHEIME STERNE")
-#endif
-
 #endif

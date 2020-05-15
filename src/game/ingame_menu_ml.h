@@ -1,5 +1,5 @@
-#ifndef INGAME_MENU_H
-#define INGAME_MENU_H
+#ifndef INGAME_MENU_ML_H
+#define INGAME_MENU_ML_H
 
 #include "types.h"
 
@@ -55,15 +55,16 @@ enum SpecialFontChars {
     GLOBAR_CHAR_TERMINATOR = 0xFF
 };
 
-// definitions for some of the special characters defined in charmap.txt
+// definitions for some of the special characters defined in charmap_ml.txt
 enum DialogSpecialChars {
-#ifdef VERSION_EU
-    DIALOG_CHAR_LOWER_A_GRAVE = 0x60,      // 'a' grave
-    DIALOG_CHAR_LOWER_A_CIRCUMFLEX = 0x61, // 'a' circumflex
-    DIALOG_CHAR_LOWER_A_UMLAUT = 0x62,     // 'a' umlaut
-    DIALOG_CHAR_UPPER_A_GRAVE = 0x64,      // 'A' grave
-    DIALOG_CHAR_UPPER_A_CIRCUMFLEX = 0x65, // 'A' circumflex
-    DIALOG_CHAR_UPPER_A_UMLAUT = 0x66,     // 'A' umlaut
+    DIALOG_CHAR_LOWER_A_GRAVE = 0x68,      // 'a' grave
+    DIALOG_CHAR_LOWER_A_CIRCUMFLEX = 0x69, // 'a' circumflex
+    DIALOG_CHAR_LOWER_A_UMLAUT = 0x6A,     // 'a' umlaut
+    DIALOG_CHAR_LOWER_A_ACUTE = 0x6B,      // 'a' acute
+    DIALOG_CHAR_UPPER_A_GRAVE = 0x6C,      // 'A' grave
+    DIALOG_CHAR_UPPER_A_CIRCUMFLEX = 0x6D, // 'A' circumflex
+    DIALOG_CHAR_UPPER_A_UMLAUT = 0x6E,     // 'A' umlaut
+    DIALOG_CHAR_UPPER_A_ACUTE = 0x6F,      // 'A' acute
     DIALOG_CHAR_LOWER_E_GRAVE = 0x70,      // 'e' grave
     DIALOG_CHAR_LOWER_E_CIRCUMFLEX = 0x71, // 'e' circumflex
     DIALOG_CHAR_LOWER_E_UMLAUT = 0x72,     // 'e' umlaut
@@ -72,35 +73,48 @@ enum DialogSpecialChars {
     DIALOG_CHAR_UPPER_E_CIRCUMFLEX = 0x75, // 'E' circumflex
     DIALOG_CHAR_UPPER_E_UMLAUT = 0x76,     // 'E' umlaut
     DIALOG_CHAR_UPPER_E_ACUTE = 0x77,      // 'E' acute
-    DIALOG_CHAR_LOWER_U_GRAVE = 0x80,      // 'u' grave
-    DIALOG_CHAR_LOWER_U_CIRCUMFLEX = 0x81, // 'u' circumflex
-    DIALOG_CHAR_LOWER_U_UMLAUT = 0x82,     // 'u' umlaut
-    DIALOG_CHAR_UPPER_U_GRAVE = 0x84,      // 'U' grave
-    DIALOG_CHAR_UPPER_U_CIRCUMFLEX = 0x85, // 'U' circumflex
-    DIALOG_CHAR_UPPER_U_UMLAUT = 0x86,     // 'U' umlaut
-    DIALOG_CHAR_LOWER_O_CIRCUMFLEX = 0x91, // 'o' circumflex
-    DIALOG_CHAR_LOWER_O_UMLAUT = 0x92,     // 'o' umlaut
-    DIALOG_CHAR_UPPER_O_CIRCUMFLEX = 0x95, // 'O' circumflex
-    DIALOG_CHAR_UPPER_O_UMLAUT = 0x96,     // 'O' umlaut
-    DIALOG_CHAR_LOWER_I_CIRCUMFLEX = 0xA1, // 'i' circumflex
-    DIALOG_CHAR_LOWER_I_UMLAUT = 0xA2,     // 'i' umlaut
-    DIALOG_CHAR_I_NO_DIA = 0xEB,           // 'i' without diacritic
-    DIALOG_CHAR_DOUBLE_LOW_QUOTE = 0xF0,   // German opening quotation mark
-#endif
-#if defined(VERSION_US) || defined(VERSION_EU)
-    DIALOG_CHAR_SLASH = 0xD0,
-    DIALOG_CHAR_MULTI_THE = 0xD1, // 'the'
-    DIALOG_CHAR_MULTI_YOU = 0xD2, // 'you'
-#endif
-    DIALOG_CHAR_PERIOD = 0x6E,
-    DIALOG_CHAR_COMMA = 0x6F,
-    DIALOG_CHAR_SPACE = 0x9E,
-    DIALOG_CHAR_STAR_COUNT = 0xE0, // number of stars
+    DIALOG_CHAR_LOWER_U_GRAVE = 0x78,      // 'u' grave
+    DIALOG_CHAR_LOWER_U_CIRCUMFLEX = 0x79, // 'u' circumflex
+    DIALOG_CHAR_LOWER_U_UMLAUT = 0x7A,     // 'u' umlaut
+    DIALOG_CHAR_LOWER_U_ACUTE = 0x7B,      // 'u' acute
+    DIALOG_CHAR_UPPER_U_GRAVE = 0x7C,      // 'U' grave
+    DIALOG_CHAR_UPPER_U_CIRCUMFLEX = 0x7D, // 'U' circumflex
+    DIALOG_CHAR_UPPER_U_UMLAUT = 0x7E,     // 'U' umlaut
+    DIALOG_CHAR_UPPER_U_ACUTE = 0x7F,      // 'U' acute
+    DIALOG_CHAR_LOWER_O_GRAVE = 0x80,      // 'o' grave
+    DIALOG_CHAR_LOWER_O_CIRCUMFLEX = 0x81, // 'o' circumflex
+    DIALOG_CHAR_LOWER_O_UMLAUT = 0x82,     // 'o' umlaut
+    DIALOG_CHAR_LOWER_O_ACUTE = 0x83,      // 'o' acute
+    DIALOG_CHAR_UPPER_O_GRAVE = 0x84,      // 'O' grave
+    DIALOG_CHAR_UPPER_O_CIRCUMFLEX = 0x85, // 'O' circumflex
+    DIALOG_CHAR_UPPER_O_UMLAUT = 0x86,     // 'O' umlaut
+    DIALOG_CHAR_UPPER_O_ACUTE = 0x87,      // 'O' acute
+    DIALOG_CHAR_LOWER_I_GRAVE = 0x88,      // 'i' grave
+    DIALOG_CHAR_LOWER_I_CIRCUMFLEX = 0x89, // 'i' circumflex
+    DIALOG_CHAR_LOWER_I_UMLAUT = 0x8A,     // 'i' umlaut
+    DIALOG_CHAR_LOWER_I_ACUTE = 0x8B,      // 'i' acute
+    DIALOG_CHAR_UPPER_I_GRAVE = 0x8C,      // 'I' grave
+    DIALOG_CHAR_UPPER_I_CIRCUMFLEX = 0x8D, // 'I' circumflex
+    DIALOG_CHAR_UPPER_I_UMLAUT = 0x8E,     // 'I' umlaut
+    DIALOG_CHAR_UPPER_I_ACUTE = 0x8F,      // 'I' acute
+    DIALOG_CHAR_LOWER_N_TILDE = 0x90,      // 'n' with tilde
+    DIALOG_CHAR_UPPER_N_TILDE = 0x91,      // 'N' with tilde
+    DIALOG_CHAR_UPSIDE_DOWN_EXCLAMATION_MARK = 0x92, // ¡
+    DIALOG_CHAR_UPSIDE_DOWN_QUESTION_MARK = 0x93, // ¿
+    DIALOG_CHAR_I_NO_DIA = 0x2C,           // 'i' without diacritic
+    DIALOG_CHAR_DOUBLE_LOW_QUOTE = 0x97,   // German opening quotation mark
+    DIALOG_CHAR_SLASH = 0x65,
+    DIALOG_CHAR_MULTI_THE = 0x66, // 'the'
+    DIALOG_CHAR_MULTI_YOU = 0x67, // 'you'
+    DIALOG_CHAR_PERIOD = 0x3F,
+    DIALOG_CHAR_COMMA = 0x5A,
+    DIALOG_CHAR_SPACE = 0x40,
+    DIALOG_CHAR_STAR_COUNT = 0x42, // number of stars
     DIALOG_CHAR_UMLAUT = 0xE9,
-    DIALOG_CHAR_DAKUTEN = 0xF0,
-    DIALOG_CHAR_PERIOD_OR_HANDAKUTEN = 0xF1,
-    DIALOG_CHAR_STAR_FILLED = 0xFA,
-    DIALOG_CHAR_STAR_OPEN = 0xFD,
+    DIALOG_CHAR_DAKUTEN = 0x4A,
+    DIALOG_CHAR_PERIOD_OR_HANDAKUTEN = 0x4B,
+    DIALOG_CHAR_STAR_FILLED = 0x54,
+    DIALOG_CHAR_STAR_OPEN = 0x57,
     DIALOG_CHAR_NEWLINE = 0xFE,
     DIALOG_CHAR_TERMINATOR = 0xFF
 };

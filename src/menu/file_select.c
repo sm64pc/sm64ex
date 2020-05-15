@@ -16,12 +16,20 @@
 #include "engine/graph_node.h"
 #include "engine/math_util.h"
 #include "behavior_data.h"
-#include "text_strings.h"
+#if !defined(VERSION_ML)
+    #include "text_strings.h"
+#else
+    #include "text_strings_ml.h"
+    #include "text_strings_ml_jp.h"
+#endif
 #include "file_select.h"
 #include "dialog_ids.h"
 
-#include "eu_translation.h"
-#include "ml_translations.h"
+#if defined(VERSION_EU)
+    #include "eu_translation.h"
+#elif defined(VERSION_ML)
+    #include "ml_translations.h"
+#endif
 #if defined(VERSION_EU) || defined(VERSION_ML)
 #undef LANGUAGE_FUNCTION
 #define LANGUAGE_FUNCTION sLanguageMode
@@ -66,7 +74,7 @@ static struct Object *sMainMenuButtons[NUM_BUTTONS];
 static u8 sYesNoColor[2];
 
 // Unused variable that is written to define centered X value for some strings.
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
 static s16 sCenteredX;
 #endif
 
@@ -146,9 +154,19 @@ static unsigned char textReturn[] = { TEXT_RETURN_JP };
 #elif VERSION_US
 static unsigned char textReturn[] = { TEXT_RETURN };
 #elif VERSION_EU
-static unsigned char textReturn[][8] = {{ TEXT_RETURN }, { TEXT_RETURN_FR }, { TEXT_RETURN_DE }};
+static unsigned char textReturn[][8] = {
+    { TEXT_RETURN },
+    { TEXT_RETURN_FR },
+    { TEXT_RETURN_DE }
+};
 #elif VERSION_ML 
-static unsigned char textReturn[][8] = {{ TEXT_RETURN }, { TEXT_RETURN }, { TEXT_RETURN_JP }, { TEXT_RETURN_FR }, { TEXT_RETURN_DE }};
+static unsigned char textReturn[][8] = {
+    { TEXT_RETURN },
+    { TEXT_RETURN },
+    { TEXT_RETURN_JP },
+    { TEXT_RETURN_FR },
+    { TEXT_RETURN_DE }
+};
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -156,9 +174,19 @@ static unsigned char textviewScore[] = { TEXT_CHECK_SCORE_JP };
 #elif VERSION_US
 static unsigned char textviewScore[] = { TEXT_CHECK_SCORE };
 #elif VERSION_EU
-static unsigned char textViewScore[][12] = {{ TEXT_CHECK_SCORE }, { TEXT_CHECK_SCORE_FR }, { TEXT_CHECK_SCORE_DE }};
+static unsigned char textViewScore[][12] = {
+    { TEXT_CHECK_SCORE },
+    { TEXT_CHECK_SCORE_FR },
+    { TEXT_CHECK_SCORE_DE }
+};
 #elif VERSION_ML
-static unsigned char textViewScore[][12] = {{ TEXT_CHECK_SCORE }, { TEXT_CHECK_SCORE }, { TEXT_CHECK_SCORE_JP }, { TEXT_CHECK_SCORE_FR }, { TEXT_CHECK_SCORE_DE }};
+static unsigned char textViewScore[][12] = {
+    { TEXT_CHECK_SCORE },
+    { TEXT_CHECK_SCORE },
+    { TEXT_CHECK_SCORE_JP },
+    { TEXT_CHECK_SCORE_FR },
+    { TEXT_CHECK_SCORE_DE }
+};
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -166,9 +194,19 @@ static unsigned char textCopyFileButton[] = { TEXT_COPY_FILE_JP };
 #elif VERSION_US
 static unsigned char textCopyFileButton[] = { TEXT_COPY_FILE };
 #elif VERSION_EU
-static unsigned char textCopyFileButton[][15] = {{ TEXT_COPY_FILE }, { TEXT_COPY_FILE_FR }, { TEXT_COPY_FILE_DE }};
+static unsigned char textCopyFileButton[][15] = {
+    { TEXT_COPY_FILE },
+    { TEXT_COPY_FILE_FR },
+    { TEXT_COPY_FILE_DE }
+};
 #elif VERSION_ML
-static unsigned char textCopyFileButton[][15] = {{ TEXT_COPY_FILE }, { TEXT_COPY_FILE }, { TEXT_COPY_FILE_JP }, { TEXT_COPY_FILE_FR }, { TEXT_COPY_FILE_DE }};
+static unsigned char textCopyFileButton[][15] = {
+    { TEXT_COPY_FILE },
+    { TEXT_COPY_FILE },
+    { TEXT_COPY_FILE_JP },
+    { TEXT_COPY_FILE_FR },
+    { TEXT_COPY_FILE_DE }
+};
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -176,9 +214,19 @@ static unsigned char textEraseFileButton[] = { TEXT_ERASE_FILE_JP };
 #elif VERSION_US
 static unsigned char textEraseFileButton[] = { TEXT_ERASE_FILE };
 #elif VERSION_EU
-static unsigned char textEraseFileButton[][16] = {{ TEXT_ERASE_FILE }, { TEXT_ERASE_FILE_FR }, { TEXT_ERASE_FILE_DE }};
+static unsigned char textEraseFileButton[][16] = {
+    { TEXT_ERASE_FILE },
+    { TEXT_ERASE_FILE_FR },
+    { TEXT_ERASE_FILE_DE }
+};
 #elif VERSION_ML
-static unsigned char textEraseFileButton[][16] = {{ TEXT_ERASE_FILE }, { TEXT_ERASE_FILE }, { TEXT_ERASE_FILE_JP }, { TEXT_ERASE_FILE_FR }, { TEXT_ERASE_FILE_DE }};
+static unsigned char textEraseFileButton[][16] = {
+    { TEXT_ERASE_FILE },
+    { TEXT_ERASE_FILE },
+    { TEXT_ERASE_FILE_JP },
+    { TEXT_ERASE_FILE_FR },
+    { TEXT_ERASE_FILE_DE }
+};
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -212,14 +260,52 @@ static unsigned char textMarioB[] = { TEXT_FILE_MARIO_B };
 static unsigned char textMarioC[] = { TEXT_FILE_MARIO_C };
 static unsigned char textMarioD[] = { TEXT_FILE_MARIO_D };
 #elif VERSION_ML
-static unsigned char textMarioA[] = {{ TEXT_FILE_MARIO_A }, { TEXT_FILE_MARIO_A }, { TEXT_FILE_MARIO_A_JP }, { TEXT_FILE_MARIO_A }, { TEXT_FILE_MARIO_A }};
-static unsigned char textMarioB[] = {{ TEXT_FILE_MARIO_B }, { TEXT_FILE_MARIO_A }, { TEXT_FILE_MARIO_B_JP }, { TEXT_FILE_MARIO_B }, { TEXT_FILE_MARIO_B }};
-static unsigned char textMarioC[] = {{ TEXT_FILE_MARIO_C }, { TEXT_FILE_MARIO_A }, { TEXT_FILE_MARIO_C_JP }, { TEXT_FILE_MARIO_C }, { TEXT_FILE_MARIO_C }};
-static unsigned char textMarioD[] = {{ TEXT_FILE_MARIO_D }, { TEXT_FILE_MARIO_A }, { TEXT_FILE_MARIO_D_JP }, { TEXT_FILE_MARIO_D }, { TEXT_FILE_MARIO_D }};
+static unsigned char textMarioA[][8] = {
+    { TEXT_FILE_MARIO_A },
+    { TEXT_FILE_MARIO_A },
+    { TEXT_FILE_MARIO_A_JP },
+    { TEXT_FILE_MARIO_A },
+    { TEXT_FILE_MARIO_A },
+};
+static unsigned char textMarioB[][8] = {
+    { TEXT_FILE_MARIO_B },
+    { TEXT_FILE_MARIO_B },
+    { TEXT_FILE_MARIO_B_JP },
+    { TEXT_FILE_MARIO_B },
+    { TEXT_FILE_MARIO_B },
+};
+static unsigned char textMarioC[][8] = {
+    { TEXT_FILE_MARIO_C },
+    { TEXT_FILE_MARIO_C },
+    { TEXT_FILE_MARIO_C_JP },
+    { TEXT_FILE_MARIO_C },
+    { TEXT_FILE_MARIO_C }
+};
+static unsigned char textMarioD[][8] = {
+    { TEXT_FILE_MARIO_D },
+    { TEXT_FILE_MARIO_D },
+    { TEXT_FILE_MARIO_D_JP },
+    { TEXT_FILE_MARIO_D },
+    { TEXT_FILE_MARIO_D }
+};
 #endif
 
-#ifndef VERSION_EU
+#if !defined (VERSION_EU) || !defined (VERSION_ML)
 static unsigned char textNew[] = { TEXT_NEW };
+#elif defined(VERSION_EU)
+static unsigned char textNew[][5] = {
+    { TEXT_NEW },
+    { TEXT_NEW_FR }, 
+    { TEXT_NEW_DE }
+};
+#elif defined(VERSION_ML)
+static unsigned char textNew[][5] = {
+    { TEXT_NEW },
+    { TEXT_NEW },
+    { TEXT_NEW },
+    { TEXT_NEW_FR },
+    { TEXT_NEW_DE }
+};
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -227,9 +313,19 @@ static unsigned char textSelectFile[] = { TEXT_SELECT_FILE_JP };
 #elif VERSION_US
 static unsigned char textSelectFile[] = { TEXT_SELECT_FILE };
 #elif VERSION_EU
-static unsigned char textSelectFile[][17] = {{ TEXT_SELECT_FILE }, { TEXT_SELECT_FILE_FR }, { TEXT_SELECT_FILE_DE }};
+static unsigned char textSelectFile[][17] = {
+    { TEXT_SELECT_FILE },
+    { TEXT_SELECT_FILE_FR },
+    { TEXT_SELECT_FILE_DE }
+};
 #elif VERSION_ML
-static unsigned char textSelectFile[][17] = {{ TEXT_SELECT_FILE }, { TEXT_SELECT_FILE }, { TEXT_SELECT_FILE_JP }, { TEXT_SELECT_FILE_FR }, { TEXT_SELECT_FILE_DE }};
+static unsigned char textSelectFile[][17] = {
+    { TEXT_SELECT_FILE },
+    { TEXT_SELECT_FILE },
+    { TEXT_SELECT_FILE_JP },
+    { TEXT_SELECT_FILE_FR },
+    { TEXT_SELECT_FILE_DE }
+};
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -237,9 +333,19 @@ static unsigned char textScore[] = { TEXT_SCORE_JP };
 #elif VERSION_US
 static unsigned char textScore[] = { TEXT_SCORE };
 #elif VERSION_EU
-static unsigned char textScore[][9] = {{ TEXT_SCORE }, { TEXT_SCORE_FR }, { TEXT_SCORE_DE }};
+static unsigned char textScore[][9] = {
+    { TEXT_SCORE },
+    { TEXT_SCORE_FR },
+    { TEXT_SCORE_DE }
+};
 #elif VERSION_ML
-static unsigned char textScore[][9] = {{ TEXT_SCORE }, { TEXT_SCORE }, { TEXT_SCORE_JP }, { TEXT_SCORE_FR }, { TEXT_SCORE_DE }};
+static unsigned char textScore[][9] = {
+    { TEXT_SCORE },
+    { TEXT_SCORE },
+    { TEXT_SCORE_JP },
+    { TEXT_SCORE_FR },
+    { TEXT_SCORE_DE }
+};
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -247,9 +353,19 @@ static unsigned char textCopy[] = { TEXT_COPY_JP };
 #elif VERSION_US
 static unsigned char textCopy[] = { TEXT_COPY };
 #elif VERSION_EU
-static unsigned char textCopy[][9] = {{ TEXT_COPY }, { TEXT_COPY_FR }, { TEXT_COPY_DE }};
+static unsigned char textCopy[][9] = {
+    { TEXT_COPY },
+    { TEXT_COPY_FR },
+    { TEXT_COPY_DE }
+};
 #elif VERSION_ML
-static unsigned char textCopy[][9] = {{ TEXT_COPY }, { TEXT_COPY }, { TEXT_COPY_JP }, { TEXT_COPY_FR }, { TEXT_COPY_DE }};
+static unsigned char textCopy[][9] = {
+    { TEXT_COPY },
+    { TEXT_COPY },
+    { TEXT_COPY_JP },
+    { TEXT_COPY_FR },
+    { TEXT_COPY_DE }
+};
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -257,15 +373,34 @@ static unsigned char textErase[] = { TEXT_ERASE_JP };
 #elif VERSION_US
 static unsigned char textErase[] = { TEXT_ERASE };
 #elif VERSION_EU
-static unsigned char textErase[][8] = {{ TEXT_ERASE }, { TEXT_ERASE_FR }, { TEXT_ERASE_DE }};
+static unsigned char textErase[][8] = {
+    { TEXT_ERASE },
+    { TEXT_ERASE_FR },
+    { TEXT_ERASE_DE }
+};
 #elif VERSION_ML
-static unsigned char textErase[][8] = {{ TEXT_ERASE }, { TEXT_ERASE }, { TEXT_ERASE_JP }, { TEXT_ERASE_FR }, { TEXT_ERASE_DE }};
+static unsigned char textErase[][8] = {
+    { TEXT_ERASE },
+    { TEXT_ERASE },
+    { TEXT_ERASE_JP },
+    { TEXT_ERASE_FR },
+    { TEXT_ERASE_DE }
+};
 #endif
 
 #if defined(VERSION_EU)
-static unsigned char textOption[][9] = {{ TEXT_OPTION }, { TEXT_OPTION_FR }, { TEXT_OPTION_DE } };
+static unsigned char textOption[][9] = {
+    { TEXT_OPTION },
+    { TEXT_OPTION_FR },
+    { TEXT_OPTION_DE }
+};
 #elif VERSION_ML
-static unsigned char textOption[][9] = {{ TEXT_OPTION }, { TEXT_OPTION }, { TEXT_OPTION_JP }, { TEXT_OPTION_FR }, { TEXT_OPTION_DE } };
+static unsigned char textOption[][9] = {
+    { TEXT_OPTION },
+    { TEXT_OPTION },
+    { TEXT_OPTION_JP },
+    { TEXT_OPTION_FR },
+    { TEXT_OPTION_DE } };
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -273,9 +408,19 @@ static unsigned char textCheckFile[] = { TEXT_CHECK_FILE_JP };
 #elif VERSION_US
 static unsigned char textCheckFile[] = { TEXT_CHECK_FILE };
 #elif VERSION_EU
-static unsigned char textCheckFile[][18] = {{ TEXT_CHECK_FILE }, { TEXT_CHECK_FILE_FR }, { TEXT_CHECK_FILE_DE }};
+static unsigned char textCheckFile[][18] = {
+    { TEXT_CHECK_FILE },
+    { TEXT_CHECK_FILE_FR },
+    { TEXT_CHECK_FILE_DE }
+};
 #elif VERSION_ML
-static unsigned char textCheckFile[][18] = {{ TEXT_CHECK_FILE }, { TEXT_CHECK_FILE }, { TEXT_CHECK_FILE_JP }, { TEXT_CHECK_FILE_FR }, { TEXT_CHECK_FILE_DE }};
+static unsigned char textCheckFile[][18] = {
+    { TEXT_CHECK_FILE },
+    { TEXT_CHECK_FILE },
+    { TEXT_CHECK_FILE_JP },
+    { TEXT_CHECK_FILE_FR },
+    { TEXT_CHECK_FILE_DE }
+};
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -283,9 +428,19 @@ static unsigned char textNoSavedDataExists[] = { TEXT_NO_SAVED_DATA_EXISTS_JP };
 #elif VERSION_US
 static unsigned char textNoSavedDataExists[] = { TEXT_NO_SAVED_DATA_EXISTS };
 #elif VERSION_EU
-static unsigned char textNoSavedDataExists[][30] = {{ TEXT_NO_SAVED_DATA_EXISTS }, { TEXT_NO_SAVED_DATA_EXISTS_FR }, { TEXT_NO_SAVED_DATA_EXISTS_DE }};
+static unsigned char textNoSavedDataExists[][30] = {
+    { TEXT_NO_SAVED_DATA_EXISTS },
+    { TEXT_NO_SAVED_DATA_EXISTS_FR },
+    { TEXT_NO_SAVED_DATA_EXISTS_DE }
+};
 #elif VERSION_ML
-static unsigned char textNoSavedDataExists[][30] = {{ TEXT_NO_SAVED_DATA_EXISTS }, { TEXT_NO_SAVED_DATA_EXISTS }, { TEXT_NO_SAVED_DATA_EXISTS_JP }, { TEXT_NO_SAVED_DATA_EXISTS_FR }, { TEXT_NO_SAVED_DATA_EXISTS_DE }};
+static unsigned char textNoSavedDataExists[][30] = {
+    { TEXT_NO_SAVED_DATA_EXISTS },
+    { TEXT_NO_SAVED_DATA_EXISTS },
+    { TEXT_NO_SAVED_DATA_EXISTS_JP },
+    { TEXT_NO_SAVED_DATA_EXISTS_FR },
+    { TEXT_NO_SAVED_DATA_EXISTS_DE }
+};
 #endif
 
 #if defined(VERSION_JP) || (VERSION_SH)
@@ -293,9 +448,19 @@ static unsigned char textCopyFile[] = { TEXT_COPY_FILE_JP };
 #elif VERSION_US
 static unsigned char textCopyFile[] = { TEXT_COPY_FILE };
 #elif VERSION_EU
-static unsigned char textCopyFile[][16] = {{ TEXT_COPY_FILE }, { TEXT_COPY_FILE_BUTTON_FR }, { TEXT_COPY_FILE_BUTTON_DE }};
+static unsigned char textCopyFile[][16] = {
+    { TEXT_COPY_FILE },
+    { TEXT_COPY_FILE_BUTTON_FR },
+    { TEXT_COPY_FILE_BUTTON_DE }
+};
 #elif VERSION_ML
-static unsigned char textCopyFile[][16] = {{ TEXT_COPY_FILE }, { TEXT_COPY_FILE }, { TEXT_COPY_FILE_JP }, { TEXT_COPY_FILE_BUTTON_FR }, { TEXT_COPY_FILE_BUTTON_DE }};
+static unsigned char textCopyFile[][16] = {
+    { TEXT_COPY_FILE },
+    { TEXT_COPY_FILE },
+    { TEXT_COPY_FILE_JP },
+    { TEXT_COPY_FILE_BUTTON_FR },
+    { TEXT_COPY_FILE_BUTTON_DE }
+};
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -303,9 +468,19 @@ static unsigned char textCopyItToWhere[] = { TEXT_COPY_IT_TO_WHERE_JP };
 #elif VERSION_US
 static unsigned char textCopyItToWhere[] = { TEXT_COPY_IT_TO_WHERE };
 #elif VERSION_EU
-static unsigned char textCopyItToWhere[][18] = {{ TEXT_COPY_IT_TO_WHERE }, { TEXT_COPY_IT_TO_WHERE_FR }, { TEXT_COPY_IT_TO_WHERE_DE }};
+static unsigned char textCopyItToWhere[][18] = {
+    { TEXT_COPY_IT_TO_WHERE },
+    { TEXT_COPY_IT_TO_WHERE_FR },
+    { TEXT_COPY_IT_TO_WHERE_DE }
+};
 #elif VERSION_ML
-static unsigned char textCopyItToWhere[][18] = {{ TEXT_COPY_IT_TO_WHERE }, { TEXT_COPY_IT_TO_WHERE }, { TEXT_COPY_IT_TO_WHERE_JP }, { TEXT_COPY_IT_TO_WHERE_FR }, { TEXT_COPY_IT_TO_WHERE_DE }};
+static unsigned char textCopyItToWhere[][18] = {
+    { TEXT_COPY_IT_TO_WHERE },
+    { TEXT_COPY_IT_TO_WHERE },
+    { TEXT_COPY_IT_TO_WHERE_JP },
+    { TEXT_COPY_IT_TO_WHERE_FR },
+    { TEXT_COPY_IT_TO_WHERE_DE }
+};
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -313,7 +488,13 @@ static unsigned char textNoSavedDataExistsCopy[] = { TEXT_NO_SAVED_DATA_EXISTS_J
 #elif VERSION_US
 static unsigned char textNoSavedDataExistsCopy[] = { TEXT_NO_SAVED_DATA_EXISTS };
 #elif VERSION_ML
-static unsigned char textNoSavedDataExistsCopy[] = {{ TEXT_NO_SAVED_DATA_EXISTS }, { TEXT_NO_SAVED_DATA_EXISTS }, { TEXT_NO_SAVED_DATA_EXISTS_JP }, { TEXT_NO_SAVED_DATA_EXISTS_FR }, { TEXT_NO_SAVED_DATA_EXISTS_DE }};
+static unsigned char textNoSavedDataExistsCopy[][30] = {
+    { TEXT_NO_SAVED_DATA_EXISTS },
+    { TEXT_NO_SAVED_DATA_EXISTS },
+    { TEXT_NO_SAVED_DATA_EXISTS_JP },
+    { TEXT_NO_SAVED_DATA_EXISTS_FR },
+    { TEXT_NO_SAVED_DATA_EXISTS_DE }
+};
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -321,9 +502,19 @@ static unsigned char textCopyCompleted[] = { TEXT_COPYING_COMPLETED_JP };
 #elif VERSION_US
 static unsigned char textCopyCompleted[] = { TEXT_COPYING_COMPLETED };
 #elif VERSION_EU
-static unsigned char textCopyCompleted[][18] = {{ TEXT_COPYING_COMPLETED }, { TEXT_COPYING_COMPLETED_FR }, { TEXT_COPYING_COMPLETED_DE }};
+static unsigned char textCopyCompleted[][18] = {
+    { TEXT_COPYING_COMPLETED },
+    { TEXT_COPYING_COMPLETED_FR },
+    { TEXT_COPYING_COMPLETED_DE }
+};
 #elif VERSION_ML
-static unsigned char textCopyCompleted[][18] = {{ TEXT_COPYING_COMPLETED }, { TEXT_COPYING_COMPLETED }, { TEXT_COPYING_COMPLETED_JP }, { TEXT_COPYING_COMPLETED_FR }, { TEXT_COPYING_COMPLETED_DE }};
+static unsigned char textCopyCompleted[][18] = {
+    { TEXT_COPYING_COMPLETED },
+    { TEXT_COPYING_COMPLETED },
+    { TEXT_COPYING_COMPLETED_JP },
+    { TEXT_COPYING_COMPLETED_FR },
+    { TEXT_COPYING_COMPLETED_DE }
+};
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -331,9 +522,19 @@ static unsigned char textSavedDataExists[] = { TEXT_SAVED_DATA_EXISTS_JP };
 #elif VERSION_US
 static unsigned char textSavedDataExists[] = { TEXT_SAVED_DATA_EXISTS };
 #elif VERSION_EU
-static unsigned char textSavedDataExists[][20] = {{ TEXT_SAVED_DATA_EXISTS }, { TEXT_SAVED_DATA_EXISTS_FR }, { TEXT_SAVED_DATA_EXISTS_DE }};
+static unsigned char textSavedDataExists[][20] = {
+    { TEXT_SAVED_DATA_EXISTS },
+    { TEXT_SAVED_DATA_EXISTS_FR },
+    { TEXT_SAVED_DATA_EXISTS_DE }
+};
 #elif VERSION_ML
-static unsigned char textSavedDataExists[][20] = {{ TEXT_SAVED_DATA_EXISTS }, { TEXT_SAVED_DATA_EXISTS }, { TEXT_SAVED_DATA_EXISTS_JP }, { TEXT_SAVED_DATA_EXISTS_FR }, { TEXT_SAVED_DATA_EXISTS_DE }};
+static unsigned char textSavedDataExists[][20] = {
+    { TEXT_SAVED_DATA_EXISTS },
+    { TEXT_SAVED_DATA_EXISTS },
+    { TEXT_SAVED_DATA_EXISTS_JP },
+    { TEXT_SAVED_DATA_EXISTS_FR },
+    { TEXT_SAVED_DATA_EXISTS_DE }
+};
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -341,9 +542,19 @@ static unsigned char textNoFileToCopyFrom[] = { TEXT_NO_FILE_TO_COPY_FROM_JP };
 #elif VERSION_US
 static unsigned char textNoFileToCopyFrom[] = { TEXT_NO_FILE_TO_COPY_FROM };
 #elif VERSION_EU
-static unsigned char textNoFileToCopyFrom[][21] = {{ TEXT_NO_FILE_TO_COPY_FROM }, { TEXT_NO_FILE_TO_COPY_FROM_FR }, { TEXT_NO_FILE_TO_COPY_FROM_DE }};
+static unsigned char textNoFileToCopyFrom[][21] = {
+    { TEXT_NO_FILE_TO_COPY_FROM },
+    { TEXT_NO_FILE_TO_COPY_FROM_FR },
+    { TEXT_NO_FILE_TO_COPY_FROM_DE }
+};
 #elif VERSION_ML
-static unsigned char textNoFileToCopyFrom[][21] = {{ TEXT_NO_FILE_TO_COPY_FROM }, { TEXT_NO_FILE_TO_COPY_FROM }, { TEXT_NO_FILE_TO_COPY_FROM_JP }, { TEXT_NO_FILE_TO_COPY_FROM_FR }, { TEXT_NO_FILE_TO_COPY_FROM_DE }};
+static unsigned char textNoFileToCopyFrom[][21] = {
+    { TEXT_NO_FILE_TO_COPY_FROM },
+    { TEXT_NO_FILE_TO_COPY_FROM },
+    { TEXT_NO_FILE_TO_COPY_FROM_JP },
+    { TEXT_NO_FILE_TO_COPY_FROM_FR },
+    { TEXT_NO_FILE_TO_COPY_FROM_DE }
+};
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -351,9 +562,19 @@ static unsigned char textYes[] = { TEXT_YES_JP };
 #elif VERSION_US
 static unsigned char textYes[] = { TEXT_YES };
 #elif VERSION_EU
-static unsigned char textYes[][4] = {{ TEXT_YES }, { TEXT_YES_FR }, { TEXT_YES_DE }};
+static unsigned char textYes[][4] = {
+    { TEXT_YES },
+    { TEXT_YES_FR },
+    { TEXT_YES_DE }
+};
 #elif VERSION_ML
-static unsigned char textYes[][4] = {{ TEXT_YES }, { TEXT_YES }, { TEXT_YES_JP }, { TEXT_YES_FR }, { TEXT_YES_DE }};
+static unsigned char textYes[][4] = {
+    { TEXT_YES },
+    { TEXT_YES },
+    { TEXT_YES_JP },
+    { TEXT_YES_FR },
+    { TEXT_YES_DE }
+};
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -361,60 +582,180 @@ static unsigned char textNo[] = { TEXT_NO_JP };
 #elif VERSION_US
 static unsigned char textNo[] = { TEXT_NO };
 #elif VERSION_EU
-static unsigned char textNo[][5] = {{ TEXT_NO }, { TEXT_NO_FR }, { TEXT_NO_DE }};
+static unsigned char textNo[][5] = {
+    { TEXT_NO },
+    { TEXT_NO_FR },
+    { TEXT_NO_DE }
+};
 #elif VERSION_ML
-static unsigned char textNo[][5] = {{ TEXT_NO }, { TEXT_NO }, { TEXT_NO_JP }, { TEXT_NO_FR }, { TEXT_NO_DE }};
+static unsigned char textNo[][5] = {
+    { TEXT_NO },
+    { TEXT_NO },
+    { TEXT_NO_JP },
+    { TEXT_NO_FR },
+    { TEXT_NO_DE }
+};
 #endif
 
-#if defined(VERSION_EU)
-// In EU, Erase File and Sound Select strings are outside it's print string function
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textEraseFile[] = { TEXT_ERASE_FILE_JP };
+#elif VERSION_US
+static unsigned char textEraseFile[] = { TEXT_ERASE_FILE };
+#elif VERSION_EU
 static unsigned char textEraseFile[][17] = {
-    { TEXT_ERASE_FILE }, { TEXT_ERASE_FILE_BUTTON_FR }, { TEXT_ERASE_FILE_BUTTON_DE }
+    { TEXT_ERASE_FILE },
+    { TEXT_ERASE_FILE_BUTTON_FR },
+    { TEXT_ERASE_FILE_BUTTON_DE }
 };
-static unsigned char textSure[][8] = {{ TEXT_SURE }, { TEXT_SURE_FR }, { TEXT_SURE_DE }};
-static unsigned char textMarioAJustErased[][20] = {
-    { TEXT_FILE_MARIO_A_JUST_ERASED }, { TEXT_FILE_MARIO_A_JUST_ERASED_FR }, { TEXT_FILE_MARIO_A_JUST_ERASED_DE }
-};
-
-static unsigned char textSoundSelect[][13] = {
-    { TEXT_SOUND_SELECT }, { TEXT_SOUND_SELECT_FR }, { TEXT_SOUND_SELECT_DE }
-};
-
-static unsigned char textLanguageSelect[][17] = {
-    { TEXT_LANGUAGE_SELECT }, { TEXT_LANGUAGE_SELECT_FR }, { TEXT_LANGUAGE_SELECT_DE }
-};
-
-static unsigned char textLanguage[][9] = {{ TEXT_ENGLISH }, { TEXT_FRENCH }, { TEXT_GERMAN }};
-
-static unsigned char textMario[] = { TEXT_MARIO };
-static unsigned char textHiScore[][15] = {{ TEXT_HI_SCORE }, { TEXT_HI_SCORE_FR }, { TEXT_HI_SCORE_DE }};
-static unsigned char textMyScore[][10] = {{ TEXT_MY_SCORE }, { TEXT_MY_SCORE_FR }, { TEXT_MY_SCORE_DE }};
-
-static unsigned char textNew[][5] = {{ TEXT_NEW }, { TEXT_NEW_FR }, { TEXT_NEW_DE }};
 #elif VERSION_ML
 static unsigned char textEraseFile[][17] = {
-    { TEXT_ERASE_FILE }, { TEXT_ERASE_FILE }, { TEXT_ERASE_FILE_JP }, { TEXT_ERASE_FILE_BUTTON_FR }, { TEXT_ERASE_FILE_BUTTON_DE }
+    { TEXT_ERASE_FILE },
+    { TEXT_ERASE_FILE },
+    { TEXT_ERASE_FILE_JP },
+    { TEXT_ERASE_FILE_BUTTON_FR },
+    { TEXT_ERASE_FILE_BUTTON_DE }
 };
-static unsigned char textSure[][8] = {{ TEXT_SURE }, { TEXT_SURE_JP }, { TEXT_SURE_FR }, { TEXT_SURE_DE }};
+#endif
+
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textSure[] = { TEXT_SURE_JP };
+#elif VERSION_US
+static unsigned char textSure[] = { TEXT_SURE };
+#elif VERSION_EU
+static unsigned char textSure[][8] = {
+    { TEXT_SURE },
+    { TEXT_SURE_FR },
+    { TEXT_SURE_DE }
+};
+#elif VERSION_ML
+static unsigned char textSure[][8] = {
+    { TEXT_SURE },
+    { TEXT_SURE_JP },
+    { TEXT_SURE_FR },
+    { TEXT_SURE_DE }
+};
+#endif
+
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textMarioAJustErased[] = { TEXT_FILE_MARIO_A_JUST_ERASED_JP };
+#elif VERSION_US
+static unsigned char textMarioAJustErased[] = { TEXT_FILE_MARIO_A_JUST_ERASED };
+#elif VERSION_EU
 static unsigned char textMarioAJustErased[][20] = {
-    { TEXT_FILE_MARIO_A_JUST_ERASED }, { TEXT_FILE_MARIO_A_JUST_ERASED }, { TEXT_FILE_MARIO_A_JUST_ERASED_JP }, { TEXT_FILE_MARIO_A_JUST_ERASED_FR }, { TEXT_FILE_MARIO_A_JUST_ERASED_DE }
+    { TEXT_FILE_MARIO_A_JUST_ERASED },
+    { TEXT_FILE_MARIO_A_JUST_ERASED_FR },
+    { TEXT_FILE_MARIO_A_JUST_ERASED_DE }
 };
+#elif VERSION_ML
+static unsigned char textMarioAJustErased[][20] = {
+    { TEXT_FILE_MARIO_A_JUST_ERASED },
+    { TEXT_FILE_MARIO_A_JUST_ERASED },
+    { TEXT_FILE_MARIO_A_JUST_ERASED_JP },
+    { TEXT_FILE_MARIO_A_JUST_ERASED_FR },
+    { TEXT_FILE_MARIO_A_JUST_ERASED_DE }
+};
+#endif
 
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textSoundSelect[] = { TEXT_SOUND_SELECT_JP };
+#elif VERSION_US
+static unsigned char textSoundSelect[] = { TEXT_SOUND_SELECT };
+#elif VERSION_EU
 static unsigned char textSoundSelect[][13] = {
-    { TEXT_SOUND_SELECT }, { TEXT_SOUND_SELECT }, { TEXT_SOUND_SELECT_JP }, { TEXT_SOUND_SELECT_FR }, { TEXT_SOUND_SELECT_DE }
+    { TEXT_SOUND_SELECT },
+    { TEXT_SOUND_SELECT_FR },
+    { TEXT_SOUND_SELECT_DE }
 };
+#elif VERSION_ML
+static unsigned char textSoundSelect[][13] = {
+    { TEXT_SOUND_SELECT },
+    { TEXT_SOUND_SELECT },
+    { TEXT_SOUND_SELECT_JP },
+    { TEXT_SOUND_SELECT_FR },
+    { TEXT_SOUND_SELECT_DE }
+};
+#endif
 
+#ifdef VERSION_EU
 static unsigned char textLanguageSelect[][17] = {
-    { TEXT_LANGUAGE_SELECT }, { TEXT_LANGUAGE_SELECT }, { TEXT_LANGUAGE_SELECT_JP }, { TEXT_LANGUAGE_SELECT_FR }, { TEXT_LANGUAGE_SELECT_DE }
+    { TEXT_LANGUAGE_SELECT },
+    { TEXT_LANGUAGE_SELECT_FR },
+    { TEXT_LANGUAGE_SELECT_DE }
 };
+#elif VERSION_ML
+static unsigned char textLanguageSelect[][17] = {
+    { TEXT_LANGUAGE_SELECT },
+    { TEXT_LANGUAGE_SELECT },
+    { TEXT_LANGUAGE_SELECT_JP },
+    { TEXT_LANGUAGE_SELECT_FR },
+    { TEXT_LANGUAGE_SELECT_DE }
+};
+#endif
 
-static unsigned char textLanguage[][9] = {{ TEXT_US_ENGLISH }, { TEXT_UK_ENGLISH }, { TEXT_JAPANESE }, { TEXT_FRENCH }, { TEXT_GERMAN }};
+#ifdef VERSION_EU
+static unsigned char textLanguage[][9] = {
+    { TEXT_ENGLISH },
+    { TEXT_FRENCH },
+    { TEXT_GERMAN }
+};
+#elif VERSION_ML
+static unsigned char textLanguage[][12] = {
+    { TEXT_US_ENGLISH },
+    { TEXT_UK_ENGLISH },
+    { TEXT_JAPANESE },
+    { TEXT_FRENCH },
+    { TEXT_GERMAN }
+};
+#endif
 
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textMario[] = { TEXT_MARIO_JP };
+#elif VERSION_US
 static unsigned char textMario[] = { TEXT_MARIO };
-static unsigned char textHiScore[][15] = {{ TEXT_HI_SCORE }, { TEXT_HI_SCORE }, { TEXT_HI_SCORE_JP }, { TEXT_HI_SCORE_FR }, { TEXT_HI_SCORE_DE }};
-static unsigned char textMyScore[][10] = {{ TEXT_MY_SCORE }, { TEXT_MY_SCORE }, { TEXT_MY_SCORE_JP }, { TEXT_MY_SCORE_FR }, { TEXT_MY_SCORE_DE }};
+#elif VERSION_EU
+static unsigned char textMario[] = { TEXT_MARIO };
+#elif VERSION_ML
+static unsigned char textMario[] = { TEXT_MARIO };
+#endif
 
-static unsigned char textNew[][5] = {{ TEXT_NEW }, { TEXT_NEW }, { TEXT_NEW_JP }, { TEXT_NEW_FR }, { TEXT_NEW_DE }};
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textHiScore[] = { TEXT_HI_SCORE_JP };
+#elif VERSION_US
+static unsigned char textHiScore[] = { TEXT_HI_SCORE };
+#elif VERSION_EU
+static unsigned char textHiScore[][15] = {
+    { TEXT_HI_SCORE },
+    { TEXT_HI_SCORE_FR },
+    { TEXT_HI_SCORE_DE }
+};
+#elif VERSION_ML
+static unsigned char textHiScore[][15] = {
+    { TEXT_HI_SCORE },
+    { TEXT_HI_SCORE },
+    { TEXT_HI_SCORE_JP },
+    { TEXT_HI_SCORE_FR },
+    { TEXT_HI_SCORE_DE }
+};
+#endif
+
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textMyScore[] = { TEXT_MY_SCORE_JP };
+#elif VERSION_US
+static unsigned char textMyScore[] = { TEXT_MY_SCORE };
+#elif VERSION_EU
+static unsigned char textMyScore[][10] = {
+    { TEXT_MY_SCORE },
+    { TEXT_MY_SCORE_FR },
+    { TEXT_MY_SCORE_DE }
+};
+#elif VERSION_ML
+static unsigned char textMyScore[][10] = {
+    { TEXT_MY_SCORE },
+    { TEXT_MY_SCORE },
+    { TEXT_MY_SCORE_JP },
+    { TEXT_MY_SCORE_FR },
+    { TEXT_MY_SCORE_DE }
+};
 #endif
 static unsigned char starIcon[] = { GLYPH_STAR, GLYPH_SPACE };
 static unsigned char xIcon[] = { GLYPH_MULTIPLY, GLYPH_SPACE };
@@ -1171,19 +1512,19 @@ void render_sound_mode_menu_buttons(struct Object *soundModeButton) {
     sMainMenuButtons[MENU_BUTTON_LANGUAGE_US_ENGLISH]->oMenuButtonScale = 0.11111111f;
     // UK English option button
     sMainMenuButtons[MENU_BUTTON_LANGUAGE_UK_ENGLISH] = spawn_object_rel_with_rot(
-        soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, 600, -111, -100, 0, -0x8000, 0);
+        soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, 400, -111, -100, 0, -0x8000, 0);
     sMainMenuButtons[MENU_BUTTON_LANGUAGE_UK_ENGLISH]->oMenuButtonScale = 0.11111111f;
     // Japanese option button
     sMainMenuButtons[MENU_BUTTON_LANGUAGE_JAPANESE] = spawn_object_rel_with_rot(
-        soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, 400, -111, -100, 0 -0x8000, 0);
+        soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, 200, -111, -100, 0, -0x8000, 0);
     sMainMenuButtons[MENU_BUTTON_LANGUAGE_JAPANESE]->oMenuButtonScale = 0.11111111f;
     // French option button
     sMainMenuButtons[MENU_BUTTON_LANGUAGE_FRENCH] = spawn_object_rel_with_rot(
-        soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, 200, -111, -100, 0, -0x8000, 0);
+        soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, 0, -111, -100, 0, -0x8000, 0);
     sMainMenuButtons[MENU_BUTTON_LANGUAGE_FRENCH]->oMenuButtonScale = 0.11111111f;
     // German option button
     sMainMenuButtons[MENU_BUTTON_LANGUAGE_GERMAN] = spawn_object_rel_with_rot(
-        soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, 0, -111, -100, 0, -0x8000, 0);
+        soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, -200, -111, -100, 0, -0x8000, 0);
     sMainMenuButtons[MENU_BUTTON_LANGUAGE_GERMAN]->oMenuButtonScale = 0.11111111f;
 
     // Return button
@@ -1258,6 +1599,7 @@ void check_sound_mode_menu_clicked_buttons(struct Object *soundModeButton) {
                     play_sound(SOUND_MENU_CLICK_FILE_SELECT, gDefaultSoundArgs);
                     sMainMenuButtons[buttonID]->oMenuButtonState = MENU_BUTTON_STATE_ZOOM_IN_OUT;
                     sSelectedButtonID = buttonID;
+                }
 #endif
                 sCurrentMenuLevel = MENU_LAYER_SUBMENU;
 
@@ -2275,9 +2617,9 @@ void print_copy_menu_strings(void) {
 #if defined(VERSION_EU) || defined(VERSION_ML)
     centeredX = get_str_x_pos_from_center(159, textViewScore[sLanguageMode], 10.0f);
 #endif
-#if defined(VERSION_US) || defined(VERSION_JP) || defined(VERSION_SH) || defined(VERSION_ML)
+#if defined(VERSION_US) || defined(VERSION_JP) || defined(VERSION_SH)
     print_generic_string(VIEWSCORE_X1, 35, LANGUAGE_ARRAY(textviewScore));
-#elif defined(VERSION_EU)
+#elif defined(VERSION_EU) || defined(VERSION_ML)
     print_generic_string(VIEWSCORE_X1, 35, LANGUAGE_ARRAY(textViewScore));
 #endif
 #if defined(VERSION_EU) || defined(VERSION_ML)
@@ -2409,16 +2751,10 @@ void erase_menu_display_message(s8 messageID) {
 #endif
 
 #if defined(VERSION_US)
-    unsigned char textEraseFile[] = { TEXT_ERASE_FILE };
-    unsigned char textSure[] = { TEXT_SURE };
     unsigned char textNoSavedDataExists[] = { TEXT_NO_SAVED_DATA_EXISTS };
-    unsigned char textMarioAJustErased[] = { TEXT_FILE_MARIO_A_JUST_ERASED };
     unsigned char textSavedDataExists[] = { TEXT_SAVED_DATA_EXISTS };
 #elif defined(VERSION_JP) || defined(VERSION_SH)
-    unsigned char textEraseFile[] = { TEXT_ERASE_FILE_JP };
-    unsigned char textSure[] = { TEXT_SURE_JP };
     unsigned char textNoSavedDataExists[] = { TEXT_NO_SAVED_DATA_EXISTS_JP };
-    unsigned char textMarioAJustErased[] = { TEXT_FILE_MARIO_A_JUST_ERASED_JP };
     unsigned char textSavedDataExists[] = { TEXT_SAVED_DATA_EXISTS_JP };
 #endif
 
@@ -2580,12 +2916,6 @@ void print_sound_mode_menu_strings(void) {
     s16 textX;
 #elif defined(VERSION_EU) || defined(VERSION_ML)
     s32 textX;
-#endif
-
-#if defined(VERSION_US)
-    unsigned char textSoundSelect[] = { TEXT_SOUND_SELECT };
-#elif defined(VERSION_JP) || defined(VERSION_SH)
-    unsigned char textSoundSelect[] = { TEXT_SOUND_SELECT_JP };
 #endif
 
     // Print "SOUND SELECT" text
@@ -2779,18 +3109,10 @@ void print_score_file_star_score(s8 fileIndex, s16 courseIndex, s16 x, s16 y) {
  void print_save_file_scores(s8 fileIndex) {
     void **levelNameTable;
     unsigned char textFileLetter[] = { TEXT_ZERO };
-#if defined(VERSION_JP) || defined(VERSION_SH)
-    unsigned char textMario[] = { TEXT_MARIO_JP };
-    unsigned char textHiScore[] = { TEXT_HI_SCORE_JP };
-    unsigned char textMyScore[] = { TEXT_MY_SCORE_JP };
-#elif !defined(VERSION_EU) || !defined(VERSION_ML)
-    unsigned char textMario[] = { TEXT_MARIO };
-    unsigned char textHiScore[] = { TEXT_HI_SCORE };
-    unsigned char textMyScore[] = { TEXT_MY_SCORE };
     #if defined(VERSION_US) || defined(VERSION_JP) || defined(VERSION_SH)
         levelNameTable = segmented_to_virtual(seg2_course_name_table);
     #endif
-#elif VERSION_EU
+#ifdef VERSION_EU
     switch (sLanguageMode) {
         case LANGUAGE_ENGLISH:
             levelNameTable = segmented_to_virtual(eu_course_strings_en_table);
@@ -2907,7 +3229,7 @@ static void print_file_select_strings(void) {
     create_dl_ortho_matrix();
     switch (sSelectedButtonID) {
         case MENU_BUTTON_NONE:
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
             // Ultimately calls print_main_menu_strings, but prints main language strings first.
             print_main_lang_strings();
 #else

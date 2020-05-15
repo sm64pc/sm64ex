@@ -176,6 +176,8 @@ BUILD_DIR_BASE := build
 
 ifeq ($(TARGET_WEB),1)
   BUILD_DIR := $(BUILD_DIR_BASE)/$(VERSION)_web
+else ifeq ($(TARGET_RPI),1)
+  BUILD_DIR := $(BUILD_DIR_BASE)/$(VERSION)_pi
 else
   BUILD_DIR := $(BUILD_DIR_BASE)/$(VERSION)_pc
 endif
@@ -183,15 +185,19 @@ endif
 LIBULTRA := $(BUILD_DIR)/libultra.a
 
 ifeq ($(TARGET_WEB),1)
-  EXE := $(BUILD_DIR)/$(TARGET).html
+ 	EXE := $(BUILD_DIR)/$(TARGET).html
 else ifeq ($(WINDOWS_BUILD),1)
-  EXE := $(BUILD_DIR)/$(TARGET).exe
+ 	EXE := $(BUILD_DIR)/$(TARGET).exe
 else ifeq ($(CROSS_BUILD),1)
-  ifeq ($(TARGET),windows)
-    EXE := $(BUILD_DIR)/$(TARGET).exe
-  else ifeq ($(TARGET),linux)
-    EXE := $(BUILD_DIR)/$(TARGET)
-  endif
+	ifeq ($(CROSS),i686-w64-mingw32.static-)
+ 		EXE := $(BUILD_DIR)/$(TARGET).exe
+	else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+ 		EXE := $(BUILD_DIR)/$(TARGET).exe
+	else ifeq ($(CROSS),i686-pc-linux-gnu-)
+ 		EXE := $(BUILD_DIR)/$(TARGET)
+	else ifeq ($(CROSS),x86_64-pc-linux-gnu-)
+ 		EXE := $(BUILD_DIR)/$(TARGET)
+ 	endif
 # Linux builds/binary namer
 else ifeq ($(TARGET_RPI),1)
   EXE := $(BUILD_DIR)/$(TARGET).arm
@@ -373,12 +379,6 @@ SOUND_SEQUENCE_FILES := $(wildcard sound/sequences/jp/*.m64) \
     $(wildcard sound/sequences/*.m64) \
     $(foreach file,$(wildcard sound/sequences/jp/*.s),$(BUILD_DIR)/$(file:.s=.m64)) \
     $(foreach file,$(wildcard sound/sequences/*.s),$(BUILD_DIR)/$(file:.s=.m64))
-else ifeq ($(VERSION),ml)
-SOUND_BANK_FILES := $(wildcard sound/sound_banks/*.json)
-SOUND_SEQUENCE_FILES := $(wildcard sound/sequences/us/*.m64) \
-    $(wildcard sound/sequences/*.m64) \
-    $(foreach file,$(wildcard sound/sequences/us/*.s),$(BUILD_DIR)/$(file:.s=.m64)) \
-    $(foreach file,$(wildcard sound/sequences/*.s),$(BUILD_DIR)/$(file:.s=.m64))
 else
 SOUND_BANK_FILES := $(wildcard sound/sound_banks/*.json)
 SOUND_SEQUENCE_FILES := $(wildcard sound/sequences/$(VERSION)/*.m64) \
@@ -431,7 +431,13 @@ endif
 ifeq ($(WINDOWS_BUILD),1)
   LD := $(CXX)
 else ifeq ($(CROSS_BUILD),1)
-  LD := $(CROSS)ld
+	ifeq ($(CROSS),i686-w64-mingw32.static-)
+    LD := $(CROSS)ld
+	else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+    LD := $(CROSS)ld
+	else ifeq ($(CROSS),)
+    LD := $(CROSS)ld
+  endif
 else
   LD := $(CC)
 endif
@@ -442,17 +448,17 @@ OBJCOPY := objcopy
 PYTHON := python3
 
 ifeq ($(WINDOWS_BUILD),1)
-CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(CROSS)sdl2-config --cflags`
-CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(CROSS)sdl2-config --cflags`
+	CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(CROSS)sdl2-config --cflags`
+	CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(CROSS)sdl2-config --cflags`
 else ifeq ($(CROSS_BUILD),1)
-CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(CROSS)sdl2-config --cflags`
-CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(CROSS)sdl2-config --cflags`
+	CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(CROSS)sdl2-config --cflags`
+	CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(CROSS)sdl2-config --cflags`
 else ifeq ($(TARGET_WEB),1)
-CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
-CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv -s USE_SDL=2
+	CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
+	CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv -s USE_SDL=2
 else # Linux / Other builds below
-CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(CROSS)sdl2-config --cflags`
-CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(CROSS)sdl2-config --cflags`
+	CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(CROSS)sdl2-config --cflags`
+	CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(CROSS)sdl2-config --cflags`
 endif
 
 # Check for better camera option
@@ -464,20 +470,26 @@ endif
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
 
 ifeq ($(TARGET_WEB),1)
-  LDFLAGS := -lm -lGL -lSDL2 -no-pie -s TOTAL_MEMORY=20MB -g4 --source-map-base http://localhost:8080/ -s "EXTRA_EXPORTED_RUNTIME_METHODS=['callMain']"
+	LDFLAGS := -lm -lGL -lSDL2 -no-pie -s TOTAL_MEMORY=20MB -g4 --source-map-base http://localhost:8080/ -s "EXTRA_EXPORTED_RUNTIME_METHODS=['callMain']"
 else ifeq ($(WINDOWS_BUILD),1)
 # Linux builds/binary namer
   LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(CROSS)sdl2-config --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -no-pie -static
-  ifeq ($(WINDOWS_CONSOLE),1)
-    LDFLAGS += -mconsole 
-  endif
+	ifeq ($(WINDOWS_CONSOLE),1)
+    LDFLAGS += -mconsole
+	endif
 else ifeq ($(CROSS_BUILD),1)
-  ifeq ($(TARGET),windows)
-    LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(CROSS)sdl2-config --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -lasound -no-pie -static
-    ifeq ($(WINDOWS_CONSOLE),1)
-      LDFLAGS += -mconsole 
-    endif
-  else ifeq ($(TARGET),linux)
+# Linux builds/binary namer
+  ifeq ($(CROSS),i686-w64-mingw32.static-)
+  	LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(CROSS)sdl2-config --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -no-pie -static
+	  ifeq ($(WINDOWS_CONSOLE),1)
+      LDFLAGS += -mconsole
+	  endif
+	else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+  	LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(CROSS)sdl2-config --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -no-pie -static
+	  ifeq ($(WINDOWS_CONSOLE),1)
+      LDFLAGS += -mconsole
+	  endif
+	else
     LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(CROSS)sdl2-config --libs` -no-pie -lpthread
   endif
 else ifeq ($(TARGET_RPI),1)
@@ -530,11 +542,10 @@ distclean:
 	$(RM) -r $(BUILD_DIR_BASE)
 	./extract_assets.py --clean
 
-# temporarily disabled
-#cleanall:
-#  $(RM) -r $(BUILD_DIR_BASE)
-#  ./extract_assets.py --clean
-#  $(MAKE) -s -C tools clean
+cleanall:
+	$(RM) -r $(BUILD_DIR_BASE)
+	./extract_assets.py --clean
+	$(MAKE) -s -C tools clean
 
 test: $(ROM)
 	$(EMULATOR) $(EMU_FLAGS) $<
@@ -550,10 +561,21 @@ $(BUILD_DIR)/lib/bin/ipl3_font.bin: lib/ipl3_font.png
 	$(IPLFONTUTIL) e $< $@
 
 #Required so the compiler doesn't complain about this not existing.
-$(BUILD_DIR)/src/game/camera.o: $(BUILD_DIR)/include/text_strings.h
+ifneq ($(VERSION),ml)
+	$(BUILD_DIR)/src/game/camera.o: $(BUILD_DIR)/include/text_strings.h
+else
+	$(BUILD_DIR)/src/game/camera.o: $(BUILD_DIR)/include/text_strings_ml.h $(BUILD_DIR)/include/text_strings_ml_jp.h
+endif
 
+ifneq ($(VERSION),ml)
 $(BUILD_DIR)/include/text_strings.h: include/text_strings.h.in
 	$(TEXTCONV) charmap.txt $< $@
+else
+$(BUILD_DIR)/include/text_strings_ml.h: include/text_strings_ml.h.in
+	$(TEXTCONV) charmap_ml.txt $< $@
+$(BUILD_DIR)/include/text_strings_ml_jp.h: include/text_strings_ml_jp.h.in
+	$(TEXTCONV) charmap.txt $< $@
+endif
 
 $(BUILD_DIR)/include/text_menu_strings.h: include/text_menu_strings.h.in
 	$(TEXTCONV) charmap_menu.txt $< $@
@@ -600,20 +622,57 @@ $(BUILD_DIR)/bin/segment2.o: $(BUILD_DIR)/text/$(VERSION)/define_text.inc.c
 endif
 endif
 
+ifneq ($(VERSION),ml)
 $(BUILD_DIR)/text/%/define_courses.inc.c: text/define_courses.inc.c text/%/courses.h
 	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/$*/
 	$(TEXTCONV) charmap.txt $@ $@
-
 $(BUILD_DIR)/text/%/define_text.inc.c: text/define_text.inc.c text/%/courses.h text/%/dialogs.h
 	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/$*/
 	$(TEXTCONV) charmap.txt $@ $@
+else
+$(BUILD_DIR)/text/us/define_courses.inc.c: text/define_courses.inc.c text/us/courses.h
+	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/us/
+	$(TEXTCONV) charmap_ml.txt $@ $@
+$(BUILD_DIR)/text/uk/define_courses.inc.c: text/define_courses.inc.c text/uk/courses.h
+	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/uk/
+	$(TEXTCONV) charmap_ml.txt $@ $@
+$(BUILD_DIR)/text/fr/define_courses.inc.c: text/define_courses.inc.c text/fr/courses.h
+	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/fr/
+	$(TEXTCONV) charmap_ml.txt $@ $@
+$(BUILD_DIR)/text/de/define_courses.inc.c: text/define_courses.inc.c text/de/courses.h
+	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/de/
+	$(TEXTCONV) charmap_ml.txt $@ $@
+$(BUILD_DIR)/text/jp/define_courses.inc.c: text/define_courses.inc.c text/jp/courses.h
+	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/jp/
+	$(TEXTCONV) charmap.txt $@ $@
+$(BUILD_DIR)/text/us/define_text.inc.c: text/define_text.inc.c text/us/courses.h text/us/dialogs.h
+	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/us/
+	$(TEXTCONV) charmap_ml.txt $@ $@
+$(BUILD_DIR)/text/uk/define_text.inc.c: text/define_text.inc.c text/uk/courses.h text/uk/dialogs.h
+	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/uk/
+	$(TEXTCONV) charmap_ml.txt $@ $@
+$(BUILD_DIR)/text/fr/define_text.inc.c: text/define_text.inc.c text/fr/courses.h text/fr/dialogs.h
+	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/fr/
+	$(TEXTCONV) charmap_ml.txt $@ $@
+$(BUILD_DIR)/text/de/define_text.inc.c: text/define_text.inc.c text/de/courses.h text/de/dialogs.h
+	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/de/
+	$(TEXTCONV) charmap_ml.txt $@ $@
+$(BUILD_DIR)/text/jp/define_text.inc.c: text/define_text.inc.c text/jp/courses.h text/jp/dialogs.h
+	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/jp/
+	$(TEXTCONV) charmap.txt $@ $@
+endif
+
 
 ALL_DIRS := $(BUILD_DIR) $(addprefix $(BUILD_DIR)/,$(SRC_DIRS) $(ASM_DIRS) $(GODDARD_SRC_DIRS) $(ULTRA_SRC_DIRS) $(ULTRA_ASM_DIRS) $(ULTRA_BIN_DIRS) $(BIN_DIRS) $(TEXTURE_DIRS) $(TEXT_DIRS) $(SOUND_SAMPLE_DIRS) $(addprefix levels/,$(LEVEL_DIRS)) include) $(MIO0_DIR) $(addprefix $(MIO0_DIR)/,$(VERSION)) $(SOUND_BIN_DIR) $(SOUND_BIN_DIR)/sequences/$(VERSION)
 
 # Make sure build directory exists before compiling anything
 DUMMY != mkdir -p $(ALL_DIRS)
 
-$(BUILD_DIR)/include/text_strings.h: $(BUILD_DIR)/include/text_menu_strings.h
+ifneq ($(VERSION),ml)
+  $(BUILD_DIR)/include/text_strings.h: $(BUILD_DIR)/include/text_menu_strings.h
+else
+  $(BUILD_DIR)/include/text_strings_ml.h: $(BUILD_DIR)/include/text_strings_ml_jp.h $(BUILD_DIR)/include/text_menu_strings.h
+endif
 
 ifeq ($(VERSION),eu)
 $(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
@@ -621,9 +680,9 @@ $(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h $(BUILD
 $(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
 O_FILES += $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
 else ifeq ($(VERSION),ml)
-$(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/us/translation_us_en.o $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/jp/translation_jp.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
-$(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/us/translation_us_en.o $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/jp/translation_jp.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
-$(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/us/translation_us_en.o $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/jp/translation_jp.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
+$(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings_ml.h $(BUILD_DIR)/include/text_strings_ml_jp.h $(BUILD_DIR)/bin/us/translation_us_en.o $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/jp/translation_jp.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
+$(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings_ml.h $(BUILD_DIR)/include/text_strings_ml_jp.h $(BUILD_DIR)/bin/us/translation_us_en.o $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/jp/translation_jp.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
+$(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings_ml.h $(BUILD_DIR)/include/text_strings_ml_jp.h $(BUILD_DIR)/bin/us/translation_us_en.o $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/jp/translation_jp.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
 O_FILES += $(BUILD_DIR)/bin/us/translation_us_en.o $(BUILD_DIR)/bin/eu/translation_uk_en.o $(BUILD_DIR)/bin/jp/translation_jp.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
 else
 $(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h

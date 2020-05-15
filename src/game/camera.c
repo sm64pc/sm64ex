@@ -15,7 +15,11 @@
 #include "engine/surface_collision.h"
 #include "engine/behavior_script.h"
 #include "level_update.h"
-#include "ingame_menu.h"
+#if !defined(VERSION_ML)
+    #include "ingame_menu.h"
+#else
+    #include "ingame_menu_ml.h"
+#endif
 #include "mario_actions_cutscene.h"
 #include "save_file.h"
 #include "object_helpers.h"

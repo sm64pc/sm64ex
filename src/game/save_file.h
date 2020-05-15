@@ -51,7 +51,7 @@ struct MainMenuSaveData
     u32 coinScoreAges[NUM_SAVE_FILES];
     u16 soundMode;
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     u16 language;
 #define SUBTRAHEND 8
 #else
