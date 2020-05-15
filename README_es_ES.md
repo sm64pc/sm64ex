@@ -1,7 +1,7 @@
 # sm64pc
 Adaptación a OpenGL de [n64decomp/sm64](https://github.com/n64decomp/sm64). 
 
-No dudes en contribuir o reportar bugs, pero recuerda **no se debe subir nada con copyright**. 
+No dudes en contribuir o reportar bugs, pero recuerda: **no se debe subir nada con copyright**. 
 Ejecuta `./extract-assets.py --clean && make clean` o `make distclean` para borrar todo el contenido proveniente de la ROM. Este port es posible gracias a [n64-fast32-engine](https://github.com/Emill/n64-fast3d-engine/) creado por [Emill](https://github.com/Emill).
 
 ## Funcionalidades
@@ -79,7 +79,7 @@ cp libaudiofile/.libs/libaudiofile.a ../lib/
 cp libaudiofile/.libs/libaudiofile.la ../lib/
 ```
 ## Ahora toca hacer algo desde Windows. 
-En el explorador de Windows, ve a sm64pc\tools y edita el archivo Makefile desde un editor de texto (es recomdable usar uno como Notepad++ o Sublime Text. Busca la línea que contiene esto:
+En el explorador de Windows, ve a sm64pc\tools y edita el archivo Makefile desde un editor de texto (es recomendable usar uno como Notepad++ o Sublime Text). Busca la línea que contiene esto:
 
 ```tabledesign_CFLAGS := -Wno-uninitialized -laudiofile```
 
@@ -187,7 +187,7 @@ El script está incluído en la rama master, pero también puede descargarse [aq
 
 ### Estos problemas están marcados como solucionados. Por favor, contacta si sigues teniendo estos problemas.
   * El soporte de la versión EU es aún experimental.
-  * Los controles de la cámara tienen problemas para algunas personas.
+  * Los controles de la cámara tienen problemas para algunos usuarios.
 # Parches
 En la carpeta `./enhancements` hay varios archivos `patch`, que pueden aplicarse de la siguiente manera:
 
