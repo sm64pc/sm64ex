@@ -23,7 +23,14 @@ static void tas_read(OSContPad *pad) {
     }
 }
 
+static u32 tas_rawkey(void) {
+    return VK_INVALID;
+}
+
 struct ControllerAPI controller_recorded_tas = {
+    VK_INVALID,
     tas_init,
-    tas_read
+    tas_read,
+    tas_rawkey,
+    NULL, // no rebinding
 };

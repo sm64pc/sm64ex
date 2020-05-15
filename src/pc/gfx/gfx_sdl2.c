@@ -19,6 +19,7 @@
 #include "gfx_window_manager_api.h"
 #include "gfx_screen_config.h"
 #include "../configfile.h"
+#include "../cliopts.h"
 
 #include "src/pc/controller/controller_keyboard.h"
 
@@ -112,6 +113,10 @@ static void gfx_sdl_init(void) {
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
     window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
+
+    if (gCLIOpts.FullScreen) {
+        configFullscreen = true;
+    }
 
     if (configFullscreen) {
         window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;

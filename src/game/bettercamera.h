@@ -26,14 +26,9 @@ enum newcam_flagvalues
 
 };
 
-extern void newcam_display_options(void);
-extern void newcam_check_pause_buttons(void);
 extern void newcam_init_settings(void);
-extern void newcam_save_settings(void);
-extern void newcam_render_option_text(void);
 extern void newcam_diagnostics(void);
 
-extern u8 newcam_option_open;
 
 extern u8 newcam_sensitivityX; //How quick the camera works.
 extern u8 newcam_sensitivityY;

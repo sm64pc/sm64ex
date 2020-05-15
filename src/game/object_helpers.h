@@ -292,6 +292,7 @@ extern void cur_obj_shake_y(f32);
 void cur_obj_start_cam_event(struct Object *obj, s32 cameraEvent);
 // extern ? set_mario_interact_hoot_if_in_range(?);
 void obj_set_billboard(struct Object *a0);
+void obj_set_cylboard(struct Object *a0);
 void cur_obj_set_hitbox_radius_and_height(f32,f32);
 void cur_obj_set_hurtbox_radius_and_height(f32,f32);
 // extern ? obj_spawn_loot_coins(?);

@@ -30,12 +30,13 @@ extern Vec3s gVec3sOne;
 #define GRAPH_RENDER_Z_BUFFER       (1 << 3)
 #define GRAPH_RENDER_INVISIBLE      (1 << 4)
 #define GRAPH_RENDER_HAS_ANIMATION  (1 << 5)
+#define GRAPH_RENDER_CYLBOARD       (1 << 6)
 
 // Whether the node type has a function pointer of type GraphNodeFunc
 #define GRAPH_NODE_TYPE_FUNCTIONAL            0x100
 
 // Type used for Bowser and an unused geo function in obj_behaviors.c
-#define GRAPH_NODE_TYPE_400                   0x400				
+#define GRAPH_NODE_TYPE_400                   0x400
 
 // The discriminant for different types of geo nodes
 #define GRAPH_NODE_TYPE_ROOT                  0x001

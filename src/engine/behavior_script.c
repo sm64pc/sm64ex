@@ -98,10 +98,10 @@ static void cur_obj_bhv_stack_push(uintptr_t bhvAddr) {
 // Retrieve the last behavior command address from the object's behavior stack.
 static uintptr_t cur_obj_bhv_stack_pop(void) {
     uintptr_t bhvAddr;
-    
+
     gCurrentObject->bhvStackIndex--;
     bhvAddr = gCurrentObject->bhvStack[gCurrentObject->bhvStackIndex];
-    
+
     return bhvAddr;
 }
 
@@ -115,7 +115,7 @@ static void stub_behavior_script_1(void) {
 // Usage: HIDE()
 static s32 bhv_cmd_hide(void) {
     cur_obj_hide();
-    
+
     gCurBhvCommand++;
     return BHV_PROC_CONTINUE;
 }
@@ -124,7 +124,7 @@ static s32 bhv_cmd_hide(void) {
 // Usage: DISABLE_RENDERING()
 static s32 bhv_cmd_disable_rendering(void) {
     gCurrentObject->header.gfx.node.flags &= ~GRAPH_RENDER_ACTIVE;
-    
+
     gCurBhvCommand++;
     return BHV_PROC_CONTINUE;
 }
@@ -133,7 +133,15 @@ static s32 bhv_cmd_disable_rendering(void) {
 // Usage: BILLBOARD()
 static s32 bhv_cmd_billboard(void) {
     gCurrentObject->header.gfx.node.flags |= GRAPH_RENDER_BILLBOARD;
-    
+
+    gCurBhvCommand++;
+    return BHV_PROC_CONTINUE;
+}
+
+// Command 0x
+static s32 bhv_cmd_cylboard(void) {
+    gCurrentObject->header.gfx.node.flags |= GRAPH_RENDER_CYLBOARD;
+
     gCurBhvCommand++;
     return BHV_PROC_CONTINUE;
 }
@@ -142,9 +150,9 @@ static s32 bhv_cmd_billboard(void) {
 // Usage: SET_MODEL(modelID)
 static s32 bhv_cmd_set_model(void) {
     s32 modelID = BHV_CMD_GET_2ND_S16(0);
-    
+
     gCurrentObject->header.gfx.sharedChild = gLoadedGraphNodes[modelID];
-    
+
     gCurBhvCommand++;
     return BHV_PROC_CONTINUE;
 }
@@ -216,7 +224,7 @@ static s32 bhv_cmd_break_unused(void) {
 static s32 bhv_cmd_call(void) {
     const BehaviorScript *jumpAddress;
     gCurBhvCommand++;
-    
+
     cur_obj_bhv_stack_push(BHV_CMD_GET_ADDR_OF_CMD(1)); // Store address of the next bhv command in the stack.
     jumpAddress = segmented_to_virtual(BHV_CMD_GET_VPTR(0));
     gCurBhvCommand = jumpAddress; // Jump to the new address.
@@ -300,7 +308,7 @@ static s32 bhv_cmd_begin_repeat(void) {
 static s32 bhv_cmd_end_repeat(void) {
     u32 count = cur_obj_bhv_stack_pop(); // Retrieve loop count from the stack.
     count--;
-    
+
     if (count != 0) {
         gCurBhvCommand = (const BehaviorScript *) cur_obj_bhv_stack_pop(); // Jump back to the first command in the loop
         // Save address and count to the stack again
@@ -320,7 +328,7 @@ static s32 bhv_cmd_end_repeat(void) {
 static s32 bhv_cmd_end_repeat_continue(void) {
     u32 count = cur_obj_bhv_stack_pop();
     count--;
-    
+
     if (count != 0) {
         gCurBhvCommand = (const BehaviorScript *) cur_obj_bhv_stack_pop(); // Jump back to the first command in the loop
         // Save address and count to the stack again
@@ -546,7 +554,7 @@ static s32 bhv_cmd_drop_to_floor(void) {
     f32 x = gCurrentObject->oPosX;
     f32 y = gCurrentObject->oPosY;
     f32 z = gCurrentObject->oPosZ;
-    
+
     f32 floor = find_floor_height(x, y + 200.0f, z);
     gCurrentObject->oPosY = floor;
     gCurrentObject->oMoveFlags |= OBJ_MOVE_ON_GROUND;
@@ -665,7 +673,7 @@ static s32 bhv_cmd_nop_4(void) {
 static s32 bhv_cmd_begin(void) {
     // These objects were likely very early objects, which is why this code is here
     // instead of in the respective behavior scripts.
-    
+
     // Initiate the room if the object is a haunted chair or the mad piano.
     if (cur_obj_has_behavior(bhvHauntedChair)) {
         bhv_init_room();
@@ -696,7 +704,7 @@ static void bhv_cmd_set_int_random_from_table(s32 tableSize) {
     }
 
     cur_obj_set_int(field, table[(s32)(tableSize * random_float())]);
-    
+
     // Does not increment gCurBhvCommand or return a bhv status
 }
 
@@ -719,7 +727,7 @@ static s32 bhv_cmd_set_int_random_from_table(void) {
 
     // Set the field to a random entry of the table.
     cur_obj_set_int(field, table[(s32)(tableSize * random_float())]);
-    
+
     gCurBhvCommand += (tableSize / 2) + 1;
     return BHV_PROC_CONTINUE;
 }
@@ -729,9 +737,9 @@ static s32 bhv_cmd_set_int_random_from_table(void) {
 // Usage: LOAD_COLLISION_DATA(collisionData)
 static s32 bhv_cmd_load_collision_data(void) {
     u32 *collisionData = segmented_to_virtual(BHV_CMD_GET_VPTR(1));
-    
+
     gCurrentObject->collisionData = collisionData;
-    
+
     gCurBhvCommand += 2;
     return BHV_PROC_CONTINUE;
 }
@@ -742,7 +750,7 @@ static s32 bhv_cmd_set_home(void) {
     gCurrentObject->oHomeX = gCurrentObject->oPosX;
     gCurrentObject->oHomeY = gCurrentObject->oPosY;
     gCurrentObject->oHomeZ = gCurrentObject->oPosZ;
-    
+
     gCurBhvCommand++;
     return BHV_PROC_CONTINUE;
 }
@@ -815,9 +823,9 @@ static s32 bhv_cmd_parent_bit_clear(void) {
 // Usage: SPAWN_WATER_DROPLET(dropletParams)
 static s32 bhv_cmd_spawn_water_droplet(void) {
     struct WaterDropletParams *dropletParams = BHV_CMD_GET_VPTR(1);
-    
+
     spawn_water_droplet(gCurrentObject, dropletParams);
-    
+
     gCurBhvCommand += 2;
     return BHV_PROC_CONTINUE;
 }
@@ -842,62 +850,63 @@ void stub_behavior_script_2(void) {
 
 typedef s32 (*BhvCommandProc)(void);
 static BhvCommandProc BehaviorCmdTable[] = {
-    bhv_cmd_begin,
-    bhv_cmd_delay,
-    bhv_cmd_call,
-    bhv_cmd_return,
-    bhv_cmd_goto,
-    bhv_cmd_begin_repeat,
-    bhv_cmd_end_repeat,
-    bhv_cmd_end_repeat_continue,
-    bhv_cmd_begin_loop,
-    bhv_cmd_end_loop,
-    bhv_cmd_break,
-    bhv_cmd_break_unused,
-    bhv_cmd_call_native,
-    bhv_cmd_add_float,
-    bhv_cmd_set_float,
-    bhv_cmd_add_int,
-    bhv_cmd_set_int,
-    bhv_cmd_or_int,
-    bhv_cmd_bit_clear,
-    bhv_cmd_set_int_rand_rshift,
-    bhv_cmd_set_random_float,
-    bhv_cmd_set_random_int,
-    bhv_cmd_add_random_float,
-    bhv_cmd_add_int_rand_rshift,
-    bhv_cmd_nop_1,
-    bhv_cmd_nop_2,
-    bhv_cmd_nop_3,
-    bhv_cmd_set_model,
-    bhv_cmd_spawn_child,
-    bhv_cmd_deactivate,
-    bhv_cmd_drop_to_floor,
-    bhv_cmd_sum_float,
-    bhv_cmd_sum_int,
-    bhv_cmd_billboard,
-    bhv_cmd_hide,
-    bhv_cmd_set_hitbox,
-    bhv_cmd_nop_4,
-    bhv_cmd_delay_var,
-    bhv_cmd_begin_repeat_unused,
-    bhv_cmd_load_animations,
-    bhv_cmd_animate,
-    bhv_cmd_spawn_child_with_param,
-    bhv_cmd_load_collision_data,
-    bhv_cmd_set_hitbox_with_offset,
-    bhv_cmd_spawn_obj,
-    bhv_cmd_set_home,
-    bhv_cmd_set_hurtbox,
-    bhv_cmd_set_interact_type,
-    bhv_cmd_set_obj_physics,
-    bhv_cmd_set_interact_subtype,
-    bhv_cmd_scale,
-    bhv_cmd_parent_bit_clear,
-    bhv_cmd_animate_texture,
-    bhv_cmd_disable_rendering,
-    bhv_cmd_set_int_unused,
-    bhv_cmd_spawn_water_droplet,
+    bhv_cmd_begin, //00
+    bhv_cmd_delay, //01
+    bhv_cmd_call,  //02
+    bhv_cmd_return, //03
+    bhv_cmd_goto, //04
+    bhv_cmd_begin_repeat, //05
+    bhv_cmd_end_repeat, //06
+    bhv_cmd_end_repeat_continue, //07
+    bhv_cmd_begin_loop, //08
+    bhv_cmd_end_loop, //09
+    bhv_cmd_break, //0A
+    bhv_cmd_break_unused, //0B
+    bhv_cmd_call_native, //0C
+    bhv_cmd_add_float, //0D
+    bhv_cmd_set_float, //0E
+    bhv_cmd_add_int, //0F
+    bhv_cmd_set_int, //10
+    bhv_cmd_or_int, //11
+    bhv_cmd_bit_clear, //12
+    bhv_cmd_set_int_rand_rshift, //13
+    bhv_cmd_set_random_float, //14
+    bhv_cmd_set_random_int, //15
+    bhv_cmd_add_random_float, //16
+    bhv_cmd_add_int_rand_rshift, //17
+    bhv_cmd_nop_1, //18
+    bhv_cmd_nop_2, //19
+    bhv_cmd_nop_3, //1A
+    bhv_cmd_set_model, //1B
+    bhv_cmd_spawn_child, //1C
+    bhv_cmd_deactivate, //1D
+    bhv_cmd_drop_to_floor, //1E
+    bhv_cmd_sum_float, //1F
+    bhv_cmd_sum_int, //20
+    bhv_cmd_billboard, //21
+    bhv_cmd_hide, //22
+    bhv_cmd_set_hitbox, //23
+    bhv_cmd_nop_4, //24
+    bhv_cmd_delay_var, //25
+    bhv_cmd_begin_repeat_unused, //26
+    bhv_cmd_load_animations, //27
+    bhv_cmd_animate, //28
+    bhv_cmd_spawn_child_with_param, //29
+    bhv_cmd_load_collision_data, //2A
+    bhv_cmd_set_hitbox_with_offset, //2B
+    bhv_cmd_spawn_obj, //2C
+    bhv_cmd_set_home, //2D
+    bhv_cmd_set_hurtbox, //2E
+    bhv_cmd_set_interact_type, //2F
+    bhv_cmd_set_obj_physics, //30
+    bhv_cmd_set_interact_subtype, //31
+    bhv_cmd_scale, //32
+    bhv_cmd_parent_bit_clear, //33
+    bhv_cmd_animate_texture, //34
+    bhv_cmd_disable_rendering, //35
+    bhv_cmd_set_int_unused, //36
+    bhv_cmd_spawn_water_droplet, //37
+    bhv_cmd_cylboard //38
 };
 
 // Execute the behavior script of the current object, process the object flags, and other miscellaneous code for updating objects.
@@ -987,11 +996,15 @@ void cur_obj_update(void) {
     } else if ((objFlags & OBJ_FLAG_COMPUTE_DIST_TO_MARIO) && gCurrentObject->collisionData == NULL) {
         if (!(objFlags & OBJ_FLAG_ACTIVE_FROM_AFAR)) {
             // If the object has a render distance, check if it should be shown.
+#ifndef NODRAWINGDISTANCE
             if (distanceFromMario > gCurrentObject->oDrawingDistance) {
                 // Out of render distance, hide the object.
                 gCurrentObject->header.gfx.node.flags &= ~GRAPH_RENDER_ACTIVE;
                 gCurrentObject->activeFlags |= ACTIVE_FLAG_FAR_AWAY;
             } else if (gCurrentObject->oHeldState == HELD_FREE) {
+#else
+            if (distanceFromMario <= gCurrentObject->oDrawingDistance && gCurrentObject->oHeldState == HELD_FREE) {
+#endif
                 // In render distance (and not being held), show the object.
                 gCurrentObject->header.gfx.node.flags |= GRAPH_RENDER_ACTIVE;
                 gCurrentObject->activeFlags &= ~ACTIVE_FLAG_FAR_AWAY;
