@@ -1,7 +1,4 @@
-# sm64pc  - skipintro branch
-
-This is a testing branch featuring a new CLI interface and support to skip the introductory Peach & Lakitu cutscenes, useful for development tests.
-
+# sm64pc
 OpenGL adaptation of [n64decomp/sm64](https://github.com/n64decomp/sm64). 
 
 Feel free to report bugs and contribute, but remember, there must be **no upload of any copyrighted asset**. 
@@ -13,6 +10,7 @@ Run `./extract-assets.py --clean && make clean` or `make distclean` to remove RO
  * Variable aspect ratio and resolution. The game can now correctly render at basically any window size.
  * Native xinput controller support. On Linux, DualShock 4 has been confirmed to work plug-and-play.
  * Analog camera control and mouse look. (Activate with `make BETTERCAMERA=1`.)
+ * Option to skip the Peach/Lakitu new file intro.
 
 ## Building
 For building instructions, please refer to the [wiki](https://github.com/sm64pc/sm64pc/wiki).
