@@ -32,6 +32,8 @@
 #include "../pc/configfile.h"
 #define CONFIG_FILE "sm64config.txt"
 
+#include "pc/cliopts.h"
+
 #define PLAY_MODE_NORMAL 0
 #define PLAY_MODE_PAUSED 2
 #define PLAY_MODE_CHANGE_AREA 3
@@ -176,7 +178,8 @@ s8 D_8032C9E0 = 0;
 u8 unused3[4];
 u8 unused4[2];
 
-
+// For configfile intro skipping
+//extern unsigned int configSkipIntro;
 
 
 void basic_update(s16 *arg);
@@ -1214,7 +1217,7 @@ s32 init_level(void) {
                 if (gMarioState->action != ACT_UNINITIALIZED) {
                     if (save_file_exists(gCurrSaveFileNum - 1)) {
                         set_mario_action(gMarioState, ACT_IDLE, 0);
-                    } else {
+                    } else if (gCLIOpts.SkipIntro == 0) {
                         set_mario_action(gMarioState, ACT_INTRO_CUTSCENE, 0);
                         val4 = 1;
                     }
