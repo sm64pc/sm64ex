@@ -14,7 +14,7 @@ Run `./extract-assets.py --clean && make clean` or `make distclean` to remove RO
  * Analog camera control and mouse look. (Activate with `make BETTERCAMERA=1`.)
  * An option to disable drawing distances. (Activate with `make NODRAWINGDISTANCE=1`.)
  * In-game control binding, currently available on the `testing` branch.
- * Skip introductory Peach & Lakitu cutscenes with a `--skip-intro` CLI option, currently available on `testing` and `skip-intro` branches.
+ * Skip introductory Peach & Lakitu cutscenes with the `--skip-intro` CLI option
 
 ## Building
 For building instructions, please refer to the [wiki](https://github.com/sm64pc/sm64pc/wiki).
