@@ -145,7 +145,8 @@ void newcam_init(struct Camera *c, u8 dv)
     newcam_intendedmode = newcam_mode;
     newcam_modeflags = newcam_mode;
 }
-static f32 newcam_clamp(f32 value, f32 max, f32 min)
+
+static u8 newcam_clamp(u8 value, u8 min, u8 max)
 {
     if (value > max)
         value = max;
@@ -153,6 +154,7 @@ static f32 newcam_clamp(f32 value, f32 max, f32 min)
         value = min;
     return value;
 }
+
 ///These are the default settings for Puppycam. You may change them to change how they'll be set for first timers.
 void newcam_init_settings(void)
 {
@@ -702,12 +704,10 @@ void newcam_change_setting(u8 toggle)
         newcam_mouse ^= 1;
         break;
     case 2:
-        if (newcam_sensitivityX > 10 && newcam_sensitivityX < 250)
-            newcam_sensitivityX += toggle;
+        newcam_sensitivityX = newcam_clamp(newcam_sensitivityX + toggle, 10, 250);
         break;
     case 3:
-        if (newcam_sensitivityY > 10 && newcam_sensitivityY < 250)
-            newcam_sensitivityY += toggle;
+        newcam_sensitivityY = newcam_clamp(newcam_sensitivityY + toggle, 10, 250);
         break;
     case 4:
         newcam_invertX ^= 1;
@@ -716,12 +716,10 @@ void newcam_change_setting(u8 toggle)
         newcam_invertY ^= 1;
         break;
     case 6:
-        if (newcam_aggression > 0 && newcam_aggression < 100)
-            newcam_aggression += toggle;
+        newcam_aggression = newcam_clamp(newcam_aggression + toggle, 0, 100);
         break;
     case 7:
-        if (newcam_panlevel > 0 && newcam_panlevel < 100)
-            newcam_panlevel += toggle;
+        newcam_panlevel = newcam_clamp(newcam_panlevel + toggle, 0, 100);
         break;
     }
 }
@@ -825,13 +823,18 @@ void newcam_check_pause_buttons()
 {
     if (gPlayer1Controller->buttonPressed & R_TRIG)
     {
-        #ifndef nosound
-        play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
-        #endif
         if (newcam_option_open == 0)
+        {
+            #ifndef nosound
+            play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
+            #endif
             newcam_option_open = 1;
+        }
         else
         {
+            #ifndef nosound
+            play_sound(SOUND_MENU_MARIO_CASTLE_WARP2, gDefaultSoundArgs);
+            #endif
             newcam_option_open = 0;
             newcam_save_settings();
         }
@@ -847,7 +850,7 @@ void newcam_check_pause_buttons()
                 switch (newcam_option_index)
                 {
                     case 0: newcam_option_index++; newcam_option_timer += 10; break;
-                    default: newcam_option_timer += 5; break;
+                    default: newcam_option_timer += 3; break;
                 }
                 #ifndef nosound
                 play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
@@ -875,7 +878,7 @@ void newcam_check_pause_buttons()
                 switch (newcam_option_index)
                 {
                     case 0: newcam_option_index++; newcam_option_timer += 10; break;
-                    default: newcam_option_timer += 5; break;
+                    default: newcam_option_timer += 3; break;
                 }
                 #ifndef nosound
                 play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
