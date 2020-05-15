@@ -5,37 +5,36 @@
 // is now thanks to multilang support
 #if defined(VERSION_JP) || defined(VERSION_SH)
 static const u8 Debug0[] = {
-    _(TEXT_DEBUG_STAGE_SELECT_JP"\n"
-      TEXT_DEBUG_CONTINUE_JP"\n"
-      TEXT_DEBUG_MAP_1_JP"\n"
-      TEXT_DEBUG_MAP_2_JP"\n"
-      TEXT_DEBUG_MAP_3_JP"\n"
-      TEXT_DEBUG_MAP_4_JP"\n"
-      TEXT_DEBUG_MAP_5_JP"\n"
-      TEXT_DEBUG_RETURN_JP)
+    _("ＳＴＡＧＥ　ＳＥＬＥＣＴ\n"
+      "　つづける？\n"
+      "　１　マウンテン\n"
+      "　２　ファイアーバブル\n"
+      "　３　スノースライダー\n"
+      "　４　ウォーターランド\n"
+      "　　　クッパ１ごう\n"
+      "　もどる")
 };
-
 static const u8 Debug1[] = {
-    _(TEXT_DEBUG_PAUSE_JP"\n"
-      TEXT_DEBUG_CONTINUE_JP"\n"
-      TEXT_DEBUG_STOP_JP)
+    _("ＰＡＵＳＥ　　　　\n"
+      "　つづける？\n"
+      "　やめる　？")
 };
 #elif defined(VERSION_US)
 static const u8 Debug0[] = {
-    _(TEXT_DEBUG_STAGE_SELECT"\n"
-      TEXT_DEBUG_CONTINUE"\n"
-      TEXT_DEBUG_MAP_1"\n"
-      TEXT_DEBUG_MAP_2"\n"
-      TEXT_DEBUG_MAP_3"\n"
-      TEXT_DEBUG_MAP_4"\n"
-      TEXT_DEBUG_MAP_5"\n"
-      TEXT_DEBUG_RETURN)
+    _("STAGE SELECT\n"
+      "CONTINUE?\n"
+      "1 COOL COOL MOUNTAIN\n"
+      "2 BOWSER AND THE FIRE SEA\n"
+      "3 COOL COOL MOUNTAIN SNOW SLIDE\n"
+      "4 WET-DRY WORLD\n"
+      "BOWSER AND THE DARK WORLD\n"
+      "RETURN")
 };
 
 static const u8 Debug1[] = {
-    _(TEXT_DEBUG_PAUSE"\n"
-      TEXT_DEBUG_CONTINUE"\n"
-      TEXT_DEBUG_STOP)
+    _("PAUSE\n"
+      "CONTINUE?\n"
+      "STOP?")
 };
 
 static const struct DialogEntry debug_text_entry_0 = {

@@ -137,22 +137,6 @@
 #define TEXT_FILE_MARIO_QUESTION _("Mario!")
 
 /**
- * Debug screen text.
- */
-#define TEXT_DEBUG_STAGE_SELECT_JP _("ＳＴＡＧＥ　ＳＥＬＥＣＴ")
-#define TEXT_DEBUG_PAUSE_JP _("ＰＡＵＳＥ　　　　")
-#define TEXT_DEBUG_STAGE_SELECT _("STAGE SELECT")
-#define TEXT_DEBUG_CONTINUE _("CONTINUE?")
-#define TEXT_DEBUG_MAP_1 _("1 COOL COOL MOUNTAIN")
-#define TEXT_DEBUG_MAP_2 _("2 BOWSER AND THE FIRE SEA")
-#define TEXT_DEBUG_MAP_3 _("3 COOL COOL MOUNTAIN SNOW SLIDE")
-#define TEXT_DEBUG_MAP_4 _("4 WET-DRY WORLD")
-#define TEXT_DEBUG_MAP_5 _("BOWSER AND THE DARK WORLD")
-#define TEXT_DEBUG_RETURN _("RETURN")
-#define TEXT_DEBUG_PAUSE _("PAUSE")
-#define TEXT_DEBUG_STOP _("STOP?")
-
-/**
  * File Select Text
  */
 #define TEXT_RETURN_FR _("RETOUR")

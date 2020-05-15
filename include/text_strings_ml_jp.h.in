@@ -101,16 +101,4 @@
 #define TEXT_LETS_HAVE_CAKE_JP _("おいしいケーキを　やきましょう")
 #define TEXT_FOR_MARIO_JP _("マリオの　ために・・・")
 #define TEXT_FILE_MARIO_QUESTION_JP _("マリオ？")
-
-/**
- * Debug screen text.
- */
-#define TEXT_DEBUG_CONTINUE_JP _("　つづける？")
-#define TEXT_DEBUG_MAP_1_JP _("　１　マウンテン")
-#define TEXT_DEBUG_MAP_2_JP _("　２　ファイアーバブル")
-#define TEXT_DEBUG_MAP_3_JP _("　３　スノースライダー")
-#define TEXT_DEBUG_MAP_4_JP _("　４　ウォーターランド")
-#define TEXT_DEBUG_MAP_5_JP _("　　　クッパ１ごう")
-#define TEXT_DEBUG_RETURN_JP _("　もどる")
-#define TEXT_DEBUG_STOP_JP _("　やめる　？")
 #endif
