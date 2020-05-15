@@ -1777,7 +1777,7 @@ const Gfx dl_menu_rgba16_wood_course[] = {
     gsDPSetCombineMode(G_CC_DECALRGBA, G_CC_DECALRGBA),
     gsSPTexture(0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON),
     gsDPSetRenderMode(G_RM_AA_TEX_EDGE, G_RM_AA_TEX_EDGE2),
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
     gsSPEndDisplayList(),
 };
 const Gfx dl_menu_rgba16_wood_course_end[] = {

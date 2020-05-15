@@ -9,7 +9,7 @@
 
 #include "make_const_nonconst.h"
 
-#ifdef VERSION_EU
+#if defined(VERSION_EU) || defined(VERSION_ML)
 #include "levels/ending/cake_eu.inc.c"
 
 // 0x07023000 - 0x07023FFF
@@ -246,7 +246,7 @@ const Gfx dl_cake_end_screen_eu_070297D8[] = {
 };
 
 // VERSION_EU
-#else
+#elif !defined(VERSION_EU)
 
 #include "levels/ending/cake.inc.c"
 
