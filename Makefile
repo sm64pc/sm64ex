@@ -26,7 +26,7 @@ TARGET_RPI ?= 0
 # Compiler to use (ido or gcc)
 # COMPILER ?= ido // Old Default
 
-# Makeflag to enable OSX stuff
+# Makeflag to enable OSX fixes
 OSX_BUILD ?= 0
 
 # Disable better camera by default
@@ -483,12 +483,13 @@ ifeq ($(TARGET_RPI),1)
 LDFLAGS := $(OPT_FLAGS) -lm -lGLESv2 `$(SDLCONFIG) --libs` -no-pie
 else
 
-ifeq ($(TARGET_MACOS),1)
+ifeq ($(OSX_BUILD),1)
 LDFLAGS := -lm -framework OpenGL `$(SDLCONFIG) --libs` -no-pie -lpthread `pkg-config --libs libusb-1.0 glfw3 glew`
 else
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(SDLCONFIG) --libs` -no-pie -lpthread
 endif
 endif
+
 endif #Added for OSX
 endif #Added for Pi
 
