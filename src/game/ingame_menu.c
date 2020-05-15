@@ -2681,11 +2681,6 @@ void render_pause_my_score_coins(void) {
     u8 courseIndex;
     u8 starFlags;
 
-#ifndef VERSION_EU
-    courseNameTbl = segmented_to_virtual(seg2_course_name_table);
-    actNameTbl = segmented_to_virtual(seg2_act_name_table);
-#endif
-
     courseIndex = gCurrCourseNum - 1;
     starFlags = save_file_get_star_flags(gCurrSaveFileNum - 1, gCurrCourseNum - 1);
 
@@ -2727,6 +2722,9 @@ void render_pause_my_score_coins(void) {
             courseNameTbl = segmented_to_virtual(course_name_table_eu_de);
             break;
     }
+#else
+    courseNameTbl = segmented_to_virtual(seg2_course_name_table);
+    actNameTbl = segmented_to_virtual(seg2_act_name_table);
 #endif
 
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);

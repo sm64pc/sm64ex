@@ -2453,7 +2453,7 @@ void sound_reset(u8 presetId) {
     sGameLoopTicked = 0;
     disable_all_sequence_players();
     sound_init();
-#if defined(VERSION_JP) || defined(VERSION_US) || defined(VERSION_SH)
+#if defined(VERSION_JP) || defined(VERSION_US) || defined(VERSION_SH) || defined(VERSION_ML)
     audio_reset_session(&gAudioSessionPresets[presetId]);
 #else
     audio_reset_session_eu(presetId);
