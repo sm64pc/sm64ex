@@ -1,7 +1,7 @@
 # sm64pc
 Adaptación a OpenGL de [n64decomp/sm64](https://github.com/n64decomp/sm64). 
 
-No dudes en contribuir o reportar bugs, pero recuerda **no se debe subir nada con copyright**. 
+No dudes en contribuir o reportar bugs, pero recuerda: **no se debe subir nada con copyright**. 
 Ejecuta `./extract-assets.py --clean && make clean` o `make distclean` para borrar todo el contenido proveniente de la ROM. Este port es posible gracias a [n64-fast32-engine](https://github.com/Emill/n64-fast3d-engine/) creado por [Emill](https://github.com/Emill).
 
 ## Funcionalidades
@@ -79,7 +79,7 @@ cp libaudiofile/.libs/libaudiofile.a ../lib/
 cp libaudiofile/.libs/libaudiofile.la ../lib/
 ```
 #### Ahora toca hacer algo desde Windows. 
-En el explorador de Windows, ve a sm64pc\tools y edita el archivo Makefile desde un editor de texto (es recomdable usar uno como Notepad++ o Sublime Text. Busca la línea que contiene esto:
+En el explorador de Windows, ve a sm64pc\tools y edita el archivo Makefile desde un editor de texto (es recomendable usar un editor decente como Notepad++ o Sublime Text, en lugar del bloc de notas, para asegurarte de que no rompes el formato del texto) Busca la línea que contiene esto:
 
 ```tabledesign_CFLAGS := -Wno-uninitialized -laudiofile```
 
