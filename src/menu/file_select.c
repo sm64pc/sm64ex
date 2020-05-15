@@ -290,8 +290,10 @@ static unsigned char textMarioD[][8] = {
 };
 #endif
 
-#if !defined (VERSION_EU) || !defined (VERSION_ML)
+#if defined(VERSION_US)
 static unsigned char textNew[] = { TEXT_NEW };
+#elif defined(VERSION_JP) || defined(VERSION_SH)
+static unsigned char textNew[] = { TEXT_NEW_JP };
 #elif defined(VERSION_EU)
 static unsigned char textNew[][5] = {
     { TEXT_NEW },
@@ -302,7 +304,7 @@ static unsigned char textNew[][5] = {
 static unsigned char textNew[][5] = {
     { TEXT_NEW },
     { TEXT_NEW },
-    { TEXT_NEW },
+    { TEXT_NEW_JP },
     { TEXT_NEW_FR },
     { TEXT_NEW_DE }
 };

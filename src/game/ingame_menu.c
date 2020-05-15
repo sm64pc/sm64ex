@@ -2850,9 +2850,6 @@ void render_pause_camera_options(s16 x, s16 y, s8 *index, s16 xIndex) {
     };
 #define textNormalUpClose textNormalUpClose[gInGameLanguage]
 #define textNormalFixed   textNormalFixed[gInGameLanguage]
-#else // these are failsafes now
-    u8 textNormalUpClose[] = { TEXT_NORMAL_UPCLOSE };
-    u8 textNormalFixed[] = { TEXT_NORMAL_FIXED };
 #endif
 
     handle_menu_scrolling(MENU_SCROLL_HORIZONTAL, index, 1, 2);

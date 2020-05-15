@@ -918,7 +918,7 @@ void find_surface_on_ray(Vec3f orig, Vec3f dir, struct Surface **hit_surface, Ve
     cellZ = (s16)fCellZ;
     
     // Don't do DDA if straight down
-    if (normalized_dir[1] >= 1.0f || normalized_dir[1] <= -1.0f)
+    if (normalized_dir[1] >= 0.99999f || normalized_dir[1] <= -0.99999f)
     {
 		find_surface_on_ray_cell(cellX, cellZ, orig, normalized_dir, dir_length, hit_surface, hit_pos, &max_length);
 		return;

@@ -570,15 +570,16 @@ endif
 ifneq ($(VERSION),ml)
 $(BUILD_DIR)/include/text_strings.h: include/text_strings.h.in
 	$(TEXTCONV) charmap.txt $< $@
+$(BUILD_DIR)/include/text_menu_strings.h: include/text_menu_strings.h.in
+	$(TEXTCONV) charmap_menu.txt $< $@
 else
 $(BUILD_DIR)/include/text_strings_ml.h: include/text_strings_ml.h.in
 	$(TEXTCONV) charmap_ml.txt $< $@
 $(BUILD_DIR)/include/text_strings_ml_jp.h: include/text_strings_ml_jp.h.in
 	$(TEXTCONV) charmap.txt $< $@
-endif
-
 $(BUILD_DIR)/include/text_menu_strings.h: include/text_menu_strings.h.in
 	$(TEXTCONV) charmap_menu.txt $< $@
+endif
 
 ifeq ($(VERSION),eu)
 TEXT_DIRS := text/de text/uk text/fr

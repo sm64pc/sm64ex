@@ -1,0 +1,8 @@
+Makefile:739: extraneous text after 'else' directive
+In file included from src/game/camera.c:710:0:
+src/game/bettercamera.inc.h:12:14: fatal error: include/text_strings_ml.h: No such file or directory
+     #include "include/text_strings_ml.h"
+              ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+Makefile:845: recipe for target 'build/ml_pc/src/game/camera.o' failed
+make: *** [build/ml_pc/src/game/camera.o] Error 1

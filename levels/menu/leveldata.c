@@ -7,7 +7,10 @@
 #include "special_preset_names.h"
 #include "textures.h"
 #ifdef VERSION_EU
-#include "text_strings.h"
+    #include "text_strings.h"
+#elif defined(VERSION_ML)
+    #include "text_strings_ml.h"
+    #include "text_strings_ml_jp.h"
 #endif
 #include "make_const_nonconst.h"
 

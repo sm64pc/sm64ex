@@ -6,7 +6,12 @@
 #include "game/segment2.h"
 #include "game/save_file.h"
 #include "bettercamera.h"
-#include "include/text_strings.h"
+#if !defined(VERSION_ML)
+    #include "include/text_strings.h"
+#else
+    #include "include/text_strings_ml.h"
+    #include "include/text_strings_ml_jp.h"
+#endif
 #include "engine/surface_collision.h"
 #include "pc/configfile.h"
 #include <stdio.h>
@@ -112,44 +117,10 @@ u8 newcam_option_index = 0;
 u8 newcam_option_scroll = 0;
 u8 newcam_option_scroll_last = 0;
 u8 newcam_total = 8; //How many options there are in newcam_options.
-
-#if defined(VERSION_US)
-    u8 newcam_analoguetext[] = { { NC_ANALOGUE } };
-    u8 newcam_mousetext[] = { { NC_MOUSE } };
-    u8 newcam_camXtext[] = { { NC_CAMX } };
-    u8 newcam_camYtext[] = { { NC_CAMY } };
-    u8 newcam_invertXtext[] = { { NC_INVERTX } };
-    u8 newcam_invertYtext[] = { { NC_INVERTY } };
-    u8 newcam_camCtext[] = { { NC_CAMC } };
-    u8 newcam_camPtext[] = { { NC_CAMP } };
-    u8 newcam_disabledtext[] = { { NC_DISABLED } };
-    u8 newcam_enabledtext[] = { { NC_ENABLED } };
-    u8 newcam_buttontext[] = { { NC_BUTTON } };
-    u8 newcam_button2text[] = { { NC_BUTTON2 } };
-    u8 newcam_optiontext[] = { { NC_OPTION } };
-    u8 newcam_highlighttext[] = { { NC_HIGHLIGHT } };
-    u8 newcam_options[][64] = {{newcam_analoguetext}, {newcam_mousetext}, {newcam_camXtext}, {newcam_camYtext}, {newcam_invertXtext}, {newcam_invertYtext}, {newcam_camCtext}, {newcam_camPtext}};
-    u8 newcam_flags[][64] = {{newcam_disabledtext}, {newcam_enabledtext}};
-    u8 newcam_strings[][64] = {{newcam_buttontext}, {newcam_button2text}, {newcam_optiontext}, {newcam_highlighttext}};
-#elif defined(VERSION_JP) || defined(VERSION_SH)
-    u8 newcam_analoguetext[] = { { NC_ANALOGUE } };
-    u8 newcam_mousetext[] = { { NC_MOUSE } };
-    u8 newcam_camXtext[] = { { NC_CAMX } };
-    u8 newcam_camYtext[] = { { NC_CAMY } };
-    u8 newcam_invertXtext[] = { { NC_INVERTX } };
-    u8 newcam_invertYtext[] = { { NC_INVERTY } };
-    u8 newcam_camCtext[] = { { NC_CAMC } };
-    u8 newcam_camPtext[] = { { NC_CAMP } };
-    u8 newcam_disabledtext[] = { { NC_DISABLED } };
-    u8 newcam_enabledtext[] = { { NC_ENABLED } };
-    u8 newcam_buttontext[] = { { NC_BUTTON } };
-    u8 newcam_button2text[] = { { NC_BUTTON2 } };
-    u8 newcam_optiontext[] = { { NC_OPTION } };
-    u8 newcam_highlighttext[] = { { NC_HIGHLIGHT } };
-    u8 newcam_options[][64] = {{newcam_analoguetext}, {newcam_mousetext}, {newcam_camXtext}, {newcam_camYtext}, {newcam_invertXtext}, {newcam_invertYtext}, {newcam_camCtext}, {newcam_camPtext}};
-    u8 newcam_flags[][64] = {{newcam_disabledtext}, {newcam_enabledtext}};
-    u8 newcam_strings[][64] = {{newcam_buttontext}, {newcam_button2text}, {newcam_optiontext}, {newcam_highlighttext}};
-#elif defined(VERSION_EU)
+#if defined(VERSION_EU) || defined(VERSION_ML)
+s32 gInGameLanguage = eu_get_language();
+#endif
+#if defined(VERSION_EU)
     u8 newcam_analoguetext[][] = {
         { NC_ANALOGUE },
         { NC_ANALOGUE },
@@ -220,9 +191,20 @@ u8 newcam_total = 8; //How many options there are in newcam_options.
         { NC_HIGHLIGHT },
         { NC_HIGHLIGHT },
     };
-    u8 newcam_options[][64] = {{newcam_analoguetext}, {newcam_mousetext}, {newcam_camXtext}, {newcam_camYtext}, {newcam_invertXtext}, {newcam_invertYtext}, {newcam_camCtext}, {newcam_camPtext}};
-    u8 newcam_flags[][64] = {{newcam_disabledtext}, {newcam_enabledtext}};
-    u8 newcam_strings[][64] = {{newcam_buttontext}, {newcam_button2text}, {newcam_optiontext}, {newcam_highlighttext}};
+    #define newcam_analoguetext newcam_analoguetext[gInGameLanguage]
+    #define newcam_mousetext newcam_mousetext[gInGameLanguage]
+    #define newcam_camXtext newcam_camXtext[gInGameLanguage]
+    #define newcam_camYtext newcam_camYtext[gInGameLanguage]
+    #define newcam_invertXtext newcam_invertXtext[gInGameLanguage]
+    #define newcam_invertYtext newcam_invertYtext[gInGameLanguage]
+    #define newcam_camCtext newcam_camCtext[gInGameLanguage]
+    #define newcam_camPtext newcam_camPtext[gInGameLanguage]
+    #define newcam_disabledtext newcam_disabledtext[gInGameLanguage]
+    #define newcam_enabledtext newcam_enabledtext[gInGameLanguage]
+    #define newcam_buttontext newcam_buttontext[gInGameLanguage]
+    #define newcam_button2text newcam_button2text[gInGameLanguage]
+    #define newcam_optiontext newcam_optiontext[gInGameLanguage]
+    #define newcam_highlighttext newcam_highlighttext[gInGameLanguage]
 #elif defined(VERSION_ML)
     u8 newcam_analoguetext[][] = {
         { NC_ANALOGUE },
@@ -322,14 +304,54 @@ u8 newcam_total = 8; //How many options there are in newcam_options.
         { NC_HIGHLIGHT },
         { NC_HIGHLIGHT },
     };
+    #define newcam_analoguetext newcam_analoguetext[gInGameLanguage]
+    #define newcam_mousetext newcam_mousetext[gInGameLanguage]
+    #define newcam_camXtext newcam_camXtext[gInGameLanguage]
+    #define newcam_camYtext newcam_camYtext[gInGameLanguage]
+    #define newcam_invertXtext newcam_invertXtext[gInGameLanguage]
+    #define newcam_invertYtext newcam_invertYtext[gInGameLanguage]
+    #define newcam_camCtext newcam_camCtext[gInGameLanguage]
+    #define newcam_camPtext newcam_camPtext[gInGameLanguage]
+    #define newcam_disabledtext newcam_disabledtext[gInGameLanguage]
+    #define newcam_enabledtext newcam_enabledtext[gInGameLanguage]
+    #define newcam_buttontext newcam_buttontext[gInGameLanguage]
+    #define newcam_button2text newcam_button2text[gInGameLanguage]
+    #define newcam_optiontext newcam_optiontext[gInGameLanguage]
+    #define newcam_highlighttext newcam_highlighttext[gInGameLanguage]
+#elif defined(VERSION_US)
+    u8 newcam_analoguetext[] = { NC_ANALOGUE };
+    u8 newcam_mousetext[] = { NC_MOUSE };
+    u8 newcam_camXtext[] = { NC_CAMX };
+    u8 newcam_camYtext[] = { NC_CAMY };
+    u8 newcam_invertXtext[] = { NC_INVERTX };
+    u8 newcam_invertYtext[] = { NC_INVERTY };
+    u8 newcam_camCtext[] = { NC_CAMC };
+    u8 newcam_camPtext[] = { NC_CAMP };
+    u8 newcam_disabledtext[] = { NC_DISABLED };
+    u8 newcam_enabledtext[] = { NC_ENABLED };
+    u8 newcam_buttontext[] = { NC_BUTTON };
+    u8 newcam_button2text[] = { NC_BUTTON2 };
+    u8 newcam_optiontext[] = { NC_OPTION };
+    u8 newcam_highlighttext[] = { NC_HIGHLIGHT };
+#elif defined(VERSION_JP) || defined(VERSION_SH)
+    u8 newcam_analoguetext[] = { NC_ANALOGUE };
+    u8 newcam_mousetext[] = { NC_MOUSE };
+    u8 newcam_camXtext[] = { NC_CAMX };
+    u8 newcam_camYtext[] = { NC_CAMY };
+    u8 newcam_invertXtext[] = { NC_INVERTX };
+    u8 newcam_invertYtext[] = { NC_INVERTY };
+    u8 newcam_camCtext[] = { NC_CAMC };
+    u8 newcam_camPtext[] = { NC_CAMP };
+    u8 newcam_disabledtext[] = { NC_DISABLED };
+    u8 newcam_enabledtext[] = { NC_ENABLED };
+    u8 newcam_buttontext[] = { NC_BUTTON };
+    u8 newcam_button2text[] = { NC_BUTTON2 };
+    u8 newcam_optiontext[] = { NC_OPTION };
+    u8 newcam_highlighttext[] = { NC_HIGHLIGHT };
+#endif
     u8 newcam_options[][64] = {{newcam_analoguetext}, {newcam_mousetext}, {newcam_camXtext}, {newcam_camYtext}, {newcam_invertXtext}, {newcam_invertYtext}, {newcam_camCtext}, {newcam_camPtext}};
     u8 newcam_flags[][64] = {{newcam_disabledtext}, {newcam_enabledtext}};
     u8 newcam_strings[][64] = {{newcam_buttontext}, {newcam_button2text}, {newcam_optiontext}, {newcam_highlighttext}};
-#else // as a failsafe
-    u8 newcam_options[][64] = {{NC_ANALOGUE}, {NC_MOUSE}, {NC_CAMX}, {NC_CAMY}, {NC_INVERTX}, {NC_INVERTY}, {NC_CAMC}, {NC_CAMP}};
-    u8 newcam_flags[][64] = {{NC_DISABLED}, {NC_ENABLED}};
-    u8 newcam_strings[][64] = {{NC_BUTTON}, {NC_BUTTON2}, {NC_OPTION}, {NC_HIGHLIGHT}};
-#endif
 extern int mouse_x;
 extern int mouse_y;
 
