@@ -286,9 +286,19 @@ void print_course_number(void) {
  */
 void print_act_selector_strings(void) {
 #if defined(VERSION_EU)
-    unsigned char myScore[][10] = { {TEXT_MYSCORE}, {TEXT_MY_SCORE_FR}, {TEXT_MY_SCORE_DE} };
+    unsigned char myScore[][10] = {
+        { TEXT_MYSCORE },
+        { TEXT_MY_SCORE_FR },
+        { TEXT_MY_SCORE_DE }
+    };
 #elif VERSION_ML
-    unsigned char myScore[][10] = {{ TEXT_MYSCORE }, { TEXT_MYSCORE }, { TEXT_MYSCORE_JP }, { TEXT_MY_SCORE_FR }, { TEXT_MY_SCORE_DE }};
+    unsigned char myScore[][10] = {
+        { TEXT_MYSCORE },
+        { TEXT_MYSCORE },
+        { TEXT_MYSCORE_JP },
+        { TEXT_MY_SCORE_FR },
+        { TEXT_MY_SCORE_DE }
+    };
 #elif defined(VERSION_JP) || defined(VERSION_SH)
     unsigned char myScore[] = { TEXT_MYSCORE_JP };
 #else
