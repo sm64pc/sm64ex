@@ -2,7 +2,9 @@
 OpenGL adaptation of [n64decomp/sm64](https://github.com/n64decomp/sm64). 
 
 Feel free to report bugs and contribute, but remember, there must be **no upload of any copyrighted asset**. 
-Run `./extract-assets.py --clean && make clean` or `make distclean` to remove ROM-originated content. This port has been made possible thanks to [n64-fast32-engine](https://github.com/Emill/n64-fast3d-engine/) by [Emill](https://github.com/Emill).
+Run `./extract-assets.py --clean && make clean` or `make distclean` to remove ROM-originated content. This port has been made possible mostly thanks to [Emill](https://github.com/Emill) and his [n64-fast32-engine](https://github.com/Emill/n64-fast3d-engine/) renderer.
+
+*Read this in other languages: [Español](README_es_ES.md).*
 
 ## Features
 
