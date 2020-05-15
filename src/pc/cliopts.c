@@ -1,4 +1,5 @@
 #include "cliopts.h"
+#include <strings.h>
 
 struct PCCLIOptions gCLIOpts;
 
