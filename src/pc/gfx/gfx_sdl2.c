@@ -26,7 +26,7 @@
 #ifdef VERSION_EU
 #define FRAMERATE 25
 #else
-#define FrAMERATE 30
+#define FRAMERATE 30
 #endif
 
 static SDL_Window *wnd;
@@ -173,7 +173,7 @@ static void gfx_sdl_main_loop(void (*run_one_game_iter)(void)) {
         t = SDL_GetTicks() - t;
 
         if (t < 1000 / FRAMERATE) {
-            SDL_Delay ((1000 / fRAMERATE) - t);
+            SDL_Delay ((1000 / FRAMERATE) - t);
         }
     }
 }
