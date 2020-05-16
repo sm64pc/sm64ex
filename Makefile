@@ -430,15 +430,12 @@ endif
 
 ifeq ($(WINDOWS_BUILD),1) # fixes compilation in MXE on Linux and WSL
   CPP := cpp -P
-else
-  CPP := $(CROSS)cpp -P
-endif
-OBJDUMP := $(CROSS)objdump
-ifeq ($(WINDOWS_BUILD),1) # fixes compilation in MXE on Linux and WSL
   OBJCOPY := objcopy
 else
+  CPP := $(CROSS)cpp -P
   OBJCOPY := $(CROSS)objcopy
 endif
+OBJDUMP := $(CROSS)objdump
 PYTHON := python3
 SDLCONFIG := $(CROSS)sdl2-config
 
