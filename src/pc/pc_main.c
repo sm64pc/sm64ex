@@ -92,7 +92,7 @@ void audio_shutdown(void) {
 }
 
 void game_shutdown(void) {
-    configfile_save(CONFIG_FILE);
+    configfile_save(gCLIOpts.ConfigFile);;
     controller_shutdown();
     audio_shutdown();
     gfx_shutdown();
@@ -136,7 +136,7 @@ void main_func(void) {
     main_pool_init(pool, pool + sizeof(pool) / sizeof(pool[0]));
     gEffectsMemoryPool = mem_pool_init(0x4000, MEMORY_POOL_LEFT);
 
-    configfile_load(CONFIG_FILE);
+    configfile_load(gCLIOpts.ConfigFile);
     atexit(game_shutdown);
 
 #ifdef TARGET_WEB
