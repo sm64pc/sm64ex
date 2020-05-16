@@ -575,7 +575,7 @@ static void gfx_sp_vertex(size_t n_vertices, size_t dest_index, const Vtx *verti
             // Inspired by:
             // https://github.com/gonetz/GLideN64/commit/c8cbafff71a81bee5112aaafe6e21d6648ff8125#diff-69d8715ec7f9fd627ec4f5516edd003dL484
             const bool useFirstColor = (dest_index & 1) == 0;
-			const unsigned char* col = useFirstColor
+            const unsigned char* col = useFirstColor
                                 ? rsp.current_lights[rsp.current_num_lights - 1].col
                                 : rsp.current_lights[rsp.current_num_lights - 1].colc;
             int r = col[0];
