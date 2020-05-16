@@ -328,7 +328,6 @@ void (*TablePiranhaPlantActions[])(void) = {
  */
 void bhv_piranha_plant_loop(void) {
     cur_obj_call_action_function(TablePiranhaPlantActions);
-
     #ifndef NODRAWINGDISTANCE
     // In WF, hide all Piranha Plants once high enough up.
     if (gCurrLevelNum == LEVEL_WF) {
