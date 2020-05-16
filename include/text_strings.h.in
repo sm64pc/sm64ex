@@ -9,6 +9,7 @@
 #define TEXT_OPT_INVERTY   _("Invert Y Axis")
 #define TEXT_OPT_CAMC      _("Camera Centre Aggression")
 #define TEXT_OPT_CAMP      _("Camera Pan Level")
+#define TEXT_OPT_CAMD      _("Camera Deceleration")
 #define TEXT_OPT_ENABLED   _("Enabled")
 #define TEXT_OPT_DISABLED  _("Disabled")
 #define TEXT_OPT_BUTTON1   _("[R]: Options")
