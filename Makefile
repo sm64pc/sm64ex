@@ -142,7 +142,7 @@ ifeq ($(TARGET_RPI),1) # Define RPi to change SDL2 title & GLES2 hints
 endif
 
 ifeq ($(OSX_BUILD),1) # Modify GFX & SDL2 for OSX GL
-     VERSION_CLFAGS += -DOSX_BUILD
+     VERSION_CFLAGS += -DOSX_BUILD
 endif
 
 VERSION_ASFLAGS := --defsym AVOID_UB=1
