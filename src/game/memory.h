@@ -37,19 +37,11 @@ u32 main_pool_available(void);
 u32 main_pool_push_state(void);
 u32 main_pool_pop_state(void);
 
-#ifdef TARGET_N64
-void *load_segment(s32 segment, u8 *srcStart, u8 *srcEnd, u32 side);
-void *load_to_fixed_pool_addr(u8 *destAddr, u8 *srcStart, u8 *srcEnd);
-void *load_segment_decompress(s32 segment, u8 *srcStart, u8 *srcEnd);
-void *load_segment_decompress_heap(u32 segment, u8 *srcStart, u8 *srcEnd);
-void load_engine_code_segment(void);
-#else
 #define load_segment(...)
 #define load_to_fixed_pool_addr(...)
 #define load_segment_decompress(...)
 #define load_segment_decompress_heap(...)
 #define load_engine_code_segment(...)
-#endif
 
 struct AllocOnlyPool *alloc_only_pool_init(u32 size, u32 side);
 void *alloc_only_pool_alloc(struct AllocOnlyPool *pool, s32 size);

@@ -30,6 +30,7 @@
 #include "src/pc/controller/controller_keyboard.h"
 
 static SDL_Window *wnd;
+static SDL_GLContext ctx = NULL;
 static int inverted_scancode_table[512];
 
 static bool cur_fullscreen;
@@ -241,6 +242,15 @@ static double gfx_sdl_get_time(void) {
     return 0.0;
 }
 
+
+static void gfx_sdl_shutdown(void) {
+    if (SDL_WasInit(0)) {
+        if (ctx) { SDL_GL_DeleteContext(ctx); ctx = NULL; }
+        if (wnd) { SDL_DestroyWindow(wnd); wnd = NULL; }
+        SDL_Quit();
+    }
+}
+
 struct GfxWindowManagerAPI gfx_sdl = {
     gfx_sdl_init,
     gfx_sdl_main_loop,
@@ -249,5 +259,6 @@ struct GfxWindowManagerAPI gfx_sdl = {
     gfx_sdl_start_frame,
     gfx_sdl_swap_buffers_begin,
     gfx_sdl_swap_buffers_end,
-    gfx_sdl_get_time
+    gfx_sdl_get_time,
+    gfx_sdl_shutdown
 };

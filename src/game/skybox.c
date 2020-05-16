@@ -242,7 +242,6 @@ void *create_skybox_ortho_matrix(s8 player) {
     f32 top = sSkyBoxInfo[player].scaledY;
     Mtx *mtx = alloc_display_list(sizeof(*mtx));
 
-#ifndef TARGET_N64
     f32 half_width = (4.0f / 3.0f) / GFX_DIMENSIONS_ASPECT_RATIO * SCREEN_WIDTH / 2;
     f32 center = (sSkyBoxInfo[player].scaledX + SCREEN_WIDTH / 2);
     if (half_width < SCREEN_WIDTH / 2) {
@@ -250,7 +249,6 @@ void *create_skybox_ortho_matrix(s8 player) {
         left = center - half_width;
         right = center + half_width;
     }
-#endif
 
     if (mtx != NULL) {
         guOrtho(mtx, left, right, bottom, top, 0.0f, 3.0f, 1.0f);

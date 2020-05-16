@@ -1,3 +1,4 @@
+
 # Makefile to rebuild SM64 split image
 
 ### Default target ###
@@ -251,8 +252,8 @@ ifeq ($(TARGET_WEB),1)
 endif
 
 # Use a default opt flag for gcc, then override if RPi
-# OPT_FLAGS := -O2 # -O2 opt breaks sound on x86?
 
+# OPT_FLAGS := -O2 # "Whole-compile optimization flag" Breaks sound on x86.
 
 ifeq ($(TARGET_RPI),1)
 	machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
@@ -427,7 +428,13 @@ else
 endif
 
 ifeq ($(WINDOWS_BUILD),1)
-  LD := $(CXX)
+  ifeq ($(CROSS),i686-w64-mingw32.static-) # fixes compilation in MXE on Linux and WSL
+    LD := $(CC)
+  else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+    LD := $(CC)
+  else
+    LD := $(CXX)
+  endif
 else
   LD := $(CC)
 endif
