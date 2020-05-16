@@ -428,9 +428,17 @@ else
   LD := $(CC)
 endif
 
-CPP := $(CROSS)cpp -P
+ifeq ($(WINDOWS_BUILD),1) # fixes compilation in MXE on Linux and WSL
+  CPP := cpp -P
+else
+  CPP := $(CROSS)cpp -P
+endif
 OBJDUMP := $(CROSS)objdump
-OBJCOPY := $(CROSS)objcopy
+ifeq ($(WINDOWS_BUILD),1) # fixes compilation in MXE on Linux and WSL
+  OBJCOPY := $(CROSS)objcopy
+else
+  OBJCOPY := $(CROSS)objcopy
+endif
 PYTHON := python3
 SDLCONFIG := $(CROSS)sdl2-config
 
@@ -473,9 +481,22 @@ LDFLAGS := -lm -lGL -lSDL2 -no-pie -s TOTAL_MEMORY=20MB -g4 --source-map-base ht
 else
 
 ifeq ($(WINDOWS_BUILD),1)
-LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -no-pie -static
-ifeq ($(WINDOWS_CONSOLE),1)
-LDFLAGS += -mconsole
+  ifeq ($(CROSS),i686-w64-mingw32.static-)
+  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -static
+    ifeq ($(WINDOWS_CONSOLE),1)
+    LDFLAGS += -mconsole
+    endif
+  else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -static
+    ifeq ($(WINDOWS_CONSOLE),1)
+    LDFLAGS += -mconsole
+    endif
+  else
+  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -no-pie -static
+    ifeq ($(WINDOWS_CONSOLE),1)
+    LDFLAGS += -mconsole
+    endif
+  endif
 endif
 else
 
