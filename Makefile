@@ -29,6 +29,8 @@ COMPILER ?= ido
 BETTERCAMERA ?= 0
 # Disable no drawing distance by default
 NODRAWINGDISTANCE ?= 0
+# Disable texture fixes by default (helps with them purists)
+TEXTURE_FIX ?= 0
 
 # Build for Emscripten/WebGL
 TARGET_WEB ?= 0
@@ -456,6 +458,12 @@ endif
 ifeq ($(NODRAWINGDISTANCE),1)
 CC_CHECK += -DNODRAWINGDISTANCE
 CFLAGS += -DNODRAWINGDISTANCE
+endif
+
+# Check for texture fix option
+ifeq ($(TEXTURE_FIX),1)
+CC_CHECK += -DTEXTURE_FIX
+CFLAGS += -DTEXTURE_FIX
 endif
 
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
