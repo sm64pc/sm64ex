@@ -31,22 +31,23 @@ static u8 optmenu_bind_idx = 0;
 // menus:   add a new submenu definition and a new
 //          option to the optsMain list
 
-static const u8 toggleStr[][64] = {
+static const u8 toggleStr[][16] = {
     { TEXT_OPT_DISABLED },
     { TEXT_OPT_ENABLED },
 };
 
-static const u8 menuStr[][64] = {
+static const u8 menuStr[][32] = {
     { TEXT_OPT_HIGHLIGHT },
     { TEXT_OPT_BUTTON1 },
     { TEXT_OPT_BUTTON2 },
     { TEXT_OPT_OPTIONS },
     { TEXT_OPT_CAMERA },
     { TEXT_OPT_CONTROLS },
+    { TEXT_OPT_VIDEO },
     { TEXT_EXIT_GAME },
 };
 
-static const u8 optsCameraStr[][64] = {
+static const u8 optsCameraStr[][32] = {
     { TEXT_OPT_CAMX },
     { TEXT_OPT_CAMY },
     { TEXT_OPT_INVERTX },
@@ -57,7 +58,14 @@ static const u8 optsCameraStr[][64] = {
     { TEXT_OPT_MOUSE },
 };
 
-static const u8 bindStr[][64] = {
+static const u8 optsVideoStr[][32] = {
+    { TEXT_OPT_FSCREEN },
+    { TEXT_OPT_TEXFILTER },
+    { TEXT_OPT_NEAREST },
+    { TEXT_OPT_LINEAR },
+};
+
+static const u8 bindStr[][32] = {
     { TEXT_OPT_UNBOUND },
     { TEXT_OPT_PRESSKEY },
     { TEXT_BIND_A },
@@ -74,6 +82,11 @@ static const u8 bindStr[][64] = {
     { TEXT_BIND_DOWN },
     { TEXT_BIND_LEFT },
     { TEXT_BIND_RIGHT },
+};
+
+static const u8 *filterChoices[] = {
+    optsVideoStr[2],
+    optsVideoStr[3],
 };
 
 enum OptType {
@@ -155,6 +168,11 @@ static struct Option optsControls[] = {
     { .type = OPT_BIND, .label = bindStr[15], .uval = configKeyStickRight, },
 };
 
+static struct Option optsVideo[] = {
+    { .type = OPT_TOGGLE, .label = optsVideoStr[0], .bval = &configFullscreen,                                          },
+    { .type = OPT_CHOICE, .label = optsVideoStr[1], .uval = &configFiltering, .choices = filterChoices, .numChoices = 2 },
+};
+
 /* submenu definitions */
 
 static struct SubMenu menuCamera = {
@@ -169,12 +187,19 @@ static struct SubMenu menuControls = {
     .numOpts = sizeof(optsControls) / sizeof(optsControls[0]),
 };
 
+static struct SubMenu menuVideo = {
+    .label = menuStr[6],
+    .opts = optsVideo,
+    .numOpts = sizeof(optsVideo) / sizeof(optsVideo[0]),
+};
+
 /* main options menu definition */
 
 static struct Option optsMain[] = {
     { .type = OPT_SUBMENU, .label = menuStr[4], .nextMenu = &menuCamera, },
     { .type = OPT_SUBMENU, .label = menuStr[5], .nextMenu = &menuControls, },
-    { .type = OPT_BUTTON,  .label = menuStr[6], .actionFn = optmenu_act_exit, },
+    { .type = OPT_SUBMENU, .label = menuStr[6], .nextMenu = &menuVideo, },
+    { .type = OPT_BUTTON,  .label = menuStr[7], .actionFn = optmenu_act_exit, },
 };
 
 static struct SubMenu menuMain = {
@@ -311,7 +336,7 @@ static void optmenu_opt_change(struct Option *opt, s32 val) {
             break;
 
         default: break;
-    };
+    }
 }
 
 static inline s16 get_hudstr_centered_x(const s16 sx, const u8 *str) {

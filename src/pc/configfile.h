@@ -7,6 +7,7 @@
 #define MAX_BINDS 3
 
 extern bool         configFullscreen;
+extern unsigned int configFiltering;
 extern unsigned int configKeyA[];
 extern unsigned int configKeyB[];
 extern unsigned int configKeyStart[];
