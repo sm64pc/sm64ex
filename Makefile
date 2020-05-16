@@ -423,7 +423,13 @@ else
 endif
 
 ifeq ($(WINDOWS_BUILD),1)
-  LD := $(CXX)
+  ifeq ($(CROSS),i686-w64-mingw32.static-) # fixes compilation in MXE on Linux and WSL
+    LD := $(CC)
+  else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+    LD := $(CC)
+  else
+    LD := $(CXX)
+  endif
 else
   LD := $(CC)
 endif
