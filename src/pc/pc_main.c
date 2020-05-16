@@ -73,7 +73,13 @@ void produce_one_frame(void) {
         create_next_audio_buffer(audio_buffer + i * (num_audio_samples * 2), num_audio_samples);
     }
     //printf("Audio samples before submitting: %d\n", audio_api->buffered());
-    audio_api->play(audio_buffer, 2 * num_audio_samples * 4);
+
+    // scale by master volume (0-127)
+    const s32 mod = (s32)configMasterVolume;
+    for (u32 i = 0; i < num_audio_samples * 4; ++i)
+        audio_buffer[i] = ((s32)audio_buffer[i] * mod) >> VOLUME_SHIFT;
+
+    audio_api->play((u8*)audio_buffer, 2 * num_audio_samples * 4);
     
     gfx_end_frame();
 }

@@ -44,6 +44,7 @@ static const u8 menuStr[][32] = {
     { TEXT_OPT_CAMERA },
     { TEXT_OPT_CONTROLS },
     { TEXT_OPT_VIDEO },
+    { TEXT_OPT_AUDIO },
     { TEXT_EXIT_GAME },
 };
 
@@ -63,6 +64,10 @@ static const u8 optsVideoStr[][32] = {
     { TEXT_OPT_TEXFILTER },
     { TEXT_OPT_NEAREST },
     { TEXT_OPT_LINEAR },
+};
+
+static const u8 optsAudioStr[][32] = {
+    { TEXT_OPT_MVOLUME },
 };
 
 static const u8 bindStr[][32] = {
@@ -190,11 +195,16 @@ static struct Option optsVideo[] = {
     DEF_OPT_CHOICE( optsVideoStr[1], &configFiltering, filterChoices ),
 };
 
+static struct Option optsAudio[] = {
+    DEF_OPT_SCROLL( optsAudioStr[0], &configMasterVolume, 0, MAX_VOLUME, 1 ),
+};
+
 /* submenu definitions */
 
-static struct SubMenu menuCamera = DEF_SUBMENU( menuStr[4], optsCamera );
+static struct SubMenu menuCamera   = DEF_SUBMENU( menuStr[4], optsCamera );
 static struct SubMenu menuControls = DEF_SUBMENU( menuStr[5], optsControls );
-static struct SubMenu menuVideo = DEF_SUBMENU( menuStr[6], optsVideo );
+static struct SubMenu menuVideo    = DEF_SUBMENU( menuStr[6], optsVideo );
+static struct SubMenu menuAudio    = DEF_SUBMENU( menuStr[7], optsAudio );
 
 /* main options menu definition */
 
@@ -202,7 +212,8 @@ static struct Option optsMain[] = {
     DEF_OPT_SUBMENU( menuStr[4], &menuCamera ),
     DEF_OPT_SUBMENU( menuStr[5], &menuControls ),
     DEF_OPT_SUBMENU( menuStr[6], &menuVideo ),
-    DEF_OPT_BUTTON ( menuStr[7], optmenu_act_exit ),
+    DEF_OPT_SUBMENU( menuStr[7], &menuAudio ),
+    DEF_OPT_BUTTON ( menuStr[8], optmenu_act_exit ),
 };
 
 static struct SubMenu menuMain = DEF_SUBMENU( menuStr[3], optsMain );
@@ -308,7 +319,7 @@ static void optmenu_opt_change(struct Option *opt, s32 val) {
             break;
 
         case OPT_SCROLL:
-            *opt->uval = wrap_add(*opt->uval, val, opt->scrMin, opt->scrMax);
+            *opt->uval = wrap_add(*opt->uval, opt->scrStep * val, opt->scrMin, opt->scrMax);
             break;
 
         case OPT_SUBMENU:

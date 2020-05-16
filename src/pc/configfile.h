@@ -4,10 +4,14 @@
 #include <stdbool.h>
 
 #define CONFIG_FILE "sm64config.txt"
-#define MAX_BINDS 3
+
+#define MAX_BINDS    3
+#define MAX_VOLUME   127
+#define VOLUME_SHIFT 7
 
 extern bool         configFullscreen;
 extern unsigned int configFiltering;
+extern unsigned int configMasterVolume;
 extern unsigned int configKeyA[];
 extern unsigned int configKeyB[];
 extern unsigned int configKeyStart[];

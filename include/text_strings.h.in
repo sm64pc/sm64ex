@@ -17,6 +17,7 @@
 #define TEXT_OPT_CAMERA    _("CAMERA")
 #define TEXT_OPT_CONTROLS  _("CONTROLS")
 #define TEXT_OPT_VIDEO     _("DISPLAY")
+#define TEXT_OPT_AUDIO     _("SOUND")
 #define TEXT_OPT_HIGHLIGHT _("O")
 #define TEXT_OPT_ANALOGUE  _("Analogue Camera")
 #define TEXT_OPT_MOUSE     _("Mouse Look")
@@ -24,6 +25,7 @@
 #define TEXT_OPT_FSCREEN   _("Fullscreen")
 #define TEXT_OPT_NEAREST   _("Nearest")
 #define TEXT_OPT_LINEAR    _("Linear")
+#define TEXT_OPT_MVOLUME   _("Master Volume")
 
 #define TEXT_OPT_UNBOUND   _("NONE")
 #define TEXT_OPT_PRESSKEY  _("...")
