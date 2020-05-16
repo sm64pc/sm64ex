@@ -30,8 +30,14 @@ typedef float  f32;
 typedef double f64;
 
 #include <stddef.h>
-#include <stdint.h>
+#include <stdint.h>#if defined(__MINGW32__) 
+#include <_mingw.h>
+#if !defined(__MINGW64_VERSION_MAJOR)
+typedef long ssize_t;
+#else
 typedef ptrdiff_t ssize_t;
-
+#endif
+#endif
+#endif
 
 #endif
