@@ -20,6 +20,7 @@
 
 #include "cliopts.h"
 #include "configfile.h"
+#include "controller/controller_api.h"
 
 OSMesg D_80339BEC;
 OSMesgQueue gSIEventMesgQueue;

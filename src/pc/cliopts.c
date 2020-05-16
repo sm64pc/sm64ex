@@ -1,6 +1,7 @@
 #include "cliopts.h"
 #include <strings.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 struct PCCLIOptions gCLIOpts;
 

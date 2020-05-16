@@ -4,6 +4,7 @@ struct PCCLIOptions
 {
 	u8 SkipIntro;
     u8 FullScreen;
+    char * ConfigFile;
 };
 
 extern struct PCCLIOptions gCLIOpts;
