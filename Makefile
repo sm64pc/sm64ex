@@ -450,6 +450,12 @@ SDLCONFIG := $(CROSS)sdl2-config
 ifeq ($(WINDOWS_BUILD),1)
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags`
 CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags`
+  ifeq ($(CROSS),i686-w64-mingw32.static-)
+    ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+      CC_CHECK += D_NOBZERO
+      CFLAGS += D_NOBZERO
+    endif
+  endif
 
 else ifeq ($(TARGET_WEB),1)
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
