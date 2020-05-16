@@ -204,10 +204,22 @@ static u32 controller_sdl_rawkey(void) {
     return VK_INVALID;
 }
 
+static void controller_sdl_shutdown(void) {
+    if (SDL_WasInit(SDL_INIT_GAMECONTROLLER)) {
+        if (sdl_cntrl) {
+            SDL_GameControllerClose(sdl_cntrl);
+            sdl_cntrl = NULL;
+        }
+        SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
+    }
+    init_ok = false;
+}
+
 struct ControllerAPI controller_sdl = {
     VK_BASE_SDL_GAMEPAD,
     controller_sdl_init,
     controller_sdl_read,
     controller_sdl_rawkey,
     controller_sdl_bind,
+    controller_sdl_shutdown
 };

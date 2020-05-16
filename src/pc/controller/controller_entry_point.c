@@ -65,6 +65,13 @@ u32 controller_get_raw_key(void) {
     return VK_INVALID;
 }
 
+void controller_shutdown(void) {
+    for (size_t i = 0; i < sizeof(controller_implementations) / sizeof(struct ControllerAPI *); i++) {
+        if (controller_implementations[i]->shutdown)
+            controller_implementations[i]->shutdown();
+    }
+}
+
 void controller_reconfigure(void) {
     for (size_t i = 0; i < sizeof(controller_implementations) / sizeof(struct ControllerAPI *); i++) {
         if (controller_implementations[i]->reconfig)
