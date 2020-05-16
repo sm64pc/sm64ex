@@ -434,11 +434,7 @@ else
   CPP := $(CROSS)cpp -P
 endif
 OBJDUMP := $(CROSS)objdump
-ifeq ($(WINDOWS_BUILD),1) # fixes compilation in MXE on Linux and WSL
-  OBJCOPY := $(CROSS)objcopy
-else
-  OBJCOPY := $(CROSS)objcopy
-endif
+OBJCOPY := $(CROSS)objcopy
 PYTHON := python3
 SDLCONFIG := $(CROSS)sdl2-config
 
