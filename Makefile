@@ -21,8 +21,6 @@ NON_MATCHING ?= 1
 TARGET_N64 = 0
 # Build and optimize for Raspberry Pi(s)
 TARGET_RPI ?= 0
-# No BZERO (for building under MXE)
-NO_BZERO ?= 0
 # Compiler to use (ido or gcc)
 COMPILER ?= ido
 
@@ -157,8 +155,6 @@ endif
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(MAKECMDGOALS),distclean)
-#ifneq ($(MAKECMDGOALS),cleantools)
-#ifneq ($(MAKECMDGOALS),cleanall) // temporarily disabled while bugfixing the clean commands
 
 # Make sure assets exist
 NOEXTRACT ?= 0
@@ -487,12 +483,6 @@ CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fn
 else
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags`
 CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags`
-endif
-
-# Check for no bzero option
-ifeq ($(NO_BZERO),1)
-CC_CHECK += -DNO_BZERO
-CFLAGS += -DNO_BZERO
 endif
 
 # Check for better camera option
