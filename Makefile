@@ -171,7 +171,7 @@ endif
 endif
 
 # Make tools if out of date
-DUMMY != make -s -C tools >&2 || echo FAIL
+DUMMY != make -C tools >&2 || echo FAIL
 ifeq ($(DUMMY),FAIL)
   $(error Failed to build tools)
 endif
