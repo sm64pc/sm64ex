@@ -8,14 +8,19 @@
 #endif
 
 #include "../configfile.h"
+#include "controller_keyboard.h"
 
 static int keyboard_buttons_down;
 
-static int keyboard_mapping[14][2];
+#define MAX_KEYBINDS 64
+static int keyboard_mapping[MAX_KEYBINDS][2];
+static int num_keybinds = 0;
+
+static u32 keyboard_lastkey = VK_INVALID;
 
 static int keyboard_map_scancode(int scancode) {
     int ret = 0;
-    for (size_t i = 0; i < sizeof(keyboard_mapping) / sizeof(keyboard_mapping[0]); i++) {
+    for (int i = 0; i < num_keybinds; i++) {
         if (keyboard_mapping[i][0] == scancode) {
             ret |= keyboard_mapping[i][1];
         }
@@ -26,12 +31,15 @@ static int keyboard_map_scancode(int scancode) {
 bool keyboard_on_key_down(int scancode) {
     int mapped = keyboard_map_scancode(scancode);
     keyboard_buttons_down |= mapped;
+    keyboard_lastkey = scancode;
     return mapped != 0;
 }
 
 bool keyboard_on_key_up(int scancode) {
     int mapped = keyboard_map_scancode(scancode);
     keyboard_buttons_down &= ~mapped;
+    if (keyboard_lastkey == (u32) scancode)
+        keyboard_lastkey = VK_INVALID;
     return mapped != 0;
 }
 
@@ -39,28 +47,38 @@ void keyboard_on_all_keys_up(void) {
     keyboard_buttons_down = 0;
 }
 
-static void set_keyboard_mapping(int index, int mask, int scancode) {
-    keyboard_mapping[index][0] = scancode;
-    keyboard_mapping[index][1] = mask;
+static void keyboard_add_binds(int mask, unsigned int *scancode) {
+    for (int i = 0; i < MAX_BINDS && num_keybinds < MAX_KEYBINDS; ++i) {
+        if (scancode[i] < VK_BASE_KEYBOARD + VK_SIZE) {
+            keyboard_mapping[num_keybinds][0] = scancode[i];
+            keyboard_mapping[num_keybinds][1] = mask;
+            num_keybinds++;
+        }
+    }
+}
+
+static void keyboard_bindkeys(void) {
+    bzero(keyboard_mapping, sizeof(keyboard_mapping));
+    num_keybinds = 0;
+
+    keyboard_add_binds(0x80000,      configKeyStickUp);
+    keyboard_add_binds(0x10000,      configKeyStickLeft);
+    keyboard_add_binds(0x40000,      configKeyStickDown);
+    keyboard_add_binds(0x20000,      configKeyStickRight);
+    keyboard_add_binds(A_BUTTON,     configKeyA);
+    keyboard_add_binds(B_BUTTON,     configKeyB);
+    keyboard_add_binds(Z_TRIG,       configKeyZ);
+    keyboard_add_binds(U_CBUTTONS,   configKeyCUp);
+    keyboard_add_binds(L_CBUTTONS,   configKeyCLeft);
+    keyboard_add_binds(D_CBUTTONS,   configKeyCDown);
+    keyboard_add_binds(R_CBUTTONS,   configKeyCRight);
+    keyboard_add_binds(L_TRIG,       configKeyL);
+    keyboard_add_binds(R_TRIG,       configKeyR);
+    keyboard_add_binds(START_BUTTON, configKeyStart);
 }
 
 static void keyboard_init(void) {
-    int i = 0;
-
-    set_keyboard_mapping(i++, 0x80000,      configKeyStickUp);
-    set_keyboard_mapping(i++, 0x10000,      configKeyStickLeft);
-    set_keyboard_mapping(i++, 0x40000,      configKeyStickDown);
-    set_keyboard_mapping(i++, 0x20000,      configKeyStickRight);
-    set_keyboard_mapping(i++, A_BUTTON,     configKeyA);
-    set_keyboard_mapping(i++, B_BUTTON,     configKeyB);
-    set_keyboard_mapping(i++, Z_TRIG,       configKeyZ);
-    set_keyboard_mapping(i++, U_CBUTTONS,   configKeyCUp);
-    set_keyboard_mapping(i++, L_CBUTTONS,   configKeyCLeft);
-    set_keyboard_mapping(i++, D_CBUTTONS,   configKeyCDown);
-    set_keyboard_mapping(i++, R_CBUTTONS,   configKeyCRight);
-    set_keyboard_mapping(i++, L_TRIG,       configKeyL);
-    set_keyboard_mapping(i++, R_TRIG,       configKeyR);
-    set_keyboard_mapping(i++, START_BUTTON, configKeyStart);
+    keyboard_bindkeys();
 
 #ifdef TARGET_WEB
     controller_emscripten_keyboard_init();
@@ -83,7 +101,20 @@ static void keyboard_read(OSContPad *pad) {
     }
 }
 
+static u32 keyboard_rawkey(void) {
+    const u32 ret = keyboard_lastkey;
+    keyboard_lastkey = VK_INVALID;
+    return ret;
+}
+
+static void keyboard_shutdown(void) {
+}
+
 struct ControllerAPI controller_keyboard = {
+    VK_BASE_KEYBOARD,
     keyboard_init,
-    keyboard_read
+    keyboard_read,
+    keyboard_rawkey,
+    keyboard_bindkeys,
+    keyboard_shutdown
 };

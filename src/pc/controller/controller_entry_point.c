@@ -56,3 +56,25 @@ void osContGetReadData(OSContPad *pad) {
         controller_implementations[i]->read(pad);
     }
 }
+
+u32 controller_get_raw_key(void) {
+    for (size_t i = 0; i < sizeof(controller_implementations) / sizeof(struct ControllerAPI *); i++) {
+        u32 vk = controller_implementations[i]->rawkey();
+        if (vk != VK_INVALID) return vk + controller_implementations[i]->vkbase;
+    }
+    return VK_INVALID;
+}
+
+void controller_shutdown(void) {
+    for (size_t i = 0; i < sizeof(controller_implementations) / sizeof(struct ControllerAPI *); i++) {
+        if (controller_implementations[i]->shutdown)
+            controller_implementations[i]->shutdown();
+    }
+}
+
+void controller_reconfigure(void) {
+    for (size_t i = 0; i < sizeof(controller_implementations) / sizeof(struct ControllerAPI *); i++) {
+        if (controller_implementations[i]->reconfig)
+            controller_implementations[i]->reconfig();
+    }
+}

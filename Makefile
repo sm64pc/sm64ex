@@ -28,6 +28,12 @@ TARGET_RPI ?= 0
 
 # Disable better camera by default
 BETTERCAMERA ?= 0
+# Disable no drawing distance by default
+NODRAWINGDISTANCE ?= 0
+# Disable texture fixes by default (helps with them purists)
+TEXTURE_FIX ?= 0
+# Enable extended options menu by default
+EXT_OPTIONS_MENU ?= 1
 
 # Build for Emscripten/WebGL
 TARGET_WEB ?= 0
@@ -42,8 +48,6 @@ else
 endif
 
 # Automatic settings for PC port(s)
-# WINDOWS_BUILD IS NOT FOR COMPILING A WINDOWS EXECUTABLE UNDER LINUX OR WSL!
-# USE THE WIKI GUIDE WITH MSYS2 FOR COMPILING A WINDOWS EXECUTABLE!
 
 NON_MATCHING := 1
 GRUCODE := f3dex2e
@@ -420,9 +424,14 @@ else
   LD := $(CC)
 endif
 
-CPP := $(CROSS)cpp -P
+ifeq ($(WINDOWS_BUILD),1) # fixes compilation in MXE on Linux and WSL
+  CPP := cpp -P
+  OBJCOPY := objcopy
+else
+  CPP := $(CROSS)cpp -P
+  OBJCOPY := $(CROSS)objcopy
+endif
 OBJDUMP := $(CROSS)objdump
-OBJCOPY := $(CROSS)objcopy
 PYTHON := python3
 SDLCONFIG := $(CROSS)sdl2-config
 
@@ -440,33 +449,53 @@ CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -W
 CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags`
 endif
 
-# Check for better camera option
+# Check for enhancement options
+
+# Check for Puppycam option
 ifeq ($(BETTERCAMERA),1)
-CC_CHECK += -DBETTERCAMERA
-CFLAGS += -DBETTERCAMERA
+  CC_CHECK += -DBETTERCAMERA
+  CFLAGS += -DBETTERCAMERA
+  EXT_OPTIONS_MENU := 1
+endif
+
+# Check for no drawing distance option
+ifeq ($(NODRAWINGDISTANCE),1)
+  CC_CHECK += -DNODRAWINGDISTANCE
+  CFLAGS += -DNODRAWINGDISTANCE
+endif
+
+# Check for texture fix option
+ifeq ($(TEXTURE_FIX),1)
+  CC_CHECK += -DTEXTURE_FIX
+  CFLAGS += -DTEXTURE_FIX
+endif
+
+# Check for extended options menu option
+ifeq ($(EXT_OPTIONS_MENU),1)
+  CC_CHECK += -DEXT_OPTIONS_MENU
+  CFLAGS += -DEXT_OPTIONS_MENU
 endif
 
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
 
 ifeq ($(TARGET_WEB),1)
 LDFLAGS := -lm -lGL -lSDL2 -no-pie -s TOTAL_MEMORY=20MB -g4 --source-map-base http://localhost:8080/ -s "EXTRA_EXPORTED_RUNTIME_METHODS=['callMain']"
-else
-
-ifeq ($(WINDOWS_BUILD),1)
-LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -no-pie -static
-ifeq ($(WINDOWS_CONSOLE),1)
-LDFLAGS += -mconsole
-endif
-else
-
+else ifeq ($(WINDOWS_BUILD),1)
+  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -static
+  ifneq ($(CROSS),i686-w64-mingw32.static-)
+    ifneq ($(CROSS),x86_64-w64-mingw32.static-)
+      LDFLAGS += -no-pie
+    endif
+  endif
+  ifeq ($(WINDOWS_CONSOLE),1)
+    LDFLAGS += -mconsole
+  endif
+else ifeq ($(TARGET_RPI),1)
 # Linux / Other builds below
-ifeq ($(TARGET_RPI),1)
 LDFLAGS := $(OPT_FLAGS) -lm -lGLESv2 `$(SDLCONFIG) --libs` -no-pie
 else
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(SDLCONFIG) --libs` -no-pie -lpthread
 endif
-endif
-endif #Added for Pi ifeq
 
 
 # Prevent a crash with -sopt
@@ -576,11 +605,13 @@ ifeq ($(VERSION),eu)
 $(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
 $(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
 $(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
+$(BUILD_DIR)/src/game/options_menu.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
 O_FILES += $(BUILD_DIR)/bin/eu/translation_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
 else
 $(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h
 $(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h
 $(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h
+$(BUILD_DIR)/src/game/options_menu.o: $(BUILD_DIR)/include/text_strings.h
 endif
 
 ################################################################

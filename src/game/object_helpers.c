@@ -984,7 +984,7 @@ BAD_RETURN(s16) cur_obj_reverse_animation(void) {
 BAD_RETURN(s32) cur_obj_extend_animation_if_at_end(void) {
     s32 sp4 = o->header.gfx.unk38.animFrame;
     s32 sp0 = o->header.gfx.unk38.curAnim->unk08 - 2;
-    
+
     if (sp4 == sp0) o->header.gfx.unk38.animFrame--;
 }
 
@@ -1593,6 +1593,10 @@ void set_mario_interact_hoot_if_in_range(UNUSED s32 sp0, UNUSED s32 sp4, f32 sp8
 
 void obj_set_billboard(struct Object *obj) {
     obj->header.gfx.node.flags |= GRAPH_RENDER_BILLBOARD;
+}
+
+void obj_set_cylboard(struct Object *obj) {
+    obj->header.gfx.node.flags |= GRAPH_RENDER_CYLBOARD;
 }
 
 void cur_obj_set_hitbox_radius_and_height(f32 radius, f32 height) {

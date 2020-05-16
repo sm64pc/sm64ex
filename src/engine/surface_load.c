@@ -786,9 +786,13 @@ void load_object_collision_model(void) {
         }
     }
 
+#ifndef NODRAWINGDISTANCE
     if (marioDist < gCurrentObject->oDrawingDistance) {
+#endif
         gCurrentObject->header.gfx.node.flags |= GRAPH_RENDER_ACTIVE;
+#ifndef NODRAWINGDISTANCE
     } else {
         gCurrentObject->header.gfx.node.flags &= ~GRAPH_RENDER_ACTIVE;
     }
+#endif
 }

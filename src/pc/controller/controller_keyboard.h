@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include "controller_api.h"
 
+# define VK_BASE_KEYBOARD 0x0000
+
 #ifdef __cplusplus
 extern "C" {
 #endif

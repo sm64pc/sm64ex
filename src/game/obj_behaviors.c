@@ -527,11 +527,15 @@ void set_object_visibility(struct Object *obj, s32 dist) {
     f32 objY = obj->oPosY;
     f32 objZ = obj->oPosZ;
 
+#ifndef NODRAWINGDISTANCE
     if (is_point_within_radius_of_mario(objX, objY, objZ, dist) == TRUE) {
+#endif
         obj->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
+#ifndef NODRAWINGDISTANCE
     } else {
         obj->header.gfx.node.flags |= GRAPH_RENDER_INVISIBLE;
     }
+#endif
 }
 
 /**

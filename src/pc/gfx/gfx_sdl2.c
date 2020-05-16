@@ -19,13 +19,16 @@
 #include "gfx_window_manager_api.h"
 #include "gfx_screen_config.h"
 #include "../configfile.h"
+#include "../cliopts.h"
 
 #include "src/pc/controller/controller_keyboard.h"
 
 static SDL_Window *wnd;
+static SDL_GLContext ctx = NULL;
 static int inverted_scancode_table[512];
 
-extern bool configFullscreen;
+static bool cur_fullscreen;
+static uint32_t cur_width, cur_height;
 
 const SDL_Scancode windows_scancode_table[] =
 { 
@@ -78,20 +81,18 @@ const SDL_Scancode scancode_rmapping_nonextended[][2] = {
     {SDL_SCANCODE_KP_MULTIPLY, SDL_SCANCODE_PRINTSCREEN}
 };
 
-static void gfx_sdl_set_fullscreen(bool fullscreen)
-{
-    if (fullscreen)
-    {
+static void gfx_sdl_set_fullscreen(bool fullscreen) {
+    if (fullscreen == cur_fullscreen) return;
+
+    if (fullscreen) {
         SDL_SetWindowFullscreen(wnd, SDL_WINDOW_FULLSCREEN_DESKTOP);
         SDL_ShowCursor(SDL_DISABLE);
-    }
-    else
-    {
+    } else {
         SDL_SetWindowFullscreen(wnd, 0);
         SDL_ShowCursor(SDL_ENABLE);
     }
 
-    configFullscreen = fullscreen;
+    cur_fullscreen = fullscreen;
 }
 
 static void gfx_sdl_init(void) {
@@ -112,6 +113,10 @@ static void gfx_sdl_init(void) {
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
     window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
+
+    if (gCLIOpts.FullScreen) {
+        configFullscreen = true;
+    }
 
     if (configFullscreen) {
         window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
@@ -185,13 +190,9 @@ static void gfx_sdl_onkeydown(int scancode) {
     const Uint8 *state = SDL_GetKeyboardState(NULL);
 
     if (state[SDL_SCANCODE_LALT] && state[SDL_SCANCODE_RETURN])
-    {
-        gfx_sdl_set_fullscreen(!configFullscreen);
-    }
+        configFullscreen = !configFullscreen;
     else if (state[SDL_SCANCODE_ESCAPE] && configFullscreen)
-    {
-        gfx_sdl_set_fullscreen(false);
-    }
+        configFullscreen = false;
 }
 
 static void gfx_sdl_onkeyup(int scancode) {
@@ -215,6 +216,9 @@ static void gfx_sdl_handle_events(void) {
                 exit(0);
         }
     }
+    // just check if the fullscreen value has changed and toggle fullscreen if it has
+    if (configFullscreen != cur_fullscreen)
+        gfx_sdl_set_fullscreen(configFullscreen);
 }
 
 static bool gfx_sdl_start_frame(void) {
@@ -232,6 +236,15 @@ static double gfx_sdl_get_time(void) {
     return 0.0;
 }
 
+
+static void gfx_sdl_shutdown(void) {
+    if (SDL_WasInit(0)) {
+        if (ctx) { SDL_GL_DeleteContext(ctx); ctx = NULL; }
+        if (wnd) { SDL_DestroyWindow(wnd); wnd = NULL; }
+        SDL_Quit();
+    }
+}
+
 struct GfxWindowManagerAPI gfx_sdl = {
     gfx_sdl_init,
     gfx_sdl_main_loop,
@@ -240,5 +253,6 @@ struct GfxWindowManagerAPI gfx_sdl = {
     gfx_sdl_start_frame,
     gfx_sdl_swap_buffers_begin,
     gfx_sdl_swap_buffers_end,
-    gfx_sdl_get_time
+    gfx_sdl_get_time,
+    gfx_sdl_shutdown
 };
