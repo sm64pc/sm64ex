@@ -569,10 +569,16 @@ static void gfx_sp_vertex(size_t n_vertices, size_t dest_index, const Vtx *verti
                 calculate_normal_dir(&lookat_y, rsp.current_lookat_coeffs[1]);
                 rsp.lights_changed = false;
             }
-            
-            int r = rsp.current_lights[rsp.current_num_lights - 1].col[0];
-            int g = rsp.current_lights[rsp.current_num_lights - 1].col[1];
-            int b = rsp.current_lights[rsp.current_num_lights - 1].col[2];
+
+            // Inspired by:
+            // https://github.com/gonetz/GLideN64/commit/c8cbafff71a81bee5112aaafe6e21d6648ff8125#diff-69d8715ec7f9fd627ec4f5516edd003dL484
+            const bool useFirstColor = (dest_index & 1) == 0;
+			const unsigned char* col = useFirstColor
+                                ? rsp.current_lights[rsp.current_num_lights - 1].col
+                                : rsp.current_lights[rsp.current_num_lights - 1].colc;
+            int r = col[0];
+            int g = col[1];
+            int b = col[2];
             
             for (int i = 0; i < rsp.current_num_lights - 1; i++) {
                 float intensity = 0;
@@ -581,9 +587,14 @@ static void gfx_sp_vertex(size_t n_vertices, size_t dest_index, const Vtx *verti
                 intensity += vn->n[2] * rsp.current_lights_coeffs[i][2];
                 intensity /= 127.0f;
                 if (intensity > 0.0f) {
-                    r += intensity * rsp.current_lights[i].col[0];
-                    g += intensity * rsp.current_lights[i].col[1];
-                    b += intensity * rsp.current_lights[i].col[2];
+                    // Inspired by:
+                    // https://github.com/gonetz/GLideN64/commit/c8cbafff71a81bee5112aaafe6e21d6648ff8125#diff-69d8715ec7f9fd627ec4f5516edd003dL492
+                    col = useFirstColor
+                                ? rsp.current_lights[i].col
+                                : rsp.current_lights[i].colc;
+                    r += intensity * col[0];
+                    g += intensity * col[1];
+                    b += intensity * col[2];
                 }
             }
             
