@@ -246,10 +246,14 @@ void bhv_whomp_loop(void) {
     cur_obj_call_action_function(sWhompActions);
     cur_obj_move_standard(-20);
     if (o->oAction != 9) {
+        #ifndef NODRAWINGDISTANCE
+        // o->oBehParams2ndByte here seems to be a flag
+        // indicating whether this is a normal or king whomp
         if (o->oBehParams2ndByte != 0)
             cur_obj_hide_if_mario_far_away_y(2000.0f);
         else
             cur_obj_hide_if_mario_far_away_y(1000.0f);
+        #endif
         load_object_collision_model();
     }
 }
