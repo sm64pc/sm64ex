@@ -22,8 +22,6 @@ TARGET_N64 = 0
 
 # Build and optimize for Raspberry Pi(s)
 TARGET_RPI ?= 0
-# No BZERO (for building under MXE)
-NO_BZERO ?= 0
 # Compiler to use (ido or gcc)
 COMPILER ?= ido
 
@@ -450,12 +448,6 @@ SDLCONFIG := $(CROSS)sdl2-config
 ifeq ($(WINDOWS_BUILD),1)
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags`
 CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags`
-  ifeq ($(CROSS),i686-w64-mingw32.static-)
-    ifeq ($(CROSS),x86_64-w64-mingw32.static-)
-      CC_CHECK += D_NOBZERO
-      CFLAGS += D_NOBZERO
-    endif
-  endif
 
 else ifeq ($(TARGET_WEB),1)
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
@@ -468,12 +460,6 @@ CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fn
 endif
 
 # Check for enhancement options
-
-# Check for no bzero option
-ifeq ($(NO_BZERO),1)
-CC_CHECK += -DNO_BZERO
-CFLAGS += -DNO_BZERO
-endif
 
 # Check for Puppycam option
 ifeq ($(BETTERCAMERA),1)
