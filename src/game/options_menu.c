@@ -132,6 +132,23 @@ struct SubMenu {
     s32 scroll;
 };
 
+/* helper macros */
+
+#define DEF_OPT_TOGGLE(lbl, bv) \
+    { .type = OPT_TOGGLE, .label = lbl, .bval = bv }
+#define DEF_OPT_SCROLL(lbl, uv, min, max, st) \
+    { .type = OPT_SCROLL, .label = lbl, .uval = uv, .scrMin = min, .scrMax = max, .scrStep = st }
+#define DEF_OPT_CHOICE(lbl, uv, ch) \
+    { .type = OPT_CHOICE, .label = lbl, .uval = uv, .choices = ch, .numChoices = sizeof(ch) / sizeof(ch[0]) }
+#define DEF_OPT_SUBMENU(lbl, nm) \
+    { .type = OPT_SUBMENU, .label = lbl, .nextMenu = nm }
+#define DEF_OPT_BIND(lbl, uv) \
+    { .type = OPT_BIND, .label = lbl, .uval = uv }
+#define DEF_OPT_BUTTON(lbl, act) \
+    { .type = OPT_BUTTON, .label = lbl, .actionFn = act }
+#define DEF_SUBMENU(lbl, opt) \
+    { .label = lbl, .opts = opt, .numOpts = sizeof(opt) / sizeof(opt[0]) }
+
 /* button action functions */
 
 static void optmenu_act_exit(UNUSED struct Option *self, s32 arg) {
@@ -141,72 +158,54 @@ static void optmenu_act_exit(UNUSED struct Option *self, s32 arg) {
 /* submenu option lists */
 
 static struct Option optsCamera[] = {
-    { .type = OPT_TOGGLE, .label = optsCameraStr[6], .bval = &configEnableCamera,                                          },
-    { .type = OPT_TOGGLE, .label = optsCameraStr[7], .bval = &configCameraMouse,                                           },
-    { .type = OPT_TOGGLE, .label = optsCameraStr[2], .bval = &configCameraInvertX,                                         },
-    { .type = OPT_TOGGLE, .label = optsCameraStr[3], .bval = &configCameraInvertY,                                         },
-    { .type = OPT_SCROLL, .label = optsCameraStr[0], .uval = &configCameraXSens, .scrMin = 10, .scrMax = 250, .scrStep = 1 },
-    { .type = OPT_SCROLL, .label = optsCameraStr[1], .uval = &configCameraYSens, .scrMin = 10, .scrMax = 250, .scrStep = 1 },
-    { .type = OPT_SCROLL, .label = optsCameraStr[4], .uval = &configCameraAggr,  .scrMin = 0,  .scrMax = 100, .scrStep = 1 },
-    { .type = OPT_SCROLL, .label = optsCameraStr[5], .uval = &configCameraPan,   .scrMin = 0,  .scrMax = 100, .scrStep = 1 },
+    DEF_OPT_TOGGLE( optsCameraStr[6], &configEnableCamera ),
+    DEF_OPT_TOGGLE( optsCameraStr[7], &configCameraMouse ),
+    DEF_OPT_TOGGLE( optsCameraStr[2], &configCameraInvertX ),
+    DEF_OPT_TOGGLE( optsCameraStr[3], &configCameraInvertY ),
+    DEF_OPT_SCROLL( optsCameraStr[0], &configCameraXSens, 10, 250, 1 ),
+    DEF_OPT_SCROLL( optsCameraStr[1], &configCameraYSens, 10, 250, 1 ),
+    DEF_OPT_SCROLL( optsCameraStr[4], &configCameraAggr, 0, 100, 1 ),
+    DEF_OPT_SCROLL( optsCameraStr[5], &configCameraPan, 0, 100, 1 ),
 };
 
 static struct Option optsControls[] = {
-    { .type = OPT_BIND, .label = bindStr[2],  .uval = configKeyA,          },
-    { .type = OPT_BIND, .label = bindStr[3],  .uval = configKeyB,          },
-    { .type = OPT_BIND, .label = bindStr[4],  .uval = configKeyStart,      },
-    { .type = OPT_BIND, .label = bindStr[5],  .uval = configKeyL,          },
-    { .type = OPT_BIND, .label = bindStr[6],  .uval = configKeyR,          },
-    { .type = OPT_BIND, .label = bindStr[7],  .uval = configKeyZ,          },
-    { .type = OPT_BIND, .label = bindStr[8],  .uval = configKeyCUp,        },
-    { .type = OPT_BIND, .label = bindStr[9],  .uval = configKeyCDown,      },
-    { .type = OPT_BIND, .label = bindStr[10], .uval = configKeyCLeft,      },
-    { .type = OPT_BIND, .label = bindStr[11], .uval = configKeyCRight,     },
-    { .type = OPT_BIND, .label = bindStr[12], .uval = configKeyStickUp,    },
-    { .type = OPT_BIND, .label = bindStr[13], .uval = configKeyStickDown,  },
-    { .type = OPT_BIND, .label = bindStr[14], .uval = configKeyStickLeft,  },
-    { .type = OPT_BIND, .label = bindStr[15], .uval = configKeyStickRight, },
+    DEF_OPT_BIND( bindStr[ 2], configKeyA ),
+    DEF_OPT_BIND( bindStr[ 3], configKeyB ),
+    DEF_OPT_BIND( bindStr[ 4], configKeyStart ),
+    DEF_OPT_BIND( bindStr[ 5], configKeyL ),
+    DEF_OPT_BIND( bindStr[ 6], configKeyR ),
+    DEF_OPT_BIND( bindStr[ 7], configKeyZ ),
+    DEF_OPT_BIND( bindStr[ 8], configKeyCUp ),
+    DEF_OPT_BIND( bindStr[ 9], configKeyCDown ),
+    DEF_OPT_BIND( bindStr[10], configKeyCLeft ),
+    DEF_OPT_BIND( bindStr[11], configKeyCRight ),
+    DEF_OPT_BIND( bindStr[12], configKeyStickUp ),
+    DEF_OPT_BIND( bindStr[13], configKeyStickDown ),
+    DEF_OPT_BIND( bindStr[14], configKeyStickLeft ),
+    DEF_OPT_BIND( bindStr[15], configKeyStickRight ),
 };
 
 static struct Option optsVideo[] = {
-    { .type = OPT_TOGGLE, .label = optsVideoStr[0], .bval = &configFullscreen,                                          },
-    { .type = OPT_CHOICE, .label = optsVideoStr[1], .uval = &configFiltering, .choices = filterChoices, .numChoices = 2 },
+    DEF_OPT_TOGGLE( optsVideoStr[0], &configFullscreen ),
+    DEF_OPT_CHOICE( optsVideoStr[1], &configFiltering, filterChoices ),
 };
 
 /* submenu definitions */
 
-static struct SubMenu menuCamera = {
-    .label = menuStr[4],
-    .opts = optsCamera,
-    .numOpts = sizeof(optsCamera) / sizeof(optsCamera[0]),
-};
-
-static struct SubMenu menuControls = {
-    .label = menuStr[5],
-    .opts = optsControls,
-    .numOpts = sizeof(optsControls) / sizeof(optsControls[0]),
-};
-
-static struct SubMenu menuVideo = {
-    .label = menuStr[6],
-    .opts = optsVideo,
-    .numOpts = sizeof(optsVideo) / sizeof(optsVideo[0]),
-};
+static struct SubMenu menuCamera = DEF_SUBMENU( menuStr[4], optsCamera );
+static struct SubMenu menuControls = DEF_SUBMENU( menuStr[5], optsControls );
+static struct SubMenu menuVideo = DEF_SUBMENU( menuStr[6], optsVideo );
 
 /* main options menu definition */
 
 static struct Option optsMain[] = {
-    { .type = OPT_SUBMENU, .label = menuStr[4], .nextMenu = &menuCamera, },
-    { .type = OPT_SUBMENU, .label = menuStr[5], .nextMenu = &menuControls, },
-    { .type = OPT_SUBMENU, .label = menuStr[6], .nextMenu = &menuVideo, },
-    { .type = OPT_BUTTON,  .label = menuStr[7], .actionFn = optmenu_act_exit, },
+    DEF_OPT_SUBMENU( menuStr[4], &menuCamera ),
+    DEF_OPT_SUBMENU( menuStr[5], &menuControls ),
+    DEF_OPT_SUBMENU( menuStr[6], &menuVideo ),
+    DEF_OPT_BUTTON ( menuStr[7], optmenu_act_exit ),
 };
 
-static struct SubMenu menuMain = {
-    .label = menuStr[3],
-    .opts = optsMain,
-    .numOpts = sizeof(optsMain) / sizeof(optsMain[0]),
-};
+static struct SubMenu menuMain = DEF_SUBMENU( menuStr[3], optsMain );
 
 /* implementation */
 
