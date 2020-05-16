@@ -47,8 +47,6 @@ else
 endif
 
 # Automatic settings for PC port(s)
-# WINDOWS_BUILD IS NOT FOR COMPILING A WINDOWS EXECUTABLE UNDER LINUX OR WSL!
-# USE THE WIKI GUIDE WITH MSYS2 FOR COMPILING A WINDOWS EXECUTABLE!
 
 NON_MATCHING := 1
 GRUCODE := f3dex2e
@@ -430,9 +428,14 @@ else
   LD := $(CC)
 endif
 
-CPP := $(CROSS)cpp -P
+ifeq ($(WINDOWS_BUILD),1) # fixes compilation in MXE on Linux and WSL
+  CPP := cpp -P
+  OBJCOPY := objcopy
+else
+  CPP := $(CROSS)cpp -P
+  OBJCOPY := $(CROSS)objcopy
+endif
 OBJDUMP := $(CROSS)objdump
-OBJCOPY := $(CROSS)objcopy
 PYTHON := python3
 SDLCONFIG := $(CROSS)sdl2-config
 
@@ -481,23 +484,22 @@ ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
 
 ifeq ($(TARGET_WEB),1)
 LDFLAGS := -lm -lGL -lSDL2 -no-pie -s TOTAL_MEMORY=20MB -g4 --source-map-base http://localhost:8080/ -s "EXTRA_EXPORTED_RUNTIME_METHODS=['callMain']"
-else
-
-ifeq ($(WINDOWS_BUILD),1)
-LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -no-pie -static
-ifeq ($(WINDOWS_CONSOLE),1)
-LDFLAGS += -mconsole
-endif
-else
-
+else ifeq ($(WINDOWS_BUILD),1)
+  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -static
+  ifneq ($(CROSS),i686-w64-mingw32.static-)
+    ifneq ($(CROSS),x86_64-w64-mingw32.static-)
+      LDFLAGS += -no-pie
+    endif
+  endif
+  ifeq ($(WINDOWS_CONSOLE),1)
+    LDFLAGS += -mconsole
+  endif
+else ifeq ($(TARGET_RPI),1)
 # Linux / Other builds below
-ifeq ($(TARGET_RPI),1)
 LDFLAGS := $(OPT_FLAGS) -lm -lGLESv2 `$(SDLCONFIG) --libs` -no-pie
 else
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(SDLCONFIG) --libs` -no-pie -lpthread
 endif
-endif
-endif #Added for Pi ifeq
 
 
 # Prevent a crash with -sopt
