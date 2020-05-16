@@ -22,8 +22,9 @@ TARGET_N64 = 0
 
 # Build and optimize for Raspberry Pi(s)
 TARGET_RPI ?= 0
-# Compiler to use (ido or gcc)
-COMPILER ?= ido
+
+# Makeflag to enable OSX fixes
+OSX_BUILD ?= 0
 
 # Disable better camera by default
 BETTERCAMERA ?= 0
@@ -141,6 +142,10 @@ ifeq ($(TARGET_RPI),1) # Define RPi to change SDL2 title & GLES2 hints
       VERSION_CFLAGS += -DUSE_GLES
 endif
 
+ifeq ($(OSX_BUILD),1) # Modify GFX & SDL2 for OSX GL
+     VERSION_CFLAGS += -DOSX_BUILD
+endif
+
 VERSION_ASFLAGS := --defsym AVOID_UB=1
 COMPARE := 0
 
@@ -167,7 +172,7 @@ endif
 endif
 
 # Make tools if out of date
-DUMMY != make -s -C tools >&2 || echo FAIL
+DUMMY != make -C tools >&2 || echo FAIL
 ifeq ($(DUMMY),FAIL)
   $(error Failed to build tools)
 endif
@@ -228,10 +233,6 @@ GODDARD_SRC_DIRS := src/goddard src/goddard/dynlists
 MIPSISET := -mips2
 MIPSBIT := -32
 
-ifeq ($(COMPILER),gcc)
-  MIPSISET := -mips3
-endif
-
 ifeq ($(VERSION),eu)
   OPT_FLAGS := -O2
 else
@@ -250,9 +251,8 @@ ifeq ($(TARGET_WEB),1)
 endif
 
 # Use a default opt flag for gcc, then override if RPi
-ifeq ($(COMPILER),gcc)
-OPT_FLAGS := -O2 # Breaks sound on x86?
-endif
+# OPT_FLAGS := -O2 # -O2 opt breaks sound on x86?
+
 
 ifeq ($(TARGET_RPI),1)
 	machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
@@ -415,6 +415,10 @@ ENDIAN_BITWIDTH := $(BUILD_DIR)/endian-and-bitwidth
 
 AS := as
 
+ifeq ($(OSX_BUILD),1)
+AS := i686-w64-mingw32-as
+endif
+
 ifneq ($(TARGET_WEB),1) # As in, not-web PC port
   CC := $(CROSS)gcc
   CXX := $(CROSS)g++
@@ -431,11 +435,19 @@ endif
 ifeq ($(WINDOWS_BUILD),1) # fixes compilation in MXE on Linux and WSL
   CPP := cpp -P
   OBJCOPY := objcopy
+  OBJDUMP := $(CROSS)objdump
 else
+ifeq ($(OSX_BUILD),1)
+ CPP := cpp-9 -P
+ OBJDUMP := i686-w64-mingw32-objdump
+ OBJCOPY := i686-w64-mingw32-objcopy
+else # Linux & other builds
   CPP := $(CROSS)cpp -P
   OBJCOPY := $(CROSS)objcopy
+  OBJDUMP := $(CROSS)objdump
 endif
-OBJDUMP := $(CROSS)objdump
+endif
+
 PYTHON := python3
 SDLCONFIG := $(CROSS)sdl2-config
 
@@ -498,9 +510,12 @@ else ifeq ($(TARGET_RPI),1)
 # Linux / Other builds below
 LDFLAGS := $(OPT_FLAGS) -lm -lGLESv2 `$(SDLCONFIG) --libs` -no-pie
 else
+ifeq ($(OSX_BUILD),1)
+LDFLAGS := -lm -framework OpenGL `$(SDLCONFIG) --libs` -no-pie -lpthread `pkg-config --libs libusb-1.0 glfw3 glew`
+else
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(SDLCONFIG) --libs` -no-pie -lpthread
 endif
-
+endif # End of LDFLAGS
 
 # Prevent a crash with -sopt
 export LANG := C
@@ -711,7 +726,6 @@ $(BUILD_DIR)/assets/mario_anim_data.c: $(wildcard assets/anims/*.inc.c)
 $(BUILD_DIR)/assets/demo_data.c: assets/demo_data.json $(wildcard assets/demos/*.bin)
 	$(PYTHON) tools/demo_data_converter.py assets/demo_data.json $(VERSION_CFLAGS) > $@
 
-ifeq ($(COMPILER),ido)
 # Source code
 $(BUILD_DIR)/levels/%/leveldata.o: OPT_FLAGS := -g
 $(BUILD_DIR)/actors/%.o: OPT_FLAGS := -g
@@ -753,8 +767,6 @@ $(BUILD_DIR)/src/audio/%.acpp: src/audio/%.c
 $(BUILD_DIR)/src/audio/%.copt: $(BUILD_DIR)/src/audio/%.acpp
 	$(QEMU_IRIX) -silent -L $(IRIX_ROOT) $(IRIX_ROOT)/usr/lib/copt -signed -I=$< -CMP=$@ -cp=i -scalaroptimize=1
 endif
-endif
-
 
 # Rebuild files with 'GLOBAL_ASM' if the NON_MATCHING flag changes.
 $(GLOBAL_ASM_O_FILES): $(GLOBAL_ASM_DEP).$(NON_MATCHING)
