@@ -19,9 +19,10 @@ COMPARE ?= 1
 NON_MATCHING ?= 1
 # Sane default until N64 build scripts rm'd
 TARGET_N64 = 0
-
 # Build and optimize for Raspberry Pi(s)
 TARGET_RPI ?= 0
+# No BZERO (for building under MXE)
+NO_BZERO ?= 0
 # Compiler to use (ido or gcc)
 COMPILER ?= ido
 
@@ -31,6 +32,8 @@ BETTERCAMERA ?= 0
 DISCORDRPC ?= 0
 # Disable no drawing distance by default
 NODRAWINGDISTANCE ?= 0
+# Disable texture fixes by default (helps with them purists)
+TEXTURE_FIX ?= 0
 
 # Build for Emscripten/WebGL
 TARGET_WEB ?= 0
@@ -45,8 +48,6 @@ else
 endif
 
 # Automatic settings for PC port(s)
-# WINDOWS_BUILD IS NOT FOR COMPILING A WINDOWS EXECUTABLE UNDER LINUX OR WSL!
-# USE THE WIKI GUIDE WITH MSYS2 FOR COMPILING A WINDOWS EXECUTABLE!
 
 NON_MATCHING := 1
 GRUCODE := f3dex2e
@@ -156,6 +157,8 @@ endif
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(MAKECMDGOALS),distclean)
+#ifneq ($(MAKECMDGOALS),cleantools)
+#ifneq ($(MAKECMDGOALS),cleanall) // temporarily disabled while bugfixing the clean commands
 
 # Make sure assets exist
 NOEXTRACT ?= 0
@@ -167,7 +170,7 @@ endif
 endif
 
 # Make tools if out of date
-DUMMY != make -s -C tools >&2 || echo FAIL
+DUMMY != make -C tools >&2 || echo FAIL
 ifeq ($(DUMMY),FAIL)
   $(error Failed to build tools)
 endif
@@ -413,7 +416,6 @@ ifeq ($(DISCORDRPC),1)
   endif
 endif
 
-
 # Automatic dependency files
 DEP_FILES := $(O_FILES:.o=.d) $(ULTRA_O_FILES:.o=.d) $(GODDARD_O_FILES:.o=.d) $(BUILD_DIR)/$(LD_SCRIPT).d
 
@@ -429,29 +431,53 @@ ENDIAN_BITWIDTH := $(BUILD_DIR)/endian-and-bitwidth
 AS := as
 
 ifneq ($(TARGET_WEB),1) # As in, not-web PC port
-  CC := $(CROSS)gcc
-  CXX := $(CROSS)g++
+	CC := $(CROSS)gcc
+	CXX := $(CROSS)g++
 else
   CC := emcc
 endif
 
 ifeq ($(WINDOWS_BUILD),1)
+	ifeq ($(CROSS),i686-w64-mingw32.static-)
+  LD := $(CC)
+	else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+	LD := $(CC)
+	else
   LD := $(CXX)
+  endif
 else ifeq ($(DISCORDRPC),1)
+  ifeq ($(CROSS),i686-w64-mingw32.static-)
+  LD := $(CC)
+  else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+  LD := $(CC)
+  else
   LD := $(CXX)
+  endif
 else
   LD := $(CC)
 endif
 
-CPP := $(CROSS)cpp -P
+ifeq ($(WINDOWS_BUILD),1) # fixes compilation in MXE on Linux and WSL
+  CPP := cpp -P
+  OBJCOPY := objcopy
+else
+  CPP := $(CROSS)cpp -P
+  OBJCOPY := $(CROSS)objcopy
+endif
 OBJDUMP := $(CROSS)objdump
-OBJCOPY := $(CROSS)objcopy
 PYTHON := python3
 SDLCONFIG := $(CROSS)sdl2-config
 
 ifeq ($(WINDOWS_BUILD),1)
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags`
 CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags`
+	ifeq ($(CROSS),i686-w64-mingw32.static-)
+		ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+			CC_CHECK += D_NOBZERO
+			CFLAGS += D_NOBZERO
+		endif
+	endif
+
 
 else ifeq ($(TARGET_WEB),1)
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
@@ -461,6 +487,12 @@ CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fn
 else
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags`
 CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags`
+endif
+
+# Check for no bzero option
+ifeq ($(NO_BZERO),1)
+CC_CHECK += -DNO_BZERO
+CFLAGS += -DNO_BZERO
 endif
 
 # Check for better camera option
@@ -475,32 +507,32 @@ CC_CHECK += -DNODRAWINGDISTANCE
 CFLAGS += -DNODRAWINGDISTANCE
 endif
 
-ifeq ($(DISCORDRPC),1)
-CC_CHECK += -DDISCORDRPC
-CFLAGS += -DDISCORDRPC
+# Check for texture fix option
+ifeq ($(TEXTURE_FIX),1)
+CC_CHECK += -DTEXTURE_FIX
+CFLAGS += -DTEXTURE_FIX
 endif
 
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
 
 ifeq ($(TARGET_WEB),1)
 LDFLAGS := -lm -lGL -lSDL2 -no-pie -s TOTAL_MEMORY=20MB -g4 --source-map-base http://localhost:8080/ -s "EXTRA_EXPORTED_RUNTIME_METHODS=['callMain']"
-else
-
-ifeq ($(WINDOWS_BUILD),1)
-LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -no-pie -static
-ifeq ($(WINDOWS_CONSOLE),1)
-LDFLAGS += -mconsole
-endif
-else
-
+else ifeq ($(WINDOWS_BUILD),1)
+LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -static
+  ifneq ($(CROSS),i686-w64-mingw32.static-)
+    ifneq ($(CROSS),x86_64-w64-mingw32.static-)
+      LDFLAGS += -no-pie
+    endif
+  endif
+  ifeq ($(WINDOWS_CONSOLE),1)
+    LDFLAGS += -mconsole
+  endif
+else ifeq ($(TARGET_RPI),1)
 # Linux / Other builds below
-ifeq ($(TARGET_RPI),1)
 LDFLAGS := $(OPT_FLAGS) -lm -lGLESv2 `$(SDLCONFIG) --libs` -no-pie
 else
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(SDLCONFIG) --libs` -no-pie -lpthread
 endif
-endif
-endif #Added for Pi ifeq
 
 
 # Prevent a crash with -sopt
@@ -538,7 +570,7 @@ clean:
 	$(RM) -r $(BUILD_DIR_BASE)
 
 cleantools:
-	$(MAKE) -s -C tools clean
+	$(MAKE) -C tools clean
 
 distclean:
 	$(RM) -r $(BUILD_DIR_BASE)
@@ -619,12 +651,10 @@ else
 $(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h
 $(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h
 $(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h
+$(BUILD_DIR)/src/game/options_menu.o: $(BUILD_DIR)/include/text_strings.h
 ifeq ($(DISCORDRPC),1)
 $(BUILD_DIR)/src/game/discord/discordrpc.o: $(BUILD_DIR)/include/text_strings.h
 endif
-endif
-$(BUILD_DIR)/src/game/options_menu.o: $(BUILD_DIR)/include/text_strings.h
-
 
 ################################################################
 # TEXTURE GENERATION                                           #
