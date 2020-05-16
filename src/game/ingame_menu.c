@@ -2391,12 +2391,6 @@ void render_pause_course_options(s16 x, s16 y, s8 *index, s16 yIndex) {
         { TEXT_EXIT_COURSE_DE }
     };
 
-    u8 textExitGame[][22] ={
- 	{ TEXT_EXIT_GAME },
-	{ TEXT_EXIT_GAME_FR },
-        { TEXT_EXIT_GAME_DE }
-    };
-
     u8 textCameraAngleR[][24] = {
         { TEXT_CAMERA_ANGLE_R },
         { TEXT_CAMERA_ANGLE_R_FR },
@@ -2404,27 +2398,23 @@ void render_pause_course_options(s16 x, s16 y, s8 *index, s16 yIndex) {
     };
 #define textContinue     textContinue[gInGameLanguage]
 #define textExitCourse   textExitCourse[gInGameLanguage]
-#define textExitGame	 textExitGame[gInGameLanguage]
 #define textCameraAngleR textCameraAngleR[gInGameLanguage]
 #else
     u8 textContinue[] = { TEXT_CONTINUE };
     u8 textExitCourse[] = { TEXT_EXIT_COURSE };
-    u8 textExitGame[] = { TEXT_EXIT_GAME };
     u8 textCameraAngleR[] = { TEXT_CAMERA_ANGLE_R };
 #endif
 
-    handle_menu_scrolling(MENU_SCROLL_VERTICAL, index, 1, 4); // Index max raised to 4 from 3
+    handle_menu_scrolling(MENU_SCROLL_VERTICAL, index, 1, 3);
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
 
     print_generic_string(x + 10, y - 2, textContinue);
     print_generic_string(x + 10, y - 17, textExitCourse);
-    print_generic_string(x + 10, y - 33, textExitGame);
 
-
-    if (index[0] != 4) {
-        print_generic_string(x + 10, y - 48, textCameraAngleR);
+    if (index[0] != 3) {
+        print_generic_string(x + 10, y - 33, textCameraAngleR);
         gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 
         create_dl_translation_matrix(MENU_MTX_PUSH, x - X_VAL8, (y - ((index[0] - 1) * yIndex)) - Y_VAL8, 0);
@@ -2432,10 +2422,8 @@ void render_pause_course_options(s16 x, s16 y, s8 *index, s16 yIndex) {
         gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
         gSPDisplayList(gDisplayListHead++, dl_draw_triangle);
         gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
-    }
-
-    if (index[0] == 4) {
-        render_pause_camera_options(x - 42, y - 57, &gDialogCameraAngleIndex, 110);
+    } else {
+        render_pause_camera_options(x - 42, y - 42, &gDialogCameraAngleIndex, 110);
     }
 }
 
@@ -2675,7 +2663,7 @@ s16 render_pause_courses_and_castle(void) {
                 gDialogBoxState = DIALOG_STATE_OPENING;
                 gMenuMode = -1;
 
-                if (gDialogLineNum == 2 || gDialogLineNum == 3) {
+                if (gDialogLineNum == 2) {
                     num = gDialogLineNum;
                 } else {
                     num = 1;

@@ -18,6 +18,7 @@
 #include "pc/controller/controller_api.h"
 
 #include <stdbool.h>
+#include <stdlib.h>
 
 u8 optmenu_open = 0;
 
@@ -43,6 +44,7 @@ static const u8 menuStr[][64] = {
     { TEXT_OPT_OPTIONS },
     { TEXT_OPT_CAMERA },
     { TEXT_OPT_CONTROLS },
+    { TEXT_EXIT_GAME },
 };
 
 static const u8 optsCameraStr[][64] = {
@@ -82,6 +84,7 @@ enum OptType {
     OPT_SCROLL,
     OPT_SUBMENU,
     OPT_BIND,
+    OPT_BUTTON,
 };
 
 struct SubMenu;
@@ -104,6 +107,7 @@ struct Option {
             u32 scrStep;
         };
         struct SubMenu *nextMenu;
+        void (*actionFn)(struct Option *, s32);
     };
 };
 
@@ -115,6 +119,12 @@ struct SubMenu {
     s32 select;
     s32 scroll;
 };
+
+/* button action functions */
+
+static void optmenu_act_exit(UNUSED struct Option *self, s32 arg) {
+    if (!arg) exit(0); // only exit on A press and not directions
+}
 
 /* submenu option lists */
 
@@ -165,6 +175,7 @@ static struct SubMenu menuControls = {
 static struct Option optsMain[] = {
     { .type = OPT_SUBMENU, .label = menuStr[4], .nextMenu = &menuCamera, },
     { .type = OPT_SUBMENU, .label = menuStr[5], .nextMenu = &menuControls, },
+    { .type = OPT_BUTTON,  .label = menuStr[6], .actionFn = optmenu_act_exit, },
 };
 
 static struct SubMenu menuMain = {
@@ -223,7 +234,7 @@ static void optmenu_draw_text(s16 x, s16 y, const u8 *str, u8 col) {
 static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
     u8 buf[32] = { 0 };
 
-    if (opt->type == OPT_SUBMENU)
+    if (opt->type == OPT_SUBMENU || opt->type == OPT_BUTTON)
         y -= 6;
 
     optmenu_draw_text(x, y, opt->label, sel);
@@ -280,6 +291,11 @@ static void optmenu_opt_change(struct Option *opt, s32 val) {
         case OPT_SUBMENU:
             opt->nextMenu->prev = currentMenu;
             currentMenu = opt->nextMenu;
+            break;
+
+        case OPT_BUTTON:
+            if (opt->actionFn)
+                opt->actionFn(opt, val);
             break;
 
         case OPT_BIND:
