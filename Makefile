@@ -516,12 +516,10 @@ else ifeq ($(WINDOWS_BUILD),1)
 else ifeq ($(TARGET_RPI),1)
 # Linux / Other builds below
 LDFLAGS := $(OPT_FLAGS) -lm -lGLESv2 `$(SDLCONFIG) --libs` -no-pie
-else
-ifeq ($(OSX_BUILD),1)
+else ifeq ($(OSX_BUILD),1)
 LDFLAGS := -lm -framework OpenGL `$(SDLCONFIG) --libs` -no-pie -lpthread `pkg-config --libs libusb-1.0 glfw3 glew`
 else
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(SDLCONFIG) --libs` -no-pie -lpthread
-endif
 endif # End of LDFLAGS
 
 # Prevent a crash with -sopt
