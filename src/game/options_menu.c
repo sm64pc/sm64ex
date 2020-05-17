@@ -16,6 +16,7 @@
 #include "game/game_init.h"
 #include "game/ingame_menu.h"
 #include "game/options_menu.h"
+#include "pc/pc_main.h"
 #include "pc/cliopts.h"
 #include "pc/configfile.h"
 #include "pc/controller/controller_api.h"
@@ -161,7 +162,7 @@ struct SubMenu {
 /* button action functions */
 
 static void optmenu_act_exit(UNUSED struct Option *self, s32 arg) {
-    if (!arg) exit(0); // only exit on A press and not directions
+    if (!arg) game_exit(); // only exit on A press and not directions
 }
 
 /* submenu option lists */
