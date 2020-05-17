@@ -5,8 +5,10 @@
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
+#include <SDL2/SDL.h>
 
 #include "configfile.h"
+#include "gfx/gfx_screen_config.h"
 #include "controller/controller_api.h"
 
 #define ARRAY_LEN(arr) (sizeof(arr) / sizeof(arr[0]))
@@ -34,6 +36,13 @@ struct ConfigOption {
 
 // Video/audio stuff
 bool         configFullscreen   = false;
+ConfigWindow configWindow       = {
+    .x = SDL_WINDOWPOS_CENTERED,
+    .y = SDL_WINDOWPOS_CENTERED,
+    .w = DESIRED_SCREEN_WIDTH,
+    .h = DESIRED_SCREEN_HEIGHT,
+    .reset = false
+};
 unsigned int configFiltering    = 1;          // 0=force nearest, 1=linear, (TODO) 2=three-point
 unsigned int configMasterVolume = MAX_VOLUME; // 0 - MAX_VOLUME
 
@@ -69,6 +78,10 @@ unsigned int configSkipIntro     = 0;
 
 static const struct ConfigOption options[] = {
     {.name = "fullscreen",           .type = CONFIG_TYPE_BOOL, .boolValue = &configFullscreen},
+    {.name = "window_x",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.x},
+    {.name = "window_y",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.y},
+    {.name = "window_w",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.w},
+    {.name = "window_h",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.h},
     {.name = "texture_filtering",    .type = CONFIG_TYPE_UINT, .uintValue = &configFiltering},
     {.name = "master_volume",        .type = CONFIG_TYPE_UINT, .uintValue = &configMasterVolume},
     {.name = "key_a",                .type = CONFIG_TYPE_BIND, .uintValue = configKeyA},

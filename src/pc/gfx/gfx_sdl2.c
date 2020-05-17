@@ -40,10 +40,7 @@
 static SDL_Window *wnd;
 static SDL_GLContext ctx = NULL;
 static int inverted_scancode_table[512];
-
-static bool window_fullscreen;
 static bool window_vsync;
-static int window_width, window_height;
 
 const SDL_Scancode windows_scancode_table[] =
 {
@@ -96,22 +93,34 @@ const SDL_Scancode scancode_rmapping_nonextended[][2] = {
     {SDL_SCANCODE_KP_MULTIPLY, SDL_SCANCODE_PRINTSCREEN}
 };
 
-static void gfx_sdl_set_fullscreen(bool fullscreen) {
-    if (fullscreen == window_fullscreen) return;
+#define IS_FULLSCREEN (SDL_GetWindowFlags(wnd) & SDL_WINDOW_FULLSCREEN_DESKTOP)
 
-    if (fullscreen) {
+static void gfx_sdl_set_fullscreen() {
+    if (configFullscreen == IS_FULLSCREEN)
+        return;
+    if (configFullscreen) {
         SDL_SetWindowFullscreen(wnd, SDL_WINDOW_FULLSCREEN_DESKTOP);
         SDL_ShowCursor(SDL_DISABLE);
     } else {
         SDL_SetWindowFullscreen(wnd, 0);
         SDL_ShowCursor(SDL_ENABLE);
-        // reset back to small window just in case
-        window_width = DESIRED_SCREEN_WIDTH;
-        window_height = DESIRED_SCREEN_HEIGHT;
-        SDL_SetWindowSize(wnd, window_width, window_height);
+        SDL_SetWindowSize(wnd, configWindow.w, configWindow.h);
+        SDL_SetWindowPosition(wnd, configWindow.x, configWindow.y);
     }
+}
 
-    window_fullscreen = fullscreen;
+static void gfx_sdl_reset_dimension_and_pos() {
+    if (!configWindow.reset) return;
+    configWindow.x = SDL_WINDOWPOS_CENTERED;
+    configWindow.y = SDL_WINDOWPOS_CENTERED;
+    configWindow.w = DESIRED_SCREEN_WIDTH;
+    configWindow.h = DESIRED_SCREEN_HEIGHT;
+    configWindow.reset = false;
+
+    if (!IS_FULLSCREEN) {
+        SDL_SetWindowSize(wnd, configWindow.w, configWindow.h);
+        SDL_SetWindowPosition(wnd, configWindow.x, configWindow.y);
+    }
 }
 
 static bool test_vsync(void) {
@@ -157,25 +166,15 @@ static void gfx_sdl_init(void) {
     "Super Mario 64 PC port (OpenGL_ES2)";
     #endif
 
-    Uint32 window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
-
-    window_fullscreen = configFullscreen;
-
-    if (configFullscreen) {
-        window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-        SDL_ShowCursor(SDL_DISABLE);
-    } else {
-        SDL_ShowCursor(SDL_ENABLE);
-    }
-
-    wnd = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            DESIRED_SCREEN_WIDTH, DESIRED_SCREEN_HEIGHT, window_flags);
-
+    wnd = SDL_CreateWindow(
+        window_title,
+        configWindow.x, configWindow.y, configWindow.w, configWindow.h,
+        SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
+    );
     ctx = SDL_GL_CreateContext(wnd);
     SDL_GL_SetSwapInterval(2);
 
-    // in case FULLSCREEN_DESKTOP set our size to god knows what
-    SDL_GetWindowSize(wnd, &window_width, &window_height);
+    gfx_sdl_set_fullscreen();
 
     window_vsync = test_vsync();
     if (!window_vsync)
@@ -201,8 +200,7 @@ static void gfx_sdl_main_loop(void (*run_one_game_iter)(void)) {
 }
 
 static void gfx_sdl_get_dimensions(uint32_t *width, uint32_t *height) {
-    *width = window_width;
-    *height = window_height;
+    SDL_GetWindowSize(wnd, width, height);
 }
 
 static int translate_scancode(int scancode) {
@@ -241,10 +239,18 @@ static void gfx_sdl_handle_events(void) {
                 gfx_sdl_onkeyup(event.key.keysym.scancode);
                 break;
 #endif
-            case SDL_WINDOWEVENT:
-                if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                    window_width = event.window.data1;
-                    window_height = event.window.data2;
+            case SDL_WINDOWEVENT: // FIX-ME: Check if this makes sense to be include in Web build
+                if (!IS_FULLSCREEN) {
+                    switch (event.window.event) {
+                        case SDL_WINDOWEVENT_MOVED:
+                            configWindow.x = event.window.data1;
+                            configWindow.y = event.window.data2;
+                            break;
+                        case SDL_WINDOWEVENT_SIZE_CHANGED:
+                            configWindow.w = event.window.data1;
+                            configWindow.h = event.window.data2;
+                            break;
+                    }
                 }
                 break;
             case SDL_QUIT:
@@ -252,9 +258,9 @@ static void gfx_sdl_handle_events(void) {
                 break;
         }
     }
-    // just check if the fullscreen value has changed and toggle fullscreen if it has
-    if (configFullscreen != window_fullscreen)
-        gfx_sdl_set_fullscreen(configFullscreen);
+
+    gfx_sdl_reset_dimension_and_pos();
+    gfx_sdl_set_fullscreen();
 }
 
 static bool gfx_sdl_start_frame(void) {
