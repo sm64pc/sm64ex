@@ -28,7 +28,11 @@
 #include "level_table.h"
 #include "course_table.h"
 #include "thread6.h"
+#ifdef TARGET_WEB
+#include <stdlib.h>
+#else
 #include "../../include/libc/stdlib.h"
+#endif
 #include "../pc/configfile.h"
 #define CONFIG_FILE "sm64config.txt"
 
