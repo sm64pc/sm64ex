@@ -45,8 +45,6 @@ static bool window_fullscreen;
 static bool window_vsync;
 static int window_width, window_height;
 
-static Uint64 frame_time = 0;
-
 const SDL_Scancode windows_scancode_table[] =
 {
 	/*	0						1							2							3							4						5							6							7 */
@@ -104,10 +102,10 @@ static void gfx_sdl_set_fullscreen(bool fullscreen) {
     if (fullscreen) {
         SDL_SetWindowFullscreen(wnd, SDL_WINDOW_FULLSCREEN_DESKTOP);
         SDL_ShowCursor(SDL_DISABLE);
-        SDL_GetWindowSize(wnd, &window_width, &window_height);
     } else {
         SDL_SetWindowFullscreen(wnd, 0);
         SDL_ShowCursor(SDL_ENABLE);
+        // reset back to small window just in case
         window_width = DESIRED_SCREEN_WIDTH;
         window_height = DESIRED_SCREEN_HEIGHT;
         SDL_SetWindowSize(wnd, window_width, window_height);
@@ -161,8 +159,6 @@ static void gfx_sdl_init(void) {
 
     Uint32 window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
 
-    window_width = DESIRED_SCREEN_WIDTH;
-    window_height = DESIRED_SCREEN_HEIGHT;
     window_fullscreen = configFullscreen;
 
     if (configFullscreen) {
@@ -173,10 +169,13 @@ static void gfx_sdl_init(void) {
     }
 
     wnd = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            window_width, window_height, window_flags);
+            DESIRED_SCREEN_WIDTH, DESIRED_SCREEN_HEIGHT, window_flags);
 
     ctx = SDL_GL_CreateContext(wnd);
     SDL_GL_SetSwapInterval(2);
+
+    // in case FULLSCREEN_DESKTOP set our size to god knows what
+    SDL_GetWindowSize(wnd, &window_width, &window_height);
 
     window_vsync = test_vsync();
     if (!window_vsync)
