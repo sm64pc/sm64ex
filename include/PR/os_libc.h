@@ -10,7 +10,7 @@
 // macOS libc has them
 #include <strings.h>
 
-#elif defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE >= 200809L)
+#elif defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE >= 200809L) || defined(NO_BZERO)
 
 // there's no way that shit's defined, use memcpy/memset
 #include <string.h>
