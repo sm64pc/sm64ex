@@ -83,6 +83,7 @@ static const u8 optsCheatsStr[][64] = {
     { TEXT_OPT_CHEAT3 },
     { TEXT_OPT_CHEAT4 },
     { TEXT_OPT_CHEAT5 },
+    { TEXT_OPT_CHEAT6 },
 };
 
 static const u8 bindStr[][32] = {
@@ -223,6 +224,7 @@ static struct Option optsCheats[] = {
     DEF_OPT_TOGGLE( optsCheatsStr[2], &cheatGodmode ),
     DEF_OPT_TOGGLE( optsCheatsStr[3], &cheatInfinitelives ),
     DEF_OPT_TOGGLE( optsCheatsStr[4], &cheatSuperspeed),
+    DEF_OPT_TOGGLE( optsCheatsStr[5], &cheatResponsive),
 
 };
 
