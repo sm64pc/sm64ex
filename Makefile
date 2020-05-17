@@ -23,8 +23,9 @@ TARGET_N64 = 0
 
 # Build and optimize for Raspberry Pi(s)
 TARGET_RPI ?= 0
-# Compiler to use (ido or gcc)
-# COMPILER ?= ido // Old Default
+
+# Makeflag to enable OSX fixes
+OSX_BUILD ?= 0
 
 # Disable better camera by default
 BETTERCAMERA ?= 0
@@ -39,6 +40,15 @@ EXT_OPTIONS_MENU ?= 1
 TARGET_WEB ?= 0
 # Specify the target you are building for, 0 means native
 TARGET_ARCH ?= native
+
+ifeq ($(CROSS),i686-w64-mingw32.static-)
+  TARGET_ARCH = i386pe
+else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+  TARGET_ARCH = i386pe
+else
+  TARGET_ARCH = native
+endif
+
 TARGET_BITS ?= 0
 
 ifneq ($(TARGET_BITS),0)
@@ -142,6 +152,10 @@ ifeq ($(TARGET_RPI),1) # Define RPi to change SDL2 title & GLES2 hints
       VERSION_CFLAGS += -DUSE_GLES
 endif
 
+ifeq ($(OSX_BUILD),1) # Modify GFX & SDL2 for OSX GL
+     VERSION_CFLAGS += -DOSX_BUILD
+endif
+
 VERSION_ASFLAGS := --defsym AVOID_UB=1
 COMPARE := 0
 
@@ -168,7 +182,7 @@ endif
 endif
 
 # Make tools if out of date
-DUMMY != make -s -C tools >&2 || echo FAIL
+DUMMY != make -C tools >&2 || echo FAIL
 ifeq ($(DUMMY),FAIL)
   $(error Failed to build tools)
 endif
@@ -411,6 +425,10 @@ ENDIAN_BITWIDTH := $(BUILD_DIR)/endian-and-bitwidth
 
 AS := as
 
+ifeq ($(OSX_BUILD),1)
+AS := i686-w64-mingw32-as
+endif
+
 ifneq ($(TARGET_WEB),1) # As in, not-web PC port
   CC := $(CROSS)gcc
   CXX := $(CROSS)g++
@@ -419,7 +437,13 @@ else
 endif
 
 ifeq ($(WINDOWS_BUILD),1)
-  LD := $(CXX)
+  ifeq ($(CROSS),i686-w64-mingw32.static-) # fixes compilation in MXE on Linux and WSL
+    LD := $(CC)
+  else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+    LD := $(CC)
+  else
+    LD := $(CXX)
+  endif
 else
   LD := $(CC)
 endif
@@ -427,11 +451,19 @@ endif
 ifeq ($(WINDOWS_BUILD),1) # fixes compilation in MXE on Linux and WSL
   CPP := cpp -P
   OBJCOPY := objcopy
+  OBJDUMP := $(CROSS)objdump
 else
+ifeq ($(OSX_BUILD),1)
+ CPP := cpp-9 -P
+ OBJDUMP := i686-w64-mingw32-objdump
+ OBJCOPY := i686-w64-mingw32-objcopy
+else # Linux & other builds
   CPP := $(CROSS)cpp -P
   OBJCOPY := $(CROSS)objcopy
+  OBJDUMP := $(CROSS)objdump
 endif
-OBJDUMP := $(CROSS)objdump
+endif
+
 PYTHON := python3
 SDLCONFIG := $(CROSS)sdl2-config
 
@@ -483,9 +515,9 @@ LDFLAGS := -lm -lGL -lSDL2 -no-pie -s TOTAL_MEMORY=20MB -g4 --source-map-base ht
 else ifeq ($(WINDOWS_BUILD),1)
   LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -static
   ifneq ($(CROSS),i686-w64-mingw32.static-)
-    ifneq ($(CROSS),x86_64-w64-mingw32.static-)
-      LDFLAGS += -no-pie
-    endif
+    LDFLAGS += -no-pie
+  else ifneq ($(CROSS),x86_64-w64-mingw32.static-)
+    LDFLAGS += -no-pie
   endif
   ifeq ($(WINDOWS_CONSOLE),1)
     LDFLAGS += -mconsole
@@ -494,9 +526,12 @@ else ifeq ($(TARGET_RPI),1)
 # Linux / Other builds below
 LDFLAGS := $(OPT_FLAGS) -lm -lGLESv2 `$(SDLCONFIG) --libs` -no-pie
 else
+ifeq ($(OSX_BUILD),1)
+LDFLAGS := -lm -framework OpenGL `$(SDLCONFIG) --libs` -no-pie -lpthread `pkg-config --libs libusb-1.0 glfw3 glew`
+else
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(SDLCONFIG) --libs` -no-pie -lpthread
 endif
-
+endif # End of LDFLAGS
 
 # Prevent a crash with -sopt
 export LANG := C
@@ -748,7 +783,6 @@ $(BUILD_DIR)/src/audio/%.acpp: src/audio/%.c
 $(BUILD_DIR)/src/audio/%.copt: $(BUILD_DIR)/src/audio/%.acpp
 	$(QEMU_IRIX) -silent -L $(IRIX_ROOT) $(IRIX_ROOT)/usr/lib/copt -signed -I=$< -CMP=$@ -cp=i -scalaroptimize=1
 endif
-
 
 # Rebuild files with 'GLOBAL_ASM' if the NON_MATCHING flag changes.
 $(GLOBAL_ASM_O_FILES): $(GLOBAL_ASM_DEP).$(NON_MATCHING)
