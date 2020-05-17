@@ -27,6 +27,7 @@ struct GfxRenderingAPI {
     void (*draw_triangles)(float buf_vbo[], size_t buf_vbo_len, size_t buf_vbo_num_tris);
     void (*init)(void);
     void (*start_frame)(void);
+    void (*shutdown)(void);
 };
 
 #endif
