@@ -278,5 +278,4 @@ def main():
     with open(".assets-local.txt", "w") as f:
         f.write(output)
 
-
 main()
