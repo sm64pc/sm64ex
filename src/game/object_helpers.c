@@ -1595,10 +1595,6 @@ void obj_set_billboard(struct Object *obj) {
     obj->header.gfx.node.flags |= GRAPH_RENDER_BILLBOARD;
 }
 
-void obj_set_cylboard(struct Object *obj) {
-    obj->header.gfx.node.flags |= GRAPH_RENDER_CYLBOARD;
-}
-
 void cur_obj_set_hitbox_radius_and_height(f32 radius, f32 height) {
     o->hitboxRadius = radius;
     o->hitboxHeight = height;

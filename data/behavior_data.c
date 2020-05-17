@@ -219,9 +219,6 @@
 #define BILLBOARD() \
     BC_B(0x21)
 
-#define CYLBOARD() \
-    BC_B(0x38)
-
 // Hides the current object.
 #define HIDE() \
     BC_B(0x22)
@@ -3183,7 +3180,7 @@ const BehaviorScript bhvFloorTrapInCastle[] = {
 
 const BehaviorScript bhvTree[] = {
     BEGIN(OBJ_LIST_POLELIKE),
-    CYLBOARD(),
+    BILLBOARD(),
     OR_INT(oFlags, OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE),
     SET_INT(oInteractType, INTERACT_POLE),
     SET_HITBOX(/*Radius*/ 80, /*Height*/ 500),

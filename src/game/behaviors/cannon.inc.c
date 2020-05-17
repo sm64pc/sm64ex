@@ -17,11 +17,9 @@ void opened_cannon_act_0(void) {
         cur_obj_enable_rendering();
         cur_obj_become_tangible();
     }
-    cur_obj_become_tangible();
-    cur_obj_enable_rendering();
     if (o->oDistanceToMario < 500.0f) {
-        //cur_obj_become_tangible();
-        //cur_obj_enable_rendering();
+        cur_obj_become_tangible();
+        cur_obj_enable_rendering();
         if (o->oInteractStatus & INT_STATUS_INTERACTED
             && (!(o->oInteractStatus
                   & INT_STATUS_TOUCHED_BOB_OMB))) // bob-omb explodes when it gets into a cannon
@@ -32,8 +30,8 @@ void opened_cannon_act_0(void) {
         } else
             o->oInteractStatus = 0;
     } else {
-        //cur_obj_become_intangible();
-        //cur_obj_disable_rendering();
+        cur_obj_become_intangible();
+        cur_obj_disable_rendering();
         o->oCannonUnk10C = 0;
     }
 }
