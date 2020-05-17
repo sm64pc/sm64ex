@@ -22,8 +22,9 @@ TARGET_N64 = 0
 
 # Build and optimize for Raspberry Pi(s)
 TARGET_RPI ?= 0
-# Compiler to use (ido or gcc)
-COMPILER ?= ido
+
+# Makeflag to enable OSX fixes
+OSX_BUILD ?= 0
 
 # Disable better camera by default
 BETTERCAMERA ?= 0
@@ -31,6 +32,10 @@ BETTERCAMERA ?= 0
 DISCORDRPC ?= 0
 # Disable no drawing distance by default
 NODRAWINGDISTANCE ?= 0
+# Disable texture fixes by default (helps with them purists)
+TEXTURE_FIX ?= 0
+# Enable extended options menu by default
+EXT_OPTIONS_MENU ?= 1
 
 # Build for Emscripten/WebGL
 TARGET_WEB ?= 0
@@ -45,8 +50,6 @@ else
 endif
 
 # Automatic settings for PC port(s)
-# WINDOWS_BUILD IS NOT FOR COMPILING A WINDOWS EXECUTABLE UNDER LINUX OR WSL!
-# USE THE WIKI GUIDE WITH MSYS2 FOR COMPILING A WINDOWS EXECUTABLE!
 
 NON_MATCHING := 1
 GRUCODE := f3dex2e
@@ -141,6 +144,10 @@ ifeq ($(TARGET_RPI),1) # Define RPi to change SDL2 title & GLES2 hints
       VERSION_CFLAGS += -DUSE_GLES
 endif
 
+ifeq ($(OSX_BUILD),1) # Modify GFX & SDL2 for OSX GL
+     VERSION_CFLAGS += -DOSX_BUILD
+endif
+
 VERSION_ASFLAGS := --defsym AVOID_UB=1
 COMPARE := 0
 
@@ -167,7 +174,7 @@ endif
 endif
 
 # Make tools if out of date
-DUMMY != make -s -C tools >&2 || echo FAIL
+DUMMY != make -C tools >&2 || echo FAIL
 ifeq ($(DUMMY),FAIL)
   $(error Failed to build tools)
 endif
@@ -231,10 +238,6 @@ GODDARD_SRC_DIRS := src/goddard src/goddard/dynlists
 MIPSISET := -mips2
 MIPSBIT := -32
 
-ifeq ($(COMPILER),gcc)
-  MIPSISET := -mips3
-endif
-
 ifeq ($(VERSION),eu)
   OPT_FLAGS := -O2
 else
@@ -253,9 +256,8 @@ ifeq ($(TARGET_WEB),1)
 endif
 
 # Use a default opt flag for gcc, then override if RPi
-ifeq ($(COMPILER),gcc)
-OPT_FLAGS := -O2 # Breaks sound on x86?
-endif
+
+# OPT_FLAGS := -O2 # "Whole-compile optimization flag" Breaks sound on x86.
 
 ifeq ($(TARGET_RPI),1)
 	machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
@@ -413,7 +415,6 @@ ifeq ($(DISCORDRPC),1)
   endif
 endif
 
-
 # Automatic dependency files
 DEP_FILES := $(O_FILES:.o=.d) $(ULTRA_O_FILES:.o=.d) $(GODDARD_O_FILES:.o=.d) $(BUILD_DIR)/$(LD_SCRIPT).d
 
@@ -428,6 +429,10 @@ ENDIAN_BITWIDTH := $(BUILD_DIR)/endian-and-bitwidth
 
 AS := as
 
+ifeq ($(OSX_BUILD),1)
+AS := i686-w64-mingw32-as
+endif
+
 ifneq ($(TARGET_WEB),1) # As in, not-web PC port
   CC := $(CROSS)gcc
   CXX := $(CROSS)g++
@@ -436,16 +441,44 @@ else
 endif
 
 ifeq ($(WINDOWS_BUILD),1)
-  LD := $(CXX)
+  ifeq ($(CROSS),i686-w64-mingw32.static-) # fixes compilation in MXE on Linux and WSL
+    LD := $(CC)
+  else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+    LD := $(CC)
+  else
+    LD := $(CXX)
+  endif
 else ifeq ($(DISCORDRPC),1)
   LD := $(CXX)
+  ifeq ($(WINDOWS_BUILD),1)
+    ifeq ($(CROSS),i686-w64-mingw32.static-) # fixes compilation in MXE on Linux and WSL
+      LD := $(CC)
+    else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+      LD := $(CC)
+    else
+      LD := $(CXX)
+    endif
+  endif
 else
   LD := $(CC)
 endif
 
-CPP := $(CROSS)cpp -P
-OBJDUMP := $(CROSS)objdump
-OBJCOPY := $(CROSS)objcopy
+ifeq ($(WINDOWS_BUILD),1) # fixes compilation in MXE on Linux and WSL
+  CPP := cpp -P
+  OBJCOPY := objcopy
+  OBJDUMP := $(CROSS)objdump
+else
+ifeq ($(OSX_BUILD),1)
+ CPP := cpp-9 -P
+ OBJDUMP := i686-w64-mingw32-objdump
+ OBJCOPY := i686-w64-mingw32-objcopy
+else # Linux & other builds
+  CPP := $(CROSS)cpp -P
+  OBJCOPY := $(CROSS)objcopy
+  OBJDUMP := $(CROSS)objdump
+endif
+endif
+
 PYTHON := python3
 SDLCONFIG := $(CROSS)sdl2-config
 
@@ -463,45 +496,63 @@ CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -W
 CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags`
 endif
 
-# Check for better camera option
+# Check for enhancement options
+
+# Check for Puppycam option
 ifeq ($(BETTERCAMERA),1)
-CC_CHECK += -DBETTERCAMERA -DEXT_OPTIONS_MENU
-CFLAGS += -DBETTERCAMERA -DEXT_OPTIONS_MENU
+  CC_CHECK += -DBETTERCAMERA
+  CFLAGS += -DBETTERCAMERA
+  EXT_OPTIONS_MENU := 1
 endif
 
 # Check for no drawing distance option
 ifeq ($(NODRAWINGDISTANCE),1)
-CC_CHECK += -DNODRAWINGDISTANCE
-CFLAGS += -DNODRAWINGDISTANCE
+  CC_CHECK += -DNODRAWINGDISTANCE
+  CFLAGS += -DNODRAWINGDISTANCE
 endif
 
+# Check for Discord Rich Presence option
 ifeq ($(DISCORDRPC),1)
 CC_CHECK += -DDISCORDRPC
 CFLAGS += -DDISCORDRPC
+endif
+
+# Check for texture fix option
+ifeq ($(TEXTURE_FIX),1)
+  CC_CHECK += -DTEXTURE_FIX
+  CFLAGS += -DTEXTURE_FIX
+endif
+
+# Check for extended options menu option
+ifeq ($(EXT_OPTIONS_MENU),1)
+  CC_CHECK += -DEXT_OPTIONS_MENU
+  CFLAGS += -DEXT_OPTIONS_MENU
 endif
 
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
 
 ifeq ($(TARGET_WEB),1)
 LDFLAGS := -lm -lGL -lSDL2 -no-pie -s TOTAL_MEMORY=20MB -g4 --source-map-base http://localhost:8080/ -s "EXTRA_EXPORTED_RUNTIME_METHODS=['callMain']"
-else
-
-ifeq ($(WINDOWS_BUILD),1)
-LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -no-pie -static
-ifeq ($(WINDOWS_CONSOLE),1)
-LDFLAGS += -mconsole
-endif
-else
-
+else ifeq ($(WINDOWS_BUILD),1)
+  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -static
+  ifneq ($(CROSS),i686-w64-mingw32.static-)
+    ifneq ($(CROSS),x86_64-w64-mingw32.static-)
+      LDFLAGS += -no-pie
+    endif
+  endif
+  ifeq ($(WINDOWS_CONSOLE),1)
+    LDFLAGS += -mconsole
+  endif
+else ifeq ($(TARGET_RPI),1)
 # Linux / Other builds below
-ifeq ($(TARGET_RPI),1)
 LDFLAGS := $(OPT_FLAGS) -lm -lGLESv2 `$(SDLCONFIG) --libs` -no-pie
+else
+ifeq ($(OSX_BUILD),1)
+LDFLAGS := -lm -framework OpenGL `$(SDLCONFIG) --libs` -no-pie -lpthread `pkg-config --libs libusb-1.0 glfw3 glew`
 else
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(SDLCONFIG) --libs` -no-pie -lpthread
 endif
-endif
-endif #Added for Pi ifeq
-
+endif # End of LDFLAGS
 
 # Prevent a crash with -sopt
 export LANG := C
@@ -619,12 +670,11 @@ else
 $(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h
 $(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h
 $(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h
+$(BUILD_DIR)/src/game/options_menu.o: $(BUILD_DIR)/include/text_strings.h
 ifeq ($(DISCORDRPC),1)
 $(BUILD_DIR)/src/game/discord/discordrpc.o: $(BUILD_DIR)/include/text_strings.h
 endif
 endif
-$(BUILD_DIR)/src/game/options_menu.o: $(BUILD_DIR)/include/text_strings.h
-
 
 ################################################################
 # TEXTURE GENERATION                                           #
@@ -719,7 +769,6 @@ $(BUILD_DIR)/assets/mario_anim_data.c: $(wildcard assets/anims/*.inc.c)
 $(BUILD_DIR)/assets/demo_data.c: assets/demo_data.json $(wildcard assets/demos/*.bin)
 	$(PYTHON) tools/demo_data_converter.py assets/demo_data.json $(VERSION_CFLAGS) > $@
 
-ifeq ($(COMPILER),ido)
 # Source code
 $(BUILD_DIR)/levels/%/leveldata.o: OPT_FLAGS := -g
 $(BUILD_DIR)/actors/%.o: OPT_FLAGS := -g
@@ -761,8 +810,6 @@ $(BUILD_DIR)/src/audio/%.acpp: src/audio/%.c
 $(BUILD_DIR)/src/audio/%.copt: $(BUILD_DIR)/src/audio/%.acpp
 	$(QEMU_IRIX) -silent -L $(IRIX_ROOT) $(IRIX_ROOT)/usr/lib/copt -signed -I=$< -CMP=$@ -cp=i -scalaroptimize=1
 endif
-endif
-
 
 # Rebuild files with 'GLOBAL_ASM' if the NON_MATCHING flag changes.
 $(GLOBAL_ASM_O_FILES): $(GLOBAL_ASM_DEP).$(NON_MATCHING)
@@ -789,7 +836,7 @@ $(BUILD_DIR)/%.o: %.s
 
 
 $(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES)
-	$(LD) -L $(BUILD_DIR) -o $@ $(O_FILES) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(RPC_LIBS) $(LDFLAGS)
+	$(LD) -L $(BUILD_DIR) -o $@ $(O_FILES) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(LDFLAGS)
 
 .PHONY: all clean distclean default diff test load libultra
 .PRECIOUS: $(BUILD_DIR)/bin/%.elf $(SOUND_BIN_DIR)/%.ctl $(SOUND_BIN_DIR)/%.tbl $(SOUND_SAMPLE_TABLES) $(SOUND_BIN_DIR)/%.s $(BUILD_DIR)/%
