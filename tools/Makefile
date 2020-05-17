@@ -1,5 +1,10 @@
+UNAME := $(shell uname)
+ifeq ($(UNAME),Darwin)
+      OSX_BUILD := -DOSX_BUILD
+endif
+
 CC := gcc
-CFLAGS := -Llib -Iinclude -I . -Wall -Wextra -Wno-unused-parameter -pedantic -std=c99 -O3 -s
+CFLAGS := -Llib -Iinclude -I . -Wall -Wextra -Wno-unused-parameter $(OSX_BUILD) -pedantic -std=c99 -O3 -s
 PROGRAMS := n64graphics n64graphics_ci mio0 n64cksum textconv patch_libultra_math iplfontutil aifc_decode aiff_extract_codebook vadpcm_enc tabledesign extract_data_for_mio skyconv
 
 n64graphics_SOURCES := n64graphics.c utils.c
@@ -43,7 +48,7 @@ clean:
 
 define COMPILE
 $(1): $($1_SOURCES)
-	$(CC) $(CFLAGS) $$^ -lm -o $$@ $($1_CFLAGS)
+	$(CC) $(CFLAGS) $(OSX_BUILD) $$^ -lm -o $$@ $($1_CFLAGS)
 endef
 
 $(foreach p,$(PROGRAMS),$(eval $(call COMPILE,$(p))))

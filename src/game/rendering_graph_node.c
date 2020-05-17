@@ -506,11 +506,7 @@ static void geo_process_background(struct GraphNodeBackground *node) {
     if (list != 0) {
         geo_append_display_list((void *) VIRTUAL_TO_PHYSICAL(list), node->fnNode.node.flags >> 8);
     } else if (gCurGraphNodeMasterList != NULL) {
-#ifdef TARGET_N64
-        Gfx *gfxStart = alloc_display_list(sizeof(Gfx) * 7);
-#else
         Gfx *gfxStart = alloc_display_list(sizeof(Gfx) * 8);
-#endif
         Gfx *gfx = gfxStart;
 
         gDPPipeSync(gfx++);
@@ -757,9 +753,7 @@ static int obj_is_in_view(struct GraphNodeObject *node, Mat4 matrix) {
     // the amount of units between the center of the screen and the horizontal edge
     // given the distance from the object to the camera.
 
-#ifndef TARGET_N64
     hScreenEdge *= GFX_DIMENSIONS_ASPECT_RATIO;
-#endif
 
     if (geo != NULL && geo->type == GRAPH_NODE_TYPE_CULLING_RADIUS) {
         cullingRadius =
@@ -802,6 +796,9 @@ static void geo_process_object(struct Object *node) {
         if (node->header.gfx.throwMatrix != NULL) {
             mtxf_mul(gMatStack[gMatStackIndex + 1], (void *) node->header.gfx.throwMatrix,
                      gMatStack[gMatStackIndex]);
+        } else if (node->header.gfx.node.flags & GRAPH_RENDER_CYLBOARD) {
+            mtxf_cylboard(gMatStack[gMatStackIndex + 1], gMatStack[gMatStackIndex],
+                           node->header.gfx.pos, gCurGraphNodeCamera->roll);
         } else if (node->header.gfx.node.flags & GRAPH_RENDER_BILLBOARD) {
             mtxf_billboard(gMatStack[gMatStackIndex + 1], gMatStack[gMatStackIndex],
                            node->header.gfx.pos, gCurGraphNodeCamera->roll);

@@ -18,6 +18,8 @@
 #include "gfx_rendering_api.h"
 #include "gfx_screen_config.h"
 
+#include "../configfile.h"
+
 #define SUPPORT_CHECK(x) assert(x)
 
 // SCALE_M_N: upscale/downscale M-bit integer to N-bit
@@ -586,10 +588,16 @@ static void gfx_sp_vertex(size_t n_vertices, size_t dest_index, const Vtx *verti
                 calculate_normal_dir(&lookat_y, rsp.current_lookat_coeffs[1]);
                 rsp.lights_changed = false;
             }
-            
-            int r = rsp.current_lights[rsp.current_num_lights - 1].col[0];
-            int g = rsp.current_lights[rsp.current_num_lights - 1].col[1];
-            int b = rsp.current_lights[rsp.current_num_lights - 1].col[2];
+
+            // Inspired by:
+            // https://github.com/gonetz/GLideN64/commit/c8cbafff71a81bee5112aaafe6e21d6648ff8125#diff-69d8715ec7f9fd627ec4f5516edd003dL484
+            const bool useFirstColor = (dest_index & 1) == 0;
+            const unsigned char* col = useFirstColor
+                                ? rsp.current_lights[rsp.current_num_lights - 1].col
+                                : rsp.current_lights[rsp.current_num_lights - 1].colc;
+            int r = col[0];
+            int g = col[1];
+            int b = col[2];
             
             for (int i = 0; i < rsp.current_num_lights - 1; i++) {
                 float intensity = 0;
@@ -598,9 +606,14 @@ static void gfx_sp_vertex(size_t n_vertices, size_t dest_index, const Vtx *verti
                 intensity += vn->n[2] * rsp.current_lights_coeffs[i][2];
                 intensity /= 127.0f;
                 if (intensity > 0.0f) {
-                    r += intensity * rsp.current_lights[i].col[0];
-                    g += intensity * rsp.current_lights[i].col[1];
-                    b += intensity * rsp.current_lights[i].col[2];
+                    // Inspired by:
+                    // https://github.com/gonetz/GLideN64/commit/c8cbafff71a81bee5112aaafe6e21d6648ff8125#diff-69d8715ec7f9fd627ec4f5516edd003dL492
+                    col = useFirstColor
+                                ? rsp.current_lights[i].col
+                                : rsp.current_lights[i].colc;
+                    r += intensity * col[0];
+                    g += intensity * col[1];
+                    b += intensity * col[2];
                 }
             }
             
@@ -780,7 +793,7 @@ static void gfx_sp_tri1(uint8_t vtx1_idx, uint8_t vtx2_idx, uint8_t vtx3_idx) {
                 import_texture(i);
                 rdp.textures_changed[i] = false;
             }
-            bool linear_filter = (rdp.other_mode_h & (3U << G_MDSFT_TEXTFILT)) != G_TF_POINT;
+            bool linear_filter = configFiltering && ((rdp.other_mode_h & (3U << G_MDSFT_TEXTFILT)) != G_TF_POINT);
             if (linear_filter != rendering_state.textures[i]->linear_filter || rdp.texture_tile.cms != rendering_state.textures[i]->cms || rdp.texture_tile.cmt != rendering_state.textures[i]->cmt) {
                 gfx_flush();
                 gfx_rapi->set_sampler_parameters(i, linear_filter, rdp.texture_tile.cms, rdp.texture_tile.cmt);
@@ -1560,5 +1573,16 @@ void gfx_run(Gfx *commands) {
 void gfx_end_frame(void) {
     if (!dropped_frame) {
         gfx_wapi->swap_buffers_end();
+    }
+}
+
+void gfx_shutdown(void) {
+    if (gfx_rapi) {
+        if (gfx_rapi->shutdown) gfx_rapi->shutdown();
+        gfx_rapi = NULL;
+    }
+    if (gfx_wapi) {
+        if (gfx_wapi->shutdown) gfx_wapi->shutdown();
+        gfx_wapi = NULL;
     }
 }

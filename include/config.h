@@ -1,4 +1,5 @@
 #ifndef CONFIG_H
+
 #define CONFIG_H
 
 /**
@@ -27,16 +28,7 @@
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
 
-// Border Height Define for NTSC Versions
-#ifdef TARGET_N64
-#ifndef VERSION_EU
-#define BORDER_HEIGHT 8
-#else
-#define BORDER_HEIGHT 1
-#endif
-#else
-// What's the point of having a border?
-#define BORDER_HEIGHT 0
-#endif
+// What's the point of having a border if we're not an N64?
+#define BORDER_HEIGHT 0 // Never use a border as not-N64
 
 #endif

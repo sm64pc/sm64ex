@@ -18,7 +18,9 @@
 #include "audio/audio_sdl.h"
 #include "audio/audio_null.h"
 
+#include "cliopts.h"
 #include "configfile.h"
+#include "controller/controller_api.h"
 
 OSMesg D_80339BEC;
 OSMesgQueue gSIEventMesgQueue;
@@ -72,9 +74,29 @@ void produce_one_frame(void) {
         create_next_audio_buffer(audio_buffer + i * (num_audio_samples * 2), num_audio_samples);
     }
     //printf("Audio samples before submitting: %d\n", audio_api->buffered());
-    audio_api->play(audio_buffer, 2 * num_audio_samples * 4);
+
+    // scale by master volume (0-127)
+    const s32 mod = (s32)configMasterVolume;
+    for (u32 i = 0; i < num_audio_samples * 4; ++i)
+        audio_buffer[i] = ((s32)audio_buffer[i] * mod) >> VOLUME_SHIFT;
+
+    audio_api->play((u8*)audio_buffer, 2 * num_audio_samples * 4);
     
     gfx_end_frame();
+}
+
+void audio_shutdown(void) {
+    if (audio_api) {
+        if (audio_api->shutdown) audio_api->shutdown();
+        audio_api = NULL;
+    }
+}
+
+void game_shutdown(void) {
+    configfile_save(gCLIOpts.ConfigFile);;
+    controller_shutdown();
+    audio_shutdown();
+    gfx_shutdown();
 }
 
 #ifdef TARGET_WEB
@@ -110,17 +132,13 @@ static void on_anim_frame(double time) {
 }
 #endif
 
-static void save_config(void) {
-    configfile_save(CONFIG_FILE);
-}
-
 void main_func(void) {
     static u64 pool[0x165000/8 / 4 * sizeof(void *)];
     main_pool_init(pool, pool + sizeof(pool) / sizeof(pool[0]));
     gEffectsMemoryPool = mem_pool_init(0x4000, MEMORY_POOL_LEFT);
 
-    configfile_load(CONFIG_FILE);
-    atexit(save_config);
+    configfile_load(gCLIOpts.ConfigFile);
+    atexit(game_shutdown);
 
 #ifdef TARGET_WEB
     emscripten_set_main_loop(em_main_loop, 0, 0);
@@ -155,6 +173,7 @@ void main_func(void) {
 }
 
 int main(int argc, char *argv[]) {
+    parse_cli_opts(argc, argv);
     main_func();
     return 0;
 }

@@ -1,7 +1,6 @@
 #include <ultra64.h>
-#ifndef TARGET_N64
 #include <string.h>
-#endif
+
 
 #include "sm64.h"
 #include "audio/external.h"
@@ -605,9 +604,7 @@ static void level_cmd_set_gamma(void) {
 
 static void level_cmd_set_terrain_data(void) {
     if (sCurrAreaIndex != -1) {
-#ifdef TARGET_N64
-        gAreas[sCurrAreaIndex].terrainData = segmented_to_virtual(CMD_GET(void *, 4));
-#else
+
         Collision *data;
         u32 size;
 
@@ -615,7 +612,7 @@ static void level_cmd_set_terrain_data(void) {
         size = get_area_terrain_size(data) * sizeof(Collision);
         gAreas[sCurrAreaIndex].terrainData = alloc_only_pool_alloc(sLevelPool, size);
         memcpy(gAreas[sCurrAreaIndex].terrainData, data, size);
-#endif
+
     }
     sCurrentCmd = CMD_NEXT;
 }
@@ -629,9 +626,7 @@ static void level_cmd_set_rooms(void) {
 
 static void level_cmd_set_macro_objects(void) {
     if (sCurrAreaIndex != -1) {
-#ifdef TARGET_N64
-        gAreas[sCurrAreaIndex].macroObjects = segmented_to_virtual(CMD_GET(void *, 4));
-#else
+
         MacroObject *data = segmented_to_virtual(CMD_GET(void *, 4));
         s32 len = 0;
         while (data[len++] != 0x001E) {
@@ -639,7 +634,7 @@ static void level_cmd_set_macro_objects(void) {
         }
         gAreas[sCurrAreaIndex].macroObjects = alloc_only_pool_alloc(sLevelPool, len * sizeof(MacroObject));
         memcpy(gAreas[sCurrAreaIndex].macroObjects, data, len * sizeof(MacroObject));
-#endif
+
     }
     sCurrentCmd = CMD_NEXT;
 }
