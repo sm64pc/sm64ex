@@ -133,6 +133,15 @@ static s32 bhv_cmd_disable_rendering(void) {
 // Usage: BILLBOARD()
 static s32 bhv_cmd_billboard(void) {
     gCurrentObject->header.gfx.node.flags |= GRAPH_RENDER_BILLBOARD;
+
+    gCurBhvCommand++;
+    return BHV_PROC_CONTINUE;
+}
+
+// Command 0x
+static s32 bhv_cmd_cylboard(void) {
+    gCurrentObject->header.gfx.node.flags |= GRAPH_RENDER_CYLBOARD;
+
     gCurBhvCommand++;
     return BHV_PROC_CONTINUE;
 }
@@ -897,6 +906,7 @@ static BhvCommandProc BehaviorCmdTable[] = {
     bhv_cmd_disable_rendering, //35
     bhv_cmd_set_int_unused, //36
     bhv_cmd_spawn_water_droplet, //37
+    bhv_cmd_cylboard //38
 };
 
 // Execute the behavior script of the current object, process the object flags, and other miscellaneous code for updating objects.
