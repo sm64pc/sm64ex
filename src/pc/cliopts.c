@@ -1,4 +1,7 @@
 #include "cliopts.h"
+#ifdef TARGET_WEB
+#include <string.h>
+#endif
 #include <strings.h>
 #include <stdlib.h>
 #include <stdio.h>
