@@ -25,6 +25,9 @@
 #include <PR/mbi.h>
 #include <PR/os_eeprom.h>
 #include <PR/os_libc.h>
+#if defined(WINDOWS_BUILD) && defined(CROSS)
+#include <PR/os_libc_mxe.h>
+#endif
 #include <PR/gu.h>
 #include <PR/os_ai.h>
 #include <PR/libaudio.h>
