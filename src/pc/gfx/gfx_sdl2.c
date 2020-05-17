@@ -114,9 +114,10 @@ static void gfx_sdl_init(void) {
 
     window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
 
-    if (gCLIOpts.FullScreen) {
+    if (gCLIOpts.FullScreen == 1)
         configFullscreen = true;
-    }
+    else if (gCLIOpts.FullScreen == 2)
+        configFullscreen = false;
 
     if (configFullscreen) {
         window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
