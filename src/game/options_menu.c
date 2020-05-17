@@ -50,6 +50,8 @@ static const u8 menuStr[][32] = {
     { TEXT_OPT_VIDEO },
     { TEXT_OPT_AUDIO },
     { TEXT_EXIT_GAME },
+    { TEXT_OPT_CHEATS },
+
 };
 
 static const u8 optsCameraStr[][32] = {
@@ -73,6 +75,14 @@ static const u8 optsVideoStr[][32] = {
 
 static const u8 optsAudioStr[][32] = {
     { TEXT_OPT_MVOLUME },
+};
+
+static const u8 optsCheatsStr[][64] = {
+    { TEXT_OPT_CHEAT1 },
+    { TEXT_OPT_CHEAT2 },
+    { TEXT_OPT_CHEAT3 },
+    { TEXT_OPT_CHEAT4 },
+    { TEXT_OPT_CHEAT5 },
 };
 
 static const u8 bindStr[][32] = {
@@ -207,6 +217,15 @@ static struct Option optsAudio[] = {
     DEF_OPT_SCROLL( optsAudioStr[0], &configMasterVolume, 0, MAX_VOLUME, 1 ),
 };
 
+static struct Option optsCheats[] = {
+    DEF_OPT_TOGGLE( optsCheatsStr[0], &cheatEnablecheats ),
+    DEF_OPT_TOGGLE( optsCheatsStr[1], &cheatMoonjump ),
+    DEF_OPT_TOGGLE( optsCheatsStr[2], &cheatGodmode ),
+    DEF_OPT_TOGGLE( optsCheatsStr[3], &cheatInfinitelives ),
+    DEF_OPT_TOGGLE( optsCheatsStr[4], &cheatSuperspeed),
+
+};
+
 /* submenu definitions */
 
 #ifdef BETTERCAMERA
@@ -215,6 +234,7 @@ static struct SubMenu menuCamera   = DEF_SUBMENU( menuStr[4], optsCamera );
 static struct SubMenu menuControls = DEF_SUBMENU( menuStr[5], optsControls );
 static struct SubMenu menuVideo    = DEF_SUBMENU( menuStr[6], optsVideo );
 static struct SubMenu menuAudio    = DEF_SUBMENU( menuStr[7], optsAudio );
+static struct SubMenu menuCheats    = DEF_SUBMENU( menuStr[9], optsCheats );
 
 /* main options menu definition */
 
@@ -226,6 +246,8 @@ static struct Option optsMain[] = {
     DEF_OPT_SUBMENU( menuStr[6], &menuVideo ),
     DEF_OPT_SUBMENU( menuStr[7], &menuAudio ),
     DEF_OPT_BUTTON ( menuStr[8], optmenu_act_exit ),
+    DEF_OPT_SUBMENU( menuStr[9], &menuCheats ),
+
 };
 
 static struct SubMenu menuMain = DEF_SUBMENU( menuStr[3], optsMain );

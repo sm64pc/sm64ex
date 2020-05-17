@@ -31,6 +31,7 @@
 #include "engine/surface_collision.h"
 #include "level_table.h"
 #include "thread6.h"
+#include "pc/configfile.h"
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif
@@ -1396,7 +1397,12 @@ void update_mario_inputs(struct MarioState *m) {
     update_mario_geometry_inputs(m);
 
     debug_print_speed_action_normal(m);
-
+    /* Moonjump cheat */
+    while (cheatMoonjump == true && cheatEnablecheats == true && m->controller->buttonDown & L_TRIG ){
+        m->vel[1] = 25;
+        break;
+    }
+    /*End of moonjump cheat */
     if (gCameraMovementFlags & CAM_MOVE_C_UP_MODE) {
         if (m->action & ACT_FLAG_ALLOW_FIRST_PERSON) {
             m->input |= INPUT_FIRST_PERSON;
@@ -1717,7 +1723,24 @@ void func_sh_8025574C(void) {
  */
 s32 execute_mario_action(UNUSED struct Object *o) {
     s32 inLoop = TRUE;
-
+    /**
+    * Cheat stuff
+    */
+    while (cheatGodmode == true && cheatEnablecheats == true){
+        gMarioState->health = 0x880;
+        break;
+    }
+    while (cheatInfinitelives == true && cheatEnablecheats == true && gMarioState->numLives < 99){
+        gMarioState->numLives += 1;
+        break;
+    }
+    while (cheatSuperspeed == true && cheatEnablecheats == true && gMarioState->forwardVel > 0 ){
+        gMarioState->forwardVel += 100;
+        break;
+    }
+    /**
+    * End of cheat stuff
+    */
     if (gMarioState->action) {
         gMarioState->marioObj->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
         mario_reset_bodystate(gMarioState);
