@@ -97,6 +97,7 @@ static void gfx_sdl_set_fullscreen(bool fullscreen) {
 
 static void gfx_sdl_init(void) {
     Uint32 window_flags = 0;
+    u8 Fullscreen;
 
     SDL_Init(SDL_INIT_VIDEO);
 	
@@ -114,12 +115,13 @@ static void gfx_sdl_init(void) {
 
     window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
 
+    Fullscreen = configFullscreen;
     if (gCLIOpts.FullScreen == 1)
-        configFullscreen = true;
+        Fullscreen = true;
     else if (gCLIOpts.FullScreen == 2)
-        configFullscreen = false;
+        Fullscreen = false;
 
-    if (configFullscreen) {
+    if (Fullscreen) {
         window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
     }
 
