@@ -51,6 +51,7 @@
 #define TEXT_OPT_CHEAT3 _("Invincible Mario")
 #define TEXT_OPT_CHEAT4 _("Infinite lives")
 #define TEXT_OPT_CHEAT5 _("Super speed")
+#define TEXT_OPT_CHEAT6 _("Super responsive controls")
 
 /**
  * Global Symbols

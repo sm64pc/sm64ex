@@ -43,6 +43,7 @@ bool cheatMoonjump = false;
 bool cheatGodmode = false;
 bool cheatInfinitelives = false;
 bool cheatSuperspeed = false;
+bool cheatResponsive = false;
 
 
 // Keyboard mappings (VK_ values, by default keyboard/gamepad/mouse)
