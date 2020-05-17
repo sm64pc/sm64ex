@@ -1,5 +1,8 @@
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <dirent.h>
+#include <string.h>
 
 #ifndef _LANGUAGE_C
 #define _LANGUAGE_C
@@ -16,9 +19,9 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #define GL_GLEXT_PROTOTYPES 1
 #include <SDL2/SDL_opengl.h>
-
 #else
 #include <SDL2/SDL.h>
 #define GL_GLEXT_PROTOTYPES 1
@@ -45,9 +48,16 @@ struct ShaderProgram {
     uint8_t num_attribs;
 };
 
+struct SurfaceData {
+  uint32_t crc;
+  SDL_Surface *surface;
+};
+
 static struct ShaderProgram shader_program_pool[64];
 static uint8_t shader_program_pool_size;
 static GLuint opengl_vbo;
+
+static struct SurfaceData surfaces[2048];
 
 static bool gfx_opengl_z_is_from_0_to_1(void) {
     return false;
@@ -56,7 +66,7 @@ static bool gfx_opengl_z_is_from_0_to_1(void) {
 static void gfx_opengl_vertex_array_set_attribs(struct ShaderProgram *prg) {
     size_t num_floats = prg->num_floats;
     size_t pos = 0;
-
+    
     for (int i = 0; i < prg->num_attribs; i++) {
         glEnableVertexAttribArray(prg->attrib_locations[i]);
         glVertexAttribPointer(prg->attrib_locations[i], prg->attrib_sizes[i], GL_FLOAT, GL_FALSE, num_floats * sizeof(float), (void *)(pos * sizeof(float)));
@@ -186,13 +196,13 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
     bool do_multiply[2] = {c[0][1] == 0 && c[0][3] == 0, c[1][1] == 0 && c[1][3] == 0};
     bool do_mix[2] = {c[0][1] == c[0][3], c[1][1] == c[1][3]};
     bool color_alpha_same = (shader_id & 0xfff) == ((shader_id >> 12) & 0xfff);
-
+    
     char vs_buf[1024];
     char fs_buf[1024];
     size_t vs_len = 0;
     size_t fs_len = 0;
     size_t num_floats = 4;
-
+    
     // Vertex shader
 #ifdef OSX_BUILD
     append_line(vs_buf, &vs_len, "");
@@ -227,7 +237,7 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
     }
     append_line(vs_buf, &vs_len, "gl_Position = aVtxPos;");
     append_line(vs_buf, &vs_len, "}");
-
+    
     // Fragment shader
 #ifdef OSX_BUILD
     append_line(fs_buf, &fs_len, "");
@@ -412,8 +422,16 @@ static void gfx_opengl_select_texture(int tile, GLuint texture_id) {
     glBindTexture(GL_TEXTURE_2D, texture_id);
 }
 
-static void gfx_opengl_upload_texture(uint8_t *rgba32_buf, int width, int height) {
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba32_buf);
+static void gfx_opengl_upload_texture(uint8_t *rgba32_buf, int width, int height, int crc) {
+  for (int x = 0; x < 2048; x ++) {
+    if (surfaces[x].crc == crc) {
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surfaces[x].surface->w,surfaces[x].surface->h,0,GL_RGBA, GL_UNSIGNED_BYTE, surfaces[x].surface->pixels);
+      printf("Found matching surface %d\n", crc);
+      return;
+    }
+  }
+
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba32_buf);
 }
 
 static uint32_t gfx_cm_to_opengl(uint32_t val) {
@@ -484,6 +502,31 @@ static void gfx_opengl_init(void) {
 #ifdef OSX_BUILD
     glewInit();
 #endif
+
+    int count = 0;
+    DIR *d;
+    struct dirent *dir;
+    d = opendir("./textures_out_combined");
+    if (d)
+    {
+        while ((dir = readdir(d)) != NULL)
+        {
+            printf("%s\n", dir->d_name);
+	    int crc = (int)strtol(dir->d_name, NULL, 16);
+            char path[1024];
+            strcpy(path, "./textures_out_combined/");
+            strcat(path,  dir->d_name);
+
+            printf("%s\n", path);
+
+	    SDL_Surface *surface  = IMG_Load(path);
+            surfaces[count].crc = crc;
+            surfaces[count].surface = surface;
+            printf("Surface found - %d %08x\n", count, crc);
+            count ++;
+        }
+        closedir(d);
+    }
 
     glGenBuffers(1, &opengl_vbo);
     

@@ -12,6 +12,8 @@
 
 #include "config.h"
 
+#include "xxhash.h"
+
 #include "gfx_pc.h"
 #include "gfx_cc.h"
 #include "gfx_window_manager_api.h"
@@ -285,7 +287,16 @@ static bool gfx_texture_cache_lookup(int tile, struct TextureHashmapNode **n, co
     return false;
 }
 
+static u32 CRC_Calculate( u32 crc, uint8_t *addr, u32 count ) {
+	u32 crcres = XXH32(addr, count, crc);
+	printf("CRC - %08x\n", crcres);
+	return crcres;
+}
+
 static void import_texture_rgba16(int tile) {
+	u32 crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
+
+
     uint8_t rgba32_buf[8192];
     
     for (uint32_t i = 0; i < rdp.loaded_texture[tile].size_bytes / 2; i++) {
@@ -303,10 +314,12 @@ static void import_texture_rgba16(int tile) {
     uint32_t width = rdp.texture_tile.line_size_bytes / 2;
     uint32_t height = rdp.loaded_texture[tile].size_bytes / rdp.texture_tile.line_size_bytes;
     
-    gfx_rapi->upload_texture(rgba32_buf, width, height);
+    gfx_rapi->upload_texture(rgba32_buf, width, height, crc);
 }
 
 static void import_texture_ia4(int tile) {
+	u32 crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
+
     uint8_t rgba32_buf[32768];
     
     for (uint32_t i = 0; i < rdp.loaded_texture[tile].size_bytes * 2; i++) {
@@ -326,10 +339,12 @@ static void import_texture_ia4(int tile) {
     uint32_t width = rdp.texture_tile.line_size_bytes * 2;
     uint32_t height = rdp.loaded_texture[tile].size_bytes / rdp.texture_tile.line_size_bytes;
     
-    gfx_rapi->upload_texture(rgba32_buf, width, height);
+    gfx_rapi->upload_texture(rgba32_buf, width, height, crc);
 }
 
 static void import_texture_ia8(int tile) {
+	u32 crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
+
     uint8_t rgba32_buf[16384];
     
     for (uint32_t i = 0; i < rdp.loaded_texture[tile].size_bytes; i++) {
@@ -347,10 +362,12 @@ static void import_texture_ia8(int tile) {
     uint32_t width = rdp.texture_tile.line_size_bytes;
     uint32_t height = rdp.loaded_texture[tile].size_bytes / rdp.texture_tile.line_size_bytes;
     
-    gfx_rapi->upload_texture(rgba32_buf, width, height);
+    gfx_rapi->upload_texture(rgba32_buf, width, height, crc);
 }
 
 static void import_texture_ia16(int tile) {
+	u32 crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
+
     uint8_t rgba32_buf[8192];
     
     for (uint32_t i = 0; i < rdp.loaded_texture[tile].size_bytes / 2; i++) {
@@ -368,10 +385,12 @@ static void import_texture_ia16(int tile) {
     uint32_t width = rdp.texture_tile.line_size_bytes / 2;
     uint32_t height = rdp.loaded_texture[tile].size_bytes / rdp.texture_tile.line_size_bytes;
     
-    gfx_rapi->upload_texture(rgba32_buf, width, height);
+    gfx_rapi->upload_texture(rgba32_buf, width, height, crc);
 }
 
 static void import_texture_ci4(int tile) {
+	u32 crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
+
     uint8_t rgba32_buf[32768];
     
     for (uint32_t i = 0; i < rdp.loaded_texture[tile].size_bytes * 2; i++) {
@@ -391,10 +410,12 @@ static void import_texture_ci4(int tile) {
     uint32_t width = rdp.texture_tile.line_size_bytes * 2;
     uint32_t height = rdp.loaded_texture[tile].size_bytes / rdp.texture_tile.line_size_bytes;
     
-    gfx_rapi->upload_texture(rgba32_buf, width, height);
+    gfx_rapi->upload_texture(rgba32_buf, width, height, crc);
 }
 
 static void import_texture_ci8(int tile) {
+	u32 crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
+
     uint8_t rgba32_buf[16384];
     
     for (uint32_t i = 0; i < rdp.loaded_texture[tile].size_bytes; i++) {
@@ -413,7 +434,7 @@ static void import_texture_ci8(int tile) {
     uint32_t width = rdp.texture_tile.line_size_bytes;
     uint32_t height = rdp.loaded_texture[tile].size_bytes / rdp.texture_tile.line_size_bytes;
     
-    gfx_rapi->upload_texture(rgba32_buf, width, height);
+    gfx_rapi->upload_texture(rgba32_buf, width, height, crc);
 }
 
 static void import_texture(int tile) {
