@@ -3,7 +3,6 @@
 #include "prevent_bss_reordering.h"
 #include "sm64.h"
 #include "gfx_dimensions.h"
-//#include "game.h"
 #include "game_init.h"
 #include "sound_init.h"
 #include "level_update.h"
@@ -28,7 +27,11 @@
 #include "level_table.h"
 #include "dialog_ids.h"
 #include "thread6.h"
+#ifdef TARGET_WEB
+#include <stdlib.h>
+#else
 #include "../../include/libc/stdlib.h"
+#endif
 #include "../pc/configfile.h"
 #define CONFIG_FILE "sm64config.txt"
 
