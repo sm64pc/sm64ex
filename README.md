@@ -22,4 +22,4 @@ Please contribute **first** to the [nightly branch](https://github.com/sm64pc/sm
 ## Building
 For building instructions, please refer to the [wiki](https://github.com/sm64pc/sm64pc/wiki).
 
-**Do NOT attempt to compile Windows executables with `WINDOWS_BUILD=1` under Linux or WSL. It will NOT work. Follow the guide on the wiki.**
+**Make sure you have MXE first before attempting to compile for Windows on Linux and WSL. Follow the guide on the wiki.**
