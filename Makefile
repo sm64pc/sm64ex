@@ -524,10 +524,6 @@ else ifeq ($(WINDOWS_BUILD),1)
   LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -static
   ifeq ($(CROSS),)
     LDFLAGS += -no-pie
-  else ifeq ($(CROSS),i686-x64-mingw32.static-)
-    NO_BZERO_BCOPY = 1
-  else ifeq ($(CROSS),x86_64-x64-mingw32.static-)
-    NO_BZERO_BCOPY = 1
   endif
   ifeq ($(WINDOWS_CONSOLE),1)
     LDFLAGS += -mconsole
