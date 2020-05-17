@@ -23,7 +23,20 @@ void parse_cli_opts(int argc, char* argv[])
 				gCLIOpts.SkipIntro = 1;
 
             if (strcmp(argv[i], "--fullscreen") == 0) // Open game in fullscreen
-                gCLIOpts.FullScreen = 1;            
+                gCLIOpts.FullScreen = 1;   
+
+			if (strcmp(argv[i], "--windowed") == 0) // Open game in windowed mode
+				gCLIOpts.FullScreen = 2;
+
+			if (strcmp(argv[i], "--help") == 0) // Print help
+			{
+				printf("Super Mario 64 PC Port\n");
+				printf("%-20s\tSkips the Peach and Castle intro when starting a new game.\n", "--skip-intro");
+				printf("%-20s\tStarts the game in full screen mode.\n", "--fullscreen");
+				printf("%-20s\tStarts the game in windowed mode.\n", "--windowed");
+				printf("%-20s\tSaves the configuration file as CONFIGNAME.\n", "--configfile CONFIGNAME");
+				exit(0);
+			}
 
             if (strncmp(argv[i], "--configfile", strlen("--configfile")) == 0)
             {
@@ -36,7 +49,7 @@ void parse_cli_opts(int argc, char* argv[])
 						strncpy(gCLIOpts.ConfigFile, argv[i+1], strlen(argv[i+1]));
 					}
 				}
-			}	
+			}
 		}
 	}
 }
