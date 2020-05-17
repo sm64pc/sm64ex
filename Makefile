@@ -40,6 +40,15 @@ EXT_OPTIONS_MENU ?= 1
 TARGET_WEB ?= 0
 # Specify the target you are building for, 0 means native
 TARGET_ARCH ?= native
+
+ifeq ($(CROSS),i686-w64-mingw32.static-)
+  TARGET_ARCH = i386pe
+else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+  TARGET_ARCH = i386pe
+else
+  TARGET_ARCH = native
+endif
+
 TARGET_BITS ?= 0
 
 ifneq ($(TARGET_BITS),0)
@@ -506,9 +515,9 @@ LDFLAGS := -lm -lGL -lSDL2 -no-pie -s TOTAL_MEMORY=20MB -g4 --source-map-base ht
 else ifeq ($(WINDOWS_BUILD),1)
   LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -static
   ifneq ($(CROSS),i686-w64-mingw32.static-)
-    ifneq ($(CROSS),x86_64-w64-mingw32.static-)
-      LDFLAGS += -no-pie
-    endif
+    LDFLAGS += -no-pie
+  else ifneq ($(CROSS),x86_64-w64-mingw32.static-)
+    LDFLAGS += -no-pie
   endif
   ifeq ($(WINDOWS_CONSOLE),1)
     LDFLAGS += -mconsole
