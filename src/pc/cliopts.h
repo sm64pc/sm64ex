@@ -1,3 +1,4 @@
+#include <PR/ultratypes.h>
 #include "sm64.h"
 
 struct PCCLIOptions 

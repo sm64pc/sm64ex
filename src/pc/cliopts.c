@@ -1,6 +1,7 @@
 #include "cliopts.h"
 #include <strings.h>
 #include <stdlib.h>
+#define __NO_MINGW_LFS //Mysterious error in MinGW.org stdio.h
 #include <stdio.h>
 
 struct PCCLIOptions gCLIOpts;
