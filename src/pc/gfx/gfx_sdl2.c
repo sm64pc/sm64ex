@@ -24,17 +24,26 @@
 
 #include "gfx_window_manager_api.h"
 #include "gfx_screen_config.h"
+#include "../pc_main.h"
 #include "../configfile.h"
 #include "../cliopts.h"
 
 #include "src/pc/controller/controller_keyboard.h"
 
+// TODO: figure out if this shit even works
+#ifdef VERSION_EU
+# define FRAMERATE 25
+#else
+# define FRAMERATE 30
+#endif
+
 static SDL_Window *wnd;
 static SDL_GLContext ctx = NULL;
 static int inverted_scancode_table[512];
 
-static bool cur_fullscreen;
-static uint32_t cur_width, cur_height;
+static bool window_fullscreen;
+static bool window_vsync;
+static int window_width, window_height;
 
 const SDL_Scancode windows_scancode_table[] =
 {
@@ -88,7 +97,7 @@ const SDL_Scancode scancode_rmapping_nonextended[][2] = {
 };
 
 static void gfx_sdl_set_fullscreen(bool fullscreen) {
-    if (fullscreen == cur_fullscreen) return;
+    if (fullscreen == window_fullscreen) return;
 
     if (fullscreen) {
         SDL_SetWindowFullscreen(wnd, SDL_WINDOW_FULLSCREEN_DESKTOP);
@@ -96,15 +105,34 @@ static void gfx_sdl_set_fullscreen(bool fullscreen) {
     } else {
         SDL_SetWindowFullscreen(wnd, 0);
         SDL_ShowCursor(SDL_ENABLE);
+        // reset back to small window just in case
+        window_width = DESIRED_SCREEN_WIDTH;
+        window_height = DESIRED_SCREEN_HEIGHT;
+        SDL_SetWindowSize(wnd, window_width, window_height);
     }
 
-    cur_fullscreen = fullscreen;
+    window_fullscreen = fullscreen;
+}
+
+static bool test_vsync(void) {
+    // Even if SDL_GL_SetSwapInterval succeeds, it doesn't mean that VSync actually works.
+    // A 60 Hz monitor should have a swap interval of 16.67 milliseconds.
+    // If it takes less than 12 milliseconds, assume that VSync is not working.
+    // SDL_GetTicks() probably does not offer enough precision for this kind of shit.
+    Uint32 start, end;
+
+    // do an extra swap, sometimes the first one takes longer (maybe creates buffers?)
+    SDL_GL_SwapWindow(wnd);
+
+    SDL_GL_SwapWindow(wnd);
+    start = SDL_GetTicks();
+    SDL_GL_SwapWindow(wnd);
+    end = SDL_GetTicks();
+
+    return (end - start >= 12);
 }
 
 static void gfx_sdl_init(void) {
-    Uint32 window_flags = 0;
-    u8 Fullscreen;
-
     SDL_Init(SDL_INIT_VIDEO);
 
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -119,49 +147,48 @@ static void gfx_sdl_init(void) {
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
-    window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
+    if (gCLIOpts.FullScreen)
+        configFullscreen = true;
 
-    Fullscreen = configFullscreen;
-    if (gCLIOpts.FullScreen == 1)
-        Fullscreen = true;
-    else if (gCLIOpts.FullScreen == 2)
-        Fullscreen = false;
-
-    if (Fullscreen) {
-        window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-    }
-
-    SDL_DisplayMode sdl_displaymode;
-    SDL_GetCurrentDisplayMode(0, &sdl_displaymode);
-
-    const char* window_title =
+    const char* window_title = 
     #ifndef USE_GLES
     "Super Mario 64 PC port (OpenGL)";
     #else
     "Super Mario 64 PC port (OpenGL_ES2)";
     #endif
 
+    Uint32 window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
+
+    window_fullscreen = configFullscreen;
+
     if (configFullscreen) {
-        wnd = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                sdl_displaymode.w, sdl_displaymode.h, window_flags);
+        window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
         SDL_ShowCursor(SDL_DISABLE);
     } else {
-        wnd = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                DESIRED_SCREEN_WIDTH, DESIRED_SCREEN_HEIGHT, window_flags);
         SDL_ShowCursor(SDL_ENABLE);
     }
 
-    SDL_GL_CreateContext(wnd);
-    SDL_GL_SetSwapInterval(1); // We have a double buffered GL context, it makes no sense to want tearing.
+    wnd = SDL_CreateWindow(window_title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+            DESIRED_SCREEN_WIDTH, DESIRED_SCREEN_HEIGHT, window_flags);
+
+    ctx = SDL_GL_CreateContext(wnd);
+    SDL_GL_SetSwapInterval(2);
+
+    // in case FULLSCREEN_DESKTOP set our size to god knows what
+    SDL_GetWindowSize(wnd, &window_width, &window_height);
+
+    window_vsync = test_vsync();
+    if (!window_vsync)
+        printf("Warning: VSync is not enabled or not working. Falling back to timer for synchronization\n");
 
     for (size_t i = 0; i < sizeof(windows_scancode_table) / sizeof(SDL_Scancode); i++) {
         inverted_scancode_table[windows_scancode_table[i]] = i;
     }
-    
+
     for (size_t i = 0; i < sizeof(scancode_rmapping_extended) / sizeof(scancode_rmapping_extended[0]); i++) {
         inverted_scancode_table[scancode_rmapping_extended[i][0]] = inverted_scancode_table[scancode_rmapping_extended[i][1]] + 0x100;
     }
-    
+
     for (size_t i = 0; i < sizeof(scancode_rmapping_nonextended) / sizeof(scancode_rmapping_nonextended[0]); i++) {
         inverted_scancode_table[scancode_rmapping_nonextended[i][0]] = inverted_scancode_table[scancode_rmapping_nonextended[i][1]];
         inverted_scancode_table[scancode_rmapping_nonextended[i][1]] += 0x100;
@@ -169,20 +196,13 @@ static void gfx_sdl_init(void) {
 }
 
 static void gfx_sdl_main_loop(void (*run_one_game_iter)(void)) {
-    int t;
-    while (1) {
-        t = SDL_GetTicks();
+    while (1)
         run_one_game_iter();
-        t = SDL_GetTicks() - t;
-
-        if (t < 1000 / 30) {
-            SDL_Delay ((1000 / 30) - t);
-        }
-    }
 }
 
 static void gfx_sdl_get_dimensions(uint32_t *width, uint32_t *height) {
-    SDL_GetWindowSize(wnd, width, height);
+    *width = window_width;
+    *height = window_height;
 }
 
 static int translate_scancode(int scancode) {
@@ -221,12 +241,19 @@ static void gfx_sdl_handle_events(void) {
                 gfx_sdl_onkeyup(event.key.keysym.scancode);
                 break;
 #endif
+            case SDL_WINDOWEVENT:
+                if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+                    window_width = event.window.data1;
+                    window_height = event.window.data2;
+                }
+                break;
             case SDL_QUIT:
-                exit(0);
+                game_exit();
+                break;
         }
     }
     // just check if the fullscreen value has changed and toggle fullscreen if it has
-    if (configFullscreen != cur_fullscreen)
+    if (configFullscreen != window_fullscreen)
         gfx_sdl_set_fullscreen(configFullscreen);
 }
 
@@ -234,7 +261,21 @@ static bool gfx_sdl_start_frame(void) {
     return true;
 }
 
+static void sync_framerate_with_timer(void) {
+    // Number of milliseconds a frame should take (30 fps)
+    const Uint32 FRAME_TIME = 1000 / FRAMERATE;
+    static Uint32 last_time;
+
+    Uint32 elapsed = SDL_GetTicks() - last_time;
+    if (elapsed < FRAME_TIME)
+        SDL_Delay(FRAME_TIME - elapsed);
+
+    last_time = SDL_GetTicks();
+}
+
 static void gfx_sdl_swap_buffers_begin(void) {
+    if (!window_vsync)
+        sync_framerate_with_timer();
     SDL_GL_SwapWindow(wnd);
 }
 

@@ -18,6 +18,7 @@
 #include "audio/audio_sdl.h"
 #include "audio/audio_null.h"
 
+#include "pc_main.h"
 #include "cliopts.h"
 #include "configfile.h"
 #include "controller/controller_api.h"
@@ -46,13 +47,11 @@ void dispatch_audio_sptask(struct SPTask *spTask) {
 void set_vblank_handler(s32 index, struct VblankHandler *handler, OSMesgQueue *queue, OSMesg *msg) {
 }
 
-static uint8_t inited = 0;
+static bool inited = false;
 
 #include "game/display.h" // for gGlobalTimer
 void send_display_list(struct SPTask *spTask) {
-    if (!inited) {
-        return;
-    }
+    if (!inited) return;
     gfx_run((Gfx *)spTask->task.t.data_ptr);
 }
 
@@ -92,11 +91,19 @@ void audio_shutdown(void) {
     }
 }
 
-void game_shutdown(void) {
+void game_deinit(void) {
     configfile_save(gCLIOpts.ConfigFile);;
     controller_shutdown();
     audio_shutdown();
     gfx_shutdown();
+    inited = false;
+}
+
+void game_exit(void) {
+    game_deinit();
+#ifndef TARGET_WEB
+    exit(0);
+#endif
 }
 
 #ifdef TARGET_WEB
@@ -128,7 +135,8 @@ static void on_anim_frame(double time) {
         }
     }
 
-    request_anim_frame(on_anim_frame);
+    if (inited) // only continue if the init flag is still set
+        request_anim_frame(on_anim_frame);
 }
 #endif
 
@@ -138,12 +146,7 @@ void main_func(void) {
     gEffectsMemoryPool = mem_pool_init(0x4000, MEMORY_POOL_LEFT);
 
     configfile_load(gCLIOpts.ConfigFile);
-    atexit(game_shutdown);
 
-#ifdef TARGET_WEB
-    emscripten_set_main_loop(em_main_loop, 0, 0);
-    request_anim_frame(on_anim_frame);
-#endif
     wm_api = &gfx_sdl;
     rendering_api = &gfx_opengl_api;
     gfx_init(wm_api, rendering_api);
@@ -159,16 +162,14 @@ void main_func(void) {
     sound_init();
 
     thread5_game_loop(NULL);
+
+    inited = true;
+
 #ifdef TARGET_WEB
-    /*for (int i = 0; i < atoi(argv[1]); i++) {
-        game_loop_one_iteration();
-    }*/
-    inited = 1;
+    emscripten_set_main_loop(em_main_loop, 0, 0);
+    request_anim_frame(on_anim_frame);
 #else
-    inited = 1;
-    while (1) {
-        wm_api->main_loop(produce_one_frame);
-    }
+    wm_api->main_loop(produce_one_frame);
 #endif
 }
 
