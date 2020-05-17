@@ -24,11 +24,12 @@ extern unsigned int configKeyStickUp[];
 extern unsigned int configKeyStickDown[];
 extern unsigned int configKeyStickLeft[];
 extern unsigned int configKeyStickRight[];
-extern bool 		cheatMoonjump;
-extern bool 		cheatGodmode;
-extern bool 		cheatEnablecheats;
-extern bool			cheatInfinitelives;
-extern bool			cheatSuperspeed;
+extern bool cheatMoonjump;
+extern bool cheatGodmode;
+extern bool cheatEnablecheats;
+extern bool cheatInfinitelives;
+extern bool cheatSuperspeed;
+
 #ifdef BETTERCAMERA
 extern unsigned int configCameraXSens;
 extern unsigned int configCameraYSens;
