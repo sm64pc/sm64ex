@@ -29,8 +29,7 @@
 #include "dialog_ids.h"
 #include "thread6.h"
 #include "../../include/libc/stdlib.h"
-#include "../pc/configfile.h"
-#define CONFIG_FILE "sm64config.txt"
+#include "../pc/pc_main.h"
 
 // TODO: put this elsewhere
 enum SaveOption { SAVE_OPT_SAVE_AND_CONTINUE = 1, SAVE_OPT_SAVE_AND_QUIT, SAVE_OPT_SAVE_EXIT_GAME, SAVE_OPT_CONTINUE_DONT_SAVE };
@@ -263,17 +262,11 @@ void handle_save_menu(struct MarioState *m) {
 
             if (gSaveOptSelectIndex == SAVE_OPT_SAVE_AND_QUIT) {
                 fade_into_special_warp(-2, 0); // reset game
+            } else if (gSaveOptSelectIndex == SAVE_OPT_SAVE_EXIT_GAME) {
+                //initiate_warp(LEVEL_CASTLE, 1, 0x1F, 0);
+                fade_into_special_warp(0, 0);
+                game_exit();
             }
-
-		if (gSaveOptSelectIndex == SAVE_OPT_SAVE_EXIT_GAME) {
-                //configfile_save(CONFIG_FILE); //Redundant, save_file implies save_config? Save config file before fully exiting
-           	//initiate_warp(LEVEL_CASTLE, 1, 0x1F, 0);
-           	fade_into_special_warp(0, 0);
-
-	    	//fade_into_special_warp(-2, 0); // do the reset game thing
-                exit(0);  // exit after saving game
-            }
-
         }
 
         // not quitting
