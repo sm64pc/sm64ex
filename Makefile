@@ -40,6 +40,17 @@ EXT_OPTIONS_MENU ?= 1
 TARGET_WEB ?= 0
 # Specify the target you are building for, 0 means native
 TARGET_ARCH ?= native
+
+ifeq ($(CROSS),i686-w64-mingw32.static-)
+  ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+    TARGET_ARCH = i386pe
+  else
+    TARGET_ARCH = i386pe
+  endif
+else
+  TARGET_ARCH = native
+endif
+
 TARGET_BITS ?= 0
 
 ifneq ($(TARGET_BITS),0)
