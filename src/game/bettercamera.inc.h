@@ -148,11 +148,15 @@ void newcam_init_settings(void)
 {
     newcam_sensitivityX = newcam_clamp(configCameraXSens, 10, 250);
     newcam_sensitivityY = newcam_clamp(configCameraYSens, 10, 250);
+    newcam_mousesensitivityX = newcam_clamp(configCameraMouseXSens, 10, 250);
+    newcam_mousesensitivityY = newcam_clamp(configCameraMouseYSens, 10, 250);
     newcam_aggression   = newcam_clamp(configCameraAggr, 0, 100);
     newcam_panlevel     = newcam_clamp(configCameraPan, 0, 100);
     newcam_invertX      = (u8)configCameraInvertX;
     newcam_invertY      = (u8)configCameraInvertY;
     newcam_mouse        = (u8)configCameraMouse;
+    newcam_mouseinvertX = (u8)configCameraMouseInvertX;
+    newcam_mouseinvertY = (u8)configCameraMouseInvertY;
     newcam_analogue     = (u8)configEnableCamera;
     newcam_degrade      = (f32)configCameraDegrade / 100.0f;
 }
