@@ -189,8 +189,14 @@ static void gfx_sdl_init(void) {
 }
 
 static void gfx_sdl_main_loop(void (*run_one_game_iter)(void)) {
-    while (1)
+    Uint32 t;
+    while (1) {
+        t = SDL_GetTicks();
         run_one_game_iter();
+        t = SDL_GetTicks() - t;
+        if (t < FRAME_TIME && configWindow.vsync <= 1)
+            SDL_Delay(FRAME_TIME - t);
+    }
 }
 
 static void gfx_sdl_get_dimensions(uint32_t *width, uint32_t *height) {
@@ -262,16 +268,7 @@ static bool gfx_sdl_start_frame(void) {
     return true;
 }
 
-static void sync_framerate_with_timer(void) {
-    Uint32 elapsed = SDL_GetTicks() - frame_start;
-    if (elapsed < FRAME_TIME)
-        SDL_Delay(FRAME_TIME - elapsed);
-}
-
 static void gfx_sdl_swap_buffers_begin(void) {
-    // if vsync is set to 2, depend only on SwapInterval to sync
-    if (configWindow.vsync <= 1)
-        sync_framerate_with_timer();
     SDL_GL_SwapWindow(wnd);
 }
 
