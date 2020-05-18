@@ -179,6 +179,8 @@ u8 unused4[2];
 
 // For configfile intro skipping
 extern unsigned int configSkipIntro;
+// For enable/disable the HUD
+extern bool configHUD;
 
 
 void basic_update(s16 *arg);
@@ -186,7 +188,9 @@ void basic_update(s16 *arg);
 u16 level_control_timer(s32 timerOp) {
     switch (timerOp) {
         case TIMER_CONTROL_SHOW:
-            gHudDisplay.flags |= HUD_DISPLAY_FLAG_TIMER;
+            if (configHUD) {
+                gHudDisplay.flags |= HUD_DISPLAY_FLAG_TIMER;
+			}
             sTimerRunning = FALSE;
             gHudDisplay.timer = 0;
             break;
@@ -894,11 +898,14 @@ void update_hud_values(void) {
     if (gCurrCreditsEntry == NULL) {
         s16 numHealthWedges = gMarioState->health > 0 ? gMarioState->health >> 8 : 0;
 
-        if (gCurrCourseNum > 0) {
-            gHudDisplay.flags |= HUD_DISPLAY_FLAG_COIN_COUNT;
-        } else {
-            gHudDisplay.flags &= ~HUD_DISPLAY_FLAG_COIN_COUNT;
+        if (configHUD) {
+            if (gCurrCourseNum > 0) {
+                gHudDisplay.flags |= HUD_DISPLAY_FLAG_COIN_COUNT;
+            } else {
+                gHudDisplay.flags &= ~HUD_DISPLAY_FLAG_COIN_COUNT;
+            }
         }
+        
 
         if (gHudDisplay.coins < gMarioState->numCoins) {
             if (gGlobalTimer & 0x00000001) {
@@ -941,10 +948,12 @@ void update_hud_values(void) {
         }
         gHudDisplay.wedges = numHealthWedges;
 
-        if (gMarioState->hurtCounter > 0) {
-            gHudDisplay.flags |= HUD_DISPLAY_FLAG_EMPHASIZE_POWER;
-        } else {
-            gHudDisplay.flags &= ~HUD_DISPLAY_FLAG_EMPHASIZE_POWER;
+        if (configHUD) {
+            if (gMarioState->hurtCounter > 0) {
+                gHudDisplay.flags |= HUD_DISPLAY_FLAG_EMPHASIZE_POWER;
+            } else {
+                gHudDisplay.flags &= ~HUD_DISPLAY_FLAG_EMPHASIZE_POWER;
+            }
         }
     }
 }
@@ -1178,7 +1187,7 @@ s32 init_level(void) {
     sTransitionTimer = 0;
     D_80339EE0 = 0;
 
-    if (gCurrCreditsEntry == NULL) {
+    if (gCurrCreditsEntry == NULL && configHUD) {
         gHudDisplay.flags = HUD_DISPLAY_DEFAULT;
     } else {
         gHudDisplay.flags = HUD_DISPLAY_NONE;

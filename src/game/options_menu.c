@@ -72,7 +72,8 @@ static const u8 optsVideoStr[][32] = {
     { TEXT_OPT_TEXFILTER },
     { TEXT_OPT_NEAREST },
     { TEXT_OPT_LINEAR },
-    { TEXT_RESET_WINDOW }
+    { TEXT_RESET_WINDOW },
+    { TEXT_OPT_HUD },
 };
 
 static const u8 optsAudioStr[][32] = {
@@ -219,6 +220,7 @@ static struct Option optsVideo[] = {
     DEF_OPT_TOGGLE( optsVideoStr[0], &configWindow.fullscreen ),
     DEF_OPT_CHOICE( optsVideoStr[1], &configFiltering, filterChoices ),
     DEF_OPT_BUTTON( optsVideoStr[4], optvide_reset_window ),
+    DEF_OPT_TOGGLE( optsVideoStr[5], &configHUD ),
 };
 
 static struct Option optsAudio[] = {
@@ -355,6 +357,13 @@ static void optmenu_opt_change(struct Option *opt, s32 val) {
     switch (opt->type) {
         case OPT_TOGGLE:
             *opt->bval = !*opt->bval;
+            if (opt->label == optsVideoStr[5]) {
+                if (val == true) {
+                    gHudDisplay.flags = HUD_DISPLAY_DEFAULT;
+                } else {
+                    gHudDisplay.flags = HUD_DISPLAY_NONE;
+                }
+            }
             break;
 
         case OPT_CHOICE:
