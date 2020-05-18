@@ -223,9 +223,9 @@ static int ivrt(u8 axis)
     else
     {
         if (newcam_invertY == 0)
-            return 1;
-        else
             return -1;
+        else
+            return 1;
     }
 }
 
