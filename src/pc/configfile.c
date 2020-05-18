@@ -68,14 +68,12 @@ unsigned int configKeyStickRight[MAX_BINDS] = { 0x0020,   VK_INVALID, VK_INVALID
 // BetterCamera settings
 unsigned int configCameraXSens   = 50;
 unsigned int configCameraYSens   = 50;
-unsigned int configCameraMouseXSens   = 50;
-unsigned int configCameraMouseYSens   = 50;
 unsigned int configCameraAggr    = 0;
 unsigned int configCameraPan     = 0;
 unsigned int configCameraDegrade = 10; // 0 - 100%
 bool         configCameraInvertX = true;
 bool         configCameraInvertY = false;
-bool         configCameraMouseInvertX = false;
+bool         configCameraMouseInvertX = true;
 bool         configCameraMouseInvertY = false;
 bool         configEnableCamera  = false;
 bool         configCameraMouse   = false;
@@ -109,8 +107,6 @@ static const struct ConfigOption options[] = {
     {.name = "bettercam_mouse_look", .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraMouse},
     {.name = "bettercam_mouse_invertx", .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraMouseInvertX},
     {.name = "bettercam_mouse_inverty", .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraMouseInvertY},
-    {.name = "bettercam_mouse_xsens", .type = CONFIG_TYPE_UINT, .uintValue = &configCameraMouseXSens},
-    {.name = "bettercam_mouse_ysens", .type = CONFIG_TYPE_UINT, .uintValue = &configCameraMouseYSens},
     {.name = "bettercam_invertx",    .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraInvertX},
     {.name = "bettercam_inverty",    .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraInvertY},
     {.name = "bettercam_xsens",      .type = CONFIG_TYPE_UINT, .uintValue = &configCameraXSens},
