@@ -1,5 +1,6 @@
 #include "cliopts.h"
 #include "configfile.h"
+#include "cheats.h"
 #include "pc_main.h"
 
 #include <strings.h>
@@ -31,6 +32,9 @@ void parse_cli_opts(int argc, char* argv[]) {
 
         else if (strcmp(argv[i], "--windowed") == 0) // Open game in windowed mode
             gCLIOpts.FullScreen = 2;
+
+        else if (strcmp(argv[i], "--cheats") == 0) // Enable cheats menu
+            Cheats.EnableCheats = true;
 
         // Print help
         else if (strcmp(argv[i], "--help") == 0) {

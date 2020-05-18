@@ -268,8 +268,8 @@ static struct Option optsMain[] = {
     DEF_OPT_SUBMENU( menuStr[6], &menuVideo ),
     DEF_OPT_SUBMENU( menuStr[7], &menuAudio ),
     DEF_OPT_BUTTON ( menuStr[8], optmenu_act_exit ),
-    DEF_OPT_SUBMENU( menuStr[9], &menuCheats ),
-
+    // NOTE: always keep cheats the last option here because of the half-assed way I toggle them
+    DEF_OPT_SUBMENU( menuStr[9], &menuCheats )
 };
 
 static struct SubMenu menuMain = DEF_SUBMENU( menuStr[3], optsMain );
@@ -459,6 +459,17 @@ void optmenu_toggle(void) {
         #ifndef nosound
         play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
         #endif
+
+        // HACK: hide the last option in main if cheats are disabled
+        menuMain.numOpts = sizeof(optsMain) / sizeof(optsMain[0]);
+        if (!Cheats.EnableCheats) {
+            menuMain.numOpts--;
+            if (menuMain.select >= menuMain.numOpts) {
+                menuMain.select = 0; // don't bother
+                menuMain.scroll = 0;
+            }
+        }
+
         currentMenu = &menuMain;
         optmenu_open = 1;
     } else {
