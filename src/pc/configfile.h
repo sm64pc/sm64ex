@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+#define CONFIGFILE_DEFAULT "sm64config.txt"
+
 #define MAX_BINDS    3
 #define MAX_VOLUME   127
 #define VOLUME_SHIFT 7
