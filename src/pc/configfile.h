@@ -35,8 +35,6 @@ extern unsigned int configKeyStickRight[];
 #ifdef BETTERCAMERA
 extern unsigned int configCameraXSens;
 extern unsigned int configCameraYSens;
-extern unsigned int configCameraMouseXSens;
-extern unsigned int configCameraMouseYSens;
 extern unsigned int configCameraAggr;
 extern unsigned int configCameraPan;
 extern unsigned int configCameraDegrade;
