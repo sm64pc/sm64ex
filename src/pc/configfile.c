@@ -37,15 +37,6 @@ bool         configFullscreen   = false;
 unsigned int configFiltering    = 1;          // 0=force nearest, 1=linear, (TODO) 2=three-point
 unsigned int configMasterVolume = MAX_VOLUME; // 0 - MAX_VOLUME
 
-// Cheat stuff
-bool cheatEnablecheats = false;
-bool cheatMoonjump = false;
-bool cheatGodmode = false;
-bool cheatInfinitelives = false;
-bool cheatSuperspeed = false;
-bool cheatResponsive = false;
-
-
 // Keyboard mappings (VK_ values, by default keyboard/gamepad/mouse)
 unsigned int configKeyA[MAX_BINDS]          = { 0x0026,   0x1000,     0x1103     };
 unsigned int configKeyB[MAX_BINDS]          = { 0x0033,   0x1002,     0x1101     };
