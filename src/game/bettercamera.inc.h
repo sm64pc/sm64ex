@@ -98,7 +98,7 @@ u8 newcam_mouseinvertX; // Reverses movement of the mouse camera axis.
 u8 newcam_mouseinvertY;
 u8 newcam_panlevel; //How much the camera sticks out a bit in the direction you're looking.
 u8 newcam_aggression; //How much the camera tries to centre itself to Mario's facing and movement.
-u8 newcam_analogue; //Wether to accept inputs from a player 2 joystick, and then disables C button input.
+u8 newcam_analogue; //Whether to accept inputs from a player 2 joystick, and then disables C button input.
 u8 newcam_mouse; // Whether to accept mouse input
 s16 newcam_distance_values[] = {750,1250,2000};
 u8 newcam_active = 1; // basically the thing that governs if newcam is on.
