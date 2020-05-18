@@ -542,7 +542,7 @@ static void gfx_opengl_init(void) {
 			int h = 0;
 			int channels = 0;
 
-			stbi_uc *surface = stbi_load(path, &w, &h, &channels, STBI_default);
+			stbi_uc *surface = stbi_load(path, &w, &h, &channels, STBI_rgb_alpha);
 
 			surfaces[count].crc = crc;
 			surfaces[count].surface = surface;
