@@ -216,7 +216,7 @@ static struct Option optsControls[] = {
 };
 
 static struct Option optsVideo[] = {
-    DEF_OPT_TOGGLE( optsVideoStr[0], &configFullscreen ),
+    DEF_OPT_TOGGLE( optsVideoStr[0], &configWindow.fullscreen ),
     DEF_OPT_CHOICE( optsVideoStr[1], &configFiltering, filterChoices ),
     DEF_OPT_BUTTON( optsVideoStr[4], optvide_reset_window ),
 };

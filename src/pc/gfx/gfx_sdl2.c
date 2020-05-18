@@ -97,9 +97,9 @@ const SDL_Scancode scancode_rmapping_nonextended[][2] = {
 #define IS_FULLSCREEN (SDL_GetWindowFlags(wnd) & SDL_WINDOW_FULLSCREEN_DESKTOP)
 
 static void gfx_sdl_set_fullscreen() {
-    if (configFullscreen == IS_FULLSCREEN)
+    if (configWindow.fullscreen == IS_FULLSCREEN)
         return;
-    if (configFullscreen) {
+    if (configWindow.fullscreen) {
         SDL_SetWindowFullscreen(wnd, SDL_WINDOW_FULLSCREEN_DESKTOP);
         SDL_ShowCursor(SDL_DISABLE);
     } else {
@@ -119,7 +119,10 @@ static void gfx_sdl_reset_dimension_and_pos() {
         configWindow.h = DESIRED_SCREEN_HEIGHT;
         configWindow.reset = false;
 
-        if (IS_FULLSCREEN) return;
+        if (IS_FULLSCREEN) {
+            configWindow.fullscreen = false;
+            return;
+        }
     } else
         return;
 
@@ -161,7 +164,7 @@ static void gfx_sdl_init(void) {
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
     if (gCLIOpts.FullScreen)
-        configFullscreen = true;
+        configWindow.fullscreen = true;
 
     const char* window_title = 
     #ifndef USE_GLES
@@ -221,9 +224,9 @@ static void gfx_sdl_onkeydown(int scancode) {
     const Uint8 *state = SDL_GetKeyboardState(NULL);
 
     if (state[SDL_SCANCODE_LALT] && state[SDL_SCANCODE_RETURN])
-        configFullscreen = !configFullscreen;
-    else if (state[SDL_SCANCODE_ESCAPE] && configFullscreen)
-        configFullscreen = false;
+        configWindow.fullscreen = !configWindow.fullscreen;
+    else if (state[SDL_SCANCODE_ESCAPE] && configWindow.fullscreen)
+        configWindow.fullscreen = false;
 }
 
 static void gfx_sdl_onkeyup(int scancode) {

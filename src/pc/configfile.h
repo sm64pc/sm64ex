@@ -11,10 +11,10 @@ typedef struct {
     unsigned int x, y, w, h;
     bool reset;
     bool vsync;
+    bool fullscreen;
     bool exiting_fullscreen;
 } ConfigWindow;
 
-extern bool         configFullscreen;
 extern ConfigWindow configWindow;
 extern unsigned int configFiltering;
 extern unsigned int configMasterVolume;

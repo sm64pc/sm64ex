@@ -35,7 +35,6 @@ struct ConfigOption {
  */
 
 // Video/audio stuff
-bool         configFullscreen   = false;
 ConfigWindow configWindow       = {
     .x = SDL_WINDOWPOS_CENTERED,
     .y = SDL_WINDOWPOS_CENTERED,
@@ -43,6 +42,7 @@ ConfigWindow configWindow       = {
     .h = DESIRED_SCREEN_HEIGHT,
     .reset = false,
     .vsync = false,
+    .fullscreen = false,
     .exiting_fullscreen = false,
 };
 unsigned int configFiltering    = 1;          // 0=force nearest, 1=linear, (TODO) 2=three-point
@@ -79,7 +79,7 @@ bool         configCameraMouse   = false;
 unsigned int configSkipIntro     = 0;
 
 static const struct ConfigOption options[] = {
-    {.name = "fullscreen",           .type = CONFIG_TYPE_BOOL, .boolValue = &configFullscreen},
+    {.name = "fullscreen",           .type = CONFIG_TYPE_BOOL, .boolValue = &configWindow.fullscreen},
     {.name = "window_x",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.x},
     {.name = "window_y",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.y},
     {.name = "window_w",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.w},
