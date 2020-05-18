@@ -39,9 +39,12 @@
 # define FRAMERATE 30
 #endif
 
+static const Uint32 FRAME_TIME = 1000 / FRAMERATE;
+
 static SDL_Window *wnd;
 static SDL_GLContext ctx = NULL;
 static int inverted_scancode_table[512];
+static Uint32 frame_start = 0;
 
 const SDL_Scancode windows_scancode_table[] =
 {
@@ -110,9 +113,9 @@ static void gfx_sdl_set_fullscreen() {
 }
 
 static void gfx_sdl_reset_dimension_and_pos() {
-    if (configWindow.exiting_fullscreen)
+    if (configWindow.exiting_fullscreen) {
         configWindow.exiting_fullscreen = false;
-    else if (configWindow.reset) {
+    } else if (configWindow.reset) {
         configWindow.x = SDL_WINDOWPOS_CENTERED;
         configWindow.y = SDL_WINDOWPOS_CENTERED;
         configWindow.w = DESIRED_SCREEN_WIDTH;
@@ -123,29 +126,14 @@ static void gfx_sdl_reset_dimension_and_pos() {
             configWindow.fullscreen = false;
             return;
         }
-    } else
+    } else if (!configWindow.settings_changed) {
         return;
+    }
 
+    configWindow.settings_changed = false;
     SDL_SetWindowSize(wnd, configWindow.w, configWindow.h);
     SDL_SetWindowPosition(wnd, configWindow.x, configWindow.y);
-}
-
-static bool test_vsync(void) {
-    // Even if SDL_GL_SetSwapInterval succeeds, it doesn't mean that VSync actually works.
-    // A 60 Hz monitor should have a swap interval of 16.67 milliseconds.
-    // If it takes less than 12 milliseconds, assume that VSync is not working.
-    // SDL_GetTicks() probably does not offer enough precision for this kind of shit.
-    Uint32 start, end;
-
-    // do an extra swap, sometimes the first one takes longer (maybe creates buffers?)
-    SDL_GL_SwapWindow(wnd);
-
-    SDL_GL_SwapWindow(wnd);
-    start = SDL_GetTicks();
-    SDL_GL_SwapWindow(wnd);
-    end = SDL_GetTicks();
-
-    return (end - start >= 12);
+    SDL_GL_SetSwapInterval(configWindow.vsync); // in case vsync changed
 }
 
 static void gfx_sdl_init(void) {
@@ -165,10 +153,8 @@ static void gfx_sdl_init(void) {
 
     if (gCLIOpts.FullScreen == 1)
         configWindow.fullscreen = true;
-
-    if (gCLIOpts.FullScreen == 2)
+    else if (gCLIOpts.FullScreen == 2)
         configWindow.fullscreen = false;
-
 
     const char* window_title = 
     #ifndef USE_GLES
@@ -183,13 +169,10 @@ static void gfx_sdl_init(void) {
         SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
     );
     ctx = SDL_GL_CreateContext(wnd);
-    SDL_GL_SetSwapInterval(2);
+
+    SDL_GL_SetSwapInterval(configWindow.vsync);
 
     gfx_sdl_set_fullscreen();
-
-    configWindow.vsync = test_vsync();
-    if (!configWindow.vsync)
-        printf("Warning: VSync is not enabled or not working. Falling back to timer for synchronization\n");
 
     for (size_t i = 0; i < sizeof(windows_scancode_table) / sizeof(SDL_Scancode); i++) {
         inverted_scancode_table[windows_scancode_table[i]] = i;
@@ -275,23 +258,19 @@ static void gfx_sdl_handle_events(void) {
 }
 
 static bool gfx_sdl_start_frame(void) {
+    frame_start = SDL_GetTicks();
     return true;
 }
 
 static void sync_framerate_with_timer(void) {
-    // Number of milliseconds a frame should take (30 fps)
-    const Uint32 FRAME_TIME = 1000 / FRAMERATE;
-    static Uint32 last_time;
-
-    Uint32 elapsed = SDL_GetTicks() - last_time;
+    Uint32 elapsed = SDL_GetTicks() - frame_start;
     if (elapsed < FRAME_TIME)
         SDL_Delay(FRAME_TIME - elapsed);
-
-    last_time = SDL_GetTicks();
 }
 
 static void gfx_sdl_swap_buffers_begin(void) {
-    if (!configWindow.vsync)
+    // if vsync is set to 2, depend only on SwapInterval to sync
+    if (configWindow.vsync <= 1)
         sync_framerate_with_timer();
     SDL_GL_SwapWindow(wnd);
 }
