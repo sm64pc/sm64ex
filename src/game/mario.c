@@ -32,6 +32,7 @@
 #include "level_table.h"
 #include "thread6.h"
 #include "pc/configfile.h"
+#include "pc/cheats.h"
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif
@@ -1397,12 +1398,14 @@ void update_mario_inputs(struct MarioState *m) {
     update_mario_geometry_inputs(m);
 
     debug_print_speed_action_normal(m);
+    
     /* Moonjump cheat */
-    while (cheatMoonjump == true && cheatEnablecheats == true && m->controller->buttonDown & L_TRIG ){
+    while (Cheats.MoonJump == true && Cheats.EnableCheats == true && m->controller->buttonDown & L_TRIG ){
         m->vel[1] = 25;
-        break;
+        break;   // TODO: Unneeded break?
     }
     /*End of moonjump cheat */
+
     if (gCameraMovementFlags & CAM_MOVE_C_UP_MODE) {
         if (m->action & ACT_FLAG_ALLOW_FIRST_PERSON) {
             m->input |= INPUT_FIRST_PERSON;
@@ -1726,17 +1729,17 @@ s32 execute_mario_action(UNUSED struct Object *o) {
     /**
     * Cheat stuff
     */
-    while (cheatGodmode == true && cheatEnablecheats == true){
-        gMarioState->health = 0x880;
-        break;
-    }
-    while (cheatInfinitelives == true && cheatEnablecheats == true && gMarioState->numLives < 99){
-        gMarioState->numLives += 1;
-        break;
-    }
-    while (cheatSuperspeed == true && cheatEnablecheats == true && gMarioState->forwardVel > 0 ){
-        gMarioState->forwardVel += 100;
-        break;
+
+    if (Cheats.EnableCheats)
+    {
+        if (Cheats.GodMode)
+            gMarioState->health = 0x880;
+
+        if (Cheats.InfiniteLives && gMarioState->numLives < 99)
+            gMarioState->numLives += 1;
+
+        if (Cheats.SuperSpeed && gMarioState->forwardVel > 0)
+            gMarioState->forwardVel += 100;
     }
     /**
     * End of cheat stuff

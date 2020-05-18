@@ -18,6 +18,7 @@
 #include "game/options_menu.h"
 #include "pc/pc_main.h"
 #include "pc/cliopts.h"
+#include "pc/cheats.h"
 #include "pc/configfile.h"
 #include "pc/controller/controller_api.h"
 
@@ -219,12 +220,12 @@ static struct Option optsAudio[] = {
 };
 
 static struct Option optsCheats[] = {
-    DEF_OPT_TOGGLE( optsCheatsStr[0], &cheatEnablecheats ),
-    DEF_OPT_TOGGLE( optsCheatsStr[1], &cheatMoonjump ),
-    DEF_OPT_TOGGLE( optsCheatsStr[2], &cheatGodmode ),
-    DEF_OPT_TOGGLE( optsCheatsStr[3], &cheatInfinitelives ),
-    DEF_OPT_TOGGLE( optsCheatsStr[4], &cheatSuperspeed),
-    DEF_OPT_TOGGLE( optsCheatsStr[5], &cheatResponsive),
+    DEF_OPT_TOGGLE( optsCheatsStr[0], &Cheats.EnableCheats ),
+    DEF_OPT_TOGGLE( optsCheatsStr[1], &Cheats.MoonJump ),
+    DEF_OPT_TOGGLE( optsCheatsStr[2], &Cheats.GodMode ),
+    DEF_OPT_TOGGLE( optsCheatsStr[3], &Cheats.InfiniteLives ),
+    DEF_OPT_TOGGLE( optsCheatsStr[4], &Cheats.SuperSpeed),
+    DEF_OPT_TOGGLE( optsCheatsStr[5], &Cheats.Responsive),
 
 };
 
