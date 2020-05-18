@@ -9,10 +9,11 @@
 
 typedef struct {
     unsigned int x, y, w, h;
+    unsigned int vsync;
     bool reset;
-    bool vsync;
     bool fullscreen;
     bool exiting_fullscreen;
+    bool settings_changed;
 } ConfigWindow;
 
 extern ConfigWindow configWindow;
