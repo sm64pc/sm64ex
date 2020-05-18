@@ -27,8 +27,6 @@
 #define TEXT_OPT_NEAREST   _("Nearest")
 #define TEXT_OPT_LINEAR    _("Linear")
 #define TEXT_OPT_MVOLUME   _("Master Volume")
-#define TEXT_OPT_VSYNC     _("Vertical Sync")
-#define TEXT_OPT_DOUBLE    _("Double")
 #define TEXT_RESET_WINDOW  _("Reset Window")
 
 #define TEXT_OPT_UNBOUND   _("NONE")
