@@ -13,7 +13,7 @@ void parse_cli_opts(int argc, char* argv[])
     gCLIOpts.FullScreen = 0;
     gCLIOpts.ConfigFile = malloc(31);
     strncpy(gCLIOpts.ConfigFile, "sm64config.txt", strlen("sm64config.txt"));
-    gCLIOpts.ConfigFile[strlen("sm64config.txt") + 1] = '\0';
+    gCLIOpts.ConfigFile[strlen("sm64config.txt")] = '\0';
 
 	// Scan arguments for options
 	if (argc > 1)
@@ -49,7 +49,7 @@ void parse_cli_opts(int argc, char* argv[])
 					} else {
 						memset(gCLIOpts.ConfigFile, 0, 30);
 						strncpy(gCLIOpts.ConfigFile, argv[i+1], strlen(argv[i+1]));
-						gCLIOpts.ConfigFile[strlen(argv[i+1]) + 1] = '\0';
+						gCLIOpts.ConfigFile[strlen(argv[i+1])] = '\0';
 					}
 				}
 			}
