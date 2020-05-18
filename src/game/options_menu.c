@@ -186,15 +186,19 @@ static void optvide_reset_window(UNUSED struct Option *self, s32 arg) {
 
 #ifdef BETTERCAMERA
 static struct Option optsCamera[] = {
-    DEF_OPT_TOGGLE( optsCameraStr[6], &configEnableCamera ),
-    DEF_OPT_TOGGLE( optsCameraStr[7], &configCameraMouse ),
+    DEF_OPT_TOGGLE( optsCameraStr[10], &configEnableCamera ),
+    DEF_OPT_TOGGLE( optsCameraStr[11], &configCameraMouse ),
     DEF_OPT_TOGGLE( optsCameraStr[2], &configCameraInvertX ),
     DEF_OPT_TOGGLE( optsCameraStr[3], &configCameraInvertY ),
+    DEF_OPT_TOGGLE( optsCameraStr[6], &configCameraMouseInvertX ),
+    DEF_OPT_TOGGLE( optsCameraStr[7], &configCameraMouseInvertY ),
     DEF_OPT_SCROLL( optsCameraStr[0], &configCameraXSens, 10, 250, 1 ),
     DEF_OPT_SCROLL( optsCameraStr[1], &configCameraYSens, 10, 250, 1 ),
-    DEF_OPT_SCROLL( optsCameraStr[4], &configCameraAggr, 0, 100, 1 ),
-    DEF_OPT_SCROLL( optsCameraStr[5], &configCameraPan, 0, 100, 1 ),
-    DEF_OPT_SCROLL( optsCameraStr[8], &configCameraDegrade, 0, 100, 1 ),
+    DEF_OPT_SCROLL( optsCameraStr[4], &configCameraMouseXSens, 10, 250, 1 ),
+    DEF_OPT_SCROLL( optsCameraStr[5], &configCameraMouseYSens, 10, 250, 1 ),
+    DEF_OPT_SCROLL( optsCameraStr[8], &configCameraAggr, 0, 100, 1 ),
+    DEF_OPT_SCROLL( optsCameraStr[9], &configCameraPan, 0, 100, 1 ),
+    DEF_OPT_SCROLL( optsCameraStr[12], &configCameraDegrade, 0, 100, 1 ),
 };
 #endif
 
