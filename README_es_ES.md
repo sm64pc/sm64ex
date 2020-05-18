@@ -11,8 +11,9 @@ Ejecuta `./extract_assets.py --clean && make clean` o `make distclean` para borr
  * Soporte nativo para mandos XInput. En Linux, se ha confirmado que el DualShock 4 funciona sin más.
  * Cámara analógica y cámara controlada con el ratón. (Se activa con `make BETTERCAMERA=1`.)
  * Opción para desactivar el límite de distancia de renderizado. (Se activa con `make NODRAWINGDISTANCE=1`.)
- * Configurar los controles desde el juego, actualmente solo en la rama `testing`.
- * Posibilidad de saltarte la intro con la opción de línea de comandos `--skip-intro`, actualmente solo en las ramas `testing` y `skip-intro`.
+ * Configurar los controles desde el juego.
+ * Posibilidad de saltarte la intro con la opción de línea de comandos `--skip-intro`
+ * Menú de trucos, al cual se accede a través del menú "Options". Ten en cuenta que si un cheat te pide pulsar el botón "L", se refiere al botón de N64, el cual tendrá que estar asignado a un botón de tu mando. Ve a los ajustes de control y asegúrate de que tienes "L" mapeado a un botón de tu mando.
 
 ## Compilar en Windows
 **No intentes compilar ejecutables para Windows bajo Linux usando `WINDOWS_BUILD=1`. No va a funcionar. Sigue la guía.**
