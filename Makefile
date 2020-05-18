@@ -41,14 +41,12 @@ NO_BZERO_BCOPY ?= 0
 # Build for Emscripten/WebGL
 TARGET_WEB ?= 0
 # Specify the target you are building for, 0 means native
-TARGET_ARCH ?= native
-
 ifeq ($(CROSS),i686-w64-mingw32.static-)
   TARGET_ARCH = i386pe
 else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
   TARGET_ARCH = i386pe
 else
-  TARGET_ARCH = native
+  TARGET_ARCH ?= native
 endif
 
 TARGET_BITS ?= 0
