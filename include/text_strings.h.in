@@ -7,8 +7,6 @@
 #define TEXT_OPT_CAMY      _("Gamepad Camera Y Sensitivity")
 #define TEXT_OPT_INVERTX   _("Invert Gamepad X Axis")
 #define TEXT_OPT_INVERTY   _("Invert Gamepad Y Axis")
-#define TEXT_OPT_MOUSE_CAMX _("Mouse Camera X Sensitivity")
-#define TEXT_OPT_MOUSE_CAMY _("Mouse Camera Y Sensitivity")
 #define TEXT_OPT_MOUSE_INVERTX _("Invert Mouse X Axis")
 #define TEXT_OPT_MOUSE_INVERTY _("Invert Mouse Y Axis")
 #define TEXT_OPT_CAMC      _("Camera Centre Aggression")
