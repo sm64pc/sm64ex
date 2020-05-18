@@ -14,6 +14,8 @@
 #include "controller_sdl.h"
 #include "../configfile.h"
 
+#include "game/level_update.h"
+
 // mouse buttons are also in the controller namespace (why), just offset 0x100
 #define VK_OFS_SDL_MOUSE 0x0100
 #define VK_BASE_SDL_MOUSE (VK_BASE_SDL_GAMEPAD + VK_OFS_SDL_MOUSE)
@@ -101,7 +103,7 @@ static void controller_sdl_read(OSContPad *pad) {
     }
 
 #ifdef BETTERCAMERA
-    if (newcam_mouse == 1)
+    if (newcam_mouse == 1 && sCurrPlayMode != 2)
         SDL_SetRelativeMouseMode(SDL_TRUE);
     else
         SDL_SetRelativeMouseMode(SDL_FALSE);

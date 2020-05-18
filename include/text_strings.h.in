@@ -1,4 +1,4 @@
-#ifndef TEXT_STRINGS_H
+	#ifndef TEXT_STRINGS_H
 #define TEXT_STRINGS_H
 
 #include "text_menu_strings.h"
@@ -27,6 +27,7 @@
 #define TEXT_OPT_NEAREST   _("Nearest")
 #define TEXT_OPT_LINEAR    _("Linear")
 #define TEXT_OPT_MVOLUME   _("Master Volume")
+#define TEXT_RESET_WINDOW  _("Reset Window")
 
 #define TEXT_OPT_UNBOUND   _("NONE")
 #define TEXT_OPT_PRESSKEY  _("...")
@@ -44,6 +45,14 @@
 #define TEXT_BIND_DOWN     _("Stick Down")
 #define TEXT_BIND_LEFT     _("Stick Left")
 #define TEXT_BIND_RIGHT    _("Stick Right")
+
+#define TEXT_OPT_CHEATS _("CHEATS")
+#define TEXT_OPT_CHEAT1 _("Enable cheats")
+#define TEXT_OPT_CHEAT2 _("Moonjump (Press L)")
+#define TEXT_OPT_CHEAT3 _("Invincible Mario")
+#define TEXT_OPT_CHEAT4 _("Infinite lives")
+#define TEXT_OPT_CHEAT5 _("Super speed")
+#define TEXT_OPT_CHEAT6 _("Super responsive controls")
 
 /**
  * Global Symbols

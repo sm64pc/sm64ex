@@ -32,9 +32,7 @@
 #include <stdlib.h>
 #else
 #include "../../include/libc/stdlib.h"
-#endif
-#include "../pc/configfile.h"
-#define CONFIG_FILE "sm64config.txt"
+#include "../pc/pc_main.h"
 
 #include "pc/cliopts.h"
 
@@ -1024,36 +1022,27 @@ s32 play_mode_normal(void) {
 s32 play_mode_paused(void) {
     if (gPauseScreenMode == 0) {
         set_menu_mode(RENDER_PAUSE_SCREEN);
-    } 	else if (gPauseScreenMode == 1) {
+    } else if (gPauseScreenMode == 1) {
         raise_background_noise(1);
         gCameraMovementFlags &= ~CAM_MOVE_PAUSE_SCREEN;
         set_play_mode(PLAY_MODE_NORMAL);
-    }
+    } else if (gPauseScreenMode == 2) {
         // Exit level
-	else if (gPauseScreenMode == 2) {
-
-        	if (gDebugLevelSelect) {
-            	fade_into_special_warp(-9, 1);
-        	}
-
-		else {
-            	initiate_warp(LEVEL_CASTLE, 1, 0x1F, 0);
-            	fade_into_special_warp(0, 0);
-            	gSavedCourseNum = COURSE_NONE;
-        	}
-
-     } // end of gPauseScreenMode == 2 for "EXIT COURSE" option
-
-      	if (gPauseScreenMode == 3) { // We should only be getting "int 3" to here
-	    initiate_warp(LEVEL_CASTLE, 1, 0x1F, 0);
+        if (gDebugLevelSelect) {
+            fade_into_special_warp(-9, 1);
+        } else {
+            initiate_warp(LEVEL_CASTLE, 1, 0x1F, 0);
             fade_into_special_warp(0, 0);
+            gSavedCourseNum = COURSE_NONE;
+        }
+    } else if (gPauseScreenMode == 3) {
+        // We should only be getting "int 3" to here
+        initiate_warp(LEVEL_CASTLE, 1, 0x1F, 0);
+        fade_into_special_warp(0, 0);
+        game_exit();
+    }
 
-	    //configfile_save(CONFIG_FILE);
-            exit(0);  // Appears to automatically save config on exit!
-     }
-
-	gCameraMovementFlags &= ~CAM_MOVE_PAUSE_SCREEN;
-   // }
+    gCameraMovementFlags &= ~CAM_MOVE_PAUSE_SCREEN;
 
     return 0;
 }

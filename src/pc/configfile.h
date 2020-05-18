@@ -7,7 +7,15 @@
 #define MAX_VOLUME   127
 #define VOLUME_SHIFT 7
 
-extern bool         configFullscreen;
+typedef struct {
+    unsigned int x, y, w, h;
+    bool reset;
+    bool vsync;
+    bool fullscreen;
+    bool exiting_fullscreen;
+} ConfigWindow;
+
+extern ConfigWindow configWindow;
 extern unsigned int configFiltering;
 extern unsigned int configMasterVolume;
 extern unsigned int configKeyA[];
