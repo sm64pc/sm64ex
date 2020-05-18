@@ -90,10 +90,14 @@ f32 newcam_degrade = 0.1f; //What percent of the remaining camera movement is de
 u8 newcam_cstick_down = 0; //Just a value that triggers true when the player 2 stick is moved in 8 direction move to prevent holding it down.
 u8 newcam_target;
 
-u8 newcam_sensitivityX; //How quick the camera works.
+u8 newcam_sensitivityX; //How quick the camera works when using a gamepad.
 u8 newcam_sensitivityY;
-u8 newcam_invertX; //Reverses movement of the camera axis.
+u8 newcam_invertX; // Reverses movement of the camera axis.
 u8 newcam_invertY;
+u8 newcam_mousesensitivityX; //How quick the camera works under mouse look.
+u8 newcam_mousesensitivityY;
+u8 newcam_mouseinvertX; // Reverses movement of the mouse camera axis.
+u8 newcam_mouseinvertY;
 u8 newcam_panlevel; //How much the camera sticks out a bit in the direction you're looking.
 u8 newcam_aggression; //How much the camera tries to centre itself to Mario's facing and movement.
 u8 newcam_analogue; //Wether to accept inputs from a player 2 joystick, and then disables C button input.
