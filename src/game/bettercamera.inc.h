@@ -617,7 +617,7 @@ static void newcam_apply_values(struct Camera *c)
     gLakituState.yaw = -newcam_yaw+0x4000;
 
     //Adds support for wing mario tower
-    if (gMarioState->floor->type == SURFACE_LOOK_UP_WARP) {
+    if (gMarioState->floor && gMarioState->floor->type == SURFACE_LOOK_UP_WARP) {
         if (save_file_get_total_star_count(gCurrSaveFileNum - 1, 0, 0x18) >= 10) {
             if (newcam_tilt < -8000 && gMarioState->forwardVel == 0) {
                 level_trigger_warp(gMarioState, 1);
