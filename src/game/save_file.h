@@ -160,4 +160,12 @@ void eu_set_language(u16 language);
 u16 eu_get_language(void);
 #endif
 
+#ifdef TEXTSAVES
+#define FILENAME_FORMAT "save_file_%d.sav"
+#define NUM_COURSES 15
+#define NUM_BONUS_COURSES 10
+#define NUM_FLAGS 21
+#define NUM_CAP_ON 4
+#endif
+
 #endif
