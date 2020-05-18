@@ -36,7 +36,14 @@ TEXTURE_FIX ?= 0
 # Enable extended options menu by default
 EXT_OPTIONS_MENU ?= 1
 # Disable no bzero/bcopy workaround by default
-NO_BZERO_BCOPY ?= 0
+# Enable by default for MXE builds
+ifeq ($(CROSS),i686-w64-mingw32.static-)
+  NO_BZERO_BCOPY := 1
+else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+  NO_BZERO_BCOPY := 1
+else
+  NO_BZERO_BCOPY ?= 0
+endif
 
 # Build for Emscripten/WebGL
 TARGET_WEB ?= 0
@@ -522,10 +529,6 @@ else ifeq ($(WINDOWS_BUILD),1)
   LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -static
   ifeq ($(CROSS),)
     LDFLAGS += -no-pie
-  else ifeq ($(CROSS),i686-x64-mingw32.static-)
-    NO_BZERO_BCOPY := 1
-  else ifeq ($(CROSS),x86_64-x64-mingw32.static-)
-    NO_BZERO_BCOPY := 1
   endif
   ifeq ($(WINDOWS_CONSOLE),1)
     LDFLAGS += -mconsole
