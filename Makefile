@@ -523,9 +523,9 @@ else ifeq ($(WINDOWS_BUILD),1)
   ifeq ($(CROSS),)
     LDFLAGS += -no-pie
   else ifeq ($(CROSS),i686-x64-mingw32.static-)
-    NO_BZERO_BCOPY = 1
+    NO_BZERO_BCOPY := 1
   else ifeq ($(CROSS),x86_64-x64-mingw32.static-)
-    NO_BZERO_BCOPY = 1
+    NO_BZERO_BCOPY := 1
   endif
   ifeq ($(WINDOWS_CONSOLE),1)
     LDFLAGS += -mconsole
