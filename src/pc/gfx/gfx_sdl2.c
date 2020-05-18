@@ -163,8 +163,12 @@ static void gfx_sdl_init(void) {
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
-    if (gCLIOpts.FullScreen)
+    if (gCLIOpts.FullScreen == 1)
         configWindow.fullscreen = true;
+
+    if (gCLIOpts.FullScreen == 2)
+        configWindow.fullscreen = false;
+
 
     const char* window_title = 
     #ifndef USE_GLES
