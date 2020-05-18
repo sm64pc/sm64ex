@@ -27,11 +27,7 @@
 #include "level_table.h"
 #include "dialog_ids.h"
 #include "thread6.h"
-#ifdef TARGET_WEB
-#include <stdlib.h>
-#else
 #include "../../include/libc/stdlib.h"
-#endif
 #include "../pc/pc_main.h"
 
 // TODO: put this elsewhere
