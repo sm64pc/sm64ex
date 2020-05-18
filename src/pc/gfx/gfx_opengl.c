@@ -4,6 +4,14 @@
 #include <dirent.h>
 #include <string.h>
 
+#define STBI_NO_LINEAR
+#define STBI_NO_HDR
+#define STBI_NO_TGA
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb/stb_image.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb/stb_image_write.h"
+
 #ifndef _LANGUAGE_C
 #define _LANGUAGE_C
 #endif
@@ -19,7 +27,6 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #define GL_GLEXT_PROTOTYPES 1
 #include <SDL2/SDL_opengl.h>
 #else
@@ -50,7 +57,9 @@ struct ShaderProgram {
 
 struct SurfaceData {
   uint32_t crc;
-  SDL_Surface *surface;
+  stbi_uc *surface;
+  int w;
+  int h;
 };
 
 static struct ShaderProgram shader_program_pool[64];
@@ -422,11 +431,11 @@ static void gfx_opengl_select_texture(int tile, GLuint texture_id) {
     glBindTexture(GL_TEXTURE_2D, texture_id);
 }
 
-static void gfx_opengl_upload_texture(uint8_t *rgba32_buf, int width, int height, int crc) {
+static void gfx_opengl_upload_texture(uint8_t *rgba32_buf, int width, int height, uint32_t crc) {
   for (int x = 0; x < 2048; x ++) {
     if (surfaces[x].crc == crc) {
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surfaces[x].surface->w,surfaces[x].surface->h,0,GL_RGBA, GL_UNSIGNED_BYTE, surfaces[x].surface->pixels);
       printf("Found matching surface %d\n", crc);
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surfaces[x].w,surfaces[x].h,0,GL_RGBA, GL_UNSIGNED_BYTE, surfaces[x].surface);
       return;
     }
   }
@@ -506,24 +515,42 @@ static void gfx_opengl_init(void) {
     int count = 0;
     DIR *d;
     struct dirent *dir;
-    d = opendir("./textures_out_combined");
+    d = opendir("textures_out_combined");
     if (d)
     {
         while ((dir = readdir(d)) != NULL)
         {
             printf("%s\n", dir->d_name);
-	    int crc = (int)strtol(dir->d_name, NULL, 16);
-            char path[1024];
-            strcpy(path, "./textures_out_combined/");
+			char hexString[8];
+			for (int x = 0; x < 8; x ++) {
+				hexString[x] = dir->d_name[x];
+			}
+            printf("%s\n", hexString);
+			
+	        unsigned long int crc = strtoul(hexString, NULL, 16);
+
+            printf("%08x\n", crc);
+			
+            char path[2048];
+            strcpy(path, "textures_out_combined\\");
             strcat(path,  dir->d_name);
 
             printf("%s\n", path);
 
-	    SDL_Surface *surface  = IMG_Load(path);
-            surfaces[count].crc = crc;
-            surfaces[count].surface = surface;
-            printf("Surface found - %d %08x\n", count, crc);
-            count ++;
+
+			int w = 0;
+			int h = 0;
+			int channels = 0;
+
+			stbi_uc *surface = stbi_load(path, &w, &h, &channels, STBI_default);
+
+			surfaces[count].crc = crc;
+			surfaces[count].surface = surface;
+			surfaces[count].w = w;
+			surfaces[count].h = h;
+
+			printf("Surface found - %d %08x\n", count, crc);
+			count ++;
         }
         closedir(d);
     }
