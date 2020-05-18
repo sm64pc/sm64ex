@@ -175,6 +175,11 @@ void main_func(void) {
 
 int main(int argc, char *argv[]) {
     parse_cli_opts(argc, argv);
+
+    if (gCLIOpts.LevelSelect) gDebugLevelSelect = TRUE;
+    if (gCLIOpts.Profiler) gShowProfiler = TRUE;
+    if (gCLIOpts.Debug) gShowDebugText = TRUE;
+
     main_func();
     return 0;
 }
