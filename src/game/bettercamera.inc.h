@@ -370,7 +370,7 @@ static void newcam_rotate_button(void)
     if (newcam_mouse == 1)
     {
         newcam_yaw += ivrt(0) * mouse_x * 16;
-        newcam_tilt += ivrt(0) * mouse_y * 16;
+        newcam_tilt += ivrt(1) * mouse_y * 16;
     }
 }
 
