@@ -94,8 +94,6 @@ u8 newcam_sensitivityX; //How quick the camera works when using a gamepad.
 u8 newcam_sensitivityY;
 u8 newcam_invertX; // Reverses movement of the camera axis.
 u8 newcam_invertY;
-u8 newcam_mousesensitivityX; //How quick the camera works under mouse look.
-u8 newcam_mousesensitivityY;
 u8 newcam_mouseinvertX; // Reverses movement of the mouse camera axis.
 u8 newcam_mouseinvertY;
 u8 newcam_panlevel; //How much the camera sticks out a bit in the direction you're looking.
@@ -152,8 +150,6 @@ void newcam_init_settings(void)
 {
     newcam_sensitivityX = newcam_clamp(configCameraXSens, 10, 250);
     newcam_sensitivityY = newcam_clamp(configCameraYSens, 10, 250);
-    newcam_mousesensitivityX = newcam_clamp(configCameraMouseXSens, 10, 250);
-    newcam_mousesensitivityY = newcam_clamp(configCameraMouseYSens, 10, 250);
     newcam_aggression   = newcam_clamp(configCameraAggr, 0, 100);
     newcam_panlevel     = newcam_clamp(configCameraPan, 0, 100);
     newcam_invertX      = (u8)configCameraInvertX;
@@ -374,7 +370,7 @@ static void newcam_rotate_button(void)
     if (newcam_mouse == 1)
     {
         newcam_yaw += ivrt(0) * mouse_x * 16;
-        newcam_tilt += ivrt(1) * mouse_y * 16;
+        newcam_tilt += ivrt(0) * mouse_y * 16;
     }
 }
 
