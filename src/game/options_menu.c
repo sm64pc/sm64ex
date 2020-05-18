@@ -72,6 +72,7 @@ static const u8 optsVideoStr[][32] = {
     { TEXT_OPT_TEXFILTER },
     { TEXT_OPT_NEAREST },
     { TEXT_OPT_LINEAR },
+    { TEXT_RESET_WINDOW }
 };
 
 static const u8 optsAudioStr[][32] = {
@@ -177,6 +178,10 @@ static void optmenu_act_exit(UNUSED struct Option *self, s32 arg) {
     if (!arg) game_exit(); // only exit on A press and not directions
 }
 
+static void optvide_reset_window(UNUSED struct Option *self, s32 arg) {
+    if (!arg) configWindow.reset = true;; // Restrict reset to A press and not directions
+}
+
 /* submenu option lists */
 
 #ifdef BETTERCAMERA
@@ -211,8 +216,9 @@ static struct Option optsControls[] = {
 };
 
 static struct Option optsVideo[] = {
-    DEF_OPT_TOGGLE( optsVideoStr[0], &configFullscreen ),
+    DEF_OPT_TOGGLE( optsVideoStr[0], &configWindow.fullscreen ),
     DEF_OPT_CHOICE( optsVideoStr[1], &configFiltering, filterChoices ),
+    DEF_OPT_BUTTON( optsVideoStr[4], optvide_reset_window ),
 };
 
 static struct Option optsAudio[] = {
