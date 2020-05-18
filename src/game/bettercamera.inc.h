@@ -92,7 +92,7 @@ u8 newcam_target;
 
 u8 newcam_sensitivityX; //How quick the camera works when using a gamepad.
 u8 newcam_sensitivityY;
-u8 newcam_invertX;// Reverses movement of the camera axis.
+u8 newcam_invertX; //Reverses movement of the camera axis.
 u8 newcam_invertY;
 u8 newcam_mouseinvertX; // Reverses movement of the mouse camera axis.
 u8 newcam_mouseinvertY;
