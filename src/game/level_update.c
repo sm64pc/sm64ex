@@ -190,7 +190,7 @@ u16 level_control_timer(s32 timerOp) {
         case TIMER_CONTROL_SHOW:
             if (configHUD) {
                 gHudDisplay.flags |= HUD_DISPLAY_FLAG_TIMER;
-			}
+            }
             sTimerRunning = FALSE;
             gHudDisplay.timer = 0;
             break;
@@ -905,7 +905,7 @@ void update_hud_values(void) {
                 gHudDisplay.flags &= ~HUD_DISPLAY_FLAG_COIN_COUNT;
             }
         }
-        
+
 
         if (gHudDisplay.coins < gMarioState->numCoins) {
             if (gGlobalTimer & 0x00000001) {
