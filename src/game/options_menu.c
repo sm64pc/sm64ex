@@ -73,8 +73,6 @@ static const u8 optsVideoStr[][32] = {
     { TEXT_OPT_NEAREST },
     { TEXT_OPT_LINEAR },
     { TEXT_RESET_WINDOW },
-    { TEXT_OPT_VSYNC },
-    { TEXT_OPT_DOUBLE },
     { TEXT_OPT_HUD },
 };
 
@@ -113,12 +111,6 @@ static const u8 bindStr[][32] = {
 static const u8 *filterChoices[] = {
     optsVideoStr[2],
     optsVideoStr[3],
-};
-
-static const u8 *vsyncChoices[] = {
-    toggleStr[0],
-    toggleStr[1],
-    optsVideoStr[6],
 };
 
 enum OptType {
@@ -187,12 +179,8 @@ static void optmenu_act_exit(UNUSED struct Option *self, s32 arg) {
     if (!arg) game_exit(); // only exit on A press and not directions
 }
 
-static void optvideo_reset_window(UNUSED struct Option *self, s32 arg) {
-    if (!arg) {
-        // Restrict reset to A press and not directions
-        configWindow.reset = true;
-        configWindow.settings_changed = true;
-    }
+static void optvide_reset_window(UNUSED struct Option *self, s32 arg) {
+    if (!arg) configWindow.reset = true;; // Restrict reset to A press and not directions
 }
 
 /* submenu option lists */
@@ -230,10 +218,9 @@ static struct Option optsControls[] = {
 
 static struct Option optsVideo[] = {
     DEF_OPT_TOGGLE( optsVideoStr[0], &configWindow.fullscreen ),
-    DEF_OPT_CHOICE( optsVideoStr[5], &configWindow.vsync, vsyncChoices ),
     DEF_OPT_CHOICE( optsVideoStr[1], &configFiltering, filterChoices ),
     DEF_OPT_BUTTON( optsVideoStr[4], optvideo_reset_window ),
-    DEF_OPT_TOGGLE( optsVideoStr[7], &configHUD ),
+    DEF_OPT_TOGGLE( optsVideoStr[5], &configHUD ),
 };
 
 static struct Option optsAudio[] = {
@@ -245,8 +232,8 @@ static struct Option optsCheats[] = {
     DEF_OPT_TOGGLE( optsCheatsStr[1], &Cheats.MoonJump ),
     DEF_OPT_TOGGLE( optsCheatsStr[2], &Cheats.GodMode ),
     DEF_OPT_TOGGLE( optsCheatsStr[3], &Cheats.InfiniteLives ),
-    DEF_OPT_TOGGLE( optsCheatsStr[4], &Cheats.SuperSpeed ),
-    DEF_OPT_TOGGLE( optsCheatsStr[5], &Cheats.Responsive ),
+    DEF_OPT_TOGGLE( optsCheatsStr[4], &Cheats.SuperSpeed),
+    DEF_OPT_TOGGLE( optsCheatsStr[5], &Cheats.Responsive),
 
 };
 
@@ -258,7 +245,7 @@ static struct SubMenu menuCamera   = DEF_SUBMENU( menuStr[4], optsCamera );
 static struct SubMenu menuControls = DEF_SUBMENU( menuStr[5], optsControls );
 static struct SubMenu menuVideo    = DEF_SUBMENU( menuStr[6], optsVideo );
 static struct SubMenu menuAudio    = DEF_SUBMENU( menuStr[7], optsAudio );
-static struct SubMenu menuCheats   = DEF_SUBMENU( menuStr[9], optsCheats );
+static struct SubMenu menuCheats    = DEF_SUBMENU( menuStr[9], optsCheats );
 
 /* main options menu definition */
 
@@ -370,7 +357,7 @@ static void optmenu_opt_change(struct Option *opt, s32 val) {
     switch (opt->type) {
         case OPT_TOGGLE:
             *opt->bval = !*opt->bval;
-            if (opt->label == optsVideoStr[7]) {
+            if (opt->label == optsVideoStr[5]) {
                 if (configHUD) {
                     gHudDisplay.flags = HUD_DISPLAY_DEFAULT;
                 } else {
