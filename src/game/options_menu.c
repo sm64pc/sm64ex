@@ -23,9 +23,7 @@
 #include "pc/controller/controller_api.h"
 
 #include <stdbool.h>
-#ifdef TARGET_WEB
-#include <stdlib.h>
-#endif
+#include "../../include/libc/stdlib.h"
 
 u8 optmenu_open = 0;
 
