@@ -28,11 +28,7 @@
 #include "level_table.h"
 #include "course_table.h"
 #include "thread6.h"
-#ifdef TARGET_WEB
-#include <stdlib.h>
-#else
 #include "../../include/libc/stdlib.h"
-#endif
 #include "../pc/pc_main.h"
 
 #include "pc/cliopts.h"
