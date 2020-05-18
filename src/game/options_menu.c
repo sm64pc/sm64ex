@@ -358,7 +358,7 @@ static void optmenu_opt_change(struct Option *opt, s32 val) {
         case OPT_TOGGLE:
             *opt->bval = !*opt->bval;
             if (opt->label == optsVideoStr[5]) {
-                if (val == true) {
+                if (configHUD) {
                     gHudDisplay.flags = HUD_DISPLAY_DEFAULT;
                 } else {
                     gHudDisplay.flags = HUD_DISPLAY_NONE;
