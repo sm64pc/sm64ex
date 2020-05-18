@@ -30,10 +30,14 @@ extern void newcam_init_settings(void);
 extern void newcam_diagnostics(void);
 
 
-extern u8 newcam_sensitivityX; //How quick the camera works.
+extern u8 newcam_sensitivityX; //How quick the camera works when using a gamepad.
 extern u8 newcam_sensitivityY;
 extern u8 newcam_invertX;
 extern u8 newcam_invertY;
+extern u8 newcam_mousesensitivityX; //How quick the camera works under mouse look.
+extern u8 newcam_mousesensitivityY;
+extern u8 newcam_mouseinvertX;
+extern u8 newcam_mouseinvertY;
 extern u8 newcam_panlevel; //How much the camera sticks out a bit in the direction you're looking.
 extern u8 newcam_aggression; //How much the camera tries to centre itself to Mario's facing and movement.
 extern u8 newcam_active; // basically the thing that governs if newcam is on.
