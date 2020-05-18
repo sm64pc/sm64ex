@@ -41,7 +41,9 @@ ConfigWindow configWindow       = {
     .y = SDL_WINDOWPOS_CENTERED,
     .w = DESIRED_SCREEN_WIDTH,
     .h = DESIRED_SCREEN_HEIGHT,
-    .reset = false
+    .reset = false,
+    .vsync = false,
+    .exiting_fullscreen = false,
 };
 unsigned int configFiltering    = 1;          // 0=force nearest, 1=linear, (TODO) 2=three-point
 unsigned int configMasterVolume = MAX_VOLUME; // 0 - MAX_VOLUME

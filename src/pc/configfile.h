@@ -10,6 +10,8 @@
 typedef struct {
     unsigned int x, y, w, h;
     bool reset;
+    bool vsync;
+    bool exiting_fullscreen;
 } ConfigWindow;
 
 extern bool         configFullscreen;

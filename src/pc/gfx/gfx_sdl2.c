@@ -22,6 +22,8 @@
 
 #endif // End of OS-Specific GL defines
 
+#include <stdio.h>
+
 #include "gfx_window_manager_api.h"
 #include "gfx_screen_config.h"
 #include "../pc_main.h"
@@ -40,7 +42,6 @@
 static SDL_Window *wnd;
 static SDL_GLContext ctx = NULL;
 static int inverted_scancode_table[512];
-static bool window_vsync;
 
 const SDL_Scancode windows_scancode_table[] =
 {
@@ -104,23 +105,26 @@ static void gfx_sdl_set_fullscreen() {
     } else {
         SDL_SetWindowFullscreen(wnd, 0);
         SDL_ShowCursor(SDL_ENABLE);
-        SDL_SetWindowSize(wnd, configWindow.w, configWindow.h);
-        SDL_SetWindowPosition(wnd, configWindow.x, configWindow.y);
+        configWindow.exiting_fullscreen = true;
     }
 }
 
 static void gfx_sdl_reset_dimension_and_pos() {
-    if (!configWindow.reset) return;
-    configWindow.x = SDL_WINDOWPOS_CENTERED;
-    configWindow.y = SDL_WINDOWPOS_CENTERED;
-    configWindow.w = DESIRED_SCREEN_WIDTH;
-    configWindow.h = DESIRED_SCREEN_HEIGHT;
-    configWindow.reset = false;
+    if (configWindow.exiting_fullscreen)
+        configWindow.exiting_fullscreen = false;
+    else if (configWindow.reset) {
+        configWindow.x = SDL_WINDOWPOS_CENTERED;
+        configWindow.y = SDL_WINDOWPOS_CENTERED;
+        configWindow.w = DESIRED_SCREEN_WIDTH;
+        configWindow.h = DESIRED_SCREEN_HEIGHT;
+        configWindow.reset = false;
 
-    if (!IS_FULLSCREEN) {
-        SDL_SetWindowSize(wnd, configWindow.w, configWindow.h);
-        SDL_SetWindowPosition(wnd, configWindow.x, configWindow.y);
-    }
+        if (IS_FULLSCREEN) return;
+    } else
+        return;
+
+    SDL_SetWindowSize(wnd, configWindow.w, configWindow.h);
+    SDL_SetWindowPosition(wnd, configWindow.x, configWindow.y);
 }
 
 static bool test_vsync(void) {
@@ -176,8 +180,8 @@ static void gfx_sdl_init(void) {
 
     gfx_sdl_set_fullscreen();
 
-    window_vsync = test_vsync();
-    if (!window_vsync)
+    configWindow.vsync = test_vsync();
+    if (!configWindow.vsync)
         printf("Warning: VSync is not enabled or not working. Falling back to timer for synchronization\n");
 
     for (size_t i = 0; i < sizeof(windows_scancode_table) / sizeof(SDL_Scancode); i++) {
@@ -239,8 +243,8 @@ static void gfx_sdl_handle_events(void) {
                 gfx_sdl_onkeyup(event.key.keysym.scancode);
                 break;
 #endif
-            case SDL_WINDOWEVENT: // FIX-ME: Check if this makes sense to be include in Web build
-                if (!IS_FULLSCREEN) {
+            case SDL_WINDOWEVENT: // TODO: Check if this makes sense to be included in the Web build
+                if (!(IS_FULLSCREEN || configWindow.exiting_fullscreen)) {
                     switch (event.window.event) {
                         case SDL_WINDOWEVENT_MOVED:
                             configWindow.x = event.window.data1;
@@ -280,7 +284,7 @@ static void sync_framerate_with_timer(void) {
 }
 
 static void gfx_sdl_swap_buffers_begin(void) {
-    if (!window_vsync)
+    if (!configWindow.vsync)
         sync_framerate_with_timer();
     SDL_GL_SwapWindow(wnd);
 }
