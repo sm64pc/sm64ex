@@ -30,6 +30,9 @@ u8 optmenu_open = 0;
 static u8 optmenu_binding = 0;
 static u8 optmenu_bind_idx = 0;
 
+/* Keeps track of how many times the user has pressed L while in the options menu, so cheats can be unlocked */
+static s32 l_counter = 0;
+
 // How to add stuff:
 // strings: add them to include/text_strings.h.in
 //          and to menuStr[] / opts*Str[]
@@ -481,6 +484,9 @@ void optmenu_toggle(void) {
 
         currentMenu = &menuMain;
         optmenu_open = 1;
+        
+        /* Resets l_counter to 0 every time the options menu is open */
+        l_counter = 0;
     } else {
         #ifndef nosound
         play_sound(SOUND_MENU_MARIO_CASTLE_WARP2, gDefaultSoundArgs);
@@ -510,7 +516,19 @@ void optmenu_check_buttons(void) {
 
     if (gPlayer1Controller->buttonPressed & R_TRIG)
         optmenu_toggle();
-
+    
+    /* Enables cheats if the user press the L trigger 3 times while in the options menu. Also plays a sound. */
+    
+    if (gPlayer1Controller->buttonPressed & L_TRIG && !Cheats.EnableCheats){
+        if (l_counter == 2){
+                Cheats.EnableCheats = true;
+                play_sound(SOUND_MENU_STAR_SOUND, gDefaultSoundArgs);
+                l_counter = 0;
+        } else {
+            l_counter++;
+        }
+    }
+    
     if (!optmenu_open) return;
 
     u8 allowInput = 0;
