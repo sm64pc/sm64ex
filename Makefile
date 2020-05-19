@@ -217,13 +217,12 @@ LIBULTRA := $(BUILD_DIR)/libultra.a
 
 ifeq ($(TARGET_WEB),1)
 EXE := $(BUILD_DIR)/$(TARGET).html
-	else ifeq ($(WINDOWS_BUILD),1)
-		EXE := $(BUILD_DIR)/$(TARGET).exe
-	else ifeq ($(TARGET_RPI),1)
-		EXE := $(BUILD_DIR)/$(TARGET).arm
-	else
-		EXE := $(BUILD_DIR)/$(TARGET)
-	endif
+else ifeq ($(WINDOWS_BUILD),1)
+EXE := $(BUILD_DIR)/$(TARGET).exe
+else ifeq ($(TARGET_RPI),1)
+EXE := $(BUILD_DIR)/$(TARGET).arm
+else
+EXE := $(BUILD_DIR)/$(TARGET)
 endif
 
 ELF := $(BUILD_DIR)/$(TARGET).elf
