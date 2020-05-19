@@ -223,6 +223,10 @@ static int ivrt(u8 axis)
             return -1;
         else
             return 1;
+        if (newcam_mouseinvertX == 0)
+            return 1;
+        else
+            return -1;
     }
     else
     {
@@ -230,6 +234,10 @@ static int ivrt(u8 axis)
             return 1;
         else
             return -1;
+        if (newcam_mouseinvertY == 0)
+            return -1;
+        else
+            return 1;
     }
 }
 
