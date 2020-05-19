@@ -68,7 +68,7 @@ ifeq ($(WINDOWS_BUILD),1)
     TARGET_BITS = 32
     NO_BZERO_BCOPY := 1
   else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
-    TARGET_ARCH = i386pe
+    TARGET_ARCH = i386pep
     TARGET_BITS = 64
     NO_BZERO_BCOPY := 1
   endif
@@ -181,7 +181,9 @@ endif
 # in the makefile that we want should cover assets.)
 
 ifneq ($(MAKECMDGOALS),clean)
-ifneq ($(MAKECMDGOALS),distclean)
+else ifneq ($(MAKECMDGOALS),distclean)
+else ifneq ($(MAKECMDGOALS),cleantools)
+else ifneq ($(MAKECMDGOALS),cleanall)
 
 # Make sure assets exist
 NOEXTRACT ?= 0
@@ -199,7 +201,6 @@ ifeq ($(DUMMY),FAIL)
 endif
 
 endif
-endif
 
 ################ Target Executable and Sources ###############
 
@@ -216,16 +217,12 @@ LIBULTRA := $(BUILD_DIR)/libultra.a
 
 ifeq ($(TARGET_WEB),1)
 EXE := $(BUILD_DIR)/$(TARGET).html
-	else
-	ifeq ($(WINDOWS_BUILD),1)
+	else ifeq ($(WINDOWS_BUILD),1)
 		EXE := $(BUILD_DIR)/$(TARGET).exe
-
-		else # Linux builds/binary namer
-		ifeq ($(TARGET_RPI),1)
-			EXE := $(BUILD_DIR)/$(TARGET).arm
-		else
-			EXE := $(BUILD_DIR)/$(TARGET)
-		endif
+	else ifeq ($(TARGET_RPI),1)
+		EXE := $(BUILD_DIR)/$(TARGET).arm
+	else
+		EXE := $(BUILD_DIR)/$(TARGET)
 	endif
 endif
 
@@ -285,7 +282,6 @@ ifeq ($(TARGET_RPI),1)
 # Raspberry Pi 2 and 3 in ARM 32bit mode
         ifneq (,$(findstring armv7l,$(machine)))
                 model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
-
                 ifneq (,$(findstring 3,$(model)))
                          OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -O3
                          else
@@ -592,11 +588,16 @@ clean:
 	$(RM) -r $(BUILD_DIR_BASE)
 
 cleantools:
-	$(MAKE) -s -C tools clean
+	$(MAKE) -C tools clean
 
 distclean:
 	$(RM) -r $(BUILD_DIR_BASE)
 	./extract_assets.py --clean
+
+cleanall:
+	$(RM) -r $(BUILD_DIR_BASE)
+	./extract_assets.py --clean
+	$(MAKE) -C tools clean
 
 test: $(ROM)
 	$(EMULATOR) $(EMU_FLAGS) $<
