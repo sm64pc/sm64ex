@@ -443,8 +443,13 @@ static void newcam_update_values(void)
     u8 waterflag = 0;
     if (newcam_modeflags & NC_FLAG_XTURN)
         newcam_yaw += (ivrt(0)*(newcam_yaw_acc*(newcam_sensitivityX/10)));
-    if (((newcam_tilt < 12000 && newcam_tilt_acc*ivrt(1) > 0) || (newcam_tilt > -12000 && newcam_tilt_acc*ivrt(1) < 0)) && newcam_modeflags & NC_FLAG_YTURN)
-        newcam_tilt += (ivrt(1)*(newcam_tilt_acc*(newcam_sensitivityY/10)));
+        if (newcam_mouse == 1)
+            newcam_yaw += (mivrt(0)*(newcam_yaw_acc*(newcam_sensitivityX/10)));
+    if (((newcam_tilt < 12000 && newcam_tilt_acc*ivrt(1) > 0) || (newcam_tilt > -12000 && newcam_tilt_acc*ivrt(1) < 0)) || ((newcam_tilt < 12000 && newcam_tilt_acc*mivrt(1) > 0) || (newcam_tilt > -12000 && newcam_tilt_acc*mivrt(1) < 0)) && newcam_modeflags & NC_FLAG_YTURN)
+        if (newcam_mouse == 0)
+            newcam_tilt += (ivrt(1)*(newcam_tilt_acc*(newcam_sensitivityY/10)));
+        else
+            newcam_tilt += (mivrt(1)*(newcam_tilt_acc*(newcam_sensitivityY/10)));
     else
     {
         if (newcam_tilt > 12000)
