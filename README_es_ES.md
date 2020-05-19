@@ -13,7 +13,7 @@ Ejecuta `./extract_assets.py --clean && make clean` o `make distclean` para borr
  * Opción para desactivar el límite de distancia de renderizado. (Se activa con `make NODRAWINGDISTANCE=1`.)
  * Configurar los controles desde el juego.
  * Posibilidad de saltarte la intro con la opción de línea de comandos `--skip-intro`
- * Menú de trucos (_cheats_) en _options_. (Se activa con la opción de línea de comandos `--cheats`) Ten en cuenta que si un cheat te pide pulsar el botón "L", se refiere al botón de N64, el cual tendrá que estar asignado a un botón de tu mando. Ve a los ajustes de control y asegúrate de que tienes "L" mapeado a un botón de tu mando.
+ * Menú de trucos (_cheats_) en _options_. Se activa pulsado el botón "L" 3 veces en la pantalla de opciones, y luego debes salir y entrar del menú de opciones para verlo. También se puede activar abriendo el juego con la opción de línea de comandos `--cheats`. Ten en cuenta que con el botón "L", nos referimos al botón de N64, el cual tendrá que estar asignado a un botón de tu mando. Ve a los ajustes de control y asegúrate de que tienes "L" mapeado a un botón de tu mando.
 
 ## Compilar en Windows
 **No intentes compilar ejecutables para Windows bajo Linux usando `WINDOWS_BUILD=1`. No va a funcionar. Sigue la guía.**
