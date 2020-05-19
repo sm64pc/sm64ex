@@ -1,9 +1,11 @@
+#ifndef _CHEATS_H
+#define _CHEATS_H
+
 #include <stdbool.h>
 
-struct CheatList
-{
+struct CheatList {
     bool         EnableCheats;
-	bool         MoonJump;
+    bool         MoonJump;
     bool         GodMode;
     bool         InfiniteLives;
     bool         SuperSpeed;
@@ -14,3 +16,5 @@ struct CheatList
 };
 
 extern struct CheatList Cheats;
+
+#endif // _CHEATS_H

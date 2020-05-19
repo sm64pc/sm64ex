@@ -3,16 +3,19 @@
 
 #include <stdbool.h>
 
+#define CONFIGFILE_DEFAULT "sm64config.txt"
+
 #define MAX_BINDS    3
 #define MAX_VOLUME   127
 #define VOLUME_SHIFT 7
 
 typedef struct {
     unsigned int x, y, w, h;
+    unsigned int vsync;
     bool reset;
-    bool vsync;
     bool fullscreen;
     bool exiting_fullscreen;
+    bool settings_changed;
 } ConfigWindow;
 
 extern ConfigWindow configWindow;
