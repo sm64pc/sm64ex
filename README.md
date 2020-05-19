@@ -18,7 +18,7 @@ Please contribute **first** to the [nightly branch](https://github.com/sm64pc/sm
  * An option to disable drawing distances. (Activate with `make NODRAWINGDISTANCE=1`.)
  * In-game control binding, currently available on the `testing` branch.
  * Skip introductory Peach & Lakitu cutscenes with the `--skip-intro` CLI option
- * Cheats menu in Options. (Activate with `--cheats`) Please note that if a cheat asks you to press "L" it's referring to the N64 button. Check your bindings and make sure you have the "L" button mapped to a button in your controller.
+ * Cheats menu in Options. Activate by pressing the "L Trigger" three times while in the Options menu and then exiting and re-entering the menu, or by launching the game with `--cheats`. **Please note that the "L Trigger" means the N64 button, not the actual "L" button in your real controller. Check your bindings in the settings. By default, it's mapped to the left analog stick click.**
 
 ## Building
 For building instructions, please refer to the [wiki](https://github.com/sm64pc/sm64pc/wiki).
