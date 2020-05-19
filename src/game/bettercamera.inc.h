@@ -223,10 +223,6 @@ static int ivrt(u8 axis)
             return -1;
         else
             return 1;
-        if (newcam_mouseinvertX == 0)
-            return 1;
-        else
-            return -1;
     }
     else
     {
@@ -234,6 +230,20 @@ static int ivrt(u8 axis)
             return 1;
         else
             return -1;
+    }
+}
+
+static int mivrt(u8 axis)
+{
+    if (axis == 0)
+    {
+        if (newcam_mouseinvertX == 0)
+            return 1;
+        else
+            return -1;
+    }
+    else
+    {
         if (newcam_mouseinvertY == 0)
             return -1;
         else
@@ -370,13 +380,13 @@ static void newcam_rotate_button(void)
     if (newcam_mouse == 1)
     {
         if (newcam_mouseinvertX == 0)
-          newcam_yaw += ivrt(0) * mouse_x * 16;
+          newcam_yaw += mivrt(0) * mouse_x * 16;
         else
-          newcam_yaw += ivrt(1) * mouse_x * 16;
+          newcam_yaw += mivrt(1) * mouse_x * 16;
         if (newcam_mouseinvertY == 0)
-          newcam_tilt += ivrt(0) * mouse_y * 16;
+          newcam_tilt += mivrt(0) * mouse_y * 16;
         else
-          newcam_tilt += ivrt(1) * mouse_y * 16;
+          newcam_tilt += mivrt(1) * mouse_y * 16;
     }
 }
 
