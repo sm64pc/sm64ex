@@ -29,11 +29,9 @@ extern f32 gCosineTable[];
 
 #define sqr(x) ((x) * (x))
 
-#ifndef TARGET_WEB
-#define abs(x) ((x) < 0 ? -(x) : (x))
-#else
+#define absx(x) ((x) < 0 ? -(x) : (x))
+
 #include "../../include/libc/stdlib.h"
-#endif
 
 void *vec3f_copy(Vec3f dest, Vec3f src);
 void *vec3f_set(Vec3f dest, f32 x, f32 y, f32 z);

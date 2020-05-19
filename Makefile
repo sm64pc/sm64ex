@@ -22,8 +22,15 @@ NON_MATCHING ?= 1
 # Build and optimize for Raspberry Pi(s)
 TARGET_RPI ?= 0
 
+# Build for Emscripten/WebGL
+TARGET_WEB ?= 0
+
 # Makeflag to enable OSX fixes
 OSX_BUILD ?= 0
+
+# Specify the target you are building for, TARGET_BITS=0 means native
+TARGET_ARCH ?= native
+TARGET_BITS ?= 0
 
 # Disable better camera by default
 BETTERCAMERA ?= 0
@@ -36,63 +43,41 @@ EXT_OPTIONS_MENU ?= 1
 # Disable text-based save-files by default
 TEXTSAVES ?= 0
 
-# Disable no bzero/bcopy workaround by default
-# Enable by default for MXE builds
-ifeq ($(WINDOWS_BUILD),1)
-  ifeq ($(CROSS),i686-w64-mingw32.static-)
-    NO_BZERO_BCOPY := 1
-  else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
-    NO_BZERO_BCOPY := 1
-  else
-    NO_BZERO_BCOPY ?= 0
-  endif
-else
-  NO_BZERO_BCOPY ?= 0
+# Various workarounds for weird toolchains
+
+NO_BZERO_BCOPY ?= 0
+NO_LDIV ?= 0
+
+# Automatic settings for PC port(s)
+
+NON_MATCHING := 1
+GRUCODE := f3dex2e
+WINDOWS_BUILD ?= 0
+
+ifeq ($(TARGET_WEB),0)
+ifeq ($(OS),Windows_NT)
+WINDOWS_BUILD := 1
+endif
 endif
 
-# Build for Emscripten/WebGL
-TARGET_WEB ?= 0
-# Specify the target you are building for, 0 means native
-ifeq ($(WINDOWS_BUILD),1)
-  ifeq ($(CROSS),i686-w64-mingw32.static-)
-    TARGET_ARCH = i386pe
-  else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
-    TARGET_ARCH = i386pe
-  else
-    TARGET_ARCH ?= native
-  endif
-else
-  TARGET_ARCH ?= native
-endif
+# MXE overrides
 
 ifeq ($(WINDOWS_BUILD),1)
   ifeq ($(CROSS),i686-w64-mingw32.static-)
+    TARGET_ARCH = i386pe
     TARGET_BITS = 32
+    NO_BZERO_BCOPY := 1
   else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+    TARGET_ARCH = i386pe
     TARGET_BITS = 64
-  else
-    TARGET_BITS ?= 0
+    NO_BZERO_BCOPY := 1
   endif
-else
-  TARGET_BITS ?= 0
 endif
 
 ifneq ($(TARGET_BITS),0)
   BITS := -m$(TARGET_BITS)
 else
   BITS :=
-endif
-
-# Automatic settings for PC port(s)
-
-NON_MATCHING := 1
-GRUCODE := f3dex2e
-WINDOWS_BUILD := 0
-
-ifeq ($(TARGET_WEB),0)
-ifeq ($(OS),Windows_NT)
-WINDOWS_BUILD := 1
-endif
 endif
 
 # Release (version) flag defs
@@ -449,7 +434,7 @@ ENDIAN_BITWIDTH := $(BUILD_DIR)/endian-and-bitwidth
 
 # Huge deleted N64 section was here
 
-AS := as
+AS := $(CROSS)as
 
 ifeq ($(OSX_BUILD),1)
 AS := i686-w64-mingw32-as
@@ -462,6 +447,8 @@ else
   CC := emcc
 endif
 
+LD := $(CC)
+
 ifeq ($(WINDOWS_BUILD),1)
   ifeq ($(CROSS),i686-w64-mingw32.static-) # fixes compilation in MXE on Linux and WSL
     LD := $(CC)
@@ -470,24 +457,20 @@ ifeq ($(WINDOWS_BUILD),1)
   else
     LD := $(CXX)
   endif
-else
-  LD := $(CC)
 endif
 
 ifeq ($(WINDOWS_BUILD),1) # fixes compilation in MXE on Linux and WSL
   CPP := cpp -P
   OBJCOPY := objcopy
   OBJDUMP := $(CROSS)objdump
-else
-ifeq ($(OSX_BUILD),1)
- CPP := cpp-9 -P
- OBJDUMP := i686-w64-mingw32-objdump
- OBJCOPY := i686-w64-mingw32-objcopy
+else ifeq ($(OSX_BUILD),1)
+  CPP := cpp-9 -P
+  OBJDUMP := i686-w64-mingw32-objdump
+  OBJCOPY := i686-w64-mingw32-objcopy
 else # Linux & other builds
   CPP := $(CROSS)cpp -P
   OBJCOPY := $(CROSS)objcopy
   OBJDUMP := $(CROSS)objdump
-endif
 endif
 
 PYTHON := python3
@@ -543,6 +526,12 @@ endif
 ifeq ($(NO_BZERO_BCOPY),1)
   CC_CHECK += -DNO_BZERO_BCOPY
   CFLAGS += -DNO_BZERO_BCOPY
+endif
+
+# Use internal ldiv()/lldiv()
+ifeq ($(NO_LDIV),1)
+  CC_CHECK += -DNO_LDIV
+  CFLAGS += -DNO_LDIV
 endif
 
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
