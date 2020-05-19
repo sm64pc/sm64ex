@@ -75,6 +75,7 @@ static const u8 optsVideoStr[][32] = {
     { TEXT_RESET_WINDOW },
     { TEXT_OPT_VSYNC },
     { TEXT_OPT_DOUBLE },
+    { TEXT_OPT_HUD },
 };
 
 static const u8 optsAudioStr[][32] = {
@@ -235,6 +236,7 @@ static struct Option optsVideo[] = {
     DEF_OPT_CHOICE( optsVideoStr[5], &configWindow.vsync, vsyncChoices ),
     DEF_OPT_CHOICE( optsVideoStr[1], &configFiltering, filterChoices ),
     DEF_OPT_BUTTON( optsVideoStr[4], optvideo_reset_window ),
+    DEF_OPT_TOGGLE( optsVideoStr[7], &configHUD ),
 };
 
 static struct Option optsAudio[] = {
