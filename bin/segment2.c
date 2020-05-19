@@ -2107,7 +2107,7 @@ const Gfx dl_hud_img_load_tex_block[] = {
     gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, 4, G_TX_NOLOD, G_TX_WRAP | G_TX_NOMIRROR, 4, G_TX_NOLOD),
     gsDPLoadSync(),
     gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 16 * 16 - 1, CALC_DXT(16, G_IM_SIZ_16b_BYTES)),
-    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 4, 0, G_TX_RENDERTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, 4, G_TX_NOLOD, G_TX_WRAP | G_TX_NOMIRROR, 4, G_TX_NOLOD),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 4, 0, G_TX_RENDERTILE, 0, G_TX_CLAMP, 4, G_TX_NOLOD, G_TX_CLAMP, 4, G_TX_NOLOD),
     gsDPSetTileSize(0, 0, 0, (16 - 1) << G_TEXTURE_IMAGE_FRAC, (16 - 1) << G_TEXTURE_IMAGE_FRAC),
     gsSPEndDisplayList(),
 };
@@ -2144,7 +2144,7 @@ const Gfx dl_rgba16_load_tex_block[] = {
     gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, 4, G_TX_NOLOD, G_TX_WRAP | G_TX_NOMIRROR, 4, G_TX_NOLOD),
     gsDPLoadSync(),
     gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 16 * 16 - 1, CALC_DXT(16, G_IM_SIZ_16b_BYTES)),
-    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 4, 0, G_TX_RENDERTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, 4, G_TX_NOLOD, G_TX_WRAP | G_TX_NOMIRROR, 4, G_TX_NOLOD),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 4, 0, G_TX_RENDERTILE, 0, G_TX_CLAMP, 4, G_TX_NOLOD, G_TX_CLAMP, 4, G_TX_NOLOD),
     gsDPSetTileSize(0, 0, 0, (16 - 1) << G_TEXTURE_IMAGE_FRAC, (16 - 1) << G_TEXTURE_IMAGE_FRAC),
     gsSPEndDisplayList(),
 };
@@ -2499,41 +2499,23 @@ static const Lights1 segment2_lights_unused = gdSPDefLights1(
 
 // 0x02014470 - 0x020144B0
 static const Mtx matrix_identity = {
-#ifdef TARGET_N64
-    {{0x00010000, 0x00000000,
-      0x00000001, 0x00000000},
-     {0x00000000, 0x00010000,
-      0x00000000, 0x00000001},
-     {0x00000000, 0x00000000,
-      0x00000000, 0x00000000},
-     {0x00000000, 0x00000000,
-      0x00000000, 0x00000000}}
-#else
+
     {{1.0f, 0.0f, 0.0f, 0.0f},
     {0.0f, 1.0f, 0.0f, 0.0f},
     {0.0f, 0.0f, 1.0f, 0.0f},
     {0.0f, 0.0f, 0.0f, 1.0f}}
-#endif
+
 };
 
 
 // 0x020144B0 - 0x020144F0
 static const Mtx matrix_fullscreen = {
-#if TARGET_N64
-    {{0x00000000, 0x00000000,
-      0x00000000, 0x00000000},
-     {0x00000000, 0xffff0000,
-      0xffffffff, 0xffff0001},
-     {((65536 * 2 / SCREEN_WIDTH) << 16) | 0, 0x00000000,
-      (0 << 16) | (65536 * 2 / SCREEN_HEIGHT), 0x00000000},
-     {0x00000000, 0x00000000,
-      0x00000000, 0x00000000}}
-#else
+
     {{2.0f / SCREEN_WIDTH, 0.0f, 0.0f, 0.0f},
     {0.0f, 2.0f / SCREEN_HEIGHT, 0.0f, 0.0f},
     {0.0f, 0.0f, -1.0f, 0.0f},
     {-1.0f, -1.0f, -1.0f, 1.0f}}
-#endif
+
 };
 
 

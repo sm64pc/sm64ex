@@ -9,8 +9,11 @@
 #include "include/text_strings.h"
 #include "engine/surface_collision.h"
 #include "pc/configfile.h"
+#if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR) 
+//quick and dirty fix for some older MinGW.org mingwrt
+#else
 #include <stdio.h>
-
+#endif
 
 
 /**
@@ -28,8 +31,6 @@ NC_MODE_NOTURN: Disables horizontal and vertical control of the camera.
 //#define NEWCAM_DEBUG //Some print values for puppycam. Not useful anymore, but never hurts to keep em around.
 //#define nosound //If for some reason you hate the concept of audio, you can disable it.
 //#define noaccel //Disables smooth movement of the camera with the C buttons.
-#define DEGRADE 0.1f //What percent of the remaining camera movement is degraded. Default is 10%
-
 
 //!Hardcoded camera angle stuff. They're essentially area boxes that when Mario is inside, will trigger some view changes.
 ///Don't touch this btw, unless you know what you're doing, this has to be above for religious reasons.
@@ -88,6 +89,7 @@ s16 newcam_yaw_target; // The yaw value the camera tries to set itself to when t
 f32 newcam_turnwait; // The amount of time to wait after landing before allowing the camera to turn again
 f32 newcam_pan_x;
 f32 newcam_pan_z;
+f32 newcam_degrade = 0.1f; //What percent of the remaining camera movement is degraded. Default is 10%
 u8 newcam_cstick_down = 0; //Just a value that triggers true when the player 2 stick is moved in 8 direction move to prevent holding it down.
 u8 newcam_target;
 
@@ -155,6 +157,7 @@ void newcam_init_settings(void)
     newcam_invertY      = (u8)configCameraInvertY;
     newcam_mouse        = (u8)configCameraMouse;
     newcam_analogue     = (u8)configEnableCamera;
+    newcam_degrade      = (f32)configCameraDegrade / 100.0f;
 }
 
 /** Mathematic calculations. This stuffs so basic even *I* understand it lol
@@ -216,9 +219,9 @@ static int ivrt(u8 axis)
     if (axis == 0)
     {
         if (newcam_invertX == 0)
-            return 1;
-        else
             return -1;
+        else
+            return 1;
     }
     else
     {
@@ -268,7 +271,7 @@ static void newcam_rotate_button(void)
             #ifdef noaccel
             newcam_yaw_acc = 0;
             #else
-            newcam_yaw_acc -= (newcam_yaw_acc*(DEGRADE));
+            newcam_yaw_acc -= (newcam_yaw_acc*newcam_degrade);
             #endif
     }
 
@@ -280,7 +283,7 @@ static void newcam_rotate_button(void)
         #ifdef noaccel
         newcam_tilt_acc = 0;
         #else
-        newcam_tilt_acc -= (newcam_tilt_acc*(DEGRADE));
+        newcam_tilt_acc -= (newcam_tilt_acc*newcam_degrade);
         #endif
 
     newcam_framessincec[0] += 1;
@@ -346,13 +349,13 @@ static void newcam_rotate_button(void)
         else
         {
             newcam_cstick_down = 0;
-            newcam_yaw_acc -= (newcam_yaw_acc*(DEGRADE));
+            newcam_yaw_acc -= (newcam_yaw_acc*newcam_degrade);
         }
 
         if (ABS(gPlayer2Controller->stickY) > 20 && newcam_modeflags & NC_FLAG_YTURN)
             newcam_tilt_acc = newcam_adjust_value(newcam_tilt_acc,(-gPlayer2Controller->stickY/4));
         else
-            newcam_tilt_acc -= (newcam_tilt_acc*(DEGRADE));
+            newcam_tilt_acc -= (newcam_tilt_acc*newcam_degrade);
     }
 
     if (newcam_mouse == 1)
@@ -378,8 +381,8 @@ static void newcam_zoom_button(void)
             newcam_distance = newcam_distance_target;
     }
 
-    //When you press L and R together, set the flag for centering the camera. Afterwards, start setting the yaw to the Player's yaw at the time.
-    if (gPlayer1Controller->buttonDown & L_TRIG && gPlayer1Controller->buttonDown & R_TRIG && newcam_modeflags & NC_FLAG_ZOOM)
+    //When you press L, set the flag for centering the camera. Afterwards, start setting the yaw to the Player's yaw at the time.
+    if (gPlayer1Controller->buttonDown & L_TRIG && newcam_modeflags & NC_FLAG_ZOOM)
     {
         newcam_yaw_target = -gMarioState->faceAngle[1]-0x4000;
         newcam_centering = 1;
@@ -617,7 +620,7 @@ static void newcam_apply_values(struct Camera *c)
     gLakituState.yaw = -newcam_yaw+0x4000;
 
     //Adds support for wing mario tower
-    if (gMarioState->floor->type == SURFACE_LOOK_UP_WARP) {
+    if (gMarioState->floor && gMarioState->floor->type == SURFACE_LOOK_UP_WARP) {
         if (save_file_get_total_star_count(gCurrSaveFileNum - 1, 0, 0x18) >= 10) {
             if (newcam_tilt < -8000 && gMarioState->forwardVel == 0) {
                 level_trigger_warp(gMarioState, 1);

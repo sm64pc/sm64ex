@@ -349,7 +349,7 @@ m4trace:configure.ac:17: -1- m4_pattern_allow([^am__fastdepCXX_FALSE$])
 m4trace:configure.ac:17: -1- _AM_SUBST_NOTMAKE([am__fastdepCXX_TRUE])
 m4trace:configure.ac:17: -1- _AM_SUBST_NOTMAKE([am__fastdepCXX_FALSE])
 m4trace:configure.ac:19: -1- _m4_warn([obsolete], [The macro `AM_PROG_LIBTOOL' is obsolete.
-You should run autoupdate.], [aclocal.m4:130: AM_PROG_LIBTOOL is expanded from...
+You should run autoupdate.], [aclocal.m4:122: AM_PROG_LIBTOOL is expanded from...
 configure.ac:19: the top level])
 m4trace:configure.ac:19: -1- LT_INIT
 m4trace:configure.ac:19: -1- m4_pattern_forbid([^_?LT_[A-Z_]+$])
@@ -446,8 +446,7 @@ m4trace:configure.ac:19: -1- m4_pattern_allow([^RANLIB$])
 m4trace:configure.ac:19: -1- m4_pattern_allow([LT_OBJDIR])
 m4trace:configure.ac:19: -1- AC_DEFINE_TRACE_LITERAL([LT_OBJDIR])
 m4trace:configure.ac:19: -1- m4_pattern_allow([^LT_OBJDIR$])
-m4trace:configure.ac:19: -1- AH_OUTPUT([LT_OBJDIR], [/* Define to the sub-directory in which libtool stores uninstalled libraries.
-   */
+m4trace:configure.ac:19: -1- AH_OUTPUT([LT_OBJDIR], [/* Define to the sub-directory where libtool stores uninstalled libraries. */
 @%:@undef LT_OBJDIR])
 m4trace:configure.ac:19: -1- LT_SUPPORTED_TAG([CC])
 m4trace:configure.ac:19: -1- AC_SUBST([MANIFEST_TOOL])
@@ -468,6 +467,9 @@ m4trace:configure.ac:19: -1- m4_pattern_allow([^OTOOL$])
 m4trace:configure.ac:19: -1- AC_SUBST([OTOOL64])
 m4trace:configure.ac:19: -1- AC_SUBST_TRACE([OTOOL64])
 m4trace:configure.ac:19: -1- m4_pattern_allow([^OTOOL64$])
+m4trace:configure.ac:19: -1- AC_SUBST([LT_SYS_LIBRARY_PATH])
+m4trace:configure.ac:19: -1- AC_SUBST_TRACE([LT_SYS_LIBRARY_PATH])
+m4trace:configure.ac:19: -1- m4_pattern_allow([^LT_SYS_LIBRARY_PATH$])
 m4trace:configure.ac:19: -1- AH_OUTPUT([HAVE_DLFCN_H], [/* Define to 1 if you have the <dlfcn.h> header file. */
 @%:@undef HAVE_DLFCN_H])
 m4trace:configure.ac:19: -1- AC_SUBST([CPP])
@@ -516,6 +518,9 @@ m4trace:configure.ac:19: -1- m4_pattern_allow([^CXXCPP$])
 m4trace:configure.ac:19: -1- AC_SUBST([LD])
 m4trace:configure.ac:19: -1- AC_SUBST_TRACE([LD])
 m4trace:configure.ac:19: -1- m4_pattern_allow([^LD$])
+m4trace:configure.ac:19: -1- AC_SUBST([LT_SYS_LIBRARY_PATH])
+m4trace:configure.ac:19: -1- AC_SUBST_TRACE([LT_SYS_LIBRARY_PATH])
+m4trace:configure.ac:19: -1- m4_pattern_allow([^LT_SYS_LIBRARY_PATH$])
 m4trace:configure.ac:22: -1- AC_DEFINE_TRACE_LITERAL([STDC_HEADERS])
 m4trace:configure.ac:22: -1- m4_pattern_allow([^STDC_HEADERS$])
 m4trace:configure.ac:22: -1- AH_OUTPUT([STDC_HEADERS], [/* Define to 1 if you have the ANSI C header files. */

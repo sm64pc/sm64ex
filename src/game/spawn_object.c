@@ -161,8 +161,7 @@ void clear_object_lists(struct ObjectNode *objLists) {
 }
 
 /**
- * This function looks broken, but it appears to attempt to delete the leaf
- * graph nodes under obj and obj's siblings.
+ * Delete the leaf graph nodes under obj and obj's siblings.
  */
 static void unused_delete_leaf_nodes(struct Object *obj) {
     struct Object *children;
@@ -176,8 +175,7 @@ static void unused_delete_leaf_nodes(struct Object *obj) {
         mark_obj_for_deletion(obj);
     }
 
-    // Probably meant to be !=
-    while ((sibling = (struct Object *) obj->header.gfx.node.next) == obj0) {
+    while ((sibling = (struct Object *) obj->header.gfx.node.next) != obj0) {
         unused_delete_leaf_nodes(sibling);
         obj = (struct Object *) sibling->header.gfx.node.next;
     }
@@ -196,6 +194,7 @@ void unload_object(struct Object *obj) {
     geo_add_child(&gObjParentGraphNode, &obj->header.gfx.node);
 
     obj->header.gfx.node.flags &= ~GRAPH_RENDER_BILLBOARD;
+    obj->header.gfx.node.flags &= ~GRAPH_RENDER_CYLBOARD;
     obj->header.gfx.node.flags &= ~GRAPH_RENDER_ACTIVE;
 
     deallocate_object(&gFreeObjectList, &obj->header);

@@ -14,6 +14,8 @@
 #include "controller_sdl.h"
 #include "../configfile.h"
 
+#include "game/level_update.h"
+
 // mouse buttons are also in the controller namespace (why), just offset 0x100
 #define VK_OFS_SDL_MOUSE 0x0100
 #define VK_BASE_SDL_MOUSE (VK_BASE_SDL_GAMEPAD + VK_OFS_SDL_MOUSE)
@@ -101,7 +103,7 @@ static void controller_sdl_read(OSContPad *pad) {
     }
 
 #ifdef BETTERCAMERA
-    if (newcam_mouse == 1)
+    if (newcam_mouse == 1 && sCurrPlayMode != 2)
         SDL_SetRelativeMouseMode(SDL_TRUE);
     else
         SDL_SetRelativeMouseMode(SDL_FALSE);
@@ -204,10 +206,22 @@ static u32 controller_sdl_rawkey(void) {
     return VK_INVALID;
 }
 
+static void controller_sdl_shutdown(void) {
+    if (SDL_WasInit(SDL_INIT_GAMECONTROLLER)) {
+        if (sdl_cntrl) {
+            SDL_GameControllerClose(sdl_cntrl);
+            sdl_cntrl = NULL;
+        }
+        SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
+    }
+    init_ok = false;
+}
+
 struct ControllerAPI controller_sdl = {
     VK_BASE_SDL_GAMEPAD,
     controller_sdl_init,
     controller_sdl_read,
     controller_sdl_rawkey,
     controller_sdl_bind,
+    controller_sdl_shutdown
 };

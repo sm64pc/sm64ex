@@ -1,7 +1,5 @@
 #include <ultra64.h>
-#ifndef TARGET_N64
 #include <string.h>
-#endif
 
 #include "sm64.h"
 
@@ -78,27 +76,6 @@ void *get_segment_base_addr(s32 segment) {
     return (void *) (sSegmentTable[segment] | 0x80000000);
 }
 
-#ifdef TARGET_N64
-void *segmented_to_virtual(const void *addr) {
-    size_t segment = (uintptr_t) addr >> 24;
-    size_t offset = (uintptr_t) addr & 0x00FFFFFF;
-
-    return (void *) ((sSegmentTable[segment] + offset) | 0x80000000);
-}
-
-void *virtual_to_segmented(u32 segment, const void *addr) {
-    size_t offset = ((uintptr_t) addr & 0x1FFFFFFF) - sSegmentTable[segment];
-
-    return (void *) ((segment << 24) + offset);
-}
-
-void move_segment_table_to_dmem(void) {
-    s32 i;
-
-    for (i = 0; i < 16; i++)
-        gSPSegment(gDisplayListHead++, i, sSegmentTable[i]);
-}
-#else
 void *segmented_to_virtual(const void *addr) {
     return (void *) addr;
 }
@@ -109,7 +86,7 @@ void *virtual_to_segmented(u32 segment, const void *addr) {
 
 void move_segment_table_to_dmem(void) {
 }
-#endif
+
 
 /**
  * Initialize the main memory pool. This pool is conceptually a pair of stacks
@@ -248,22 +225,8 @@ u32 main_pool_pop_state(void) {
  */
 static void dma_read(u8 *dest, u8 *srcStart, u8 *srcEnd) {
     u32 size = ALIGN16(srcEnd - srcStart);
-#ifdef TARGET_N64
-    osInvalDCache(dest, size);
-    while (size != 0) {
-        u32 copySize = (size >= 0x1000) ? 0x1000 : size;
 
-        osPiStartDma(&gDmaIoMesg, OS_MESG_PRI_NORMAL, OS_READ, (uintptr_t) srcStart, dest, copySize,
-                     &gDmaMesgQueue);
-        osRecvMesg(&gDmaMesgQueue, &D_80339BEC, OS_MESG_BLOCK);
-
-        dest += copySize;
-        srcStart += copySize;
-        size -= copySize;
-    }
-#else
     memcpy(dest, srcStart, srcEnd - srcStart);
-#endif
 }
 
 /**
@@ -280,103 +243,6 @@ static void *dynamic_dma_read(u8 *srcStart, u8 *srcEnd, u32 side) {
     }
     return dest;
 }
-
-#ifdef TARGET_N64
-/**
- * Load data from ROM into a newly allocated block, and set the segment base
- * address to this block.
- */
-void *load_segment(s32 segment, u8 *srcStart, u8 *srcEnd, u32 side) {
-    void *addr = dynamic_dma_read(srcStart, srcEnd, side);
-
-    if (addr != NULL) {
-        set_segment_base_addr(segment, addr);
-    }
-    return addr;
-}
-
-/*
- * Allocate a block of memory starting at destAddr and ending at the righthand
- * end of the memory pool. Then copy srcStart through srcEnd from ROM to this
- * block.
- * If this block is not large enough to hold the ROM data, or that portion
- * of the pool is already allocated, return NULL.
- */
-void *load_to_fixed_pool_addr(u8 *destAddr, u8 *srcStart, u8 *srcEnd) {
-    void *dest = NULL;
-    u32 srcSize = ALIGN16(srcEnd - srcStart);
-    u32 destSize = ALIGN16((u8 *) sPoolListHeadR - destAddr);
-
-    if (srcSize <= destSize) {
-        dest = main_pool_alloc(destSize, MEMORY_POOL_RIGHT);
-        if (dest != NULL) {
-            bzero(dest, destSize);
-            osWritebackDCacheAll();
-            dma_read(dest, srcStart, srcEnd);
-            osInvalICache(dest, destSize);
-            osInvalDCache(dest, destSize);
-        }
-    } else {
-    }
-    return dest;
-}
-
-/**
- * Decompress the block of ROM data from srcStart to srcEnd and return a
- * pointer to an allocated buffer holding the decompressed data. Set the
- * base address of segment to this address.
- */
-void *load_segment_decompress(s32 segment, u8 *srcStart, u8 *srcEnd) {
-    void *dest = NULL;
-
-    u32 compSize = ALIGN16(srcEnd - srcStart);
-    u8 *compressed = main_pool_alloc(compSize, MEMORY_POOL_RIGHT);
-
-    // Decompressed size from mio0 header
-    u32 *size = (u32 *) (compressed + 4);
-
-    if (compressed != NULL) {
-        dma_read(compressed, srcStart, srcEnd);
-        dest = main_pool_alloc(*size, MEMORY_POOL_LEFT);
-        if (dest != NULL) {
-            decompress(compressed, dest);
-            set_segment_base_addr(segment, dest);
-            main_pool_free(compressed);
-        } else {
-        }
-    } else {
-    }
-    return dest;
-}
-
-void *load_segment_decompress_heap(u32 segment, u8 *srcStart, u8 *srcEnd) {
-    UNUSED void *dest = NULL;
-    u32 compSize = ALIGN16(srcEnd - srcStart);
-    u8 *compressed = main_pool_alloc(compSize, MEMORY_POOL_RIGHT);
-    UNUSED u32 *pUncSize = (u32 *) (compressed + 4);
-
-    if (compressed != NULL) {
-        dma_read(compressed, srcStart, srcEnd);
-        decompress(compressed, gDecompressionHeap);
-        set_segment_base_addr(segment, gDecompressionHeap);
-        main_pool_free(compressed);
-    } else {
-    }
-    return gDecompressionHeap;
-}
-
-void load_engine_code_segment(void) {
-    void *startAddr = (void *) SEG_ENGINE;
-    u32 totalSize = SEG_FRAMEBUFFERS - SEG_ENGINE;
-    UNUSED u32 alignedSize = ALIGN16(_engineSegmentRomEnd - _engineSegmentRomStart);
-
-    bzero(startAddr, totalSize);
-    osWritebackDCacheAll();
-    dma_read(startAddr, _engineSegmentRomStart, _engineSegmentRomEnd);
-    osInvalICache(startAddr, totalSize);
-    osInvalDCache(startAddr, totalSize);
-}
-#endif
 
 /**
  * Allocate an allocation-only pool from the main pool. This pool doesn't

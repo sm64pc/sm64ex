@@ -48,8 +48,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = i686-w64-mingw32
-host_triplet = i686-w64-mingw32
+build_triplet = x86_64-w64-mingw32
+host_triplet = x86_64-w64-mingw32
 subdir = docs
 DIST_COMMON = $(dist_man1_MANS) $(dist_man3_MANS) \
 	$(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -101,16 +101,16 @@ man3dir = $(mandir)/man3
 NROFF = nroff
 MANS = $(dist_man1_MANS) $(dist_man3_MANS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-A2X = /usr/bin/a2x
-ACLOCAL = ${SHELL} /c/Users/marti/Desktop/audiofile-0.3.6/missing --run aclocal-1.11
+A2X = 
+ACLOCAL = ${SHELL} /i/Development/sm64pc/tools/audiofile-0.3.6/missing --run aclocal-1.11
 AMTAR = $${TAR-tar}
 AR = ar
-ASCIIDOC = /usr/bin/asciidoc
+ASCIIDOC = 
 AUDIOFILE_VERSION = 0.3.6
 AUDIOFILE_VERSION_INFO = 1:0:0
-AUTOCONF = ${SHELL} /c/Users/marti/Desktop/audiofile-0.3.6/missing --run autoconf
-AUTOHEADER = ${SHELL} /c/Users/marti/Desktop/audiofile-0.3.6/missing --run autoheader
-AUTOMAKE = ${SHELL} /c/Users/marti/Desktop/audiofile-0.3.6/missing --run automake-1.11
+AUTOCONF = ${SHELL} /i/Development/sm64pc/tools/audiofile-0.3.6/missing --run autoconf
+AUTOHEADER = ${SHELL} /i/Development/sm64pc/tools/audiofile-0.3.6/missing --run autoheader
+AUTOMAKE = ${SHELL} /i/Development/sm64pc/tools/audiofile-0.3.6/missing --run automake-1.11
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
@@ -145,18 +145,19 @@ INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LCOV = 
-LD = C:/git-sdk-64/mingw32/i686-w64-mingw32/bin/ld.exe
+LD = I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/bin/ld.exe
 LDFLAGS = 
 LIBOBJS = 
-LIBS = 
+LIBS = -lstdc++
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = cp -pR
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /c/Users/marti/Desktop/audiofile-0.3.6/missing --run makeinfo
+LT_SYS_LIBRARY_PATH = 
+MAKEINFO = ${SHELL} /i/Development/sm64pc/tools/audiofile-0.3.6/missing --run makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = /usr/bin/mkdir -p
-NM = /mingw32/bin/nm -B
+NM = /mingw64/bin/nm -B
 NMEDIT = 
 OBJDUMP = objdump
 OBJEXT = o
@@ -170,9 +171,9 @@ PACKAGE_TARNAME = audiofile
 PACKAGE_URL = 
 PACKAGE_VERSION = 0.3.6
 PATH_SEPARATOR = :
-PKG_CONFIG = /mingw32/bin/pkg-config
+PKG_CONFIG = /mingw64/bin/pkg-config
 PKG_CONFIG_LIBDIR = 
-PKG_CONFIG_PATH = /mingw32/lib/pkgconfig:/mingw32/share/pkgconfig
+PKG_CONFIG_PATH = /mingw64/lib/pkgconfig:/mingw64/share/pkgconfig
 RANLIB = ranlib
 SED = /usr/bin/sed
 SET_MAKE = 
@@ -182,10 +183,10 @@ TEST_BIN =
 VALGRIND = 
 VERSION = 0.3.6
 WERROR_CFLAGS = 
-abs_builddir = /c/Users/marti/Desktop/audiofile-0.3.6/docs
-abs_srcdir = /c/Users/marti/Desktop/audiofile-0.3.6/docs
-abs_top_builddir = /c/Users/marti/Desktop/audiofile-0.3.6
-abs_top_srcdir = /c/Users/marti/Desktop/audiofile-0.3.6
+abs_builddir = /i/Development/sm64pc/tools/audiofile-0.3.6/docs
+abs_srcdir = /i/Development/sm64pc/tools/audiofile-0.3.6/docs
+abs_top_builddir = /i/Development/sm64pc/tools/audiofile-0.3.6
+abs_top_srcdir = /i/Development/sm64pc/tools/audiofile-0.3.6
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_CXX = g++
@@ -196,9 +197,9 @@ am__quote =
 am__tar = $${TAR-tar} chof - "$$tardir"
 am__untar = $${TAR-tar} xf -
 bindir = ${exec_prefix}/bin
-build = i686-w64-mingw32
-build_alias = i686-w64-mingw32
-build_cpu = i686
+build = x86_64-w64-mingw32
+build_alias = x86_64-w64-mingw32
+build_cpu = x86_64
 build_os = mingw32
 build_vendor = w64
 builddir = .
@@ -207,15 +208,15 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-host = i686-w64-mingw32
+host = x86_64-w64-mingw32
 host_alias = 
-host_cpu = i686
+host_cpu = x86_64
 host_os = mingw32
 host_vendor = w64
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /c/Users/marti/Desktop/audiofile-0.3.6/install-sh
+install_sh = ${SHELL} /i/Development/sm64pc/tools/audiofile-0.3.6/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -224,7 +225,7 @@ mandir = ${datarootdir}/man
 mkdir_p = /usr/bin/mkdir -p
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /mingw32
+prefix = /mingw64
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
@@ -235,58 +236,58 @@ target_alias =
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-DOCS_TXT_MAN1 = \
-	sfconvert.1.txt \
-	sfinfo.1.txt
+#DOCS_TXT_MAN1 = \
+#	sfconvert.1.txt \
+#	sfinfo.1.txt
 
-DOCS_TXT_MAN3 = \
-	afCloseFile.3.txt \
-	afGetFrameCount.3.txt \
-	afGetFrameSize.3.txt \
-	afInitAESChannelDataTo.3.txt \
-	afInitCompression.3.txt \
-	afInitFileFormat.3.txt \
-	afInitSampleFormat.3.txt \
-	afNewFileSetup.3.txt \
-	afOpenFile.3.txt \
-	afQuery.3.txt \
-	afReadFrames.3.txt \
-	afReadMisc.3.txt \
-	afSeekFrame.3.txt \
-	afSetErrorHandler.3.txt \
-	afSetVirtualSampleFormat.3.txt \
-	afWriteFrames.3.txt
+#DOCS_TXT_MAN3 = \
+#	afCloseFile.3.txt \
+#	afGetFrameCount.3.txt \
+#	afGetFrameSize.3.txt \
+#	afInitAESChannelDataTo.3.txt \
+#	afInitCompression.3.txt \
+#	afInitFileFormat.3.txt \
+#	afInitSampleFormat.3.txt \
+#	afNewFileSetup.3.txt \
+#	afOpenFile.3.txt \
+#	afQuery.3.txt \
+#	afReadFrames.3.txt \
+#	afReadMisc.3.txt \
+#	afSeekFrame.3.txt \
+#	afSetErrorHandler.3.txt \
+#	afSetVirtualSampleFormat.3.txt \
+#	afWriteFrames.3.txt
 
-DOCS_TXT = $(DOCS_TXT_MAN1) $(DOCS_TXT_MAN3)
-EXTRA_DIST = \
-	$(DOCS_TXT) \
-	asciidoc.conf
+#DOCS_TXT = $(DOCS_TXT_MAN1) $(DOCS_TXT_MAN3)
+#EXTRA_DIST = \
+#	$(DOCS_TXT) \
+#	asciidoc.conf
 
-DOCS_MAN1 = $(DOCS_TXT_MAN1:.txt=)
-DOCS_MAN3 = $(DOCS_TXT_MAN3:.txt=)
-DOCS_MAN3_EXTRA = \
-	afInitAESChannelData.3 \
-	afInitByteOrder.3 \
-	afInitChannels.3 \
-	afInitRate.3 \
-	afGetDataOffset.3 \
-	afGetTrackBytes.3 \
-	afQueryLong.3 \
-	afQueryDouble.3 \
-	afQueryPointer.3 \
-	afSeekMisc.3 \
-	afSetVirtualByteOrder.3 \
-	afSetVirtualChannels.3 \
-	afSetVirtualPCMMapping.3 \
-	afTellFrame.3 \
-	afWriteMisc.3
+#DOCS_MAN1 = $(DOCS_TXT_MAN1:.txt=)
+#DOCS_MAN3 = $(DOCS_TXT_MAN3:.txt=)
+#DOCS_MAN3_EXTRA = \
+#	afInitAESChannelData.3 \
+#	afInitByteOrder.3 \
+#	afInitChannels.3 \
+#	afInitRate.3 \
+#	afGetDataOffset.3 \
+#	afGetTrackBytes.3 \
+#	afQueryLong.3 \
+#	afQueryDouble.3 \
+#	afQueryPointer.3 \
+#	afSeekMisc.3 \
+#	afSetVirtualByteOrder.3 \
+#	afSetVirtualChannels.3 \
+#	afSetVirtualPCMMapping.3 \
+#	afTellFrame.3 \
+#	afWriteMisc.3
 
-DOCS_HTML = $(DOCS_TXT:.txt=.html)
-dist_man1_MANS = $(DOCS_MAN1)
-dist_man3_MANS = $(DOCS_MAN3) $(DOCS_MAN3_EXTRA)
-ASCIIDOCFLAGS = -arevnumber=$(VERSION) -amansource="Audio File Library"
-A2XFLAGS = $(ASCIIDOCFLAGS) -d manpage -f manpage
-CLEANFILES = *.1 *.3 *.html
+#DOCS_HTML = $(DOCS_TXT:.txt=.html)
+#dist_man1_MANS = $(DOCS_MAN1)
+#dist_man3_MANS = $(DOCS_MAN3) $(DOCS_MAN3_EXTRA)
+#ASCIIDOCFLAGS = -arevnumber=$(VERSION) -amansource="Audio File Library"
+#A2XFLAGS = $(ASCIIDOCFLAGS) -d manpage -f manpage
+#CLEANFILES = *.1 *.3 *.html
 all: all-am
 
 .SUFFIXES:
@@ -508,7 +509,7 @@ dvi: dvi-am
 
 dvi-am:
 
-#html: html-am
+html: html-am
 
 html-am:
 
@@ -580,16 +581,16 @@ uninstall-man: uninstall-man1 uninstall-man3
 	uninstall-man3
 
 
-%.html: %.txt
-	$(ASCIIDOC) $(ASCIIDOCFLAGS) -b html4 -d manpage -f asciidoc.conf $<
+#%.html: %.txt
+#	$(ASCIIDOC) $(ASCIIDOCFLAGS) -b html4 -d manpage -f asciidoc.conf $<
 
-%.1: %.1.txt
-	$(A2X) $(A2XFLAGS) --asciidoc-opts="-f asciidoc.conf" $<
+#%.1: %.1.txt
+#	$(A2X) $(A2XFLAGS) --asciidoc-opts="-f asciidoc.conf" $<
 
-%.3: %.3.txt
-	$(A2X) $(A2XFLAGS) --asciidoc-opts="-f asciidoc.conf" $<
+#%.3: %.3.txt
+#	$(A2X) $(A2XFLAGS) --asciidoc-opts="-f asciidoc.conf" $<
 
-html: $(DOCS_HTML)
+#html: $(DOCS_HTML)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

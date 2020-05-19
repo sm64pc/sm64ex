@@ -1,4 +1,4 @@
-#ifndef TEXT_STRINGS_H
+	#ifndef TEXT_STRINGS_H
 #define TEXT_STRINGS_H
 
 #include "text_menu_strings.h"
@@ -9,6 +9,7 @@
 #define TEXT_OPT_INVERTY   _("Invert Y Axis")
 #define TEXT_OPT_CAMC      _("Camera Centre Aggression")
 #define TEXT_OPT_CAMP      _("Camera Pan Level")
+#define TEXT_OPT_CAMD      _("Camera Deceleration")
 #define TEXT_OPT_ENABLED   _("Enabled")
 #define TEXT_OPT_DISABLED  _("Disabled")
 #define TEXT_OPT_BUTTON1   _("[R]: Options")
@@ -16,9 +17,20 @@
 #define TEXT_OPT_OPTIONS   _("OPTIONS")
 #define TEXT_OPT_CAMERA    _("CAMERA")
 #define TEXT_OPT_CONTROLS  _("CONTROLS")
+#define TEXT_OPT_VIDEO     _("DISPLAY")
+#define TEXT_OPT_AUDIO     _("SOUND")
 #define TEXT_OPT_HIGHLIGHT _("O")
 #define TEXT_OPT_ANALOGUE  _("Analogue Camera")
 #define TEXT_OPT_MOUSE     _("Mouse Look")
+#define TEXT_OPT_TEXFILTER _("Texture Filtering")
+#define TEXT_OPT_FSCREEN   _("Fullscreen")
+#define TEXT_OPT_NEAREST   _("Nearest")
+#define TEXT_OPT_LINEAR    _("Linear")
+#define TEXT_OPT_MVOLUME   _("Master Volume")
+#define TEXT_OPT_VSYNC     _("Vertical Sync")
+#define TEXT_OPT_DOUBLE    _("Double")
+#define TEXT_RESET_WINDOW  _("Reset Window")
+#define TEXT_OPT_HUD       _("HUD")
 
 #define TEXT_OPT_UNBOUND   _("NONE")
 #define TEXT_OPT_PRESSKEY  _("...")
@@ -37,6 +49,16 @@
 #define TEXT_BIND_LEFT     _("Stick Left")
 #define TEXT_BIND_RIGHT    _("Stick Right")
 
+#define TEXT_OPT_CHEATS _("CHEATS")
+#define TEXT_OPT_CHEAT1 _("Enable cheats")
+#define TEXT_OPT_CHEAT2 _("Moonjump (Press L)")
+#define TEXT_OPT_CHEAT3 _("Invincible Mario")
+#define TEXT_OPT_CHEAT4 _("Infinite lives")
+#define TEXT_OPT_CHEAT5 _("Super speed")
+#define TEXT_OPT_CHEAT6 _("Super responsive controls")
+#define TEXT_OPT_CHEAT7 _("Exit course at any time")
+#define TEXT_OPT_CHEAT8 _("Huge Mario")
+#define TEXT_OPT_CHEAT9 _("Tiny Mario")
 /**
  * Global Symbols
  */

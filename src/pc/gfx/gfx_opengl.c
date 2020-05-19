@@ -18,10 +18,17 @@
 #include <SDL2/SDL.h>
 #define GL_GLEXT_PROTOTYPES 1
 #include <SDL2/SDL_opengl.h>
+
 #else
 #include <SDL2/SDL.h>
 #define GL_GLEXT_PROTOTYPES 1
+
+#ifdef OSX_BUILD
+#include <SDL2/SDL_opengl.h>
+#else
 #include <SDL2/SDL_opengles2.h>
+#endif
+
 #endif
 
 #include "gfx_cc.h"
@@ -49,7 +56,7 @@ static bool gfx_opengl_z_is_from_0_to_1(void) {
 static void gfx_opengl_vertex_array_set_attribs(struct ShaderProgram *prg) {
     size_t num_floats = prg->num_floats;
     size_t pos = 0;
-    
+
     for (int i = 0; i < prg->num_attribs; i++) {
         glEnableVertexAttribArray(prg->attrib_locations[i]);
         glVertexAttribPointer(prg->attrib_locations[i], prg->attrib_sizes[i], GL_FLOAT, GL_FALSE, num_floats * sizeof(float), (void *)(pos * sizeof(float)));
@@ -179,15 +186,19 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
     bool do_multiply[2] = {c[0][1] == 0 && c[0][3] == 0, c[1][1] == 0 && c[1][3] == 0};
     bool do_mix[2] = {c[0][1] == c[0][3], c[1][1] == c[1][3]};
     bool color_alpha_same = (shader_id & 0xfff) == ((shader_id >> 12) & 0xfff);
-    
+
     char vs_buf[1024];
     char fs_buf[1024];
     size_t vs_len = 0;
     size_t fs_len = 0;
     size_t num_floats = 4;
-    
+
     // Vertex shader
+#ifdef OSX_BUILD
+    append_line(vs_buf, &vs_len, "");
+#else
     append_line(vs_buf, &vs_len, "#version 100");
+#endif
     append_line(vs_buf, &vs_len, "attribute vec4 aVtxPos;");
     if (used_textures[0] || used_textures[1]) {
         append_line(vs_buf, &vs_len, "attribute vec2 aTexCoord;");
@@ -216,10 +227,15 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
     }
     append_line(vs_buf, &vs_len, "gl_Position = aVtxPos;");
     append_line(vs_buf, &vs_len, "}");
-    
+
     // Fragment shader
+#ifdef OSX_BUILD
+    append_line(fs_buf, &fs_len, "");
+#else
     append_line(fs_buf, &fs_len, "#version 100");
     append_line(fs_buf, &fs_len, "precision mediump float;");
+#endif
+
     if (used_textures[0] || used_textures[1]) {
         append_line(fs_buf, &fs_len, "varying vec2 vTexCoord;");
     }
@@ -408,9 +424,10 @@ static uint32_t gfx_cm_to_opengl(uint32_t val) {
 }
 
 static void gfx_opengl_set_sampler_parameters(int tile, bool linear_filter, uint32_t cms, uint32_t cmt) {
+    const GLenum filter = linear_filter ? GL_LINEAR : GL_NEAREST;
     glActiveTexture(GL_TEXTURE0 + tile);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, linear_filter ? GL_LINEAR : GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, linear_filter ? GL_LINEAR : GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, gfx_cm_to_opengl(cms));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, gfx_cm_to_opengl(cmt));
 }
@@ -463,7 +480,11 @@ static void gfx_opengl_init(void) {
 #if FOR_WINDOWS
     glewInit();
 #endif
-    
+
+#ifdef OSX_BUILD
+    glewInit();
+#endif
+
     glGenBuffers(1, &opengl_vbo);
     
     glBindBuffer(GL_ARRAY_BUFFER, opengl_vbo);
@@ -478,6 +499,9 @@ static void gfx_opengl_start_frame(void) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_SCISSOR_TEST);
+}
+
+static void gfx_opengl_shutdown(void) {
 }
 
 struct GfxRenderingAPI gfx_opengl_api = {
@@ -499,5 +523,6 @@ struct GfxRenderingAPI gfx_opengl_api = {
     gfx_opengl_set_use_alpha,
     gfx_opengl_draw_triangles,
     gfx_opengl_init,
-    gfx_opengl_start_frame
+    gfx_opengl_start_frame,
+    gfx_opengl_shutdown
 };

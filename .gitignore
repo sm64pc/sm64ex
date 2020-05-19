@@ -54,6 +54,7 @@ build/*
 *.mio0
 *.z64
 *.map
+*.sav
 .assets-local.txt
 sm64_save_file.bin
 sm64config.txt

@@ -31,6 +31,8 @@
 #include "engine/surface_collision.h"
 #include "level_table.h"
 #include "thread6.h"
+#include "pc/configfile.h"
+#include "pc/cheats.h"
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif
@@ -1213,8 +1215,23 @@ u8 sSquishScaleOverTime[16] = { 0x46, 0x32, 0x32, 0x3C, 0x46, 0x50, 0x50, 0x3C,
 void squish_mario_model(struct MarioState *m) {
     if (m->squishTimer != 0xFF) {
         // If no longer squished, scale back to default.
+        // Also handles the Tiny Mario and Huge Mario cheats.
         if (m->squishTimer == 0) {
-            vec3f_set(m->marioObj->header.gfx.scale, 1.0f, 1.0f, 1.0f);
+            if (Cheats.EnableCheats) {
+                if (Cheats.HugeMario) {
+                    vec3f_set(m->marioObj->header.gfx.scale, 2.5f, 2.5f, 2.5f);
+                }
+                else if (Cheats.TinyMario) {
+                    vec3f_set(m->marioObj->header.gfx.scale, 0.2f, 0.2f, 0.2f);
+                }
+                else {
+                    vec3f_set(m->marioObj->header.gfx.scale, 1.0f, 1.0f, 1.0f);
+                }
+            }
+            else {
+                vec3f_set(m->marioObj->header.gfx.scale, 1.0f, 1.0f, 1.0f);
+            }
+            
         }
         // If timer is less than 16, rubber-band Mario's size scale up and down.
         else if (m->squishTimer <= 16) {
@@ -1396,6 +1413,13 @@ void update_mario_inputs(struct MarioState *m) {
     update_mario_geometry_inputs(m);
 
     debug_print_speed_action_normal(m);
+    
+    /* Moonjump cheat */
+    while (Cheats.MoonJump == true && Cheats.EnableCheats == true && m->controller->buttonDown & L_TRIG ){
+        m->vel[1] = 25;
+        break;   // TODO: Unneeded break?
+    }
+    /*End of moonjump cheat */
 
     if (gCameraMovementFlags & CAM_MOVE_C_UP_MODE) {
         if (m->action & ACT_FLAG_ALLOW_FIRST_PERSON) {
@@ -1717,7 +1741,24 @@ void func_sh_8025574C(void) {
  */
 s32 execute_mario_action(UNUSED struct Object *o) {
     s32 inLoop = TRUE;
+    /**
+    * Cheat stuff
+    */
 
+    if (Cheats.EnableCheats)
+    {
+        if (Cheats.GodMode)
+            gMarioState->health = 0x880;
+
+        if (Cheats.InfiniteLives && gMarioState->numLives < 99)
+            gMarioState->numLives += 1;
+
+        if (Cheats.SuperSpeed && gMarioState->forwardVel > 0)
+            gMarioState->forwardVel += 100;
+    }
+    /**
+    * End of cheat stuff
+    */
     if (gMarioState->action) {
         gMarioState->marioObj->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
         mario_reset_bodystate(gMarioState);

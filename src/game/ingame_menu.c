@@ -19,6 +19,7 @@
 #include "print.h"
 #include "engine/math_util.h"
 #include "course_table.h"
+#include "pc/cheats.h"
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif
@@ -134,14 +135,7 @@ void create_dl_identity_matrix(void) {
         return;
     }
 
-#ifdef TARGET_N64
-    matrix->m[0][0] = 0x00010000;    matrix->m[1][0] = 0x00000000;    matrix->m[2][0] = 0x00000000;    matrix->m[3][0] = 0x00000000;
-    matrix->m[0][1] = 0x00000000;    matrix->m[1][1] = 0x00010000;    matrix->m[2][1] = 0x00000000;    matrix->m[3][1] = 0x00000000;
-    matrix->m[0][2] = 0x00000001;    matrix->m[1][2] = 0x00000000;    matrix->m[2][2] = 0x00000000;    matrix->m[3][2] = 0x00000000;
-    matrix->m[0][3] = 0x00000000;    matrix->m[1][3] = 0x00000001;    matrix->m[2][3] = 0x00000000;    matrix->m[3][3] = 0x00000000;
-#else
     guMtxIdent(matrix);
-#endif
 
     gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(matrix), G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
     gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(matrix), G_MTX_PROJECTION | G_MTX_LOAD | G_MTX_NOPUSH);
@@ -1805,25 +1799,18 @@ void render_dialog_entries(void) {
     render_dialog_box_type(dialog, dialog->linesPerBox);
 
     gDPSetScissor(gDisplayListHead++, G_SC_NON_INTERLACE,
-#ifdef TARGET_N64
-                  ensure_nonnegative(dialog->leftOffset),
-#else
+
                   0,
-#endif
                   ensure_nonnegative(DIAG_VAL2 - dialog->width),
 #ifdef VERSION_EU
-#ifdef TARGET_N64
-                  ensure_nonnegative(dialog->leftOffset + DIAG_VAL3 / gDialogBoxScale),
-#else
+
                   SCREEN_WIDTH,
-#endif
+
                   ensure_nonnegative((240 - dialog->width) + ((dialog->linesPerBox * 80) / DIAG_VAL4) / gDialogBoxScale));
 #else
-#ifdef TARGET_N64
-                  ensure_nonnegative(DIAG_VAL3 + dialog->leftOffset),
-#else
+
                   SCREEN_WIDTH,
-#endif
+
                   ensure_nonnegative(240 + ((dialog->linesPerBox * 80) / DIAG_VAL4) - dialog->width));
 #endif
 #if defined(VERSION_JP) || defined(VERSION_SH)
@@ -2136,12 +2123,9 @@ void shade_screen(void) {
 
     // This is a bit weird. It reuses the dialog text box (width 130, height -80),
     // so scale to at least fit the screen.
-#ifdef TARGET_N64
-    create_dl_scale_matrix(MENU_MTX_NOPUSH, 2.6f, 3.4f, 1.0f);
-#else
+
     create_dl_scale_matrix(MENU_MTX_NOPUSH,
                            GFX_DIMENSIONS_ASPECT_RATIO * SCREEN_HEIGHT / 130.0f, 3.0f, 1.0f);
-#endif
 
     gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, 110);
     gSPDisplayList(gDisplayListHead++, dl_draw_text_bg_box);
@@ -2391,12 +2375,6 @@ void render_pause_course_options(s16 x, s16 y, s8 *index, s16 yIndex) {
         { TEXT_EXIT_COURSE_DE }
     };
 
-    u8 textExitGame[][22] ={
- 	{ TEXT_EXIT_GAME },
-	{ TEXT_EXIT_GAME_FR },
-        { TEXT_EXIT_GAME_DE }
-    };
-
     u8 textCameraAngleR[][24] = {
         { TEXT_CAMERA_ANGLE_R },
         { TEXT_CAMERA_ANGLE_R_FR },
@@ -2404,27 +2382,23 @@ void render_pause_course_options(s16 x, s16 y, s8 *index, s16 yIndex) {
     };
 #define textContinue     textContinue[gInGameLanguage]
 #define textExitCourse   textExitCourse[gInGameLanguage]
-#define textExitGame	 textExitGame[gInGameLanguage]
 #define textCameraAngleR textCameraAngleR[gInGameLanguage]
 #else
     u8 textContinue[] = { TEXT_CONTINUE };
     u8 textExitCourse[] = { TEXT_EXIT_COURSE };
-    u8 textExitGame[] = { TEXT_EXIT_GAME };
     u8 textCameraAngleR[] = { TEXT_CAMERA_ANGLE_R };
 #endif
 
-    handle_menu_scrolling(MENU_SCROLL_VERTICAL, index, 1, 4); // Index max raised to 4 from 3
+    handle_menu_scrolling(MENU_SCROLL_VERTICAL, index, 1, 3);
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
 
     print_generic_string(x + 10, y - 2, textContinue);
     print_generic_string(x + 10, y - 17, textExitCourse);
-    print_generic_string(x + 10, y - 33, textExitGame);
 
-
-    if (index[0] != 4) {
-        print_generic_string(x + 10, y - 48, textCameraAngleR);
+    if (index[0] != 3) {
+        print_generic_string(x + 10, y - 33, textCameraAngleR);
         gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 
         create_dl_translation_matrix(MENU_MTX_PUSH, x - X_VAL8, (y - ((index[0] - 1) * yIndex)) - Y_VAL8, 0);
@@ -2432,10 +2406,8 @@ void render_pause_course_options(s16 x, s16 y, s8 *index, s16 yIndex) {
         gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
         gSPDisplayList(gDisplayListHead++, dl_draw_triangle);
         gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
-    }
-
-    if (index[0] == 4) {
-        render_pause_camera_options(x - 42, y - 57, &gDialogCameraAngleIndex, 110);
+    } else {
+        render_pause_camera_options(x - 42, y - 42, &gDialogCameraAngleIndex, 110);
     }
 }
 
@@ -2658,8 +2630,9 @@ s16 render_pause_courses_and_castle(void) {
             shade_screen();
             render_pause_my_score_coins();
             render_pause_red_coins();
-
-            if (gMarioStates[0].action & ACT_FLAG_PAUSE_EXIT) {
+            
+/* Added support for the "Exit course at any time" cheat */
+            if ((gMarioStates[0].action & ACT_FLAG_PAUSE_EXIT) || (Cheats.EnableCheats && Cheats.ExitAnywhere)) {
                 render_pause_course_options(99, 93, &gDialogLineNum, 15);
             }
 
@@ -2675,7 +2648,7 @@ s16 render_pause_courses_and_castle(void) {
                 gDialogBoxState = DIALOG_STATE_OPENING;
                 gMenuMode = -1;
 
-                if (gDialogLineNum == 2 || gDialogLineNum == 3) {
+                if (gDialogLineNum == 2) {
                     num = gDialogLineNum;
                 } else {
                     num = 1;

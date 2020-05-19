@@ -29,16 +29,14 @@ typedef volatile s64 vs64;
 typedef float  f32;
 typedef double f64;
 
-#ifdef TARGET_N64
-typedef u32 size_t;
-typedef s32 ssize_t;
-typedef u32 uintptr_t;
-typedef s32 intptr_t;
-typedef s32 ptrdiff_t;
-#else
 #include <stddef.h>
 #include <stdint.h>
+#if defined(__MINGW32__) 
+#include <_mingw.h>
+#if !defined(__MINGW64_VERSION_MAJOR)
+typedef long ssize_t;
+#else
 typedef ptrdiff_t ssize_t;
 #endif
-
+#endif
 #endif

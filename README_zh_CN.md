@@ -2,7 +2,7 @@
 本项目是 [n64decomp/sm64](https://github.com/n64decomp/sm64) 的 OpenGL 移植版本。
 
 我们欢迎贡献代码与 bug 报告，但请切记，**不得上传任何被版权保护（来自 ROM 文件）的资源**。
-提交前请运行 `./extract-assets.py --clean && make clean` 或 `make distclean` 来清除所有从 ROM 文件中提取的内容。
+提交前请运行 `./extract_assets.py --clean && make clean` 或 `make distclean` 来清除所有从 ROM 文件中提取的内容。
 本移植是基于 [Emill](https://github.com/Emill) 的工作 [n64-fast32-engine](https://github.com/Emill/n64-fast3d-engine/) 才得以实现的。
 
 ## 主要功能
