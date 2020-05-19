@@ -64,7 +64,17 @@ else
   TARGET_ARCH ?= native
 endif
 
-TARGET_BITS ?= 0
+ifeq ($(WINDOWS_BUILD),1)
+  ifeq ($(CROSS),i686-w64-mingw32.static-)
+    TARGET_BITS = 32
+  else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+    TARGET_BITS = 64
+  else
+    TARGET_BITS ?= 0
+  endif
+else
+  TARGET_BITS ?= 0
+endif
 
 ifneq ($(TARGET_BITS),0)
   BITS := -m$(TARGET_BITS)
