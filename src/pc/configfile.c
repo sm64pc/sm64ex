@@ -36,15 +36,13 @@ struct ConfigOption {
 
 // Video/audio stuff
 ConfigWindow configWindow       = {
-    .x = SDL_WINDOWPOS_CENTERED,
-    .y = SDL_WINDOWPOS_CENTERED,
-    .w = DESIRED_SCREEN_WIDTH,
-    .h = DESIRED_SCREEN_HEIGHT,
-    .vsync = 1,
-    .reset = false,
+    .x          = SDL_WINDOWPOS_CENTERED,
+    .y          = SDL_WINDOWPOS_CENTERED,
+    .w          = DESIRED_SCREEN_WIDTH,
+    .h          = DESIRED_SCREEN_HEIGHT,
+    .reset      = false,
+    .vsync      = true,
     .fullscreen = false,
-    .exiting_fullscreen = false,
-    .settings_changed = false,
 };
 unsigned int configFiltering    = 1;          // 0=force nearest, 1=linear, (TODO) 2=three-point
 unsigned int configMasterVolume = MAX_VOLUME; // 0 - MAX_VOLUME
@@ -86,7 +84,7 @@ static const struct ConfigOption options[] = {
     {.name = "window_y",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.y},
     {.name = "window_w",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.w},
     {.name = "window_h",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.h},
-    {.name = "vsync",                .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.vsync},
+    {.name = "vsync",                .type = CONFIG_TYPE_UINT, .boolValue = &configWindow.vsync},
     {.name = "texture_filtering",    .type = CONFIG_TYPE_UINT, .uintValue = &configFiltering},
     {.name = "master_volume",        .type = CONFIG_TYPE_UINT, .uintValue = &configMasterVolume},
     {.name = "key_a",                .type = CONFIG_TYPE_BIND, .uintValue = configKeyA},

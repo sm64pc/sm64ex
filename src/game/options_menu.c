@@ -78,7 +78,6 @@ static const u8 optsVideoStr[][32] = {
     { TEXT_OPT_LINEAR },
     { TEXT_RESET_WINDOW },
     { TEXT_OPT_VSYNC },
-    { TEXT_OPT_DOUBLE },
     { TEXT_OPT_HUD },
 };
 
@@ -120,12 +119,6 @@ static const u8 bindStr[][32] = {
 static const u8 *filterChoices[] = {
     optsVideoStr[2],
     optsVideoStr[3],
-};
-
-static const u8 *vsyncChoices[] = {
-    toggleStr[0],
-    toggleStr[1],
-    optsVideoStr[6],
 };
 
 enum OptType {
@@ -195,11 +188,7 @@ static void optmenu_act_exit(UNUSED struct Option *self, s32 arg) {
 }
 
 static void optvideo_reset_window(UNUSED struct Option *self, s32 arg) {
-    if (!arg) {
-        // Restrict reset to A press and not directions
-        configWindow.reset = true;
-        configWindow.settings_changed = true;
-    }
+    if (!arg) configWindow.reset = true; // Restrict reset to A press and not directions
 }
 
 /* submenu option lists */
@@ -237,7 +226,7 @@ static struct Option optsControls[] = {
 
 static struct Option optsVideo[] = {
     DEF_OPT_TOGGLE( optsVideoStr[0], &configWindow.fullscreen ),
-    DEF_OPT_CHOICE( optsVideoStr[5], &configWindow.vsync, vsyncChoices ),
+    DEF_OPT_TOGGLE( optsVideoStr[5], &configWindow.vsync ),
     DEF_OPT_CHOICE( optsVideoStr[1], &configFiltering, filterChoices ),
     DEF_OPT_BUTTON( optsVideoStr[4], optvideo_reset_window ),
     DEF_OPT_TOGGLE( optsVideoStr[7], &configHUD ),
@@ -484,7 +473,7 @@ void optmenu_toggle(void) {
 
         currentMenu = &menuMain;
         optmenu_open = 1;
-        
+
         /* Resets l_counter to 0 every time the options menu is open */
         l_counter = 0;
     } else {
@@ -516,7 +505,7 @@ void optmenu_check_buttons(void) {
 
     if (gPlayer1Controller->buttonPressed & R_TRIG)
         optmenu_toggle();
-    
+
     /* Enables cheats if the user press the L trigger 3 times while in the options menu. Also plays a sound. */
     
     if ((gPlayer1Controller->buttonPressed & L_TRIG) && !Cheats.EnableCheats) {
@@ -528,7 +517,7 @@ void optmenu_check_buttons(void) {
             l_counter++;
         }
     }
-    
+
     if (!optmenu_open) return;
 
     u8 allowInput = 0;
