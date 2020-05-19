@@ -18,8 +18,6 @@ GRUCODE ?= f3d_old
 COMPARE ?= 1
 # If NON_MATCHING is 1, define the NON_MATCHING and AVOID_UB macros when building (recommended)
 NON_MATCHING ?= 1
-# Sane default until N64 build scripts rm'd
-TARGET_N64 = 0
 
 # Build and optimize for Raspberry Pi(s)
 TARGET_RPI ?= 0
@@ -38,20 +36,46 @@ EXT_OPTIONS_MENU ?= 1
 # Disable text-based save-files by default
 TEXTSAVES ?= 0
 
+# Disable no bzero/bcopy workaround by default
+# Enable by default for MXE builds
+ifeq ($(WINDOWS_BUILD),1)
+  ifeq ($(CROSS),i686-w64-mingw32.static-)
+    NO_BZERO_BCOPY := 1
+  else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+    NO_BZERO_BCOPY := 1
+  else
+    NO_BZERO_BCOPY ?= 0
+  endif
+else
+  NO_BZERO_BCOPY ?= 0
+endif
+
 # Build for Emscripten/WebGL
 TARGET_WEB ?= 0
 # Specify the target you are building for, 0 means native
-TARGET_ARCH ?= native
-
-ifeq ($(CROSS),i686-w64-mingw32.static-)
-  TARGET_ARCH = i386pe
-else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
-  TARGET_ARCH = i386pe
+ifeq ($(WINDOWS_BUILD),1)
+  ifeq ($(CROSS),i686-w64-mingw32.static-)
+    TARGET_ARCH = i386pe
+  else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+    TARGET_ARCH = i386pe
+  else
+    TARGET_ARCH ?= native
+  endif
 else
-  TARGET_ARCH = native
+  TARGET_ARCH ?= native
 endif
 
-TARGET_BITS ?= 0
+ifeq ($(WINDOWS_BUILD),1)
+  ifeq ($(CROSS),i686-w64-mingw32.static-)
+    TARGET_BITS = 32
+  else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+    TARGET_BITS = 64
+  else
+    TARGET_BITS ?= 0
+  endif
+else
+  TARGET_BITS ?= 0
+endif
 
 ifneq ($(TARGET_BITS),0)
   BITS := -m$(TARGET_BITS)
@@ -513,6 +537,12 @@ endif
 ifeq ($(EXT_OPTIONS_MENU),1)
   CC_CHECK += -DEXT_OPTIONS_MENU
   CFLAGS += -DEXT_OPTIONS_MENU
+endif
+
+# Check for no bzero/bcopy workaround option
+ifeq ($(NO_BZERO_BCOPY),1)
+  CC_CHECK += -DNO_BZERO_BCOPY
+  CFLAGS += -DNO_BZERO_BCOPY
 endif
 
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)

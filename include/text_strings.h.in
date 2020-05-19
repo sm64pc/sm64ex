@@ -27,7 +27,10 @@
 #define TEXT_OPT_NEAREST   _("Nearest")
 #define TEXT_OPT_LINEAR    _("Linear")
 #define TEXT_OPT_MVOLUME   _("Master Volume")
+#define TEXT_OPT_VSYNC     _("Vertical Sync")
+#define TEXT_OPT_DOUBLE    _("Double")
 #define TEXT_RESET_WINDOW  _("Reset Window")
+#define TEXT_OPT_HUD       _("HUD")
 
 #define TEXT_OPT_UNBOUND   _("NONE")
 #define TEXT_OPT_PRESSKEY  _("...")
@@ -53,7 +56,9 @@
 #define TEXT_OPT_CHEAT4 _("Infinite lives")
 #define TEXT_OPT_CHEAT5 _("Super speed")
 #define TEXT_OPT_CHEAT6 _("Super responsive controls")
-
+#define TEXT_OPT_CHEAT7 _("Exit course at any time")
+#define TEXT_OPT_CHEAT8 _("Huge Mario")
+#define TEXT_OPT_CHEAT9 _("Tiny Mario")
 /**
  * Global Symbols
  */

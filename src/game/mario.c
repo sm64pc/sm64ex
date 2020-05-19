@@ -1215,8 +1215,23 @@ u8 sSquishScaleOverTime[16] = { 0x46, 0x32, 0x32, 0x3C, 0x46, 0x50, 0x50, 0x3C,
 void squish_mario_model(struct MarioState *m) {
     if (m->squishTimer != 0xFF) {
         // If no longer squished, scale back to default.
+        // Also handles the Tiny Mario and Huge Mario cheats.
         if (m->squishTimer == 0) {
-            vec3f_set(m->marioObj->header.gfx.scale, 1.0f, 1.0f, 1.0f);
+            if (Cheats.EnableCheats) {
+                if (Cheats.HugeMario) {
+                    vec3f_set(m->marioObj->header.gfx.scale, 2.5f, 2.5f, 2.5f);
+                }
+                else if (Cheats.TinyMario) {
+                    vec3f_set(m->marioObj->header.gfx.scale, 0.2f, 0.2f, 0.2f);
+                }
+                else {
+                    vec3f_set(m->marioObj->header.gfx.scale, 1.0f, 1.0f, 1.0f);
+                }
+            }
+            else {
+                vec3f_set(m->marioObj->header.gfx.scale, 1.0f, 1.0f, 1.0f);
+            }
+            
         }
         // If timer is less than 16, rubber-band Mario's size scale up and down.
         else if (m->squishTimer <= 16) {

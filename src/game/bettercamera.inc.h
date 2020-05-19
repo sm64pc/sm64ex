@@ -9,8 +9,11 @@
 #include "include/text_strings.h"
 #include "engine/surface_collision.h"
 #include "pc/configfile.h"
+#if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR) 
+//quick and dirty fix for some older MinGW.org mingwrt
+#else
 #include <stdio.h>
-
+#endif
 
 
 /**
@@ -216,9 +219,9 @@ static int ivrt(u8 axis)
     if (axis == 0)
     {
         if (newcam_invertX == 0)
-            return 1;
-        else
             return -1;
+        else
+            return 1;
     }
     else
     {

@@ -59,7 +59,6 @@ static char* discard_line(ini_t *ini, char *p) {
   return p;
 }
 
-
 static char *unescape_quoted_value(ini_t *ini, char *p) {
   /* Use `q` as write-head and `p` as read-head, `p` is always ahead of `q`
    * as escape sequences are always larger than their resultant data */
@@ -88,7 +87,6 @@ static char *unescape_quoted_value(ini_t *ini, char *p) {
 end:
   return q;
 }
-
 
 /* Splits data in place into strings containing section-headers, keys and
  * values using one or more '\0' as a delimiter. Unescapes quoted values */
@@ -164,8 +162,10 @@ static void split_data(ini_t *ini) {
   }
 }
 
-
-
+/**
+ * Loads data from specified path.
+ * @return ini_t struct with loaded data.
+ */
 ini_t* ini_load(const char *filename) {
   ini_t *ini = NULL;
   FILE *fp = NULL;
@@ -211,11 +211,18 @@ fail:
   return NULL;
 }
 
+/**
+ * Deletes ini_t struct from memory.
+ */
 void ini_free(ini_t *ini) {
   free(ini->data);
   free(ini);
 }
 
+/**
+ * Gets value by specified key and section.
+ * @return string with the key.
+ */
 const char* ini_get(ini_t *ini, const char *section, const char *key) {
   char *current_section = "";
   char *val;
@@ -247,7 +254,10 @@ const char* ini_get(ini_t *ini, const char *section, const char *key) {
   return NULL;
 }
 
-
+/**
+ * Gets value by specified key, section and format string.
+ * @return a value specified in the format in `dst`.
+ */
 int ini_sget(
   ini_t *ini, const char *section, const char *key,
   const char *scanfmt, void *dst
