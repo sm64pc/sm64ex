@@ -7,7 +7,7 @@ LIBAFLA=libaudiofile.la
 AUDDIR=./tools/audiofile-0.3.6
 
 # Command line options
-OPTIONS=("Analog Camera" "No Draw Distance" "Text-saves" "Smoke Texture Fix" "Clean build")
+OPTIONS=("Analog Camera" "No Draw Distance" "Text-saves" "Texture Fixes" "Clean build")
 EXTRA=("BETTERCAMERA=1" "NODRAWINGDISTANCE=1" "TEXTSAVES=1" "TEXTURE_FIX=1" "clean")
 
 # Colors
@@ -46,15 +46,6 @@ else
     printf "${YELLOW} Going up one directory.${RESET}\n\n"
 		cd ../
 
-		printf "${GREEN}Notepad will now open, please follow the instructions carefully.\n\n"
-		printf "${YELLOW}Locate the line: " 
-		printf "${CYAN}tabledesign_CFLAGS := -Wno-uninitialized -laudiofile\n"
-		printf "${YELLOW}Then add at the end: ${CYAN}-lstdc++\n" 
-		printf "${YELLOW}So it reads: "
-		printf "${CYAN}tabledesign_CFLAGS := -Wno-uninitialized -laudiofile -lstdc++\n\n"
-		notepad "Makefile"
-		read -n 1 -r -s -p $'\e[32mPRESS ENTER TO CONTINUE...\e[0m\n'
-
     printf "${YELLOW} Executing: ${CYAN}make -j${RESET}\n\n"
 		PATH=/mingw64/bin:/mingw32/bin:$PATH make -j		
 
@@ -90,7 +81,7 @@ PATH=/mingw32/bin:/mingw64/bin:$PATH make $CMDL -j -d
 
 if [ "${CMDL}" != " clean" ]; then
 
-	printf "\n${GREEN}If all went well you should have a compiled .EXE in the 'builds/us_pc/' folder.\n"
+	printf "\n${GREEN}If all went well, you should have a compiled .EXE in the 'builds/us_pc/' folder.\n"
 	printf "${CYAN}Would you like to run the game? [y or n]: ${RESET}"
 	read TEST
 
@@ -98,5 +89,5 @@ if [ "${CMDL}" != " clean" ]; then
 		exec ./build/us_pc/sm64.us.f3dex2e.exe
 	fi 
 else
-	printf "\nYour build is now clean\n"
+	printf "\nYour build is now clean.\n"
 fi 
