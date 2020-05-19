@@ -519,8 +519,8 @@ void optmenu_check_buttons(void) {
     
     /* Enables cheats if the user press the L trigger 3 times while in the options menu. Also plays a sound. */
     
-    if (gPlayer1Controller->buttonPressed & L_TRIG && !Cheats.EnableCheats){
-        if (l_counter == 2){
+    if ((gPlayer1Controller->buttonPressed & L_TRIG) && !Cheats.EnableCheats) {
+        if (l_counter == 2) {
                 Cheats.EnableCheats = true;
                 play_sound(SOUND_MENU_STAR_SOUND, gDefaultSoundArgs);
                 l_counter = 0;
