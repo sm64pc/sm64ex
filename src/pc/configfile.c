@@ -78,6 +78,7 @@ bool         configEnableCamera  = false;
 bool         configCameraMouse   = false;
 #endif
 unsigned int configSkipIntro     = 0;
+bool         configHUD           = true;
 
 static const struct ConfigOption options[] = {
     {.name = "fullscreen",           .type = CONFIG_TYPE_BOOL, .boolValue = &configWindow.fullscreen},
