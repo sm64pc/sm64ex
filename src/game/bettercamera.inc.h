@@ -442,8 +442,9 @@ static void newcam_update_values(void)
 {//For tilt, this just limits it so it doesn't go further than 90 degrees either way. 90 degrees is actually 16384, but can sometimes lead to issues, so I just leave it shy of 90.
     u8 waterflag = 0;
     if (newcam_modeflags & NC_FLAG_XTURN)
-        newcam_yaw += (ivrt(0)*(newcam_yaw_acc*(newcam_sensitivityX/10)));
-        if (newcam_mouse == 1)
+        if (newcam_mouse == 0)
+            newcam_yaw += (ivrt(0)*(newcam_yaw_acc*(newcam_sensitivityX/10)));
+        else
             newcam_yaw += (mivrt(0)*(newcam_yaw_acc*(newcam_sensitivityX/10)));
     if (((newcam_tilt < 12000 && newcam_tilt_acc*ivrt(1) > 0) || (newcam_tilt > -12000 && newcam_tilt_acc*ivrt(1) < 0)) || ((newcam_tilt < 12000 && newcam_tilt_acc*mivrt(1) > 0) || (newcam_tilt > -12000 && newcam_tilt_acc*mivrt(1) < 0)) && newcam_modeflags & NC_FLAG_YTURN)
         if (newcam_mouse == 0)
