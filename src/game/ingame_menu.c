@@ -19,6 +19,7 @@
 #include "print.h"
 #include "engine/math_util.h"
 #include "course_table.h"
+#include "pc/cheats.h"
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif
@@ -2629,8 +2630,9 @@ s16 render_pause_courses_and_castle(void) {
             shade_screen();
             render_pause_my_score_coins();
             render_pause_red_coins();
-
-            if (gMarioStates[0].action & ACT_FLAG_PAUSE_EXIT) {
+            
+/* Added support for the "Exit course at any time" cheat */
+            if ((gMarioStates[0].action & ACT_FLAG_PAUSE_EXIT) || (Cheats.EnableCheats && Cheats.ExitAnywhere)) {
                 render_pause_course_options(99, 93, &gDialogLineNum, 15);
             }
 
