@@ -1,94 +1,62 @@
 af_vfs.lo: af_vfs.cpp ../config.h afinternal.h \
- C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sys/types.h \
- C:/git-sdk-64/mingw32/i686-w64-mingw32/include/crtdefs.h \
- C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt.h \
- C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw.h \
- C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_mac.h \
- C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_secapi.h \
- C:/git-sdk-64/mingw32/i686-w64-mingw32/include/vadefs.h \
- C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sdks/_mingw_ddk.h \
- C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_off_t.h \
+ I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/sys/types.h \
+ I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/crtdefs.h \
+ I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/corecrt.h \
+ I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/_mingw.h \
+ I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/_mingw_mac.h \
+ I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/_mingw_secapi.h \
+ I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/vadefs.h \
+ I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h \
+ I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/_mingw_off_t.h \
  audiofile.h aupvlist.h \
- C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include/stdint.h \
- C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stdint.h \
- C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include/stddef.h \
- C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stddef.h error.h af_vfs.h \
- audiofile.h C:/git-sdk-64/mingw32/include/c++/9.3.0/stdlib.h \
- C:/git-sdk-64/mingw32/include/c++/9.3.0/cstdlib \
- C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/c++config.h \
- C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/os_defines.h \
- C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/cpu_defines.h \
- C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stdlib.h \
- C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt_wstdlib.h \
- C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include-fixed/limits.h \
- C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include-fixed/syslimits.h \
- C:/git-sdk-64/mingw32/i686-w64-mingw32/include/limits.h \
- C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sec_api/stdlib_s.h \
- C:/git-sdk-64/mingw32/i686-w64-mingw32/include/malloc.h \
- C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/std_abs.h
-
+ I:/Development/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/10.1.0/include/stdint.h \
+ I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/stdint.h \
+ I:/Development/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/10.1.0/include/stddef.h \
+ I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/stddef.h error.h \
+ af_vfs.h audiofile.h \
+ I:/Development/MSYS2/mingw64/include/c++/10.1.0/stdlib.h \
+ I:/Development/MSYS2/mingw64/include/c++/10.1.0/cstdlib \
+ I:/Development/MSYS2/mingw64/include/c++/10.1.0/x86_64-w64-mingw32/bits/c++config.h \
+ I:/Development/MSYS2/mingw64/include/c++/10.1.0/x86_64-w64-mingw32/bits/os_defines.h \
+ I:/Development/MSYS2/mingw64/include/c++/10.1.0/x86_64-w64-mingw32/bits/cpu_defines.h \
+ I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/stdlib.h \
+ I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/corecrt_wstdlib.h \
+ I:/Development/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/10.1.0/include-fixed/limits.h \
+ I:/Development/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/10.1.0/include-fixed/syslimits.h \
+ I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/limits.h \
+ I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/sec_api/stdlib_s.h \
+ I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/malloc.h \
+ I:/Development/MSYS2/mingw64/include/c++/10.1.0/bits/std_abs.h
 ../config.h:
-
 afinternal.h:
-
-C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sys/types.h:
-
-C:/git-sdk-64/mingw32/i686-w64-mingw32/include/crtdefs.h:
-
-C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt.h:
-
-C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw.h:
-
-C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_mac.h:
-
-C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_secapi.h:
-
-C:/git-sdk-64/mingw32/i686-w64-mingw32/include/vadefs.h:
-
-C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sdks/_mingw_ddk.h:
-
-C:/git-sdk-64/mingw32/i686-w64-mingw32/include/_mingw_off_t.h:
-
+I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/sys/types.h:
+I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/crtdefs.h:
+I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/corecrt.h:
+I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/_mingw.h:
+I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/_mingw_mac.h:
+I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/_mingw_secapi.h:
+I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/vadefs.h:
+I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h:
+I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/_mingw_off_t.h:
 audiofile.h:
-
 aupvlist.h:
-
-C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include/stdint.h:
-
-C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stdint.h:
-
-C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include/stddef.h:
-
-C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stddef.h:
-
+I:/Development/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/10.1.0/include/stdint.h:
+I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/stdint.h:
+I:/Development/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/10.1.0/include/stddef.h:
+I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/stddef.h:
 error.h:
-
 af_vfs.h:
-
 audiofile.h:
-
-C:/git-sdk-64/mingw32/include/c++/9.3.0/stdlib.h:
-
-C:/git-sdk-64/mingw32/include/c++/9.3.0/cstdlib:
-
-C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/c++config.h:
-
-C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/os_defines.h:
-
-C:/git-sdk-64/mingw32/include/c++/9.3.0/i686-w64-mingw32/bits/cpu_defines.h:
-
-C:/git-sdk-64/mingw32/i686-w64-mingw32/include/stdlib.h:
-
-C:/git-sdk-64/mingw32/i686-w64-mingw32/include/corecrt_wstdlib.h:
-
-C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include-fixed/limits.h:
-
-C:/git-sdk-64/mingw32/lib/gcc/i686-w64-mingw32/9.3.0/include-fixed/syslimits.h:
-
-C:/git-sdk-64/mingw32/i686-w64-mingw32/include/limits.h:
-
-C:/git-sdk-64/mingw32/i686-w64-mingw32/include/sec_api/stdlib_s.h:
-
-C:/git-sdk-64/mingw32/i686-w64-mingw32/include/malloc.h:
-
-C:/git-sdk-64/mingw32/include/c++/9.3.0/bits/std_abs.h:
+I:/Development/MSYS2/mingw64/include/c++/10.1.0/stdlib.h:
+I:/Development/MSYS2/mingw64/include/c++/10.1.0/cstdlib:
+I:/Development/MSYS2/mingw64/include/c++/10.1.0/x86_64-w64-mingw32/bits/c++config.h:
+I:/Development/MSYS2/mingw64/include/c++/10.1.0/x86_64-w64-mingw32/bits/os_defines.h:
+I:/Development/MSYS2/mingw64/include/c++/10.1.0/x86_64-w64-mingw32/bits/cpu_defines.h:
+I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/stdlib.h:
+I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/corecrt_wstdlib.h:
+I:/Development/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/10.1.0/include-fixed/limits.h:
+I:/Development/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/10.1.0/include-fixed/syslimits.h:
+I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/limits.h:
+I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/sec_api/stdlib_s.h:
+I:/Development/MSYS2/mingw64/x86_64-w64-mingw32/include/malloc.h:
+I:/Development/MSYS2/mingw64/include/c++/10.1.0/bits/std_abs.h:
