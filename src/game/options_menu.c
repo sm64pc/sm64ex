@@ -23,6 +23,7 @@
 #include "pc/controller/controller_api.h"
 
 #include <stdbool.h>
+#include "../../include/libc/stdlib.h"
 
 u8 optmenu_open = 0;
 

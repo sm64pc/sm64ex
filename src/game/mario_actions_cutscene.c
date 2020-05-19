@@ -3,7 +3,6 @@
 #include "prevent_bss_reordering.h"
 #include "sm64.h"
 #include "gfx_dimensions.h"
-//#include "game.h"
 #include "game_init.h"
 #include "sound_init.h"
 #include "level_update.h"
