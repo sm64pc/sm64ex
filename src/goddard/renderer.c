@@ -649,8 +649,8 @@ static Gfx *gd_red_sparkle_dl_array[] = {
     gd_dl_red_sparkle_0,
     gd_dl_red_sparkle_0,
 #ifndef TEXTURE_FIX
-    gd_dl_red_sparkle_4,
-    gd_dl_red_sparkle_4,
+    gd_dl_red_sparkle_4_dup,
+    gd_dl_red_sparkle_4_dup,
 #else
     gd_dl_red_sparkle_5,
     gd_dl_red_sparkle_5,
@@ -669,8 +669,8 @@ static Gfx *gd_silver_sparkle_dl_array[] = {
     gd_dl_silver_sparkle_0,
     gd_dl_silver_sparkle_0,
 #ifndef TEXTURE_FIX
-    gd_dl_silver_sparkle_4,
-    gd_dl_silver_sparkle_4,
+    gd_dl_silver_sparkle_4_dup,
+    gd_dl_silver_sparkle_4_dup,
 #else
     gd_dl_silver_sparkle_5,
     gd_dl_silver_sparkle_5,
