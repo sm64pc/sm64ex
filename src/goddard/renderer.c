@@ -569,12 +569,22 @@ static Gfx gd_dl_red_sparkle_4[] = {
     gsSPBranchList(gd_dl_sparkle),
 };
 
+#ifndef TEXTURE_FIX
 static Gfx gd_dl_red_sparkle_4_dup[] ={
     gsDPPipeSync(),
     gsSPDisplayList(gd_dl_sparkle_red_color),
     gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, gd_texture_sparkle_4), // 4 again, correct texture would be 5
     gsSPBranchList(gd_dl_sparkle),
 };
+
+#else
+static Gfx gd_dl_red_sparkle_5[] ={
+    gsDPPipeSync(),
+    gsSPDisplayList(gd_dl_sparkle_red_color),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, gd_texture_sparkle_5),
+    gsSPBranchList(gd_dl_sparkle),
+};
+#endif
 
 static Gfx gd_dl_silver_sparkle_0[] = {
     gsDPPipeSync(),
@@ -611,12 +621,22 @@ static Gfx gd_dl_silver_sparkle_4[] = {
     gsSPBranchList(gd_dl_sparkle),
 };
 
+#ifndef TEXTURE_FIX
 static Gfx gd_dl_silver_sparkle_4_dup[] = {
     gsDPPipeSync(),
     gsSPDisplayList(gd_dl_sparkle_white_color),
     gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, gd_texture_sparkle_4), // 4 again, correct texture would be 5
     gsSPBranchList(gd_dl_sparkle),
 };
+
+#else
+static Gfx gd_dl_silver_sparkle_5[] = {
+    gsDPPipeSync(),
+    gsSPDisplayList(gd_dl_sparkle_white_color),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, gd_texture_sparkle_5),
+    gsSPBranchList(gd_dl_sparkle),
+};
+#endif
 
 static Gfx *gd_red_sparkle_dl_array[] = {
     gd_dl_red_sparkle_4,
@@ -629,8 +649,13 @@ static Gfx *gd_red_sparkle_dl_array[] = {
     gd_dl_red_sparkle_1,
     gd_dl_red_sparkle_0,
     gd_dl_red_sparkle_0,
+#ifndef TEXTURE_FIX
     gd_dl_red_sparkle_4_dup,
     gd_dl_red_sparkle_4_dup,
+#else
+    gd_dl_red_sparkle_5,
+    gd_dl_red_sparkle_5,
+#endif
 };
 
 static Gfx *gd_silver_sparkle_dl_array[] = {
@@ -644,8 +669,13 @@ static Gfx *gd_silver_sparkle_dl_array[] = {
     gd_dl_silver_sparkle_1,
     gd_dl_silver_sparkle_0,
     gd_dl_silver_sparkle_0,
+#ifndef TEXTURE_FIX
     gd_dl_silver_sparkle_4_dup,
     gd_dl_silver_sparkle_4_dup,
+#else
+    gd_dl_silver_sparkle_5,
+    gd_dl_silver_sparkle_5,
+#endif
 };
 
 static Gfx gd_texture3_dummy_aligner1[] = {
