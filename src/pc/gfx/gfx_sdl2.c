@@ -39,12 +39,15 @@
 # define FRAMERATE 30
 #endif
 
-static const Uint32 FRAME_TIME = 1000 / FRAMERATE;
-
-static SDL_Window *wnd;
-static SDL_GLContext ctx = NULL;
-static int inverted_scancode_table[512];
-static Uint32 frame_start = 0;
+static struct {
+    SDL_GLContext ctx;
+    SDL_Window*   wnd;
+    Uint64        frametime;
+    int           refresh_rate;
+    int           swap_interval;
+    bool          exiting_fullscreen;
+    int           inverted_scancode_table[512];
+} gContext = { 0 };
 
 const SDL_Scancode windows_scancode_table[] =
 {
@@ -97,47 +100,123 @@ const SDL_Scancode scancode_rmapping_nonextended[][2] = {
     {SDL_SCANCODE_KP_MULTIPLY, SDL_SCANCODE_PRINTSCREEN}
 };
 
-#define IS_FULLSCREEN (SDL_GetWindowFlags(wnd) & SDL_WINDOW_FULLSCREEN_DESKTOP)
+#define IS_FULLSCREEN \
+    (SDL_GetWindowFlags(gContext.wnd) & SDL_WINDOW_FULLSCREEN_DESKTOP)
+
+static void gfx_sdl_update_vsync() {
+    static int current_swap_interval = -1;
+
+    if (!configWindow.vsync) {
+        gContext.swap_interval = 0;
+    } else if (
+        gContext.refresh_rate < FRAMERATE || gContext.refresh_rate % FRAMERATE
+    ) {
+        // Soft disable vsync in environemts where display's refresh rate
+        // information is unavailable or it is not a multiple of the game's
+        // fixed framerate
+        if (gContext.swap_interval != 0) {
+            SDL_LogError(SDL_LOG_CATEGORY_VIDEO, "Vsync is not available");
+            gContext.swap_interval = 0;
+        }
+    } else {
+        gContext.swap_interval = gContext.refresh_rate / FRAMERATE;
+    }
+
+    // Avoid unecessary changes
+    if (gContext.swap_interval == current_swap_interval) return;
+    if (
+        current_swap_interval != -1
+        && current_swap_interval != 0 && gContext.swap_interval != 0
+    ) {
+        // Allow an unsynchronized frame to render to avoid possible jitter
+        // introduced by immediatly changing swap_interval
+        current_swap_interval = 0;
+        SDL_GL_SetSwapInterval(0);
+        SDL_LogDebug(SDL_LOG_CATEGORY_VIDEO, "Jitter fix");
+        return;
+    }
+
+    if (
+        SDL_GL_SetSwapInterval(gContext.swap_interval) && gContext.swap_interval
+    ) {
+        // Failed to set intended swap interval, force disabled vsync
+        configWindow.vsync = false;
+        SDL_LogError(SDL_LOG_CATEGORY_VIDEO, "Failed to enable vsync");
+        return gfx_sdl_update_vsync(); // Recurse once to reset vsync
+    }
+
+    // Cache current swap valuez
+    current_swap_interval = gContext.swap_interval;
+
+    if (gContext.swap_interval)
+        SDL_LogDebug(
+            SDL_LOG_CATEGORY_VIDEO, "Vsync enable: %d", gContext.swap_interval
+        );
+    else
+        SDL_LogDebug(SDL_LOG_CATEGORY_VIDEO, "Vsync disabled");
+}
 
 static void gfx_sdl_set_fullscreen() {
     if (configWindow.fullscreen == IS_FULLSCREEN)
         return;
     if (configWindow.fullscreen) {
-        SDL_SetWindowFullscreen(wnd, SDL_WINDOW_FULLSCREEN_DESKTOP);
+        SDL_SetWindowFullscreen(gContext.wnd, SDL_WINDOW_FULLSCREEN_DESKTOP);
         SDL_ShowCursor(SDL_DISABLE);
     } else {
-        SDL_SetWindowFullscreen(wnd, 0);
+        SDL_SetWindowFullscreen(gContext.wnd, 0);
         SDL_ShowCursor(SDL_ENABLE);
-        configWindow.exiting_fullscreen = true;
+        gContext.exiting_fullscreen = true;
     }
 }
 
+static void gfx_sdl_update_refresh_rate() {
+    //! FIXME:
+    // SDL caches the display's current_mode at initialization and only updates
+    // it on explicit SDL mode change calls. So, if any external change happens
+    // it will report wrong values.
+    // Research a way to force SDL to update the display's current_mode on
+    // external changes.
+    // https://stackoverflow.com/questions/39810237/get-the-updated-screen-resolution-in-sdl2
+    SDL_DisplayMode current_display_mode = { 0 };
+    int current_display = SDL_GetWindowDisplayIndex(gContext.wnd);
+    if (current_display < 0
+        || SDL_GetCurrentDisplayMode(current_display, &current_display_mode)
+    ) {
+        // Failed to query display refresh rate, defaults to 0 to disable vsync
+        gContext.refresh_rate = 0;
+        SDL_LogError(SDL_LOG_CATEGORY_VIDEO, "Failed to query refresh rate");
+        return;
+    }
+
+    gContext.refresh_rate = current_display_mode.refresh_rate;
+}
+
 static void gfx_sdl_reset_dimension_and_pos() {
-    if (configWindow.exiting_fullscreen) {
-        configWindow.exiting_fullscreen = false;
+    if (gContext.exiting_fullscreen) {
+        gContext.exiting_fullscreen = false;
     } else if (configWindow.reset) {
         configWindow.x = SDL_WINDOWPOS_CENTERED;
         configWindow.y = SDL_WINDOWPOS_CENTERED;
         configWindow.w = DESIRED_SCREEN_WIDTH;
         configWindow.h = DESIRED_SCREEN_HEIGHT;
+        configWindow.vsync = true;
         configWindow.reset = false;
 
         if (IS_FULLSCREEN) {
             configWindow.fullscreen = false;
             return;
         }
-    } else if (!configWindow.settings_changed) {
+    } else {
         return;
     }
 
-    configWindow.settings_changed = false;
-    SDL_SetWindowSize(wnd, configWindow.w, configWindow.h);
-    SDL_SetWindowPosition(wnd, configWindow.x, configWindow.y);
-    SDL_GL_SetSwapInterval(configWindow.vsync); // in case vsync changed
+    SDL_SetWindowSize(gContext.wnd, configWindow.w, configWindow.h);
+    SDL_SetWindowPosition(gContext.wnd, configWindow.x, configWindow.y);
 }
 
 static void gfx_sdl_init(void) {
     SDL_Init(SDL_INIT_VIDEO);
+    SDL_LogSetAllPriority(getenv("DEBUG") ? SDL_LOG_PRIORITY_DEBUG : SDL_LOG_PRIORITY_INFO);
 
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -163,49 +242,57 @@ static void gfx_sdl_init(void) {
     "Super Mario 64 PC port (OpenGL_ES2)";
     #endif
 
-    wnd = SDL_CreateWindow(
+    gContext.wnd = SDL_CreateWindow(
         window_title,
         configWindow.x, configWindow.y, configWindow.w, configWindow.h,
         SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
     );
-    ctx = SDL_GL_CreateContext(wnd);
+    gContext.ctx = SDL_GL_CreateContext(gContext.wnd);
 
-    SDL_GL_SetSwapInterval(configWindow.vsync);
-
+    gfx_sdl_update_refresh_rate();
+    gfx_sdl_update_vsync();
     gfx_sdl_set_fullscreen();
 
+    // Time that a game's frame should take relative to SDL performance frequency
+    gContext.frametime = SDL_GetPerformanceFrequency() / FRAMERATE;
+
     for (size_t i = 0; i < sizeof(windows_scancode_table) / sizeof(SDL_Scancode); i++) {
-        inverted_scancode_table[windows_scancode_table[i]] = i;
+        gContext.inverted_scancode_table[windows_scancode_table[i]] = i;
     }
 
     for (size_t i = 0; i < sizeof(scancode_rmapping_extended) / sizeof(scancode_rmapping_extended[0]); i++) {
-        inverted_scancode_table[scancode_rmapping_extended[i][0]] = inverted_scancode_table[scancode_rmapping_extended[i][1]] + 0x100;
+        gContext.inverted_scancode_table[scancode_rmapping_extended[i][0]] = gContext.inverted_scancode_table[scancode_rmapping_extended[i][1]] + 0x100;
     }
 
     for (size_t i = 0; i < sizeof(scancode_rmapping_nonextended) / sizeof(scancode_rmapping_nonextended[0]); i++) {
-        inverted_scancode_table[scancode_rmapping_nonextended[i][0]] = inverted_scancode_table[scancode_rmapping_nonextended[i][1]];
-        inverted_scancode_table[scancode_rmapping_nonextended[i][1]] += 0x100;
+        gContext.inverted_scancode_table[scancode_rmapping_nonextended[i][0]] = gContext.inverted_scancode_table[scancode_rmapping_nonextended[i][1]];
+        gContext.inverted_scancode_table[scancode_rmapping_nonextended[i][1]] += 0x100;
     }
 }
 
 static void gfx_sdl_main_loop(void (*run_one_game_iter)(void)) {
-    Uint32 t;
+    Uint64 start, elapsed;
     while (1) {
-        t = SDL_GetTicks();
+        start = SDL_GetPerformanceCounter();
         run_one_game_iter();
-        t = SDL_GetTicks() - t;
-        if (t < FRAME_TIME && configWindow.vsync <= 1)
-            SDL_Delay(FRAME_TIME - t);
+
+        if (gContext.swap_interval != 0) continue;
+
+        elapsed = SDL_GetPerformanceCounter() - start;
+        while (elapsed < gContext.frametime) {
+            SDL_Delay(0);
+            elapsed = SDL_GetPerformanceCounter() - start;
+        }
     }
 }
 
 static void gfx_sdl_get_dimensions(uint32_t *width, uint32_t *height) {
-    SDL_GetWindowSize(wnd, width, height);
+    SDL_GetWindowSize(gContext.wnd, width, height);
 }
 
 static int translate_scancode(int scancode) {
     if (scancode < 512) {
-        return inverted_scancode_table[scancode];
+        return gContext.inverted_scancode_table[scancode];
     } else {
         return 0;
     }
@@ -239,8 +326,10 @@ static void gfx_sdl_handle_events(void) {
                 gfx_sdl_onkeyup(event.key.keysym.scancode);
                 break;
 #endif
-            case SDL_WINDOWEVENT: // TODO: Check if this makes sense to be included in the Web build
-                if (!(IS_FULLSCREEN || configWindow.exiting_fullscreen)) {
+            case SDL_WINDOWEVENT:
+                gfx_sdl_update_refresh_rate();
+                if (!(IS_FULLSCREEN || gContext.exiting_fullscreen)) {
+                    // TODO: Check if this makes sense to be included in the Web build
                     switch (event.window.event) {
                         case SDL_WINDOWEVENT_MOVED:
                             configWindow.x = event.window.data1;
@@ -259,17 +348,17 @@ static void gfx_sdl_handle_events(void) {
         }
     }
 
+    gfx_sdl_update_vsync();
     gfx_sdl_reset_dimension_and_pos();
     gfx_sdl_set_fullscreen();
 }
 
 static bool gfx_sdl_start_frame(void) {
-    frame_start = SDL_GetTicks();
     return true;
 }
 
 static void gfx_sdl_swap_buffers_begin(void) {
-    SDL_GL_SwapWindow(wnd);
+    SDL_GL_SwapWindow(gContext.wnd);
 }
 
 static void gfx_sdl_swap_buffers_end(void) {
@@ -282,8 +371,8 @@ static double gfx_sdl_get_time(void) {
 
 static void gfx_sdl_shutdown(void) {
     if (SDL_WasInit(0)) {
-        if (ctx) { SDL_GL_DeleteContext(ctx); ctx = NULL; }
-        if (wnd) { SDL_DestroyWindow(wnd); wnd = NULL; }
+        if (gContext.ctx) { SDL_GL_DeleteContext(gContext.ctx); gContext.ctx = NULL; }
+        if (gContext.wnd) { SDL_DestroyWindow(gContext.wnd); gContext.wnd = NULL; }
         SDL_Quit();
     }
 }
