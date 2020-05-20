@@ -1535,7 +1535,7 @@ static void gfx_run_dl(Gfx* cmd) {
             case G_TEXRECT:
             case G_TEXRECTFLIP:
             {
-                int32_t lrx, lry, tile, ulx, uly;
+                int32_t lrx, lry, tile = 0, ulx, uly;
                 uint32_t uls, ult, dsdx, dtdy;
 #ifdef F3DEX_GBI_2E
                 lrx = (int32_t)(C0(0, 24) << 8) >> 8;

@@ -291,8 +291,8 @@ static void add_surface(struct Surface *surface, s32 dynamic) {
     }
 }
 
-static void stub_surface_load_1(void) {
-}
+//static void stub_surface_load_1(void) {
+//}
 
 /**
  * Initializes a Surface struct using the given vertex data
@@ -651,8 +651,8 @@ void clear_dynamic_surfaces(void) {
     }
 }
 
-static void unused_80383604(void) {
-}
+//static void unused_80383604(void) {
+//}
 
 /**
  * Applies an object's tranformation to the object's vertices.

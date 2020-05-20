@@ -71,7 +71,7 @@ s32 approach_forward_vel(f32 *arr, f32 spC, f32 sp10) {
 }
 
 void chuckya_act_0(void) {
-    s32 sp3C;
+    s32 sp3C = 0;
     UNUSED u8 pad[16];
     s32 sp28;
     if (o->oTimer == 0)

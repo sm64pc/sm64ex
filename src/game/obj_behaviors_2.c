@@ -688,10 +688,10 @@ static void obj_die_if_health_non_positive(void) {
     }
 }
 
-static void obj_unused_die(void) {
-    o->oHealth = 0;
-    obj_die_if_health_non_positive();
-}
+//static void obj_unused_die(void) {
+//    o->oHealth = 0;
+//    obj_die_if_health_non_positive();
+//}
 
 static void obj_set_knockback_action(s32 attackType) {
     switch (attackType) {

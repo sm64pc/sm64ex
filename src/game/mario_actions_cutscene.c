@@ -220,11 +220,11 @@ s32 geo_switch_peach_eyes(s32 run, struct GraphNode *node, UNUSED s32 a2) {
 }
 
 // unused
-static void stub_is_textbox_active(u16 *a0) {
-    if (get_dialog_id() == -1) {
-        *a0 = 0;
-    }
-}
+//static void stub_is_textbox_active(u16 *a0) {
+//    if (get_dialog_id() == -1) {
+//        *a0 = 0;
+//    }
+//}
 
 /**
  * get_star_collection_dialog: Determine what dialog should show when Mario

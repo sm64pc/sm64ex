@@ -10,6 +10,7 @@
 #include "surface_load.h"
 #include "game/object_list_processor.h"
 #include "math_util.h"
+#include "macros.h"
 
 /**************************************************
  *                      WALLS                      *
@@ -373,7 +374,7 @@ f32 unused_obj_find_floor_height(struct Object *obj) {
  */
 struct FloorGeometry sFloorGeo;
 
-static u8 unused8038BE50[0x40];
+UNUSED static u8 unused8038BE50[0x40];
 
 /**
  * Return the floor height underneath (xPos, yPos, zPos) and populate `floorGeo`

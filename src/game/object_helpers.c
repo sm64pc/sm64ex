@@ -1395,8 +1395,8 @@ void cur_obj_move_y(f32 gravity, f32 bounciness, f32 buoyancy) {
     }
 }
 
-static void stub_obj_helpers_1(void) {
-}
+//static void stub_obj_helpers_1(void) {
+//}
 
 static s32 clear_move_flag(u32 *bitSet, s32 flag) {
     if (*bitSet & flag) {
@@ -2255,8 +2255,8 @@ void bhv_dust_smoke_loop(void) {
     o->oSmokeTimer++;
 }
 
-static void stub_obj_helpers_2(void) {
-}
+//static void stub_obj_helpers_2(void) {
+//}
 
 s32 cur_obj_set_direction_table(s8 *a0) {
     o->oToxBoxUnk1AC = a0;
@@ -2404,8 +2404,8 @@ s32 is_item_in_array(s8 item, s8 *array) {
     return FALSE;
 }
 
-static void stub_obj_helpers_5(void) {
-}
+//static void stub_obj_helpers_5(void) {
+//}
 
 void bhv_init_room(void) {
     struct Surface *floor;

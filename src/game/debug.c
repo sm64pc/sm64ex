@@ -336,54 +336,54 @@ void reset_debug_objectinfo(void) {
  * C Right) and then toggles the debug flags from FF to 2; 2 is unused,
  * despite so this has no effect, being called. (unused)
  */
-static void check_debug_button_seq(void) {
-    s16 *buttonArr;
-    s16 cButtonMask;
+//static void check_debug_button_seq(void) {
+//    s16 *buttonArr;
+//    s16 cButtonMask;
 
-    buttonArr = sDebugInfoButtonSeq;
+//    buttonArr = sDebugInfoButtonSeq;
 
-    if (!(gPlayer1Controller->buttonDown & L_TRIG)) {
-        sDebugInfoButtonSeqID = 0;
-    } else {
-        if ((s16)(cButtonMask = (gPlayer1Controller->buttonPressed & C_BUTTONS))) {
-            if (buttonArr[sDebugInfoButtonSeqID] == cButtonMask) {
-                sDebugInfoButtonSeqID += 1;
-                if (buttonArr[sDebugInfoButtonSeqID] == -1) {
-                    if (gDebugInfoFlags == DEBUG_INFO_FLAG_ALL) {
-                        gDebugInfoFlags = DEBUG_INFO_FLAG_LSELECT;
-                    } else {
-                        gDebugInfoFlags = DEBUG_INFO_FLAG_ALL;
-                    }
-                }
-            } else {
-                sDebugInfoButtonSeqID = 0;
-            }
-        }
-    }
-}
+//    if (!(gPlayer1Controller->buttonDown & L_TRIG)) {
+//        sDebugInfoButtonSeqID = 0;
+//    } else {
+//        if ((s16)(cButtonMask = (gPlayer1Controller->buttonPressed & C_BUTTONS))) {
+//            if (buttonArr[sDebugInfoButtonSeqID] == cButtonMask) {
+//                sDebugInfoButtonSeqID += 1;
+//                if (buttonArr[sDebugInfoButtonSeqID] == -1) {
+//                    if (gDebugInfoFlags == DEBUG_INFO_FLAG_ALL) {
+//                        gDebugInfoFlags = DEBUG_INFO_FLAG_LSELECT;
+//                    } else {
+//                        gDebugInfoFlags = DEBUG_INFO_FLAG_ALL;
+//                    }
+//                }
+//            } else {
+//                sDebugInfoButtonSeqID = 0;
+//            }
+//        }
+//    }
+//}
 
 /*
  * Poll the debug info flags and controller for appropriate presses that
  * control sDebugPage's range. (unused)
  */
-static void try_change_debug_page(void) {
-    if (gDebugInfoFlags & DEBUG_INFO_FLAG_DPRINT) {
-        if ((gPlayer1Controller->buttonPressed & L_JPAD)
-            && (gPlayer1Controller->buttonDown & (L_TRIG | R_TRIG))) {
-            sDebugPage += 1;
-        }
-        if ((gPlayer1Controller->buttonPressed & R_JPAD)
-            && (gPlayer1Controller->buttonDown & (L_TRIG | R_TRIG))) {
-            sDebugPage -= 1;
-        }
-        if (sDebugPage >= (DEBUG_PAGE_MAX + 1)) {
-            sDebugPage = DEBUG_PAGE_MIN;
-        }
-        if (sDebugPage < DEBUG_PAGE_MIN) {
-            sDebugPage = DEBUG_PAGE_MAX;
-        }
-    }
-}
+//static void try_change_debug_page(void) {
+//    if (gDebugInfoFlags & DEBUG_INFO_FLAG_DPRINT) {
+//        if ((gPlayer1Controller->buttonPressed & L_JPAD)
+//            && (gPlayer1Controller->buttonDown & (L_TRIG | R_TRIG))) {
+//            sDebugPage += 1;
+//        }
+//        if ((gPlayer1Controller->buttonPressed & R_JPAD)
+//            && (gPlayer1Controller->buttonDown & (L_TRIG | R_TRIG))) {
+//            sDebugPage -= 1;
+//        }
+//        if (sDebugPage >= (DEBUG_PAGE_MAX + 1)) {
+//            sDebugPage = DEBUG_PAGE_MIN;
+//        }
+//        if (sDebugPage < DEBUG_PAGE_MIN) {
+//            sDebugPage = DEBUG_PAGE_MAX;
+//        }
+//    }
+//}
 
 /*
  * Use the controller to modify gDebugInfo and the sys cursor while
@@ -391,52 +391,52 @@ static void try_change_debug_page(void) {
  * sDebugSysCursor. This is used to adjust enemy and effect behaviors
  * on the fly. (unused)
  */
-#ifndef VERSION_SH
-static
-#endif
-void try_modify_debug_controls(void) {
-    s32 sp4;
+//#ifndef VERSION_SH
+//static
+//#endif
+//void try_modify_debug_controls(void) {
+//    s32 sp4;
 
-    if (gPlayer1Controller->buttonPressed & Z_TRIG) {
-        sNoExtraDebug ^= 1;
-    }
-    if (!(gPlayer1Controller->buttonDown & (L_TRIG | R_TRIG)) && sNoExtraDebug == FALSE) {
-        sp4 = 1;
-        if (gPlayer1Controller->buttonDown & B_BUTTON) {
-            sp4 = 100;
-        }
+//    if (gPlayer1Controller->buttonPressed & Z_TRIG) {
+//        sNoExtraDebug ^= 1;
+//    }
+//    if (!(gPlayer1Controller->buttonDown & (L_TRIG | R_TRIG)) && sNoExtraDebug == FALSE) {
+//        sp4 = 1;
+//        if (gPlayer1Controller->buttonDown & B_BUTTON) {
+//            sp4 = 100;
+//        }
 
-        if (sDebugInfoDPadMask & U_JPAD) {
-            sDebugSysCursor -= 1;
-            if (sDebugSysCursor < 0) {
-                sDebugSysCursor = 0;
-            }
-        }
+//        if (sDebugInfoDPadMask & U_JPAD) {
+//            sDebugSysCursor -= 1;
+//            if (sDebugSysCursor < 0) {
+//                sDebugSysCursor = 0;
+//            }
+//        }
 
-        if (sDebugInfoDPadMask & D_JPAD) {
-            sDebugSysCursor += 1;
-            if (sDebugSysCursor >= 8) {
-                sDebugSysCursor = 7;
-            }
-        }
+//        if (sDebugInfoDPadMask & D_JPAD) {
+//            sDebugSysCursor += 1;
+//            if (sDebugSysCursor >= 8) {
+//                sDebugSysCursor = 7;
+//            }
+//        }
 
-        if (sDebugInfoDPadMask & L_JPAD) {
+//        if (sDebugInfoDPadMask & L_JPAD) {
             // we allow the player while in this mode to modify the debug controls. This is
             // so the playtester can adjust enemy behavior and parameters on the fly, since
             // various behaviors try to update their behaviors from gDebugInfo[4] and [5].
-            if (gPlayer1Controller->buttonDown & A_BUTTON) {
-                gDebugInfo[sDebugPage][sDebugSysCursor] =
-                    gDebugInfoOverwrite[sDebugPage][sDebugSysCursor];
-            } else {
-                gDebugInfo[sDebugPage][sDebugSysCursor] = gDebugInfo[sDebugPage][sDebugSysCursor] - sp4;
-            }
-        }
+//            if (gPlayer1Controller->buttonDown & A_BUTTON) {
+//                gDebugInfo[sDebugPage][sDebugSysCursor] =
+//                    gDebugInfoOverwrite[sDebugPage][sDebugSysCursor];
+//            } else {
+//                gDebugInfo[sDebugPage][sDebugSysCursor] = gDebugInfo[sDebugPage][sDebugSysCursor] - sp4;
+//            }
+//        }
 
-        if (sDebugInfoDPadMask & R_JPAD) {
-            gDebugInfo[sDebugPage][sDebugSysCursor] = gDebugInfo[sDebugPage][sDebugSysCursor] + sp4;
-        }
-    }
-}
+//        if (sDebugInfoDPadMask & R_JPAD) {
+//            gDebugInfo[sDebugPage][sDebugSysCursor] = gDebugInfo[sDebugPage][sDebugSysCursor] + sp4;
+//        }
+//    }
+//}
 
 // possibly a removed debug control (TODO: check DD)
 void stub_debug_5(void) {

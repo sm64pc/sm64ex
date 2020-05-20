@@ -1,8 +1,8 @@
 #include <string.h>
 #include <stdint.h>
 #include <assert.h>
+#include <PR/ultratypes.h>
 #include "macros.h"
-#include "../../include/PR/ultratypes.h"
 
 // Note: Some of this is stolen from Mupen64Plus rsp audio plugin.
 // See abi.h for documentation.
