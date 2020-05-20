@@ -48,6 +48,10 @@ TEXTSAVES ?= 0
 NO_BZERO_BCOPY ?= 0
 NO_LDIV ?= 0
 
+# Use OpenGL 1.3 renderer
+
+LEGACY_GL ?= 0
+
 # Automatic settings for PC port(s)
 
 NON_MATCHING := 1
@@ -532,6 +536,12 @@ endif
 ifeq ($(NO_LDIV),1)
   CC_CHECK += -DNO_LDIV
   CFLAGS += -DNO_LDIV
+endif
+
+# Use OpenGL 1.3
+ifeq ($(LEGACY_GL),1)
+  CC_CHECK += -DLEGACY_GL
+  CFLAGS += -DLEGACY_GL
 endif
 
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
