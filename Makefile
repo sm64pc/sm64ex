@@ -171,10 +171,10 @@ endif
 # in the makefile that we want should cover assets.)
 
 ifneq ($(MAKECMDGOALS),clean)
-else ifneq ($(MAKECMDGOALS),cleantools)
-else ifneq ($(MAKECMDGOALS),distclean)
-else ifneq ($(MAKECMDGOALS),cleanall)
-else ifneq ($(MAKECMDGOALS),distcleanall)
+ifneq ($(MAKECMDGOALS),cleantools)
+ifneq ($(MAKECMDGOALS),distclean)
+ifneq ($(MAKECMDGOALS),cleanall)
+ifneq ($(MAKECMDGOALS),distcleanall)
 
 # Make sure assets exist
 NOEXTRACT ?= 0
@@ -191,6 +191,10 @@ ifeq ($(DUMMY),FAIL)
   $(error Failed to build tools)
 endif
 
+endif
+endif
+endif
+endif
 endif
 
 ################ Target Executable and Sources ###############

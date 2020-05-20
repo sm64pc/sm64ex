@@ -146,13 +146,17 @@ define level_rules =
 endef
 
 ifneq ($(MAKECMDGOALS),clean)
-else ifneq ($(MAKECMDGOALS),cleantools)
-else ifneq ($(MAKECMDGOALS),distclean)
-else ifneq ($(MAKECMDGOALS),cleanall)
-else ifneq ($(MAKECMDGOALS),distcleanall)
+ifneq ($(MAKECMDGOALS),cleantools)
+ifneq ($(MAKECMDGOALS),distclean)
+ifneq ($(MAKECMDGOALS),cleanall)
+ifneq ($(MAKECMDGOALS),distcleanall)
 $(BUILD_DIR)/level_rules.mk: levels/level_rules.mk levels/level_defines.h
 	$(CPP) $(VERSION_CFLAGS) -I . -o $@ $<
 include $(BUILD_DIR)/level_rules.mk
+endif
+endif
+endif
+endif
 endif
 
 # --------------------------------------
