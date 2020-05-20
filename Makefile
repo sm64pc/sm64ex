@@ -75,6 +75,8 @@ ifeq ($(WINDOWS_BUILD),1)
     TARGET_ARCH = i386pep
     TARGET_BITS = 64
     NO_BZERO_BCOPY := 1
+  else ifeq (__MINGW32__) && !(__MINGW64_VERSION_MAJOR)
+  	NO_BZERO_BCOPY := 1
   endif
 endif
 
