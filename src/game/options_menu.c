@@ -116,6 +116,7 @@ static const u8 bindStr[][32] = {
     { TEXT_BIND_LEFT },
     { TEXT_BIND_RIGHT },
     { TEXT_BIND_WALK },
+    { TEXT_BIND_SPEED },
 };
 
 static const u8 *filterChoices[] = {
@@ -235,6 +236,7 @@ static struct Option optsControls[] = {
     DEF_OPT_BIND( bindStr[14], configKeyStickLeft ),
     DEF_OPT_BIND( bindStr[15], configKeyStickRight ),
     DEF_OPT_BIND( bindStr[16], configKeyWalk ),
+    DEF_OPT_SCROLL( bindStr[17], &configSpeed, 0, 100, 1 ),
 };
 
 static struct Option optsVideo[] = {

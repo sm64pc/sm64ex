@@ -49,6 +49,7 @@
 #define TEXT_BIND_LEFT     _("Stick Left")
 #define TEXT_BIND_RIGHT    _("Stick Right")
 #define TEXT_BIND_WALK     _("Walk Button")
+#define TEXT_BIND_SPEED    _("Walking Speed")
 
 #define TEXT_OPT_CHEATS _("CHEATS")
 #define TEXT_OPT_CHEAT1 _("Enable cheats")

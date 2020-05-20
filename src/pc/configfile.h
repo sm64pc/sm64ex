@@ -36,6 +36,7 @@ extern unsigned int configKeyStickDown[];
 extern unsigned int configKeyStickLeft[];
 extern unsigned int configKeyStickRight[];
 extern unsigned int configKeyWalk[];
+extern unsigned int configSpeed;
 #ifdef BETTERCAMERA
 extern unsigned int configCameraXSens;
 extern unsigned int configCameraYSens;
