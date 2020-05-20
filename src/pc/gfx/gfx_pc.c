@@ -40,8 +40,6 @@
 #define MAX_LIGHTS 2
 #define MAX_VERTICES 64
 
-#define CLOCK_MONOTONIC 0
-
 struct RGBA {
     uint8_t r, g, b, a;
 };
@@ -157,23 +155,37 @@ static size_t buf_vbo_num_tris;
 static struct GfxWindowManagerAPI *gfx_wapi;
 static struct GfxRenderingAPI *gfx_rapi;
 
-#if defined(__MINGW32__) 
-#include <_mingw.h>
-#if !defined(__MINGW64_VERSION_MAJOR)
+#if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR) && !defined(__APPLE__)
+// old mingw
+# include <_mingw.h>
+# define NO_CLOCK_GETTIME
+#endif
+
+#ifdef NO_CLOCK_GETTIME
+
+#if defined(_WIN32)
 #include <windows.h>
-//https://stackoverflow.com/questions/5404277/porting-clock-gettime-to-windows
-struct timespec { long tv_sec; long tv_nsec; };    //header part
-int clock_gettime(int arg, struct timespec *spec)      //C-file part
-{  __int64 wintime; GetSystemTimeAsFileTime((FILETIME*)&wintime);
-   wintime      -=116444736000000000LL;  //1jan1601 to 1jan1970
-   spec->tv_sec  =wintime / 10000000LL;           //seconds
-   spec->tv_nsec =wintime % 10000000LL*100;      //nano-seconds
-   return 0;
+#define CLOCK_MONOTONIC 0
+// https://stackoverflow.com/questions/5404277/porting-clock-gettime-to-windows
+struct timespec { long tv_sec; long tv_nsec; };
+int clock_gettime(int arg, struct timespec *spec) {
+    __int64 wintime;
+    GetSystemTimeAsFileTime((FILETIME*)&wintime);
+    wintime      -= 116444736000000000LL;     //1jan1601 to 1jan1970
+    spec->tv_sec  = wintime / 10000000LL;     //seconds
+    spec->tv_nsec = wintime % 10000000LL*100; //nano-seconds
+    return 0;
 }
-#else
+#else // _WIN32
+#error "Add a clock_gettime() impl for your platform!"
+#endif // _WIN32
+
+#else // NO_CLOCK_GETTIME
+
 #include <time.h>
-#endif
-#endif
+
+#endif // NO_CLOCK_GETTIME
+
 static unsigned long get_time(void) {
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
