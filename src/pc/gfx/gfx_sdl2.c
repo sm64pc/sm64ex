@@ -42,6 +42,7 @@
 static struct {
     SDL_GLContext ctx;
     SDL_Window*   wnd;
+    Uint64        frametime;
     int           refresh_rate;
     int           swap_interval;
     bool          exiting_fullscreen;
@@ -252,6 +253,9 @@ static void gfx_sdl_init(void) {
     gfx_sdl_update_vsync();
     gfx_sdl_set_fullscreen();
 
+    // Time that a game's frame should take relative to SDL performance frequency
+    gContext.frametime = SDL_GetPerformanceFrequency() / FRAMERATE;
+
     for (size_t i = 0; i < sizeof(windows_scancode_table) / sizeof(SDL_Scancode); i++) {
         gContext.inverted_scancode_table[windows_scancode_table[i]] = i;
     }
@@ -267,8 +271,6 @@ static void gfx_sdl_init(void) {
 }
 
 static void gfx_sdl_main_loop(void (*run_one_game_iter)(void)) {
-    // Number of nanosecons a game's frame should take
-    const Uint32 FRAMETIME = 1e9 / FRAMERATE;
     Uint64 start, elapsed;
     while (1) {
         start = SDL_GetPerformanceCounter();
@@ -277,7 +279,7 @@ static void gfx_sdl_main_loop(void (*run_one_game_iter)(void)) {
         if (gContext.swap_interval != 0) continue;
 
         elapsed = SDL_GetPerformanceCounter() - start;
-        while (elapsed < FRAMETIME) {
+        while (elapsed < gContext.frametime) {
             SDL_Delay(0);
             elapsed = SDL_GetPerformanceCounter() - start;
         }
