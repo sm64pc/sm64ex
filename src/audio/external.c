@@ -774,7 +774,7 @@ struct SPTask *create_next_audio_frame_task(void) {
     return NULL;
 }
 
-void create_next_audio_buffer(s16 *samples, u32 num_samples) {
+void create_next_audio_buffer(u16 *samples, u32 num_samples) {
     gAudioFrameCount++;
     if (sGameLoopTicked != 0) {
         update_game_sound();

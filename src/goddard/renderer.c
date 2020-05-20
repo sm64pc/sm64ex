@@ -1687,7 +1687,8 @@ u32 Unknown8019EC88(Gfx *dl, UNUSED s32 arg1) {
 /* 24D4C4 -> 24D63C; orig name: func_8019ECF4 */
 void mat4_to_mtx(const Mat4f *src, Mtx *dst) {
 
-    guMtxF2L(src, dst);
+    //guMtxF2L(src, dst);
+    guMtxF2L(*(Mat4f *)src, dst);
 
 }
 

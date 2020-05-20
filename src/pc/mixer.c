@@ -1,6 +1,8 @@
 #include <string.h>
 #include <stdint.h>
 #include <assert.h>
+#include "macros.h"
+#include "../../include/PR/ultratypes.h"
 
 // Note: Some of this is stolen from Mupen64Plus rsp audio plugin.
 // See abi.h for documentation.
@@ -146,14 +148,14 @@ static inline int16_t sample_mix(int16_t dst, int16_t src, int16_t gain) {
     return clamp_s16(dst + src_modified);
 }
 
-void aClearBuffer(uint64_t *cmd, uint16_t dmem, uint16_t count) {
+void aClearBuffer(UNUSED u64 *cmd, uint16_t dmem, uint16_t count) {
     dmem += DMEM_BASE;
     //assert(align(count, 16) == count);
     count = align(count, 16);
     memset(alist_buffer + dmem, 0, count);
 }
 
-void aSetBuffer(uint64_t *cmd, uint8_t flags, uint16_t dmemin, uint16_t dmemout, uint16_t count) {
+void aSetBuffer(UNUSED u64 *cmd, uint8_t flags, uint16_t dmemin, uint16_t dmemout, uint16_t count) {
     if (flags & A_AUX) {
         // Parameter names are not really correct for A_AUX
         alist_audio.dry_right = dmemin + DMEM_BASE;
@@ -166,16 +168,16 @@ void aSetBuffer(uint64_t *cmd, uint8_t flags, uint16_t dmemin, uint16_t dmemout,
     }
 }
 
-void aLoadBuffer(uint64_t *cmd, uint16_t *addr) {
+void aLoadBuffer(UNUSED u64 *cmd, uint16_t *addr) {
     // addr &= ~7
     memcpy(alist_buffer + alist_audio.in, addr, alist_audio.count);
 }
 
-void aSaveBuffer(uint64_t *cmd, uint16_t *addr) {
+void aSaveBuffer(UNUSED u64 *cmd, uint16_t *addr) {
     memcpy(addr, alist_buffer + alist_audio.out, alist_audio.count);
 }
 
-void aDMEMMove(uint64_t *cmd, uint16_t dmemin, uint16_t dmemout, uint16_t count) {
+void aDMEMMove(UNUSED u64 *cmd, uint16_t dmemin, uint16_t dmemout, uint16_t count) {
     dmemin += DMEM_BASE;
     dmemout += DMEM_BASE;
     //assert(align(count, 16) == count);
@@ -183,7 +185,7 @@ void aDMEMMove(uint64_t *cmd, uint16_t dmemin, uint16_t dmemout, uint16_t count)
     memmove(alist_buffer + dmemout, alist_buffer + dmemin, count);
 }
 
-void aMix(uint64_t *cmd, uint8_t flags, uint16_t gain, uint16_t dmemin, uint16_t dmemout) {
+void aMix(UNUSED u64 *cmd, UNUSED uint8_t flags, uint16_t gain, uint16_t dmemin, uint16_t dmemout) {
     dmemin += DMEM_BASE;
     dmemout += DMEM_BASE;
     
@@ -220,7 +222,7 @@ static inline int16_t ramp_step(struct ramp_t* ramp) {
     return (int16_t)(ramp->value >> 16);
 }
 
-void aEnvMixer(uint64_t *cmd, uint8_t flags, uint16_t *addr) {
+void aEnvMixer(UNUSED u64 *cmd, uint8_t flags, uint16_t *addr) {
     size_t n = (flags & A_AUX) ? 4 : 2;
     
     const int16_t *const in = (int16_t*)(alist_buffer + alist_audio.in);
@@ -309,7 +311,7 @@ void aEnvMixer(uint64_t *cmd, uint8_t flags, uint16_t *addr) {
     s->ramp_values[1] = ramps[1].value;
 }
 
-void aResample(uint64_t *cmd, uint8_t flags, uint16_t pitch, uint16_t *state_addr) {
+void aResample(UNUSED u64 *cmd, uint8_t flags, uint16_t pitch, uint16_t *state_addr) {
     int16_t *dst = (int16_t*)(alist_buffer + alist_audio.out);
     int16_t *src = (int16_t*)(alist_buffer + alist_audio.in);
     size_t count = alist_audio.count >> 1;
@@ -340,7 +342,7 @@ void aResample(uint64_t *cmd, uint8_t flags, uint16_t pitch, uint16_t *state_add
     state_addr[4] = pitch_accumulator;
 }
 
-void aInterleave(uint64_t *cmd, uint16_t inL, uint16_t inR) {
+void aInterleave(UNUSED u64 *cmd, uint16_t inL, uint16_t inR) {
     inL += DMEM_BASE;
     inR += DMEM_BASE;
     
@@ -369,7 +371,7 @@ void aInterleave(uint64_t *cmd, uint16_t inL, uint16_t inR) {
 }
 
 // These two share the same opcode but parameters and what they do are different depending on flags
-void aSetVolume(uint64_t *cmd, uint8_t flags, uint16_t vol, uint16_t voltgt, uint16_t volrate) {
+void aSetVolume(UNUSED u64 *cmd, uint8_t flags, uint16_t vol, UNUSED uint16_t voltgt, uint16_t volrate) {
     if (flags & A_AUX) {
         // Parameter names are not really correct for A_AUX
         alist_audio.dry = vol;
@@ -381,7 +383,7 @@ void aSetVolume(uint64_t *cmd, uint8_t flags, uint16_t vol, uint16_t voltgt, uin
         alist_audio.vol[lr] = vol;
     }
 }
-void aSetVolume32(uint64_t *cmd, uint8_t flags, uint16_t voltgt, uint32_t volrate) {
+void aSetVolume32(UNUSED u64 *cmd, uint8_t flags, uint16_t voltgt, uint32_t volrate) {
     size_t lr = (flags & A_LEFT) ? 0 : 1;
     
     assert(!(flags & A_VOL) && !(flags & A_AUX));
@@ -389,11 +391,11 @@ void aSetVolume32(uint64_t *cmd, uint8_t flags, uint16_t voltgt, uint32_t volrat
     alist_audio.rate[lr] = volrate;
 }
 
-void aSetLoop(uint64_t *cmd, uint16_t *addr) {
+void aSetLoop(UNUSED u64 *cmd, uint16_t *addr) {
     alist_audio.loop = addr;
 }
 
-void aLoadADPCM(uint64_t *cmd, uint16_t count, uint16_t *addr) {
+void aLoadADPCM(UNUSED u64 *cmd, uint16_t count, uint16_t *addr) {
     assert(align(count, 8) == count);
     memcpy(alist_audio.table, addr, count);
 }
@@ -451,7 +453,7 @@ static void adpcm_compute_residuals(int16_t* dst, const int16_t* src,
    }
 }
 
-void aADPCMdec(uint64_t *cmd, uint8_t flags, uint16_t *last_frame_addr) {
+void aADPCMdec(UNUSED u64 *cmd, uint8_t flags, uint16_t *last_frame_addr) {
     int16_t *dst = (int16_t*)(alist_buffer + alist_audio.out);
     uint8_t *src = alist_buffer + alist_audio.in;
     size_t count = alist_audio.count;

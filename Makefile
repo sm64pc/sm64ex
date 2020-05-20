@@ -642,7 +642,7 @@ $(BUILD_DIR)/text/%/define_courses.inc.c: text/define_courses.inc.c text/%/cours
 	$(TEXTCONV) charmap.txt $@ $@
 
 $(BUILD_DIR)/text/%/define_text.inc.c: text/define_text.inc.c text/%/courses.h text/%/dialogs.h
-	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/$*/
+	$(CPP) $(VERSION_CFLAGS) -Wno-trigraphs $< -o $@ -I text/$*/
 	$(TEXTCONV) charmap.txt $@ $@
 
 ALL_DIRS := $(BUILD_DIR) $(addprefix $(BUILD_DIR)/,$(SRC_DIRS) $(ASM_DIRS) $(GODDARD_SRC_DIRS) $(ULTRA_SRC_DIRS) $(ULTRA_ASM_DIRS) $(ULTRA_BIN_DIRS) $(BIN_DIRS) $(TEXTURE_DIRS) $(TEXT_DIRS) $(SOUND_SAMPLE_DIRS) $(addprefix levels/,$(LEVEL_DIRS)) include) $(MIO0_DIR) $(addprefix $(MIO0_DIR)/,$(VERSION)) $(SOUND_BIN_DIR) $(SOUND_BIN_DIR)/sequences/$(VERSION)

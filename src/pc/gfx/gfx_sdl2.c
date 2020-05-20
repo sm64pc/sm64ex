@@ -200,7 +200,9 @@ static void gfx_sdl_main_loop(void (*run_one_game_iter)(void)) {
 }
 
 static void gfx_sdl_get_dimensions(uint32_t *width, uint32_t *height) {
-    SDL_GetWindowSize(wnd, width, height);
+    int w, h;
+    SDL_GetWindowSize(wnd, &w, &h);
+    *width = w; *height = h;
 }
 
 static int translate_scancode(int scancode) {

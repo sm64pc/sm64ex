@@ -69,7 +69,7 @@ int run_press_start_demo_timer(s32 timer) {
     return timer;
 }
 
-extern int gDemoInputListID_2;
+extern uint gDemoInputListID_2;
 extern int gPressedStart;
 
 int start_demo(int timer)
