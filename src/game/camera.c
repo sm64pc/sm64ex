@@ -3083,8 +3083,8 @@ void update_camera(struct Camera *c) {
 
     if (gMarioState->action == ACT_SHOT_FROM_CANNON && newcam_active)
     {
-        gMarioState->area->camera->mode = CAM_MODE_NEWCAM;
-        gLakituState.mode = CAM_MODE_NEWCAM;
+        gMarioState->area->camera->mode = CAMERA_MODE_NEWCAM;
+        gLakituState.mode = CAMERA_MODE_NEWCAM;
     }
 #endif
 

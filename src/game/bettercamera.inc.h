@@ -187,7 +187,7 @@ void newcam_diagnostics(void)
     print_text_fmt_int(32,32,"DISTANCE %d",newcam_distance);
 }
 
-static s16 newcam_adjust_value(s16 var, s16 val)
+static s16 newcam_adjust_value(s16 var, s16 val, s8 max)
 {
     if (val > 0)
     {
@@ -337,7 +337,7 @@ static void newcam_rotate_button(void)
             if (newcam_modeflags & NC_FLAG_8D)
             {
                 if (newcam_cstick_down == 0)
-                    {
+                {
                     newcam_cstick_down = 1;
                     newcam_centering = 1;
                     #ifndef nosound
