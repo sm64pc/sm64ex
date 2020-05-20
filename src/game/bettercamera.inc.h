@@ -361,7 +361,7 @@ static void newcam_rotate_button(void)
             }
             else
             {
-                newcam_yaw_acc = newcam_adjust_value(newcam_yaw_acc,(-gPlayer2Controller->stickX/8), intendedXMag);
+                newcam_yaw_acc = newcam_adjust_value(newcam_yaw_acc,(-gPlayer2Controller->stickX/8, intendedXMag));
             }
         else
         if (newcam_analogue)
