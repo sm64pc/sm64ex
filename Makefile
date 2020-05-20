@@ -170,11 +170,7 @@ endif
 # on tools and assets, and we use directory globs further down
 # in the makefile that we want should cover assets.)
 
-ifneq ($(MAKECMDGOALS),clean)
-ifneq ($(MAKECMDGOALS),cleantools)
-ifneq ($(MAKECMDGOALS),distclean)
-ifneq ($(MAKECMDGOALS),cleanall)
-ifneq ($(MAKECMDGOALS),distcleanall)
+ifneq (,$(findstring clean,$(MAKEGOALS)))
 
 # Make sure assets exist
 NOEXTRACT ?= 0
@@ -191,10 +187,6 @@ ifeq ($(DUMMY),FAIL)
   $(error Failed to build tools)
 endif
 
-endif
-endif
-endif
-endif
 endif
 
 ################ Target Executable and Sources ###############
