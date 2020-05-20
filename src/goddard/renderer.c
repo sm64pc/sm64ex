@@ -493,6 +493,7 @@ ALIGNED8 static u8 gd_texture_sparkle_4[] = {
 
 //! No reference to this texture. Two DL's uses the same previous texture
 //  instead of using this texture.
+// Fixed via setting TEXTURE_FIX to 1.
 ALIGNED8 static u8 gd_texture_sparkle_5[] = {
 #include "textures/intro_raw/sparkle_5.rgba16.inc.c"
 };
