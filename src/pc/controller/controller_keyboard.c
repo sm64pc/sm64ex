@@ -89,21 +89,18 @@ static void keyboard_init(void) {
 
 static void keyboard_read(OSContPad *pad) {
     pad->button |= keyboard_buttons_down;
+    const s8 sens = (keyboard_buttons_down & 0x100000) ? 46 : 127;
     if ((keyboard_buttons_down & 0x30000) == 0x10000) {
-        pad->stick_x = -128;
-        if (keyboard_buttons_down & 0x100000) pad->stick_x = -46;
+        pad->stick_x = - sens;
     }
     if ((keyboard_buttons_down & 0x30000) == 0x20000) {
-        pad->stick_x = 127;
-        if (keyboard_buttons_down & 0x100000) pad->stick_x = 46;
+        pad->stick_x = sens;
     }
     if ((keyboard_buttons_down & 0xc0000) == 0x40000) {
-        pad->stick_y = -128;
-        if (keyboard_buttons_down & 0x100000) pad->stick_y = -46;
+        pad->stick_y = - sens;
     }
     if ((keyboard_buttons_down & 0xc0000) == 0x80000) {
-        pad->stick_y = 127;
-        if (keyboard_buttons_down & 0x100000) pad->stick_y = 46;
+        pad->stick_y = sens;
     }
     if (pad->stick_x != 0 && pad->stick_y != 0) {
         double angle = atan2(pad->stick_y, pad->stick_x);
