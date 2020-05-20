@@ -170,7 +170,7 @@ endif
 # on tools and assets, and we use directory globs further down
 # in the makefile that we want should cover assets.)
 
-ifneq (,$(findstring clean,$(MAKEGOALS)))
+ifeq (,$(findstring clean,$(MAKECMDGOALS)))
 
 # Make sure assets exist
 NOEXTRACT ?= 0
