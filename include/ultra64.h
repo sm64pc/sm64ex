@@ -30,9 +30,4 @@
 #include <PR/libaudio.h>
 #include <PR/libultra.h>
 
-#if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
-#include <_mingw.h>
-#include <string.h>
-#endif
-
 #endif
