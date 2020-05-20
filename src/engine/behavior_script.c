@@ -105,11 +105,11 @@ static uintptr_t cur_obj_bhv_stack_pop(void) {
     return bhvAddr;
 }
 
-static void stub_behavior_script_1(void) {
-    for (;;) {
-        ;
-    }
-}
+//static void stub_behavior_script_1(void) {
+//    for (;;) {
+//        ;
+//    }
+//}
 
 // Command 0x22: Hides the current object.
 // Usage: HIDE()

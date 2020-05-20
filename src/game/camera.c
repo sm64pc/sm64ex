@@ -1712,8 +1712,8 @@ struct ParallelTrackingPoint sBBHLibraryParTrackPath[] = {
 //    return 0;
 //}
 
-static void stub_camera_1(UNUSED s32 unused) {
-}
+//static void stub_camera_1(UNUSED s32 unused) {
+//}
 
 void mode_boss_fight_camera(struct Camera *c) {
     c->nextYaw = update_boss_fight_camera(c, c->focus, c->pos);
