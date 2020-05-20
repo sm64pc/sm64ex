@@ -40,6 +40,8 @@
 #define MAX_LIGHTS 2
 #define MAX_VERTICES 64
 
+#define CLOCK_MONOTONIC 0
+
 struct RGBA {
     uint8_t r, g, b, a;
 };
@@ -159,7 +161,6 @@ static struct GfxRenderingAPI *gfx_rapi;
 #include <_mingw.h>
 #if !defined(__MINGW64_VERSION_MAJOR)
 #include <windows.h>
-#define CLOCK_MONOTONIC 0
 //https://stackoverflow.com/questions/5404277/porting-clock-gettime-to-windows
 struct timespec { long tv_sec; long tv_nsec; };    //header part
 int clock_gettime(int arg, struct timespec *spec)      //C-file part

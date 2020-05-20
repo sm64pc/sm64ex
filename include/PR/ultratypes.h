@@ -31,6 +31,7 @@ typedef double f64;
 
 #include <stddef.h>
 #include <stdint.h>
+#include <sys/types.h>
 #if defined(__MINGW32__) 
 #include <_mingw.h>
 #if !defined(__MINGW64_VERSION_MAJOR)
