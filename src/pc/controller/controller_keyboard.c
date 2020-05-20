@@ -89,7 +89,7 @@ static void keyboard_init(void) {
 
 static void keyboard_read(OSContPad *pad) {
     pad->button |= keyboard_buttons_down;
-    const s8 sens = (keyboard_buttons_down & 0x100000) ? configSpeed / 4 + 30 : 127;
+    const s8 sens = (keyboard_buttons_down & 0x100000) ? configSpeed * 10 / 4 + 30 : 127;
     if ((keyboard_buttons_down & 0x30000) == 0x10000) {
         pad->stick_x = - sens;
     }

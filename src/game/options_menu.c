@@ -236,7 +236,7 @@ static struct Option optsControls[] = {
     DEF_OPT_BIND( bindStr[14], configKeyStickLeft ),
     DEF_OPT_BIND( bindStr[15], configKeyStickRight ),
     DEF_OPT_BIND( bindStr[16], configKeyWalk ),
-    DEF_OPT_SCROLL( bindStr[17], &configSpeed, 0, 100, 1 ),
+    DEF_OPT_SCROLL( bindStr[17], &configSpeed, 0, 10, 1 ),
 };
 
 static struct Option optsVideo[] = {

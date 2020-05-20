@@ -79,7 +79,7 @@ bool         configEnableCamera  = false;
 bool         configCameraMouse   = false;
 #endif
 unsigned int configSkipIntro     = 0;
-unsigned int configSpeed         = 50;
+unsigned int configSpeed         = 7;
 bool         configHUD           = true;
 
 static const struct ConfigOption options[] = {
