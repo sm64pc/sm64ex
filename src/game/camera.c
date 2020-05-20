@@ -2032,10 +2032,10 @@ s16 update_slide_camera(struct Camera *c) {
 
 void mode_behind_mario_camera(struct Camera *c) {
     c->nextYaw = mode_behind_mario(c);
-    return 0;
 }
 
 s32 nop_update_water_camera(UNUSED struct Camera *c, UNUSED Vec3f focus, UNUSED Vec3f pos) {
+    return 0;
 }
 
 /**
