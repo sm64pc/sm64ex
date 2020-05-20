@@ -330,8 +330,8 @@ static void newcam_rotate_button(void)
 
     if (newcam_analogue == 1) //There's not much point in keeping this behind a check, but it wouldn't hurt, just incase any 2player shenanigans ever happen, it makes it easy to disable.
     { //The joystick values cap at 80, so divide by 8 to get the same net result at maximum turn as the button
-        intendedXMag = gPlayer2Controller->rawStickX*1.25;
-        intendedYMag = gPlayer2Controller->rawStickY*1.25;
+        intendedXMag = gPlayer2Controller->stickX*1.25;
+        intendedYMag = gPlayer2Controller->stickY*1.25;
         if (ABS(gPlayer2Controller->stickX) > 20 && newcam_modeflags & NC_FLAG_XTURN)
         {
             if (newcam_modeflags & NC_FLAG_8D)
