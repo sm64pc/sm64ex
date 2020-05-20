@@ -64,6 +64,7 @@ unsigned int configKeyStickUp[MAX_BINDS]    = { 0x0011,   VK_INVALID, VK_INVALID
 unsigned int configKeyStickDown[MAX_BINDS]  = { 0x001F,   VK_INVALID, VK_INVALID };
 unsigned int configKeyStickLeft[MAX_BINDS]  = { 0x001E,   VK_INVALID, VK_INVALID };
 unsigned int configKeyStickRight[MAX_BINDS] = { 0x0020,   VK_INVALID, VK_INVALID };
+unsigned int configKeyWalk[MAX_BINDS] =       { 0x002A,   VK_INVALID, VK_INVALID };
 
 #ifdef BETTERCAMERA
 // BetterCamera settings
