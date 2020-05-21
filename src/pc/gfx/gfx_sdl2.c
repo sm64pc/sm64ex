@@ -213,20 +213,22 @@ static int translate_scancode(int scancode) {
     }
 }
 
-//static void gfx_sdl_onkeydown(int scancode) {
-//    keyboard_on_key_down(translate_scancode(scancode));
+#ifndef TARGET_WEB
+static void gfx_sdl_onkeydown(int scancode) {
+    keyboard_on_key_down(translate_scancode(scancode));
 
-//    const Uint8 *state = SDL_GetKeyboardState(NULL);
+    const Uint8 *state = SDL_GetKeyboardState(NULL);
 
-//    if (state[SDL_SCANCODE_LALT] && state[SDL_SCANCODE_RETURN])
-//        configWindow.fullscreen = !configWindow.fullscreen;
-//    else if (state[SDL_SCANCODE_ESCAPE] && configWindow.fullscreen)
-//        configWindow.fullscreen = false;
-//}
+    if (state[SDL_SCANCODE_LALT] && state[SDL_SCANCODE_RETURN])
+        configWindow.fullscreen = !configWindow.fullscreen;
+    else if (state[SDL_SCANCODE_ESCAPE] && configWindow.fullscreen)
+        configWindow.fullscreen = false;
+}
 
-//static void gfx_sdl_onkeyup(int scancode) {
-//    keyboard_on_key_up(translate_scancode(scancode));
-//}
+static void gfx_sdl_onkeyup(int scancode) {
+    keyboard_on_key_up(translate_scancode(scancode));
+}
+#endif
 
 static void gfx_sdl_handle_events(void) {
     SDL_Event event;
