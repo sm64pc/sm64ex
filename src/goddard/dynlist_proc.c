@@ -1909,6 +1909,7 @@ void d_set_att_to_offset(UNUSED u32 a) {
 
     if (sDynListCurObj == NULL) {
         fatal_printf("proc_dynlist(): No current object");
+        return;
     }
 
     dynobj = sDynListCurObj;

@@ -136,7 +136,7 @@ static s32 sUpdateYoshiScene;           // @ 801BB0D4; update dl Vtx from ObjVer
 static s32 sUpdateMarioScene;           // @ 801BB0D8; update dl Vtx from ObjVertex?
 UNUSED static u32 unref_801bb0dc;
 static s32 sUpdateCarScene; // @ 801BB0E0; guess, not really used
-static u32 unref_801bb0e4;
+UNUSED static u32 unref_801bb0e4;
 static struct GdVec3f D_801BB0E8;
 UNUSED static u32 unref_801bb0f8[2];
 static Mtx sIdnMtx;           // @ 801BB100
@@ -494,9 +494,15 @@ ALIGNED8 static u8 gd_texture_sparkle_4[] = {
 //! No reference to this texture. Two DL's uses the same previous texture
 //  instead of using this texture.
 // Fixed via setting TEXTURE_FIX to 1.
+#ifdef TEXTURE_FIX
 ALIGNED8 static u8 gd_texture_sparkle_5[] = {
 #include "textures/intro_raw/sparkle_5.rgba16.inc.c"
 };
+#else
+UNUSED ALIGNED8 static u8 gd_texture_sparkle_5[] = {
+#include "textures/intro_raw/sparkle_5.rgba16.inc.c"
+};
+#endif
 
 static Vtx_t gd_vertex_sparkle[] = {
     {{   -32,      0,      0}, 0, {      0,   1984}, {  0x00, 0x00, 0x7F, 0x00}},

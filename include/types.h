@@ -291,6 +291,7 @@ struct MarioState
     /*0x0C*/ u32 action;
     /*0x10*/ u32 prevAction;
     /*0x14*/ u32 terrainSoundAddend;
+    ///*0x18*/ s32 actionState; // makes the game easier
     /*0x18*/ u16 actionState;
     /*0x1A*/ u16 actionTimer;
     /*0x1C*/ u32 actionArg;

@@ -1708,9 +1708,9 @@ struct ParallelTrackingPoint sBBHLibraryParTrackPath[] = {
     { 0, { 0.0f, 0.0f, 0.0f }, 0.0f, 0.0f },
 };
 
-//s32 unused_update_mode_5_camera(UNUSED struct Camera *c, UNUSED Vec3f focus, UNUSED Vec3f pos) {
-//    return 0;
-//}
+UNUSED s32 unused_update_mode_5_camera(UNUSED struct Camera *c, UNUSED Vec3f focus, UNUSED Vec3f pos) {
+    return 0;
+}
 
 //static void stub_camera_1(UNUSED s32 unused) {
 //}
@@ -5415,7 +5415,7 @@ void determine_pushing_or_pulling_door(s16 *rotation) {
     if (sMarioCamState->action == ACT_PULLING_DOOR) {
         *rotation = 0;
     } else {
-        *rotation = DEGREES(180);
+        *rotation = (s16) DEGREES(180);
     }
 }
 
@@ -9569,8 +9569,8 @@ s32 intro_peach_move_camera_start_to_pipe(struct Camera *c, struct CutsceneSplin
 
     // The two splines used by this function are reflected in the horizontal plane for some reason,
     // so they are rotated every frame. Why do this, Nintendo?
-    rotate_in_xz(c->focus, c->focus, DEGREES(180));
-    rotate_in_xz(c->pos, c->pos, DEGREES(180));
+    rotate_in_xz(c->focus, c->focus, (s16) DEGREES(180));
+    rotate_in_xz(c->pos, c->pos, (s16) DEGREES(180));
 
     vec3f_set(offset, -1328.f, 260.f, 4664.f);
     vec3f_add(c->focus, offset);

@@ -886,7 +886,7 @@ struct ObjMaterial *find_or_add_new_mtl(struct ObjGroup *group, UNUSED s32 a1, f
     }
 
     newMtl = make_material(0, NULL, 1);
-    set_cur_dynobj(newMtl);
+    set_cur_dynobj((struct GdObj *)newMtl);
     d_set_diffuse(r, g, b);
     addto_group(group, (struct GdObj *) newMtl);
 

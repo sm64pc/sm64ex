@@ -285,7 +285,7 @@ static bool gfx_texture_cache_lookup(int tile, struct TextureHashmapNode **n, co
     size_t hash = (uintptr_t)orig_addr;
     hash = (hash >> 5) & 0x3ff;
     struct TextureHashmapNode **node = &gfx_texture_cache.hashmap[hash];
-    while (*node != NULL && *node - gfx_texture_cache.pool < gfx_texture_cache.pool_pos) {
+    while (*node != NULL && *node - gfx_texture_cache.pool < (long)gfx_texture_cache.pool_pos) {
         if ((*node)->texture_addr == orig_addr && (*node)->fmt == fmt && (*node)->siz == siz) {
             gfx_rapi->select_texture(tile, (*node)->texture_id);
             *n = *node;

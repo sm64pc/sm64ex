@@ -205,6 +205,7 @@ static void gfx_sdl_get_dimensions(uint32_t *width, uint32_t *height) {
     *width = w; *height = h;
 }
 
+#ifndef TARGET_WEB
 static int translate_scancode(int scancode) {
     if (scancode < 512) {
         return inverted_scancode_table[scancode];
@@ -213,7 +214,6 @@ static int translate_scancode(int scancode) {
     }
 }
 
-#ifndef TARGET_WEB
 static void gfx_sdl_onkeydown(int scancode) {
     keyboard_on_key_down(translate_scancode(scancode));
 
