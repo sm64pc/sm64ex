@@ -315,36 +315,36 @@ void display_and_vsync(void) {
 
 // this function records distinct inputs over a 255-frame interval to RAM locations and was likely
 // used to record the demo sequences seen in the final game. This function is unused.
-//static void record_demo(void) {
+UNUSED static void record_demo(void) {
     // record the player's button mask and current rawStickX and rawStickY.
-//    u8 buttonMask =
-//        ((gPlayer1Controller->buttonDown & (A_BUTTON | B_BUTTON | Z_TRIG | START_BUTTON)) >> 8)
-//        | (gPlayer1Controller->buttonDown & (U_CBUTTONS | D_CBUTTONS | L_CBUTTONS | R_CBUTTONS));
-//    s8 rawStickX = gPlayer1Controller->rawStickX;
-//    s8 rawStickY = gPlayer1Controller->rawStickY;
+    u8 buttonMask =
+        ((gPlayer1Controller->buttonDown & (A_BUTTON | B_BUTTON | Z_TRIG | START_BUTTON)) >> 8)
+        | (gPlayer1Controller->buttonDown & (U_CBUTTONS | D_CBUTTONS | L_CBUTTONS | R_CBUTTONS));
+    s8 rawStickX = gPlayer1Controller->rawStickX;
+    s8 rawStickY = gPlayer1Controller->rawStickY;
 
     // if the stick is in deadzone, set its value to 0 to
     // nullify the effects. We do not record deadzone inputs.
-//    if (rawStickX > -8 && rawStickX < 8) {
-//        rawStickX = 0;
-//    }
+    if (rawStickX > -8 && rawStickX < 8) {
+        rawStickX = 0;
+    }
 
-//    if (rawStickY > -8 && rawStickY < 8) {
-//        rawStickY = 0;
-//    }
+    if (rawStickY > -8 && rawStickY < 8) {
+        rawStickY = 0;
+    }
 
     // record the distinct input and timer so long as they
     // are unique. If the timer hits 0xFF, reset the timer
     // for the next demo input.
-//    if (gRecordedDemoInput.timer == 0xFF || buttonMask != gRecordedDemoInput.buttonMask
-//        || rawStickX != gRecordedDemoInput.rawStickX || rawStickY != gRecordedDemoInput.rawStickY) {
-//        gRecordedDemoInput.timer = 0;
-//        gRecordedDemoInput.buttonMask = buttonMask;
-//        gRecordedDemoInput.rawStickX = rawStickX;
-//        gRecordedDemoInput.rawStickY = rawStickY;
-//    }
-//    gRecordedDemoInput.timer++;
-//}
+    if (gRecordedDemoInput.timer == 0xFF || buttonMask != gRecordedDemoInput.buttonMask
+        || rawStickX != gRecordedDemoInput.rawStickX || rawStickY != gRecordedDemoInput.rawStickY) {
+        gRecordedDemoInput.timer = 0;
+        gRecordedDemoInput.buttonMask = buttonMask;
+        gRecordedDemoInput.rawStickX = rawStickX;
+        gRecordedDemoInput.rawStickY = rawStickY;
+    }
+    gRecordedDemoInput.timer++;
+}
 
 // take the updated controller struct and calculate
 // the new x, y, and distance floats.
