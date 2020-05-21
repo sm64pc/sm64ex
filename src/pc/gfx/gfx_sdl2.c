@@ -156,7 +156,7 @@ static void gfx_sdl_init(void) {
     else if (gCLIOpts.FullScreen == 2)
         configWindow.fullscreen = false;
 
-    const char window_title[96] = 
+    char window_title[96] =
     #ifndef USE_GLES
     "Super Mario 64 PC port (OpenGL)";
     #else
@@ -164,8 +164,7 @@ static void gfx_sdl_init(void) {
     #endif
 
     #ifdef NIGHTLY
-    strcat(window_title, " nightly ");
-    strcat(window_title, GIT_HASH);
+    strcat(window_title, " nightly " GIT_HASH);
     #endif
 
     wnd = SDL_CreateWindow(
