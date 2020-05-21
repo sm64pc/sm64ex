@@ -1705,21 +1705,21 @@ void mario_update_hitbox_and_cap_model(struct MarioState *m) {
  * An unused and possibly a debug function. Z + another button input
  * sets Mario with a different cap.
  */
-//static void debug_update_mario_cap(u16 button, s32 flags, u16 capTimer, u16 capMusic) {
+UNUSED static void debug_update_mario_cap(u16 button, s32 flags, u16 capTimer, u16 capMusic) {
     // This checks for Z_TRIG instead of Z_DOWN flag
     // (which is also what other debug functions do),
     // so likely debug behavior rather than unused behavior.
-//    if ((gPlayer1Controller->buttonDown & Z_TRIG) && (gPlayer1Controller->buttonPressed & button)
-//        && ((gMarioState->flags & flags) == 0)) {
-//        gMarioState->flags |= (flags + MARIO_CAP_ON_HEAD);
+    if ((gPlayer1Controller->buttonDown & Z_TRIG) && (gPlayer1Controller->buttonPressed & button)
+        && ((gMarioState->flags & flags) == 0)) {
+        gMarioState->flags |= (flags + MARIO_CAP_ON_HEAD);
 
-//        if (capTimer > gMarioState->capTimer) {
-//            gMarioState->capTimer = capTimer;
-//        }
+        if (capTimer > gMarioState->capTimer) {
+            gMarioState->capTimer = capTimer;
+        }
 
-//        play_cap_music(capMusic);
-//    }
-//}
+        play_cap_music(capMusic);
+    }
+}
 
 #ifdef VERSION_SH
 void func_sh_8025574C(void) {
