@@ -639,6 +639,9 @@ $(BUILD_DIR)/include/text_strings.h: include/text_strings.h.in
 $(BUILD_DIR)/include/text_menu_strings.h: include/text_menu_strings.h.in
 	$(TEXTCONV) charmap_menu.txt $< $@
 
+$(BUILD_DIR)/include/text_options_strings.h: include/text_options_strings.h.in
+	$(TEXTCONV) charmap.txt $< $@
+
 ifeq ($(VERSION),eu)
 TEXT_DIRS := text/de text/us text/fr
 
@@ -678,6 +681,7 @@ ALL_DIRS := $(BUILD_DIR) $(addprefix $(BUILD_DIR)/,$(SRC_DIRS) $(ASM_DIRS) $(GOD
 DUMMY != mkdir -p $(ALL_DIRS)
 
 $(BUILD_DIR)/include/text_strings.h: $(BUILD_DIR)/include/text_menu_strings.h
+$(BUILD_DIR)/include/text_strings.h: $(BUILD_DIR)/include/text_options_strings.h
 
 ifeq ($(VERSION),eu)
 $(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
