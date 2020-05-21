@@ -158,9 +158,9 @@ static void gfx_sdl_init(void) {
 
     const char* window_title = 
     #ifndef USE_GLES
-    "Super Mario 64 PC port (OpenGL)";
+    "Super Mario 64 PC Port (OpenGL)";
     #else
-    "Super Mario 64 PC port (OpenGL_ES2)";
+    "Super Mario 64 PC Port (OpenGL_ES2)";
     #endif
 
     wnd = SDL_CreateWindow(
