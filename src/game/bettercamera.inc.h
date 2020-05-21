@@ -361,8 +361,9 @@ static void newcam_rotate_button(void)
             }
             else
             {
-                newcam_yaw_acc = newcam_adjust_value(newcam_yaw_acc,(-gPlayer2Controller->stickX/8, intendedXMag));
+                newcam_yaw_acc = newcam_adjust_value(newcam_yaw_acc,-gPlayer2Controller->stickX/8, intendedXMag);
             }
+        }
         else
         if (newcam_analogue)
         {
@@ -371,7 +372,7 @@ static void newcam_rotate_button(void)
         }
 
         if (ABS(gPlayer2Controller->stickY) > 20 && newcam_modeflags & NC_FLAG_YTURN)
-            newcam_tilt_acc = newcam_adjust_value(newcam_tilt_acc,(-gPlayer2Controller->stickY/8, intendedYMag));
+            newcam_tilt_acc = newcam_adjust_value(newcam_tilt_acc,-gPlayer2Controller->stickY/8, intendedYMag);
         else
         if (newcam_analogue)
         {
