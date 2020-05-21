@@ -175,9 +175,9 @@ s8 gVibratoCurve[16] = { 0, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 
 #endif
 
 struct AdsrEnvelope gDefaultEnvelope[] = {
-    { BSWAP16(4), BSWAP16(32000) },    // go from 0 to 32000 over the course of 16ms
-    { BSWAP16(1000), BSWAP16(32000) }, // stay there for 4.16 seconds
-    { BSWAP16(ADSR_HANG), 0 }          // then continue staying there
+    { BE_TO_HOST16(4), BE_TO_HOST16(32000) },    // go from 0 to 32000 over the course of 16ms
+    { BE_TO_HOST16(1000), BE_TO_HOST16(32000) }, // stay there for 4.16 seconds
+    { BE_TO_HOST16(ADSR_HANG), 0 }          // then continue staying there
 };
 
 #ifdef VERSION_EU

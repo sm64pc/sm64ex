@@ -391,7 +391,7 @@ s32 adsr_update(struct AdsrState *adsr) {
             // fallthrough
 
         case ADSR_STATE_LOOP:
-            adsr->delay = BSWAP16(adsr->envelope[adsr->envIndex].delay);
+            adsr->delay = BE_TO_HOST16(adsr->envelope[adsr->envIndex].delay);
             switch (adsr->delay) {
                 case ADSR_DISABLE:
                     adsr->state = ADSR_STATE_DISABLED;
@@ -400,7 +400,7 @@ s32 adsr_update(struct AdsrState *adsr) {
                     adsr->state = ADSR_STATE_HANG;
                     break;
                 case ADSR_GOTO:
-                    adsr->envIndex = BSWAP16(adsr->envelope[adsr->envIndex].arg);
+                    adsr->envIndex = BE_TO_HOST16(adsr->envelope[adsr->envIndex].arg);
                     break;
                 case ADSR_RESTART:
                     adsr->state = ADSR_STATE_INITIAL;
@@ -411,11 +411,11 @@ s32 adsr_update(struct AdsrState *adsr) {
                     if (adsr->delay >= 4) {
                         adsr->delay = adsr->delay * gAudioBufferParameters.updatesPerFrame / 4;
                     }
-                    adsr->target = (f32) BSWAP16(adsr->envelope[adsr->envIndex].arg) / 32767.0;
+                    adsr->target = (f32) BE_TO_HOST16(adsr->envelope[adsr->envIndex].arg) / 32767.0;
                     adsr->target = adsr->target * adsr->target;
                     adsr->velocity = (adsr->target - adsr->current) / adsr->delay;
 #else
-                    adsr->target = BSWAP16(adsr->envelope[adsr->envIndex].arg);
+                    adsr->target = BE_TO_HOST16(adsr->envelope[adsr->envIndex].arg);
                     adsr->velocity = ((adsr->target - adsr->current) << 0x10) / adsr->delay;
 #endif
                     adsr->state = ADSR_STATE_FADE;

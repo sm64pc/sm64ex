@@ -130,11 +130,11 @@ s32 gDialogResponse = 0;
 
 #if defined(VERSION_JP) || defined(VERSION_SH) || defined(VERSION_EU)
 #ifdef VERSION_EU
-#define CHCACHE_BUFLEN (8 * 8)  // EU only converts 8x8 characters
+#define CHCACHE_BUFLEN (8 * 8)  // EU only converts 8x8
 #else
 #define CHCACHE_BUFLEN (8 * 16) // JP only converts 8x16 or 16x8 characters
 #endif
-// stores char data unpacked from ia1 to ia8 or ia1 to ia4
+// stores char data unpacked from ia1 to ia8 or ia4
 // so that it won't be reconverted every time a character is rendered
 static struct CachedChar { u8 used; u8 data[CHCACHE_BUFLEN]; } charCache[256];
 #endif // VERSION
@@ -279,7 +279,7 @@ void render_generic_char(u8 c) {
 }
 
 #ifdef VERSION_EU
-static inline void alloc_ia4_tex_from_i1(u8 *out, u8 *in, s16 width, s16 height) {
+static void alloc_ia4_tex_from_i1(u8 *out, u8 *in, s16 width, s16 height) {
     u32 size = (u32) width * (u32) height;
     s32 inPos;
     s16 outPos = 0;
@@ -297,7 +297,7 @@ static inline void alloc_ia4_tex_from_i1(u8 *out, u8 *in, s16 width, s16 height)
     }
 }
 
-static inline u8 *convert_ia4_char(u8 c, u8 *tex, s16 w, s16 h) {
+static u8 *convert_ia4_char(u8 c, u8 *tex, s16 w, s16 h) {
     if (!charCache[c].used) {
         charCache[c].used = 1;
         alloc_ia4_tex_from_i1(charCache[c].data, tex, w, h);
