@@ -393,8 +393,9 @@ UNUSED static void try_change_debug_page(void) {
  */
 #ifndef VERSION_SH
 UNUSED static void try_modify_debug_controls(void) {
-#endif
+#else
 UNUSED void try_modify_debug_controls(void) {
+#endif
     s32 sp4;
 
     if (gPlayer1Controller->buttonPressed & Z_TRIG) {
@@ -526,8 +527,9 @@ void try_do_mario_debug_object_spawn(void) {
 // TODO: figure out what this is
 #ifndef VERSION_SH
 UNUSED static void debug_print_obj_move_flags(void) {
-#endif
+#else
 UNUSED void debug_print_obj_move_flags(void) {
+#endif
 #ifndef VERSION_EU // TODO: Is there a better way to diff this? static EU doesn't seem to work.
     if (gCurrentObject->oMoveFlags & OBJ_MOVE_LANDED) {
         print_debug_top_down_objectinfo("BOUND   %x", gCurrentObject->oMoveFlags);
