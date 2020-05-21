@@ -436,11 +436,32 @@ static void gfx_opengl_select_texture(int tile, GLuint texture_id) {
 static void gfx_opengl_upload_texture(uint8_t *rgba32_buf, int width, int height, uint32_t crc) {
   for (int x = 0; x < 2048; x ++) {
     if (surfaces[x].crc == crc) {
-      printf("Found matching surface %d\n", crc);
+      printf("Found matching surface %08x\n", crc);
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surfaces[x].w,surfaces[x].h,0,GL_RGBA, GL_UNSIGNED_BYTE, surfaces[x].surface);
       return;
     }
   }
+
+#ifdef DUMP_TEXTURES
+  printf("Non-matching surface %08x\n", crc);
+
+  char path[2048];
+#if FOR_WINDOWS
+  strcpy(path, "unmatched_textures\\");
+#else
+  strcpy(path, "unmatched_textures/");
+#endif
+
+  char hex[9];
+  sprintf(hex, "%08x", crc);
+
+  strcat(path, hex);
+  strcat(path, ".png");
+
+  printf("Writing non-matching surface to - %s\n", path);
+
+  stbi_write_png(path, width, height, 4, rgba32_buf, width * 4);
+#endif
 
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba32_buf);
 }
