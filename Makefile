@@ -123,6 +123,15 @@ endif
 endif
 endif
 
+# Stuff for showing the git hash in the intro on nightly builds
+# From https://stackoverflow.com/questions/44038428/include-git-commit-hash-and-or-branch-name-in-c-c-source
+ifeq ($(shell git rev-parse --abbrev-ref HEAD),nightly)
+  $(info Hello Caldera!!! I'm here all week!)
+  GIT_HASH=`git rev-parse --short HEAD`
+  COMPILE_TIME=`date -u +'%Y-%m-%d %H:%M:%S UTC'`
+  VERSION_CFLAGS += -DNIGHTLY -DGIT_HASH="\"$(GIT_HASH)\"" -DCOMPILE_TIME="\"$(COMPILE_TIME)\""
+endif
+
 # Microcode
 
 ifeq ($(GRUCODE),f3dex) # Fast3DEX
