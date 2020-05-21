@@ -316,16 +316,17 @@ static bool gfx_texture_cache_lookup(int tile, struct TextureHashmapNode **n, co
     return false;
 }
 
-static void import_texture_rgba32(int tile) {
-    uint32_t width = rdp.texture_tile.line_size_bytes / 2;
-    uint32_t height = (rdp.loaded_texture[tile].size_bytes / 2) / rdp.texture_tile.line_size_bytes;
-    gfx_rapi->upload_texture(rdp.loaded_texture[tile].addr, width, height);
-}
-
 static uint32_t CRC_Calculate(u32 crc, uint8_t *addr, u32 count) {
     uint32_t crcres = (uint32_t) XXH32(addr, count, crc);
 	printf("CRC - %08x\n", crcres);
 	return crcres;
+}
+
+static void import_texture_rgba32(int tile) {
+    uint32_t crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
+    uint32_t width = rdp.texture_tile.line_size_bytes / 2;
+    uint32_t height = (rdp.loaded_texture[tile].size_bytes / 2) / rdp.texture_tile.line_size_bytes;
+    gfx_rapi->upload_texture(rdp.loaded_texture[tile].addr, width, height, crc);
 }
 
 static void import_texture_rgba16(int tile) {
@@ -419,6 +420,7 @@ static void import_texture_ia16(int tile) {
 }
 
 static void import_texture_i4(int tile) {
+    uint32_t crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
     uint8_t rgba32_buf[32768];
     
     for (uint32_t i = 0; i < rdp.loaded_texture[tile].size_bytes * 2; i++) {
@@ -433,10 +435,11 @@ static void import_texture_i4(int tile) {
     uint32_t width = rdp.texture_tile.line_size_bytes * 2;
     uint32_t height = rdp.loaded_texture[tile].size_bytes / rdp.texture_tile.line_size_bytes;
     
-    gfx_rapi->upload_texture(rgba32_buf, width, height);
+    gfx_rapi->upload_texture(rgba32_buf, width, height, crc);
 }
 
 static void import_texture_i8(int tile) {
+    uint32_t crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
     uint8_t rgba32_buf[16384];
 
     for (uint32_t i = 0; i < rdp.loaded_texture[tile].size_bytes; i++) {
@@ -450,7 +453,7 @@ static void import_texture_i8(int tile) {
     uint32_t width = rdp.texture_tile.line_size_bytes;
     uint32_t height = rdp.loaded_texture[tile].size_bytes / rdp.texture_tile.line_size_bytes;
     
-    gfx_rapi->upload_texture(rgba32_buf, width, height);
+    gfx_rapi->upload_texture(rgba32_buf, width, height, crc);
 }
 
 static void import_texture_ci4(int tile) {
