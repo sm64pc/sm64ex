@@ -287,14 +287,14 @@ static bool gfx_texture_cache_lookup(int tile, struct TextureHashmapNode **n, co
     return false;
 }
 
-static u32 CRC_Calculate( u32 crc, uint8_t *addr, u32 count ) {
-	u32 crcres = XXH32(addr, count, crc);
+static uint32_t CRC_Calculate(u32 crc, uint8_t *addr, u32 count) {
+    uint32_t crcres = (uint32_t) XXH32(addr, count, crc);
 	printf("CRC - %08x\n", crcres);
 	return crcres;
 }
 
 static void import_texture_rgba16(int tile) {
-	u32 crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
+    uint32_t crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
 
 
     uint8_t rgba32_buf[8192];
@@ -318,7 +318,7 @@ static void import_texture_rgba16(int tile) {
 }
 
 static void import_texture_ia4(int tile) {
-	u32 crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
+    uint32_t crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
 
     uint8_t rgba32_buf[32768];
     
@@ -343,7 +343,7 @@ static void import_texture_ia4(int tile) {
 }
 
 static void import_texture_ia8(int tile) {
-	u32 crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
+    uint32_t crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
 
     uint8_t rgba32_buf[16384];
     
@@ -366,7 +366,7 @@ static void import_texture_ia8(int tile) {
 }
 
 static void import_texture_ia16(int tile) {
-	u32 crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
+    uint32_t crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
 
     uint8_t rgba32_buf[8192];
     
@@ -389,7 +389,7 @@ static void import_texture_ia16(int tile) {
 }
 
 static void import_texture_ci4(int tile) {
-	u32 crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
+    uint32_t crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
 
     uint8_t rgba32_buf[32768];
     
@@ -414,7 +414,7 @@ static void import_texture_ci4(int tile) {
 }
 
 static void import_texture_ci8(int tile) {
-	u32 crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
+    uint32_t crc = CRC_Calculate(0, rdp.loaded_texture[tile].addr, rdp.loaded_texture[tile].size_bytes);
 
     uint8_t rgba32_buf[16384];
     

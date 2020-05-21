@@ -520,23 +520,23 @@ static void gfx_opengl_init(void) {
     {
         while ((dir = readdir(d)) != NULL)
         {
-            printf("%s\n", dir->d_name);
-			char hexString[8];
+			char hexString[9];
 			for (int x = 0; x < 8; x ++) {
 				hexString[x] = dir->d_name[x];
 			}
-            printf("%s\n", hexString);
+            hexString[8] = '\0';
 			
-	        unsigned long int crc = strtoul(hexString, NULL, 16);
+	        uint32_t crc = (uint32_t) strtoul(hexString, NULL, 16);
 
-            printf("%08x\n", crc);
+            printf("Surface %d found - %s %08x %s\n", count, hexString, crc, dir->d_name);
 			
             char path[2048];
+        #if FOR_WINDOWS
             strcpy(path, "textures_out_combined\\");
+        #else
+            strcpy(path, "textures_out_combined/");
+        #endif
             strcat(path,  dir->d_name);
-
-            printf("%s\n", path);
-
 
 			int w = 0;
 			int h = 0;
@@ -549,7 +549,6 @@ static void gfx_opengl_init(void) {
 			surfaces[count].w = w;
 			surfaces[count].h = h;
 
-			printf("Surface found - %d %08x\n", count, crc);
 			count ++;
         }
         closedir(d);
