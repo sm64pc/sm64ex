@@ -322,7 +322,7 @@ static void import_texture_rgba32(int tile) {
     gfx_rapi->upload_texture(rdp.loaded_texture[tile].addr, width, height);
 }
 
-tatic uint32_t CRC_Calculate(u32 crc, uint8_t *addr, u32 count) {
+static uint32_t CRC_Calculate(u32 crc, uint8_t *addr, u32 count) {
     uint32_t crcres = (uint32_t) XXH32(addr, count, crc);
 	printf("CRC - %08x\n", crcres);
 	return crcres;
