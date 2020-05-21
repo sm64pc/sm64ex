@@ -36,26 +36,24 @@ struct ConfigOption {
 
 // Video/audio stuff
 ConfigWindow configWindow       = {
-    .x = SDL_WINDOWPOS_CENTERED,
-    .y = SDL_WINDOWPOS_CENTERED,
-    .w = DESIRED_SCREEN_WIDTH,
-    .h = DESIRED_SCREEN_HEIGHT,
-    .vsync = 1,
-    .reset = false,
+    .x          = SDL_WINDOWPOS_CENTERED,
+    .y          = SDL_WINDOWPOS_CENTERED,
+    .w          = DESIRED_SCREEN_WIDTH,
+    .h          = DESIRED_SCREEN_HEIGHT,
+    .reset      = false,
+    .vsync      = true,
     .fullscreen = false,
-    .exiting_fullscreen = false,
-    .settings_changed = false,
 };
 unsigned int configFiltering    = 1;          // 0=force nearest, 1=linear, (TODO) 2=three-point
-unsigned int configMasterVolume = MAX_VOLUME; // 0 - MAX_VOLUME
+unsigned int configMasterVolume = 40; // 0 - MAX_VOLUME
 
 // Keyboard mappings (VK_ values, by default keyboard/gamepad/mouse)
-unsigned int configKeyA[MAX_BINDS]          = { 0x0026,   0x1000,     0x1103     };
-unsigned int configKeyB[MAX_BINDS]          = { 0x0033,   0x1002,     0x1101     };
-unsigned int configKeyStart[MAX_BINDS]      = { 0x0039,   0x1006,     VK_INVALID };
-unsigned int configKeyL[MAX_BINDS]          = { 0x0034,   0x1007,     0x1104     };
-unsigned int configKeyR[MAX_BINDS]          = { 0x0036,   0x100A,     0x1105     };
-unsigned int configKeyZ[MAX_BINDS]          = { 0x0025,   0x1009,     0x1102     };
+unsigned int configKeyA[MAX_BINDS]          = { 0x0039,   0x1000,     0x1103     };
+unsigned int configKeyB[MAX_BINDS]          = { 0x011D,   0x1002,     0x1101     };
+unsigned int configKeyStart[MAX_BINDS]      = { 0x001C,   0x1006,     VK_INVALID };
+unsigned int configKeyL[MAX_BINDS]          = { 0x002D,   0x1007,     0x1104     };
+unsigned int configKeyR[MAX_BINDS]          = { 0x002E,   0x100A,     0x1105     };
+unsigned int configKeyZ[MAX_BINDS]          = { 0x001D,   0x1009,     0x1102     };
 unsigned int configKeyCUp[MAX_BINDS]        = { 0x0148,   VK_INVALID, VK_INVALID };
 unsigned int configKeyCDown[MAX_BINDS]      = { 0x0150,   VK_INVALID, VK_INVALID };
 unsigned int configKeyCLeft[MAX_BINDS]      = { 0x014B,   VK_INVALID, VK_INVALID };
@@ -68,17 +66,17 @@ unsigned int configKeyWalk[MAX_BINDS] =       { 0x002A,   VK_INVALID, VK_INVALID
 
 #ifdef BETTERCAMERA
 // BetterCamera settings
-unsigned int configCameraXSens   = 50;
-unsigned int configCameraYSens   = 50;
-unsigned int configCameraAggr    = 0;
+unsigned int configCameraXSens   = 100;
+unsigned int configCameraYSens   = 100;
+unsigned int configCameraAggr    = 35;
 unsigned int configCameraPan     = 0;
-unsigned int configCameraDegrade = 10; // 0 - 100%
+unsigned int configCameraDegrade = 100; // 0 - 100%
 bool         configCameraInvertX = true;
 bool         configCameraInvertY = false;
-bool         configEnableCamera  = false;
-bool         configCameraMouse   = false;
+bool         configEnableCamera  = true;
+bool         configCameraMouse   = true;
 #endif
-unsigned int configSkipIntro     = 0;
+unsigned int configSkipIntro     = 1;
 unsigned int configSpeed         = 7;
 bool         configHUD           = true;
 
@@ -88,7 +86,7 @@ static const struct ConfigOption options[] = {
     {.name = "window_y",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.y},
     {.name = "window_w",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.w},
     {.name = "window_h",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.h},
-    {.name = "vsync",                .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.vsync},
+    {.name = "vsync",                .type = CONFIG_TYPE_UINT, .boolValue = &configWindow.vsync},
     {.name = "texture_filtering",    .type = CONFIG_TYPE_UINT, .uintValue = &configFiltering},
     {.name = "master_volume",        .type = CONFIG_TYPE_UINT, .uintValue = &configMasterVolume},
     {.name = "key_a",                .type = CONFIG_TYPE_BIND, .uintValue = configKeyA},
