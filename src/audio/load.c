@@ -382,46 +382,46 @@ out2:
 #undef static
 #endif
 
-//#ifndef VERSION_EU
+#ifndef VERSION_EU
 // This function gets optimized out on US due to being static and never called
-//static
-//#endif
+UNUSED static
+#endif
 
-//void patch_sound(UNUSED struct AudioBankSound *sound, UNUSED u8 *memBase, UNUSED u8 *offsetBase) {
-//    struct AudioBankSample *sample;
-//    void *patched;
-//    UNUSED u8 *mem; // unused on US
+void patch_sound(UNUSED struct AudioBankSound *sound, UNUSED u8 *memBase, UNUSED u8 *offsetBase) {
+    struct AudioBankSample *sample;
+    void *patched;
+    UNUSED u8 *mem; // unused on US
 
-//#define PATCH(x, base) (patched = (void *)((uintptr_t) (x) + (uintptr_t) base))
+#define PATCH(x, base) (patched = (void *)((uintptr_t) (x) + (uintptr_t) base))
 
-//    if (sound->sample != NULL) {
-//        sample = sound->sample = PATCH(sound->sample, memBase);
-//        if (sample->loaded == 0) {
-//            sample->sampleAddr = PATCH(sample->sampleAddr, offsetBase);
-//            sample->loop = PATCH(sample->loop, memBase);
-//            sample->book = PATCH(sample->book, memBase);
-//            sample->loaded = 1;
-//        }
-//#ifdef VERSION_EU
-//        else if (sample->loaded == 0x80) {
-//            PATCH(sample->sampleAddr, offsetBase);
-//            mem = soundAlloc(&gNotesAndBuffersPool, sample->sampleSize);
-//            if (mem == NULL) {
-//                sample->sampleAddr = patched;
-//                sample->loaded = 1;
-//            } else {
-//                audio_dma_copy_immediate((uintptr_t) patched, mem, sample->sampleSize);
-//                sample->loaded = 0x81;
-//                sample->sampleAddr = mem;
-//            }
-//            sample->loop = PATCH(sample->loop, memBase);
-//            sample->book = PATCH(sample->book, memBase);
-//        }
-//#endif
-//    }
+    if (sound->sample != NULL) {
+        sample = sound->sample = PATCH(sound->sample, memBase);
+        if (sample->loaded == 0) {
+            sample->sampleAddr = PATCH(sample->sampleAddr, offsetBase);
+            sample->loop = PATCH(sample->loop, memBase);
+            sample->book = PATCH(sample->book, memBase);
+            sample->loaded = 1;
+        }
+#ifdef VERSION_EU
+        else if (sample->loaded == 0x80) {
+            PATCH(sample->sampleAddr, offsetBase);
+            mem = soundAlloc(&gNotesAndBuffersPool, sample->sampleSize);
+            if (mem == NULL) {
+                sample->sampleAddr = patched;
+                sample->loaded = 1;
+            } else {
+                audio_dma_copy_immediate((uintptr_t) patched, mem, sample->sampleSize);
+                sample->loaded = 0x81;
+                sample->sampleAddr = mem;
+            }
+            sample->loop = PATCH(sample->loop, memBase);
+            sample->book = PATCH(sample->book, memBase);
+        }
+#endif
+    }
 
-//#undef PATCH
-//}
+#undef PATCH
+}
 
 #ifndef VERSION_EU
 #define PATCH_SOUND(_sound, mem, offset)                                                  \

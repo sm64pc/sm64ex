@@ -206,35 +206,37 @@ void create_dl_ortho_matrix(void) {
     gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(matrix), G_MTX_PROJECTION | G_MTX_MUL | G_MTX_NOPUSH)
 }
 
-//static u8 *alloc_ia8_text_from_i1(u16 *in, s16 width, s16 height) {
-//    s32 inPos;
-//    u16 bitMask;
-//    u8 *out;
-//    s16 outPos = 0;
+#if defined(VERSION_JP) || defined(VERSION_SH)
+static u8 *alloc_ia8_text_from_i1(u16 *in, s16 width, s16 height) {
+    s32 inPos;
+    u16 bitMask;
+    u8 *out;
+    s16 outPos = 0;
 
-//    out = alloc_display_list((u32) width * (u32) height);
+    out = alloc_display_list((u32) width * (u32) height);
 
-//    if (out == NULL) {
-//        return NULL;
-//    }
+    if (out == NULL) {
+        return NULL;
+    }
 
-//    for (inPos = 0; inPos < (width * height) / 16; inPos++) {
-//        bitMask = 0x8000;
+    for (inPos = 0; inPos < (width * height) / 16; inPos++) {
+        bitMask = 0x8000;
 
-//        while (bitMask != 0) {
-//            if (in[inPos] & bitMask) {
-//                out[outPos] = 0xFF;
-//            } else {
-//                out[outPos] = 0x00;
-//            }
+        while (bitMask != 0) {
+            if (in[inPos] & bitMask) {
+                out[outPos] = 0xFF;
+            } else {
+                out[outPos] = 0x00;
+            }
 
-//            bitMask /= 2;
-//            outPos++;
-//        }
-//    }
+            bitMask /= 2;
+            outPos++;
+        }
+    }
 
-//    return out;
-//}
+    return out;
+}
+#endif
 
 void render_generic_char(u8 c) {
     void **fontLUT;
@@ -2956,13 +2958,14 @@ void render_save_confirmation(s16 x, s16 y, s8 *index, s16 sp6e)
         { TEXT_SAVE_AND_CONTINUE_FR },
         { TEXT_SAVE_AND_CONTINUE_DE }
     };
+
     u8 textSaveAndQuitArr[][22] = {
         { TEXT_SAVE_AND_QUIT },
         { TEXT_SAVE_AND_QUIT_FR },
         { TEXT_SAVE_AND_QUIT_DE }
     };
 
-    u8 textSaveExitGame[][26] = { // New function to exit game
+    u8 textSaveExitGame[][28] = { // New function to exit game
         { TEXT_SAVE_EXIT_GAME },
         { TEXT_SAVE_EXIT_GAME_FR },
         { TEXT_SAVE_EXIT_GAME_DE }
