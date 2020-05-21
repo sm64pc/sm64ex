@@ -494,15 +494,12 @@ ALIGNED8 static u8 gd_texture_sparkle_4[] = {
 //! No reference to this texture. Two DL's uses the same previous texture
 //  instead of using this texture.
 // Fixed via setting TEXTURE_FIX to 1.
-#ifdef TEXTURE_FIX
+#ifndef TEXTURE_FIX
+UNUSED
+#endif
 ALIGNED8 static u8 gd_texture_sparkle_5[] = {
 #include "textures/intro_raw/sparkle_5.rgba16.inc.c"
 };
-#else
-UNUSED ALIGNED8 static u8 gd_texture_sparkle_5[] = {
-#include "textures/intro_raw/sparkle_5.rgba16.inc.c"
-};
-#endif
 
 static Vtx_t gd_vertex_sparkle[] = {
     {{   -32,      0,      0}, 0, {      0,   1984}, {  0x00, 0x00, 0x7F, 0x00}},
