@@ -59,7 +59,7 @@ static const u8 menuStr[][32] = {
 
 };
 
-#ifdef BETTERCAMERA
+#if defined(BETTERCAMERA) && defined(EXT_OPTIONS_MENU)
 static const u8 optsCameraStr[][32] = {
     { TEXT_OPT_CAMX },
     { TEXT_OPT_CAMY },
