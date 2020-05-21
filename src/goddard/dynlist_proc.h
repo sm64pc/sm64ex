@@ -64,8 +64,6 @@ extern void d_copystr_to_idbuf(char *);
 extern struct GdObj *d_makeobj(enum DObjTypes type, DynId id);
 extern void d_set_shapeptrptr(struct ObjShape **);
 extern struct GdObj *d_use_obj(DynId);
-// in case this breaks anything
-//extern void set_cur_dynobj();
 extern void set_cur_dynobj(struct GdObj *);
 extern void d_start_group(DynId);
 extern void d_end_group(DynId);
