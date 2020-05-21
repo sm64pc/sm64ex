@@ -33,6 +33,7 @@
 #include "thread6.h"
 #include "pc/configfile.h"
 #include "pc/cheats.h"
+#include "macros.h"
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif
