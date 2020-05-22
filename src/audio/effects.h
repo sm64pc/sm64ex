@@ -24,6 +24,7 @@
 #define ADSR_GOTO -2
 #define ADSR_RESTART -3
 
+// Envelopes are always stored as big endian, to match sequence files which are
 // byte blobs and can embed envelopes.
 // BSWAP16() definition has been moved to macros.h. Use BE_TO_HOST16() for the
 // same effect in the future.
