@@ -241,7 +241,7 @@ static void alloc_ia8_text_from_i1(u8 *out, u16 *in, s16 width, s16 height) {
     }
 }
 
-    static u8 *convert_ia8_char(u8 c, u16 *tex, s16 w, s16 h) {
+static u8 *convert_ia8_char(u8 c, u16 *tex, s16 w, s16 h) {
     if (!charCache[c].used) {
         charCache[c].used = 1;
         alloc_ia8_text_from_i1(charCache[c].data, tex, w, h);
