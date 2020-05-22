@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <ultra64.h>
+#include <math.h>
 
 #include "controller_api.h"
 
@@ -75,6 +76,7 @@ static void keyboard_bindkeys(void) {
     keyboard_add_binds(L_TRIG,       configKeyL);
     keyboard_add_binds(R_TRIG,       configKeyR);
     keyboard_add_binds(START_BUTTON, configKeyStart);
+    keyboard_add_binds(0x100000,     configKeyWalk);
 }
 
 static void keyboard_init(void) {
@@ -87,17 +89,23 @@ static void keyboard_init(void) {
 
 static void keyboard_read(OSContPad *pad) {
     pad->button |= keyboard_buttons_down;
+    const s8 sens = (keyboard_buttons_down & 0x100000) ? configSpeed * 10 / 4 + 30 : 127;
     if ((keyboard_buttons_down & 0x30000) == 0x10000) {
-        pad->stick_x = -128;
+        pad->stick_x = - sens;
     }
     if ((keyboard_buttons_down & 0x30000) == 0x20000) {
-        pad->stick_x = 127;
+        pad->stick_x = sens;
     }
     if ((keyboard_buttons_down & 0xc0000) == 0x40000) {
-        pad->stick_y = -128;
+        pad->stick_y = - sens;
     }
     if ((keyboard_buttons_down & 0xc0000) == 0x80000) {
-        pad->stick_y = 127;
+        pad->stick_y = sens;
+    }
+    if (pad->stick_x != 0 && pad->stick_y != 0) {
+        double angle = atan2(pad->stick_y, pad->stick_x);
+        pad->stick_x = cos(angle) * abs(pad->stick_x);
+        pad->stick_y = sin(angle) * abs(pad->stick_y);
     }
 }
 

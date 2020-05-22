@@ -64,6 +64,7 @@ unsigned int configKeyStickUp[MAX_BINDS]    = { 0x0011,   VK_INVALID, VK_INVALID
 unsigned int configKeyStickDown[MAX_BINDS]  = { 0x001F,   VK_INVALID, VK_INVALID };
 unsigned int configKeyStickLeft[MAX_BINDS]  = { 0x001E,   VK_INVALID, VK_INVALID };
 unsigned int configKeyStickRight[MAX_BINDS] = { 0x0020,   VK_INVALID, VK_INVALID };
+unsigned int configKeyWalk[MAX_BINDS] =       { 0x002A,   VK_INVALID, VK_INVALID };
 
 #ifdef BETTERCAMERA
 // BetterCamera settings
@@ -78,6 +79,7 @@ bool         configEnableCamera  = false;
 bool         configCameraMouse   = false;
 #endif
 unsigned int configSkipIntro     = 0;
+unsigned int configSpeed         = 7;
 bool         configHUD           = true;
 
 static const struct ConfigOption options[] = {
@@ -103,6 +105,8 @@ static const struct ConfigOption options[] = {
     {.name = "key_stickdown",        .type = CONFIG_TYPE_BIND, .uintValue = configKeyStickDown},
     {.name = "key_stickleft",        .type = CONFIG_TYPE_BIND, .uintValue = configKeyStickLeft},
     {.name = "key_stickright",       .type = CONFIG_TYPE_BIND, .uintValue = configKeyStickRight},
+    {.name = "key_walk",             .type = CONFIG_TYPE_BIND, .uintValue = configKeyWalk},
+    {.name = "walking_speed",        .type = CONFIG_TYPE_UINT, .uintValue = &configSpeed},
     #ifdef BETTERCAMERA
     {.name = "bettercam_enable",     .type = CONFIG_TYPE_BOOL, .boolValue = &configEnableCamera},
     {.name = "bettercam_mouse_look", .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraMouse},
