@@ -29,10 +29,10 @@
 static u16 gRandomSeed16;
 
 // Unused function that directly jumps to a behavior command and resets the object's stack index.
-static void goto_behavior_unused(const BehaviorScript *bhvAddr) {
-    gCurBhvCommand = segmented_to_virtual(bhvAddr);
-    gCurrentObject->bhvStackIndex = 0;
-}
+//static void goto_behavior_unused(const BehaviorScript *bhvAddr) {
+//    gCurBhvCommand = segmented_to_virtual(bhvAddr);
+//    gCurrentObject->bhvStackIndex = 0;
+//}
 
 // Generate a pseudorandom integer from 0 to 65535 from the random seed, and update the seed.
 u16 random_u16(void) {
@@ -105,11 +105,11 @@ static uintptr_t cur_obj_bhv_stack_pop(void) {
     return bhvAddr;
 }
 
-static void stub_behavior_script_1(void) {
-    for (;;) {
-        ;
-    }
-}
+//static void stub_behavior_script_1(void) {
+//    for (;;) {
+//        ;
+//    }
+//}
 
 // Command 0x22: Hides the current object.
 // Usage: HIDE()
@@ -693,20 +693,20 @@ static s32 bhv_cmd_begin(void) {
 // It cannot be simply re-added to the table, as unlike all other bhv commands it takes a parameter.
 // Theoretically this command would have been of variable size.
 // Included below is a modified/repaired version of this function that would work properly.
-static void bhv_cmd_set_int_random_from_table(s32 tableSize) {
-    u8 field = BHV_CMD_GET_2ND_U8(0);
-    s32 table[16];
-    s32 i;
+//static void bhv_cmd_set_int_random_from_table(s32 tableSize) {
+//    u8 field = BHV_CMD_GET_2ND_U8(0);
+//    s32 table[16];
+//    s32 i;
     // This for loop would not work as intended at all...
-    for (i = 0; i <= tableSize / 2; i += 2) {
-        table[i] = BHV_CMD_GET_1ST_S16(i + 1);
-        table[i + 1] = BHV_CMD_GET_2ND_S16(i + 1);
-    }
+//    for (i = 0; i <= tableSize / 2; i += 2) {
+//        table[i] = BHV_CMD_GET_1ST_S16(i + 1);
+//        table[i + 1] = BHV_CMD_GET_2ND_S16(i + 1);
+//    }
 
-    cur_obj_set_int(field, table[(s32)(tableSize * random_float())]);
+//    cur_obj_set_int(field, table[(s32)(tableSize * random_float())]);
 
     // Does not increment gCurBhvCommand or return a bhv status
-}
+//}
 
 /**
 // Command 0x??: Sets the specified field to a random entry in the given table, up to size 16.

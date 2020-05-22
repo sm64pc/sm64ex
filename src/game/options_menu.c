@@ -59,6 +59,7 @@ static const u8 menuStr[][32] = {
 
 };
 
+#if defined(BETTERCAMERA) && defined(EXT_OPTIONS_MENU)
 static const u8 optsCameraStr[][32] = {
     { TEXT_OPT_CAMX },
     { TEXT_OPT_CAMY },
@@ -70,6 +71,7 @@ static const u8 optsCameraStr[][32] = {
     { TEXT_OPT_MOUSE },
     { TEXT_OPT_CAMD },
 };
+#endif
 
 static const u8 optsVideoStr[][32] = {
     { TEXT_OPT_FSCREEN },

@@ -33,13 +33,9 @@ typedef double f64;
 #include <stdint.h>
 #include <sys/types.h>
 
-#if defined(__MINGW32__) 
+#if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
 #include <_mingw.h>
-#if !defined(__MINGW64_VERSION_MAJOR)
 typedef long ssize_t;
-#else
-typedef ptrdiff_t ssize_t;
-#endif
 #endif
 
 #endif // _ULTRA64_TYPES_H_

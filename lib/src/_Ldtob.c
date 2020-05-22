@@ -26,7 +26,7 @@ const double D_80338670[] = { 10e0L, 10e1L, 10e3L, 10e7L, 10e15L, 10e31L, 10e63L
 #define _CSIGN 1
 #define _ILONG 0
 #define _MBMAX 8
-#define NAN 2
+#define _NAN 2
 #define INF 1
 #define FINITE -1
 #define _DFRAC ((1 << _DOFF) - 1)
@@ -166,14 +166,14 @@ static s16 _Ldunscale(s16 *pex, printf_struct *px) {
     short xchar = (ps[_D0] & _DMASK) >> _DOFF;
     if (xchar == _DMAX) { /* NaN or INF */
         *pex = 0;
-        return (s16)(ps[_D0] & _DFRAC || ps[_D1] || ps[_D2] || ps[_D3] ? NAN : INF);
+        return (s16)(ps[_D0] & _DFRAC || ps[_D1] || ps[_D2] || ps[_D3] ? _NAN : INF);
     } else if (0 < xchar) {
         ps[_D0] = (ps[_D0] & ~_DMASK) | (_DBIAS << _DOFF);
         *pex = xchar - (_DBIAS - 1);
         return (FINITE);
     }
     if (0 > xchar) {
-        return NAN;
+        return _NAN;
     } else {
         *pex = 0;
         return (0);

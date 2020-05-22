@@ -384,7 +384,7 @@ out2:
 
 #ifndef VERSION_EU
 // This function gets optimized out on US due to being static and never called
-static
+UNUSED static
 #endif
 
 void patch_sound(UNUSED struct AudioBankSound *sound, UNUSED u8 *memBase, UNUSED u8 *offsetBase) {
@@ -875,13 +875,15 @@ void audio_init() {
     UNUSED s8 pad[32];
     u8 buf[0x10];
 #endif
-    s32 i, j, k;
+    s32 i, j;
+    s32 UNUSED k;
     UNUSED s32 lim1; // lim1 unused in EU
 #ifdef VERSION_EU
     u8 buf[0x10];
     s32 UNUSED lim2, lim3;
 #else
-    s32 lim2, lim3;
+    s32 lim2;
+    s32 UNUSED lim3;
 #endif
     u32 size;
     UNUSED u64 *ptr64;

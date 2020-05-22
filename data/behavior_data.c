@@ -3144,12 +3144,12 @@ const BehaviorScript bhvUnusedFakeStar[] = {
 };
 
 // What is this?
-static const BehaviorScript unused_1[] = {
-    BREAK(),
-    BREAK(),
-    BREAK(),
-    BREAK(),
-};
+//static const BehaviorScript unused_1[] = {
+//    BREAK(),
+//    BREAK(),
+//    BREAK(),
+//    BREAK(),
+//};
 
 const BehaviorScript bhvStaticObject[] = {
     BEGIN(OBJ_LIST_DEFAULT),

@@ -1126,19 +1126,19 @@ s32 play_mode_change_level(void) {
  * Unused play mode. Doesn't call transition update and doesn't reset transition
  * at the end.
  */
-static s32 play_mode_unused(void) {
-    if (--sTransitionTimer == -1) {
-        gHudDisplay.flags = HUD_DISPLAY_NONE;
+//static s32 play_mode_unused(void) {
+//    if (--sTransitionTimer == -1) {
+//        gHudDisplay.flags = HUD_DISPLAY_NONE;
 
-        if (sWarpDest.type != WARP_TYPE_NOT_WARPING) {
-            return sWarpDest.levelNum;
-        } else {
-            return D_80339EE0;
-        }
-    }
+//        if (sWarpDest.type != WARP_TYPE_NOT_WARPING) {
+//            return sWarpDest.levelNum;
+//        } else {
+//            return D_80339EE0;
+//        }
+//    }
 
-    return 0;
-}
+//    return 0;
+//}
 
 s32 update_level(void) {
     s32 changeLevel;

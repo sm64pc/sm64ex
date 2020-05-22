@@ -163,23 +163,23 @@ void clear_object_lists(struct ObjectNode *objLists) {
 /**
  * Delete the leaf graph nodes under obj and obj's siblings.
  */
-static void unused_delete_leaf_nodes(struct Object *obj) {
-    struct Object *children;
-    struct Object *sibling;
-    struct Object *obj0 = obj;
+//static void unused_delete_leaf_nodes(struct Object *obj) {
+//    struct Object *children;
+//    struct Object *sibling;
+//    struct Object *obj0 = obj;
 
-    if ((children = (struct Object *) obj->header.gfx.node.children) != NULL) {
-        unused_delete_leaf_nodes(children);
-    } else {
+//    if ((children = (struct Object *) obj->header.gfx.node.children) != NULL) {
+//        unused_delete_leaf_nodes(children);
+//    } else {
         // No children
-        mark_obj_for_deletion(obj);
-    }
+//        mark_obj_for_deletion(obj);
+//    }
 
-    while ((sibling = (struct Object *) obj->header.gfx.node.next) != obj0) {
-        unused_delete_leaf_nodes(sibling);
-        obj = (struct Object *) sibling->header.gfx.node.next;
-    }
-}
+//    while ((sibling = (struct Object *) obj->header.gfx.node.next) != obj0) {
+//        unused_delete_leaf_nodes(sibling);
+//        obj = (struct Object *) sibling->header.gfx.node.next;
+//    }
+//}
 
 /**
  * Free the given object.

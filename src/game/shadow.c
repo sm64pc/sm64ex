@@ -190,8 +190,7 @@ f32 get_water_level_below_shadow(struct Shadow *s) {
         gShadowAboveWaterOrLava = TRUE;
         return waterLevel;
     }
-    //! @bug Missing return statement. This compiles to return `waterLevel`
-    //! incidentally.
+    return waterLevel;
 }
 
 /**

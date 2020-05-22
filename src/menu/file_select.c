@@ -38,6 +38,9 @@
 // the large length difference between options.
 // sSoundTextY unused (EU supports its existence).
 static s16 sSoundTextX;
+UNUSED static s16 sSoundTextY;
+#elif VERSION_EU
+static s16 sSoundTextX;
 static s16 sSoundTextY;
 #endif
 

@@ -20,7 +20,7 @@ static struct ControllerAPI *controller_implementations[] = {
     &controller_keyboard,
 };
 
-s32 osContInit(OSMesgQueue *mq, u8 *controllerBits, OSContStatus *status) {
+s32 osContInit(UNUSED OSMesgQueue *mq, u8 *controllerBits, UNUSED OSContStatus *status) {
     for (size_t i = 0; i < sizeof(controller_implementations) / sizeof(struct ControllerAPI *); i++) {
         controller_implementations[i]->init();
     }
@@ -28,7 +28,7 @@ s32 osContInit(OSMesgQueue *mq, u8 *controllerBits, OSContStatus *status) {
     return 0;
 }
 
-s32 osContStartReadData(OSMesgQueue *mesg) {
+s32 osContStartReadData(UNUSED OSMesgQueue *mesg) {
     return 0;
 }
 

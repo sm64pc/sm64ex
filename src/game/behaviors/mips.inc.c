@@ -110,7 +110,7 @@ void bhv_mips_act_wait_for_nearby_mario(void) {
  */
 void bhv_mips_act_follow_path(void) {
     s16 collisionFlags = 0;
-    s32 followStatus;
+    s32 followStatus = 0;
     struct Waypoint **pathBase;
     struct Waypoint *waypoint;
 

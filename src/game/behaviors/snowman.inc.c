@@ -52,7 +52,7 @@ void adjust_rolling_face_pitch(f32 f12) {
 
 void snowmans_bottom_act_1(void) {
     UNUSED s16 sp26;
-    s32 sp20;
+    s32 sp20 = 0;
     UNUSED s16 sp1E;
 
     o->oPathedStartWaypoint = segmented_to_virtual(&ccm_seg7_trajectory_snowman);

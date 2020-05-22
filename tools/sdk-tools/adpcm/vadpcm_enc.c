@@ -15,7 +15,7 @@ int main(int argc, char **argv)
     s16 numMarkers;
     s16 *inBuffer;
     s16 ts;
-    s32 minLoopLength = 800;
+    u32 minLoopLength = 800;
     s32 ***coefTable = NULL;
     s32 *state;
     s32 order;
@@ -31,10 +31,10 @@ int main(int argc, char **argv)
     s32 i;
     s32 j;
     s32 k;
-    s32 nFrames;
+    u32 nFrames;
     s32 offset;
     s32 cChunkPos;
-    s32 currentPos;
+    u32 currentPos;
     s32 soundPointer = 0;
     s32 startPointer = 0;
     s32 startSoundPointer = 0;
@@ -53,8 +53,8 @@ int main(int argc, char **argv)
     SoundDataChunk SndDChunk;
     InstrumentChunk InstChunk;
     Loop *loops = NULL;
-    ALADPCMloop *aloops;
-    Marker *markers;
+    ALADPCMloop *aloops = NULL;
+    Marker *markers = NULL;
     CodeChunk cChunk;
     char filename[1024];
     FILE *fhandle;
@@ -92,7 +92,7 @@ int main(int argc, char **argv)
             break;
 
         case 'l':
-            sscanf(optarg, "%d", &minLoopLength);
+            sscanf(optarg, "%d", (s32 *)&minLoopLength);
             break;
 
         default:
@@ -132,7 +132,7 @@ int main(int argc, char **argv)
 
     inBuffer = malloc(16 * sizeof(s16));
 
-    fread(&FormChunk, sizeof(Chunk), 1, ifile);
+    if (fread(&FormChunk, sizeof(Chunk), 1, ifile)){};
     BSWAP32(FormChunk.ckID)
     BSWAP32(FormChunk.ckSize)
     BSWAP32(FormChunk.formType)
@@ -198,7 +198,7 @@ int main(int argc, char **argv)
 
         case 0x53534e44: // SSND
             offset = ftell(ifile);
-            fread(&SndDChunk, sizeof(SoundDataChunk), 1, ifile);
+            if (fread(&SndDChunk, sizeof(SoundDataChunk), 1, ifile)){};
             BSWAP32(SndDChunk.offset)
             BSWAP32(SndDChunk.blockSize)
             // The assert error messages specify line numbers 219/220. Match
@@ -214,16 +214,16 @@ int main(int argc, char **argv)
 
         case 0x4d41524b: // MARK
             offset = ftell(ifile);
-            fread(&numMarkers, sizeof(s16), 1, ifile);
+            if (fread(&numMarkers, sizeof(s16), 1, ifile)){};
             BSWAP16(numMarkers)
             markers = malloc(numMarkers * sizeof(Marker));
             for (i = 0; i < numMarkers; i++)
             {
-                fread(&markers[i], sizeof(Marker), 1, ifile);
+                if (fread(&markers[i], sizeof(Marker), 1, ifile)){};
                 BSWAP16(markers[i].MarkerID)
                 BSWAP16(markers[i].positionH)
                 BSWAP16(markers[i].positionL)
-                fread(&strnLen, 1, 1, ifile);
+                if (fread(&strnLen, 1, 1, ifile)){};
                 if ((strnLen & 1) != 0)
                 {
                     fseek(ifile, strnLen, SEEK_CUR);
@@ -238,7 +238,7 @@ int main(int argc, char **argv)
 
         case 0x494e5354: // INST
             offset = ftell(ifile);
-            fread(&InstChunk, sizeof(InstrumentChunk), 1, ifile);
+            if (fread(&InstChunk, sizeof(InstrumentChunk), 1, ifile)){};
             BSWAP16(InstChunk.sustainLoop.playMode)
             BSWAP16(InstChunk.sustainLoop.beginLoop)
             BSWAP16(InstChunk.sustainLoop.endLoop)
@@ -414,10 +414,10 @@ int main(int argc, char **argv)
                     }
                 }
                 left = aloops[i].end - currentPos;
-                fread(inBuffer, sizeof(s16), left, ifile);
+                if (fread(inBuffer, sizeof(s16), left, ifile)){};
                 BSWAP16_MANY(inBuffer, left)
                 fseek(ifile, startPointer, SEEK_SET);
-                fread(inBuffer + left, sizeof(s16), 16 - left, ifile);
+                if (fread(inBuffer + left, sizeof(s16), 16 - left, ifile)){};
                 BSWAP16_MANY(inBuffer + left, 16 - left)
                 vencodeframe(ofile, inBuffer, state, coefTable, order, npredictors, 16);
                 nBytes += 9;
@@ -429,7 +429,7 @@ int main(int argc, char **argv)
     }
 
     nFrames = (CommChunk.numFramesH << 16) + CommChunk.numFramesL;
-    if ((nloops > 0U) & truncate)
+    if ((nloops > 0) & truncate)
     {
         lookupMarker(&loopEnd, loops[nloops - 1].endLoop, markers, numMarkers);
         nFrames = (loopEnd + 16 < nFrames ? loopEnd + 16 : nFrames);
@@ -446,7 +446,7 @@ int main(int argc, char **argv)
             nsam = 16;
         }
 
-        if (fread(inBuffer, 2, nsam, ifile) == nsam)
+        if (fread(inBuffer, 2, (u32)nsam, ifile) == (u32)nsam)
         {
             BSWAP16_MANY(inBuffer, nsam)
             vencodeframe(ofile, inBuffer, state, coefTable, order, npredictors, nsam);

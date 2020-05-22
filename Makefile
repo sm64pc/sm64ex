@@ -72,7 +72,7 @@ ifeq ($(WINDOWS_BUILD),1)
     TARGET_BITS = 32
     NO_BZERO_BCOPY := 1
   else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
-    TARGET_ARCH = i386pe
+    TARGET_ARCH = i386pep
     TARGET_BITS = 64
     NO_BZERO_BCOPY := 1
   endif
@@ -92,22 +92,19 @@ ifeq ($(VERSION),jp)
   GRUCODE_CFLAGS := -DF3D_OLD
   GRUCODE_ASFLAGS := --defsym F3D_OLD=1
   TARGET := sm64.jp
-else
-ifeq ($(VERSION),us)
+else ifeq ($(VERSION),us)
   VERSION_CFLAGS := -DVERSION_US
   VERSION_ASFLAGS := --defsym VERSION_US=1
   GRUCODE_CFLAGS := -DF3D_OLD
   GRUCODE_ASFLAGS := --defsym F3D_OLD=1
   TARGET := sm64.us
-else
-ifeq ($(VERSION),eu)
+else ifeq ($(VERSION),eu)
   VERSION_CFLAGS := -DVERSION_EU
   VERSION_ASFLAGS := --defsym VERSION_EU=1
   GRUCODE_CFLAGS := -DF3D_NEW
   GRUCODE_ASFLAGS := --defsym F3D_NEW=1
   TARGET := sm64.eu
-else
-ifeq ($(VERSION),sh)
+else ifeq ($(VERSION),sh)
   $(warning Building SH is experimental and is prone to breaking. Try at your own risk.)
   VERSION_CFLAGS := -DVERSION_SH
   VERSION_ASFLAGS := --defsym VERSION_SH=1
@@ -118,9 +115,6 @@ ifeq ($(VERSION),sh)
   NOEXTRACT := 1
 else
   $(error unknown version "$(VERSION)")
-endif
-endif
-endif
 endif
 
 # Stuff for showing the git hash in the intro on nightly builds
@@ -139,34 +133,26 @@ ifeq ($(GRUCODE),f3dex) # Fast3DEX
   GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1 --defsym F3DEX_GBI=1
   TARGET := $(TARGET).f3dex
   COMPARE := 0
-else
-ifeq ($(GRUCODE), f3dex2) # Fast3DEX2
+else ifeq ($(GRUCODE), f3dex2) # Fast3DEX2
   GRUCODE_CFLAGS := -DF3DEX_GBI_2
   GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1 --defsym F3DEX_GBI_2=1
   TARGET := $(TARGET).f3dex2
   COMPARE := 0
-else
-ifeq ($(GRUCODE), f3dex2e) # Fast3DEX2 Extended (PC default)
+else ifeq ($(GRUCODE), f3dex2e) # Fast3DEX2 Extended (PC default)
   GRUCODE_CFLAGS := -DF3DEX_GBI_2E
   TARGET := $(TARGET).f3dex2e
   COMPARE := 0
-else
-ifeq ($(GRUCODE),f3d_new) # Fast3D 2.0H (Shindou)
+else ifeq ($(GRUCODE),f3d_new) # Fast3D 2.0H (Shindou)
   GRUCODE_CFLAGS := -DF3D_NEW
   GRUCODE_ASFLAGS := --defsym F3D_NEW=1
   TARGET := $(TARGET).f3d_new
   COMPARE := 0
-else
-ifeq ($(GRUCODE),f3dzex) # Fast3DZEX (2.0J / Animal Forest - Dōbutsu no Mori)
+else ifeq ($(GRUCODE),f3dzex) # Fast3DZEX (2.0J / Animal Forest - Dōbutsu no Mori)
   $(warning Fast3DZEX is experimental. Try at your own risk.)
   GRUCODE_CFLAGS := -DF3DEX_GBI_2
   GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1 --defsym F3DZEX_GBI=1
   TARGET := $(TARGET).f3dzex
   COMPARE := 0
-endif
-endif
-endif
-endif
 endif
 
 # Default build is for PC now
@@ -193,8 +179,7 @@ endif
 # on tools and assets, and we use directory globs further down
 # in the makefile that we want should cover assets.)
 
-ifneq ($(MAKECMDGOALS),clean)
-ifneq ($(MAKECMDGOALS),distclean)
+ifeq (,$(findstring clean,$(MAKECMDGOALS)))
 
 # Make sure assets exist
 NOEXTRACT ?= 0
@@ -212,7 +197,6 @@ ifeq ($(DUMMY),FAIL)
 endif
 
 endif
-endif
 
 ################ Target Executable and Sources ###############
 
@@ -229,17 +213,12 @@ LIBULTRA := $(BUILD_DIR)/libultra.a
 
 ifeq ($(TARGET_WEB),1)
 EXE := $(BUILD_DIR)/$(TARGET).html
-	else
-	ifeq ($(WINDOWS_BUILD),1)
-		EXE := $(BUILD_DIR)/$(TARGET).exe
-
-		else # Linux builds/binary namer
-		ifeq ($(TARGET_RPI),1)
-			EXE := $(BUILD_DIR)/$(TARGET).arm
-		else
-			EXE := $(BUILD_DIR)/$(TARGET)
-		endif
-	endif
+else ifeq ($(WINDOWS_BUILD),1)
+EXE := $(BUILD_DIR)/$(TARGET).exe
+else ifeq ($(TARGET_RPI),1) # Linux builds/binary namer
+EXE := $(BUILD_DIR)/$(TARGET).arm
+else
+EXE := $(BUILD_DIR)/$(TARGET)
 endif
 
 ELF := $(BUILD_DIR)/$(TARGET).elf
@@ -269,12 +248,10 @@ MIPSBIT := -32
 
 ifeq ($(VERSION),eu)
   OPT_FLAGS := -O2
-else
-ifeq ($(VERSION),sh)
+else ifeq ($(VERSION),sh)
   OPT_FLAGS := -O2
 else
   OPT_FLAGS := -g
-endif
 endif
 
 # Set BITS (32/64) to compile for
@@ -478,8 +455,8 @@ ifeq ($(WINDOWS_BUILD),1) # fixes compilation in MXE on Linux and WSL
   OBJDUMP := $(CROSS)objdump
 else ifeq ($(OSX_BUILD),1)
   CPP := cpp-9 -P
-  OBJDUMP := i686-w64-mingw32-objdump
   OBJCOPY := i686-w64-mingw32-objcopy
+  OBJDUMP := i686-w64-mingw32-objdump
 else # Linux & other builds
   CPP := $(CROSS)cpp -P
   OBJCOPY := $(CROSS)objcopy
@@ -497,8 +474,7 @@ else ifeq ($(TARGET_WEB),1)
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
 CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv -s USE_SDL=2
 
-# Linux / Other builds below
-else
+else # Linux / Other builds below
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags`
 CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags`
 endif
@@ -512,6 +488,7 @@ ifeq ($(BETTERCAMERA),1)
   EXT_OPTIONS_MENU := 1
 endif
 
+# Check for text-based save option
 ifeq ($(TEXTSAVES),1)
   CC_CHECK += -DTEXTSAVES
   CFLAGS += -DTEXTSAVES
@@ -568,12 +545,10 @@ else ifeq ($(WINDOWS_BUILD),1)
 else ifeq ($(TARGET_RPI),1)
 # Linux / Other builds below
 LDFLAGS := $(OPT_FLAGS) -lm -lGLESv2 `$(SDLCONFIG) --libs` -no-pie
-else
-ifeq ($(OSX_BUILD),1)
+else ifeq ($(OSX_BUILD),1)
 LDFLAGS := -lm -framework OpenGL `$(SDLCONFIG) --libs` -no-pie -lpthread `pkg-config --libs libusb-1.0 glfw3 glew`
 else
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(SDLCONFIG) --libs` -no-pie -lpthread
-endif
 endif # End of LDFLAGS
 
 # Prevent a crash with -sopt
@@ -611,11 +586,20 @@ clean:
 	$(RM) -r $(BUILD_DIR_BASE)
 
 cleantools:
-	$(MAKE) -s -C tools clean
+	$(MAKE) -C tools clean
+
+cleanall:
+	$(RM) -r $(BUILD_DIR_BASE)
+	$(MAKE) -C tools clean
 
 distclean:
 	$(RM) -r $(BUILD_DIR_BASE)
 	./extract_assets.py --clean
+
+distcleanall:
+	$(RM) -r $(BUILD_DIR_BASE)
+	./extract_assets.py --clean
+	$(MAKE) -C tools clean
 
 test: $(ROM)
 	$(EMULATOR) $(EMU_FLAGS) $<
@@ -654,8 +638,7 @@ $(BUILD_DIR)/levels/menu/leveldata.o: $(BUILD_DIR)/text/us/define_courses.inc.c
 $(BUILD_DIR)/levels/menu/leveldata.o: $(BUILD_DIR)/text/de/define_courses.inc.c
 $(BUILD_DIR)/levels/menu/leveldata.o: $(BUILD_DIR)/text/fr/define_courses.inc.c
 
-else
-ifeq ($(VERSION),sh)
+else ifeq ($(VERSION),sh)
 TEXT_DIRS := text/jp
 $(BUILD_DIR)/bin/segment2.o: $(BUILD_DIR)/text/jp/define_text.inc.c
 
@@ -665,14 +648,13 @@ TEXT_DIRS := text/$(VERSION)
 # non-EU encoded text inserted into segment 0x02
 $(BUILD_DIR)/bin/segment2.o: $(BUILD_DIR)/text/$(VERSION)/define_text.inc.c
 endif
-endif
 
 $(BUILD_DIR)/text/%/define_courses.inc.c: text/define_courses.inc.c text/%/courses.h
 	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/$*/
 	$(TEXTCONV) charmap.txt $@ $@
 
 $(BUILD_DIR)/text/%/define_text.inc.c: text/define_text.inc.c text/%/courses.h text/%/dialogs.h
-	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/$*/
+	$(CPP) $(VERSION_CFLAGS) -Wno-trigraphs $< -o $@ -I text/$*/
 	$(TEXTCONV) charmap.txt $@ $@
 
 ALL_DIRS := $(BUILD_DIR) $(addprefix $(BUILD_DIR)/,$(SRC_DIRS) $(ASM_DIRS) $(GODDARD_SRC_DIRS) $(ULTRA_SRC_DIRS) $(ULTRA_ASM_DIRS) $(ULTRA_BIN_DIRS) $(BIN_DIRS) $(TEXTURE_DIRS) $(TEXT_DIRS) $(SOUND_SAMPLE_DIRS) $(addprefix levels/,$(LEVEL_DIRS)) include) $(MIO0_DIR) $(addprefix $(MIO0_DIR)/,$(VERSION)) $(SOUND_BIN_DIR) $(SOUND_BIN_DIR)/sequences/$(VERSION)

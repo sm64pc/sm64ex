@@ -9,8 +9,8 @@ s32 readcodebook(FILE *fhandle, s32 ****table, s32 *order, s32 *npredictors)
     s32 j;
     s32 k;
 
-    fscanf(fhandle, "%d", order);
-    fscanf(fhandle, "%d", npredictors);
+    if (fscanf(fhandle, "%d", order)){};
+    if (fscanf(fhandle, "%d", npredictors)){};
     *table = malloc(*npredictors * sizeof(s32 **));
     for (i = 0; i < *npredictors; i++)
     {
@@ -28,7 +28,7 @@ s32 readcodebook(FILE *fhandle, s32 ****table, s32 *order, s32 *npredictors)
         {
             for (k = 0; k < 8; k++)
             {
-                fscanf(fhandle, "%d", &table_entry[k][j]);
+                if (fscanf(fhandle, "%d", &table_entry[k][j])){};
             }
         }
 
@@ -63,9 +63,9 @@ s32 readaifccodebook(FILE *fhandle, s32 ****table, s16 *order, s16 *npredictors)
     s32 k;
     s16 ts;
 
-    fread(order, sizeof(s16), 1, fhandle);
+    if (fread(order, sizeof(s16), 1, fhandle)){};
     BSWAP16(*order)
-    fread(npredictors, sizeof(s16), 1, fhandle);
+    if (fread(npredictors, sizeof(s16), 1, fhandle)){};
     BSWAP16(*npredictors)
     *table = malloc(*npredictors * sizeof(s32 **));
     for (i = 0; i < *npredictors; i++)
@@ -84,7 +84,7 @@ s32 readaifccodebook(FILE *fhandle, s32 ****table, s16 *order, s16 *npredictors)
         {
             for (k = 0; k < 8; k++)
             {
-                fread(&ts, sizeof(s16), 1, fhandle);
+                if (fread(&ts, sizeof(s16), 1, fhandle)){};
                 BSWAP16(ts)
                 table_entry[k][j] = ts;
             }

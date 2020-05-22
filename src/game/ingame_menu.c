@@ -218,7 +218,7 @@ void create_dl_ortho_matrix(void) {
 }
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
-static inline void alloc_ia8_text_from_i1(u8 *out, u16 *in, s16 width, s16 height) {
+static void alloc_ia8_text_from_i1(u8 *out, u16 *in, s16 width, s16 height) {
     s32 inPos;
     u16 bitMask;
     u16 inWord;
@@ -241,7 +241,7 @@ static inline void alloc_ia8_text_from_i1(u8 *out, u16 *in, s16 width, s16 heigh
     }
 }
 
-static inline u8 *convert_ia8_char(u8 c, u16 *tex, s16 w, s16 h) {
+static u8 *convert_ia8_char(u8 c, u16 *tex, s16 w, s16 h) {
     if (!charCache[c].used) {
         charCache[c].used = 1;
         alloc_ia8_text_from_i1(charCache[c].data, tex, w, h);
@@ -2968,13 +2968,14 @@ void render_save_confirmation(s16 x, s16 y, s8 *index, s16 sp6e)
         { TEXT_SAVE_AND_CONTINUE_FR },
         { TEXT_SAVE_AND_CONTINUE_DE }
     };
+
     u8 textSaveAndQuitArr[][22] = {
         { TEXT_SAVE_AND_QUIT },
         { TEXT_SAVE_AND_QUIT_FR },
         { TEXT_SAVE_AND_QUIT_DE }
     };
 
-    u8 textSaveExitGame[][26] = { // New function to exit game
+    u8 textSaveExitGame[][28] = { // New function to exit game
         { TEXT_SAVE_EXIT_GAME },
         { TEXT_SAVE_EXIT_GAME_FR },
         { TEXT_SAVE_EXIT_GAME_DE }

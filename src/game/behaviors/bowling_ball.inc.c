@@ -65,7 +65,7 @@ void bowling_ball_set_waypoints(void) {
 
 void bhv_bowling_ball_roll_loop(void) {
     s16 collisionFlags;
-    s32 sp18;
+    s32 sp18 = 0;
 
     bowling_ball_set_waypoints();
     collisionFlags = object_step();
@@ -95,7 +95,7 @@ void bhv_bowling_ball_roll_loop(void) {
 }
 
 void bhv_bowling_ball_initializeLoop(void) {
-    s32 sp1c;
+    s32 sp1c = 0;
 
     bowling_ball_set_waypoints();
 
@@ -248,6 +248,7 @@ void bhv_free_bowling_ball_roll_loop(void) {
     }
 
     if ((collisionFlags & OBJ_COL_FLAG_GROUNDED) && !(collisionFlags & OBJ_COL_FLAGS_LANDED))
+    //if ((collisionFlags & OBJ_COL_FLAG_GROUNDED) && !(collisionFlags & OBJ_COL_FLAG_NO_Y_VEL)) // could mess with bowling ball behavior, but it fixes a compiler warning
         cur_obj_play_sound_2(SOUND_GENERAL_QUIET_POUND1_LOWPRIO);
 
     if (!is_point_within_radius_of_mario(o->oPosX, o->oPosY, o->oPosZ, 6000)) {

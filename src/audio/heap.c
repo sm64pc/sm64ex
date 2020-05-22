@@ -302,10 +302,10 @@ void temporary_pools_init(struct PoolSplit *a) {
     temporary_pool_clear(&gUnusedLoadedPool.temporary);
 }
 
-#ifndef VERSION_EU
-static void unused_803163D4() {
-}
-#endif
+//#ifndef VERSION_EU
+//static void unused_803163D4() {
+//}
+//#endif
 
 void *alloc_bank_or_seq(struct SoundMultiPool *arg0, s32 arg1, s32 size, s32 arg3, s32 id) {
     // arg3 = 0, 1 or 2?
@@ -649,7 +649,7 @@ s32 audio_shut_down_and_reset_step(void) {
 /**
  * Waits until a specified number of audio frames have been created
  */
-void wait_for_audio_frames(s32 frames) {
+void wait_for_audio_frames(UNUSED s32 frames) {
     gAudioFrameCount = 0;
 
 }
