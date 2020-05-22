@@ -6,21 +6,12 @@
 #include <assert.h>
 #include <ctype.h>
 #include <SDL2/SDL.h>
-#include <errno.h>
-#include <dirent.h>
-#include <sys/stat.h>
-#include <unistd.h>
 
 #include "configfile.h"
 #include "gfx/gfx_screen_config.h"
 #include "controller/controller_api.h"
 
 #define ARRAY_LEN(arr) (sizeof(arr) / sizeof(arr[0]))
-#if defined(_WIN32) || defined(_WIN64) || defined (WIN32)
-    #define makedir(path, mode) mkdir(path)
-#else
-    #define makedir(path, mode) mkdir(path, mode)
-#endif
 
 enum ConfigOptionType {
     CONFIG_TYPE_BOOL,
@@ -206,38 +197,16 @@ void configfile_load(const char *filename) {
     FILE *file;
     char *line;
 
-    DIR* conf_dir = opendir(SDL_GetPrefPath("", "sm64pc"));     // Checks for XDG_DATA_HOME/sm64pc
-    char * cur_dir = SDL_GetBasePath();                         // Saves the current working directory so we can return to it later.
+    printf("Loading configuration from '%s'\n", filename);
 
-    if (ENOENT == errno)  
-    {                                                      // XDG_DATA_HOME/sm64pc does not exist, so try to read from the current working directory.
-        printf("%s not found.\n", SDL_GetPrefPath("", "sm64pc"));
-        file = fopen(filename, "r");
-        if (file == NULL) {
-            printf("Config file '%s' not found. Creating it.\n", filename);   // Config file also not found in cwd, so make a new one.
-            closedir(conf_dir);
-            configfile_save(filename);
-            return;
-        } else printf("Loading configuration from '%s%s'\n", SDL_GetBasePath(), filename); // We've found a file in cwd!
-    } else 
-    {                                           
-                                                // The config folder exists, so try to read from it.
-        
-        chdir(SDL_GetPrefPath("", "sm64pc"));       // Goes to XDG_DATA_HOME/sm64pc.
-        file = fopen(filename, "r");            
-        if (file == NULL)                       // If there's not a file here
-        {
-            chdir(cur_dir);           // Go back to the previous cwd
-            printf("Config file '%s' not found. Creating it.\n", filename);
-            closedir(conf_dir);
-            configfile_save(filename);
-            return;
-        } else 
-            printf("Loading configuration from '%s%s'\n", SDL_GetPrefPath("", "sm64pc"), filename); // We've found a file in XDG_DATA_HOME/sm64pc!
+    file = fopen(filename, "r");
+    if (file == NULL) {
+        // Create a new config file and save defaults
+        printf("Config file '%s' not found. Creating it.\n", filename);
+        configfile_save(filename);
+        return;
     }
 
-    closedir(conf_dir);
-    
     // Go through each line in the file
     while ((line = read_file_line(file)) != NULL) {
         char *p = line;
@@ -246,9 +215,13 @@ void configfile_load(const char *filename) {
 
         while (isspace(*p))
             p++;
+
+        if (!*p || *p == '#') // comment or empty line
+            continue;
+
         numTokens = tokenize_string(p, 2, tokens);
         if (numTokens != 0) {
-            if (numTokens == 2) {
+            if (numTokens >= 2) {
                 const struct ConfigOption *option = NULL;
 
                 for (unsigned int i = 0; i < ARRAY_LEN(options); i++) {
@@ -260,7 +233,7 @@ void configfile_load(const char *filename) {
                 if (option == NULL)
                     printf("unknown option '%s'\n", tokens[0]);
                 else {
-                     switch (option->type) {
+                    switch (option->type) {
                         case CONFIG_TYPE_BOOL:
                             if (strcmp(tokens[1], "true") == 0)
                                 *option->boolValue = true;
@@ -289,37 +262,15 @@ void configfile_load(const char *filename) {
     }
 
     fclose(file);
-    chdir(cur_dir);
 }
 
-
-// Writes to PrefPath/sm64pc.
+// Writes the config file to 'filename'
 void configfile_save(const char *filename) {
-    
     FILE *file;
 
-    printf("Saving configuration to '%s%s'\n",SDL_GetPrefPath("", "sm64pc"),  filename);
-    
-    char * cur_dir = SDL_GetBasePath();                         // Current working directory
-    DIR* conf_dir = opendir(SDL_GetPrefPath("", "sm64pc"));     // Checks if there's already an 'sm64pc' folder
-    if (ENOENT == errno)  // Directory does not exist
-    { 
-        makedir(SDL_GetPrefPath("", "sm64pc"), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);    // If there isn't, we'll make one.
-        conf_dir = opendir(SDL_GetPrefPath("", "sm64pc"));
-        if (errno == ENOENT) 
-        {
-            printf("Error: Couldn't get config path.\n");                      // If it still doesn't exist, bail out
-            exit(ENOENT);
-        }
-    }
-    
+    printf("Saving configuration to '%s'\n", filename);
 
-    closedir(conf_dir);
-    chdir(SDL_GetPrefPath("", "sm64pc"));                                           // Go to the pref folder
-    file = fopen(filename, "w");                                                    // Write the config file
-    chdir(cur_dir);                                                                 // Come back. 
-    
-
+    file = fopen(filename, "w");
     if (file == NULL) {
         // error
         return;
