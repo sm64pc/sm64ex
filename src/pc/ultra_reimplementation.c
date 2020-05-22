@@ -3,6 +3,16 @@
 #include "lib/src/libultra_internal.h"
 #include "macros.h"
 
+// These five next libraries are required for saving in the correct folders.
+#include <unistd.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <SDL2/SDL.h>
+#include <errno.h>
+
+u8 DONT_POLLUTE_SAVE = 0;       // Stops save-data pollution on the terminal.
+u8 DONT_POLLUTE_READ = 0;
+
 #ifdef TARGET_WEB
 #include <emscripten.h>
 #endif
@@ -119,7 +129,38 @@ s32 osEepromLongRead(UNUSED OSMesgQueue *mq, u8 address, u8 *buffer, int nbytes)
         ret = 0;
     }
 #else
-    FILE *fp = fopen("sm64_save_file.bin", "rb");
+    DIR* conf_dir = opendir(SDL_GetPrefPath("", "sm64pc"));     // Checks for XDG_DATA_HOME/sm64pc
+    char * cur_dir = SDL_GetBasePath();                         // Saves the current working directory so we can return to it later.
+    FILE *fp;
+    if (ENOENT == errno)  
+    {                                                      // XDG_DATA_HOME/sm64pc does not exist, so try to read from the current working directory.
+        fp = fopen("sm64_save_file.bin", "rb");
+        if (fp == NULL) 
+        {
+            closedir(conf_dir);  // Save data also not found in cwd, so return an error.
+            return -1;
+        } 
+        else 
+        {
+            printf("Loading sava data from '%s%s'\n", SDL_GetBasePath(), "sm64_save_file.bin"); // We've found a file in cwd!
+        }
+    } 
+    else 
+    {
+                    // The config folder exists, so try to read from it.
+
+                chdir(SDL_GetPrefPath("", "sm64pc"));       // Goes to XDG_DATA_HOME/sm64pc.
+        fp = fopen("sm64_save_file.bin", "rb");        
+        if (fp == NULL)                       // If there's not a file here
+        {
+            chdir(cur_dir);                
+            closedir(conf_dir);                 // We didn't find a save file in XDG_DATA_HOME/sm64pc
+            return -1;
+        } else printf("Loading save data from '%s%s'\n", SDL_GetPrefPath("", "sm64pc"), "sm64_save_file.bin"); // We've found a file in XDG_DATA_HOME/sm64pc!
+            
+    }
+
+    
     if (fp == NULL) {
         return -1;
     }
@@ -149,7 +190,29 @@ s32 osEepromLongWrite(UNUSED OSMesgQueue *mq, u8 address, u8 *buffer, int nbytes
     }, content);
     s32 ret = 0;
 #else
+    char * cur_dir = SDL_GetBasePath();                         // Current working directory
+    DIR* conf_dir = opendir(SDL_GetPrefPath("", "sm64pc"));     // Checks if there's already an 'sm64pc' folder
+    if (ENOENT == errno)  // Directory does not exist
+    { 
+        mkdir(SDL_GetPrefPath("", "sm64pc"), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);    // If there isn't, we'll make one.
+        conf_dir = opendir(SDL_GetPrefPath("", "sm64pc"));
+        if (errno == ENOENT) 
+        {
+            printf("Error: Couldn't get save path.\n");                      // If it still doesn't exist, bail out
+            exit(ENOENT);
+        }
+    }
+
+    closedir(conf_dir);
+    chdir(SDL_GetPrefPath("", "sm64pc"));                                           // Go to the pref folder
     FILE* fp = fopen("sm64_save_file.bin", "wb");
+    if (!DONT_POLLUTE_SAVE) {
+        printf("Save data is in '%s%s'\n",SDL_GetPrefPath("", "sm64pc"),  "sm64_save_file.bin");
+        DONT_POLLUTE_SAVE = 1;       // This is a bad solution to only print this message once.
+    }
+    
+    chdir(cur_dir);        
+    
     if (fp == NULL) {
         return -1;
     }
