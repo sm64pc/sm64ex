@@ -19,6 +19,7 @@
 #include "print.h"
 #include "engine/math_util.h"
 #include "course_table.h"
+#include "macros.h"
 #include "pc/cheats.h"
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
@@ -127,6 +128,16 @@ u8 gMenuHoldKeyIndex = 0;
 u8 gMenuHoldKeyTimer = 0;
 s32 gDialogResponse = 0;
 
+#if defined(VERSION_JP) || defined(VERSION_SH) || defined(VERSION_EU)
+#ifdef VERSION_EU
+#define CHCACHE_BUFLEN (8 * 8)  // EU only converts 8x8
+#else
+#define CHCACHE_BUFLEN (8 * 16) // JP only converts 8x16 or 16x8 characters
+#endif
+// stores char data unpacked from ia1 to ia8 or ia4
+// so that it won't be reconverted every time a character is rendered
+static struct CachedChar { u8 used; u8 data[CHCACHE_BUFLEN]; } charCache[256];
+#endif // VERSION
 
 void create_dl_identity_matrix(void) {
     Mtx *matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
@@ -207,23 +218,18 @@ void create_dl_ortho_matrix(void) {
 }
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
-static u8 *alloc_ia8_text_from_i1(u16 *in, s16 width, s16 height) {
+static inline void alloc_ia8_text_from_i1(u8 *out, u16 *in, s16 width, s16 height) {
     s32 inPos;
     u16 bitMask;
-    u8 *out;
+    u16 inWord;
     s16 outPos = 0;
 
-    out = alloc_display_list((u32) width * (u32) height);
-
-    if (out == NULL) {
-        return NULL;
-    }
-
     for (inPos = 0; inPos < (width * height) / 16; inPos++) {
+        inWord = BE_TO_HOST16(in[inPos]);
         bitMask = 0x8000;
 
         while (bitMask != 0) {
-            if (in[inPos] & bitMask) {
+            if (inWord & bitMask) {
                 out[outPos] = 0xFF;
             } else {
                 out[outPos] = 0x00;
@@ -233,8 +239,14 @@ static u8 *alloc_ia8_text_from_i1(u16 *in, s16 width, s16 height) {
             outPos++;
         }
     }
+}
 
-    return out;
+static inline u8 *convert_ia8_char(u8 c, u16 *tex, s16 w, s16 h) {
+    if (!charCache[c].used) {
+        charCache[c].used = 1;
+        alloc_ia8_text_from_i1(charCache[c].data, tex, w, h);
+    }
+    return charCache[c].data;
 }
 #endif
 
@@ -249,7 +261,7 @@ void render_generic_char(u8 c) {
     packedTexture = segmented_to_virtual(fontLUT[c]);
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
-    unpackedTexture = alloc_ia8_text_from_i1(packedTexture, 8, 16);
+    unpackedTexture = convert_ia8_char(c, packedTexture, 8, 16);
 
     gDPPipeSync(gDisplayListHead++);
     gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_IA, G_IM_SIZ_8b, 1, VIRTUAL_TO_PHYSICAL(unpackedTexture));
@@ -267,19 +279,11 @@ void render_generic_char(u8 c) {
 }
 
 #ifdef VERSION_EU
-u8 *alloc_ia4_tex_from_i1(u8 *in, s16 width, s16 height) {
+static void alloc_ia4_tex_from_i1(u8 *out, u8 *in, s16 width, s16 height) {
     u32 size = (u32) width * (u32) height;
-    u8 *out;
     s32 inPos;
-    s16 outPos;
+    s16 outPos = 0;
     u8 bitMask;
-
-    outPos = 0;
-    out = (u8 *) alloc_display_list(size);
-
-    if (out == NULL) {
-        return NULL;
-    }
 
     for (inPos = 0; inPos < (width * height) / 4; inPos++) {
         bitMask = 0x80;
@@ -291,8 +295,14 @@ u8 *alloc_ia4_tex_from_i1(u8 *in, s16 width, s16 height) {
             outPos++;
         }
     }
+}
 
-    return out;
+static u8 *convert_ia4_char(u8 c, u8 *tex, s16 w, s16 h) {
+    if (!charCache[c].used) {
+        charCache[c].used = 1;
+        alloc_ia4_tex_from_i1(charCache[c].data, tex, w, h);
+    }
+    return charCache[c].data;
 }
 
 void render_generic_char_at_pos(s16 xPos, s16 yPos, u8 c) {
@@ -302,7 +312,7 @@ void render_generic_char_at_pos(s16 xPos, s16 yPos, u8 c) {
 
     fontLUT = segmented_to_virtual(main_font_lut);
     packedTexture = segmented_to_virtual(fontLUT[c]);
-    unpackedTexture = alloc_ia4_tex_from_i1(packedTexture, 8, 8);
+    unpackedTexture = convert_ia4_char(c, packedTexture, 8, 8);
 
     gDPPipeSync(gDisplayListHead++);
     gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_IA, G_IM_SIZ_16b, 1, VIRTUAL_TO_PHYSICAL(unpackedTexture));
@@ -1027,7 +1037,7 @@ void render_generic_dialog_char_at_pos(struct DialogEntry *dialog, s16 x, s16 y,
 
     fontLUT = segmented_to_virtual(main_font_lut);
     packedTexture = segmented_to_virtual(fontLUT[c]);
-    unpackedTexture = alloc_ia4_tex_from_i1(packedTexture, 8, 8);
+    unpackedTexture = convert_ia4_char(c, packedTexture, 8, 8);
 
     gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_IA, G_IM_SIZ_16b, 1, VIRTUAL_TO_PHYSICAL(unpackedTexture));
     gSPDisplayList(gDisplayListHead++, dl_ia_text_tex_settings);
