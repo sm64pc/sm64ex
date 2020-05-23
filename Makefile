@@ -126,6 +126,15 @@ endif
 endif
 endif
 
+# Stuff for showing the git hash in the intro on nightly builds
+# From https://stackoverflow.com/questions/44038428/include-git-commit-hash-and-or-branch-name-in-c-c-source
+ifeq ($(shell git rev-parse --abbrev-ref HEAD),nightly)
+  $(info Hello Caldera!!! I'm here all week!)
+  GIT_HASH=`git rev-parse --short HEAD`
+  COMPILE_TIME=`date -u +'%Y-%m-%d %H:%M:%S UTC'`
+  VERSION_CFLAGS += -DNIGHTLY -DGIT_HASH="\"$(GIT_HASH)\"" -DCOMPILE_TIME="\"$(COMPILE_TIME)\""
+endif
+
 # Microcode
 
 ifeq ($(GRUCODE),f3dex) # Fast3DEX
@@ -637,6 +646,9 @@ $(BUILD_DIR)/include/text_strings.h: include/text_strings.h.in
 $(BUILD_DIR)/include/text_menu_strings.h: include/text_menu_strings.h.in
 	$(TEXTCONV) charmap_menu.txt $< $@
 
+$(BUILD_DIR)/include/text_options_strings.h: include/text_options_strings.h.in
+	$(TEXTCONV) charmap.txt $< $@
+
 ifeq ($(VERSION),eu)
 TEXT_DIRS := text/de text/us text/fr
 
@@ -676,6 +688,7 @@ ALL_DIRS := $(BUILD_DIR) $(addprefix $(BUILD_DIR)/,$(SRC_DIRS) $(ASM_DIRS) $(GOD
 DUMMY != mkdir -p $(ALL_DIRS)
 
 $(BUILD_DIR)/include/text_strings.h: $(BUILD_DIR)/include/text_menu_strings.h
+$(BUILD_DIR)/include/text_strings.h: $(BUILD_DIR)/include/text_options_strings.h
 
 ifeq ($(VERSION),eu)
 $(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
