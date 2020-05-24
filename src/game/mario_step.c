@@ -8,6 +8,7 @@
 #include "game_init.h"
 #include "interaction.h"
 #include "mario_step.h"
+#include "object_list_processor.h"
 
 static s16 sMovingSandSpeeds[] = { 12, 8, 4, 0 };
 
@@ -15,6 +16,8 @@ struct Surface gWaterSurfacePseudoFloor = {
     SURFACE_VERY_SLIPPERY, 0,    0,    0, 0, 0, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },
     { 0.0f, 1.0f, 0.0f },  0.0f, NULL,
 };
+
+static struct Object *sTrampoline;
 
 /**
  * Always returns zero. This may have been intended
@@ -30,7 +33,7 @@ f32 get_additive_y_vel_for_jumps(void) {
     #ifndef QOL_FIXES
     return 0.0f;
     #else
-    return (sTrampoline != NULL) ? sTrampoline->oBetaTrampolineAdditiveYvel : 0.0f;
+    return (sTrampoline != NULL) ? sTrampoline->oBetaTrampolineAdditiveYVel : 0.0f;
     #endif
 }
 
