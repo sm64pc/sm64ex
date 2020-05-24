@@ -23,6 +23,9 @@
 #include "configfile.h"
 #include "controller/controller_api.h"
 
+#include "game/main.h"
+#include "game/thread6.h"
+
 OSMesg D_80339BEC;
 OSMesgQueue gSIEventMesgQueue;
 
@@ -31,6 +34,10 @@ s8 D_8032C648;
 s8 gDebugLevelSelect;
 s8 gShowProfiler;
 s8 gShowDebugText;
+
+s32 gRumblePakPfs;
+struct RumbleData gRumbleDataQueue[3];
+struct StructSH8031D9B0 gCurrRumbleSettings;
 
 static struct AudioAPI *audio_api;
 static struct GfxWindowManagerAPI *wm_api;
@@ -60,6 +67,7 @@ void send_display_list(struct SPTask *spTask) {
 void produce_one_frame(void) {
     gfx_start_frame();
     game_loop_one_iteration();
+    thread6_rumble_loop();
     
     int samples_left = audio_api->buffered();
     u32 num_audio_samples = samples_left < audio_api->get_desired_buffered() ? 544 : 528;
@@ -162,7 +170,7 @@ void main_func(void) {
     sound_init();
 
     thread5_game_loop(NULL);
-
+    
     inited = true;
 
 #ifdef TARGET_WEB

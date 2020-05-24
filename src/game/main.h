@@ -24,7 +24,7 @@ extern OSThread gIdleThread;
 extern OSThread gMainThread;
 extern OSThread gGameLoopThread;
 extern OSThread gSoundThread;
-#ifdef VERSION_SH
+#ifndef VERSION_SH
 extern OSThread gRumblePakThread;
 
 extern s32 gRumblePakPfs; // Actually an OSPfs but we don't have that header yet
@@ -33,7 +33,7 @@ extern s32 gRumblePakPfs; // Actually an OSPfs but we don't have that header yet
 extern OSMesgQueue gPIMesgQueue;
 extern OSMesgQueue gIntrMesgQueue;
 extern OSMesgQueue gSPTaskMesgQueue;
-#ifdef VERSION_SH
+#ifndef VERSION_SH
 extern OSMesgQueue gRumblePakSchedulerMesgQueue;
 extern OSMesgQueue gRumbleThreadVIMesgQueue;
 #endif
@@ -46,7 +46,7 @@ extern OSIoMesg gDmaIoMesg;
 extern OSMesg D_80339BEC;
 extern OSMesgQueue gDmaMesgQueue;
 extern OSMesgQueue gSIEventMesgQueue;
-#ifdef VERSION_SH
+#ifndef VERSION_SH
 extern OSMesg gRumblePakSchedulerMesgBuf[1];
 extern OSMesg gRumbleThreadVIMesgBuf[1];
 
@@ -73,6 +73,6 @@ extern s8 gShowDebugText;
 extern void set_vblank_handler(s32 a, struct VblankHandler *b, OSMesgQueue *queue, OSMesg *msg);
 extern void dispatch_audio_sptask(struct SPTask *spTask);
 extern void send_display_list(struct SPTask *a);
-extern void main(void);
+// extern void main(void);
 
 #endif

@@ -104,14 +104,10 @@ static s32 read_eeprom_data(void *buffer, s32 size) {
         u32 offset = (u32)((u8 *) buffer - (u8 *) &gSaveBuffer) / 8;
 
         do {
-#ifdef VERSION_SH
             block_until_rumble_pak_free();
-#endif
             triesLeft--;
             status = osEepromLongRead(&gSIEventMesgQueue, offset, buffer, size);
-#ifdef VERSION_SH
             release_rumble_pak_control();
-#endif
         } while (triesLeft > 0 && status != 0);
     }
 
@@ -132,14 +128,10 @@ static s32 write_eeprom_data(void *buffer, s32 size, const uintptr_t baseofs) {
         u32 offset = (u32)baseofs >> 3;
 
         do {
-#ifdef VERSION_SH
             block_until_rumble_pak_free();
-#endif
             triesLeft--;
             status = osEepromLongWrite(&gSIEventMesgQueue, offset, buffer, size);
-#ifdef VERSION_SH
             release_rumble_pak_control();
-#endif
         } while (triesLeft > 0 && status != 0);
     }
 

@@ -25,7 +25,7 @@ OSThread gIdleThread;
 OSThread gMainThread;
 OSThread gGameLoopThread;
 OSThread gSoundThread;
-#ifdef VERSION_SH
+#ifndef VERSION_SH
 OSThread gRumblePakThread;
 
 s32 gRumblePakPfs; // Actually an OSPfs but we don't have that header yet
@@ -38,7 +38,7 @@ OSMesgQueue gSIEventMesgQueue;
 OSMesgQueue gPIMesgQueue;
 OSMesgQueue gIntrMesgQueue;
 OSMesgQueue gSPTaskMesgQueue;
-#ifdef VERSION_SH
+#ifndef VERSION_SH
 OSMesgQueue gRumblePakSchedulerMesgQueue;
 OSMesgQueue gRumbleThreadVIMesgQueue;
 #endif
@@ -47,7 +47,7 @@ OSMesg gPIMesgBuf[32];
 OSMesg gSIEventMesgBuf[1];
 OSMesg gIntrMesgBuf[16];
 OSMesg gUnknownMesgBuf[16];
-#ifdef VERSION_SH
+#ifndef VERSION_SH
 OSMesg gRumblePakSchedulerMesgBuf[1];
 OSMesg gRumbleThreadVIMesgBuf[1];
 
@@ -152,7 +152,7 @@ void create_thread(OSThread *thread, OSId id, void (*entry)(void *), void *arg, 
     osCreateThread(thread, id, entry, arg, sp, pri);
 }
 
-#ifdef VERSION_SH
+#ifndef VERSION_SH
 extern void func_sh_802F69CC(void);
 #endif
 
@@ -162,7 +162,7 @@ void handle_nmi_request(void) {
     func_80320890();
     sound_banks_disable(2, 0x037A);
     fadeout_music(90);
-#ifdef VERSION_SH
+#ifndef VERSION_SH
     func_sh_802F69CC();
 #endif
 }
@@ -233,7 +233,7 @@ void handle_vblank(void) {
 
     stub_main_3();
     sNumVblanks++;
-#ifdef VERSION_SH
+#ifndef VERSION_SH
     if (gResetTimer > 0 && gResetTimer < 100) {
         gResetTimer++;
     }
@@ -268,9 +268,8 @@ void handle_vblank(void) {
             start_sptask(M_GFXTASK);
         }
     }
-#ifdef VERSION_SH
+
     rumble_thread_update_vi();
-#endif
 
     // Notify the game loop about the vblank.
     if (gVblankHandler1 != NULL) {

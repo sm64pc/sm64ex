@@ -5,8 +5,6 @@
 #include "main.h"
 #include "thread6.h"
 
-#ifdef VERSION_SH
-
 static s8 D_SH_8030CCB4;
 static s32 sUnusedDisableRumble;
 static s32 sRumblePakThreadActive;
@@ -15,22 +13,18 @@ static s32 sRumblePakErrorCount;
 s32 gRumblePakTimer;
 
 // These void* are OSPfs* but we don't have that header
+// And in general, it is not necessary =)
 extern s32 osMotorStop(void *);
 extern s32 osMotorStart(void *);
 extern u32 osMotorInit(OSMesgQueue *, void *, s32);
 
 void init_rumble_pak_scheduler_queue(void) {
-    osCreateMesgQueue(&gRumblePakSchedulerMesgQueue, gRumblePakSchedulerMesgBuf, 1);
-    osSendMesg(&gRumblePakSchedulerMesgQueue, (OSMesg) 0, OS_MESG_NOBLOCK);
 }
 
 void block_until_rumble_pak_free(void) {
-    OSMesg msg;
-    osRecvMesg(&gRumblePakSchedulerMesgQueue, &msg, OS_MESG_BLOCK);
 }
 
 void release_rumble_pak_control(void) {
-    osSendMesg(&gRumblePakSchedulerMesgQueue, (OSMesg) 0, OS_MESG_NOBLOCK);
 }
 
 static void start_rumble(void) {
@@ -225,32 +219,21 @@ void func_sh_8024CA04(void) {
     gCurrRumbleSettings.unk0C = 4;
 }
 
-static void thread6_rumble_loop(UNUSED void *a0) {
-    OSMesg msg;
+void thread6_rumble_loop(UNUSED void *a0) {
+    update_rumble_data_queue();
+    update_rumble_pak();
 
-    cancel_rumble();
-
-    sRumblePakThreadActive = TRUE;
-
-    while (TRUE) {
-        // Block until VI
-        osRecvMesg(&gRumbleThreadVIMesgQueue, &msg, OS_MESG_BLOCK);
-
-        update_rumble_data_queue();
-        update_rumble_pak();
-
-        if (sRumblePakActive) {
-            if (sRumblePakErrorCount >= 30) {
-                sRumblePakActive = FALSE;
-            }
-        } else if (gGlobalTimer % 60 == 0) {
-            sRumblePakActive = osMotorInit(&gSIEventMesgQueue, &gRumblePakPfs, gPlayer1Controller->port) < 1;
-            sRumblePakErrorCount = 0;
+    if (sRumblePakActive) {
+        if (sRumblePakErrorCount >= 30) {
+            sRumblePakActive = FALSE;
         }
+    } else if (gGlobalTimer % 60 == 0) {
+        sRumblePakActive = osMotorInit(&gSIEventMesgQueue, &gRumblePakPfs, gPlayer1Controller->port) < 1;
+        sRumblePakErrorCount = 0;
+    }
 
-        if (gRumblePakTimer > 0) {
-            gRumblePakTimer--;
-        }
+    if (gRumblePakTimer > 0) {
+        gRumblePakTimer--;
     }
 }
 
@@ -272,17 +255,10 @@ void cancel_rumble(void) {
 }
 
 void create_thread_6(void) {
-    osCreateMesgQueue(&gRumbleThreadVIMesgQueue, gRumbleThreadVIMesgBuf, 1);
-    osCreateThread(&gRumblePakThread, 6, thread6_rumble_loop, NULL, gThread6Stack + 0x2000, 30);
-    osStartThread(&gRumblePakThread);
 }
 
 void rumble_thread_update_vi(void) {
     if (sRumblePakThreadActive == FALSE) {
         return;
     }
-
-    osSendMesg(&gRumbleThreadVIMesgQueue, (OSMesg) 0x56525443, OS_MESG_NOBLOCK);
 }
-
-#endif
