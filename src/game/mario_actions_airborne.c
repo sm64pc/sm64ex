@@ -67,9 +67,6 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
 
     fallHeight = m->peakHeight - m->pos[1];
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wtype-limits"
-
     //! Never normally true
     // Fixed when QOL_FIXES=1
     #ifdef QOL_FIXES
@@ -81,8 +78,6 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
     #else
     damageHeight = 1150.0f; // fixes a WebGL compiler warning when done this way
     #endif
-
-#pragma GCC diagnostic pop
 
     if (m->action != ACT_TWIRLING && m->floor->type != SURFACE_BURNING) {
         if (m->vel[1] < -55.0f) {

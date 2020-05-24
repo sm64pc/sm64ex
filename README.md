@@ -16,7 +16,7 @@ Please contribute **first** to the [nightly branch](https://github.com/sm64pc/sm
  * Native xinput controller support. On Linux, DualShock 4 has been confirmed to work plug-and-play.
  * Analog camera control and mouse look. (Activate with `make BETTERCAMERA=1`.)
  * An option to disable drawing distances. (Activate with `make NODRAWINGDISTANCE=1`.)
- * QoL fixes. (Activate with `make QOL_FIXES=1`.)
+ * Quality-of-life fixes. (Activate with `make QOL_FIXES=1`.)
  * In-game control binding.
  * Skip introductory Peach & Lakitu cutscenes with the `--skip-intro` CLI option
  * Disabling the HUD.
