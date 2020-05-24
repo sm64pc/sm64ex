@@ -40,8 +40,8 @@
 static s16 sSoundTextX;
 UNUSED static s16 sSoundTextY;
 #elif VERSION_EU
-static s16 sSoundTextX;
-static s16 sSoundTextY;
+UNUSED static s16 sSoundTextX;
+UNUSED static s16 sSoundTextY;
 #endif
 
 //! @Bug (UB Array Access) For PAL, more buttons were added than the array was extended.
@@ -65,8 +65,8 @@ static struct Object *sMainMenuButtons[NUM_BUTTONS];
 // The current sound mode is automatically centered on US due to
 // the large length difference between options.
 // sSoundTextY is unused
-static s16 sSoundTextX;
-static s16 sSoundTextY;
+UNUSED static s16 sSoundTextX;
+UNUSED static s16 sSoundTextY;
 #endif
 
 // Used to defined yes/no fade colors after a file is selected in the erase menu.

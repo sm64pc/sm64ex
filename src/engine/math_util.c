@@ -12,13 +12,6 @@ Vec4s *gSplineKeyframe;
 float gSplineKeyframeFraction;
 int gSplineState;
 
-// These functions have bogus return values.
-// Disable the compiler warning.
-#pragma GCC diagnostic push
-#ifndef TARGET_WEB
-#pragma GCC diagnostic ignored "-Wreturn-local-addr"
-#endif
-
 /// Copy vector 'src' to 'dest'
 void vec3f_copy(Vec3f dest, Vec3f src) {
     dest[0] = src[0];
@@ -153,8 +146,6 @@ f32 vec3f_dot(Vec3f a, Vec3f b)
 {
 	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
-
-#pragma GCC diagnostic pop
 
 /// Copy matrix 'src' to 'dest'
 void mtxf_copy(Mat4 dest, Mat4 src) {

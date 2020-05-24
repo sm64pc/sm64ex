@@ -27,7 +27,11 @@ struct Surface gWaterSurfacePseudoFloor = {
  * and if so return a higher value than 0.
  */
 f32 get_additive_y_vel_for_jumps(void) {
+    #ifndef QOL_FIXES
     return 0.0f;
+    #else
+    return (sTrampoline != NULL) ? sTrampoline->oBetaTrampolineAdditiveYvel : 0.0f;
+    #endif
 }
 
 /**
@@ -50,6 +54,9 @@ void stub_mario_step_1(UNUSED struct MarioState *x) {
  * or to set a variable with its intended additive Y vel.
  */
 void stub_mario_step_2(void) {
+    #ifdef QOL_FIXES
+    sTrampoline = gCurrentObject;
+    #endif
 }
 
 void transfer_bully_speed(struct BullyCollisionData *obj1, struct BullyCollisionData *obj2) {

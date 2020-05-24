@@ -7,8 +7,8 @@ LIBAFLA=libaudiofile.la
 AUDDIR=./tools/audiofile-0.3.6
 
 # Command line options
-OPTIONS=("Analog Camera" "No Draw Distance" "Text-saves" "Texture Fixes" "Clean build")
-EXTRA=("BETTERCAMERA=1" "NODRAWINGDISTANCE=1" "TEXTSAVES=1" "TEXTURE_FIX=1" "clean")
+OPTIONS=("Analog Camera" "No Draw Distance" "Text-saves" "Quality of Life Fixes" "Clean build")
+EXTRA=("BETTERCAMERA=1" "NODRAWINGDISTANCE=1" "TEXTSAVES=1" "QOL_FIXES=1" "clean")
 
 # Colors
 RED=$(tput setaf 1)

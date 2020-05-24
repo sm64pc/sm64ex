@@ -70,14 +70,17 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wtype-limits"
 
-    //! Never true
-    // Switch the comments around at lines
-    // 294-295 in include/types.h to fix
+    //! Never normally true
+    // Fixed when QOL_FIXES=1
+    #ifdef QOL_FIXES
     if (m->actionState == ACT_GROUND_POUND) {
         damageHeight = 600.0f;
     } else {
         damageHeight = 1150.0f;
     }
+    #else
+    damageHeight = 1150.0f; // fixes a WebGL compiler warning when done this way
+    #endif
 
 #pragma GCC diagnostic pop
 

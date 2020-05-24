@@ -24,7 +24,7 @@ void port_eu_init(void);
 struct Note *gNotes;
 
 #ifdef VERSION_EU
-static u8 pad[4];
+UNUSED static u8 pad[4];
 #endif
 
 struct SequencePlayer gSequencePlayers[SEQUENCE_PLAYERS];

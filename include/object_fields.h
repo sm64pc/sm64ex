@@ -198,6 +198,11 @@
 #define /*0x0FC*/ oBackAndForthPlatformUnkFC  OBJECT_FIELD_F32(0x1D)
 #define /*0x100*/ oBackAndForthPlatformUnk100 OBJECT_FIELD_F32(0x1E)
 
+/* Beta Trampoline */
+#ifdef QOL_FIXES
+#define /*0x098*/ oBetaTrampolineAdditiveYVel OBJECT_FIELD_F32(0x04)
+#endif
+
 /* Bird */
 #define /*0x0F4*/ oBirdSpeed       OBJECT_FIELD_F32(0x1B)
 #define /*0x0F8*/ oBirdTargetPitch OBJECT_FIELD_S32(0x1C)

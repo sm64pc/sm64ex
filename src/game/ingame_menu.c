@@ -280,7 +280,7 @@ void render_generic_char(u8 c) {
 
 #ifdef VERSION_EU
 static void alloc_ia4_tex_from_i1(u8 *out, u8 *in, s16 width, s16 height) {
-    u32 size = (u32) width * (u32) height;
+    UNUSED u32 size = (u32) width * (u32) height;
     s32 inPos;
     s16 outPos = 0;
     u8 bitMask;

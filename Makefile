@@ -36,11 +36,11 @@ TARGET_BITS ?= 0
 BETTERCAMERA ?= 0
 # Disable no drawing distance by default
 NODRAWINGDISTANCE ?= 0
-# Disable texture fixes by default (helps with them purists)
-TEXTURE_FIX ?= 0
+# Disable QoL fixes by default (helps with them purists)
+QOL_FIXES ?= 0
 # Enable extended options menu by default
 EXT_OPTIONS_MENU ?= 1
-# Disable text-based save-files by default
+# Disable text-based save files by default
 TEXTSAVES ?= 0
 
 # Various workarounds for weird toolchains
@@ -500,10 +500,10 @@ ifeq ($(NODRAWINGDISTANCE),1)
   CFLAGS += -DNODRAWINGDISTANCE
 endif
 
-# Check for texture fix option
-ifeq ($(TEXTURE_FIX),1)
-  CC_CHECK += -DTEXTURE_FIX
-  CFLAGS += -DTEXTURE_FIX
+# Check for QoL fix option
+ifeq ($(QOL_FIXES),1)
+  CC_CHECK += -DQOL_FIXES
+  CFLAGS += -DQOL_FIXES
 endif
 
 # Check for extended options menu option
@@ -536,9 +536,6 @@ ifeq ($(TARGET_WEB),1)
 LDFLAGS := -lm -lGL -lSDL2 -no-pie -s TOTAL_MEMORY=20MB -g4 --source-map-base http://localhost:8080/ -s "EXTRA_EXPORTED_RUNTIME_METHODS=['callMain']"
 else ifeq ($(WINDOWS_BUILD),1)
   LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -static
-  ifeq ($(CROSS),)
-    LDFLAGS += -no-pie
-  endif
   ifeq ($(WINDOWS_CONSOLE),1)
     LDFLAGS += -mconsole
   endif
@@ -840,7 +837,7 @@ $(BUILD_DIR)/%.o: %.s
 $(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES)
 	$(LD) -L $(BUILD_DIR) -o $@ $(O_FILES) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(LDFLAGS)
 
-.PHONY: all clean distclean default diff test load libultra
+.PHONY: all clean cleantools cleanall distclean distcleanall default diff test load libultra
 .PRECIOUS: $(BUILD_DIR)/bin/%.elf $(SOUND_BIN_DIR)/%.ctl $(SOUND_BIN_DIR)/%.tbl $(SOUND_SAMPLE_TABLES) $(SOUND_BIN_DIR)/%.s $(BUILD_DIR)/%
 .DELETE_ON_ERROR:
 

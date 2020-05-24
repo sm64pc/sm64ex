@@ -98,7 +98,7 @@ u8 EUpad2[0x64];
 static OSMesg sGdMesgBuf[1]; // @ 801BE944
 u8 EUpad3[0x34];
 static OSMesg D_801BE97C; // msg buf for D_801BE8B0 queue
-static OSIoMesg D_801BE980;
+UNUSED static OSIoMesg D_801BE980;
 static struct ObjView *D_801BE994; // store if View flag 0x40 set
 
 u8 EUpad4[0x88];
@@ -493,8 +493,8 @@ ALIGNED8 static u8 gd_texture_sparkle_4[] = {
 
 //! No reference to this texture. Two DL's uses the same previous texture
 //  instead of using this texture.
-// Fixed via setting TEXTURE_FIX to 1.
-#ifndef TEXTURE_FIX
+// Fixed via setting QOL_FIXES to 1.
+#ifndef QOL_FIXES
 UNUSED
 #endif
 ALIGNED8 static u8 gd_texture_sparkle_5[] = {
@@ -573,7 +573,7 @@ static Gfx gd_dl_red_sparkle_4[] = {
     gsSPBranchList(gd_dl_sparkle),
 };
 
-#ifndef TEXTURE_FIX
+#ifndef QOL_FIXES
 static Gfx gd_dl_red_sparkle_4_dup[] = {
     gsDPPipeSync(),
     gsSPDisplayList(gd_dl_sparkle_red_color),
@@ -625,7 +625,7 @@ static Gfx gd_dl_silver_sparkle_4[] = {
     gsSPBranchList(gd_dl_sparkle),
 };
 
-#ifndef TEXTURE_FIX
+#ifndef QOL_FIXES
 static Gfx gd_dl_silver_sparkle_4_dup[] = {
     gsDPPipeSync(),
     gsSPDisplayList(gd_dl_sparkle_white_color),
@@ -653,7 +653,7 @@ static Gfx *gd_red_sparkle_dl_array[] = {
     gd_dl_red_sparkle_1,
     gd_dl_red_sparkle_0,
     gd_dl_red_sparkle_0,
-#ifndef TEXTURE_FIX
+#ifndef QOL_FIXES
     gd_dl_red_sparkle_4_dup,
     gd_dl_red_sparkle_4_dup,
 #else
@@ -673,7 +673,7 @@ static Gfx *gd_silver_sparkle_dl_array[] = {
     gd_dl_silver_sparkle_1,
     gd_dl_silver_sparkle_0,
     gd_dl_silver_sparkle_0,
-#ifndef TEXTURE_FIX
+#ifndef QOL_FIXES
     gd_dl_silver_sparkle_4_dup,
     gd_dl_silver_sparkle_4_dup,
 #else

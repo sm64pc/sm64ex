@@ -55,7 +55,7 @@ static const Lights1 koopa_seg6_lights_06002630 = gdSPDefLights1(
 //     the rest of its body. This is evident because once the mistake is corrected
 //     it turns back to being white like the other polygons.
 //     Due to debate in the PR surrounding the fix to this, said fix is on
-//     a compile-time variable. Use TEXTURE_FIX=1 at compile time to fix this.
+//     a compile-time variable. Use QOL_FIXES=1 at compile time to fix this.
 // 0x06002648
 ALIGNED8 static const u8 koopa_seg6_texture_06002648[] = {
 #include "actors/koopa/koopa_shell_front.rgba16.inc.c"
@@ -2079,7 +2079,7 @@ const Gfx koopa_seg6_dl_0600C498[] = {
     gsSPVertex(koopa_seg6_vertex_0600B560, 9, 0),
     gsSP2Triangles( 0,  1,  2, 0x0,  3,  4,  5, 0x0),
     gsSP1Triangle( 6,  7,  8, 0x0),
-    #ifdef TEXTURE_FIX
+    #ifdef QOL_FIXES
     gsSPLight(&koopa_seg6_lights_06002630.l, 1),
     gsSPLight(&koopa_seg6_lights_06002630.a, 2),
     #else

@@ -274,7 +274,8 @@ u64 *synthesis_execute(u64 *cmdBuf, s32 *writtenCmds, u16 *aiBuf, s32 bufLen) {
     for (i = gAudioBufferParameters.updatesPerFrame; i > 0; i--) {
         if (i == 1) {
             // self-assignment has no affect when added here, could possibly simplify a macro definition
-            chunkLen = bufLen; nextVolRampTable = nextVolRampTable; leftVolRamp = gLeftVolRampings[nextVolRampTable]; rightVolRamp = gRightVolRampings[nextVolRampTable & 0xFFFFFFFF];
+            // remove it to fix a WebGL compiler warning
+            chunkLen = bufLen; leftVolRamp = gLeftVolRampings[nextVolRampTable]; rightVolRamp = gRightVolRampings[nextVolRampTable & 0xFFFFFFFF];
         } else {
             if (bufLen / i >= gAudioBufferParameters.samplesPerUpdateMax) {
                 chunkLen = gAudioBufferParameters.samplesPerUpdateMax; nextVolRampTable = 2; leftVolRamp = gLeftVolRampings[2]; rightVolRamp = gRightVolRampings[2];
@@ -367,8 +368,7 @@ u64 *synthesis_resample_and_mix_reverb(u64 *cmd, s32 bufLen, s16 reverbIndex, s1
     } else {
         temp_t9 = (item->startPos % 8u) * 2;
         #ifdef AVOID_UB
-        sp58 = temp_t9;
-        sp58 = ALIGN(item->lengths[0] + sp58, 4);
+        sp58 = ALIGN(item->lengths[0] + temp_t9, 4);
         #else
         sp58 = ALIGN(item->lengths[0] + (sp58=temp_t9), 4);
         #endif

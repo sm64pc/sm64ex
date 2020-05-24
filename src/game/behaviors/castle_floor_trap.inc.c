@@ -26,7 +26,11 @@ void bhv_castle_floor_trap_open_detect(void) {
 
 void bhv_castle_floor_trap_open(void) {
     if (o->oTimer == 0)
+        #ifdef QOL_FIXES
+        create_sound_spawner(SOUND_GENERAL_CASTLE_TRAP_OPEN);
+        #else
         cur_obj_play_sound_2(SOUND_GENERAL_CASTLE_TRAP_OPEN);
+        #endif
     o->oAngleVelRoll -= 0x100;
     o->oFaceAngleRoll += o->oAngleVelRoll;
     if (o->oFaceAngleRoll < -0x4000) {
