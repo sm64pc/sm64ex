@@ -36,7 +36,7 @@ TARGET_BITS ?= 0
 BETTERCAMERA ?= 0
 # Disable no drawing distance by default
 NODRAWINGDISTANCE ?= 0
-# Disable QoL fixes by default (helps with them purists)
+# Disable quality-of-life fixes by default (helps with them purists)
 QOL_FIXES ?= 0
 # Enable extended options menu by default
 EXT_OPTIONS_MENU ?= 1
@@ -72,6 +72,14 @@ ifeq ($(WINDOWS_BUILD),1)
     TARGET_BITS = 32
     NO_BZERO_BCOPY := 1
   else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+    TARGET_ARCH = i386pep
+    TARGET_BITS = 64
+    NO_BZERO_BCOPY := 1
+  else ifeq ($(CROSS),mxe-i686-w64-mingw32.static-)
+    TARGET_ARCH = i386pe
+    TARGET_BITS = 32
+    NO_BZERO_BCOPY := 1
+  else ifeq ($(CROSS),mxe-x86_64-w64-mingw32.static-)
     TARGET_ARCH = i386pep
     TARGET_BITS = 64
     NO_BZERO_BCOPY := 1
@@ -443,6 +451,10 @@ ifeq ($(WINDOWS_BUILD),1)
   ifeq ($(CROSS),i686-w64-mingw32.static-) # fixes compilation in MXE on Linux and WSL
     LD := $(CC)
   else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+    LD := $(CC)
+  else ifeq ($(CROSS),mxe-i686-w64-mingw32.static-)
+    LD := $(CC)
+  else ifeq ($(CROSS),mxe-x86_64-w64-mingw32.static-)
     LD := $(CC)
   else
     LD := $(CXX)

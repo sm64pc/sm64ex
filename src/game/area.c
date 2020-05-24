@@ -107,7 +107,9 @@ void set_warp_transition_rgb(u8 red, u8 green, u8 blue) {
     gWarpTransBlue = blue;
 }
 
-#ifndef TARGET_WEB
+#if defined(VERSION_EU) && defined(TARGET_WEB)
+UNUSED
+#else
 static int scale_x_to_correct_aspect_center(int x) {
     f32 aspect = GFX_DIMENSIONS_ASPECT_RATIO;
     return x + (SCREEN_HEIGHT * aspect / 2) - (SCREEN_WIDTH / 2);
