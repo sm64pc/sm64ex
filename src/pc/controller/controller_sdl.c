@@ -217,6 +217,18 @@ static void controller_sdl_shutdown(void) {
     init_ok = false;
 }
 
+s32 controller_rumble_init(void) {
+    return 0;
+}
+
+s32 controller_rumble_play(f32 strength, u32 length) {
+    return 0;
+}
+
+s32 controller_rumble_stop(void) {
+    return 0;
+}
+
 struct ControllerAPI controller_sdl = {
     VK_BASE_SDL_GAMEPAD,
     controller_sdl_init,
