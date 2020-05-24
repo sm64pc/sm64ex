@@ -67,18 +67,19 @@ unsigned int configKeyStickRight[MAX_BINDS] = { 0x0020,   VK_INVALID, VK_INVALID
 
 #ifdef BETTERCAMERA
 // BetterCamera settings
-unsigned int configCameraXSens   = 50;
-unsigned int configCameraYSens   = 50;
-unsigned int configCameraAggr    = 0;
-unsigned int configCameraPan     = 0;
-unsigned int configCameraDegrade = 10; // 0 - 100%
-bool         configCameraInvertX = true;
-bool         configCameraInvertY = false;
-bool         configEnableCamera  = false;
-bool         configCameraMouse   = false;
+unsigned int configCameraXSens    = 50;
+unsigned int configCameraYSens    = 50;
+unsigned int configCameraAggr     = 0;
+unsigned int configCameraPan      = 0;
+unsigned int configCameraDegrade  = 10; // 0 - 100%
+bool         configCameraInvertX  = true;
+bool         configCameraInvertY  = false;
+bool         configEnableCamera   = false;
+bool         configCameraMouse    = false;
 #endif
-unsigned int configSkipIntro     = 0;
-bool         configHUD           = true;
+unsigned int configSkipIntro      = 0;
+bool         configHUD            = true;
+bool         configEnableAutosave = false;
 
 static const struct ConfigOption options[] = {
     {.name = "fullscreen",           .type = CONFIG_TYPE_BOOL, .boolValue = &configWindow.fullscreen},
@@ -115,6 +116,7 @@ static const struct ConfigOption options[] = {
     {.name = "bettercam_degrade",    .type = CONFIG_TYPE_UINT, .uintValue = &configCameraDegrade},
     #endif
     {.name = "skip_intro",           .type = CONFIG_TYPE_UINT, .uintValue = &configSkipIntro},    // Add this back!
+    {.name = "autosave_enable",      .type = CONFIG_TYPE_BOOL, .uintValue = &configEnableAutosave},
 };
 
 // Reads an entire line from a file (excluding the newline character) and returns an allocated string
