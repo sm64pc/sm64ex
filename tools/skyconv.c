@@ -216,7 +216,6 @@ static void assign_tile_positions() {
 void write_tiles() {
     const ImageProps props = IMAGE_PROPERTIES[type][true];
     char buffer[PATH_MAX];
-    char skyboxName[PATH_MAX];
 
     if (realpath(writeDir, buffer) == NULL) {
         fprintf(stderr, "err: Could not find find img dir %s", writeDir);
