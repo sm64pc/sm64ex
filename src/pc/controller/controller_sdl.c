@@ -187,6 +187,17 @@ static void controller_sdl_read(OSContPad *pad) {
         int stick_y = -lefty / 0x100;
         pad->stick_y = stick_y == 128 ? 127 : stick_y;
     }
+
+    uint32_t magnitude_sq = (uint32_t)(rightx * rightx) + (uint32_t)(righty * righty);
+    if (magnitude_sq > (uint32_t)(DEADZONE * DEADZONE)) {
+        pad->r_stick_x = rightx / 0x100;
+        stick_y = -righty / 0x100;
+        pad->r_stick_y = stick_y == 128 ? 127 : stick_y;
+    } else
+    {
+        pad->r_stick_x = 0;
+        pad->r_stick_y = 0;
+    }
 }
 
 static u32 controller_sdl_rawkey(void) {
