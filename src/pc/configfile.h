@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #define CONFIGFILE_DEFAULT "sm64config.txt"
+#define DATAPATH_DEFAULT "res"
 
 #define MAX_BINDS    3
 #define MAX_VOLUME   127

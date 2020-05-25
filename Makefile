@@ -42,6 +42,8 @@ TEXTURE_FIX ?= 0
 EXT_OPTIONS_MENU ?= 1
 # Disable text-based save-files by default
 TEXTSAVES ?= 0
+# Load textures from external PNG files
+EXTERNAL_TEXTURES ?= 0
 
 # Various workarounds for weird toolchains
 
@@ -552,6 +554,14 @@ ifeq ($(LEGACY_GL),1)
   CFLAGS += -DLEGACY_GL
 endif
 
+# Load external textures
+ifeq ($(EXTERNAL_TEXTURES),1)
+  CC_CHECK += -DEXTERNAL_TEXTURES
+  CFLAGS += -DEXTERNAL_TEXTURES
+  # tell skyconv to write names instead of actual texture data and save the split tiles so we can use them later
+  SKYCONV_ARGS := --store-names --write-tiles "$(BUILD_DIR)/textures/skybox_tiles"
+endif
+
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
 
 ifeq ($(TARGET_WEB),1)
@@ -605,6 +615,16 @@ SHA1SUM = sha1sum
 ######################## Targets #############################
 
 all: $(EXE)
+
+ifeq ($(EXTERNAL_TEXTURES),1)
+# prepares the resource folder for external data
+res: $(EXE)
+	@mkdir -p $(BUILD_DIR)/res
+	@cp -r -f textures/ $(BUILD_DIR)/res/
+	@cp -r -f $(BUILD_DIR)/textures/skybox_tiles/ $(BUILD_DIR)/res/textures/
+	@find actors -name \*.png -exec cp --parents {} $(BUILD_DIR)/res/ \;
+	@find levels -name \*.png -exec cp --parents {} $(BUILD_DIR)/res/ \;
+endif
 
 clean:
 	$(RM) -r $(BUILD_DIR_BASE)
@@ -700,13 +720,19 @@ endif
 ################################################################
 
 # RGBA32, RGBA16, IA16, IA8, IA4, IA1, I8, I4
+ifeq ($(EXTERNAL_TEXTURES),1)
+$(BUILD_DIR)/%: %.png
+	printf "%s%b" "$(patsubst %.png,%,$^)" '\x00' > $@
+else
 $(BUILD_DIR)/%: %.png
 	$(N64GRAPHICS) -i $@ -g $< -f $(lastword $(subst ., ,$@))
+endif
 
 $(BUILD_DIR)/%.inc.c: $(BUILD_DIR)/% %.png
 	hexdump -v -e '1/1 "0x%X,"' $< > $@
 	echo >> $@
 
+ifeq ($(EXTERNAL_TEXTURES),0)
 # Color Index CI8
 $(BUILD_DIR)/%.ci8: %.ci8.png
 	$(N64GRAPHICS_CI) -i $@ -g $< -f ci8
@@ -714,6 +740,7 @@ $(BUILD_DIR)/%.ci8: %.ci8.png
 # Color Index CI4
 $(BUILD_DIR)/%.ci4: %.ci4.png
 	$(N64GRAPHICS_CI) -i $@ -g $< -f ci4
+endif
 
 ################################################################
 
@@ -857,7 +884,7 @@ $(BUILD_DIR)/%.o: %.s
 $(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES)
 	$(LD) -L $(BUILD_DIR) -o $@ $(O_FILES) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(LDFLAGS)
 
-.PHONY: all clean distclean default diff test load libultra
+.PHONY: all clean distclean default diff test load libultra res
 .PRECIOUS: $(BUILD_DIR)/bin/%.elf $(SOUND_BIN_DIR)/%.ctl $(SOUND_BIN_DIR)/%.tbl $(SOUND_SAMPLE_TABLES) $(SOUND_BIN_DIR)/%.s $(BUILD_DIR)/%
 .DELETE_ON_ERROR:
 

@@ -75,6 +75,7 @@ char *writeDir;
 char skyboxName[256];
 bool expanded = false;
 bool writeTiles;
+bool storeNamesOnly = false;
 
 static void allocate_tiles() {
     const ImageProps props = IMAGE_PROPERTIES[type][true];
@@ -291,11 +292,18 @@ static void write_skybox_c() { /* write c data to disc */
 
     for (int i = 0; i < props.numRows * props.numCols; i++) {
         if (!tiles[i].useless) {
-            fprintf(cFile, "ALIGNED8 static const u8 %s_skybox_texture_%05X[] = {\n", skyboxName, tiles[i].pos);
-
-            print_raw_data(cFile, &tiles[i]);
-
-            fputs("};\n\n", cFile);
+            if (storeNamesOnly) {
+                fprintf(
+                    cFile,
+                    "ALIGNED8 static const u8 %s_skybox_texture_%05X[] = "
+                    "\"textures/skybox_tiles/%s.%d.rgba16\";\n\n",
+                    skyboxName, tiles[i].pos, skyboxName, tiles[i].pos
+                );
+            } else {
+                fprintf(cFile, "ALIGNED8 static const u8 %s_skybox_texture_%05X[] = {\n", skyboxName, tiles[i].pos);
+                print_raw_data(cFile, &tiles[i]);
+                fputs("};\n\n", cFile);
+            }
         }
     }
 
@@ -334,9 +342,18 @@ static void write_cake_c() {
 
     int numTiles = TABLE_DIMENSIONS[type].cols * TABLE_DIMENSIONS[type].rows;
     for (int i = 0; i < numTiles; ++i) {
-        fprintf(cFile, "ALIGNED8 static const u8 cake_end_texture_%s%d[] = {\n", euSuffx, i);
-        print_raw_data(cFile, &tiles[i]);
-        fputs("};\n\n", cFile);
+        if (storeNamesOnly) {
+            fprintf(
+                cFile,
+                "ALIGNED8 static const u8 cake_end_texture_%s%d[] = "
+                "\"textures/skybox_tiles/cake%s.%d.rgba16\";\n\n",
+                euSuffx, i, *euSuffx ? "_eu" : "", tiles[i].pos
+            );
+        } else {
+            fprintf(cFile, "ALIGNED8 static const u8 cake_end_texture_%s%d[] = {\n", euSuffx, i);
+            print_raw_data(cFile, &tiles[i]);
+            fputs("};\n\n", cFile);
+        }
     }
     fclose(cFile);
 }
@@ -473,7 +490,8 @@ static void usage() {
             "Usage: %s --type sky|cake|cake_eu {--combine INPUT OUTPUT | --split INPUT OUTPUT}\n"
             "\n"
             "Optional arguments:\n"
-            " --write-tiles OUTDIR      Also create the individual tiles' PNG files\n", programName);
+            " --write-tiles OUTDIR      Also create the individual tiles' PNG files\n"
+            " --store-names             Store texture file names instead of actual data\n", programName);
 }
 
 // Modified from n64split
@@ -528,6 +546,10 @@ static int parse_arguments(int argc, char *argv[]) {
 
             writeTiles = true;
             writeDir = argv[i];
+        }
+
+        if (strcmp(argv[i], "--store-names") == 0) {
+            storeNamesOnly = true;
         }
     }
 
