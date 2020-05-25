@@ -595,11 +595,11 @@ all: $(EXE)
 ifeq ($(EXTERNAL_TEXTURES),1)
 # prepares the resource folder for external data
 res: $(EXE)
-  @mkdir -p $(BUILD_DIR)/res
-  @cp -r -f textures/ $(BUILD_DIR)/res/
-  @cp -r -f $(BUILD_DIR)/textures/skybox_tiles/ $(BUILD_DIR)/res/textures/
-  @find actors -name \*.png -exec cp --parents {} $(BUILD_DIR)/res/ \;
-  @find levels -name \*.png -exec cp --parents {} $(BUILD_DIR)/res/ \;
+	@mkdir -p $(BUILD_DIR)/res
+	@cp -r -f textures/ $(BUILD_DIR)/res/
+	@cp -r -f $(BUILD_DIR)/textures/skybox_tiles/ $(BUILD_DIR)/res/textures/
+	@find actors -name \*.png -exec cp --parents {} $(BUILD_DIR)/res/ \;
+	@find levels -name \*.png -exec cp --parents {} $(BUILD_DIR)/res/ \;
 endif
 
 clean:
@@ -705,10 +705,10 @@ endif
 # RGBA32, RGBA16, IA16, IA8, IA4, IA1, I8, I4
 ifeq ($(EXTERNAL_TEXTURES),1)
 $(BUILD_DIR)/%: %.png
-  printf "%s%b" "$(patsubst %.png,%,$^)" '\x00' > $@
+	printf "%s%b" "$(patsubst %.png,%,$^)" '\x00' > $@
 else
 $(BUILD_DIR)/%: %.png
-  $(N64GRAPHICS) -i $@ -g $< -f $(lastword $(subst ., ,$@))
+	$(N64GRAPHICS) -i $@ -g $< -f $(lastword $(subst ., ,$@))
 endif
 
 $(BUILD_DIR)/%.inc.c: $(BUILD_DIR)/% %.png
@@ -718,11 +718,11 @@ $(BUILD_DIR)/%.inc.c: $(BUILD_DIR)/% %.png
 ifeq ($(EXTERNAL_TEXTURES),0)
 # Color Index CI8
 $(BUILD_DIR)/%.ci8: %.ci8.png
-  $(N64GRAPHICS_CI) -i $@ -g $< -f ci8
+	$(N64GRAPHICS_CI) -i $@ -g $< -f ci8
 
 # Color Index CI4
 $(BUILD_DIR)/%.ci4: %.ci4.png
-  $(N64GRAPHICS_CI) -i $@ -g $< -f ci4
+	$(N64GRAPHICS_CI) -i $@ -g $< -f ci4
 endif
 
 ################################################################
