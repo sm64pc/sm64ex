@@ -411,9 +411,9 @@ void adjust_analog_stick(struct Controller *controller) {
     }
 
     if (rightStickMag > 64) {
-        controller->r_stickX *= 64 / controller->stickMag;
-        controller->r_stickY *= 64 / controller->stickMag;
-    }    
+        controller->r_stickX *= 64 / rightStickMag;
+        controller->r_stickY *= 64 / rightStickMag;
+    }
 }
 
 // if a demo sequence exists, this will run the demo
