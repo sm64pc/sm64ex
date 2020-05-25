@@ -157,15 +157,16 @@ static void gfx_sdl_init(void) {
         configWindow.fullscreen = false;
 
     char window_title[96] =
+    "Super Mario 64 PC Port "
     #ifndef USE_GLES
-    "Super Mario 64 PC Port (OpenGL)";
+    "(OpenGL)"
     #else
-    "Super Mario 64 PC Port (OpenGL_ES2)";
+    "(OpenGL_ES2)"
     #endif
-
     #ifdef NIGHTLY
-    strcat(window_title, " nightly " GIT_HASH);
+    " nightly " GIT_HASH
     #endif
+    ; // end the window title string
 
     wnd = SDL_CreateWindow(
         window_title,

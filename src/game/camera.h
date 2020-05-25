@@ -230,7 +230,7 @@
 #define CUTSCENE_DANCE_FLY_AWAY       165
 #define CUTSCENE_DANCE_CLOSEUP        166
 #define CUTSCENE_KEY_DANCE            167
-#define CUTSCENE_SSL_PYRAMID_EXPLODE  168 // Never activated
+#define CUTSCENE_SSL_PYRAMID_EXPLODE  168 // Never activated normally. Is now activated when QOL_FIXES=1.
 #define CUTSCENE_EXIT_SPECIAL_SUCC    169
 #define CUTSCENE_NONPAINTING_DEATH    170
 #define CUTSCENE_READ_MESSAGE         171

@@ -9244,17 +9244,19 @@ BAD_RETURN(s32) cutscene_exit_bowser_succ_focus_left(UNUSED struct Camera *c) {
  * Instead of focusing on the key, just start a pitch shake. Clever!
  * The shake lasts 32 frames.
  */
+#ifndef QOL_FIXES
 BAD_RETURN(s32) cutscene_exit_bowser_key_toss_shake(struct Camera *c) {
     //! Unnecessary check.
     // Check removed when QOL_FIXES=1.
-    #ifndef QOL_FIXES
     if (c->cutscene == CUTSCENE_EXIT_BOWSER_SUCC) {
         set_camera_pitch_shake(0x800, 0x40, 0x800);
     }
-    #else
-    set_camera_pitch_shake(0x800, 0x40, 0x800);
-    #endif
 }
+#else
+BAD_RETURN(s32) cutscene_exit_bowser_key_toss_shake(UNUSED struct Camera *c) {
+    set_camera_pitch_shake(0x800, 0x40, 0x800);
+}
+#endif
 
 /**
  * Start a camera shake when mario lands on the ground.

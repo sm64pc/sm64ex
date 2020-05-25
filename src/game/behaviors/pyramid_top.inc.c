@@ -96,6 +96,9 @@ void bhv_pyramid_top_loop(void) {
             if (o->oPyramidTopPillarsTouched == 4) {
                 play_puzzle_jingle();
                 o->oAction = PYRAMID_TOP_ACT_SPINNING;
+                #ifdef QOL_FIXES
+                cutscene_pyramid_top_explode();
+                #endif
             }
             break;
 
@@ -113,6 +116,9 @@ void bhv_pyramid_top_loop(void) {
             }
 
             bhv_pyramid_top_explode();
+            #ifdef QOL_FIXES
+            cutscene_pyramid_top_explode_end();
+            #endif
             break;
     }
 }
