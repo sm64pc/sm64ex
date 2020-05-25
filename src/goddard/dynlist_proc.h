@@ -64,7 +64,7 @@ extern void d_copystr_to_idbuf(char *);
 extern struct GdObj *d_makeobj(enum DObjTypes type, DynId id);
 extern void d_set_shapeptrptr(struct ObjShape **);
 extern struct GdObj *d_use_obj(DynId);
-extern void set_cur_dynobj();        //set_cur_dynobj(struct GdObj *);
+extern void set_cur_dynobj(struct GdObj *);
 extern void d_start_group(DynId);
 extern void d_end_group(DynId);
 extern void dynid_is_int(s32);

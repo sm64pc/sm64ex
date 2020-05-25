@@ -524,7 +524,7 @@ void hit_object_from_below(struct MarioState *m, UNUSED struct Object *o) {
     set_camera_shake_from_hit(SHAKE_HIT_FROM_BELOW);
 }
 
-static u32 unused_determine_knockback_action(struct MarioState *m) {
+UNUSED static u32 unused_determine_knockback_action(struct MarioState *m) {
     u32 bonkAction;
     s16 angleToObject = mario_obj_angle_to_object(m, m->interactObj);
     s16 facingDYaw = angleToObject - m->faceAngle[1];
@@ -1297,7 +1297,7 @@ u32 interact_shock(struct MarioState *m, UNUSED u32 interactType, struct Object 
     return FALSE;
 }
 
-static u32 interact_stub(UNUSED struct MarioState *m, UNUSED u32 interactType, struct Object *o) {
+UNUSED static u32 interact_stub(UNUSED struct MarioState *m, UNUSED u32 interactType, struct Object *o) {
     if (!(o->oInteractionSubtype & INT_SUBTYPE_DELAY_INVINCIBILITY)) {
         sDelayInvincTimer = TRUE;
     }

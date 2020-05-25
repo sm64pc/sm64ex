@@ -156,16 +156,17 @@ static void gfx_sdl_init(void) {
     else if (gCLIOpts.FullScreen == 2)
         configWindow.fullscreen = false;
 
-    char window_title[96] =
+    const char *window_title =
+    "Super Mario 64 PC Port "
     #ifndef USE_GLES
-    "Super Mario 64 PC port (OpenGL)";
+    "(OpenGL)"
     #else
-    "Super Mario 64 PC port (OpenGL_ES2)";
+    "(OpenGL_ES2)"
     #endif
-
     #ifdef NIGHTLY
-    strcat(window_title, " nightly " GIT_HASH);
+    " nightly " GIT_HASH
     #endif
+    ; // end of window title string
 
     wnd = SDL_CreateWindow(
         window_title,
@@ -204,9 +205,12 @@ static void gfx_sdl_main_loop(void (*run_one_game_iter)(void)) {
 }
 
 static void gfx_sdl_get_dimensions(uint32_t *width, uint32_t *height) {
-    SDL_GetWindowSize(wnd, width, height);
+    int w, h;
+    SDL_GetWindowSize(wnd, &w, &h);
+    *width = w; *height = h;
 }
 
+#ifndef TARGET_WEB
 static int translate_scancode(int scancode) {
     if (scancode < 512) {
         return inverted_scancode_table[scancode];
@@ -214,6 +218,7 @@ static int translate_scancode(int scancode) {
         return 0;
     }
 }
+#endif
 
 static void gfx_sdl_onkeydown(int scancode) {
     keyboard_on_key_down(translate_scancode(scancode));

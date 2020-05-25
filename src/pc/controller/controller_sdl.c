@@ -42,7 +42,7 @@ static u32 joy_binds[MAX_JOYBINDS][2];
 static u32 mouse_binds[MAX_JOYBINDS][2];
 
 static bool joy_buttons[SDL_CONTROLLER_BUTTON_MAX ] = { false };
-static u32 mouse_buttons = 0;
+UNUSED static u32 mouse_buttons = 0;
 static u32 last_mouse = VK_INVALID;
 static u32 last_joybutton = VK_INVALID;
 

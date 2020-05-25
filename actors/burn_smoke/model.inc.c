@@ -10,7 +10,7 @@ static const Vtx burn_smoke_seg4_vertex_040217C0[] = {
 
 // //! Wrong texture format. Called as rgba16, which makes the burn smoke appear
 //     as a transparent black burn smoke. Probably meant to show up as white-ish
-//     burn smoke, but mistakened for being intended as black smoke.
+//     burn smoke, but mistaken for being intended as black smoke.
 //     Due to debate in the Koopa shorts PR surrounding the fix to a similar bug,
 //     said fix is on a compile-time variable. Use TEXTURE_FIX=1 at compile time
 //     to fix this.

@@ -2492,7 +2492,7 @@ ALIGNED8 const u8 texture_waterbox_lava[] = {
 };
 
 // Unreferenced light group
-static const Lights1 segment2_lights_unused = gdSPDefLights1(
+UNUSED static const Lights1 segment2_lights_unused = gdSPDefLights1(
     0x40, 0x40, 0x40,
     0xff, 0xff, 0xff, 0x28, 0x28, 0x28
 );

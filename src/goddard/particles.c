@@ -25,7 +25,7 @@ struct Connection {
 };
 
 // data
-static void *sUnused801A81D0 = NULL;
+UNUSED static void *sUnused801A81D0 = NULL;
 static s32 D_801A81D4[25] = {
     /*  ID?    X    Y    Z */
     9,  3,  12,  -14, 25, 5,  16,  -25, 42, 4,  15, -39, 55,
@@ -236,9 +236,9 @@ struct Connection *func_801825FC(struct ObjVertex *vtx1, struct ObjVertex *vtx2)
     sp34->unk1C.vtx = vtx1;
     sp34->unk20.vtx = vtx2;
     push_dynobj_stash();
-    set_cur_dynobj(vtx1);
+    set_cur_dynobj((struct GdObj *)vtx1);
     d_get_world_pos(&sp28);
-    set_cur_dynobj(vtx2);
+    set_cur_dynobj((struct GdObj *)vtx2);
     d_get_world_pos(&sp1C);
     sp28.x -= sp1C.x;
     sp28.y -= sp1C.y;
