@@ -24,6 +24,8 @@
 #include "bettercamera.h"
 #endif
 
+//#include <stdio.h>          // TODO: remember to delete this
+
 // FIXME: I'm not sure all of these variables belong in this file, but I don't
 // know of a good way to split them
 struct Controller gControllers[3];
@@ -466,8 +468,11 @@ void read_controller_inputs(void) {
             // if we're receiving inputs, update the controller struct
             // with the new button info.
             if (controller->controllerData != NULL) {
-                controller->rawStickX = controller->controllerData->stick_x;
-                controller->rawStickY = controller->controllerData->stick_y;
+                controller->rawStickX       = controller->controllerData->stick_x;
+                controller->rawStickY       = controller->controllerData->stick_y;
+                controller->rawRightStickX  = controller->controllerData->r_stick_x;
+                controller->rawRightStickY  = controller->controllerData->r_stick_y;
+                //fprintf(stderr, "\rLSx = %d, LSy =%d RSx = %d, RSy =%d  ", controller->rawStickX, controller->rawStickY, controller->rawRightStickX, controller->rawRightStickY);
                 controller->buttonPressed = controller->controllerData->button
                                             & (controller->controllerData->button ^ controller->buttonDown);
                 // 0.5x A presses are a good meme
@@ -484,7 +489,6 @@ void read_controller_inputs(void) {
                 controller->stickMag = 0;
             }
         }
-    #endif
 
     // For some reason, player 1's inputs are copied to player 3's port. This
     // potentially may have been a way the developers "recorded" the inputs
