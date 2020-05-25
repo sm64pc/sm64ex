@@ -79,6 +79,7 @@ struct ar_header {
 #define FLAGS_MIPS3 0x20
 #define FLAGS_O32ABI 0x100000 
 int main(int argc, char **argv) {
+    argc = 0;
     FILE *f = fopen(argv[1], "r+");
 
     if (f == NULL) {
@@ -122,5 +123,5 @@ int main(int argc, char **argv) {
         fseek(f, filesize - sizeof(hdr), SEEK_CUR);
     }
     fclose(f);
-    return 0;
+    return argc;
 }

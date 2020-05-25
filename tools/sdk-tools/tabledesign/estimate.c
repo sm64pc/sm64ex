@@ -244,7 +244,7 @@ void acvect(short *in, int n, int m, double *out)
  */
 int lud(double **a, int n, int *indx, int *d)
 {
-    int i,imax,j,k;
+    int i,imax = 0,j,k;
     double big,dum,sum,temp;
     double min,max;
     double *vv;
