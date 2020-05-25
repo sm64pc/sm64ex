@@ -10,6 +10,8 @@ typedef struct
     u16 button;
     s8 rawStickX;
     s8 rawStickY;
+    s8 rawRightStickX;
+    s8 rawRightStickY;
 } OSContPackedRead;
 
 typedef struct

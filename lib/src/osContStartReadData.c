@@ -44,8 +44,10 @@ void osContGetReadData(OSContPad *pad) {
         pad->errnum = (sp4.unk02 & 0xc0) >> 4;
         if (pad->errnum == 0) {
             pad->button = sp4.button;
-            pad->stick_x = sp4.rawStickX;
-            pad->stick_y = sp4.rawStickY;
+            pad->stick_x   = sp4.rawStickX;
+            pad->stick_y   = sp4.rawStickY;
+            pad->r_stick_x = sp4.rawRightStickX;
+            pad->r_stick_y = sp4.rawRightStickY;
         }
     };
 }
@@ -66,6 +68,8 @@ void __osPackReadData() {
     sp4.button = 65535;
     sp4.rawStickX = -1;
     sp4.rawStickY = -1;
+    sp4.rawRightStickX = -1;
+    sp4.rawRightStickY = -1;
     for (i = 0; i < _osCont_numControllers; i++) {
         *spc++ = sp4;
     }
