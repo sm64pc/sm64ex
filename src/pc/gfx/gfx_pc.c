@@ -23,6 +23,7 @@
 #include "gfx_rendering_api.h"
 #include "gfx_screen_config.h"
 
+#include "../platform.h"
 #include "../configfile.h"
 
 #define SUPPORT_CHECK(x) assert(x)
@@ -505,10 +506,10 @@ static void import_texture(int tile) {
 #ifdef EXTERNAL_TEXTURES
     // the "texture data" is actually a C string with the path to our texture in it
     // load it from an external image in our data path
-    static char fpath[1024];
+    static char fpath[SYS_MAX_PATH];
     int w, h;
     const char *texname = (const char*)rdp.loaded_texture[tile].addr;
-    snprintf(fpath, sizeof(fpath), "%s/%s.png", DATAPATH_DEFAULT, texname);
+    snprintf(fpath, sizeof(fpath), "%s/%s.png", sys_data_path(), texname);
     u8 *data = stbi_load(fpath, &w, &h, NULL, 4);
     if (!data) {
         fprintf(stderr, "texture not found: `%s`\n", fpath);

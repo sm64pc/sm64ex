@@ -7,7 +7,9 @@
 #include <ctype.h>
 #include <SDL2/SDL.h>
 
+#include "platform.h"
 #include "configfile.h"
+#include "cliopts.h"
 #include "gfx/gfx_screen_config.h"
 #include "controller/controller_api.h"
 
@@ -190,6 +192,18 @@ static unsigned int tokenize_string(char *str, int maxTokens, char **tokens) {
         count++;
     }
     return count;
+}
+
+// Gets the config file path and caches it
+const char *configfile_name(void) {
+    static char cfgpath[SYS_MAX_PATH] = { 0 };
+    if (!cfgpath[0]) {
+        if (gCLIOpts.ConfigFile[0])
+            snprintf(cfgpath, sizeof(cfgpath), "%s", gCLIOpts.ConfigFile);
+        else
+            snprintf(cfgpath, sizeof(cfgpath), "%s/%s", sys_save_path(), CONFIGFILE_DEFAULT);
+    }
+    return cfgpath;
 }
 
 // Loads the config file specified by 'filename'

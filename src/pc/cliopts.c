@@ -2,6 +2,7 @@
 #include "configfile.h"
 #include "cheats.h"
 #include "pc_main.h"
+#include "platform.h"
 
 #include <strings.h>
 #include <stdlib.h>
@@ -15,15 +16,27 @@ static void print_help(void) {
     printf("Super Mario 64 PC Port\n");
     printf("%-20s\tEnables the cheat menu.\n", "--cheats");
     printf("%-20s\tSaves the configuration file as CONFIGNAME.\n", "--configfile CONFIGNAME");
+    printf("%-20s\tOverrides the default read-only data path ('!' expands to executable path).\n", "--datapath DATAPATH");
+    printf("%-20s\tOverrides the default save/config path ('!' expands to executable path).\n", "--savepath SAVEPATH");
     printf("%-20s\tStarts the game in full screen mode.\n", "--fullscreen");
     printf("%-20s\tSkips the Peach and Castle intro when starting a new game.\n", "--skip-intro");
     printf("%-20s\tStarts the game in windowed mode.\n", "--windowed");
 }
 
+static inline int arg_string(const char *name, const char *value, char *target) {
+    const unsigned int arglen = strlen(value);
+    if (arglen >= SYS_MAX_PATH) {
+        fprintf(stderr, "Supplied value for `%s` is too long.\n", name);
+        return 0;
+    }
+    strncpy(target, value, arglen);
+    target[arglen] = '\0';
+    return 1;
+}
+
 void parse_cli_opts(int argc, char* argv[]) {
     // Initialize options with false values.
     memset(&gCLIOpts, 0, sizeof(gCLIOpts));
-    strncpy(gCLIOpts.ConfigFile, CONFIGFILE_DEFAULT, sizeof(gCLIOpts.ConfigFile));
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--skip-intro") == 0) // Skip Peach Intro
@@ -38,25 +51,19 @@ void parse_cli_opts(int argc, char* argv[]) {
         else if (strcmp(argv[i], "--cheats") == 0) // Enable cheats menu
             Cheats.EnableCheats = true;
 
+        else if (strcmp(argv[i], "--configfile") == 0 && (i + 1) < argc)
+            arg_string("--configfile", argv[++i], gCLIOpts.ConfigFile);
+
+        else if (strcmp(argv[i], "--datapath") == 0 && (i + 1) < argc)
+            arg_string("--datapath", argv[++i], gCLIOpts.DataPath);
+
+        else if (strcmp(argv[i], "--savepath") == 0 && (i + 1) < argc)
+            arg_string("--savepath", argv[++i], gCLIOpts.SavePath);
+
         // Print help
         else if (strcmp(argv[i], "--help") == 0) {
             print_help();
             game_exit();
-        }
-
-        else if (strcmp(argv[i], "--configfile") == 0) {
-            if (i+1 < argc) {
-                const unsigned int arglen = strlen(argv[i+1]);
-                if (arglen >= sizeof(gCLIOpts.ConfigFile)) {
-                    fprintf(stderr, "Configuration file supplied has a name too long.\n");
-                } else {
-                    strncpy(gCLIOpts.ConfigFile, argv[i+1], arglen);
-                    gCLIOpts.ConfigFile[arglen] = '\0';
-                }
-            }
-
-            // Skip the next string since it's the configuration file name.
-            i++;
         }
     }
 }
