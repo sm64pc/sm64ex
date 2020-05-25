@@ -13,6 +13,12 @@
 #include "main.h"
 #include "thread6.h"
 
+/**
+ * WARNING!
+ * This entry point is deprecated because TARGET_N64 is no longer required for building PC version.
+ * The new entry point is located in 'pc/pc_main.c'
+ **/
+
 // Message IDs
 #define MESG_SP_COMPLETE 100
 #define MESG_DP_COMPLETE 101
@@ -25,11 +31,6 @@ OSThread gIdleThread;
 OSThread gMainThread;
 OSThread gGameLoopThread;
 OSThread gSoundThread;
-#ifndef VERSION_SH
-OSThread gRumblePakThread;
-
-s32 gRumblePakPfs; // Actually an OSPfs but we don't have that header yet
-#endif
 
 OSIoMesg gDmaIoMesg;
 OSMesg D_80339BEC;
@@ -38,19 +39,20 @@ OSMesgQueue gSIEventMesgQueue;
 OSMesgQueue gPIMesgQueue;
 OSMesgQueue gIntrMesgQueue;
 OSMesgQueue gSPTaskMesgQueue;
-#ifndef VERSION_SH
-OSMesgQueue gRumblePakSchedulerMesgQueue;
-OSMesgQueue gRumbleThreadVIMesgQueue;
-#endif
 OSMesg gDmaMesgBuf[1];
 OSMesg gPIMesgBuf[32];
 OSMesg gSIEventMesgBuf[1];
 OSMesg gIntrMesgBuf[16];
 OSMesg gUnknownMesgBuf[16];
-#ifndef VERSION_SH
+
+#ifdef VERSION_SH
+OSThread gRumblePakThread;
+OSMesgQueue gRumblePakSchedulerMesgQueue;
+OSMesgQueue gRumbleThreadVIMesgQueue;
 OSMesg gRumblePakSchedulerMesgBuf[1];
 OSMesg gRumbleThreadVIMesgBuf[1];
 
+s32 gRumblePakPfs; // Actually an OSPfs but we don't have that header yet
 struct RumbleData gRumbleDataQueue[3];
 struct StructSH8031D9B0 gCurrRumbleSettings;
 #endif
@@ -152,7 +154,7 @@ void create_thread(OSThread *thread, OSId id, void (*entry)(void *), void *arg, 
     osCreateThread(thread, id, entry, arg, sp, pri);
 }
 
-#ifndef VERSION_SH
+#ifdef VERSION_SH
 extern void func_sh_802F69CC(void);
 #endif
 
@@ -162,7 +164,7 @@ void handle_nmi_request(void) {
     func_80320890();
     sound_banks_disable(2, 0x037A);
     fadeout_music(90);
-#ifndef VERSION_SH
+#ifdef VERSION_SH
     func_sh_802F69CC();
 #endif
 }
@@ -233,7 +235,7 @@ void handle_vblank(void) {
 
     stub_main_3();
     sNumVblanks++;
-#ifndef VERSION_SH
+#ifdef VERSION_SH
     if (gResetTimer > 0 && gResetTimer < 100) {
         gResetTimer++;
     }
