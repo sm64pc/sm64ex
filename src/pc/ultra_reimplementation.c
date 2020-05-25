@@ -2,6 +2,7 @@
 #include <string.h>
 #include "lib/src/libultra_internal.h"
 #include "macros.h"
+#include "platform.h"
 
 #ifdef TARGET_WEB
 #include <emscripten.h>
@@ -119,7 +120,9 @@ s32 osEepromLongRead(UNUSED OSMesgQueue *mq, u8 address, u8 *buffer, int nbytes)
         ret = 0;
     }
 #else
-    FILE *fp = fopen("sm64_save_file.bin", "rb");
+    char save_path[SYS_MAX_PATH] = { 0 };
+    snprintf(save_path, sizeof(save_path), "%s/sm64_save_file.bin", sys_save_path());
+    FILE *fp = fopen(save_path, "rb");
     if (fp == NULL) {
         return -1;
     }
@@ -149,7 +152,9 @@ s32 osEepromLongWrite(UNUSED OSMesgQueue *mq, u8 address, u8 *buffer, int nbytes
     }, content);
     s32 ret = 0;
 #else
-    FILE* fp = fopen("sm64_save_file.bin", "wb");
+    char save_path[SYS_MAX_PATH] = { 0 };
+    snprintf(save_path, sizeof(save_path), "%s/sm64_save_file.bin", sys_save_path());
+    FILE *fp = fopen(save_path, "wb");
     if (fp == NULL) {
         return -1;
     }
