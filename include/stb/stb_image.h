@@ -971,7 +971,8 @@ STBIDEF void stbi_set_flip_vertically_on_load(int flag_true_if_should_flip)
 
 static void *stbi__load_main(stbi__context *s, int *x, int *y, int *comp, int req_comp, stbi__result_info *ri, int bpc)
 {
-   memset(ri, 0, sizeof(*ri)); // make sure it's initialized if we add new fields
+   bpc = 0;
+   memset(ri, bpc, sizeof(*ri));
    ri->bits_per_channel = 8; // default is 8 so most paths don't have to be changed
    ri->channel_order = STBI_ORDER_RGB; // all current input & output are this, but this is here so we can add BGR order
    ri->num_channels = 0;
@@ -6342,11 +6343,12 @@ static stbi_uc *stbi__gif_load_next(stbi__context *s, stbi__gif *g, int *comp, i
    int first_frame; 
    int pi; 
    int pcount; 
+   req_comp = 0;
 
    // on first frame, any non-written pixels get the background colour (non-transparent)
    first_frame = 0; 
    if (g->out == 0) {
-      if (!stbi__gif_header(s, g, comp,0))     return 0; // stbi__g_failure_reason set by stbi__gif_header
+      if (!stbi__gif_header(s, g, comp,req_comp))     return 0; // stbi__g_failure_reason set by stbi__gif_header
       g->out = (stbi_uc *) stbi__malloc(4 * g->w * g->h);
       g->background = (stbi_uc *) stbi__malloc(4 * g->w * g->h); 
       g->history = (stbi_uc *) stbi__malloc(g->w * g->h); 
@@ -6360,7 +6362,7 @@ static stbi_uc *stbi__gif_load_next(stbi__context *s, stbi__gif *g, int *comp, i
       memset( g->history, 0x00, g->w * g->h );        // pixels that were affected previous frame
       first_frame = 1; 
    } else {
-      // second frame - how do we dispoase of the previous one?
+      // second frame - how do we dispose of the previous one?
       dispose = (g->eflags & 0x1C) >> 2; 
       pcount = g->w * g->h; 
 
@@ -6565,6 +6567,7 @@ static void *stbi__gif_load(stbi__context *s, int *x, int *y, int *comp, int req
    stbi_uc *u = 0;
    stbi__gif g;
    memset(&g, 0, sizeof(g));
+   STBI_NOTUSED(ri);
 
    u = stbi__gif_load_next(s, &g, comp, req_comp, 0);
    if (u == (stbi_uc *) s) u = 0;  // end of animated gif marker
