@@ -352,9 +352,14 @@ void adjust_analog_stick(struct Controller *controller) {
     UNUSED u8 pad[8];
 
     // reset the controller's x and y floats.
-    controller->stickX = 0;
-    controller->stickY = 0;
+    controller->stickX   = 0;
+    controller->stickY   = 0;
+    controller->r_stickX = 0;
+    controller->r_stickY = 0;
 
+    // controller->rawRightStickX
+
+        // Left analog stick
     // modulate the rawStickX and rawStickY to be the new f32 values by adding/subtracting 6.
     if (controller->rawStickX <= -8) {
         controller->stickX = controller->rawStickX + 6;
@@ -372,9 +377,30 @@ void adjust_analog_stick(struct Controller *controller) {
         controller->stickY = controller->rawStickY - 6;
     }
 
+        // Right analog stick
+    // modulate the rawStickX and rawStickY to be the new f32 values by adding/subtracting 6.
+    if (controller->rawRightStickX <= -8) {
+        controller->r_stickX = controller->rawRightStickX + 6;
+    }
+
+    if (controller->rawRightStickX >= 8) {
+        controller->r_stickX = controller->rawRightStickX - 6;
+    }
+
+    if (controller->rawRightStickY <= -8) {
+        controller->r_stickY = controller->rawRightStickY + 6;
+    }
+
+    if (controller->rawRightStickY >= 8) {
+        controller->r_stickY = controller->rawRightStickY - 6;
+    }
+
+
     // calculate f32 magnitude from the center by vector length.
     controller->stickMag =
         sqrtf(controller->stickX * controller->stickX + controller->stickY * controller->stickY);
+
+    float rightStickMag = sqrtf(controller->r_stickX * controller->r_stickX + controller->r_stickY * controller->r_stickY);
 
     // magnitude cannot exceed 64.0f: if it does, modify the values appropriately to
     // flatten the values down to the allowed maximum value.
@@ -383,6 +409,11 @@ void adjust_analog_stick(struct Controller *controller) {
         controller->stickY *= 64 / controller->stickMag;
         controller->stickMag = 64;
     }
+
+    if (rightStickMag > 64) {
+        controller->r_stickX *= 64 / controller->stickMag;
+        controller->r_stickY *= 64 / controller->stickMag;
+    }    
 }
 
 // if a demo sequence exists, this will run the demo
