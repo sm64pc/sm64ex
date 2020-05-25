@@ -26,6 +26,10 @@ struct Controller
   /*0x04*/ float stickX;        // [-64, 64] positive is right
   /*0x08*/ float stickY;        // [-64, 64] positive is up
   /*0x0C*/ float stickMag;      // distance from center [0, 64]
+           s16 rawRightStickX;  // X-pos for the right analog stick
+           s16 rawRightStickY;  // Y-pos for the right analog stick
+           float r_stickX;
+           float r_stickY;
   /*0x10*/ u16 buttonDown;
   /*0x12*/ u16 buttonPressed;
   /*0x14*/ OSContStatus *statusData;

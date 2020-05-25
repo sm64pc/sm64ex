@@ -22,9 +22,6 @@
 #define MAX_JOYBINDS 32
 #define MAX_MOUSEBUTTONS 8 // arbitrary
 
-extern int16_t rightx;
-extern int16_t righty;
-
 #ifdef BETTERCAMERA
 int mouse_x;
 int mouse_y;
@@ -153,8 +150,8 @@ static void controller_sdl_read(OSContPad *pad) {
 
     int16_t leftx = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_LEFTX);
     int16_t lefty = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_LEFTY);
-    rightx = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_RIGHTX);
-    righty = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_RIGHTY);
+    int16_t rightx = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_RIGHTX);
+    int16_t righty = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_RIGHTY);
 
     int16_t ltrig = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_TRIGGERLEFT);
     int16_t rtrig = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
@@ -188,10 +185,10 @@ static void controller_sdl_read(OSContPad *pad) {
         pad->stick_y = stick_y == 128 ? 127 : stick_y;
     }
 
-    uint32_t magnitude_sq = (uint32_t)(rightx * rightx) + (uint32_t)(righty * righty);
+    magnitude_sq = (uint32_t)(rightx * rightx) + (uint32_t)(righty * righty);
     if (magnitude_sq > (uint32_t)(DEADZONE * DEADZONE)) {
         pad->r_stick_x = rightx / 0x100;
-        stick_y = -righty / 0x100;
+        int stick_y = -righty / 0x100;
         pad->r_stick_y = stick_y == 128 ? 127 : stick_y;
     } else
     {
