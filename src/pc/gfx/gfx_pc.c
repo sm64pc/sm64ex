@@ -6,6 +6,11 @@
 #include <assert.h>
 #include "macros.h"
 
+#ifdef EXTERNAL_TEXTURES
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
+#endif
+
 #ifndef _LANGUAGE_C
 #define _LANGUAGE_C
 #endif
@@ -19,6 +24,7 @@
 #include "gfx_rendering_api.h"
 #include "gfx_screen_config.h"
 
+#include "../platform.h"
 #include "../configfile.h"
 
 #define SUPPORT_CHECK(x) assert(x)
@@ -316,11 +322,13 @@ static bool gfx_texture_cache_lookup(int tile, struct TextureHashmapNode **n, co
     return false;
 }
 
+#ifndef EXTERNAL_TEXTURES
 static void import_texture_rgba32(int tile) {
     uint32_t width = rdp.texture_tile.line_size_bytes / 2;
     uint32_t height = (rdp.loaded_texture[tile].size_bytes / 2) / rdp.texture_tile.line_size_bytes;
     gfx_rapi->upload_texture((uint8_t *)rdp.loaded_texture[tile].addr, width, height);
 }
+#endif // EXTERNAL_TEXTURES
 
 static void import_texture_rgba16(int tile) {
     uint8_t rgba32_buf[8192];
@@ -496,6 +504,22 @@ static void import_texture(int tile) {
         return;
     }
     
+#ifdef EXTERNAL_TEXTURES
+    // the "texture data" is actually a C string with the path to our texture in it
+    // load it from an external image in our data path
+    static char fpath[SYS_MAX_PATH];
+    int w, h;
+    const char *texname = (const char*)rdp.loaded_texture[tile].addr;
+    snprintf(fpath, sizeof(fpath), "%s/%s.png", sys_data_path(), texname);
+    u8 *data = stbi_load(fpath, &w, &h, NULL, 4);
+    if (!data) {
+        fprintf(stderr, "texture not found: `%s`\n", fpath);
+        abort();
+    }
+    gfx_rapi->upload_texture(data, w, h);
+    stbi_image_free(data); // don't need this anymore
+#else
+    // the texture data is actual texture data
     UNUSED int t0 = get_time();
     if (fmt == G_IM_FMT_RGBA) {
         if (siz == G_IM_SIZ_32b) {
@@ -537,6 +561,7 @@ static void import_texture(int tile) {
     }
     UNUSED int t1 = get_time();
     //printf("Time diff: %d\n", t1 - t0);
+#endif
 }
 
 static void gfx_normalize_vector(float v[3]) {

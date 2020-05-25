@@ -5179,8 +5179,13 @@ u8 get_cutscene_from_mario_status(struct Camera *c) {
                     //! doorStatus is never DOOR_ENTER_LOBBY when cameraEvent == 6, because
                     //! doorStatus is only used for the star door in the lobby, which uses
                     //! ACT_ENTERING_STAR_DOOR
+                    // This seemingly errant behavior is removed when QOL_FIXES=1
+                    #ifndef QOL_FIXES
                     if (c->mode == CAMERA_MODE_SPIRAL_STAIRS || c->mode == CAMERA_MODE_CLOSE
                                                                  || c->doorStatus == DOOR_ENTER_LOBBY) {
+                    #else
+                    if (c->mode == CAMERA_MODE_SPIRAL_STAIRS || c->mode == CAMERA_MODE_CLOSE) {
+                    #endif
                         cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL_MODE, CUTSCENE_DOOR_PUSH_MODE);
                     } else {
                         cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);
@@ -9241,9 +9246,14 @@ BAD_RETURN(s32) cutscene_exit_bowser_succ_focus_left(UNUSED struct Camera *c) {
  */
 BAD_RETURN(s32) cutscene_exit_bowser_key_toss_shake(struct Camera *c) {
     //! Unnecessary check.
+    // Check removed when QOL_FIXES=1.
+    #ifndef QOL_FIXES
     if (c->cutscene == CUTSCENE_EXIT_BOWSER_SUCC) {
         set_camera_pitch_shake(0x800, 0x40, 0x800);
     }
+    #else
+    set_camera_pitch_shake(0x800, 0x40, 0x800);
+    #endif
 }
 
 /**
@@ -9575,8 +9585,8 @@ s32 intro_peach_move_camera_start_to_pipe(struct Camera *c, struct CutsceneSplin
 
     // The two splines used by this function are reflected in the horizontal plane for some reason,
     // so they are rotated every frame. Why do this, Nintendo?
-    rotate_in_xz(c->focus, c->focus, (s16) DEGREES(180));
-    rotate_in_xz(c->pos, c->pos, (s16) DEGREES(180));
+    rotate_in_xz(c->focus, c->focus, (s16)DEGREES(180));
+    rotate_in_xz(c->pos, c->pos, (s16)DEGREES(180));
 
     vec3f_set(offset, -1328.f, 260.f, 4664.f);
     vec3f_add(c->focus, offset);
@@ -11315,9 +11325,16 @@ void play_cutscene(struct Camera *c) {
     if ((cutsceneDuration != 0) && !(gCutsceneTimer & CUTSCENE_STOP)) {
         //! @bug This should check for 0x7FFF (CUTSCENE_LOOP)
         //! instead, cutscenes that last longer than 0x3FFF frames will never end on their own
+        // Fixed when QOL_FIXES=1
+        #ifndef QOL_FIXES
         if (gCutsceneTimer < 0x3FFF) {
             gCutsceneTimer += 1;
         }
+        #else
+        if (gCutsceneTimer < 0x7FFF) {
+            gCutsceneTimer += 1;
+        }
+        #endif
         //! Because gCutsceneTimer is often set to 0x7FFF (CUTSCENE_LOOP), this conditional can only
         //! check for == due to overflow
         if (gCutsceneTimer == cutsceneDuration) {

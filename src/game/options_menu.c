@@ -498,7 +498,7 @@ void optmenu_toggle(void) {
         newcam_init_settings(); // load bettercam settings from config vars
         #endif
         controller_reconfigure(); // rebind using new config values
-        configfile_save(gCLIOpts.ConfigFile);
+        configfile_save(configfile_name());
     }
 }
 

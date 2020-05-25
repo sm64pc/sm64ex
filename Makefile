@@ -42,6 +42,8 @@ QOL_FIXES ?= 0
 EXT_OPTIONS_MENU ?= 1
 # Disable text-based save files by default
 TEXTSAVES ?= 0
+# Load textures from external PNG files
+EXTERNAL_TEXTURES ?= 0
 
 # Various workarounds for weird toolchains
 
@@ -72,14 +74,6 @@ ifeq ($(WINDOWS_BUILD),1)
     TARGET_BITS = 32
     NO_BZERO_BCOPY := 1
   else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
-    TARGET_ARCH = i386pep
-    TARGET_BITS = 64
-    NO_BZERO_BCOPY := 1
-  else ifeq ($(CROSS),mxe-i686-w64-mingw32.static-)
-    TARGET_ARCH = i386pe
-    TARGET_BITS = 32
-    NO_BZERO_BCOPY := 1
-  else ifeq ($(CROSS),mxe-x86_64-w64-mingw32.static-)
     TARGET_ARCH = i386pep
     TARGET_BITS = 64
     NO_BZERO_BCOPY := 1
@@ -128,7 +122,6 @@ endif
 # Stuff for showing the git hash in the intro on nightly builds
 # From https://stackoverflow.com/questions/44038428/include-git-commit-hash-and-or-branch-name-in-c-c-source
 ifeq ($(shell git rev-parse --abbrev-ref HEAD),nightly)
-  $(info Hello Caldera!!! I'm here all week!)
   GIT_HASH=`git rev-parse --short HEAD`
   COMPILE_TIME=`date -u +'%Y-%m-%d %H:%M:%S UTC'`
   VERSION_CFLAGS += -DNIGHTLY -DGIT_HASH="\"$(GIT_HASH)\"" -DCOMPILE_TIME="\"$(COMPILE_TIME)\""
@@ -479,16 +472,16 @@ PYTHON := python3
 SDLCONFIG := $(CROSS)sdl2-config
 
 ifeq ($(WINDOWS_BUILD),1)
-CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags`
-CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags`
+CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags` -DUSE_SDL=2
+CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags` -DUSE_SDL=2
 
 else ifeq ($(TARGET_WEB),1)
-CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
+CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
 CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv -s USE_SDL=2
 
 else # Linux / Other builds below
-CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags`
-CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags`
+CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags` -DUSE_SDL=2
+CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags` -DUSE_SDL=2
 endif
 
 # Check for enhancement options
@@ -542,6 +535,14 @@ ifeq ($(LEGACY_GL),1)
   CFLAGS += -DLEGACY_GL
 endif
 
+# Load external textures
+ifeq ($(EXTERNAL_TEXTURES),1)
+  CC_CHECK += -DEXTERNAL_TEXTURES
+  CFLAGS += -DEXTERNAL_TEXTURES
+  # tell skyconv to write names instead of actual texture data and save the split tiles so we can use them later
+  SKYCONV_ARGS := --store-names --write-tiles "$(BUILD_DIR)/textures/skybox_tiles"
+endif
+
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
 
 ifeq ($(TARGET_WEB),1)
@@ -590,6 +591,16 @@ SHA1SUM = sha1sum
 ######################## Targets #############################
 
 all: $(EXE)
+
+ifeq ($(EXTERNAL_TEXTURES),1)
+# prepares the resource folder for external data
+res: $(EXE)
+  @mkdir -p $(BUILD_DIR)/res
+  @cp -r -f textures/ $(BUILD_DIR)/res/
+  @cp -r -f $(BUILD_DIR)/textures/skybox_tiles/ $(BUILD_DIR)/res/textures/
+  @find actors -name \*.png -exec cp --parents {} $(BUILD_DIR)/res/ \;
+  @find levels -name \*.png -exec cp --parents {} $(BUILD_DIR)/res/ \;
+endif
 
 clean:
 	$(RM) -r $(BUILD_DIR_BASE)
@@ -692,20 +703,27 @@ endif
 ################################################################
 
 # RGBA32, RGBA16, IA16, IA8, IA4, IA1, I8, I4
+ifeq ($(EXTERNAL_TEXTURES),1)
 $(BUILD_DIR)/%: %.png
-	$(N64GRAPHICS) -i $@ -g $< -f $(lastword $(subst ., ,$@))
+  printf "%s%b" "$(patsubst %.png,%,$^)" '\x00' > $@
+else
+$(BUILD_DIR)/%: %.png
+  $(N64GRAPHICS) -i $@ -g $< -f $(lastword $(subst ., ,$@))
+endif
 
 $(BUILD_DIR)/%.inc.c: $(BUILD_DIR)/% %.png
 	hexdump -v -e '1/1 "0x%X,"' $< > $@
 	echo >> $@
 
+ifeq ($(EXTERNAL_TEXTURES),0)
 # Color Index CI8
 $(BUILD_DIR)/%.ci8: %.ci8.png
-	$(N64GRAPHICS_CI) -i $@ -g $< -f ci8
+  $(N64GRAPHICS_CI) -i $@ -g $< -f ci8
 
 # Color Index CI4
 $(BUILD_DIR)/%.ci4: %.ci4.png
-	$(N64GRAPHICS_CI) -i $@ -g $< -f ci4
+  $(N64GRAPHICS_CI) -i $@ -g $< -f ci4
+endif
 
 ################################################################
 
@@ -849,7 +867,7 @@ $(BUILD_DIR)/%.o: %.s
 $(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES)
 	$(LD) -L $(BUILD_DIR) -o $@ $(O_FILES) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(LDFLAGS)
 
-.PHONY: all clean cleantools cleanall distclean distcleanall default diff test load libultra
+.PHONY: all clean cleantools cleanall distclean distcleanall default diff test load libultra res
 .PRECIOUS: $(BUILD_DIR)/bin/%.elf $(SOUND_BIN_DIR)/%.ctl $(SOUND_BIN_DIR)/%.tbl $(SOUND_SAMPLE_TABLES) $(SOUND_BIN_DIR)/%.s $(BUILD_DIR)/%
 .DELETE_ON_ERROR:
 

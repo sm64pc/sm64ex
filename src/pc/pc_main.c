@@ -92,7 +92,7 @@ void audio_shutdown(void) {
 }
 
 void game_deinit(void) {
-    configfile_save(gCLIOpts.ConfigFile);;
+    configfile_save(configfile_name());
     controller_shutdown();
     audio_shutdown();
     gfx_shutdown();
@@ -145,7 +145,7 @@ void main_func(void) {
     main_pool_init(pool, pool + sizeof(pool) / sizeof(pool[0]));
     gEffectsMemoryPool = mem_pool_init(0x4000, MEMORY_POOL_LEFT);
 
-    configfile_load(gCLIOpts.ConfigFile);
+    configfile_load(configfile_name());
 
     wm_api = &gfx_sdl;
     rendering_api = &gfx_opengl_api;
