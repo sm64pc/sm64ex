@@ -11,6 +11,11 @@
 #include <stb/stb_image.h>
 #endif
 
+#ifdef EXTERNAL_TEXTURES
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
+#endif
+
 #ifndef _LANGUAGE_C
 #define _LANGUAGE_C
 #endif
@@ -495,6 +500,7 @@ static void import_texture_ci8(int tile) {
     
     gfx_rapi->upload_texture(rgba32_buf, width, height);
 }
+#endif // EXTERNAL_TEXTURES
 
 static void import_texture(int tile) {
     uint8_t fmt = rdp.texture_tile.fmt;
