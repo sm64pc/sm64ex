@@ -547,7 +547,7 @@ static int parse_arguments(int argc, char *argv[]) {
             writeTiles = true;
             writeDir = argv[i];
         }
-        
+
         if (strcmp(argv[i], "--store-names") == 0) {
             storeNamesOnly = true;
         }

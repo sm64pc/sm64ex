@@ -2,6 +2,8 @@
 #define _CLIOPTS_H
 #include "platform.h"
 
+#include "platform.h"
+
 struct PCCLIOptions  {
     unsigned int SkipIntro;
     unsigned int FullScreen;
