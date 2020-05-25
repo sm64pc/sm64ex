@@ -63,7 +63,7 @@ s32 readaifccodebook(FILE *fhandle, s32 ****table, s16 *order, s16 *npredictors)
     s32 k;
     s16 ts;
 
-    if (fread(order, sizeof(s16), 1, fhandle)){}};
+    if (fread(order, sizeof(s16), 1, fhandle)){};
     BSWAP16(*order)
     if (fread(npredictors, sizeof(s16), 1, fhandle)){};
     BSWAP16(*npredictors)
