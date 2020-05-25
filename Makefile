@@ -607,6 +607,7 @@ EMU_FLAGS = --noosd
 LOADER = loader64
 LOADER_FLAGS = -vwf
 SHA1SUM = sha1sum
+ZEROTERM = $(PYTHON) $(TOOLS_DIR)/zeroterm.py
 
 ###################### Dependency Check #####################
 
@@ -725,7 +726,7 @@ endif
 # RGBA32, RGBA16, IA16, IA8, IA4, IA1, I8, I4
 ifeq ($(EXTERNAL_TEXTURES),1)
 $(BUILD_DIR)/%: %.png
-	printf "%s%b" "$(patsubst %.png,%,$^)" '\x00' > $@
+	$(ZEROTERM) "$(patsubst %.png,%,$^)" > $@
 else
 $(BUILD_DIR)/%: %.png
 	$(N64GRAPHICS) -i $@ -g $< -f $(lastword $(subst ., ,$@))
