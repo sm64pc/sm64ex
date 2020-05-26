@@ -143,6 +143,11 @@ else ifeq ($(GRUCODE), f3dex2e) # Fast3DEX2 Extended (PC default)
   GRUCODE_CFLAGS := -DF3DEX_GBI_2E
   TARGET := $(TARGET).f3dex2e
   COMPARE := 0
+else ifeq ($(GRUCODE),f3d_old) # Fast3D (US, JP)
+  GRUCODE_CFLAGS := -DF3D_OLD
+  GRUCODE_ASFLAGS := --defsym F3D_OLD=1
+  TARGET := $(TARGET).f3d_old
+  COMPARE := 0
 else ifeq ($(GRUCODE),f3d_new) # Fast3D 2.0H (Shindou)
   GRUCODE_CFLAGS := -DF3D_NEW
   GRUCODE_ASFLAGS := --defsym F3D_NEW=1
@@ -579,6 +584,7 @@ EMU_FLAGS = --noosd
 LOADER = loader64
 LOADER_FLAGS = -vwf
 SHA1SUM = sha1sum
+ZEROTERM = $(PYTHON) $(TOOLS_DIR)/zeroterm.py
 
 ###################### Dependency Check #####################
 
@@ -701,7 +707,7 @@ endif
 # RGBA32, RGBA16, IA16, IA8, IA4, IA1, I8, I4
 ifeq ($(EXTERNAL_TEXTURES),1)
 $(BUILD_DIR)/%: %.png
-	printf "%s%b" "$(patsubst %.png,%,$^)" '\x00' > $@
+	$(ZEROTERM) "$(patsubst %.png,%,$^)" > $@
 else
 $(BUILD_DIR)/%: %.png
 	$(N64GRAPHICS) -i $@ -g $< -f $(lastword $(subst ., ,$@))
