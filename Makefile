@@ -14,8 +14,7 @@ default: all
 VERSION ?= us
 # Graphics microcode used
 GRUCODE ?= f3d_old
-# If COMPARE is 1, check the output sha1sum when building 'all'
-COMPARE ?= 1
+
 # define AVOID_UB macros when building (recommended)
 
 # Build and optimize for Raspberry Pi(s)
@@ -36,19 +35,23 @@ TARGET_BITS ?= 0
 
 # Disable better camera by default
 BETTERCAMERA ?= 0
+
 # Disable no drawing distance by default
 NODRAWINGDISTANCE ?= 0
+
 # Disable texture fixes by default (helps with them purists)
 TEXTURE_FIX ?= 0
+
 # Enable extended options menu by default
 EXT_OPTIONS_MENU ?= 1
+
 # Disable text-based save-files by default
 TEXTSAVES ?= 0
+
 # Load textures from external PNG files
 EXTERNAL_TEXTURES ?= 0
 
 # Various workarounds for weird toolchains
-
 NO_BZERO_BCOPY ?= 0
 NO_LDIV ?= 0
 
@@ -139,31 +142,26 @@ ifeq ($(GRUCODE),f3dex) # Fast3DEX
   GRUCODE_CFLAGS := -DF3DEX_GBI
   GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1 --defsym F3DEX_GBI=1
   TARGET := $(TARGET).f3dex
-  COMPARE := 0
 else
 ifeq ($(GRUCODE), f3dex2) # Fast3DEX2
   GRUCODE_CFLAGS := -DF3DEX_GBI_2
   GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1 --defsym F3DEX_GBI_2=1
   TARGET := $(TARGET).f3dex2
-  COMPARE := 0
 else
 ifeq ($(GRUCODE), f3dex2e) # Fast3DEX2 Extended (PC default)
   GRUCODE_CFLAGS := -DF3DEX_GBI_2E
   TARGET := $(TARGET).f3dex2e
-  COMPARE := 0
 else
 ifeq ($(GRUCODE),f3d_new) # Fast3D 2.0H (Shindou)
   GRUCODE_CFLAGS := -DF3D_NEW
   GRUCODE_ASFLAGS := --defsym F3D_NEW=1
   TARGET := $(TARGET).f3d_new
-  COMPARE := 0
 else
 ifeq ($(GRUCODE),f3dzex) # Fast3DZEX (2.0J / Animal Forest - Dōbutsu no Mori)
   $(warning Fast3DZEX is experimental. Try at your own risk.)
   GRUCODE_CFLAGS := -DF3DEX_GBI_2
   GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1 --defsym F3DZEX_GBI=1
   TARGET := $(TARGET).f3dzex
-  COMPARE := 0
 endif
 endif
 endif
@@ -182,7 +180,6 @@ ifeq ($(OSX_BUILD),1) # Modify GFX & SDL2 for OSX GL
 endif
 
 VERSION_ASFLAGS := --defsym AVOID_UB=1
-COMPARE := 0
 
 ifeq ($(TARGET_WEB),1)
   VERSION_CFLAGS := $(VERSION_CFLAGS) -DTARGET_WEB
@@ -639,12 +636,6 @@ cleantools:
 distclean:
 	$(RM) -r $(BUILD_DIR_BASE)
 	./extract_assets.py --clean
-
-test: $(ROM)
-	$(EMULATOR) $(EMU_FLAGS) $<
-
-load: $(ROM)
-	$(LOADER) $(LOADER_FLAGS) $<
 
 libultra: $(BUILD_DIR)/libultra.a
 
