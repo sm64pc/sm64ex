@@ -320,69 +320,11 @@ ifeq ($(WINDOWS_BUILD),0)
   CXX_FILES :=
 endif
 
-# We need to keep this for now
-# If we're not N64 use below
+# A big PC-only section was here
+# Now unnecessary due to the files in question having been deleted from the code entirely
 
-  ULTRA_C_FILES_SKIP := \
-    sqrtf.c \
-    string.c \
-    sprintf.c \
-    _Printf.c \
-    kdebugserver.c \
-    osInitialize.c \
-    func_802F7140.c \
-    func_802F71F0.c \
-    func_802F4A20.c \
-    EU_D_802f4330.c \
-    D_802F4380.c \
-    osLeoDiskInit.c \
-    osCreateThread.c \
-    osDestroyThread.c \
-    osStartThread.c \
-    osSetThreadPri.c \
-    osPiStartDma.c \
-    osPiRawStartDma.c \
-    osPiRawReadIo.c \
-    osPiGetCmdQueue.c \
-    osJamMesg.c \
-    osSendMesg.c \
-    osRecvMesg.c \
-    osSetEventMesg.c \
-    osTimer.c \
-    osSetTimer.c \
-    osSetTime.c \
-    osCreateViManager.c \
-    osViSetSpecialFeatures.c \
-    osVirtualToPhysical.c \
-    osViBlack.c \
-    osViSetEvent.c \
-    osViSetMode.c \
-    osViSwapBuffer.c \
-    osSpTaskLoadGo.c \
-    osCreatePiManager.c \
-    osGetTime.c \
-    osEepromProbe.c \
-    osEepromWrite.c \
-    osEepromLongWrite.c \
-    osEepromRead.c \
-    osEepromLongRead.c \
-    osContInit.c \
-    osContStartReadData.c \
-    osAiGetLength.c \
-    osAiSetFrequency.c \
-    osAiSetNextBuffer.c \
-    __osViInit.c \
-    __osSyncPutChars.c \
-    __osAtomicDec.c \
-    __osSiRawStartDma.c \
-    __osViSwapContext.c \
-    __osViGetCurrentContext.c \
-    __osDevMgrMain.c
-
-  C_FILES := $(filter-out src/game/main.c,$(C_FILES))
-  ULTRA_C_FILES := $(filter-out $(addprefix lib/src/,$(ULTRA_C_FILES_SKIP)),$(ULTRA_C_FILES))
-
-# "If we're not N64, use the above"
+C_FILES := $(C_FILES)
+ULTRA_C_FILES := $(ULTRA_C_FILES)
 
 ifeq ($(VERSION),sh)
 SOUND_BANK_FILES := $(wildcard sound/sound_banks/*.json)
@@ -553,13 +495,12 @@ else ifeq ($(WINDOWS_BUILD),1)
   ifeq ($(WINDOWS_CONSOLE),1)
     LDFLAGS += -mconsole
   endif
-else ifeq ($(TARGET_RPI),1)
-# Linux / Other builds below
-LDFLAGS := $(OPT_FLAGS) -lm -lGLESv2 `$(SDLCONFIG) --libs` -no-pie
+else ifeq ($(TARGET_RPI),1) # Linux / Other builds below
+LDFLAGS := $(OPT_FLAGS) -lm -lGLESv2 `$(SDLCONFIG) --libs`
 else ifeq ($(OSX_BUILD),1)
-LDFLAGS := -lm -framework OpenGL `$(SDLCONFIG) --libs` -no-pie -lpthread `pkg-config --libs libusb-1.0 glfw3 glew`
+LDFLAGS := -lm -framework OpenGL `$(SDLCONFIG) --libs` -lpthread `pkg-config --libs libusb-1.0 glfw3 glew`
 else
-LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(SDLCONFIG) --libs` -no-pie -lpthread
+LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(SDLCONFIG) --libs` -lpthread
 endif # End of LDFLAGS
 
 # Prevent a crash with -sopt

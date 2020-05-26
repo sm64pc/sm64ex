@@ -15,30 +15,12 @@ branch, make your changes to the code (but do not commit), then run `tools/creat
 
 The following enhancements are included in this directory:
 
-## Crash Screen - `crash.patch`
-
-This enhancement provides a crash screen that is displayed when the code throws a hardware exception. This may be useful for diagnosing crashes in game code.
-
 ## Debug Box - `debug_box.patch`
 
 This allows you to draw 3D boxes for debugging purposes.
 
 Call the `debug_box` function whenever you want to draw one. `debug_box` by default takes two arguments: a center and bounds vec3f. This will draw a box starting from the point (center - bounds) to (center + bounds).
 Use `debug_box_rot` to draw a box rotated in the xz-plane. If you want to draw a box by specifying min and max points, use `debug_box_pos` instead.
-
-## FPS Counter - `fps.patch`
-
-This patch provides an in-game FPS counter to measure the frame rate.
-
-## iQue Player Support - `ique_support.patch`
-
-This enhancement allows the same ROM to work on both the Nintendo 64 and the iQue Player.
-
-## Memory Expansion Pak Error Screen - `mem_error_screen.patch`
-
-Use this patch if your game requires over 4 MB of memory and requires the
-Expansion Pak. If the Expansion Pak is not present, an error message will be
-shown on startup.
 
 ## Demo Input Recorder - `record_demo.patch`
 
