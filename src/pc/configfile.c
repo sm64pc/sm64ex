@@ -79,7 +79,7 @@ bool         configCameraMouse   = false;
 #endif
 unsigned int configSkipIntro     = 0;
 bool         configHUD           = true;
-unsigned int configAutosave      = 0;        // 0=off, 1=mid-level only, 2=on
+unsigned int configAutosave      = 0;        // 0=off, 1=mid-level only, 2=end of level only, 3=on
 
 static const struct ConfigOption options[] = {
     {.name = "fullscreen",           .type = CONFIG_TYPE_BOOL, .boolValue = &configWindow.fullscreen},

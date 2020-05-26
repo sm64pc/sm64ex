@@ -56,7 +56,8 @@
 #define TEXT_OPT_AUTOSAVE  _("AUTOSAVE")
 #define TEXT_OPT_AUTOSAVE1 _("OFF")
 #define TEXT_OPT_AUTOSAVE2 _("MID-LEVEL ONLY")
-#define TEXT_OPT_AUTOSAVE3 _("ON")
+#define TEXT_OPT_AUTOSAVE3 _("END OF LEVEL ONLY")
+#define TEXT_OPT_AUTOSAVE4 _("ON")
 
 #define TEXT_BIND_A        _("A BUTTON")
 #define TEXT_BIND_B        _("B BUTTON")
@@ -116,8 +117,9 @@
 
 #define TEXT_OPT_AUTOSAVE  _("Autosave")
 #define TEXT_OPT_AUTOSAVE1 _("Off")
-#define TEXT_OPT_AUTOSAVE2 _("Mid-level only")
-#define TEXT_OPT_AUTOSAVE3 _("On")
+#define TEXT_OPT_AUTOSAVE2 _("Mid-Level Only")
+#define TEXT_OPT_AUTOSAVE3 _("End of Level Only")
+#define TEXT_OPT_AUTOSAVE4 _("On")
 
 #define TEXT_BIND_A        _("A Button")
 #define TEXT_BIND_B        _("B Button")

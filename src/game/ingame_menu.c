@@ -3016,7 +3016,7 @@ s16 render_course_complete_screen(void) {
 
     switch (gDialogBoxState) {
         case DIALOG_STATE_OPENING:
-            if (configAutosave == 2) {
+            if (configAutosave == 2 || configAutosave == 3) {
                 level_set_transition(0, 0);
                 gDialogBoxState = DIALOG_STATE_OPENING;
                 gMenuMode = -1;

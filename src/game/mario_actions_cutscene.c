@@ -256,7 +256,7 @@ void handle_save_menu(struct MarioState *m) {
     s32 dialogID;
     // wait for the menu to show up
     // mario_finished_animation(m) ? (not my file, not my problem)
-    if (configAutosave == 2) {
+    if (configAutosave == 2 || configAutosave == 3) {
     	gSaveOptSelectIndex = SAVE_OPT_SAVE_AND_CONTINUE;
     }
     if (is_anim_past_end(m) && gSaveOptSelectIndex != 0) {
@@ -630,7 +630,7 @@ void general_star_dance_handler(struct MarioState *m, s32 isInWater) {
                 if ((m->actionArg & 1) == 0) {
                     level_trigger_warp(m, WARP_OP_STAR_EXIT);
                 } else {
-                    if (configAutosave > 0) {
+                    if (configAutosave == 1 || configAutosave == 3) {
                         gDialogResponse = 1;
                     } else {
                         enable_time_stop();
@@ -1105,7 +1105,7 @@ s32 act_exit_land_save_dialog(struct MarioState *m) {
             set_mario_animation(m, m->actionArg == 0 ? MARIO_ANIM_GENERAL_LAND
                                                      : MARIO_ANIM_LAND_FROM_SINGLE_JUMP);
             if (is_anim_past_end(m)) {
-            	if (configAutosave == 2) {
+            	if (configAutosave == 2 || configAutosave == 3) {
 		            handle_save_menu(m);
 		            cutscene_exit_painting_end(m->area->camera);
 		            break;

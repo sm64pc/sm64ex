@@ -92,6 +92,7 @@ static const u8 optsAutosaveStr[][32] = {
     { TEXT_OPT_AUTOSAVE1 },
     { TEXT_OPT_AUTOSAVE2 },
     { TEXT_OPT_AUTOSAVE3 },
+    { TEXT_OPT_AUTOSAVE4 },
 };
 
 static const u8 optsCheatsStr[][64] = {
@@ -140,6 +141,7 @@ static const u8 *autosaveChoices[] = {
     optsAutosaveStr[1],
     optsAutosaveStr[2],
     optsAutosaveStr[3],
+    optsAutosaveStr[4],
 };
 
 enum OptType {
