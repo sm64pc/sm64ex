@@ -10,6 +10,7 @@ struct CheatList {
     bool         InfiniteLives;
     bool         SuperSpeed;
     bool         Responsive;
+    bool         UnlockDoors;
 };
 
 extern struct CheatList Cheats;

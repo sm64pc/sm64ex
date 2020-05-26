@@ -55,6 +55,7 @@
 #define TEXT_OPT_CHEAT4 _("Infinite lives")
 #define TEXT_OPT_CHEAT5 _("Super speed")
 #define TEXT_OPT_CHEAT6 _("Super responsive controls")
+#define TEXT_OPT_CHEAT7 _("Keyless Entry")
 
 /**
  * Global Symbols
