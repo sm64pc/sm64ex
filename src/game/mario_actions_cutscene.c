@@ -1105,6 +1105,10 @@ s32 act_exit_land_save_dialog(struct MarioState *m) {
             set_mario_animation(m, m->actionArg == 0 ? MARIO_ANIM_GENERAL_LAND
                                                      : MARIO_ANIM_LAND_FROM_SINGLE_JUMP);
             if (is_anim_past_end(m)) {
+            	if (configAutosave == 2) {
+		            handle_save_menu(m);
+		            break;
+            	}
                 if (gLastCompletedCourseNum != COURSE_BITDW
                     && gLastCompletedCourseNum != COURSE_BITFS) {
                     enable_time_stop();
