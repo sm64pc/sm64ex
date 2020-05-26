@@ -30,7 +30,7 @@
 #include "../../include/libc/stdlib.h"
 #include "../pc/pc_main.h"
 
-extern bool configEnableAutosave;
+extern u16 configAutosave;
 
 // TODO: put this elsewhere
 enum SaveOption { SAVE_OPT_SAVE_AND_CONTINUE = 1, SAVE_OPT_SAVE_AND_QUIT, SAVE_OPT_SAVE_EXIT_GAME, SAVE_OPT_CONTINUE_DONT_SAVE };
@@ -256,7 +256,7 @@ void handle_save_menu(struct MarioState *m) {
     s32 dialogID;
     // wait for the menu to show up
     // mario_finished_animation(m) ? (not my file, not my problem)
-    if (configEnableAutosave == TRUE) {
+    if (configAutosave == 2) {
     	gSaveOptSelectIndex = SAVE_OPT_SAVE_AND_CONTINUE;
     }
     if (is_anim_past_end(m) && gSaveOptSelectIndex != 0) {
@@ -630,7 +630,7 @@ void general_star_dance_handler(struct MarioState *m, s32 isInWater) {
                 if ((m->actionArg & 1) == 0) {
                     level_trigger_warp(m, WARP_OP_STAR_EXIT);
                 } else {
-                    if (configEnableAutosave == TRUE) {
+                    if (configAutosave > 0) {
                         gDialogResponse = 1;
                     } else {
                         enable_time_stop();
