@@ -132,6 +132,7 @@
 #define TEXT_OPT_CHEAT7    _("Exit course at any time")
 #define TEXT_OPT_CHEAT8    _("Huge Mario")
 #define TEXT_OPT_CHEAT9    _("Tiny Mario")
+#define TEXT_OPT_CHEAT10   _("No Keys Required")
 
 #endif // VERSION
 
