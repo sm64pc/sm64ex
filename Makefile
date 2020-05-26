@@ -16,8 +16,7 @@ VERSION ?= us
 GRUCODE ?= f3d_old
 # If COMPARE is 1, check the output sha1sum when building 'all'
 COMPARE ?= 1
-# If NON_MATCHING is 1, define the NON_MATCHING and AVOID_UB macros when building (recommended)
-NON_MATCHING ?= 1
+# define AVOID_UB macros when building (recommended)
 
 # Build and optimize for Raspberry Pi(s)
 TARGET_RPI ?= 0
@@ -27,6 +26,9 @@ TARGET_WEB ?= 0
 
 # Makeflag to enable OSX fixes
 OSX_BUILD ?= 0
+
+# Makeflag to enable Windows fixes
+WINDOWS_BUILD ?= 0
 
 # Specify the target you are building for, TARGET_BITS=0 means native
 TARGET_ARCH ?= native
@@ -56,9 +58,7 @@ LEGACY_GL ?= 0
 
 # Automatic settings for PC port(s)
 
-NON_MATCHING := 1
 GRUCODE := f3dex2e
-WINDOWS_BUILD ?= 0
 
 ifeq ($(TARGET_WEB),0)
 ifeq ($(OS),Windows_NT)
@@ -861,9 +861,9 @@ $(BUILD_DIR)/src/audio/%.copt: $(BUILD_DIR)/src/audio/%.acpp
 	$(QEMU_IRIX) -silent -L $(IRIX_ROOT) $(IRIX_ROOT)/usr/lib/copt -signed -I=$< -CMP=$@ -cp=i -scalaroptimize=1
 endif
 
-# Rebuild files with 'GLOBAL_ASM' if the NON_MATCHING flag changes.
-$(GLOBAL_ASM_O_FILES): $(GLOBAL_ASM_DEP).$(NON_MATCHING)
-$(GLOBAL_ASM_DEP).$(NON_MATCHING):
+# Rebuild files with 'GLOBAL_ASM' if something happens?
+$(GLOBAL_ASM_O_FILES): $(GLOBAL_ASM_DEP)
+$(GLOBAL_ASM_DEP):
 	@rm -f $(GLOBAL_ASM_DEP).*
 	touch $@
 
