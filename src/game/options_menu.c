@@ -54,6 +54,7 @@ static const u8 menuStr[][32] = {
     { TEXT_OPT_CONTROLS },
     { TEXT_OPT_VIDEO },
     { TEXT_OPT_AUDIO },
+    { TEXT_OPT_OTHER },
     { TEXT_EXIT_GAME },
     { TEXT_OPT_CHEATS },
 
@@ -84,6 +85,13 @@ static const u8 optsVideoStr[][32] = {
 
 static const u8 optsAudioStr[][32] = {
     { TEXT_OPT_MVOLUME },
+};
+
+static const u8 optsAutosaveStr[][32] = {
+    { TEXT_OPT_AUTOSAVE },
+    { TEXT_OPT_AUTOSAVE1 },
+    { TEXT_OPT_AUTOSAVE2 },
+    { TEXT_OPT_AUTOSAVE3 },
 };
 
 static const u8 optsCheatsStr[][64] = {
@@ -126,6 +134,12 @@ static const u8 *vsyncChoices[] = {
     toggleStr[0],
     toggleStr[1],
     optsVideoStr[6],
+};
+
+static const u8 *autosaveChoices[] = {
+    optsAutosaveStr[1],
+    optsAutosaveStr[2],
+    optsAutosaveStr[3],
 };
 
 enum OptType {
@@ -247,6 +261,10 @@ static struct Option optsAudio[] = {
     DEF_OPT_SCROLL( optsAudioStr[0], &configMasterVolume, 0, MAX_VOLUME, 1 ),
 };
 
+static struct Option optsOther[] = {
+    DEF_OPT_CHOICE( optsAutosaveStr[0], &configAutosave, autosaveChoices ),
+};
+
 static struct Option optsCheats[] = {
     DEF_OPT_TOGGLE( optsCheatsStr[0], &Cheats.EnableCheats ),
     DEF_OPT_TOGGLE( optsCheatsStr[1], &Cheats.MoonJump ),
@@ -268,7 +286,8 @@ static struct SubMenu menuCamera   = DEF_SUBMENU( menuStr[4], optsCamera );
 static struct SubMenu menuControls = DEF_SUBMENU( menuStr[5], optsControls );
 static struct SubMenu menuVideo    = DEF_SUBMENU( menuStr[6], optsVideo );
 static struct SubMenu menuAudio    = DEF_SUBMENU( menuStr[7], optsAudio );
-static struct SubMenu menuCheats   = DEF_SUBMENU( menuStr[9], optsCheats );
+static struct SubMenu menuOther    = DEF_SUBMENU( menuStr[8], optsOther );
+static struct SubMenu menuCheats   = DEF_SUBMENU( menuStr[10], optsCheats );
 
 /* main options menu definition */
 
@@ -279,9 +298,10 @@ static struct Option optsMain[] = {
     DEF_OPT_SUBMENU( menuStr[5], &menuControls ),
     DEF_OPT_SUBMENU( menuStr[6], &menuVideo ),
     DEF_OPT_SUBMENU( menuStr[7], &menuAudio ),
-    DEF_OPT_BUTTON ( menuStr[8], optmenu_act_exit ),
+    DEF_OPT_SUBMENU( menuStr[8], &menuOther ),
+    DEF_OPT_BUTTON ( menuStr[9], optmenu_act_exit ),
     // NOTE: always keep cheats the last option here because of the half-assed way I toggle them
-    DEF_OPT_SUBMENU( menuStr[9], &menuCheats )
+    DEF_OPT_SUBMENU( menuStr[10], &menuCheats )
 };
 
 static struct SubMenu menuMain = DEF_SUBMENU( menuStr[3], optsMain );

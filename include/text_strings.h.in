@@ -19,6 +19,7 @@
 #define TEXT_OPT_CONTROLS  _("CONTROLS")
 #define TEXT_OPT_VIDEO     _("DISPLAY")
 #define TEXT_OPT_AUDIO     _("SOUND")
+#define TEXT_OPT_OTHER     _("OTHER")
 #define TEXT_OPT_HIGHLIGHT _("O")
 #define TEXT_OPT_ANALOGUE  _("Analogue Camera")
 #define TEXT_OPT_MOUSE     _("Mouse Look")
@@ -31,6 +32,11 @@
 #define TEXT_OPT_DOUBLE    _("Double")
 #define TEXT_RESET_WINDOW  _("Reset Window")
 #define TEXT_OPT_HUD       _("HUD")
+
+#define TEXT_OPT_AUTOSAVE  _("Autosave")
+#define TEXT_OPT_AUTOSAVE1 _("Off")
+#define TEXT_OPT_AUTOSAVE2 _("Mid-level only")
+#define TEXT_OPT_AUTOSAVE3 _("On")
 
 #define TEXT_OPT_UNBOUND   _("NONE")
 #define TEXT_OPT_PRESSKEY  _("...")
