@@ -54,6 +54,8 @@ s8 gRedCoinsCollected;
 extern u8 gLastCompletedCourseNum;
 extern u8 gLastCompletedStarNum;
 
+extern bool configEnableAutosave;
+
 enum DialogBoxState {
     DIALOG_STATE_OPENING,
     DIALOG_STATE_VERTICAL,
@@ -3023,13 +3025,26 @@ s16 render_course_complete_screen(void) {
             }
             break;
         case DIALOG_STATE_VERTICAL:
-            shade_screen();
-            render_course_complete_lvl_info_and_hud_str();
+            if (configEnableAutosave == FALSE) {
+                shade_screen();
+                render_course_complete_lvl_info_and_hud_str();
 #ifdef VERSION_EU
-            render_save_confirmation(86, &gDialogLineNum, 20);
+                render_save_confirmation(86, &gDialogLineNum, 20);
 #else
-            render_save_confirmation(100, 86, &gDialogLineNum, 20);
+                render_save_confirmation(100, 86, &gDialogLineNum, 20);
 #endif
+            } else {
+                level_set_transition(0, 0);
+                gDialogBoxState = DIALOG_STATE_OPENING;
+                gMenuMode = -1;
+                num = gDialogLineNum;
+                gCourseDoneMenuTimer = 0;
+                gCourseCompleteCoins = 0;
+                gCourseCompleteCoinsEqual = 0;
+                gHudFlash = 0;
+
+                return num;
+            }
 
             if (gCourseDoneMenuTimer > 110
                 && (gPlayer3Controller->buttonPressed & A_BUTTON
