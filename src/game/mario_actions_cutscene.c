@@ -1107,6 +1107,7 @@ s32 act_exit_land_save_dialog(struct MarioState *m) {
             if (is_anim_past_end(m)) {
             	if (configAutosave == 2) {
 		            handle_save_menu(m);
+		            cutscene_exit_painting_end(m->area->camera);
 		            break;
             	}
                 if (gLastCompletedCourseNum != COURSE_BITDW
