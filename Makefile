@@ -532,6 +532,9 @@ ZEROTERM = $(PYTHON) $(TOOLS_DIR)/zeroterm.py
 all: $(EXE)
 
 ifeq ($(EXTERNAL_TEXTURES),1)
+# depend on resources as well
+all: res
+
 # prepares the resource folder for external data
 res: $(EXE)
 	@mkdir -p $(BUILD_DIR)/res
