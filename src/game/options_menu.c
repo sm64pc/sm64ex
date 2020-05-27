@@ -484,7 +484,7 @@ void optmenu_draw(void) {
 //This has been separated for interesting reasons. Don't question it.
 void optmenu_draw_prompt(void) {
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
-    optmenu_draw_text(278, 212, menuStr[1 + optmenu_open], 0);
+    optmenu_draw_text(264, 212, menuStr[1 + optmenu_open], 0);
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 }
 
@@ -518,7 +518,7 @@ void optmenu_toggle(void) {
         newcam_init_settings(); // load bettercam settings from config vars
         #endif
         controller_reconfigure(); // rebind using new config values
-        configfile_save(gCLIOpts.ConfigFile);
+        configfile_save(configfile_name());
     }
 }
 

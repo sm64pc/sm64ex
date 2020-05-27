@@ -25,6 +25,21 @@
 #define GL_GLEXT_PROTOTYPES 1
 #include <SDL2/SDL_opengl.h>
 
+// redefine this if using a different GL loader
+#define mglGetProcAddress(name) SDL_GL_GetProcAddress(name)
+
+// we'll define and load it manually in init, just in case
+typedef void (*PFNMGLFOGCOORDPOINTERPROC)(GLenum type, GLsizei stride, const void *pointer);
+static PFNMGLFOGCOORDPOINTERPROC mglFogCoordPointer = NULL;
+
+// since these can have different names, might as well redefine them to a single one
+#undef GL_FOG_COORD_SRC
+#undef GL_FOG_COORD
+#undef GL_FOG_COORD_ARRAY
+#define GL_FOG_COORD_SRC 0x8450
+#define GL_FOG_COORD 0x8451
+#define GL_FOG_COORD_ARRAY 0x8457
+
 #include "gfx_cc.h"
 #include "gfx_rendering_api.h"
 #include "macros.h"
@@ -65,9 +80,12 @@ static uint8_t shader_program_pool_size;
 static struct ShaderProgram *cur_shader = NULL;
 
 static const float *cur_buf = NULL;
+static const float *cur_fog_ofs = NULL;
 static size_t cur_buf_size = 0;
 static size_t cur_buf_num_tris = 0;
 static size_t cur_buf_stride = 0;
+static bool gl_blend = false;
+static bool gl_adv_fog = false;
 
 static const float c_white[] = { 1.f, 1.f, 1.f, 1.f };
 
@@ -186,13 +204,18 @@ static void gfx_opengl_apply_shader(struct ShaderProgram *prg) {
     }
 
     if (prg->shader_id & SHADER_OPT_FOG) {
-        // have fog, but fog colors are the same for every vertex
-        // TODO: alpha ain't the same, maybe use glSecondaryColorPointer?
-        // TODO: or pass start and end from gsSPFogPosition somehow or calculate them from z0, w0 and a0?
-        // TODO: or alpha blend solid triangles on top, using the fog factor as alpha
-        // glEnable(GL_FOG);
-        // glFogi(GL_FOG_MODE, GL_LINEAR);
-        // glFogfv(GL_FOG_COLOR, ofs);
+        // fog requested, we can deal with it in one of two ways
+        if (gl_adv_fog) {
+            // if GL_EXT_fog_coord is available, use the provided fog factor as scaled depth for GL fog
+            const float fogrgb[] = { ofs[0], ofs[1], ofs[2] };
+            glEnable(GL_FOG);
+            glFogfv(GL_FOG_COLOR, fogrgb); // color is the same for all verts, only intensity is different
+            glEnableClientState(GL_FOG_COORD_ARRAY);
+            mglFogCoordPointer(GL_FLOAT, cur_buf_stride, ofs + 3); // point it to alpha, which is fog factor
+        } else {
+            // if there's no fog coords available, blend it on top of normal tris later
+            cur_fog_ofs = ofs;
+        }
         ofs += 4;
     }
 
@@ -251,8 +274,11 @@ static void gfx_opengl_unload_shader(struct ShaderProgram *old_prg) {
     glDisable(GL_TEXTURE0);
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_ALPHA_TEST);
+    glDisable(GL_FOG);
+    cur_fog_ofs = NULL; // clear fog colors
 
     glDisableClientState(GL_COLOR_ARRAY);
+    if (gl_adv_fog) glDisableClientState(GL_FOG_COORD_ARRAY);
 }
 
 static void gfx_opengl_load_shader(struct ShaderProgram *new_prg) {
@@ -401,11 +427,38 @@ static void gfx_opengl_set_scissor(int x, int y, int width, int height) {
 }
 
 static void gfx_opengl_set_use_alpha(bool use_alpha) {
+    gl_blend = use_alpha;
     if (use_alpha) {
         glEnable(GL_BLEND);
     } else {
         glDisable(GL_BLEND);
     }
+}
+
+// draws the same triangles as plain fog color + fog intensity as alpha
+// on top of the normal tris and blends them to achieve sort of the same effect
+// as fog would
+static inline void gfx_opengl_blend_fog_tris(void) {
+    // if a texture was used, replace it with fog color instead, but still keep the alpha
+    if (cur_shader->texture_used[0]) {
+        glActiveTexture(GL_TEXTURE0);
+        TEXENV_COMBINE_ON();
+        // out.rgb = input0.rgb
+        TEXENV_COMBINE_SET1(RGB, GL_REPLACE, GL_PRIMARY_COLOR);
+        // out.a = texel0.a * input0.a
+        TEXENV_COMBINE_SET2(ALPHA, GL_MODULATE, GL_TEXTURE, GL_PRIMARY_COLOR);
+    }
+
+    glEnableClientState(GL_COLOR_ARRAY); // enable color array temporarily
+    glColorPointer(4, GL_FLOAT, cur_buf_stride, cur_fog_ofs); // set fog colors as primary colors
+    if (!gl_blend) glEnable(GL_BLEND); // enable blending temporarily
+    glDepthFunc(GL_LEQUAL); // Z is the same as the base triangles
+
+    glDrawArrays(GL_TRIANGLES, 0, 3 * cur_buf_num_tris);
+
+    glDepthFunc(GL_LESS); // set back to default
+    if (!gl_blend) glDisable(GL_BLEND); // disable blending if it was disabled
+    glDisableClientState(GL_COLOR_ARRAY); // will get reenabled later anyway
 }
 
 static void gfx_opengl_draw_triangles(float buf_vbo[], size_t buf_vbo_len, size_t buf_vbo_num_tris) {
@@ -418,7 +471,10 @@ static void gfx_opengl_draw_triangles(float buf_vbo[], size_t buf_vbo_len, size_
 
     gfx_opengl_apply_shader(cur_shader);
 
-    glDrawArrays(GL_TRIANGLES, 0, 3 * buf_vbo_num_tris);
+    glDrawArrays(GL_TRIANGLES, 0, 3 * cur_buf_num_tris);
+
+    // cur_fog_ofs is only set if GL_EXT_fog_coord isn't used
+    if (cur_fog_ofs) gfx_opengl_blend_fog_tris();
 }
 
 static inline bool gl_check_ext(const char *name) {
@@ -428,10 +484,11 @@ static inline bool gl_check_ext(const char *name) {
         extstr = (const char *)glGetString(GL_EXTENSIONS);
 
     if (!strstr(extstr, name)) {
-        fprintf(stderr, "Required GL extension not supported: %s\n", name);
+        fprintf(stderr, "GL extension not supported: %s\n", name);
         return false;
     }
 
+    printf("GL extension detected: %s\n", name);
     return true;
 }
 
@@ -465,16 +522,44 @@ static void gfx_opengl_init(void) {
     }
 
     // check extensions that we need
-    bool supported =
+    const bool supported =
         gl_check_ext("GL_ARB_multitexture") &&
         gl_check_ext("GL_ARB_texture_env_combine");
 
     if (!supported) abort();
 
+    gl_adv_fog = false;
+
+    // check whether we can use advanced fog shit
+    const bool fog_ext =
+        vmajor > 1 || vminor > 3 ||
+        gl_check_ext("GL_EXT_fog_coord") ||
+        gl_check_ext("GL_ARB_fog_coord");
+
+    if (fog_ext) {
+        // try to load manually, as this might be an extension, and even then the ext list may lie
+        mglFogCoordPointer = mglGetProcAddress("glFogCoordPointer");
+        if (!mglFogCoordPointer) mglFogCoordPointer = mglGetProcAddress("glFogCoordPointerEXT");
+        if (!mglFogCoordPointer) mglFogCoordPointer = mglGetProcAddress("glFogCoordPointerARB");
+        if (!mglFogCoordPointer)
+            printf("glFogCoordPointer is not actually available, it won't be used.\n");
+        else
+            gl_adv_fog = true; // appears to be all good
+    }
+
     printf("GL_VERSION = %s\n", glGetString(GL_VERSION));
     printf("GL_EXTENSIONS =\n%s\n", glGetString(GL_EXTENSIONS));
 
-    // these never change
+    if (gl_adv_fog) {
+        // set fog params, they never change
+        printf("GL_EXT_fog_coord available, using that for fog\n");
+        glFogi(GL_FOG_COORD_SRC, GL_FOG_COORD);
+        glFogi(GL_FOG_MODE, GL_LINEAR);
+        glFogf(GL_FOG_START, 0.0f);
+        glFogf(GL_FOG_END, 1.0f);
+    }
+
+    // these also never change
     glEnableClientState(GL_VERTEX_ARRAY);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, c_white);
