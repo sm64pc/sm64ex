@@ -13,7 +13,7 @@ struct CheatList {
     bool         ExitAnywhere;
     bool         HugeMario;
     bool         TinyMario;
-    unsigned int BLJAnywherePower;
+    unsigned int BLJAnywhere;
 };
 
 extern struct CheatList Cheats;

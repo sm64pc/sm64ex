@@ -376,12 +376,19 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation, 
     stepResult = perform_air_step(m, stepArg);
     switch (stepResult) {
         case AIR_STEP_NONE:
-            /* BLJ anywhere cheat */
-            if (Cheats.BLJAnywherePower > 0 && Cheats.EnableCheats == TRUE && m->action == ACT_LONG_JUMP && (m->controller->buttonPressed & A_BUTTON) && m->forwardVel < 1.0f) {
-                m->forwardVel -= (Cheats.BLJAnywherePower - 1) * 2.5f;
-                m->vel[1] = -100.0f;
+            // BLJ anywhere cheat
+            if (Cheats.BLJAnywhere > 0 && Cheats.EnableCheats == TRUE && m->action == ACT_LONG_JUMP
+                && m->forwardVel < 1.0f && m->pos[1] - 50.0f < m->floorHeight) {
+                if (Cheats.BLJAnywhere < 7) {
+                    if (m->controller->buttonPressed & A_BUTTON) {
+                        m->forwardVel -= (Cheats.BLJAnywhere - 1) * 2.5f;
+                        m->vel[1] = -50.0f;
+                    }
+                } else if (m->controller->buttonDown & A_BUTTON) {
+                    m->forwardVel -= (Cheats.BLJAnywhere - 7) * 2.5f;
+                    m->vel[1] = -50.0f;
+                }
             }
-            /* End of BLJ anywhere cheat */
             set_mario_animation(m, animation);
             break;
 
