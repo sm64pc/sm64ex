@@ -76,6 +76,15 @@
 #define TEXT_OPT_CHEAT7    _("EXIT COURSE AT ANY TIME")
 #define TEXT_OPT_CHEAT8    _("HUGE MARIO")
 #define TEXT_OPT_CHEAT9    _("TINY MARIO")
+#define TEXT_OPT_CHEAT10   _("BLJ ANYWHERE")
+
+#define TEXT_OPT_BLJCHEAT1 _("DISABLED")
+#define TEXT_OPT_BLJCHEAT2 _("ENABLED - BOOST: 0")
+#define TEXT_OPT_BLJCHEAT3 _("ENABLED - BOOST: 1")
+#define TEXT_OPT_BLJCHEAT4 _("ENABLED - BOOST: 2")
+#define TEXT_OPT_BLJCHEAT5 _("ENABLED - BOOST: 3")
+#define TEXT_OPT_BLJCHEAT6 _("ENABLED - BOOST: 4")
+#define TEXT_OPT_BLJCHEAT7 _("ENABLED - BOOST: 5")
 
 #else // VERSION
 
@@ -132,6 +141,15 @@
 #define TEXT_OPT_CHEAT7    _("Exit course at any time")
 #define TEXT_OPT_CHEAT8    _("Huge Mario")
 #define TEXT_OPT_CHEAT9    _("Tiny Mario")
+#define TEXT_OPT_CHEAT10   _("BLJ Anywhere")
+
+#define TEXT_OPT_BLJCHEAT1 _("Disabled")
+#define TEXT_OPT_BLJCHEAT2 _("Enabled - Boost: 0")
+#define TEXT_OPT_BLJCHEAT3 _("Enabled - Boost: 1")
+#define TEXT_OPT_BLJCHEAT4 _("Enabled - Boost: 2")
+#define TEXT_OPT_BLJCHEAT5 _("Enabled - Boost: 3")
+#define TEXT_OPT_BLJCHEAT6 _("Enabled - Boost: 4")
+#define TEXT_OPT_BLJCHEAT7 _("Enabled - Boost: 5")
 
 #endif // VERSION
 

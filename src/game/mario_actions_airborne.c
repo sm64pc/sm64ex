@@ -16,6 +16,7 @@
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif
+#include "pc/cheats.h"
 
 void play_flip_sounds(struct MarioState *m, s16 frame1, s16 frame2, s16 frame3) {
     s32 animFrame = m->marioObj->header.gfx.unk38.animFrame;
@@ -375,6 +376,12 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation, 
     stepResult = perform_air_step(m, stepArg);
     switch (stepResult) {
         case AIR_STEP_NONE:
+            /* BLJ anywhere cheat */
+            if (Cheats.BLJAnywherePower > 0 && Cheats.EnableCheats == TRUE && m->action == ACT_LONG_JUMP && (m->controller->buttonPressed & A_BUTTON) && m->forwardVel < 1.0f) {
+                m->forwardVel -= (Cheats.BLJAnywherePower - 1) * 2.5f;
+                m->vel[1] = -100.0f;
+            }
+            /* End of BLJ anywhere cheat */
             set_mario_animation(m, animation);
             break;
 
