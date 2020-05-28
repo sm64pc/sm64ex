@@ -234,7 +234,7 @@ static struct Option optsControls[] = {
     DEF_OPT_BIND( bindStr[13], configKeyStickDown ),
     DEF_OPT_BIND( bindStr[14], configKeyStickLeft ),
     DEF_OPT_BIND( bindStr[15], configKeyStickRight ),
-    // max deadzone is 31000; this is less than the max range of 32768, but this
+    // max deadzone is 31000; this is less than the max range of ~32768, but this
     // way, the player can't accidentally lock themselves out of using the stick
     DEF_OPT_SCROLL( bindStr[16], &configStickDeadzone, 0, 100, 1 ),
 };
