@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_API
 #define CONTROLLER_API
 
-#define DEADZONE 4960
+#define DEADZONE_STEP 310         // original deadzone is 4960
 #define VK_INVALID 0xFFFF
 #define VK_SIZE 0x1000
 

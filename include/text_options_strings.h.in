@@ -66,6 +66,7 @@
 #define TEXT_BIND_DOWN     _("STICK DOWN")
 #define TEXT_BIND_LEFT     _("STICK LEFT")
 #define TEXT_BIND_RIGHT    _("STICK RIGHT")
+#define TEXT_OPT_DEADZONE  _("STICK DEADZONE")
 
 #define TEXT_OPT_CHEAT1    _("ENABLE CHEATS")
 #define TEXT_OPT_CHEAT2    _("MOONJUMP (PRESS L)")
@@ -122,6 +123,7 @@
 #define TEXT_BIND_DOWN     _("Stick Down")
 #define TEXT_BIND_LEFT     _("Stick Left")
 #define TEXT_BIND_RIGHT    _("Stick Right")
+#define TEXT_OPT_DEADZONE  _("Stick Deadzone")
 
 #define TEXT_OPT_CHEAT1    _("Enable cheats")
 #define TEXT_OPT_CHEAT2    _("Moonjump (Press L)")

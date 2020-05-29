@@ -35,6 +35,7 @@ extern unsigned int configKeyStickUp[];
 extern unsigned int configKeyStickDown[];
 extern unsigned int configKeyStickLeft[];
 extern unsigned int configKeyStickRight[];
+extern unsigned int configStickDeadzone;
 #ifdef EXTERNAL_TEXTURES
 extern bool         configPrecacheRes;
 #endif
