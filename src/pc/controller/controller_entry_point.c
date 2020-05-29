@@ -13,6 +13,7 @@ int16_t rightx;
 int16_t righty;
 int c_rightx;
 int c_righty;
+extern unsigned int configStickDeadzone;
 
 static struct ControllerAPI *controller_implementations[] = {
     &controller_recorded_tas,
