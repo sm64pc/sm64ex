@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
 #include <assert.h>
@@ -573,30 +574,47 @@ static bool preload_texture(const char *path) {
     return true;
 }
 
+static inline void load_texture(const char *name) {
+    static char fpath[SYS_MAX_PATH];
+    int w, h;
+    const char *texname = name;
+
+    if (!texname[0]) {
+        fprintf(stderr, "empty texture name at %p\n", texname);
+        return;
+    }
+
+    snprintf(fpath, sizeof(fpath), "%s/%s.png", sys_data_path(), texname);
+    u8 *data = stbi_load(fpath, &w, &h, NULL, 4);
+    if (!data) {
+        fprintf(stderr, "could not load texture: `%s`\n", fpath);
+        return;
+    }
+
+    gfx_rapi->upload_texture(data, w, h);
+    stbi_image_free(data); // don't need this anymore
+}
+
 #endif // EXTERNAL_TEXTURES
 
 static void import_texture(int tile) {
     uint8_t fmt = rdp.texture_tile.fmt;
     uint8_t siz = rdp.texture_tile.siz;
-    
+
+    if (!rdp.loaded_texture[tile].addr) {
+        fprintf(stderr, "NULL texture: tile %d, format %d/%d, size %d\n",
+                tile, (int)fmt, (int)siz, (int)rdp.loaded_texture[tile].size_bytes);
+        return;
+    }
+
     if (gfx_texture_cache_lookup(tile, &rendering_state.textures[tile], rdp.loaded_texture[tile].addr, fmt, siz)) {
         return;
     }
-    
+
 #ifdef EXTERNAL_TEXTURES
     // the "texture data" is actually a C string with the path to our texture in it
     // load it from an external image in our data path
-    static char fpath[SYS_MAX_PATH];
-    int w, h;
-    const char *texname = (const char*)rdp.loaded_texture[tile].addr;
-    snprintf(fpath, sizeof(fpath), "%s/%s.png", sys_data_path(), texname);
-    u8 *data = stbi_load(fpath, &w, &h, NULL, 4);
-    if (!data) {
-        fprintf(stderr, "could not load texture: `%s`\n", fpath);
-        abort();
-    }
-    gfx_rapi->upload_texture(data, w, h);
-    stbi_image_free(data); // don't need this anymore
+    load_texture((const char*)rdp.loaded_texture[tile].addr);
 #else
     // the texture data is actual texture data
     int t0 = get_time();

@@ -245,6 +245,7 @@ static inline u8 *convert_ia8_char(u8 c, u16 *tex, s16 w, s16 h) {
 #ifdef EXTERNAL_TEXTURES
     return (u8 *)tex; // the data's just a name
 #else
+    if (!tex) return NULL;
     if (!charCache[c].used) {
         charCache[c].used = 1;
         alloc_ia8_text_from_i1(charCache[c].data, tex, w, h);
@@ -305,6 +306,7 @@ static u8 *convert_ia4_char(u8 c, u8 *tex, s16 w, s16 h) {
 #ifdef EXTERNAL_TEXTURES
     return tex; // the data's just a name
 #else
+    if (!tex) return NULL;
     if (!charCache[c].used) {
         charCache[c].used = 1;
         alloc_ia4_tex_from_i1(charCache[c].data, tex, w, h);
