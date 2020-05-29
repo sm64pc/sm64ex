@@ -1,6 +1,8 @@
 #include "lib/src/libultra_internal.h"
 #include "lib/src/osContInternal.h"
 
+#include "../configfile.h"
+
 #include "controller_recorded_tas.h"
 #include "controller_keyboard.h"
 
