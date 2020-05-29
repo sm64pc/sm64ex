@@ -51,7 +51,8 @@ void osContGetReadData(OSContPad *pad) {
 
 #ifdef BETTERCAMERA
     uint32_t magnitude_sq = (uint32_t)(rightx * rightx) + (uint32_t)(righty * righty);
-    if (magnitude_sq > (uint32_t)(DEADZONE * DEADZONE)) {
+    uint32_t stickDeadzoneActual = configStickDeadzone * DEADZONE_STEP;
+    if (magnitude_sq > (uint32_t)(stickDeadzoneActual * stickDeadzoneActual)) {
         c_rightx = rightx / 0x100;
         int stick_y = -righty / 0x100;
         c_righty = stick_y == 128 ? 127 : stick_y;
