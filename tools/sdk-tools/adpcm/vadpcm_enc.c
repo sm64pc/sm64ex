@@ -432,13 +432,13 @@ int main(int argc, char **argv)
                     }
                 }
                 left = aloops[i].end - currentPos;
-                if (fread(inBuffer, sizeof(s16), left, ifile) != left) {
+                if (fread(inBuffer, sizeof(s16), left, ifile) != (u32)left) {
                     printf("I/O error occurred.");
                     exit(1);
                 };
                 BSWAP16_MANY(inBuffer, left)
                 fseek(ifile, startPointer, SEEK_SET);
-                if (fread(inBuffer + left, sizeof(s16), 16 - left, ifile) != (16 - left)) {
+                if (fread(inBuffer + left, sizeof(s16), 16 - left, ifile) != ((u32)16 - left)) {
                     printf("I/O error occurred.");
                     exit(1);
                 };
