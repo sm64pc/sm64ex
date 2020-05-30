@@ -74,9 +74,9 @@ struct newcam_hardpos newcam_fixedcam[] =
 #endif // noaccel
 
 s16 newcam_yaw; //Z axis rotation
-f32 newcam_yaw_acc;
+s16 newcam_yaw_acc;
 s16 newcam_tilt = 1500; //Y axis rotation
-f32 newcam_tilt_acc;
+s16 newcam_tilt_acc;
 u16 newcam_distance = 750; //The distance the camera stays from the player
 u16 newcam_distance_target = 750; //The distance the player camera tries to reach.
 f32 newcam_pos_target[3]; //The position the camera is basing calculations off. *usually* Mario.
@@ -129,7 +129,7 @@ void newcam_init(struct Camera *c, u8 dv)
         case LEVEL_CCM: if (gCurrAreaIndex == 1) {newcam_yaw = -0x4000; newcam_tilt = 2000; newcam_distance_target = newcam_distance_values[1];} else newcam_mode = NC_MODE_SLIDE; break;
         case LEVEL_WDW: newcam_yaw = 0x2000; newcam_tilt = 3000; newcam_distance_target = newcam_distance_values[1]; break;
         case 27: newcam_mode = NC_MODE_SLIDE; break;
-        case LEVEL_THI: if (gCurrAreaIndex == 2) newcam_mode = NC_MODE_SLIDE; break;
+        case LEVEL_TTM: if (gCurrAreaIndex == 2) newcam_mode = NC_MODE_SLIDE; break;
     }
 
     newcam_distance = newcam_distance_target;
@@ -187,7 +187,7 @@ void newcam_diagnostics(void)
     print_text_fmt_int(32,32,"DISTANCE %d",newcam_distance);
 }
 
-static s16 newcam_adjust_value(s16 var, s16 val, s8 max)
+static s16 newcam_adjust_value(s16 var, s16 val, s16 max)
 {
     if (val > 0)
     {

@@ -1,9 +1,15 @@
 #include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
 #include <assert.h>
+
+#ifdef EXTERNAL_TEXTURES
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
+#endif
 
 #ifndef _LANGUAGE_C
 #define _LANGUAGE_C
@@ -18,6 +24,7 @@
 #include "gfx_rendering_api.h"
 #include "gfx_screen_config.h"
 
+#include "../platform.h"
 #include "../configfile.h"
 
 #define SUPPORT_CHECK(x) assert(x)
@@ -39,6 +46,17 @@
 #define MAX_BUFFERED 256
 #define MAX_LIGHTS 2
 #define MAX_VERTICES 64
+
+#ifdef EXTERNAL_TEXTURES
+# define MAX_CACHED_TEXTURES 4096 // for preloading purposes
+# define HASH_SHIFT 0
+#else
+# define MAX_CACHED_TEXTURES 512
+# define HASH_SHIFT 5
+#endif
+
+#define HASHMAP_LEN (MAX_CACHED_TEXTURES * 2)
+#define HASH_MASK (HASHMAP_LEN - 1)
 
 struct RGBA {
     uint8_t r, g, b, a;
@@ -66,8 +84,8 @@ struct TextureHashmapNode {
     bool linear_filter;
 };
 static struct {
-    struct TextureHashmapNode *hashmap[1024];
-    struct TextureHashmapNode pool[512];
+    struct TextureHashmapNode *hashmap[HASHMAP_LEN];
+    struct TextureHashmapNode pool[MAX_CACHED_TEXTURES];
     uint32_t pool_pos;
 } gfx_texture_cache;
 
@@ -155,41 +173,17 @@ static size_t buf_vbo_num_tris;
 static struct GfxWindowManagerAPI *gfx_wapi;
 static struct GfxRenderingAPI *gfx_rapi;
 
-#if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR) && !defined(__APPLE__)
-// old mingw
-# include <_mingw.h>
-# define NO_CLOCK_GETTIME
+#ifdef EXTERNAL_TEXTURES
+static inline size_t string_hash(const uint8_t *str) {
+    size_t h = 0;
+    for (const uint8_t *p = str; *p; p++)
+        h = 31 * h + *p;
+    return h;
+}
 #endif
 
-#ifdef NO_CLOCK_GETTIME
-
-#if defined(_WIN32)
-#include <windows.h>
-#define CLOCK_MONOTONIC 0
-// https://stackoverflow.com/questions/5404277/porting-clock-gettime-to-windows
-struct timespec { long tv_sec; long tv_nsec; };
-int clock_gettime(int arg, struct timespec *spec) {
-    __int64 wintime;
-    GetSystemTimeAsFileTime((FILETIME*)&wintime);
-    wintime      -= 116444736000000000LL;     //1jan1601 to 1jan1970
-    spec->tv_sec  = wintime / 10000000LL;     //seconds
-    spec->tv_nsec = wintime % 10000000LL*100; //nano-seconds
-    return 0;
-}
-#else // _WIN32
-#error "Add a clock_gettime() impl for your platform!"
-#endif // _WIN32
-
-#else // NO_CLOCK_GETTIME
-
-#include <time.h>
-
-#endif // NO_CLOCK_GETTIME
-
 static unsigned long get_time(void) {
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-    return (unsigned long)ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
+    return 0;
 }
 
 static void gfx_flush(void) {
@@ -281,11 +275,19 @@ static struct ColorCombiner *gfx_lookup_or_create_color_combiner(uint32_t cc_id)
 }
 
 static bool gfx_texture_cache_lookup(int tile, struct TextureHashmapNode **n, const uint8_t *orig_addr, uint32_t fmt, uint32_t siz) {
+    #ifdef EXTERNAL_TEXTURES // hash and compare the data (i.e. the texture name) itself
+    size_t hash = string_hash(orig_addr);
+    #define CMPADDR(x, y) (x && !sys_strcasecmp(x, y))
+    #else // hash and compare the address
     size_t hash = (uintptr_t)orig_addr;
-    hash = (hash >> 5) & 0x3ff;
+    #define CMPADDR(x, y) x == y
+    #endif
+
+    hash = (hash >> HASH_SHIFT) & HASH_MASK;
+
     struct TextureHashmapNode **node = &gfx_texture_cache.hashmap[hash];
     while (*node != NULL && *node - gfx_texture_cache.pool < gfx_texture_cache.pool_pos) {
-        if ((*node)->texture_addr == orig_addr && (*node)->fmt == fmt && (*node)->siz == siz) {
+        if (CMPADDR((*node)->texture_addr, orig_addr) && (*node)->fmt == fmt && (*node)->siz == siz) {
             gfx_rapi->select_texture(tile, (*node)->texture_id);
             *n = *node;
             return true;
@@ -296,7 +298,7 @@ static bool gfx_texture_cache_lookup(int tile, struct TextureHashmapNode **n, co
         // Pool is full. We just invalidate everything and start over.
         gfx_texture_cache.pool_pos = 0;
         node = &gfx_texture_cache.hashmap[hash];
-        //puts("Clearing texture cache");
+        // puts("Clearing texture cache");
     }
     *node = &gfx_texture_cache.pool[gfx_texture_cache.pool_pos++];
     if ((*node)->texture_addr == NULL) {
@@ -313,7 +315,10 @@ static bool gfx_texture_cache_lookup(int tile, struct TextureHashmapNode **n, co
     (*node)->siz = siz;
     *n = *node;
     return false;
+    #undef CMPADDR
 }
+
+#ifndef EXTERNAL_TEXTURES
 
 static void import_texture_rgba32(int tile) {
     uint32_t width = rdp.texture_tile.line_size_bytes / 2;
@@ -487,14 +492,131 @@ static void import_texture_ci8(int tile) {
     gfx_rapi->upload_texture(rgba32_buf, width, height);
 }
 
+#else // EXTERNAL_TEXTURES
+
+// this is taken straight from n64graphics
+static bool texname_to_texformat(const char *name, u8 *fmt, u8 *siz) {
+    static const struct {
+        const char *name;
+        const u8 format;
+        const u8 size;
+    } fmt_table[] = {
+        { "rgba16", G_IM_FMT_RGBA, G_IM_SIZ_16b },
+        { "rgba32", G_IM_FMT_RGBA, G_IM_SIZ_32b },
+        { "ia1",    G_IM_FMT_IA,   G_IM_SIZ_8b  }, // uhh
+        { "ia4",    G_IM_FMT_IA,   G_IM_SIZ_4b  },
+        { "ia8",    G_IM_FMT_IA,   G_IM_SIZ_8b  },
+        { "ia16",   G_IM_FMT_IA,   G_IM_SIZ_16b },
+        { "i4",     G_IM_FMT_I,    G_IM_SIZ_4b  },
+        { "i8",     G_IM_FMT_I,    G_IM_SIZ_8b  },
+        { "ci8",    G_IM_FMT_I,    G_IM_SIZ_8b  },
+        { "ci16",   G_IM_FMT_I,    G_IM_SIZ_16b },
+    };
+
+    char *fstr = strrchr(name, '.');
+    if (!fstr) return false; // no format string?
+    fstr++;
+
+    for (unsigned i = 0; i < sizeof(fmt_table) / sizeof(fmt_table[0]); ++i) {
+        if (!sys_strcasecmp(fstr, fmt_table[i].name)) {
+            *fmt = fmt_table[i].format;
+            *siz = fmt_table[i].size;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// calls import_texture() on every texture in the res folder
+// we can get the format and size from the texture files
+// and then cache them using gfx_texture_cache_lookup
+static bool preload_texture(const char *path) {
+    // strip off the extension
+    char texname[SYS_MAX_PATH];
+    strncpy(texname, path, sizeof(texname));
+    texname[sizeof(texname)-1] = 0;
+    char *dot = strrchr(texname, '.');
+    if (dot) *dot = 0;
+
+    // get the format and size from filename
+    u8 fmt, siz;
+    if (!texname_to_texformat(texname, &fmt, &siz)) {
+        fprintf(stderr, "unknown texture format: `%s`, skipping\n", texname);
+        return true; // just skip it, might be a stray skybox or something
+    }
+
+    // strip off the data path
+    const char *datapath = sys_data_path();
+    const unsigned int datalen = strlen(datapath);
+    const char *actualname = (!strncmp(texname, datapath, datalen)) ?
+        texname + datalen + 1 : texname;
+    // skip any separators
+    while (*actualname == '/' || *actualname == '\\') ++actualname;
+    // this will be stored in the hashtable, so make a copy
+    actualname = sys_strdup(actualname);
+    assert(actualname);
+
+    struct TextureHashmapNode *n;
+    if (!gfx_texture_cache_lookup(0, &n, actualname, fmt, siz)) {
+        // new texture, load it
+        int w, h;
+        u8 *data = stbi_load(path, &w, &h, NULL, 4);
+        if (!data) {
+            fprintf(stderr, "could not load texture: `%s`\n", path);
+            return false;
+        }
+        // upload it
+        gfx_rapi->upload_texture(data, w, h);
+        stbi_image_free(data);
+    }
+
+    return true;
+}
+
+static inline void load_texture(const char *name) {
+    static char fpath[SYS_MAX_PATH];
+    int w, h;
+    const char *texname = name;
+
+    if (!texname[0]) {
+        fprintf(stderr, "empty texture name at %p\n", texname);
+        return;
+    }
+
+    snprintf(fpath, sizeof(fpath), "%s/%s.png", sys_data_path(), texname);
+    u8 *data = stbi_load(fpath, &w, &h, NULL, 4);
+    if (!data) {
+        fprintf(stderr, "could not load texture: `%s`\n", fpath);
+        return;
+    }
+
+    gfx_rapi->upload_texture(data, w, h);
+    stbi_image_free(data); // don't need this anymore
+}
+
+#endif // EXTERNAL_TEXTURES
+
 static void import_texture(int tile) {
     uint8_t fmt = rdp.texture_tile.fmt;
     uint8_t siz = rdp.texture_tile.siz;
-    
+
+    if (!rdp.loaded_texture[tile].addr) {
+        fprintf(stderr, "NULL texture: tile %d, format %d/%d, size %d\n",
+                tile, (int)fmt, (int)siz, (int)rdp.loaded_texture[tile].size_bytes);
+        return;
+    }
+
     if (gfx_texture_cache_lookup(tile, &rendering_state.textures[tile], rdp.loaded_texture[tile].addr, fmt, siz)) {
         return;
     }
-    
+
+#ifdef EXTERNAL_TEXTURES
+    // the "texture data" is actually a C string with the path to our texture in it
+    // load it from an external image in our data path
+    load_texture((const char*)rdp.loaded_texture[tile].addr);
+#else
+    // the texture data is actual texture data
     int t0 = get_time();
     if (fmt == G_IM_FMT_RGBA) {
         if (siz == G_IM_SIZ_32b) {
@@ -536,6 +658,7 @@ static void import_texture(int tile) {
     }
     int t1 = get_time();
     //printf("Time diff: %d\n", t1 - t0);
+#endif
 }
 
 static void gfx_normalize_vector(float v[3]) {
@@ -1638,6 +1761,13 @@ void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi) {
     for (size_t i = 0; i < sizeof(precomp_shaders) / sizeof(uint32_t); i++) {
         gfx_lookup_or_create_shader_program(precomp_shaders[i]);
     }
+    #ifdef EXTERNAL_TEXTURES
+    // preload all textures if needed
+    if (configPrecacheRes) {
+        printf("Precaching textures from `%s`\n", sys_data_path());
+        sys_dir_walk(sys_data_path(), preload_texture, true);
+    }
+    #endif
 }
 
 void gfx_start_frame(void) {
