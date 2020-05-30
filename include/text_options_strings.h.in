@@ -76,7 +76,7 @@
 #define TEXT_OPT_CHEAT7    _("EXIT COURSE AT ANY TIME")
 #define TEXT_OPT_CHEAT8    _("HUGE MARIO")
 #define TEXT_OPT_CHEAT9    _("TINY MARIO")
-#define TEXT_OPT_CHEAT10   _("Stay in level after star")
+#define TEXT_OPT_CHEAT10   _("STAY IN LEVEL AFTER STAR")
 
 #else // VERSION
 
