@@ -231,7 +231,7 @@ void configfile_load(const char *filename) {
     // Go through each line in the file
     while ((line = read_file_line(file)) != NULL) {
         char *p = line;
-        char *tokens[2];
+        char *tokens[1 + MAX_BINDS];
         int numTokens;
 
         while (isspace(*p))
@@ -240,7 +240,7 @@ void configfile_load(const char *filename) {
         if (!*p || *p == '#') // comment or empty line
             continue;
 
-        numTokens = tokenize_string(p, 2, tokens);
+        numTokens = tokenize_string(p, sizeof(tokens) / sizeof(tokens[0]), tokens);
         if (numTokens != 0) {
             if (numTokens >= 2) {
                 const struct ConfigOption *option = NULL;
@@ -274,7 +274,9 @@ void configfile_load(const char *filename) {
                         default:
                             assert(0); // bad type
                     }
-                    printf("option: '%s', value: '%s'\n", tokens[0], tokens[1]);
+                    printf("option: '%s', value:", tokens[0]);
+                    for (int i = 1; i < numTokens; ++i) printf(" '%s'", tokens[i]);
+                    printf("\n");
                 }
             } else
                 puts("error: expected value");
