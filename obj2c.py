@@ -97,29 +97,29 @@ def parse(filename):
             if line.startswith('v '):
                 if reading_vtx:
                     _record_vtx()
-                else:
-                    coordinates = [eval(x) for x in line.split()[1:4]]
-                    gfx_vertices.append(coordinates)
-                    vtx_v_count += 1
-                    gfx_v_count += 1
+
+                coordinates = [eval(x) for x in line.split()[1:4]]
+                gfx_vertices.append(coordinates)
+                vtx_v_count += 1
+                gfx_v_count += 1
                 continue
     
             if line.startswith('vn '):
                 if reading_vtx:
                     _record_vtx()
-                else:
-                    coordinates = [eval(x) for x in line.split()[1:4]]
-                    gfx_normals.append([_encode_normal(x) for x in coordinates])
+
+                coordinates = [eval(x) for x in line.split()[1:4]]
+                gfx_normals.append([_encode_normal(x) for x in coordinates])
                 continue
 
             if line.startswith('vt '):
                 if reading_vtx:
                     _record_vtx()
-                else:
-                    coordinates = line.split()
-                    u = eval(coordinates[1])
-                    v = 1 - eval(coordinates[2])
-                    gfx_texture.append([_encode_texture(u), _encode_texture(v)])
+
+                coordinates = line.split()
+                u = eval(coordinates[1])
+                v = 1 - eval(coordinates[2])
+                gfx_texture.append([_encode_texture(u), _encode_texture(v)])
                 continue
 
             if line.startswith('g '):
