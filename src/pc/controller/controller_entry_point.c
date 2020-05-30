@@ -30,7 +30,8 @@ s32 osContInit(OSMesgQueue *mq, u8 *controllerBits, OSContStatus *status) {
 }
 
 s32 osMotorStart(void *pfs) {
-    return controller_rumble_play(0.5, 1000);
+    // Since rumble stops by osMotorStop, its duration is not nessecary.
+    return controller_rumble_play(configRumbleStrength / 100.0, 50);
 }
 
 s32 osMotorStop(void *pfs) {
