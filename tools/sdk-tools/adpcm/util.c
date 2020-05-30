@@ -61,19 +61,19 @@ char *ReadPString(FILE *ifile)
     char *st;
 
     if (fread(&c, 1, 1, ifile) != 1){
-        printf("Error: File not found. Perhaps an I/O error occurred.");
+        printf("I/O error occurred.");
         exit(1);
     };
     st = malloc(c + 1);
     if (fread(st, c, 1, ifile) != 1){
-        printf("Error: File not found. Perhaps an I/O error occurred.");
+        printf("I/O error occurred.");
         exit(1);
     };
     st[c] = '\0';
     if ((c & 1) == 0)
     {
         if (fread(&c, 1, 1, ifile) != 1){
-            printf("Error: File not found. Perhaps an I/O error occurred.");
+            printf("I/O error occurred.");
             exit(1);
         };
     }
@@ -101,7 +101,7 @@ ALADPCMloop *readlooppoints(FILE *ifile, s16 *nloops)
     ALADPCMloop *al;
 
     if (fread(nloops, sizeof(s16), 1, ifile) != 1){
-        printf("Error: File not found. Perhaps an I/O error occurred.");
+        printf("I/O error occurred.");
         exit(1);
     };
     BSWAP16(*nloops)
@@ -109,7 +109,7 @@ ALADPCMloop *readlooppoints(FILE *ifile, s16 *nloops)
     for (i = 0; i < *nloops; i++)
     {
         if (fread(&al[i], sizeof(ALADPCMloop), 1, ifile) != 1){
-            printf("Error: File not found. Perhaps an I/O error occurred.");
+            printf("I/O error occurred.");
             exit(1);
         };
         BSWAP32(al[i].start)

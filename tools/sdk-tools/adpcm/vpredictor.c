@@ -10,11 +10,11 @@ s32 readcodebook(FILE *fhandle, s32 ****table, s32 *order, s32 *npredictors)
     s32 k;
 
     if (fscanf(fhandle, "%d", order) != 1) {
-        printf("Error: File not found. Perhaps an I/O error occurred.");
+        printf("I/O error occurred.");
         exit(1);
     };
     if (fscanf(fhandle, "%d", npredictors) != 1) {
-        printf("Error: File not found. Perhaps an I/O error occurred.");
+        printf("I/O error occurred.");
         exit(1);
     };
     *table = malloc(*npredictors * sizeof(s32 **));
@@ -35,7 +35,7 @@ s32 readcodebook(FILE *fhandle, s32 ****table, s32 *order, s32 *npredictors)
             for (k = 0; k < 8; k++)
             {
                 if (fscanf(fhandle, "%d", &table_entry[k][j]) != 1) {
-                    printf("Error: File not found. Perhaps an I/O error occurred.");
+                    printf("I/O error occurred.");
                     exit(1);
                 };
             }
@@ -73,12 +73,12 @@ s32 readaifccodebook(FILE *fhandle, s32 ****table, s16 *order, s16 *npredictors)
     s16 ts;
 
     if (fread(order, sizeof(s16), 1, fhandle) != 1) {
-        printf("Error: File not found. Perhaps an I/O error occurred.");
+        printf("I/O error occurred.");
         exit(1);
     };
     BSWAP16(*order)
     if (fread(npredictors, sizeof(s16), 1, fhandle) != 1) {
-        printf("Error: File not found. Perhaps an I/O error occurred.");
+        printf("I/O error occurred.");
         exit(1);
     };
     BSWAP16(*npredictors)
@@ -100,7 +100,7 @@ s32 readaifccodebook(FILE *fhandle, s32 ****table, s16 *order, s16 *npredictors)
             for (k = 0; k < 8; k++)
             {
                 if (fread(&ts, sizeof(s16), 1, fhandle) != 1) {
-                    printf("Error: File not found. Perhaps an I/O error occurred.");
+                    printf("I/O error occurred.");
                     exit(1);
                 };
                 BSWAP16(ts)
