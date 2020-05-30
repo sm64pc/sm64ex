@@ -60,19 +60,19 @@ char *ReadPString(FILE *ifile)
     u8 c;
     char *st;
 
-    if (fread(&c, 1, 1, ifile) != 1){
+    if (fread(&c, 1, 1, ifile) != 1) {
         printf("I/O error occurred.");
         exit(1);
     };
     st = malloc(c + 1);
-    if (fread(st, c, 1, ifile) != 1){
+    if (fread(st, c, 1, ifile) != 1) {
         printf("I/O error occurred.");
         exit(1);
     };
     st[c] = '\0';
     if ((c & 1) == 0)
     {
-        if (fread(&c, 1, 1, ifile) != 1){
+        if (fread(&c, 1, 1, ifile) != 1) {
             printf("I/O error occurred.");
             exit(1);
         };
@@ -100,7 +100,7 @@ ALADPCMloop *readlooppoints(FILE *ifile, s16 *nloops)
     s32 i;
     ALADPCMloop *al;
 
-    if (fread(nloops, sizeof(s16), 1, ifile) != 1){
+    if (fread(nloops, sizeof(s16), 1, ifile) != 1) {
         printf("I/O error occurred.");
         exit(1);
     };
@@ -108,7 +108,7 @@ ALADPCMloop *readlooppoints(FILE *ifile, s16 *nloops)
     al = malloc(*nloops * sizeof(ALADPCMloop));
     for (i = 0; i < *nloops; i++)
     {
-        if (fread(&al[i], sizeof(ALADPCMloop), 1, ifile) != 1){
+        if (fread(&al[i], sizeof(ALADPCMloop), 1, ifile) != 1) {
             printf("I/O error occurred.");
             exit(1);
         };
