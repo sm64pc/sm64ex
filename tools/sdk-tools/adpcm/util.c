@@ -10,12 +10,12 @@ static u32 getshort(FILE *ifile)
     u32 c1;
     u32 c2;
 
-    if ((c1 = getc(ifile)) == -1U)
+    if ((c1 = getc(ifile)) == (u32)EOF)
     {
         return 0;
     }
 
-    if ((c2 = getc(ifile)) == -1U)
+    if ((c2 = getc(ifile)) == (u32)EOF)
     {
         return 0;
     }
@@ -60,13 +60,22 @@ char *ReadPString(FILE *ifile)
     u8 c;
     char *st;
 
-    if (fread(&c, 1, 1, ifile)){};
+    if (fread(&c, 1, 1, ifile) != 1){
+        printf("Error: File not found. Perhaps an I/O error occurred.");
+        exit(1);
+    };
     st = malloc(c + 1);
-    if (fread(st, c, 1, ifile)){};
+    if (fread(st, c, 1, ifile) != 1){
+        printf("Error: File not found. Perhaps an I/O error occurred.");
+        exit(1);
+    };
     st[c] = '\0';
     if ((c & 1) == 0)
     {
-        if (fread(&c, 1, 1, ifile)){};
+        if (fread(&c, 1, 1, ifile) != 1){
+            printf("Error: File not found. Perhaps an I/O error occurred.");
+            exit(1);
+        };
     }
     return st;
 }
@@ -91,12 +100,18 @@ ALADPCMloop *readlooppoints(FILE *ifile, s16 *nloops)
     s32 i;
     ALADPCMloop *al;
 
-    if (fread(nloops, sizeof(s16), 1, ifile)){};
+    if (fread(nloops, sizeof(s16), 1, ifile) != 1){
+        printf("Error: File not found. Perhaps an I/O error occurred.");
+        exit(1);
+    };
     BSWAP16(*nloops)
     al = malloc(*nloops * sizeof(ALADPCMloop));
     for (i = 0; i < *nloops; i++)
     {
-        if (fread(&al[i], sizeof(ALADPCMloop), 1, ifile)){};
+        if (fread(&al[i], sizeof(ALADPCMloop), 1, ifile) != 1){
+            printf("Error: File not found. Perhaps an I/O error occurred.");
+            exit(1);
+        };
         BSWAP32(al[i].start)
         BSWAP32(al[i].end)
         BSWAP32(al[i].count)

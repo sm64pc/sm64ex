@@ -5,7 +5,7 @@ endif
 
 CC := gcc
 CFLAGS := -Llib -Iinclude -I../include -I . -Wall -Wextra $(OSX_BUILD) -pedantic -std=c99 -O3 -s
-PROGRAMS := n64graphics n64graphics_ci mio0 textconv patch_libultra_math iplfontutil aifc_decode aiff_extract_codebook vadpcm_enc tabledesign extract_data_for_mio skyconv
+PROGRAMS := n64graphics n64graphics_ci mio0 textconv iplfontutil aifc_decode aiff_extract_codebook vadpcm_enc tabledesign extract_data_for_mio skyconv
 
 n64graphics_SOURCES := n64graphics.c utils.c
 n64graphics_CFLAGS  := -DN64GRAPHICS_STANDALONE
@@ -17,7 +17,6 @@ mio0_SOURCES := libmio0.c
 mio0_CFLAGS := -DMIO0_STANDALONE
 
 textconv_SOURCES := textconv.c utf8.c hashtable.c
-patch_libultra_math_SOURCES := patch_libultra_math.c
 
 iplfontutil_SOURCES := iplfontutil.c
 iplfontutil_CFLAGS := -O2 # faster compile time

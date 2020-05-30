@@ -132,7 +132,10 @@ int main(int argc, char **argv)
 
     inBuffer = malloc(16 * sizeof(s16));
 
-    if (fread(&FormChunk, sizeof(Chunk), 1, ifile)){};
+    if (fread(&FormChunk, sizeof(Chunk), 1, ifile) != 1){
+        printf("Error: File not found. Perhaps an I/O error occurred.");
+        exit(1);
+    };
     BSWAP32(FormChunk.ckID)
     BSWAP32(FormChunk.ckSize)
     BSWAP32(FormChunk.formType)
@@ -198,7 +201,10 @@ int main(int argc, char **argv)
 
         case 0x53534e44: // SSND
             offset = ftell(ifile);
-            if (fread(&SndDChunk, sizeof(SoundDataChunk), 1, ifile)){};
+            if (fread(&SndDChunk, sizeof(SoundDataChunk), 1, ifile) != 1){
+                printf("Error: File not found. Perhaps an I/O error occurred.");
+                exit(1);
+            };
             BSWAP32(SndDChunk.offset)
             BSWAP32(SndDChunk.blockSize)
             // The assert error messages specify line numbers 219/220. Match
@@ -214,16 +220,25 @@ int main(int argc, char **argv)
 
         case 0x4d41524b: // MARK
             offset = ftell(ifile);
-            if (fread(&numMarkers, sizeof(s16), 1, ifile)){};
+            if (fread(&numMarkers, sizeof(s16), 1, ifile) != 1){
+                printf("Error: File not found. Perhaps an I/O error occurred.");
+                exit(1);
+            };
             BSWAP16(numMarkers)
             markers = malloc(numMarkers * sizeof(Marker));
             for (i = 0; i < numMarkers; i++)
             {
-                if (fread(&markers[i], sizeof(Marker), 1, ifile)){};
+                if (fread(&markers[i], sizeof(Marker), 1, ifile) != 1){
+                    printf("Error: File not found. Perhaps an I/O error occurred.");
+                    exit(1);
+                };
                 BSWAP16(markers[i].MarkerID)
                 BSWAP16(markers[i].positionH)
                 BSWAP16(markers[i].positionL)
-                if (fread(&strnLen, 1, 1, ifile)){};
+                if (fread(&strnLen, 1, 1, ifile) != 1){
+                    printf("Error: File not found. Perhaps an I/O error occurred.");
+                    exit(1);
+                };
                 if ((strnLen & 1) != 0)
                 {
                     fseek(ifile, strnLen, SEEK_CUR);
@@ -238,7 +253,10 @@ int main(int argc, char **argv)
 
         case 0x494e5354: // INST
             offset = ftell(ifile);
-            if (fread(&InstChunk, sizeof(InstrumentChunk), 1, ifile)){};
+            if (fread(&InstChunk, sizeof(InstrumentChunk), 1, ifile) != 1){
+                printf("Error: File not found. Perhaps an I/O error occurred.");
+                exit(1);
+            };
             BSWAP16(InstChunk.sustainLoop.playMode)
             BSWAP16(InstChunk.sustainLoop.beginLoop)
             BSWAP16(InstChunk.sustainLoop.endLoop)
@@ -414,10 +432,16 @@ int main(int argc, char **argv)
                     }
                 }
                 left = aloops[i].end - currentPos;
-                if (fread(inBuffer, sizeof(s16), left, ifile)){};
+                if (fread(inBuffer, sizeof(s16), left, ifile) != 1){
+                    printf("Error: File not found. Perhaps an I/O error occurred.");
+                    exit(1);
+                };
                 BSWAP16_MANY(inBuffer, left)
                 fseek(ifile, startPointer, SEEK_SET);
-                if (fread(inBuffer + left, sizeof(s16), 16 - left, ifile)){};
+                if (fread(inBuffer + left, sizeof(s16), 16 - left, ifile) != 1){
+                    printf("Error: File not found. Perhaps an I/O error occurred.");
+                    exit(1);
+                };
                 BSWAP16_MANY(inBuffer + left, 16 - left)
                 vencodeframe(ofile, inBuffer, state, coefTable, order, npredictors, 16);
                 nBytes += 9;
