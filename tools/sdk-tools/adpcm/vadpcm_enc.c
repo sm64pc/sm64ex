@@ -141,9 +141,10 @@ int main(int argc, char **argv)
     BSWAP32(FormChunk.formType)
 
     // @bug This doesn't check for FORM for AIFF files, probably due to mistaken operator precedence.
-    if (!((FormChunk.ckID == 0x464f524d && // FORM
-           FormChunk.formType == 0x41494643) || // AIFC
-           FormChunk.formType == 0x41494646)) // AIFF
+    // Fixed below
+    if (!(FormChunk.ckID == 0x464f524d && // FORM
+          (FormChunk.formType == 0x41494643 || // AIFC
+           FormChunk.formType == 0x41494646))) // AIFF
     {
         fprintf(stderr, "%s: [%s] is not an AIFF-C File\n", progname, argv[1]);
         exit(1);
