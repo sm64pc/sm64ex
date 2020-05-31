@@ -1,6 +1,7 @@
 """
 This module attempts to parse the ``model.inc.c`` files and extract the
-3D models within as standard Wavefront OBJ files. 
+3D models (including normals and texture coordinates) within as standard 
+Wavefront OBJ files. 
 
 Example:
     Specify the path to the ``.inc.c`` file and a directory where to save 
@@ -9,8 +10,8 @@ Example:
         $ python c2obj.py ./actors/mario/model.inc.c ./actors/mario/obj/
 
 This is a work in progress and it currently has some serious limitations:
-    * It only extracts geometry information, so no textures or any other info
     * It makes assumptions about the layout of the code in the C source
+    * It assumes that the encoded texture coordinates are for a 32x32 map
     * It hasn't been properly tested.
 
 """
@@ -58,8 +59,8 @@ def parse(filename, output_directory):
                 
                 current_gfx_name = line.split(' ')[2][:-2]
                 current_gfx_file = open(path.join(output_directory, current_gfx_name + '.obj'), 'w')
-                current_gfx_file.write("# Armando Arredondo's SM64 Wavefront OBJ Geometry Converter\n")
-                current_gfx_file.write('# File Created: {}\n\n'.format(datetime.now()))
+                current_gfx_file.write(f"# Armando Arredondo's SM64 Wavefront OBJ Geometry Converter\n")
+                current_gfx_file.write(f'# File Created: {datetime.now()}\n\n')
                 reading_gfx = True
                 continue
             
@@ -107,30 +108,52 @@ def parse(filename, output_directory):
                         current_gfx_file.write('vn {:.3f} {:.3f} {:.3f}\n'.format(*n))
                     current_gfx_file.write(f'# {current_vtx_vertices} vertex normals\n\n')
 
+                    texture_info = any(_has_texture_info(tri) for tri in current_vtx_data)
+                    if texture_info:
+                        for tri in current_vtx_data:
+                            u = _decode_texture(tri[2][0])
+                            v = 1 - _decode_texture(tri[2][1])
+                            current_gfx_file.write('vt {:.3f} {:.3f}\n'.format(u, v))
+                        current_gfx_file.write(f'# {current_vtx_vertices} texture coords\n\n')
+
                     current_gfx_file.write(f'g {current_vtx_name}\n\n')
                 
                 elif line.startswith(insert_2tri_call):
                     args = line[len(insert_2tri_call):].split(',')
                     correction = current_gfx_vertices - current_vtx_vertices + 1
                     indexes = [eval(args[i]) + correction for i in [0, 1, 2, 4, 5, 6]]
-                    current_gfx_file.write('f {0}//{0} {1}//{1} {2}//{2}\n'.format(*indexes[:3]))
-                    current_gfx_file.write('f {0}//{0} {1}//{1} {2}//{2}\n'.format(*indexes[3:]))
+                    if texture_info:
+                        current_gfx_file.write('f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}\n'.format(*indexes[:3]))
+                        current_gfx_file.write('f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}\n'.format(*indexes[3:]))
+                    else:
+                        current_gfx_file.write('f {0}//{0} {1}//{1} {2}//{2}\n'.format(*indexes[:3]))
+                        current_gfx_file.write('f {0}//{0} {1}//{1} {2}//{2}\n'.format(*indexes[3:]))
                     current_gfx_faces += 2
 
                 elif line.startswith(insert_1tri_call):
                     args = line[len(insert_1tri_call):].split(',')
                     correction = current_gfx_vertices - current_vtx_vertices + 1
                     indexes = [eval(args[i]) + correction for i in [0, 1, 2]]
-                    current_gfx_file.write('f {0}//{0} {1}//{1} {2}//{2}\n'.format(*indexes))
+                    if texture_info:
+                        current_gfx_file.write('f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}\n'.format(*indexes))
+                    else:
+                        current_gfx_file.write('f {0}//{0} {1}//{1} {2}//{2}\n'.format(*indexes))
                     current_gfx_faces += 1
 
                 continue
     
     print(f'{gfx_count} models extracted.')
 
+def _has_texture_info(tri):
+    (u, v) = tri[2]
+    return int(u) != 0 or int(v) != 0
+
 def _decode_normal(x):
     y = x if x <= 127 else x - 255
     return y / 127
+
+def _decode_texture(x):
+    return x / (2**10)
 
 if __name__ == "__main__":
     import argparse
