@@ -205,8 +205,7 @@ static s32 read_text_save(s32 fileIndex) {
     ini_t *savedata;
     
     u32 i, flag, coins, stars, starFlags;
-    u32 capLevel, capArea;
-    Vec3s capPos;
+    u32 capArea;
     
     /* Define savefile's name */
     if (sprintf(filename, FILENAME_FORMAT, fileIndex) < 0)
@@ -218,8 +217,6 @@ static s32 read_text_save(s32 fileIndex) {
         return -1;
     } else {
         printf("Loading savefile from '%s'\n", filename);
-        /* Good, file exists for gSaveBuffer */
-        gSaveBuffer.files[fileIndex][0].flags |= SAVE_FLAG_FILE_EXISTS;
     }
 
     /* Read coin score age for selected file and sound mode */
@@ -303,34 +300,46 @@ static s32 read_text_save(s32 fileIndex) {
     
     /* ... it's level ... */
     value = ini_get(savedata, "cap", "level");
-    if (strcmp(value, "ssl") == 0) {
-        gSaveBuffer.files[fileIndex][0].capLevel = 8; // ssl
-    }
-    else if (strcmp(value, "sl") == 0) {
-        gSaveBuffer.files[fileIndex][0].capLevel = 10; // sl
-    }
-    else if (strcmp(value, "ttm") == 0) {
-        gSaveBuffer.files[fileIndex][0].capLevel = 12; // ttm
-    }
-    else if (strcmp(value, "none") == 0) {
-        gSaveBuffer.files[fileIndex][0].capLevel = 0;
-    }
-    else {
-        printf("Invalid 'cap:level' flag!\n");
-        return -1;
+    if (value) {
+        if (strcmp(value, "ssl") == 0) {
+            gSaveBuffer.files[fileIndex][0].capLevel = 8; // ssl
+        }
+        else if (strcmp(value, "sl") == 0) {
+            gSaveBuffer.files[fileIndex][0].capLevel = 10; // sl
+        }
+        else if (strcmp(value, "ttm") == 0) {
+            gSaveBuffer.files[fileIndex][0].capLevel = 12; // ttm
+        }
+        else if (strcmp(value, "none") == 0) {
+            gSaveBuffer.files[fileIndex][0].capLevel = 0;
+        }
+        else {
+            printf("Invalid 'cap:level' flag!\n");
+            return -1;
+        }
     }
     
     /* ... and it's area */
-    sscanf(ini_get(savedata, "cap", "area"), "%d", &capArea);
-    if (capArea > 1 && capArea < 2) {
-        printf("Invalid 'cap:area' flag: %d!\n", capArea);
-        return -1;
+    value = ini_get(savedata, "cap", "area");
+    if (value) {
+        sscanf(value, "%d", &capArea);
+        if (capArea > 1 && capArea < 2) {
+            printf("Invalid 'cap:area' flag: %d!\n", capArea);
+            return -1;
+        }
+        else {
+            gSaveBuffer.files[fileIndex][0].capArea = capArea; 
+        }
     }
-    else {
-        gSaveBuffer.files[fileIndex][0].capArea = capArea; 
-    }
+    
+    /* Good, file exists for gSaveBuffer */
+    gSaveBuffer.files[fileIndex][0].flags |= SAVE_FLAG_FILE_EXISTS;
+
+    /* Make a backup */
+    bcopy(&gSaveBuffer.files[fileIndex][0], &gSaveBuffer.files[fileIndex][1],
+          sizeof(gSaveBuffer.files[fileIndex][1]));
     
     /* Cleaning up after ourselves */
     ini_free(savedata);
-    return 1;
+    return 0;
 }
