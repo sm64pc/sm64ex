@@ -125,6 +125,7 @@ s32 lvl_init_or_update(s16 initOrUpdate, s32);
 s32 lvl_init_from_save_file(s16, s32 levelNum);
 s32 lvl_set_current_level(s16, s32 levelNum);
 s32 lvl_play_the_end_screen_sound(s16, s32);
+s32 credits_end_wait_for_reset();
 
 
 #endif
