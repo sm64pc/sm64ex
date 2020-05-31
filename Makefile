@@ -33,6 +33,8 @@ BETTERCAMERA ?= 0
 NODRAWINGDISTANCE ?= 0
 # Disable texture fixes by default (helps with them purists)
 TEXTURE_FIX ?= 0
+# Disable high poly models by default (all hail the purists)
+HD_MODELS ?= 0
 # Enable extended options menu by default
 EXT_OPTIONS_MENU ?= 1
 
@@ -500,6 +502,12 @@ endif
 ifeq ($(TEXTURE_FIX),1)
   CC_CHECK += -DTEXTURE_FIX
   CFLAGS += -DTEXTURE_FIX
+endif
+
+# Check high poly models options
+ifeq ($(HD_MODELS),1)
+  CC_CHECK += -DHD_MODELS
+  CFLAGS += -DHD_MODELS
 endif
 
 # Check for extended options menu option

@@ -51,7 +51,11 @@ UNUSED static const u64 binid_10 = 10;
 #include "warp_collision/collision.inc.c"
 UNUSED static const u64 binid_11 = 11;
 
+#ifdef HD_MODELS
+#include "mario_cap/hd_model.inc.c"
+#else
 #include "mario_cap/model.inc.c"
+#endif
 UNUSED static const u64 binid_12 = 12;
 
 #include "power_meter/model.inc.c"

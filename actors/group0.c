@@ -6,7 +6,11 @@
 #include "make_const_nonconst.h"
 
 // Note: This bin does not use bin IDs, unlike the other segmented bins.
+#ifdef HD_MODELS
+#include "mario/hd_model.inc.c"
+#else
 #include "mario/model.inc.c"
+#endif
 
 #include "bubble/model.inc.c"
 
