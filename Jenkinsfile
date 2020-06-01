@@ -41,7 +41,7 @@ pipeline {
             git clean -fd .
             git checkout -- .
             echo 'y' | tools/apply_patch.sh "$f"
-            make -j4 VERSION=us COMPARE=0
+            make -j4 VERSION=us
           done
         '''
       }
