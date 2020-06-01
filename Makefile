@@ -42,8 +42,8 @@ TEXTURE_FIX ?= 0
 EXT_OPTIONS_MENU ?= 1
 # Disable text-based save-files by default
 TEXTSAVES ?= 0
-# Load textures from external PNG files
-EXTERNAL_TEXTURES ?= 0
+# Load resources from external files
+EXTERNAL_DATA ?= 0
 
 # Various workarounds for weird toolchains
 
@@ -274,7 +274,7 @@ else
 ifeq ($(VERSION),sh)
   OPT_FLAGS := -O2
 else
-  OPT_FLAGS := -g
+  OPT_FLAGS := -O2
 endif
 endif
 
@@ -555,9 +555,9 @@ ifeq ($(LEGACY_GL),1)
 endif
 
 # Load external textures
-ifeq ($(EXTERNAL_TEXTURES),1)
-  CC_CHECK += -DEXTERNAL_TEXTURES
-  CFLAGS += -DEXTERNAL_TEXTURES
+ifeq ($(EXTERNAL_DATA),1)
+  CC_CHECK += -DEXTERNAL_DATA
+  CFLAGS += -DEXTERNAL_DATA
   # tell skyconv to write names instead of actual texture data and save the split tiles so we can use them later
   SKYCONV_ARGS := --store-names --write-tiles "$(BUILD_DIR)/textures/skybox_tiles"
 endif
@@ -617,15 +617,20 @@ ZEROTERM = $(PYTHON) $(TOOLS_DIR)/zeroterm.py
 
 all: $(EXE)
 
-ifeq ($(EXTERNAL_TEXTURES),1)
+ifeq ($(EXTERNAL_DATA),1)
 # depend on resources as well
 all: res
 
 # prepares the resource folder for external data
 res: $(EXE)
 	@mkdir -p $(BUILD_DIR)/res
+	@mkdir -p $(BUILD_DIR)/res/sound
 	@cp -r -f textures/ $(BUILD_DIR)/res/
 	@cp -r -f $(BUILD_DIR)/textures/skybox_tiles/ $(BUILD_DIR)/res/textures/
+	@cp -f $(SOUND_BIN_DIR)/sound_data.ctl $(BUILD_DIR)/res/sound/
+	@cp -f $(SOUND_BIN_DIR)/sound_data.tbl $(BUILD_DIR)/res/sound/
+	@cp -f $(SOUND_BIN_DIR)/sequences.bin $(BUILD_DIR)/res/sound/
+	@cp -f $(SOUND_BIN_DIR)/bank_sets $(BUILD_DIR)/res/sound/
 	@find actors -name \*.png -exec cp --parents {} $(BUILD_DIR)/res/ \;
 	@find levels -name \*.png -exec cp --parents {} $(BUILD_DIR)/res/ \;
 endif
@@ -724,7 +729,7 @@ endif
 ################################################################
 
 # RGBA32, RGBA16, IA16, IA8, IA4, IA1, I8, I4
-ifeq ($(EXTERNAL_TEXTURES),1)
+ifeq ($(EXTERNAL_DATA),1)
 $(BUILD_DIR)/%: %.png
 	$(ZEROTERM) "$(patsubst %.png,%,$^)" > $@
 else
@@ -736,7 +741,7 @@ $(BUILD_DIR)/%.inc.c: $(BUILD_DIR)/% %.png
 	hexdump -v -e '1/1 "0x%X,"' $< > $@
 	echo >> $@
 
-ifeq ($(EXTERNAL_TEXTURES),0)
+ifeq ($(EXTERNAL_DATA),0)
 # Color Index CI8
 $(BUILD_DIR)/%.ci8: %.ci8.png
 	$(N64GRAPHICS_CI) -i $@ -g $< -f ci8
@@ -787,6 +792,18 @@ $(SOUND_BIN_DIR)/%.m64: $(SOUND_BIN_DIR)/%.o
 $(SOUND_BIN_DIR)/%.o: $(SOUND_BIN_DIR)/%.s
 	$(AS) $(ASFLAGS) -o $@ $<
 
+ifeq ($(EXTERNAL_DATA),1)
+
+$(SOUND_BIN_DIR)/sound_data.ctl.c: $(SOUND_BIN_DIR)/sound_data.ctl
+	echo "unsigned char gSoundDataADSR[] = \"sound/sound_data.ctl\";" > $@
+$(SOUND_BIN_DIR)/sound_data.tbl.c: $(SOUND_BIN_DIR)/sound_data.tbl
+	echo "unsigned char gSoundDataRaw[] = \"sound/sound_data.tbl\";" > $@
+$(SOUND_BIN_DIR)/sequences.bin.c: $(SOUND_BIN_DIR)/sequences.bin
+	echo "unsigned char gMusicData[] = \"sound/sequences.bin\";" > $@
+$(SOUND_BIN_DIR)/bank_sets.c: $(SOUND_BIN_DIR)/bank_sets
+	echo "unsigned char gBankSetsData[] = \"sound/bank_sets\";" > $@
+
+else
 
 $(SOUND_BIN_DIR)/sound_data.ctl.c: $(SOUND_BIN_DIR)/sound_data.ctl
 	echo "unsigned char gSoundDataADSR[] = {" > $@
@@ -807,6 +824,8 @@ $(SOUND_BIN_DIR)/bank_sets.c: $(SOUND_BIN_DIR)/bank_sets
 	echo "unsigned char gBankSetsData[0x100] = {" > $@
 	hexdump -v -e '1/1 "0x%X,"' $< >> $@
 	echo "};" >> $@
+
+endif
 
 $(BUILD_DIR)/levels/scripts.o: $(BUILD_DIR)/include/level_headers.h
 

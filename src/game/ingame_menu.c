@@ -128,7 +128,7 @@ u8 gMenuHoldKeyIndex = 0;
 u8 gMenuHoldKeyTimer = 0;
 s32 gDialogResponse = 0;
 
-#if !defined(EXTERNAL_TEXTURES) && (defined(VERSION_JP) || defined(VERSION_SH) || defined(VERSION_EU))
+#if !defined(EXTERNAL_DATA) && (defined(VERSION_JP) || defined(VERSION_SH) || defined(VERSION_EU))
 #ifdef VERSION_EU
 #define CHCACHE_BUFLEN (8 * 8)  // EU only converts 8x8
 #else
@@ -242,7 +242,7 @@ static inline void alloc_ia8_text_from_i1(u8 *out, u16 *in, s16 width, s16 heigh
 }
 
 static inline u8 *convert_ia8_char(u8 c, u16 *tex, s16 w, s16 h) {
-#ifdef EXTERNAL_TEXTURES
+#ifdef EXTERNAL_DATA
     return (u8 *)tex; // the data's just a name
 #else
     if (!tex) return NULL;
@@ -303,7 +303,7 @@ static void alloc_ia4_tex_from_i1(u8 *out, u8 *in, s16 width, s16 height) {
 }
 
 static u8 *convert_ia4_char(u8 c, u8 *tex, s16 w, s16 h) {
-#ifdef EXTERNAL_TEXTURES
+#ifdef EXTERNAL_DATA
     return tex; // the data's just a name
 #else
     if (!tex) return NULL;

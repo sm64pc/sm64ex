@@ -86,6 +86,29 @@ bool sys_dir_walk(const char *base, walk_fn_t walk, const bool recur) {
     return ret;
 }
 
+void *sys_load_res(const char *name) {
+    char path[SYS_MAX_PATH] = { 0 };
+    snprintf(path, sizeof(path), "%s/%s", sys_data_path(), name);
+
+    FILE *f = fopen(path, "rb");
+    if (!f) return NULL;
+
+    fseek(f, 0, SEEK_END);
+    size_t size = ftell(f);
+    fseek(f, 0, SEEK_SET);
+
+    void *buf = malloc(size);
+    if (!buf) {
+        fclose(f);
+        return NULL;
+    }
+
+    fread(buf, 1, size, f);
+    fclose(f);
+
+    return buf;
+}
+
 bool sys_mkdir(const char *name) {
     #ifdef _WIN32
     return _mkdir(name) == 0;
