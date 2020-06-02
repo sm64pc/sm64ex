@@ -46,11 +46,17 @@ struct ShaderProgram {
     GLint attrib_locations[7];
     uint8_t attrib_sizes[7];
     uint8_t num_attribs;
+    bool used_noise;
+    GLint frame_count_location;
+    GLint window_height_location;
 };
 
 static struct ShaderProgram shader_program_pool[64];
 static uint8_t shader_program_pool_size;
 static GLuint opengl_vbo;
+
+static uint32_t frame_count;
+static uint32_t current_height;
 
 static bool gfx_opengl_z_is_from_0_to_1(void) {
     return false;
@@ -62,8 +68,15 @@ static void gfx_opengl_vertex_array_set_attribs(struct ShaderProgram *prg) {
 
     for (int i = 0; i < prg->num_attribs; i++) {
         glEnableVertexAttribArray(prg->attrib_locations[i]);
-        glVertexAttribPointer(prg->attrib_locations[i], prg->attrib_sizes[i], GL_FLOAT, GL_FALSE, num_floats * sizeof(float), (void *)(pos * sizeof(float)));
+        glVertexAttribPointer(prg->attrib_locations[i], prg->attrib_sizes[i], GL_FLOAT, GL_FALSE, num_floats * sizeof(float), (void *) (pos * sizeof(float)));
         pos += prg->attrib_sizes[i];
+    }
+}
+
+static void gfx_opengl_set_uniforms(struct ShaderProgram *prg) {
+    if (prg->used_noise) {
+        glUniform1i(prg->frame_count_location, frame_count);
+        glUniform1i(prg->window_height_location, current_height);
     }
 }
 
@@ -78,6 +91,7 @@ static void gfx_opengl_unload_shader(struct ShaderProgram *old_prg) {
 static void gfx_opengl_load_shader(struct ShaderProgram *new_prg) {
     glUseProgram(new_prg->opengl_program_id);
     gfx_opengl_vertex_array_set_attribs(new_prg);
+    gfx_opengl_set_uniforms(new_prg);
 }
 
 static void append_str(char *buf, size_t *len, const char *str) {
@@ -168,7 +182,9 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
     bool opt_alpha = (shader_id & SHADER_OPT_ALPHA) != 0;
     bool opt_fog = (shader_id & SHADER_OPT_FOG) != 0;
     bool opt_texture_edge = (shader_id & SHADER_OPT_TEXTURE_EDGE) != 0;
-    bool used_textures[2] = {0, 0};
+    bool opt_noise = (shader_id & SHADER_OPT_NOISE) != 0;
+
+    bool used_textures[2] = { 0, 0 };
     int num_inputs = 0;
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 4; j++) {
@@ -185,9 +201,9 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
             }
         }
     }
-    bool do_single[2] = {c[0][2] == 0, c[1][2] == 0};
-    bool do_multiply[2] = {c[0][1] == 0 && c[0][3] == 0, c[1][1] == 0 && c[1][3] == 0};
-    bool do_mix[2] = {c[0][1] == c[0][3], c[1][1] == c[1][3]};
+    bool do_single[2] = { c[0][2] == 0, c[1][2] == 0 };
+    bool do_multiply[2] = { c[0][1] == 0 && c[0][3] == 0, c[1][1] == 0 && c[1][3] == 0 };
+    bool do_mix[2] = { c[0][1] == c[0][3], c[1][1] == c[1][3] };
     bool color_alpha_same = (shader_id & 0xfff) == ((shader_id >> 12) & 0xfff);
 
     char vs_buf[1024];
@@ -254,15 +270,26 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
     if (used_textures[1]) {
         append_line(fs_buf, &fs_len, "uniform sampler2D uTex1;");
     }
+
+    if (opt_alpha && opt_noise) {
+        append_line(fs_buf, &fs_len, "uniform int frame_count;");
+        append_line(fs_buf, &fs_len, "uniform int window_height;");
+
+        append_line(fs_buf, &fs_len, "float random(in vec3 value) {");
+        append_line(fs_buf, &fs_len, "    float random = dot(sin(value), vec3(12.9898, 78.233, 37.719));");
+        append_line(fs_buf, &fs_len, "    return fract(sin(random) * 143758.5453);");
+        append_line(fs_buf, &fs_len, "}");
+    }
+
     append_line(fs_buf, &fs_len, "void main() {");
-    
+
     if (used_textures[0]) {
         append_line(fs_buf, &fs_len, "vec4 texVal0 = texture2D(uTex0, vTexCoord);");
     }
     if (used_textures[1]) {
         append_line(fs_buf, &fs_len, "vec4 texVal1 = texture2D(uTex1, vTexCoord);");
     }
-    
+
     append_str(fs_buf, &fs_len, opt_alpha ? "vec4 texel = " : "vec3 texel = ");
     if (!color_alpha_same && opt_alpha) {
         append_str(fs_buf, &fs_len, "vec4(");
@@ -274,7 +301,7 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
         append_formula(fs_buf, &fs_len, c, do_single[0], do_multiply[0], do_mix[0], opt_alpha, false, opt_alpha);
     }
     append_line(fs_buf, &fs_len, ";");
-    
+
     if (opt_texture_edge && opt_alpha) {
         append_line(fs_buf, &fs_len, "if (texel.a > 0.3) texel.a = 1.0; else discard;");
     }
@@ -286,27 +313,31 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
             append_line(fs_buf, &fs_len, "texel = mix(texel, vFog.rgb, vFog.a);");
         }
     }
-    
+
+    if (opt_alpha && opt_noise) {
+        append_line(fs_buf, &fs_len, "texel.a *= floor(random(vec3(floor(gl_FragCoord.xy * (240.0 / float(window_height))), float(frame_count))) + 0.5);");
+    }
+
     if (opt_alpha) {
         append_line(fs_buf, &fs_len, "gl_FragColor = texel;");
     } else {
         append_line(fs_buf, &fs_len, "gl_FragColor = vec4(texel, 1.0);");
     }
     append_line(fs_buf, &fs_len, "}");
-    
+
     vs_buf[vs_len] = '\0';
     fs_buf[fs_len] = '\0';
-    
+
     /*puts("Vertex shader:");
     puts(vs_buf);
     puts("Fragment shader:");
     puts(fs_buf);
     puts("End");*/
-    
-    const GLchar *sources[2] = {vs_buf, fs_buf};
-    const GLint lengths[2] = {vs_len, fs_len};
+
+    const GLchar *sources[2] = { vs_buf, fs_buf };
+    const GLint lengths[2] = { vs_len, fs_len };
     GLint success;
-    
+
     GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex_shader, 1, &sources[0], &lengths[0]);
     glCompileShader(vertex_shader);
@@ -320,7 +351,7 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
         fprintf(stderr, "%s\n", &error_log[0]);
         sys_fatal("vertex shader compilation failed (see terminal)");
     }
-    
+
     GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment_shader, 1, &sources[1], &lengths[1]);
     glCompileShader(fragment_shader);
@@ -334,31 +365,31 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
         fprintf(stderr, "%s\n", &error_log[0]);
         sys_fatal("fragment shader compilation failed (see terminal)");
     }
-    
+
     GLuint shader_program = glCreateProgram();
     glAttachShader(shader_program, vertex_shader);
     glAttachShader(shader_program, fragment_shader);
     glLinkProgram(shader_program);
-    
+
     size_t cnt = 0;
-    
+
     struct ShaderProgram *prg = &shader_program_pool[shader_program_pool_size++];
     prg->attrib_locations[cnt] = glGetAttribLocation(shader_program, "aVtxPos");
     prg->attrib_sizes[cnt] = 4;
     ++cnt;
-    
+
     if (used_textures[0] || used_textures[1]) {
         prg->attrib_locations[cnt] = glGetAttribLocation(shader_program, "aTexCoord");
         prg->attrib_sizes[cnt] = 2;
         ++cnt;
     }
-    
+
     if (opt_fog) {
         prg->attrib_locations[cnt] = glGetAttribLocation(shader_program, "aFog");
         prg->attrib_sizes[cnt] = 4;
         ++cnt;
     }
-    
+
     for (int i = 0; i < num_inputs; i++) {
         char name[16];
         sprintf(name, "aInput%d", i + 1);
@@ -366,7 +397,7 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
         prg->attrib_sizes[cnt] = opt_alpha ? 4 : 3;
         ++cnt;
     }
-    
+
     prg->shader_id = shader_id;
     prg->opengl_program_id = shader_program;
     prg->num_inputs = num_inputs;
@@ -374,18 +405,26 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
     prg->used_textures[1] = used_textures[1];
     prg->num_floats = num_floats;
     prg->num_attribs = cnt;
-    
+
     gfx_opengl_load_shader(prg);
-    
+
     if (used_textures[0]) {
-        GLint sampler_attrib = glGetUniformLocation(shader_program, "uTex0");
-        glUniform1i(sampler_attrib, 0);
+        GLint sampler_location = glGetUniformLocation(shader_program, "uTex0");
+        glUniform1i(sampler_location, 0);
     }
     if (used_textures[1]) {
-        GLint sampler_attrib = glGetUniformLocation(shader_program, "uTex1");
-        glUniform1i(sampler_attrib, 1);
+        GLint sampler_location = glGetUniformLocation(shader_program, "uTex1");
+        glUniform1i(sampler_location, 1);
     }
-    
+
+    if (opt_alpha && opt_noise) {
+        prg->frame_count_location = glGetUniformLocation(shader_program, "frame_count");
+        prg->window_height_location = glGetUniformLocation(shader_program, "window_height");
+        prg->used_noise = true;
+    } else {
+        prg->used_noise = false;
+    }
+
     return prg;
 }
 
@@ -459,6 +498,7 @@ static void gfx_opengl_set_zmode_decal(bool zmode_decal) {
 
 static void gfx_opengl_set_viewport(int x, int y, int width, int height) {
     glViewport(x, y, width, height);
+    current_height = height;
 }
 
 static void gfx_opengl_set_scissor(int x, int y, int width, int height) {
@@ -517,6 +557,8 @@ static void gfx_opengl_init(void) {
 }
 
 static void gfx_opengl_start_frame(void) {
+    frame_count++;
+
     glDisable(GL_SCISSOR_TEST);
     glDepthMask(GL_TRUE); // Must be set to clear Z-buffer
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
