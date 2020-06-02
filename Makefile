@@ -625,10 +625,18 @@ all: res
 # prepares the resource folder for external data
 res: $(EXE)
 	@mkdir -p $(BUILD_DIR)/res/sound
-	@rsync -zar --prune-empty-dirs textures $(BUILD_DIR)/res/
-	@rsync -zar --prune-empty-dirs --include="*/" --include="*.png" --exclude="*" actors $(BUILD_DIR)/res/
-	@rsync -zar --prune-empty-dirs --include="*/" --include="*.png" --exclude="*" levels $(BUILD_DIR)/res/
-	@rsync -zar --prune-empty-dirs $(BUILD_DIR)/textures/skybox_tiles $(BUILD_DIR)/res/textures/
+	ifneq ($(OSX_BUILD),1)
+	  @mkdir -p $(BUILD_DIR)/res
+	  @cp -r -f textures/ $(BUILD_DIR)/res/
+	  @cp -r -f $(BUILD_DIR)/textures/skybox_tiles/ $(BUILD_DIR)/res/textures/
+	  @find actors -name \*.png -exec cp --parents {} $(BUILD_DIR)/res/ \;
+	  @find levels -name \*.png -exec cp --parents {} $(BUILD_DIR)/res/ \;
+	else
+	  @rsync -zar --prune-empty-dirs textures $(BUILD_DIR)/res/
+	  @rsync -zar --prune-empty-dirs --include="*/" --include="*.png" --exclude="*" actors $(BUILD_DIR)/res/
+	  @rsync -zar --prune-empty-dirs --include="*/" --include="*.png" --exclude="*" levels $(BUILD_DIR)/res/
+	  @rsync -zar --prune-empty-dirs $(BUILD_DIR)/textures/skybox_tiles $(BUILD_DIR)/res/textures/
+	endif
 	@cp -f $(SOUND_BIN_DIR)/sound_data.ctl $(BUILD_DIR)/res/sound/
 	@cp -f $(SOUND_BIN_DIR)/sound_data.tbl $(BUILD_DIR)/res/sound/
 	@cp -f $(SOUND_BIN_DIR)/sequences.bin $(BUILD_DIR)/res/sound/
