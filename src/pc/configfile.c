@@ -68,7 +68,7 @@ unsigned int configKeyStickLeft[MAX_BINDS]  = { 0x001E,   VK_INVALID, VK_INVALID
 unsigned int configKeyStickRight[MAX_BINDS] = { 0x0020,   VK_INVALID, VK_INVALID };
 unsigned int configStickDeadzone = 16; // 16*DEADZONE_STEP=4960 (the original default deadzone)
 #ifdef EXTERNAL_DATA
-bool configPrecacheRes = false;
+bool configPrecacheRes = true;
 #endif
 #ifdef BETTERCAMERA
 // BetterCamera settings
