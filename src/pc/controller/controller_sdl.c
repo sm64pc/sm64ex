@@ -13,6 +13,7 @@
 #include "controller_api.h"
 #include "controller_sdl.h"
 #include "../configfile.h"
+#include "../platform.h"
 
 #include "game/level_update.h"
 
@@ -88,6 +89,17 @@ static void controller_sdl_init(void) {
         fprintf(stderr, "SDL init error: %s\n", SDL_GetError());
         return;
     }
+
+    // try loading an external gamecontroller mapping file
+    char gcpath[SYS_MAX_PATH];
+    snprintf(gcpath, sizeof(gcpath), "%s/gamecontrollerdb.txt", sys_save_path());
+    int nummaps = SDL_GameControllerAddMappingsFromFile(gcpath);
+    if (nummaps < 0) {
+        snprintf(gcpath, sizeof(gcpath), "%s/gamecontrollerdb.txt", sys_data_path());
+        nummaps = SDL_GameControllerAddMappingsFromFile(gcpath);
+    }
+    if (nummaps >= 0)
+        printf("loaded %d controller mappings from '%s'\n", nummaps, gcpath);
 
 #ifdef BETTERCAMERA
     if (newcam_mouse == 1)
