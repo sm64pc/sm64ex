@@ -35,15 +35,15 @@
 #define DIZZY_FACE 0x0003
 
 #define EXECUTE(seg, script, scriptEnd, entry) \
-    CMD_BBH(0x00, 0x10, seg), \
-    CMD_PTR(script), \
-    CMD_PTR(scriptEnd), \
+    CMD_BBH(0x00, 0x10, 0x0000), \
+    CMD_PTR(NULL), \
+    CMD_PTR(NULL), \
     CMD_PTR(entry)
 
 #define EXIT_AND_EXECUTE(seg, script, scriptEnd, entry) \
-    CMD_BBH(0x01, 0x10, seg), \
-    CMD_PTR(script), \
-    CMD_PTR(scriptEnd), \
+    CMD_BBH(0x01, 0x10, 0x0000), \
+    CMD_PTR(NULL), \
+    CMD_PTR(NULL), \
     CMD_PTR(entry)
 
 #define EXIT() \
@@ -119,27 +119,27 @@
 
 #define FIXED_LOAD(loadAddr, romStart, romEnd) \
     CMD_BBH(0x16, 0x10, 0x0000), \
-    CMD_PTR(loadAddr), \
-    CMD_PTR(romStart), \
-    CMD_PTR(romEnd)
+    CMD_PTR(NULL), \
+    CMD_PTR(NULL), \
+    CMD_PTR(NULL)
 
 #define LOAD_RAW(seg, romStart, romEnd) \
-    CMD_BBH(0x17, 0x0C, seg), \
-    CMD_PTR(romStart), \
-    CMD_PTR(romEnd)
+    CMD_BBH(0x17, 0x0C, 0x0000), \
+    CMD_PTR(NULL), \
+    CMD_PTR(NULL)
 
 #define LOAD_MIO0(seg, romStart, romEnd) \
-    CMD_BBH(0x18, 0x0C, seg), \
-    CMD_PTR(romStart), \
-    CMD_PTR(romEnd)
+    CMD_BBH(0x18, 0x0C, 0x0000), \
+    CMD_PTR(NULL), \
+    CMD_PTR(NULL)
 
 #define LOAD_MARIO_HEAD(sethead) \
     CMD_BBH(0x19, 0x04, sethead)
 
 #define LOAD_MIO0_TEXTURE(seg, romStart, romEnd) \
-    CMD_BBH(0x1A, 0x0C, seg), \
-    CMD_PTR(romStart), \
-    CMD_PTR(romEnd)
+    CMD_BBH(0x1A, 0x0C, 0x0000), \
+    CMD_PTR(NULL), \
+    CMD_PTR(NULL)
 
 #define INIT_LEVEL() \
     CMD_BBH(0x1B, 0x04, 0x0000)
@@ -281,4 +281,4 @@
 #define CLEAR_DEMO_PTR() \
     CMD_BBH(0x3E, 0x04, 0x0000)
 
-#endif
+#endif // LEVEL_COMMANDS_H

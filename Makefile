@@ -115,33 +115,21 @@ endif
 # Release (version) flag defs
 
 ifeq ($(VERSION),jp)
-  VERSION_CFLAGS := -DVERSION_JP
-  VERSION_ASFLAGS := --defsym VERSION_JP=1
-  GRUCODE_CFLAGS := -DF3D_OLD
-  GRUCODE_ASFLAGS := --defsym F3D_OLD=1
-  TARGET := sm64.jp
+  VERSION_DEF := VERSION_JP
+  GRUCODE_DEF := F3D_OLD
 else
 ifeq ($(VERSION),us)
-  VERSION_CFLAGS := -DVERSION_US
-  VERSION_ASFLAGS := --defsym VERSION_US=1
-  GRUCODE_CFLAGS := -DF3D_OLD
-  GRUCODE_ASFLAGS := --defsym F3D_OLD=1
-  TARGET := sm64.us
+  VERSION_DEF := VERSION_US
+  GRUCODE_DEF := F3D_OLD
 else
 ifeq ($(VERSION),eu)
-  VERSION_CFLAGS := -DVERSION_EU
-  VERSION_ASFLAGS := --defsym VERSION_EU=1
-  GRUCODE_CFLAGS := -DF3D_NEW
-  GRUCODE_ASFLAGS := --defsym F3D_NEW=1
-  TARGET := sm64.eu
+  VERSION_DEF := VERSION_EU
+  GRUCODE_DEF := F3D_NEW
 else
 ifeq ($(VERSION),sh)
   $(warning Building SH is experimental and is prone to breaking. Try at your own risk.)
-  VERSION_CFLAGS := -DVERSION_SH
-  VERSION_ASFLAGS := --defsym VERSION_SH=1
-  GRUCODE_CFLAGS := -DF3D_NEW
-  GRUCODE_ASFLAGS := --defsym F3D_NEW=1
-  TARGET := sm64.sh
+  VERSION_DEF := VERSION_SH
+  GRUCODE_DEF := F3D_NEW
 # TODO: GET RID OF THIS!!! We should mandate assets for Shindou like EU but we dont have the addresses extracted yet so we'll just pretend you have everything extracted for now.
   NOEXTRACT := 1
 else
@@ -150,6 +138,10 @@ endif
 endif
 endif
 endif
+
+TARGET := sm64.$(VERSION)
+VERSION_CFLAGS := -D$(VERSION_DEF) -D_LANGUAGE_C
+VERSION_ASFLAGS := --defsym $(VERSION_DEF)=1
 
 # Stuff for showing the git hash in the intro on nightly builds
 # From https://stackoverflow.com/questions/44038428/include-git-commit-hash-and-or-branch-name-in-c-c-source
@@ -162,14 +154,14 @@ endif
 # Microcode
 
 ifeq ($(GRUCODE),f3dex) # Fast3DEX
-  GRUCODE_CFLAGS := -DF3DEX_GBI
-  GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1 --defsym F3DEX_GBI=1
+  GRUCODE_DEF := F3DEX_GBI
+  GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1
   TARGET := $(TARGET).f3dex
   COMPARE := 0
 else
 ifeq ($(GRUCODE), f3dex2) # Fast3DEX2
-  GRUCODE_CFLAGS := -DF3DEX_GBI_2
-  GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1 --defsym F3DEX_GBI_2=1
+  GRUCODE_DEF := F3DEX_GBI_2
+  GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1
   TARGET := $(TARGET).f3dex2
   COMPARE := 0
 else
@@ -179,15 +171,14 @@ ifeq ($(GRUCODE), f3dex2e) # Fast3DEX2 Extended (PC default)
   COMPARE := 0
 else
 ifeq ($(GRUCODE),f3d_new) # Fast3D 2.0H (Shindou)
-  GRUCODE_CFLAGS := -DF3D_NEW
-  GRUCODE_ASFLAGS := --defsym F3D_NEW=1
+  GRUCODE_DEF := F3D_NEW
   TARGET := $(TARGET).f3d_new
   COMPARE := 0
 else
 ifeq ($(GRUCODE),f3dzex) # Fast3DZEX (2.0J / Animal Forest - Dōbutsu no Mori)
   $(warning Fast3DZEX is experimental. Try at your own risk.)
-  GRUCODE_CFLAGS := -DF3DEX_GBI_2
-  GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1 --defsym F3DZEX_GBI=1
+  GRUCODE_DEF := F3DEX_GBI_2
+  GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1
   TARGET := $(TARGET).f3dzex
   COMPARE := 0
 endif
@@ -195,6 +186,9 @@ endif
 endif
 endif
 endif
+
+GRUCODE_CFLAGS := -D$(GRUCODE_DEF)
+GRUCODE_ASFLAGS := $(GRUCODE_ASFLAGS) --defsym $(GRUCODE_DEF)=1
 
 # Default build is for PC now
 VERSION_CFLAGS := $(VERSION_CFLAGS) -DNON_MATCHING -DAVOID_UB
@@ -454,10 +448,7 @@ SOUND_SAMPLE_DIRS := $(wildcard sound/samples/*)
 SOUND_SAMPLE_AIFFS := $(foreach dir,$(SOUND_SAMPLE_DIRS),$(wildcard $(dir)/*.aiff))
 SOUND_SAMPLE_TABLES := $(foreach file,$(SOUND_SAMPLE_AIFFS),$(BUILD_DIR)/$(file:.aiff=.table))
 SOUND_SAMPLE_AIFCS := $(foreach file,$(SOUND_SAMPLE_AIFFS),$(BUILD_DIR)/$(file:.aiff=.aifc))
-SOUND_OBJ_FILES := $(SOUND_BIN_DIR)/sound_data.ctl.o \
-                   $(SOUND_BIN_DIR)/sound_data.tbl.o \
-                   $(SOUND_BIN_DIR)/sequences.bin.o \
-                   $(SOUND_BIN_DIR)/bank_sets.o
+SOUND_OBJ_FILES := $(SOUND_BIN_DIR)/sound_data.o
 
 # Object files
 O_FILES := $(foreach file,$(C_FILES),$(BUILD_DIR)/$(file:.c=.o)) \
@@ -626,8 +617,8 @@ endif
 
 # Check for Discord Rich Presence option
 ifeq ($(DISCORDRPC),1)
-CC_CHECK += -DDISCORDRPC
-CFLAGS += -DDISCORDRPC
+  CC_CHECK += -DDISCORDRPC
+  CFLAGS += -DDISCORDRPC
 endif
 
 # Check for texture fix option
@@ -709,7 +700,6 @@ N64CKSUM = $(TOOLS_DIR)/n64cksum
 N64GRAPHICS = $(TOOLS_DIR)/n64graphics
 N64GRAPHICS_CI = $(TOOLS_DIR)/n64graphics_ci
 TEXTCONV = $(TOOLS_DIR)/textconv
-IPLFONTUTIL = $(TOOLS_DIR)/iplfontutil
 AIFF_EXTRACT_CODEBOOK = $(TOOLS_DIR)/aiff_extract_codebook
 VADPCM_ENC = $(TOOLS_DIR)/vadpcm_enc
 EXTRACT_DATA_FOR_MIO = $(TOOLS_DIR)/extract_data_for_mio
@@ -787,10 +777,10 @@ $(BUILD_DIR)/$(RPC_LIBS):
 
 libultra: $(BUILD_DIR)/libultra.a
 
-asm/boot.s: $(BUILD_DIR)/lib/bin/ipl3_font.bin
+$(BUILD_DIR)/asm/boot.o: $(IPL3_RAW_FILES)
+$(BUILD_DIR)/src/game/crash_screen.o: $(CRASH_TEXTURE_C_FILES)
 
-$(BUILD_DIR)/lib/bin/ipl3_font.bin: lib/ipl3_font.png
-	$(IPLFONTUTIL) e $< $@
+$(BUILD_DIR)/lib/rsp.o: $(BUILD_DIR)/rsp/rspboot.bin $(BUILD_DIR)/rsp/fast3d.bin $(BUILD_DIR)/rsp/audio.bin
 
 #Required so the compiler doesn't complain about this not existing.
 $(BUILD_DIR)/src/game/camera.o: $(BUILD_DIR)/include/text_strings.h
@@ -837,7 +827,8 @@ $(BUILD_DIR)/text/%/define_text.inc.c: text/define_text.inc.c text/%/courses.h t
 	$(CPP) $(VERSION_CFLAGS) $< -o $@ -I text/$*/
 	$(TEXTCONV) charmap.txt $@ $@
 
-ALL_DIRS := $(BUILD_DIR) $(addprefix $(BUILD_DIR)/,$(SRC_DIRS) $(ASM_DIRS) $(GODDARD_SRC_DIRS) $(ULTRA_SRC_DIRS) $(ULTRA_ASM_DIRS) $(ULTRA_BIN_DIRS) $(BIN_DIRS) $(TEXTURE_DIRS) $(TEXT_DIRS) $(SOUND_SAMPLE_DIRS) $(addprefix levels/,$(LEVEL_DIRS)) include) $(MIO0_DIR) $(addprefix $(MIO0_DIR)/,$(VERSION)) $(SOUND_BIN_DIR) $(SOUND_BIN_DIR)/sequences/$(VERSION)
+RSP_DIRS := $(BUILD_DIR)/rsp
+ALL_DIRS := $(BUILD_DIR) $(addprefix $(BUILD_DIR)/,$(SRC_DIRS) $(ASM_DIRS) $(GODDARD_SRC_DIRS) $(ULTRA_SRC_DIRS) $(ULTRA_ASM_DIRS) $(ULTRA_BIN_DIRS) $(BIN_DIRS) $(TEXTURE_DIRS) $(TEXT_DIRS) $(SOUND_SAMPLE_DIRS) $(addprefix levels/,$(LEVEL_DIRS)) include) $(MIO0_DIR) $(addprefix $(MIO0_DIR)/,$(VERSION)) $(SOUND_BIN_DIR) $(SOUND_BIN_DIR)/sequences/$(VERSION) $(RSP_DIRS)
 
 # Make sure build directory exists before compiling anything
 DUMMY != mkdir -p $(ALL_DIRS)
@@ -869,12 +860,17 @@ endif
 ################################################################
 
 # RGBA32, RGBA16, IA16, IA8, IA4, IA1, I8, I4
+
 ifeq ($(EXTERNAL_DATA),1)
+
 $(BUILD_DIR)/%: %.png
 	$(ZEROTERM) "$(patsubst %.png,%,$^)" > $@
+
 else
+
 $(BUILD_DIR)/%: %.png
 	$(N64GRAPHICS) -i $@ -g $< -f $(lastword $(subst ., ,$@))
+
 endif
 
 $(BUILD_DIR)/%.inc.c: $(BUILD_DIR)/% %.png
@@ -882,6 +878,7 @@ $(BUILD_DIR)/%.inc.c: $(BUILD_DIR)/% %.png
 	echo >> $@
 
 ifeq ($(EXTERNAL_DATA),0)
+
 # Color Index CI8
 $(BUILD_DIR)/%.ci8: %.ci8.png
 	$(N64GRAPHICS_CI) -i $@ -g $< -f ci8
@@ -889,6 +886,7 @@ $(BUILD_DIR)/%.ci8: %.ci8.png
 # Color Index CI4
 $(BUILD_DIR)/%.ci4: %.ci4.png
 	$(N64GRAPHICS_CI) -i $@ -g $< -f ci4
+
 endif
 
 ################################################################
@@ -901,6 +899,9 @@ $(BUILD_DIR)/%.table: %.aiff
 
 $(BUILD_DIR)/%.aifc: $(BUILD_DIR)/%.table %.aiff
 	$(VADPCM_ENC) -c $^ $@
+
+$(BUILD_DIR)/rsp/%.bin $(BUILD_DIR)/rsp/%_data.bin: rsp/%.s
+	$(RSPASM) -sym $@.sym -definelabel $(VERSION_DEF) 1 -definelabel $(GRUCODE_DEF) 1 -strequ CODE_FILE $(BUILD_DIR)/rsp/$*.bin -strequ DATA_FILE $(BUILD_DIR)/rsp/$*_data.bin $<
 
 $(ENDIAN_BITWIDTH): tools/determine-endian-bitwidth.c
 	$(CC) -c $(CFLAGS) -o $@.dummy2 $< 2>$@.dummy1; true
@@ -934,38 +935,18 @@ $(SOUND_BIN_DIR)/%.o: $(SOUND_BIN_DIR)/%.s
 
 ifeq ($(EXTERNAL_DATA),1)
 
-$(SOUND_BIN_DIR)/sound_data.ctl.c: $(SOUND_BIN_DIR)/sound_data.ctl
-	echo "unsigned char gSoundDataADSR[] = \"sound/sound_data.ctl\";" > $@
-$(SOUND_BIN_DIR)/sound_data.tbl.c: $(SOUND_BIN_DIR)/sound_data.tbl
-	echo "unsigned char gSoundDataRaw[] = \"sound/sound_data.tbl\";" > $@
-$(SOUND_BIN_DIR)/sequences.bin.c: $(SOUND_BIN_DIR)/sequences.bin
-	echo "unsigned char gMusicData[] = \"sound/sequences.bin\";" > $@
-$(SOUND_BIN_DIR)/bank_sets.c: $(SOUND_BIN_DIR)/bank_sets
-	echo "unsigned char gBankSetsData[] = \"sound/bank_sets\";" > $@
+$(SOUND_BIN_DIR)/%.inc.c: $(SOUND_BIN_DIR)/%
+	$(ZEROTERM) "$(patsubst %.inc.c,%,$^)" | hexdump -v -e '1/1 "0x%X,"' > $@
 
 else
 
-$(SOUND_BIN_DIR)/sound_data.ctl.c: $(SOUND_BIN_DIR)/sound_data.ctl
-	echo "unsigned char gSoundDataADSR[] = {" > $@
-	hexdump -v -e '1/1 "0x%X,"' $< >> $@
-	echo "};" >> $@
-
-$(SOUND_BIN_DIR)/sound_data.tbl.c: $(SOUND_BIN_DIR)/sound_data.tbl
-	echo "unsigned char gSoundDataRaw[] = {" > $@
-	hexdump -v -e '1/1 "0x%X,"' $< >> $@
-	echo "};" >> $@
-
-$(SOUND_BIN_DIR)/sequences.bin.c: $(SOUND_BIN_DIR)/sequences.bin
-	echo "unsigned char gMusicData[] = {" > $@
-	hexdump -v -e '1/1 "0x%X,"' $< >> $@
-	echo "};" >> $@
-
-$(SOUND_BIN_DIR)/bank_sets.c: $(SOUND_BIN_DIR)/bank_sets
-	echo "unsigned char gBankSetsData[0x100] = {" > $@
-	hexdump -v -e '1/1 "0x%X,"' $< >> $@
-	echo "};" >> $@
+$(SOUND_BIN_DIR)/%.inc.c: $(SOUND_BIN_DIR)/%
+	hexdump -v -e '1/1 "0x%X,"' $< > $@
+	echo >> $@
 
 endif
+
+$(SOUND_BIN_DIR)/sound_data.o: $(SOUND_BIN_DIR)/sound_data.ctl.inc.c $(SOUND_BIN_DIR)/sound_data.tbl.inc.c $(SOUND_BIN_DIR)/sequences.bin.inc.c $(SOUND_BIN_DIR)/bank_sets.inc.c
 
 $(BUILD_DIR)/levels/scripts.o: $(BUILD_DIR)/include/level_headers.h
 
@@ -1012,12 +993,18 @@ else
 # acpp, which needs -Wp,-+ to handle C++-style comments.
 $(BUILD_DIR)/src/audio/effects.o: OPT_FLAGS := -O2 -Wo,-loopunroll,0 -sopt,-inline=sequence_channel_process_sound,-scalaroptimize=1 -Wp,-+
 $(BUILD_DIR)/src/audio/synthesis.o: OPT_FLAGS := -O2 -sopt,-scalaroptimize=1 -Wp,-+
+#$(BUILD_DIR)/src/audio/seqplayer.o: OPT_FLAGS := -O2 -sopt,-inline_manual,-scalaroptimize=1 -Wp,-+ #-Wo,-v,-bb,-l,seqplayer_list.txt
 
 # Add a target for build/eu/src/audio/*.copt to make it easier to see debug
 $(BUILD_DIR)/src/audio/%.acpp: src/audio/%.c
-	$(QEMU_IRIX) -silent -L $(IRIX_ROOT) $(IRIX_ROOT)/usr/lib/acpp $(TARGET_CFLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -D__sgi -+ $< > $@ 
+	$(QEMU_IRIX) -silent -L $(IRIX_ROOT) $(IRIX_ROOT)/usr/lib/acpp $(TARGET_CFLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(MATCH_CFLAGS) $(GRUCODE_CFLAGS) -D__sgi -+ $< > $@
+
+$(BUILD_DIR)/src/audio/seqplayer.copt: $(BUILD_DIR)/src/audio/seqplayer.acpp
+	$(QEMU_IRIX) -silent -L $(IRIX_ROOT) $(IRIX_ROOT)/usr/lib/copt -signed -I=$< -CMP=$@ -cp=i -scalaroptimize=1 -inline_manual
+
 $(BUILD_DIR)/src/audio/%.copt: $(BUILD_DIR)/src/audio/%.acpp
 	$(QEMU_IRIX) -silent -L $(IRIX_ROOT) $(IRIX_ROOT)/usr/lib/copt -signed -I=$< -CMP=$@ -cp=i -scalaroptimize=1
+
 endif
 
 # Rebuild files with 'GLOBAL_ASM' if the NON_MATCHING flag changes.
@@ -1031,12 +1018,12 @@ $(BUILD_DIR)/%.o: %.cpp
 	$(CXX) -c $(CFLAGS) -o $@ $<
 
 $(BUILD_DIR)/%.o: %.c
-	@$(CC_CHECK) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
+	@$(CC_CHECK) $(CC_CHECK_CFLAGS) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 
 $(BUILD_DIR)/%.o: $(BUILD_DIR)/%.c
-	@$(CC_CHECK) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
+	@$(CC_CHECK) $(CC_CHECK_CFLAGS) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 $(BUILD_DIR)/%.o: %.s

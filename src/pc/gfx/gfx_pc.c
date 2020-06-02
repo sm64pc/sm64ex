@@ -1748,7 +1748,10 @@ void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi, co
         0x01141045,
         0x07a00a00,
         0x05200200,
-        0x03200200
+        0x03200200,
+        0x09200200,
+        0x0920038d,
+        0x09200045
     };
 
     for (size_t i = 0; i < sizeof(precomp_shaders) / sizeof(uint32_t); i++)

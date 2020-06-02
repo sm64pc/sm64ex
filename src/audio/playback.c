@@ -1,5 +1,4 @@
 #include <ultra64.h>
-#include <macros.h>
 
 #include "heap.h"
 #include "data.h"
@@ -152,9 +151,6 @@ struct Drum *get_drum(s32 bankId, s32 drumId) {
         gAudioErrorFlags = ((bankId << 8) + drumId) + 0x4000000;
         return 0;
     }
-    if ((uintptr_t) gCtlEntries[bankId].drums < 0x80000000U) {
-        return 0;
-    }
     drum = gCtlEntries[bankId].drums[drumId];
     if (drum == NULL) {
         gAudioErrorFlags = ((bankId << 8) + drumId) + 0x5000000;
@@ -248,9 +244,6 @@ void process_notes(void) {
 #ifdef VERSION_EU
         playbackState = (struct NotePlaybackState *) &note->priority;
         if (note->parentLayer != NO_LAYER) {
-            if ((uintptr_t) playbackState->parentLayer < 0x7fffffffU) {
-                continue;
-            }
             if (!playbackState->parentLayer->enabled && playbackState->priority >= NOTE_PRIORITY_MIN) {
                 goto c;
             } else if (playbackState->parentLayer->seqChannel->seqPlayer == NULL) {
@@ -765,8 +758,7 @@ struct Note *pop_node_with_value_less_equal(struct AudioListItem *list, s32 limi
         return NULL;
     }
 
-    best = cur;
-    for (; cur != list; cur = cur->next) {
+    for (best = cur; cur != list; cur = cur->next) {
         if (((struct Note *) best->u.value)->priority >= ((struct Note *) cur->u.value)->priority) {
             best = cur;
         }

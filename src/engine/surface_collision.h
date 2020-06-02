@@ -1,5 +1,9 @@
-#ifndef _SURFACE_COLLISION_H
-#define _SURFACE_COLLISION_H
+#ifndef SURFACE_COLLISION_H
+#define SURFACE_COLLISION_H
+
+#include <PR/ultratypes.h>
+
+#include "types.h"
 
 #define LEVEL_BOUNDARY_MAX 0x2000
 #define CELL_SIZE          0x400
@@ -34,4 +38,4 @@ f32 find_poison_gas_level(f32 x, f32 z);
 void debug_surface_list_info(f32 xPos, f32 zPos);
 void find_surface_on_ray(Vec3f orig, Vec3f dir, struct Surface **hit_surface, Vec3f hit_pos);
 
-#endif /* _SURFACE_COLLISION_H */
+#endif // SURFACE_COLLISION_H

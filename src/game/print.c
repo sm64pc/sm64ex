@@ -1,16 +1,11 @@
-#include <ultra64.h>
+#include <PR/ultratypes.h>
+#include <PR/gbi.h>
 
-#include "sm64.h"
-#include "gfx_dimensions.h"
+#include "config.h"
 #include "game_init.h"
-#include "mario.h"
 #include "memory.h"
-#include "save_file.h"
-#include "main.h"
-#include "engine/surface_collision.h"
-#include "geo_misc.h"
-#include "segment2.h"
 #include "print.h"
+#include "segment2.h"
 
 /**
  * This file handles printing and formatting the colorful text that
@@ -256,8 +251,7 @@ void print_text(s32 x, s32 y, const char *str) {
 }
 
 /**
- * Prints text in the colorful lettering centered
- * at given X, Y coordinates.
+ * Prints text in the colorful lettering centered at given X, Y coordinates.
  */
 void print_text_centered(s32 x, s32 y, const char *str) {
     char c = 0;

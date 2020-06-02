@@ -91,6 +91,7 @@
 # ifndef F3DEX_GBI_2
 #  define F3DEX_GBI_2
 # endif
+# define GBI_FLOATS
 #endif
 
 #ifdef    F3DEX_GBI_2

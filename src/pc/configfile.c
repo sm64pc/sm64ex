@@ -87,7 +87,7 @@ bool         configCameraInvertY = false;
 bool         configEnableCamera  = false;
 bool         configCameraMouse   = false;
 #endif
-unsigned int configSkipIntro     = 0;
+bool         configSkipIntro     = 0;
 bool         configHUD           = true;
 #ifdef DISCORDRPC
 bool         configDiscordRPC    = true;
@@ -135,10 +135,10 @@ static const struct ConfigOption options[] = {
     {.name = "bettercam_pan_level",  .type = CONFIG_TYPE_UINT, .uintValue = &configCameraPan},
     {.name = "bettercam_degrade",    .type = CONFIG_TYPE_UINT, .uintValue = &configCameraDegrade},
     #endif
-    {.name = "skip_intro",           .type = CONFIG_TYPE_UINT, .uintValue = &configSkipIntro},    // Add this back!
-#ifdef DISCORDRPC
-    {.name = "discordrpc_enable",     .type = CONFIG_TYPE_BOOL, .boolValue = &configDiscordRPC},
-#endif 
+    {.name = "skip_intro",           .type = CONFIG_TYPE_BOOL, .uintValue = &configSkipIntro},
+    #ifdef DISCORDRPC
+    {.name = "discordrpc_enable",    .type = CONFIG_TYPE_BOOL, .boolValue = &configDiscordRPC},
+    #endif 
 };
 
 // Reads an entire line from a file (excluding the newline character) and returns an allocated string

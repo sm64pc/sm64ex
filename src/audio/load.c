@@ -1,13 +1,13 @@
 #include <ultra64.h>
-#include <macros.h>
 
-#include "load.h"
-#include "heap.h"
 #include "data.h"
+#include "external.h"
+#include "heap.h"
+#include "load.h"
 #include "seqplayer.h"
 
-#include "../pc/platform.h"
-#include "../pc/fs/fs.h"
+#include "pc/platform.h"
+#include "pc/fs/fs.h"
 
 #define ALIGN16(val) (((val) + 0xF) & ~0xF)
 
@@ -886,6 +886,7 @@ static inline void *load_sound_res(const char *path) {
 # define LOAD_DATA(x) x
 #endif
 
+// (void) must be omitted from parameters
 void audio_init() {
 #ifdef VERSION_EU
     UNUSED s8 pad[16];
@@ -920,24 +921,9 @@ void audio_init() {
         ((u64 *) gAudioHeap)[i] = 0;
     }
 
-#ifndef AVOID_UB
-    i = 0;
-    lim3 = ((uintptr_t) &gAudioGlobalsEndMarker - (uintptr_t) &gAudioGlobalsStartMarker) / 8;
-    ptr64 = &gAudioGlobalsStartMarker - 1;
-    for (k = lim3; k >= 0; k--) {
-        i++;
-        ptr64[i] = 0;
-    }
-#endif
 #else
     for (i = 0; i < gAudioHeapSize / 8; i++) {
         ((u64 *) gAudioHeap)[i] = 0;
-    }
-
-    lim3 = ((uintptr_t) &gAudioGlobalsEndMarker - (uintptr_t) &gAudioGlobalsStartMarker) / 8;
-    ptr64 = &gAudioGlobalsStartMarker;
-    for (k = lim3; k >= 0; k--) {
-        *ptr64++ = 0;
     }
 
     D_EU_802298D0 = 20.03042f;
@@ -1027,3 +1013,4 @@ void audio_init() {
     init_sequence_players();
     gAudioLoadLock = AUDIO_LOCK_NOT_LOADING;
 }
+
