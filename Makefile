@@ -451,7 +451,7 @@ ENDIAN_BITWIDTH := $(BUILD_DIR)/endian-and-bitwidth
 AS := $(CROSS)as
 
 ifeq ($(OSX_BUILD),1)
-AS := i686-w64-mingw32-as
+  AS := i686-w64-mingw32-as
 endif
 
 ifneq ($(TARGET_WEB),1) # As in, not-web PC port
@@ -618,21 +618,22 @@ ZEROTERM = $(PYTHON) $(TOOLS_DIR)/zeroterm.py
 all: $(EXE)
 
 ifeq ($(EXTERNAL_DATA),1)
+
 # depend on resources as well
 all: res
 
 # prepares the resource folder for external data
 res: $(EXE)
-	@mkdir -p $(BUILD_DIR)/res
 	@mkdir -p $(BUILD_DIR)/res/sound
-	@cp -r -f textures/ $(BUILD_DIR)/res/
-	@cp -r -f $(BUILD_DIR)/textures/skybox_tiles/ $(BUILD_DIR)/res/textures/
+	@rsync -zar --prune-empty-dirs textures $(BUILD_DIR)/res/
+	@rsync -zar --prune-empty-dirs --include="*/" --include="*.png" --exclude="*" actors $(BUILD_DIR)/res/
+	@rsync -zar --prune-empty-dirs --include="*/" --include="*.png" --exclude="*" levels $(BUILD_DIR)/res/
+	@rsync -zar --prune-empty-dirs $(BUILD_DIR)/textures/skybox_tiles $(BUILD_DIR)/res/textures/
 	@cp -f $(SOUND_BIN_DIR)/sound_data.ctl $(BUILD_DIR)/res/sound/
 	@cp -f $(SOUND_BIN_DIR)/sound_data.tbl $(BUILD_DIR)/res/sound/
 	@cp -f $(SOUND_BIN_DIR)/sequences.bin $(BUILD_DIR)/res/sound/
 	@cp -f $(SOUND_BIN_DIR)/bank_sets $(BUILD_DIR)/res/sound/
-	@find actors -name \*.png -exec cp --parents {} $(BUILD_DIR)/res/ \;
-	@find levels -name \*.png -exec cp --parents {} $(BUILD_DIR)/res/ \;
+
 endif
 
 clean:
