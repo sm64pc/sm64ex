@@ -60,8 +60,20 @@ NON_MATCHING := 1
 GRUCODE := f3dex2e
 WINDOWS_BUILD ?= 0
 
-ifeq ($(TARGET_WEB),0)
+# Attempt to detect OS
+
 ifeq ($(OS),Windows_NT)
+  HOST_OS ?= Windows
+else
+  HOST_OS ?= $(shell uname -s 2>/dev/null || echo Unknown)
+  # some weird MINGW/Cygwin env that doesn't define $OS
+  ifneq (,$(findstring MINGW,HOST_OS))
+    HOST_OS := Windows
+  endif
+endif
+
+ifeq ($(TARGET_WEB),0)
+ifeq ($(HOST_OS),Windows)
 WINDOWS_BUILD := 1
 endif
 endif
@@ -451,7 +463,7 @@ ENDIAN_BITWIDTH := $(BUILD_DIR)/endian-and-bitwidth
 AS := $(CROSS)as
 
 ifeq ($(OSX_BUILD),1)
-  AS := i686-w64-mingw32-as
+AS := i686-w64-mingw32-as
 endif
 
 ifneq ($(TARGET_WEB),1) # As in, not-web PC port
@@ -619,20 +631,27 @@ all: $(EXE)
 
 ifeq ($(EXTERNAL_DATA),1)
 
+# thank you apple very cool
+ifeq ($(HOST_OS),Darwin)
+  CP := gcp
+else
+  CP := cp
+endif
+
 # depend on resources as well
 all: res
 
 # prepares the resource folder for external data
 res: $(EXE)
 	@mkdir -p $(BUILD_DIR)/res/sound
-	@rsync -zar --prune-empty-dirs textures $(BUILD_DIR)/res/
-	@rsync -zar --prune-empty-dirs --include="*/" --include="*.png" --exclude="*" actors $(BUILD_DIR)/res/
-	@rsync -zar --prune-empty-dirs --include="*/" --include="*.png" --exclude="*" levels $(BUILD_DIR)/res/
-	@rsync -zar --prune-empty-dirs $(BUILD_DIR)/textures/skybox_tiles $(BUILD_DIR)/res/textures/
-	@cp -f $(SOUND_BIN_DIR)/sound_data.ctl $(BUILD_DIR)/res/sound/
-	@cp -f $(SOUND_BIN_DIR)/sound_data.tbl $(BUILD_DIR)/res/sound/
-	@cp -f $(SOUND_BIN_DIR)/sequences.bin $(BUILD_DIR)/res/sound/
-	@cp -f $(SOUND_BIN_DIR)/bank_sets $(BUILD_DIR)/res/sound/
+	@$(CP) -r -f textures/ $(BUILD_DIR)/res/
+	@$(CP) -r -f $(BUILD_DIR)/textures/skybox_tiles/ $(BUILD_DIR)/res/textures/
+	@$(CP) -f $(SOUND_BIN_DIR)/sound_data.ctl $(BUILD_DIR)/res/sound/
+	@$(CP) -f $(SOUND_BIN_DIR)/sound_data.tbl $(BUILD_DIR)/res/sound/
+	@$(CP) -f $(SOUND_BIN_DIR)/sequences.bin $(BUILD_DIR)/res/sound/
+	@$(CP) -f $(SOUND_BIN_DIR)/bank_sets $(BUILD_DIR)/res/sound/
+	@find actors -name \*.png -exec $(CP) --parents {} $(BUILD_DIR)/res/ \;
+	@find levels -name \*.png -exec $(CP) --parents {} $(BUILD_DIR)/res/ \;
 
 endif
 
