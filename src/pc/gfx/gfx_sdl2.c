@@ -256,6 +256,14 @@ static void gfx_sdl_handle_events(void) {
                             break;
                     }
                 }
+                switch (event.window.event) {
+                    case SDL_WINDOWEVENT_FOCUS_LOST:
+                        configWindow.focus_lost = true;
+                        break;
+                    case SDL_WINDOWEVENT_FOCUS_GAINED:
+                        configWindow.focus_lost = false;
+                        break;
+                }
                 break;
             case SDL_QUIT:
                 game_exit();

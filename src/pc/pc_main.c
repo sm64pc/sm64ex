@@ -57,10 +57,7 @@ void send_display_list(struct SPTask *spTask) {
 
 #define printf
 
-void produce_one_frame(void) {
-    gfx_start_frame();
-    game_loop_one_iteration();
-    
+static void queue_audio(void) {
     int samples_left = audio_api->buffered();
     u32 num_audio_samples = samples_left < audio_api->get_desired_buffered() ? 544 : 528;
     //printf("Audio samples: %d %u\n", samples_left, num_audio_samples);
@@ -80,7 +77,16 @@ void produce_one_frame(void) {
         audio_buffer[i] = ((s32)audio_buffer[i] * mod) >> VOLUME_SHIFT;
 
     audio_api->play((u8*)audio_buffer, 2 * num_audio_samples * 4);
-    
+}
+
+void produce_one_frame(void) {
+    gfx_start_frame();
+
+    if (!(configWindow.pause_on_focus_lost && configWindow.focus_lost)) {
+        game_loop_one_iteration();
+        queue_audio();
+    }
+
     gfx_end_frame();
 }
 
