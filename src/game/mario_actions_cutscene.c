@@ -646,7 +646,7 @@ void general_star_dance_handler(struct MarioState *m, s32 isInWater) {
             set_mario_action(m, ACT_READING_AUTOMATIC_DIALOG, dialogID);
         } else {
             set_mario_action(m, isInWater ? ACT_WATER_IDLE : ACT_IDLE, 0);
-            if (Cheats.StayInLevel == TRUE && Cheats.EnableCheats == TRUE) {
+            if (Cheats.StayInLevel > 0 && Cheats.EnableCheats == TRUE) {
                 set_fov_function(CAM_FOV_DEFAULT);
                 // fix camera bug when getting a star underwater with StayInLevel cheat enabled
                 if (isInWater) {

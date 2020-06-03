@@ -79,6 +79,10 @@
 #define TEXT_OPT_CHEAT9    _("TINY MARIO")
 #define TEXT_OPT_CHEAT10   _("STAY IN LEVEL AFTER STAR")
 
+#define TEXT_CHEAT_STAY1    _("DISABLED")
+#define TEXT_CHEAT_STAY2    _("ENABLED (NORMAL)")
+#define TEXT_CHEAT_STAY3    _("ENABLED (NON-STOP)")
+
 #else // VERSION
 
 // Markers
@@ -136,6 +140,10 @@
 #define TEXT_OPT_CHEAT8    _("Huge Mario")
 #define TEXT_OPT_CHEAT9    _("Tiny Mario")
 #define TEXT_OPT_CHEAT10   _("Stay in level after star")
+
+#define TEXT_CHEAT_STAY1    _("Disabled")
+#define TEXT_CHEAT_STAY2    _("Enabled (Normal)")
+#define TEXT_CHEAT_STAY3    _("Enabled (Non-Stop)")
 
 #endif // VERSION
 
