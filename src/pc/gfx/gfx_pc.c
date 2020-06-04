@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <assert.h>
 
-#ifdef EXTERNAL_TEXTURES
+#ifdef EXTERNAL_DATA
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 #endif
@@ -47,7 +47,7 @@
 #define MAX_LIGHTS 2
 #define MAX_VERTICES 64
 
-#ifdef EXTERNAL_TEXTURES
+#ifdef EXTERNAL_DATA
 # define MAX_CACHED_TEXTURES 4096 // for preloading purposes
 # define HASH_SHIFT 0
 #else
@@ -173,7 +173,7 @@ static size_t buf_vbo_num_tris;
 static struct GfxWindowManagerAPI *gfx_wapi;
 static struct GfxRenderingAPI *gfx_rapi;
 
-#ifdef EXTERNAL_TEXTURES
+#ifdef EXTERNAL_DATA
 static inline size_t string_hash(const uint8_t *str) {
     size_t h = 0;
     for (const uint8_t *p = str; *p; p++)
@@ -275,9 +275,9 @@ static struct ColorCombiner *gfx_lookup_or_create_color_combiner(uint32_t cc_id)
 }
 
 static bool gfx_texture_cache_lookup(int tile, struct TextureHashmapNode **n, const uint8_t *orig_addr, uint32_t fmt, uint32_t siz) {
-    #ifdef EXTERNAL_TEXTURES // hash and compare the data (i.e. the texture name) itself
+    #ifdef EXTERNAL_DATA // hash and compare the data (i.e. the texture name) itself
     size_t hash = string_hash(orig_addr);
-    #define CMPADDR(x, y) (x && !sys_strcasecmp(x, y))
+    #define CMPADDR(x, y) (x && !sys_strcasecmp((const char *)x, (const char *)y))
     #else // hash and compare the address
     size_t hash = (uintptr_t)orig_addr;
     #define CMPADDR(x, y) x == y
@@ -318,7 +318,7 @@ static bool gfx_texture_cache_lookup(int tile, struct TextureHashmapNode **n, co
     #undef CMPADDR
 }
 
-#ifndef EXTERNAL_TEXTURES
+#ifndef EXTERNAL_DATA
 
 static void import_texture_rgba32(int tile) {
     uint32_t width = rdp.texture_tile.line_size_bytes / 2;
@@ -492,7 +492,7 @@ static void import_texture_ci8(int tile) {
     gfx_rapi->upload_texture(rgba32_buf, width, height);
 }
 
-#else // EXTERNAL_TEXTURES
+#else // EXTERNAL_DATA
 
 // this is taken straight from n64graphics
 static bool texname_to_texformat(const char *name, u8 *fmt, u8 *siz) {
@@ -595,7 +595,7 @@ static inline void load_texture(const char *name) {
     stbi_image_free(data); // don't need this anymore
 }
 
-#endif // EXTERNAL_TEXTURES
+#endif // EXTERNAL_DATA
 
 static void import_texture(int tile) {
     uint8_t fmt = rdp.texture_tile.fmt;
@@ -611,7 +611,7 @@ static void import_texture(int tile) {
         return;
     }
 
-#ifdef EXTERNAL_TEXTURES
+#ifdef EXTERNAL_DATA
     // the "texture data" is actually a C string with the path to our texture in it
     // load it from an external image in our data path
     load_texture((const char*)rdp.loaded_texture[tile].addr);
@@ -1761,7 +1761,7 @@ void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi) {
     for (size_t i = 0; i < sizeof(precomp_shaders) / sizeof(uint32_t); i++) {
         gfx_lookup_or_create_shader_program(precomp_shaders[i]);
     }
-    #ifdef EXTERNAL_TEXTURES
+    #ifdef EXTERNAL_DATA
     // preload all textures if needed
     if (configPrecacheRes) {
         printf("Precaching textures from `%s`\n", sys_data_path());

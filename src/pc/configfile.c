@@ -68,8 +68,8 @@ unsigned int configKeyStickLeft[MAX_BINDS]  = { 0x001E,   VK_INVALID, VK_INVALID
 unsigned int configKeyStickRight[MAX_BINDS] = { 0x0020,   VK_INVALID, VK_INVALID };
 unsigned int configStickDeadzone = 16; // 16*DEADZONE_STEP=4960 (the original default deadzone)
 unsigned int configRumbleStrength = 50;
-#ifdef EXTERNAL_TEXTURES
-bool configPrecacheRes = false;
+#ifdef EXTERNAL_DATA
+bool configPrecacheRes = true;
 #endif
 #ifdef BETTERCAMERA
 // BetterCamera settings
@@ -111,7 +111,7 @@ static const struct ConfigOption options[] = {
     {.name = "key_stickright",       .type = CONFIG_TYPE_BIND, .uintValue = configKeyStickRight},
     {.name = "stick_deadzone",       .type = CONFIG_TYPE_UINT, .uintValue = &configStickDeadzone},
     {.name = "rumble_strength",      .type = CONFIG_TYPE_UINT, .uintValue = &configRumbleStrength},
-    #ifdef EXTERNAL_TEXTURES
+    #ifdef EXTERNAL_DATA
     {.name = "precache",             .type = CONFIG_TYPE_BOOL, .boolValue = &configPrecacheRes},
     #endif
     #ifdef BETTERCAMERA

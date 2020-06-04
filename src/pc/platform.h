@@ -19,6 +19,7 @@ int sys_strcasecmp(const char *s1, const char *s2);
 bool sys_mkdir(const char *name); // creates with 0777 by default
 bool sys_file_exists(const char *name);
 bool sys_dir_exists(const char *name);
+void *sys_load_res(const char *name);
 
 // receives the full path
 // should return `true` if traversal should continue

@@ -1,9 +1,17 @@
 #ifndef CONTROLLER_API
 #define CONTROLLER_API
 
-#define DEADZONE_STEP 310         // original deadzone is 4960
+#define DEADZONE_STEP 310  // original deadzone is 4960
 #define VK_INVALID 0xFFFF
 #define VK_SIZE 0x1000
+
+// fake buttons for binding the stick directions
+#define STICK_UP    0x80000
+#define STICK_DOWN  0x40000
+#define STICK_LEFT  0x10000
+#define STICK_RIGHT 0x20000
+#define STICK_XMASK 0x30000
+#define STICK_YMASK 0xc0000
 
 #include <ultra64.h>
 
