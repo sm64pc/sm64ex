@@ -77,6 +77,7 @@
 #define TEXT_BIND_DOWN     _("アナログスティック した")
 #define TEXT_BIND_LEFT     _("アナログスティック ひだり")
 #define TEXT_BIND_RIGHT    _("アナログスティック みぎ")
+#define TEXT_OPT_DEADZONE  _("アナログスティック デッドゾーン")
 
 #define TEXT_OPT_CHEAT1    _("チートゆうこう")
 #define TEXT_OPT_CHEAT2    _("ムーンジャンプ (Lボタンで)")
