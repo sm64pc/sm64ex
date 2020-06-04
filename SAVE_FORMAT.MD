@@ -34,14 +34,14 @@ This section contains two flags for menu.
 
 | Flag | Value | Description |
 |---|---|---|
-| coin_score_age | ?? | Each save file has a 2 bit "age"    for each course. The higher this value, the older the high score is. This is used for tie-breaking when displaying on the high score screen
-| sound_mode | ?? | Sound mode for the game: stereo, mono, or headset
+| coin_score_age | 0, 1, 2, 3 | Each save file has a 2 bit "age"    for each course. The higher this value, the older the high score is. This is used for tie-breaking when displaying on the high score screen
+| sound_mode | stereo, mono, headset | Sound mode for the game
 
 Example:
 ```
 [menu]
-coin_score_age = ??
-sound_mode = ??
+coin_score_age = 0
+sound_mode = stereo
 ```
 ___
 ## Flags Section - [flags]
@@ -145,14 +145,14 @@ ___
 This section contains information about where Mario lost his cap and who take it.
 | Flag | Value | Description |
 |---|---|---|
-| type | ground, klepto, ukiki, mrblizzard | The one who or what took the cap from Mario.
-| level | ?? | Specifies the course where the cap is located.
-| area | ?? | Specifies the area in the course.
+| type | ground, klepto, ukiki, mrblizzard | The one who or what took the cap from Mario. Default flag is **"ground"**
+| level | ssl, sl, ttm, none | Specifies the course where the cap is located. Default flag is **"none"**.
+| area | 1, 2 | Specifies the area in the course.
 
 Example:
 ```
 [cap]
-type = onground
-level = 5
-area = 0
+type = ground
+level = ssl
+area = 1
 ```

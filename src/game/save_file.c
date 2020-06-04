@@ -1,5 +1,4 @@
 #include <ultra64.h>
-#include <stdio.h>
 #include "sm64.h"
 #include "game_init.h"
 #include "main.h"

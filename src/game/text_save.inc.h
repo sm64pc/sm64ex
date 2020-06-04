@@ -1,4 +1,8 @@
 #include <string.h>
+#include <stdio.h>
+#include <time.h>
+#include "course_table.h"
+#include "pc/ini.h"
 
 #define FILENAME_FORMAT "save_file_%d.sav"
 #define NUM_COURSES 15
@@ -6,7 +10,7 @@
 #define NUM_FLAGS 21
 #define NUM_CAP_ON 4
 
-/* Flag key */
+/* Flag keys */
 const char *sav_flags[NUM_FLAGS] = {
     "file_exists", "wing_cap", "metal_cap", "vanish_cap", "key_1", "key_2",
     "basement_door", "upstairs_door", "ddd_moved_back", "moat_drained",
@@ -29,6 +33,11 @@ const char *sav_bonus_courses[NUM_BONUS_COURSES] = {
 /* Mario's cap type keys */
 const char *cap_on_types[NUM_CAP_ON] = {
     "ground", "klepto", "ukiki", "mrblizzard"
+};
+
+/* Sound modes */
+const char *sound_modes[3] = {
+    "stereo", "mono", "headset"
 };
 
 /* Get current timestamp */
@@ -75,7 +84,7 @@ static s32 write_text_save(s32 fileIndex) {
     struct MainMenuSaveData *menudata;
     char filename[32] = { 0 };
     char value[32] = { 0 };
-    u32 i, flags, coins, stars, starFlags;
+    u32 i, bit, flags, coins, stars, starFlags;
 
     /* Define savefile's name */
     if (sprintf(filename, FILENAME_FORMAT, fileIndex) < 0)
@@ -84,6 +93,8 @@ static s32 write_text_save(s32 fileIndex) {
     file = fopen(filename, "wt");
     if (file == NULL)
         return -1;
+    else
+        printf("Updating savefile in '%s'\n", filename);
 
     /* Write header */
     fprintf(file, "# Super Mario 64 save file\n");
@@ -98,8 +109,22 @@ static s32 write_text_save(s32 fileIndex) {
     menudata = &gSaveBuffer.menuData[0];
     fprintf(file, "\n[menu]\n");
     fprintf(file, "coin_score_age = %d\n", menudata->coinScoreAges[fileIndex]);
-    fprintf(file, "sound_mode = %u\n", menudata->soundMode);
-
+    
+    /* Sound mode */
+    if (menudata->soundMode == 0) {
+        fprintf(file, "sound_mode = %s\n", sound_modes[0]);     // stereo
+    }
+    else if (menudata->soundMode == 3) {
+        fprintf(file, "sound_mode = %s\n", sound_modes[1]);     // mono
+    }
+    else if (menudata->soundMode == 1) {
+        fprintf(file, "sound_mode = %s\n", sound_modes[2]);     // headset
+    }
+    else {
+        printf("Undefined sound mode!");
+        return -1;
+    }
+    
     /* Write all flags */
     fprintf(file, "\n[flags]\n");
     for (i = 1; i < NUM_FLAGS; i++) {
@@ -139,7 +164,8 @@ static s32 write_text_save(s32 fileIndex) {
     fprintf(file, "\n[cap]\n");
     for (i = 0; i < NUM_CAP_ON; i++) {
         flags = save_file_get_flags();      // Read all flags
-        flags = (flags & (1 << (i+16)));    // Get `cap` flags
+        bit = (1 << (i+16));                // Determine current flag
+        flags = (flags & bit);              // Get `cap` flag
         flags = (flags) ? 1 : 0;            // Determine if bit is set or not
         if (flags) {
             fprintf(file, "type = %s\n", cap_on_types[i]);
@@ -149,7 +175,20 @@ static s32 write_text_save(s32 fileIndex) {
 
     /* Write in what course and area Mario losted its cap, and cap's position */
     savedata = &gSaveBuffer.files[fileIndex][0];
-    fprintf(file, "level = %d\n", savedata->capLevel);
+    switch(savedata->capLevel) {
+        case COURSE_SSL:
+            fprintf(file, "level = %s\n", "ssl");
+            break;
+        case COURSE_SL:
+            fprintf(file, "level = %s\n", "sl");
+            break;
+        case COURSE_TTM:
+            fprintf(file, "level = %s\n", "ttm");
+            break;
+        default:
+            fprintf(file, "level = %s\n", "none");
+            break;
+    }
     fprintf(file, "area = %d\n", savedata->capArea);
 
     fclose(file);
@@ -166,8 +205,7 @@ static s32 read_text_save(s32 fileIndex) {
     ini_t *savedata;
     
     u32 i, flag, coins, stars, starFlags;
-    u32 capLevel, capArea;
-    Vec3s capPos;
+    u32 capArea;
     
     /* Define savefile's name */
     if (sprintf(filename, FILENAME_FORMAT, fileIndex) < 0)
@@ -178,15 +216,30 @@ static s32 read_text_save(s32 fileIndex) {
     if (savedata == NULL) {
         return -1;
     } else {
-        /* Good, file exists for gSaveBuffer */
-        gSaveBuffer.files[fileIndex][0].flags |= SAVE_FLAG_FILE_EXISTS;
+        printf("Loading savefile from '%s'\n", filename);
     }
 
     /* Read coin score age for selected file and sound mode */
     ini_sget(savedata, "menu", "coin_score_age", "%d",
                 &gSaveBuffer.menuData[0].coinScoreAges[fileIndex]);
-    ini_sget(savedata, "menu", "sound_mode", "%u",
-                &gSaveBuffer.menuData[0].soundMode);    // Can override 4 times! 
+    
+    value = ini_get(savedata, "menu", "sound_mode");
+    if (value) {
+        if (strcmp(value, sound_modes[0]) == 0) {
+            gSaveBuffer.menuData[0].soundMode = 0;  // stereo
+        }
+        else if (strcmp(value, sound_modes[1]) == 0) {
+            gSaveBuffer.menuData[0].soundMode = 3;  // mono
+        }
+        else if (strcmp(value, sound_modes[2]) == 0) {
+            gSaveBuffer.menuData[0].soundMode = 1;  // headset
+        }
+    }
+    else {
+        printf("Invalid 'menu:sound_mode' flag!\n");
+        return -1;
+    }
+    
     
     /* Parse main flags */
     for (i = 1; i < NUM_FLAGS; i++) {
@@ -245,14 +298,48 @@ static s32 read_text_save(s32 fileIndex) {
         }
     }
     
-    /* ... also it's position, area and level */
-    sscanf(ini_get(savedata, "cap", "level"), "%d", &capLevel);
-    sscanf(ini_get(savedata, "cap", "area"), "%d", &capArea);
+    /* ... it's level ... */
+    value = ini_get(savedata, "cap", "level");
+    if (value) {
+        if (strcmp(value, "ssl") == 0) {
+            gSaveBuffer.files[fileIndex][0].capLevel = 8; // ssl
+        }
+        else if (strcmp(value, "sl") == 0) {
+            gSaveBuffer.files[fileIndex][0].capLevel = 10; // sl
+        }
+        else if (strcmp(value, "ttm") == 0) {
+            gSaveBuffer.files[fileIndex][0].capLevel = 12; // ttm
+        }
+        else if (strcmp(value, "none") == 0) {
+            gSaveBuffer.files[fileIndex][0].capLevel = 0;
+        }
+        else {
+            printf("Invalid 'cap:level' flag!\n");
+            return -1;
+        }
+    }
     
-    gSaveBuffer.files[fileIndex][0].capLevel = capLevel; 
-    gSaveBuffer.files[fileIndex][0].capArea = capArea; 
+    /* ... and it's area */
+    value = ini_get(savedata, "cap", "area");
+    if (value) {
+        sscanf(value, "%d", &capArea);
+        if (capArea > 1 && capArea < 2) {
+            printf("Invalid 'cap:area' flag: %d!\n", capArea);
+            return -1;
+        }
+        else {
+            gSaveBuffer.files[fileIndex][0].capArea = capArea; 
+        }
+    }
+    
+    /* Good, file exists for gSaveBuffer */
+    gSaveBuffer.files[fileIndex][0].flags |= SAVE_FLAG_FILE_EXISTS;
 
+    /* Make a backup */
+    bcopy(&gSaveBuffer.files[fileIndex][0], &gSaveBuffer.files[fileIndex][1],
+          sizeof(gSaveBuffer.files[fileIndex][1]));
+    
     /* Cleaning up after ourselves */
     ini_free(savedata);
-    return 1;
+    return 0;
 }

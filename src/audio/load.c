@@ -6,6 +6,8 @@
 #include "data.h"
 #include "seqplayer.h"
 
+#include "../pc/platform.h"
+
 #define ALIGN16(val) (((val) + 0xF) & ~0xF)
 
 struct SharedDma {
@@ -868,6 +870,24 @@ void load_sequence_internal(u32 player, u32 seqId, s32 loadAsync) {
     seqPlayer->scriptState.pc = sequenceData;
 }
 
+#ifdef EXTERNAL_DATA
+# define LOAD_DATA(x) load_sound_res((const char *)x)
+# include <stdio.h>
+# include <stdlib.h>
+static inline void *load_sound_res(const char *path) {
+    void *data = sys_load_res(path);
+    if (!data) {
+        fprintf(stderr, "could not load sound data from '%s'\n", path);
+        abort();
+    }
+    // FIXME: figure out where it is safe to free this shit
+    //        can't free it immediately after in audio_init()
+    return data;
+}
+#else
+# define LOAD_DATA(x) x
+#endif
+
 void audio_init() {
 #ifdef VERSION_EU
     UNUSED s8 pad[16];
@@ -966,7 +986,7 @@ void audio_init() {
 
     // Load header for sequence data (assets/music_data.sbk.s)
     gSeqFileHeader = (ALSeqFile *) buf;
-    data = gMusicData;
+    data = LOAD_DATA(gMusicData);
     audio_dma_copy_immediate((uintptr_t) data, gSeqFileHeader, 0x10);
     gSequenceCount = gSeqFileHeader->seqCount;
 #ifdef VERSION_EU
@@ -981,7 +1001,7 @@ void audio_init() {
 
     // Load header for CTL (assets/sound_data.ctl.s, i.e. ADSR)
     gAlCtlHeader = (ALSeqFile *) buf;
-    data = gSoundDataADSR;
+    data = LOAD_DATA(gSoundDataADSR);
     audio_dma_copy_immediate((uintptr_t) data, gAlCtlHeader, 0x10);
     size = gAlCtlHeader->seqCount * sizeof(ALSeqData) + 4;
     size = ALIGN16(size);
@@ -996,14 +1016,16 @@ void audio_init() {
     size = gAlTbl->seqCount * sizeof(ALSeqData) + 4;
     size = ALIGN16(size);
     gAlTbl = soundAlloc(&gAudioInitPool, size);
-    audio_dma_copy_immediate((uintptr_t) gSoundDataRaw, gAlTbl, size);
-    alSeqFileNew(gAlTbl, gSoundDataRaw);
+
+    data = LOAD_DATA(gSoundDataRaw);
+    audio_dma_copy_immediate((uintptr_t) data, gAlTbl, size);
+    alSeqFileNew(gAlTbl, data);
 
     // Load bank sets for each sequence (assets/bank_sets.s)
+    data = LOAD_DATA(gBankSetsData);
     gAlBankSets = soundAlloc(&gAudioInitPool, 0x100);
-    audio_dma_copy_immediate((uintptr_t) gBankSetsData, gAlBankSets, 0x100);
+    audio_dma_copy_immediate((uintptr_t) data, gAlBankSets, 0x100);
 
     init_sequence_players();
     gAudioLoadLock = AUDIO_LOCK_NOT_LOADING;
 }
-

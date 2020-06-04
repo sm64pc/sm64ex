@@ -61,10 +61,10 @@ static void keyboard_bindkeys(void) {
     bzero(keyboard_mapping, sizeof(keyboard_mapping));
     num_keybinds = 0;
 
-    keyboard_add_binds(0x80000,      configKeyStickUp);
-    keyboard_add_binds(0x10000,      configKeyStickLeft);
-    keyboard_add_binds(0x40000,      configKeyStickDown);
-    keyboard_add_binds(0x20000,      configKeyStickRight);
+    keyboard_add_binds(STICK_UP,     configKeyStickUp);
+    keyboard_add_binds(STICK_LEFT,   configKeyStickLeft);
+    keyboard_add_binds(STICK_DOWN,   configKeyStickDown);
+    keyboard_add_binds(STICK_RIGHT,  configKeyStickRight);
     keyboard_add_binds(A_BUTTON,     configKeyA);
     keyboard_add_binds(B_BUTTON,     configKeyB);
     keyboard_add_binds(Z_TRIG,       configKeyZ);
@@ -87,18 +87,16 @@ static void keyboard_init(void) {
 
 static void keyboard_read(OSContPad *pad) {
     pad->button |= keyboard_buttons_down;
-    if ((keyboard_buttons_down & 0x30000) == 0x10000) {
+    const u32 xstick = keyboard_buttons_down & STICK_XMASK;
+    const u32 ystick = keyboard_buttons_down & STICK_YMASK;
+    if (xstick == STICK_LEFT)
         pad->stick_x = -128;
-    }
-    if ((keyboard_buttons_down & 0x30000) == 0x20000) {
+    else if (xstick == STICK_RIGHT)
         pad->stick_x = 127;
-    }
-    if ((keyboard_buttons_down & 0xc0000) == 0x40000) {
+    if (ystick == STICK_DOWN)
         pad->stick_y = -128;
-    }
-    if ((keyboard_buttons_down & 0xc0000) == 0x80000) {
+    else if (ystick == STICK_UP)
         pad->stick_y = 127;
-    }
 }
 
 static u32 keyboard_rawkey(void) {

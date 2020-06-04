@@ -42,6 +42,8 @@ TEXTURE_FIX ?= 0
 EXT_OPTIONS_MENU ?= 1
 # Disable text-based save-files by default
 TEXTSAVES ?= 0
+# Load resources from external files
+EXTERNAL_DATA ?= 0
 
 # Various workarounds for weird toolchains
 
@@ -58,8 +60,20 @@ NON_MATCHING := 1
 GRUCODE := f3dex2e
 WINDOWS_BUILD ?= 0
 
-ifeq ($(TARGET_WEB),0)
+# Attempt to detect OS
+
 ifeq ($(OS),Windows_NT)
+  HOST_OS ?= Windows
+else
+  HOST_OS ?= $(shell uname -s 2>/dev/null || echo Unknown)
+  # some weird MINGW/Cygwin env that doesn't define $OS
+  ifneq (,$(findstring MINGW,HOST_OS))
+    HOST_OS := Windows
+  endif
+endif
+
+ifeq ($(TARGET_WEB),0)
+ifeq ($(HOST_OS),Windows)
 WINDOWS_BUILD := 1
 endif
 endif
@@ -126,7 +140,6 @@ endif
 # Stuff for showing the git hash in the intro on nightly builds
 # From https://stackoverflow.com/questions/44038428/include-git-commit-hash-and-or-branch-name-in-c-c-source
 ifeq ($(shell git rev-parse --abbrev-ref HEAD),nightly)
-  $(info Hello Caldera!!! I'm here all week!)
   GIT_HASH=`git rev-parse --short HEAD`
   COMPILE_TIME=`date -u +'%Y-%m-%d %H:%M:%S UTC'`
   VERSION_CFLAGS += -DNIGHTLY -DGIT_HASH="\"$(GIT_HASH)\"" -DCOMPILE_TIME="\"$(COMPILE_TIME)\""
@@ -273,7 +286,7 @@ else
 ifeq ($(VERSION),sh)
   OPT_FLAGS := -O2
 else
-  OPT_FLAGS := -g
+  OPT_FLAGS := -O2
 endif
 endif
 
@@ -490,8 +503,8 @@ PYTHON := python3
 SDLCONFIG := $(CROSS)sdl2-config
 
 ifeq ($(WINDOWS_BUILD),1)
-CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags`
-CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags`
+CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags` -DUSE_SDL=2
+CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags` -DUSE_SDL=2
 
 else ifeq ($(TARGET_WEB),1)
 CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
@@ -499,8 +512,8 @@ CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fn
 
 # Linux / Other builds below
 else
-CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags`
-CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags`
+CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags` -DUSE_SDL=2
+CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags` -DUSE_SDL=2
 endif
 
 # Check for enhancement options
@@ -553,6 +566,14 @@ ifeq ($(LEGACY_GL),1)
   CFLAGS += -DLEGACY_GL
 endif
 
+# Load external textures
+ifeq ($(EXTERNAL_DATA),1)
+  CC_CHECK += -DEXTERNAL_DATA
+  CFLAGS += -DEXTERNAL_DATA
+  # tell skyconv to write names instead of actual texture data and save the split tiles so we can use them later
+  SKYCONV_ARGS := --store-names --write-tiles "$(BUILD_DIR)/textures/skybox_tiles"
+endif
+
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
 
 ifeq ($(TARGET_WEB),1)
@@ -598,6 +619,7 @@ EMU_FLAGS = --noosd
 LOADER = loader64
 LOADER_FLAGS = -vwf
 SHA1SUM = sha1sum
+ZEROTERM = $(PYTHON) $(TOOLS_DIR)/zeroterm.py
 
 ###################### Dependency Check #####################
 
@@ -606,6 +628,32 @@ SHA1SUM = sha1sum
 ######################## Targets #############################
 
 all: $(EXE)
+
+ifeq ($(EXTERNAL_DATA),1)
+
+# thank you apple very cool
+ifeq ($(HOST_OS),Darwin)
+  CP := gcp
+else
+  CP := cp
+endif
+
+# depend on resources as well
+all: res
+
+# prepares the resource folder for external data
+res: $(EXE)
+	@mkdir -p $(BUILD_DIR)/res/sound
+	@$(CP) -r -f textures/ $(BUILD_DIR)/res/
+	@$(CP) -r -f $(BUILD_DIR)/textures/skybox_tiles/ $(BUILD_DIR)/res/textures/
+	@$(CP) -f $(SOUND_BIN_DIR)/sound_data.ctl $(BUILD_DIR)/res/sound/
+	@$(CP) -f $(SOUND_BIN_DIR)/sound_data.tbl $(BUILD_DIR)/res/sound/
+	@$(CP) -f $(SOUND_BIN_DIR)/sequences.bin $(BUILD_DIR)/res/sound/
+	@$(CP) -f $(SOUND_BIN_DIR)/bank_sets $(BUILD_DIR)/res/sound/
+	@find actors -name \*.png -exec $(CP) --parents {} $(BUILD_DIR)/res/ \;
+	@find levels -name \*.png -exec $(CP) --parents {} $(BUILD_DIR)/res/ \;
+
+endif
 
 clean:
 	$(RM) -r $(BUILD_DIR_BASE)
@@ -701,13 +749,19 @@ endif
 ################################################################
 
 # RGBA32, RGBA16, IA16, IA8, IA4, IA1, I8, I4
+ifeq ($(EXTERNAL_DATA),1)
+$(BUILD_DIR)/%: %.png
+	$(ZEROTERM) "$(patsubst %.png,%,$^)" > $@
+else
 $(BUILD_DIR)/%: %.png
 	$(N64GRAPHICS) -i $@ -g $< -f $(lastword $(subst ., ,$@))
+endif
 
 $(BUILD_DIR)/%.inc.c: $(BUILD_DIR)/% %.png
 	hexdump -v -e '1/1 "0x%X,"' $< > $@
 	echo >> $@
 
+ifeq ($(EXTERNAL_DATA),0)
 # Color Index CI8
 $(BUILD_DIR)/%.ci8: %.ci8.png
 	$(N64GRAPHICS_CI) -i $@ -g $< -f ci8
@@ -715,6 +769,7 @@ $(BUILD_DIR)/%.ci8: %.ci8.png
 # Color Index CI4
 $(BUILD_DIR)/%.ci4: %.ci4.png
 	$(N64GRAPHICS_CI) -i $@ -g $< -f ci4
+endif
 
 ################################################################
 
@@ -757,6 +812,18 @@ $(SOUND_BIN_DIR)/%.m64: $(SOUND_BIN_DIR)/%.o
 $(SOUND_BIN_DIR)/%.o: $(SOUND_BIN_DIR)/%.s
 	$(AS) $(ASFLAGS) -o $@ $<
 
+ifeq ($(EXTERNAL_DATA),1)
+
+$(SOUND_BIN_DIR)/sound_data.ctl.c: $(SOUND_BIN_DIR)/sound_data.ctl
+	echo "unsigned char gSoundDataADSR[] = \"sound/sound_data.ctl\";" > $@
+$(SOUND_BIN_DIR)/sound_data.tbl.c: $(SOUND_BIN_DIR)/sound_data.tbl
+	echo "unsigned char gSoundDataRaw[] = \"sound/sound_data.tbl\";" > $@
+$(SOUND_BIN_DIR)/sequences.bin.c: $(SOUND_BIN_DIR)/sequences.bin
+	echo "unsigned char gMusicData[] = \"sound/sequences.bin\";" > $@
+$(SOUND_BIN_DIR)/bank_sets.c: $(SOUND_BIN_DIR)/bank_sets
+	echo "unsigned char gBankSetsData[] = \"sound/bank_sets\";" > $@
+
+else
 
 $(SOUND_BIN_DIR)/sound_data.ctl.c: $(SOUND_BIN_DIR)/sound_data.ctl
 	echo "unsigned char gSoundDataADSR[] = {" > $@
@@ -777,6 +844,8 @@ $(SOUND_BIN_DIR)/bank_sets.c: $(SOUND_BIN_DIR)/bank_sets
 	echo "unsigned char gBankSetsData[0x100] = {" > $@
 	hexdump -v -e '1/1 "0x%X,"' $< >> $@
 	echo "};" >> $@
+
+endif
 
 $(BUILD_DIR)/levels/scripts.o: $(BUILD_DIR)/include/level_headers.h
 
@@ -858,7 +927,7 @@ $(BUILD_DIR)/%.o: %.s
 $(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES)
 	$(LD) -L $(BUILD_DIR) -o $@ $(O_FILES) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(LDFLAGS)
 
-.PHONY: all clean distclean default diff test load libultra
+.PHONY: all clean distclean default diff test load libultra res
 .PRECIOUS: $(BUILD_DIR)/bin/%.elf $(SOUND_BIN_DIR)/%.ctl $(SOUND_BIN_DIR)/%.tbl $(SOUND_SAMPLE_TABLES) $(SOUND_BIN_DIR)/%.s $(BUILD_DIR)/%
 .DELETE_ON_ERROR:
 
