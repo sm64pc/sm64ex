@@ -35,6 +35,7 @@ extern u8 newcam_mouse;
 
 static bool init_ok;
 static SDL_GameController *sdl_cntrl;
+static SDL_Haptic *sdl_haptic;
 
 static u32 num_joy_binds = 0;
 static u32 num_mouse_binds = 0;
@@ -85,7 +86,7 @@ static void controller_sdl_bind(void) {
 }
 
 static void controller_sdl_init(void) {
-    if (SDL_Init(SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS) != 0) {
+    if (SDL_Init(SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS | SDL_INIT_HAPTIC) != 0) {
         fprintf(stderr, "SDL init error: %s\n", SDL_GetError());
         return;
     }
@@ -144,6 +145,7 @@ static void controller_sdl_read(OSContPad *pad) {
         for (int i = 0; i < SDL_NumJoysticks(); i++) {
             if (SDL_IsGameController(i)) {
                 sdl_cntrl = SDL_GameControllerOpen(i);
+                sdl_haptic = SDL_HapticOpen(i);
                 if (sdl_cntrl != NULL) {
                     break;
                 }
@@ -241,9 +243,44 @@ static void controller_sdl_shutdown(void) {
             SDL_GameControllerClose(sdl_cntrl);
             sdl_cntrl = NULL;
         }
+        if (sdl_haptic) {
+            SDL_HapticClose(sdl_haptic);
+            sdl_haptic = NULL;
+        }
         SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
     }
     init_ok = false;
+}
+
+u32 controller_rumble_init(void) {
+    if (SDL_HapticRumbleSupported(sdl_haptic) != SDL_TRUE) {
+        // printf("Controller does not support haptics! %s\n", SDL_GetError());
+        return 1;
+    }
+    if (SDL_HapticRumbleInit(sdl_haptic) != 0) {
+        printf("Unable to initialize rumble! %s\n", SDL_GetError());
+        return 1;
+    }
+    return 0;
+}
+
+
+s32 controller_rumble_play(f32 strength, u32 length) {
+    if (SDL_HapticRumblePlay(sdl_haptic, strength, length) != 0) {
+        printf("Unable to start rumble! %s\n", SDL_GetError());
+        return -1;
+    } else {
+        return 0;
+    }
+}
+
+s32 controller_rumble_stop(void) {
+    if (SDL_HapticRumbleStop(sdl_haptic) != 0) {
+        printf("Unable to stop rumble! %s\n", SDL_GetError());
+        return -1;
+    } else {
+        return 0;
+    }
 }
 
 struct ControllerAPI controller_sdl = {

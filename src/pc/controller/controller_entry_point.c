@@ -5,7 +5,6 @@
 
 #include "controller_recorded_tas.h"
 #include "controller_keyboard.h"
-
 #include "controller_sdl.h"
 
 // Analog camera movement by Pathétique (github.com/vrmiguel), y0shin and Mors
@@ -28,6 +27,19 @@ s32 osContInit(OSMesgQueue *mq, u8 *controllerBits, OSContStatus *status) {
     }
     *controllerBits = 1;
     return 0;
+}
+
+s32 osMotorStart(void *pfs) {
+    // Since rumble stops by osMotorStop, its duration is not nessecary.
+    return controller_rumble_play(configRumbleStrength / 100.0, 50);
+}
+
+s32 osMotorStop(void *pfs) {
+    return controller_rumble_stop();
+}
+
+u32 osMotorInit(OSMesgQueue *mq, void *pfs, s32 port) {
+    return controller_rumble_init();
 }
 
 s32 osContStartReadData(OSMesgQueue *mesg) {
