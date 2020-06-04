@@ -67,7 +67,7 @@ void send_display_list(struct SPTask *spTask) {
 void produce_one_frame(void) {
     gfx_start_frame();
     game_loop_one_iteration();
-    thread6_rumble_loop();
+    thread6_rumble_loop(NULL);
     
     int samples_left = audio_api->buffered();
     u32 num_audio_samples = samples_left < audio_api->get_desired_buffered() ? 544 : 528;

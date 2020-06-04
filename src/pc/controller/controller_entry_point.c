@@ -1,5 +1,6 @@
 #include "lib/src/libultra_internal.h"
 #include "lib/src/osContInternal.h"
+#include "macros.h"
 
 #include "../configfile.h"
 
@@ -21,7 +22,7 @@ static struct ControllerAPI *controller_implementations[] = {
     &controller_keyboard,
 };
 
-s32 osContInit(OSMesgQueue *mq, u8 *controllerBits, OSContStatus *status) {
+s32 osContInit(UNUSED OSMesgQueue *mq, u8 *controllerBits, UNUSED OSContStatus *status) {
     for (size_t i = 0; i < sizeof(controller_implementations) / sizeof(struct ControllerAPI *); i++) {
         controller_implementations[i]->init();
     }
@@ -29,23 +30,23 @@ s32 osContInit(OSMesgQueue *mq, u8 *controllerBits, OSContStatus *status) {
     return 0;
 }
 
-s32 osMotorStart(void *pfs) {
+s32 osMotorStart(UNUSED void *pfs) {
     // Since rumble stops by osMotorStop, its duration is not nessecary.
     // Set it to 5 seconds and hope osMotorStop() is called in time.
     controller_rumble_play(configRumbleStrength / 100.0f, 5.0f);
     return 0;
 }
 
-s32 osMotorStop(void *pfs) {
+s32 osMotorStop(UNUSED void *pfs) {
     controller_rumble_stop();
     return 0;
 }
 
-u32 osMotorInit(OSMesgQueue *mq, void *pfs, s32 port) {
+u32 osMotorInit(UNUSED OSMesgQueue *mq, UNUSED void *pfs, UNUSED s32 port) {
     return 0; // rumble is initialized in the specific backend's init function
 }
 
-s32 osContStartReadData(OSMesgQueue *mesg) {
+s32 osContStartReadData(UNUSED OSMesgQueue *mesg) {
     return 0;
 }
 

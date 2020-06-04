@@ -241,9 +241,9 @@ static void controller_sdl_read(OSContPad *pad) {
     }
 }
 
-static void controller_sdl_rumble_play(f32 strength, u32 length) {
+static void controller_sdl_rumble_play(f32 strength, f32 length) {
     if (sdl_haptic)
-        SDL_HapticRumblePlay(sdl_haptic, strength, length);
+        SDL_HapticRumblePlay(sdl_haptic, strength, (u32)(length * 1000.0f));
 }
 
 static void controller_sdl_rumble_stop(void) {
