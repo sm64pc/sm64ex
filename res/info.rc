@@ -1,0 +1,18 @@
+IDI_ICON1 ICON DISCARDABLE "icon.ico"
+1 VERSIONINFO
+FILEVERSION     1,0,0,0
+PRODUCTVERSION  1,0,0,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "InternalName", "sm64pc"
+      VALUE "ProductName", "Super Mario 64 PC"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 0
+  END
+END
