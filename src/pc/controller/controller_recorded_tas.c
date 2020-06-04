@@ -39,6 +39,8 @@ struct ControllerAPI controller_recorded_tas = {
     tas_init,
     tas_read,
     tas_rawkey,
+    NULL, // no rumble_play
+    NULL, // no rumble_stop
     NULL, // no rebinding
     tas_shutdown
 };

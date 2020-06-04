@@ -113,6 +113,24 @@ static void controller_sdl_init(void) {
     init_ok = true;
 }
 
+static SDL_Haptic *controller_sdl_init_haptics(const int joy) {
+    SDL_Haptic *hap = SDL_HapticOpen(joy);
+    if (!hap) return NULL;
+
+    if (SDL_HapticRumbleSupported(hap) != SDL_TRUE) {
+        SDL_HapticClose(hap);
+        return NULL;
+    }
+
+    if (SDL_HapticRumbleInit(hap) != 0) {
+        SDL_HapticClose(hap);
+        return NULL;
+    }
+
+    printf("controller %s has haptics support, rumble enabled\n", SDL_JoystickNameForIndex(joy));
+    return hap;
+}
+
 static void controller_sdl_read(OSContPad *pad) {
     if (!init_ok) {
         return;
@@ -138,15 +156,18 @@ static void controller_sdl_read(OSContPad *pad) {
     SDL_GameControllerUpdate();
 
     if (sdl_cntrl != NULL && !SDL_GameControllerGetAttached(sdl_cntrl)) {
+        SDL_HapticClose(sdl_haptic);
         SDL_GameControllerClose(sdl_cntrl);
         sdl_cntrl = NULL;
+        sdl_haptic = NULL;
     }
+
     if (sdl_cntrl == NULL) {
         for (int i = 0; i < SDL_NumJoysticks(); i++) {
             if (SDL_IsGameController(i)) {
                 sdl_cntrl = SDL_GameControllerOpen(i);
-                sdl_haptic = SDL_HapticOpen(i);
                 if (sdl_cntrl != NULL) {
+                    sdl_haptic = controller_sdl_init_haptics(i);
                     break;
                 }
             }
@@ -220,6 +241,16 @@ static void controller_sdl_read(OSContPad *pad) {
     }
 }
 
+static void controller_sdl_rumble_play(f32 strength, u32 length) {
+    if (sdl_haptic)
+        SDL_HapticRumblePlay(sdl_haptic, strength, length);
+}
+
+static void controller_sdl_rumble_stop(void) {
+    if (sdl_haptic)
+        SDL_HapticRumbleStop(sdl_haptic);
+}
+
 static u32 controller_sdl_rawkey(void) {
     if (last_joybutton != VK_INVALID) {
         const u32 ret = last_joybutton;
@@ -252,42 +283,13 @@ static void controller_sdl_shutdown(void) {
     init_ok = false;
 }
 
-u32 controller_rumble_init(void) {
-    if (SDL_HapticRumbleSupported(sdl_haptic) != SDL_TRUE) {
-        // printf("Controller does not support haptics! %s\n", SDL_GetError());
-        return 1;
-    }
-    if (SDL_HapticRumbleInit(sdl_haptic) != 0) {
-        printf("Unable to initialize rumble! %s\n", SDL_GetError());
-        return 1;
-    }
-    return 0;
-}
-
-
-s32 controller_rumble_play(f32 strength, u32 length) {
-    if (SDL_HapticRumblePlay(sdl_haptic, strength, length) != 0) {
-        printf("Unable to start rumble! %s\n", SDL_GetError());
-        return -1;
-    } else {
-        return 0;
-    }
-}
-
-s32 controller_rumble_stop(void) {
-    if (SDL_HapticRumbleStop(sdl_haptic) != 0) {
-        printf("Unable to stop rumble! %s\n", SDL_GetError());
-        return -1;
-    } else {
-        return 0;
-    }
-}
-
 struct ControllerAPI controller_sdl = {
     VK_BASE_SDL_GAMEPAD,
     controller_sdl_init,
     controller_sdl_read,
     controller_sdl_rawkey,
+    controller_sdl_rumble_play,
+    controller_sdl_rumble_stop,
     controller_sdl_bind,
     controller_sdl_shutdown
 };
