@@ -22,6 +22,7 @@ Please contribute **first** to the [nightly branch](https://github.com/sm64pc/sm
  * Disabling the HUD.
  * Cheats menu in Options. (Activate with `--cheats`) Please note that if a cheat asks you to press "L" it's referring to the N64 button. Check your bindings and make sure you have the "L" button mapped to a button in your controller.
  * Text-based save support. (Activate with `make TEXTSAVES=1`.)
+ * Recent changes in Nightly have moved save and configuration files, and they will *not* be read from the same directory as the executable.  They are now stored in %HOMEPATH%\AppData\Roaming\sm64pc
 
 ## Building
 For building instructions, please refer to the [wiki](https://github.com/sm64pc/sm64pc/wiki).
