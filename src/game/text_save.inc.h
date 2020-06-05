@@ -26,13 +26,13 @@ const char *sav_courses[NUM_COURSES] = {
 
 /* Bonus courses keys (including Castle Course) */
 const char *sav_bonus_courses[NUM_BONUS_COURSES] = {
-    "hub", "bitdw", "bitfs", "bits", "pss", "cotmc",
-    "totwc", "vcutm", "wmotr", "sa",
+    "bitdw", "bitfs", "bits", "pss", "cotmc",
+    "totwc", "vcutm", "wmotr", "sa", "hub",
 };
 
 /* Mario's cap type keys */
 const char *cap_on_types[NUM_CAP_ON] = {
-    "ground", "klepto", "ukiki", "mrblizzard"
+    "ground", "klepto", "ukiki", "mrblizzard",
 };
 
 /* Sound modes */
@@ -150,24 +150,36 @@ static s32 write_text_save(s32 fileIndex) {
     /* Write star flags from each bonus cource (including Castle Grounds) */
     fprintf(file, "\n[bonus]\n");
     for (i = 0; i < NUM_BONUS_COURSES; i++) {
-        if (i == 0) {
-            stars = save_file_get_star_flags(fileIndex, -1);
-        } else {
-            stars = save_file_get_star_flags(fileIndex, i+14);
-        }
-        starFlags = int_to_bin(stars);
+        char *format;
 
-        fprintf(file, "%s = %d\n", sav_bonus_courses[i], starFlags);
+        if (i == NUM_BONUS_COURSES-1) {
+            /* Process Castle Grounds */
+            stars = save_file_get_star_flags(fileIndex, -1);
+            format = "%05d";
+        } else if (i == 3) {
+            /* Process Princess's Secret Slide */
+            stars = save_file_get_star_flags(fileIndex, 18);
+            format = "%02d";
+        } else {
+            /* Process another bonus course */
+            stars = save_file_get_star_flags(fileIndex, i+15);
+            format = "%d";
+        }
+
+        starFlags = int_to_bin(stars);
+        if (sprintf(value, format, starFlags) < 0)
+            return -1;
+        fprintf(file, "%s = %s\n", sav_bonus_courses[i], value);
     }
 
     /* Write who steal Mario's cap */
-    fprintf(file, "\n[cap]\n");
     for (i = 0; i < NUM_CAP_ON; i++) {
         flags = save_file_get_flags();      // Read all flags
         bit = (1 << (i+16));                // Determine current flag
         flags = (flags & bit);              // Get `cap` flag
         flags = (flags) ? 1 : 0;            // Determine if bit is set or not
         if (flags) {
+            fprintf(file, "\n[cap]\n");
             fprintf(file, "type = %s\n", cap_on_types[i]);
             break;
         }
@@ -186,10 +198,11 @@ static s32 write_text_save(s32 fileIndex) {
             fprintf(file, "level = %s\n", "ttm");
             break;
         default:
-            fprintf(file, "level = %s\n", "none");
             break;
     }
-    fprintf(file, "area = %d\n", savedata->capArea);
+    if (savedata->capLevel) {
+        fprintf(file, "area = %d\n", savedata->capArea);
+    }
 
     /* Update a backup */
     bcopy(&gSaveBuffer.files[fileIndex][0], &gSaveBuffer.files[fileIndex][1],
@@ -281,7 +294,7 @@ static s32 read_text_save(s32 fileIndex) {
                 save_file_set_star_flags(fileIndex, -1, starFlags);
             } else if (strlen(value) == 2) {
                 /* Process Princess's Secret Slide */
-                save_file_set_star_flags(fileIndex, COURSE_PSS, starFlags);
+                save_file_set_star_flags(fileIndex, 18, starFlags);
             } else {
                 /* Process another shitty bonus course */
                 save_file_set_star_flags(fileIndex, i+15, starFlags);
@@ -305,16 +318,13 @@ static s32 read_text_save(s32 fileIndex) {
     value = ini_get(savedata, "cap", "level");
     if (value) {
         if (strcmp(value, "ssl") == 0) {
-            gSaveBuffer.files[fileIndex][0].capLevel = 8; // ssl
+            gSaveBuffer.files[fileIndex][0].capLevel = COURSE_SSL; // ssl
         }
         else if (strcmp(value, "sl") == 0) {
-            gSaveBuffer.files[fileIndex][0].capLevel = 10; // sl
+            gSaveBuffer.files[fileIndex][0].capLevel = COURSE_SL; // sl
         }
         else if (strcmp(value, "ttm") == 0) {
-            gSaveBuffer.files[fileIndex][0].capLevel = 12; // ttm
-        }
-        else if (strcmp(value, "none") == 0) {
-            gSaveBuffer.files[fileIndex][0].capLevel = 0;
+            gSaveBuffer.files[fileIndex][0].capLevel = COURSE_TTM; // ttm
         }
         else {
             printf("Invalid 'cap:level' flag!\n");
