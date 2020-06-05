@@ -81,9 +81,6 @@
 
 #else // VERSION
 
-
-#else // VERSION
-
 // Markers
 
 #define TEXT_OPT_PRESSKEY  _("...")
