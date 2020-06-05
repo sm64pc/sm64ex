@@ -40,7 +40,7 @@ except OSError as e:
     sys.exit(2)
 
 # load the CRC map
-crcmap = dict()
+crcmap = list()
 try:
     with open(mapfname, 'r') as f:
         for line in f:
@@ -53,7 +53,7 @@ try:
                 crc = int(crcstr[2:], 16)
             else:
                 crc = int(crcstr)
-            crcmap[crc] = os.path.join(outpath, tok[1].strip())
+            crcmap.append((crc, os.path.join(outpath, tok[1].strip())))
 except OSError as e:
     print('could not open {0}: {1}'.format(mapfname, e))
 except ValueError as e:
@@ -61,7 +61,7 @@ except ValueError as e:
     sys.exit(3)
 
 # copy the files to the correct locations
-for crc, path in crcmap.items():
+for (crc, path) in crcmap:
     if not (crc in texmap):
         print('unmatched CRC: {0} ({1})'.format(crc, path))
     else:

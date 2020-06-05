@@ -86,7 +86,7 @@ for i in ${!OPTIONS[@]}; do
 done 
 
 printf "\n${YELLOW} Executing: ${CYAN}make ${CMDL} -j${RESET}\n\n"
-PATH=/mingw32/bin:/mingw64/bin:$PATH make $CMDL -j -d
+PATH=/mingw32/bin:/mingw64/bin:$PATH make $CMDL -j
 
 if [ "${CMDL}" != " clean" ]; then
 
