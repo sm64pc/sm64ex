@@ -3,6 +3,7 @@
 #include <time.h>
 #include "course_table.h"
 #include "pc/ini.h"
+#include "pc/platform.h"
 
 #define FILENAME_FORMAT "%s/save_file_%d.sav"
 #define NUM_COURSES 15
@@ -82,12 +83,12 @@ static s32 write_text_save(s32 fileIndex) {
     FILE* file;
     struct SaveFile *savedata;
     struct MainMenuSaveData *menudata;
-    char filename[32] = { 0 };
-    char value[32] = { 0 };
+    char filename[SYS_MAX_PATH] = { 0 };
+    char value[SYS_MAX_PATH] = { 0 };
     u32 i, bit, flags, coins, stars, starFlags;
 
     /* Define savefile's name */
-    if (sprintf(filename, FILENAME_FORMAT, sys_save_path(), fileIndex) < 0)
+    if (snprintf(filename, sizeof(filename), FILENAME_FORMAT, sys_save_path(), fileIndex) < 0)
         return -1;
 
     file = fopen(filename, "wt");
@@ -203,8 +204,8 @@ static s32 write_text_save(s32 fileIndex) {
  * Read gSaveBuffer data from a text-based savefile.
  */
 static s32 read_text_save(s32 fileIndex) {
-    char filename[32] = { 0 };
-    char temp[32] = { 0 };
+    char filename[SYS_MAX_PATH] = { 0 };
+    char temp[SYS_MAX_PATH] = { 0 };
     const char *value;
     ini_t *savedata;
     
@@ -212,7 +213,7 @@ static s32 read_text_save(s32 fileIndex) {
     u32 capArea;
     
     /* Define savefile's name */
-    if (sprintf(filename, FILENAME_FORMAT, sys_save_path(), fileIndex) < 0)
+    if (snprintf(filename, sizeof(filename), FILENAME_FORMAT, sys_save_path(), fileIndex) < 0)
         return -1;
 
     /* Try to open the file */
