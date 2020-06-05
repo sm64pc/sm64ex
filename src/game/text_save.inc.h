@@ -153,7 +153,7 @@ static s32 write_text_save(s32 fileIndex) {
         if (i == 0) {
             stars = save_file_get_star_flags(fileIndex, -1);
         } else {
-            stars = save_file_get_star_flags(fileIndex, i+15);
+            stars = save_file_get_star_flags(fileIndex, i+14);
         }
         starFlags = int_to_bin(stars);
 
@@ -191,6 +191,10 @@ static s32 write_text_save(s32 fileIndex) {
     }
     fprintf(file, "area = %d\n", savedata->capArea);
 
+    /* Update a backup */
+    bcopy(&gSaveBuffer.files[fileIndex][0], &gSaveBuffer.files[fileIndex][1],
+          sizeof(gSaveBuffer.files[fileIndex][1]));
+    
     fclose(file);
     return 1;
 }
@@ -239,7 +243,6 @@ static s32 read_text_save(s32 fileIndex) {
         printf("Invalid 'menu:sound_mode' flag!\n");
         return -1;
     }
-    
     
     /* Parse main flags */
     for (i = 1; i < NUM_FLAGS; i++) {
