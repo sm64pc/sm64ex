@@ -30,9 +30,7 @@ struct Controller
   /*0x12*/ u16 buttonPressed;
   /*0x14*/ OSContStatus *statusData;
   /*0x18*/ OSContPad *controllerData;
-#ifdef VERSION_SH
   /*0x1C*/ int port;
-#endif
 };
 
 typedef f32 Vec2f[2];

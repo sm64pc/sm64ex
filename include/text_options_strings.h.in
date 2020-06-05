@@ -81,6 +81,9 @@
 
 #else // VERSION
 
+
+#else // VERSION
+
 // Markers
 
 #define TEXT_OPT_PRESSKEY  _("...")
@@ -125,6 +128,7 @@
 #define TEXT_BIND_LEFT     _("Stick Left")
 #define TEXT_BIND_RIGHT    _("Stick Right")
 #define TEXT_OPT_DEADZONE  _("Stick Deadzone")
+#define TEXT_OPT_RUMBLE    _("Rumble Strength")
 
 #define TEXT_OPT_CHEAT1    _("Enable cheats")
 #define TEXT_OPT_CHEAT2    _("Moonjump (Press L)")

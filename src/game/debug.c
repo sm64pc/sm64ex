@@ -391,7 +391,7 @@ static void try_change_debug_page(void) {
  * sDebugSysCursor. This is used to adjust enemy and effect behaviors
  * on the fly. (unused)
  */
-#ifndef VERSION_SH
+#ifdef VERSION_SH
 static
 #endif
 void try_modify_debug_controls(void) {
@@ -524,7 +524,7 @@ void try_do_mario_debug_object_spawn(void) {
 }
 
 // TODO: figure out what this is
-#ifndef VERSION_SH
+#ifdef VERSION_SH
 static
 #endif
 void debug_print_obj_move_flags(void) {
