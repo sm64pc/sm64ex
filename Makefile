@@ -295,10 +295,6 @@ ifeq ($(TARGET_WEB),1)
   OPT_FLAGS := -O2 -g4 --source-map-base http://localhost:8080/
 endif
 
-# Use a default opt flag for gcc, then override if RPi
-
-# OPT_FLAGS := -O2 # "Whole-compile optimization flag" Breaks sound on x86.
-
 ifeq ($(TARGET_RPI),1)
 	machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
 # Raspberry Pi B+, Zero, etc
