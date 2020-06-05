@@ -10,6 +10,8 @@ default: all
 # These options can either be changed by modifying the makefile, or
 # by building with 'make SETTING=value'. 'make clean' may be required.
 
+# Build debug version (default)
+DEBUG ?= 1
 # Version of the game to build
 VERSION ?= us
 # Graphics microcode used
@@ -280,14 +282,10 @@ GODDARD_SRC_DIRS := src/goddard src/goddard/dynlists
 MIPSISET := -mips2
 MIPSBIT := -32
 
-ifeq ($(VERSION),eu)
-  OPT_FLAGS := -O2
-else
-ifeq ($(VERSION),sh)
-  OPT_FLAGS := -O2
+ifeq ($(DEBUG),1)
+  OPT_FLAGS := -g
 else
   OPT_FLAGS := -O2
-endif
 endif
 
 # Set BITS (32/64) to compile for
