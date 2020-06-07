@@ -79,7 +79,7 @@ static s32 write_text_save(s32 fileIndex) {
     struct SaveFile *savedata;
     struct MainMenuSaveData *menudata;
     char filename[SYS_MAX_PATH] = { 0 };
-    char value[SYS_MAX_PATH] = { 0 };
+    char *value;
     u32 i, bit, flags, coins, stars, starFlags;
 
     if (snprintf(filename, sizeof(filename), FILENAME_FORMAT, sys_save_path(), fileIndex) < 0)
@@ -87,7 +87,7 @@ static s32 write_text_save(s32 fileIndex) {
 
     file = fopen(filename, "wt");
     if (file == NULL) {
-        printf("Savefile '%s' not found!\n", path);
+        printf("Savefile '%s' not found!\n", filename);
         return -1;
     } else
         printf("Saving updated progress to '%s'\n", filename);
@@ -204,7 +204,6 @@ static s32 write_text_save(s32 fileIndex) {
  */
 static s32 read_text_save(s32 fileIndex) {
     char filename[SYS_MAX_PATH] = { 0 };
-    char temp[SYS_MAX_PATH] = { 0 };
     const char *value;
     ini_t *savedata;
     
@@ -243,9 +242,8 @@ static s32 read_text_save(s32 fileIndex) {
     
     for (i = 1; i < NUM_FLAGS; i++) {
         value = ini_get(savedata, "flags", sav_flags[i]);
-        
         if (value) {
-            flag = strtol(value, &temp, 10);
+            flag = value[0] - '0';  // Flag should be 0 or 1
             if (flag) {
                 flag = 1 << i;      // Flags defined in 'save_file' header
                 gSaveBuffer.files[fileIndex][0].flags |= flag;

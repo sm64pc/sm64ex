@@ -391,7 +391,6 @@ BAD_RETURN(s32) save_file_copy(s32 srcFileIndex, s32 destFileIndex) {
 
 void save_file_load_all(void) {
     s32 file;
-    s32 validSlots;
 
     gMainMenuDataModified = FALSE;
     gSaveFileModified = FALSE;
@@ -405,6 +404,7 @@ void save_file_load_all(void) {
     gSaveFileModified = TRUE;
     gMainMenuDataModified = TRUE;
 #else
+    s32 validSlots;
     read_eeprom_data(&gSaveBuffer, sizeof(gSaveBuffer));
 
     if (save_file_need_bswap(&gSaveBuffer))
