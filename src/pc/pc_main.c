@@ -22,6 +22,7 @@
 #include "cliopts.h"
 #include "configfile.h"
 #include "controller/controller_api.h"
+#include "fs/fs.h"
 
 #include "game/main.h"
 #include "game/thread6.h"
@@ -152,6 +153,8 @@ void main_func(void) {
     static u64 pool[0x165000/8 / 4 * sizeof(void *)];
     main_pool_init(pool, pool + sizeof(pool) / sizeof(pool[0]));
     gEffectsMemoryPool = mem_pool_init(0x4000, MEMORY_POOL_LEFT);
+
+    fs_init(sys_ropaths, FS_BASEDIR, sys_user_path());
 
     configfile_load(configfile_name());
 

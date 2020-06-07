@@ -7,6 +7,7 @@
 #include "seqplayer.h"
 
 #include "../pc/platform.h"
+#include "../pc/fs/fs.h"
 
 #define ALIGN16(val) (((val) + 0xF) & ~0xF)
 
@@ -875,11 +876,8 @@ void load_sequence_internal(u32 player, u32 seqId, s32 loadAsync) {
 # include <stdio.h>
 # include <stdlib.h>
 static inline void *load_sound_res(const char *path) {
-    void *data = sys_load_res(path);
-    if (!data) {
-        fprintf(stderr, "could not load sound data from '%s'\n", path);
-        abort();
-    }
+    void *data = fs_load_file(path, NULL);
+    if (!data) sys_fatal("could not load sound data from '%s'", path);
     // FIXME: figure out where it is safe to free this shit
     //        can't free it immediately after in audio_init()
     return data;

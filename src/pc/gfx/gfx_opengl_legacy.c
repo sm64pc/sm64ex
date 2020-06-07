@@ -516,17 +516,16 @@ static void gfx_opengl_init(void) {
     int vmajor, vminor;
     bool is_es = false;
     gl_get_version(&vmajor, &vminor, &is_es);
-    if (vmajor < 2 && vminor < 2 && !is_es) {
-        fprintf(stderr, "OpenGL 1.2+ is required. Reported version: %s%d.%d\n", is_es ? "ES" : "", vmajor, vminor);
-        abort();
-    }
+    if (vmajor < 2 && vminor < 2 && !is_es)
+        sys_fatal("OpenGL 1.2+ is required. Reported version: %s%d.%d\n", is_es ? "ES" : "", vmajor, vminor);
 
     // check extensions that we need
     const bool supported =
         gl_check_ext("GL_ARB_multitexture") &&
         gl_check_ext("GL_ARB_texture_env_combine");
 
-    if (!supported) abort();
+    if (!supported)
+        sys_fatal("required GL extensions are not supported");
 
     gl_adv_fog = false;
 
