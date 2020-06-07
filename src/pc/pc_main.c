@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #ifdef TARGET_WEB
 #include <emscripten.h>
@@ -24,6 +25,7 @@
 #include "controller/controller_api.h"
 #include "fs/fs.h"
 
+#include "game/game_init.h"
 #include "game/main.h"
 #include "game/thread6.h"
 
@@ -154,7 +156,9 @@ void main_func(void) {
     main_pool_init(pool, pool + sizeof(pool) / sizeof(pool[0]));
     gEffectsMemoryPool = mem_pool_init(0x4000, MEMORY_POOL_LEFT);
 
-    fs_init(sys_ropaths, FS_BASEDIR, sys_user_path());
+    const char *gamedir = gCLIOpts.GameDir[0] ? gCLIOpts.GameDir : FS_BASEDIR;
+    const char *userpath = gCLIOpts.SavePath[0] ? gCLIOpts.SavePath : sys_user_path();
+    fs_init(sys_ropaths, gamedir, userpath);
 
     configfile_load(configfile_name());
 
@@ -173,8 +177,17 @@ void main_func(void) {
     sound_init();
 
     thread5_game_loop(NULL);
-    
+
     inited = true;
+
+#ifdef EXTERNAL_DATA
+    // precache data if needed
+    if (configPrecacheRes) {
+        printf("precaching data\n");
+        fflush(stdout);
+        gfx_precache_textures();
+    }
+#endif
 
 #ifdef TARGET_WEB
     emscripten_set_main_loop(em_main_loop, 0, 0);

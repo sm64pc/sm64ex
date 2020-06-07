@@ -1748,17 +1748,17 @@ void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi) {
         0x05200200,
         0x03200200
     };
-    for (size_t i = 0; i < sizeof(precomp_shaders) / sizeof(uint32_t); i++) {
+
+    for (size_t i = 0; i < sizeof(precomp_shaders) / sizeof(uint32_t); i++)
         gfx_lookup_or_create_shader_program(precomp_shaders[i]);
-    }
-    #ifdef EXTERNAL_DATA
-    // preload all textures if needed
-    if (configPrecacheRes) {
-        printf("Precaching textures\n");
-        fs_walk(FS_TEXTUREDIR, preload_texture, NULL, true);
-    }
-    #endif
 }
+
+#ifdef EXTERNAL_DATA
+void gfx_precache_textures(void) {
+    // preload all textures
+    fs_walk(FS_TEXTUREDIR, preload_texture, NULL, true);
+}
+#endif
 
 void gfx_start_frame(void) {
     gfx_wapi->handle_events();

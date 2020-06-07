@@ -54,8 +54,8 @@ void parse_cli_opts(int argc, char* argv[]) {
         else if (strcmp(argv[i], "--configfile") == 0 && (i + 1) < argc)
             arg_string("--configfile", argv[++i], gCLIOpts.ConfigFile);
 
-        else if (strcmp(argv[i], "--datapath") == 0 && (i + 1) < argc)
-            arg_string("--datapath", argv[++i], gCLIOpts.DataPath);
+        else if (strcmp(argv[i], "--gamedir") == 0 && (i + 1) < argc)
+            arg_string("--gamedir", argv[++i], gCLIOpts.GameDir);
 
         else if (strcmp(argv[i], "--savepath") == 0 && (i + 1) < argc)
             arg_string("--savepath", argv[++i], gCLIOpts.SavePath);
