@@ -40,6 +40,7 @@ static PFNMGLFOGCOORDPOINTERPROC mglFogCoordPointer = NULL;
 #define GL_FOG_COORD 0x8451
 #define GL_FOG_COORD_ARRAY 0x8457
 
+#include "../platform.h"
 #include "gfx_cc.h"
 #include "gfx_rendering_api.h"
 #include "macros.h"

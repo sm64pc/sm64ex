@@ -33,6 +33,7 @@
 
 #endif
 
+#include "../platform.h"
 #include "gfx_cc.h"
 #include "gfx_rendering_api.h"
 
