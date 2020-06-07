@@ -2,10 +2,9 @@
 #include <stdio.h>
 #include <time.h>
 #include "course_table.h"
-#include "pc/ini.h"
 #include "pc/platform.h"
+#include "pc/ini.h"
 
-#define FILENAME_FORMAT "%s\\sm64_save_file_%d.sav"
 #define NUM_COURSES 15
 #define NUM_BONUS_COURSES 10
 #define NUM_FLAGS 21
@@ -78,20 +77,17 @@ static s32 write_text_save(s32 fileIndex) {
     FILE* file;
     struct SaveFile *savedata;
     struct MainMenuSaveData *menudata;
-    char filename[SYS_MAX_PATH] = { 0 };
-    char value[SYS_MAX_PATH] = { 0 };
+    char path[SYS_MAX_PATH] = { 0 };
+    char value[32] = { 0 };
     u32 i, bit, flags, coins, stars, starFlags;
 
-    /* Define savefile's name */
-    if (snprintf(filename, sizeof(filename), FILENAME_FORMAT, sys_save_path(), fileIndex) < 0)
-        return -1;
-
-    file = fopen(filename, "wt");
+    snprintf(path, sizeof(path), "%s\\sm64_save_file_%d.sav", sys_save_path(), fileIndex);
+    file = fopen(path, "wt");
     if (file == NULL) {
+        printf("Savefile '%s' not found!\n", path);
         return -1;
-    } else {
-        printf("Saving updated progress to '%s'\n", filename);
-    }
+    } else
+        printf("Saving updated progress to '%s'\n", path);
 
     fprintf(file, "# Super Mario 64 save file\n");
     fprintf(file, "# Comment starts with #\n");
@@ -204,24 +200,22 @@ static s32 write_text_save(s32 fileIndex) {
  * Read gSaveBuffer data from a text-based savefile.
  */
 static s32 read_text_save(s32 fileIndex) {
-    char filename[SYS_MAX_PATH] = { 0 };
-    char temp[SYS_MAX_PATH] = { 0 };
+    char path[SYS_MAX_PATH] = { 0 };
+    char temp[32] = { 0 };
     const char *value;
     ini_t *savedata;
     
     u32 i, flag, coins, stars, starFlags;
     u32 capArea;
     
-    /* Define savefile's name */
-    if (snprintf(filename, sizeof(filename), FILENAME_FORMAT, sys_save_path(), fileIndex) < 0)
-        return -1;
+    snprintf(path, sizeof(path), "%s\\sm64_save_file_%d.sav", sys_save_path(), fileIndex);
 
-    savedata = ini_load(filename);
+    savedata = ini_load(path);
     if (savedata == NULL) {
-        printf("Savefile '%s' not found!\n", filename);
+        printf("Savefile '%s' not found!\n", path);
         return -1;
     } else {
-        printf("Loading savefile from '%s'\n", filename);
+        printf("Loading savefile from '%s'\n", path);
     }
 
     ini_sget(savedata, "menu", "coin_score_age", "%d",
