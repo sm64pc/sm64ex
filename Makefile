@@ -75,9 +75,9 @@ else
 endif
 
 ifeq ($(TARGET_WEB),0)
-ifeq ($(HOST_OS),Windows)
-WINDOWS_BUILD := 1
-endif
+  ifeq ($(HOST_OS),Windows)
+    WINDOWS_BUILD := 1
+  endif
 endif
 
 # MXE overrides
@@ -96,8 +96,6 @@ endif
 
 ifneq ($(TARGET_BITS),0)
   BITS := -m$(TARGET_BITS)
-else
-  BITS :=
 endif
 
 # Release (version) flag defs
@@ -339,10 +337,6 @@ GODDARD_C_FILES := $(foreach dir,$(GODDARD_SRC_DIRS),$(wildcard $(dir)/*.c))
 
 GENERATED_C_FILES := $(BUILD_DIR)/assets/mario_anim_data.c $(BUILD_DIR)/assets/demo_data.c \
   $(addprefix $(BUILD_DIR)/bin/,$(addsuffix _skybox.c,$(notdir $(basename $(wildcard textures/skyboxes/*.png)))))
-
-ifeq ($(WINDOWS_BUILD),0)
-  CXX_FILES :=
-endif
 
 # We need to keep this for now
 # If we're not N64 use below
