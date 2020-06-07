@@ -5,7 +5,7 @@
 #include "pc/ini.h"
 #include "pc/platform.h"
 
-#define FILENAME_FORMAT "%s/save_file_%d.sav"
+#define FILENAME_FORMAT "%s\\sm64_save_file_%d.sav"
 #define NUM_COURSES 15
 #define NUM_BONUS_COURSES 10
 #define NUM_FLAGS 21
@@ -86,9 +86,10 @@ static s32 write_text_save(s32 fileIndex) {
         return -1;
 
     file = fopen(filename, "wt");
-    if (file == NULL)
+    if (file == NULL) {
+        printf("Savefile '%s' not found!\n", path);
         return -1;
-    else
+    } else
         printf("Saving updated progress to '%s'\n", filename);
 
     fprintf(file, "# Super Mario 64 save file\n");
@@ -138,14 +139,26 @@ static s32 write_text_save(s32 fileIndex) {
 
     fprintf(file, "\n[bonus]\n");
     for (i = 0; i < NUM_BONUS_COURSES; i++) {
-        if (i == 0) {
-            stars = save_file_get_star_flags(fileIndex, -1);
-        } else {
-            stars = save_file_get_star_flags(fileIndex, i+14);
-        }
-        starFlags = int_to_bin(stars);
+        char *format;
 
-        fprintf(file, "%s = %d\n", sav_bonus_courses[i], starFlags);
+        if (i == NUM_BONUS_COURSES-1) {
+            // Process Castle Grounds
+            stars = save_file_get_star_flags(fileIndex, -1);
+            format = "%05d";
+        } else if (i == 3) {
+            // Process Princess's Secret Slide
+            stars = save_file_get_star_flags(fileIndex, 18);
+            format = "%02d";
+        } else {
+            // Process bonus courses
+            stars = save_file_get_star_flags(fileIndex, i+15);
+            format = "%d";
+        }
+
+        starFlags = int_to_bin(stars);
+        if (sprintf(value, format, starFlags) < 0)
+            return -1;
+        fprintf(file, "%s = %s\n", sav_bonus_courses[i], value);
     }
 
     fprintf(file, "\n[cap]\n");
@@ -172,10 +185,11 @@ static s32 write_text_save(s32 fileIndex) {
             fprintf(file, "level = %s\n", "ttm");
             break;
         default:
-            fprintf(file, "level = %s\n", "none");
             break;
     }
-    fprintf(file, "area = %d\n", savedata->capArea);
+    if (savedata->capLevel) {
+        fprintf(file, "area = %d\n", savedata->capArea);
+    }
 
     // Backup is nessecary for saving recent progress after gameover
     bcopy(&gSaveBuffer.files[fileIndex][0], &gSaveBuffer.files[fileIndex][1],
@@ -261,7 +275,7 @@ static s32 read_text_save(s32 fileIndex) {
                 save_file_set_star_flags(fileIndex, -1, starFlags);
             } else if (strlen(value) == 2) {
                 // Process Princess's Secret Slide
-                save_file_set_star_flags(fileIndex, COURSE_PSS, starFlags);
+                save_file_set_star_flags(fileIndex, 18, starFlags);
             } else {
                 // Process bonus courses
                 save_file_set_star_flags(fileIndex, i+15, starFlags);
@@ -283,16 +297,13 @@ static s32 read_text_save(s32 fileIndex) {
     value = ini_get(savedata, "cap", "level");
     if (value) {
         if (strcmp(value, "ssl") == 0) {
-            gSaveBuffer.files[fileIndex][0].capLevel = 8; // ssl
+            gSaveBuffer.files[fileIndex][0].capLevel = COURSE_SSL; // ssl
         }
         else if (strcmp(value, "sl") == 0) {
-            gSaveBuffer.files[fileIndex][0].capLevel = 10; // sl
+            gSaveBuffer.files[fileIndex][0].capLevel = COURSE_SL; // sl
         }
         else if (strcmp(value, "ttm") == 0) {
-            gSaveBuffer.files[fileIndex][0].capLevel = 12; // ttm
-        }
-        else if (strcmp(value, "none") == 0) {
-            gSaveBuffer.files[fileIndex][0].capLevel = 0;
+            gSaveBuffer.files[fileIndex][0].capLevel = COURSE_TTM; // ttm
         }
         else {
             printf("Invalid 'cap:level' flag!\n");
