@@ -10,6 +10,8 @@ default: all
 # These options can either be changed by modifying the makefile, or
 # by building with 'make SETTING=value'. 'make clean' may be required.
 
+# Build debug version (default)
+DEBUG ?= 1
 # Version of the game to build
 VERSION ?= us
 # Graphics microcode used
@@ -73,9 +75,9 @@ else
 endif
 
 ifeq ($(TARGET_WEB),0)
-ifeq ($(HOST_OS),Windows)
-WINDOWS_BUILD := 1
-endif
+  ifeq ($(HOST_OS),Windows)
+    WINDOWS_BUILD := 1
+  endif
 endif
 
 # MXE overrides
@@ -94,8 +96,6 @@ endif
 
 ifneq ($(TARGET_BITS),0)
   BITS := -m$(TARGET_BITS)
-else
-  BITS :=
 endif
 
 # Release (version) flag defs
@@ -280,14 +280,10 @@ GODDARD_SRC_DIRS := src/goddard src/goddard/dynlists
 MIPSISET := -mips2
 MIPSBIT := -32
 
-ifeq ($(VERSION),eu)
-  OPT_FLAGS := -O2
-else
-ifeq ($(VERSION),sh)
-  OPT_FLAGS := -O2
+ifeq ($(DEBUG),1)
+  OPT_FLAGS := -g
 else
   OPT_FLAGS := -O2
-endif
 endif
 
 # Set BITS (32/64) to compile for
@@ -296,10 +292,6 @@ OPT_FLAGS += $(BITS)
 ifeq ($(TARGET_WEB),1)
   OPT_FLAGS := -O2 -g4 --source-map-base http://localhost:8080/
 endif
-
-# Use a default opt flag for gcc, then override if RPi
-
-# OPT_FLAGS := -O2 # "Whole-compile optimization flag" Breaks sound on x86.
 
 ifeq ($(TARGET_RPI),1)
 	machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
@@ -345,10 +337,6 @@ GODDARD_C_FILES := $(foreach dir,$(GODDARD_SRC_DIRS),$(wildcard $(dir)/*.c))
 
 GENERATED_C_FILES := $(BUILD_DIR)/assets/mario_anim_data.c $(BUILD_DIR)/assets/demo_data.c \
   $(addprefix $(BUILD_DIR)/bin/,$(addsuffix _skybox.c,$(notdir $(basename $(wildcard textures/skyboxes/*.png)))))
-
-ifeq ($(WINDOWS_BUILD),0)
-  CXX_FILES :=
-endif
 
 # We need to keep this for now
 # If we're not N64 use below
