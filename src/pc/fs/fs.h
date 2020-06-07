@@ -21,8 +21,7 @@
 #define FS_SOUNDDIR "sound"
 
 extern char fs_gamedir[];
-extern char fs_userdir[];
-extern const char *fs_ropaths[];
+extern char fs_writepath[];
 
 // receives the full path
 // should return `true` if traversal should continue
