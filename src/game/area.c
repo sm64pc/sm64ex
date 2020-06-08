@@ -421,4 +421,8 @@ void render_game(void) {
 
     D_8032CE74 = NULL;
     D_8032CE78 = 0;
+
+#ifdef DISCORDRPC
+    discordUpdateRichPresence();
+#endif
 }
