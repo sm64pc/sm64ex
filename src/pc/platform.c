@@ -51,7 +51,10 @@ int sys_strcasecmp(const char *s1, const char *s2) {
 
 const char *sys_file_extension(const char *fname) {
     const char *dot = strrchr(fname, '.');
-    if (!dot || !dot[1]) return NULL;
+    const char *sep = strrchr(fname, '/');
+    if (!sep) sep = strrchr(fname, '\\');
+    if (!dot || !dot[1]) return NULL; // no dot
+    if (dot <= sep + 1) return NULL; // dot is before the last separator or right after it (e.g. /.local)
     return dot + 1;
 }
 
