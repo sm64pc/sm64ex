@@ -20,7 +20,8 @@ int sys_strcasecmp(const char *s1, const char *s2);
 // path stuff
 const char *sys_user_path(void);
 const char *sys_exe_path(void);
-const char *sys_file_extension(const char *fname);
+const char *sys_file_extension(const char *fpath);
+const char *sys_file_name(const char *fpath);
 
 // shows an error message in some way and terminates the game
 void sys_fatal(const char *fmt, ...) __attribute__ ((noreturn));

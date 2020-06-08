@@ -49,13 +49,20 @@ int sys_strcasecmp(const char *s1, const char *s2) {
     return result;
 }
 
-const char *sys_file_extension(const char *fname) {
+const char *sys_file_extension(const char *fpath) {
+    const char *fname = sys_file_name(fpath);
     const char *dot = strrchr(fname, '.');
-    const char *sep = strrchr(fname, '/');
-    if (!sep) sep = strrchr(fname, '\\');
     if (!dot || !dot[1]) return NULL; // no dot
-    if (dot <= sep + 1) return NULL; // dot is before the last separator or right after it (e.g. /.local)
+    if (dot == fname) return NULL; // dot is the first char (e.g. .local)
     return dot + 1;
+}
+
+const char *sys_file_name(const char *fpath) {
+    const char *sep1 = strrchr(fpath, '/');
+    const char *sep2 = strrchr(fpath, '\\');
+    const char *sep = sep1 > sep2 ? sep1 : sep2;
+    if (!sep) return fpath;
+    return sep + 1;
 }
 
 /* this calls a platform-specific impl function after forming the error message */

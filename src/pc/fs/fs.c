@@ -43,8 +43,8 @@ static inline fs_dir_t *fs_find_dir(const char *realpath) {
 }
 
 static int mount_cmp(const void *p1, const void *p2) {
-    const char *s1 = *(const char **)p1;
-    const char *s2 = *(const char **)p2;
+    const char *s1 = sys_file_name(*(const char **)p1);
+    const char *s2 = sys_file_name(*(const char **)p2);
 
     // check if one or both of these are basepacks
     const int plen = strlen(FS_BASEPACK_PREFIX);
