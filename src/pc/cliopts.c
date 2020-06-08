@@ -16,7 +16,7 @@ static void print_help(void) {
     printf("Super Mario 64 PC Port\n");
     printf("%-20s\tEnables the cheat menu.\n", "--cheats");
     printf("%-20s\tSaves the configuration file as CONFIGNAME.\n", "--configfile CONFIGNAME");
-    printf("%-20s\tOverrides the default read-only data path ('!' expands to executable path).\n", "--datapath DATAPATH");
+    printf("%-20s\tSets additional data directory name (only 'res' is used by default).\n", "--gamedir DIRNAME");
     printf("%-20s\tOverrides the default save/config path ('!' expands to executable path).\n", "--savepath SAVEPATH");
     printf("%-20s\tStarts the game in full screen mode.\n", "--fullscreen");
     printf("%-20s\tSkips the Peach and Castle intro when starting a new game.\n", "--skip-intro");
