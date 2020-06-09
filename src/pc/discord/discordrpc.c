@@ -7,12 +7,42 @@
 #include "pc/configfile.h"
 #include "discordrpc.h"
 
+#define DISCORDLIBFILE "libdiscord-rpc"
+
+// Thanks Microsoft for being non posix compliant
+#if defined(_WIN32)
+#include <windows.h>
+#define DISCORDLIBEXT ".dll"
+#define itoa(int, str) itoa(int, str, "10")
+#define dlopen(lib, flag) LoadLibrary(TEXT(lib))
+#define dlerror() ""
+#define dlsym(handle, func) GetProcAddress(handle, func)
+#define dlclose(handle) FreeLibrary(handle)
+#elif defined(__APPLE__)
+#include <dlfcn.h>
+#define DISCORDLIBEXT ".dylib"
+#elif defined(__linux__) || defined(__FreeBSD__) // lets make the bold assumption for FreeBSD
+#include <dlfcn.h>
+#define DISCORDLIBEXT ".so"
+#else
+#error Unknown System
+#endif
+#define DISCORDLIB DISCORDLIBFILE DISCORDLIBEXT
+
 #define DISCORD_APP_ID  "709083908708237342"
 #define DISCORD_UPDATE_RATE 5
 
 time_t lastUpdatedTime;
 
 DiscordRichPresence discordRichPresence;
+bool initd = false;
+
+void* handle;
+
+void (*Discord_Initialize)(const char*, DiscordEventHandlers*, int, const char*);
+void (*Discord_Shutdown)(void);
+void (*Discord_ClearPresence)(void);
+void (*Discord_UpdatePresence)(DiscordEventHandlers*);
 
 extern s16 gCurrCourseNum;
 extern s16 gCurrActNum;
@@ -91,7 +121,7 @@ void convertstring(const u8 *str, char* output)
         switch (output[strPos]) // decide if the next character should be capitalized
         {
             case ' ':
-                if (str[strPos] != 158) printf(stdout, "Unknown Character (%i)\n", str[strPos]); // inform that an unknown char was found
+                if (str[strPos] != 158) fprintf(stdout, "Unknown Character (%i)\n", str[strPos]); // inform that an unknown char was found
             case '-':
                 capitalizeChar = true;
                 break;
@@ -106,6 +136,7 @@ void convertstring(const u8 *str, char* output)
     output[strPos] = '\0';
 }
 
+#ifndef _WIN32
 void reverse(char s[])
 {
     int i, j;
@@ -132,6 +163,7 @@ void itoa(int n, char s[])
     s[i] = '\0';
     reverse(s);
 }
+#endif
 
 void OnReady( const DiscordUser* user )
 {
@@ -142,9 +174,11 @@ void InitializeDiscord()
 {
     DiscordEventHandlers handlers;
     memset(&handlers, 0, sizeof(handlers));
-    handlers.ready          = OnReady;
+    handlers.ready = OnReady;
 
-    Discord_Initialize( DISCORD_APP_ID, &handlers, false, "" );
+    (*Discord_Initialize)(DISCORD_APP_ID, &handlers, false, "");
+
+    initd = true;
 }
 
 void SetDetails()
@@ -247,7 +281,7 @@ void SetLogo()
 
 void discordUpdateRichPresence()
 {   
-    if (!configDiscordRPC) return;
+    if (!configDiscordRPC || !initd) return;
     if (time(NULL) < lastUpdatedTime + DISCORD_UPDATE_RATE) return;
 
     lastUpdatedTime = time(NULL);
@@ -260,13 +294,31 @@ void discordUpdateRichPresence()
 
 void discordShutdown()
 {
-    Discord_Shutdown();
+    if (handle)
+    {
+        (*Discord_ClearPresence)();
+        (*Discord_Shutdown)();
+
+        dlclose(handle);
+    }
+
 };
 
 void discordInit()
 {
     if (configDiscordRPC)
     {
+        handle = dlopen(DISCORDLIB, RTLD_LAZY);
+        if (!handle) {
+            fprintf(stderr, "Unable to load Discord\n%s\n", dlerror());
+            return;
+        }
+
+        Discord_Initialize = dlsym(handle, "Discord_Initialize");
+        Discord_Shutdown = dlsym(handle, "Discord_Shutdown");
+        Discord_ClearPresence = dlsym(handle, "Discord_ClearPresence");
+        Discord_UpdatePresence = dlsym(handle, "Discord_UpdatePresence");
+
         InitializeDiscord();
 
         discordRichPresence.details = stage;
@@ -284,6 +336,6 @@ void discordReset()
     SetState();
     SetDetails();
     SetLogo();
-    Discord_UpdatePresence( &discordRichPresence );
+    (*Discord_UpdatePresence)(&discordRichPresence);
 } 
 

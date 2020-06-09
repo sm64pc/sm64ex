@@ -23,6 +23,10 @@
 
 #include "gfx_dimensions.h"
 
+#ifdef DISCORDRPC
+#include "pc/discord/discordrpc.h"
+#endif
+
 struct SpawnInfo gPlayerSpawnInfos[1];
 struct GraphNode *D_8033A160[0x100];
 struct Area gAreaData[8];

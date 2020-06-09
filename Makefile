@@ -457,12 +457,12 @@ GODDARD_O_FILES := $(foreach file,$(GODDARD_C_FILES),$(BUILD_DIR)/$(file:.c=.o))
 RPC_LIBS :=
 ifeq ($(DISCORDRPC),1)
   ifeq ($(WINDOWS_BUILD),1)
-    RPC_LIBS := src/pc/discord/libs/libdiscord-rpc-win.a
+    RPC_LIBS := src/pc/discord/lib/libdiscord-rpc.dll
   else ifeq ($(OSX_BUILD),1) 
     # needs testing
-    RPC_LIBS := src/pc/discord/libs/libdiscord-rpc-osx.a
+    RPC_LIBS := src/pc/discord/lib/libdiscord-rpc.dylib
   else
-    RPC_LIBS := src/pc/discord/libs/libdiscord-rpc-unix.a
+    RPC_LIBS := src/pc/discord/lib/libdiscord-rpc.so
   endif
 endif
 
@@ -620,6 +620,9 @@ ifeq ($(OSX_BUILD),1)
 LDFLAGS := -lm -framework OpenGL `$(SDLCONFIG) --libs` -no-pie -lpthread `pkg-config --libs libusb-1.0 glfw3 glew`
 else
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(SDLCONFIG) --libs` -no-pie -lpthread
+ifeq ($(DISCORDRPC),1)
+	LDFLAGS += -ldl -Wl,-rpath .
+endif
 endif
 endif # End of LDFLAGS
 
@@ -655,14 +658,14 @@ ZEROTERM = $(PYTHON) $(TOOLS_DIR)/zeroterm.py
 
 all: $(EXE)
 
-ifeq ($(EXTERNAL_DATA),1)
-
 # thank you apple very cool
 ifeq ($(HOST_OS),Darwin)
   CP := gcp
 else
   CP := cp
 endif
+
+ifeq ($(EXTERNAL_DATA),1)
 
 # depend on resources as well
 all: res
@@ -696,6 +699,9 @@ test: $(ROM)
 
 load: $(ROM)
 	$(LOADER) $(LOADER_FLAGS) $<
+
+$(BUILD_DIR)/$(RPC_LIBS):
+	@$(CP) -f $(RPC_LIBS) $(BUILD_DIR)
 
 libultra: $(BUILD_DIR)/libultra.a
 
@@ -956,8 +962,8 @@ $(BUILD_DIR)/%.o: %.s
 
 
 
-$(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(RPC_LIBS)
-	$(LD) -L $(BUILD_DIR) -o $@ $(O_FILES) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(RPC_LIBS) $(LDFLAGS)
+$(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(BUILD_DIR)/$(RPC_LIBS)
+	$(LD) -L $(BUILD_DIR) -o $@ $(O_FILES) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(LDFLAGS)
 
 .PHONY: all clean distclean default diff test load libultra res
 .PRECIOUS: $(BUILD_DIR)/bin/%.elf $(SOUND_BIN_DIR)/%.ctl $(SOUND_BIN_DIR)/%.tbl $(SOUND_SAMPLE_TABLES) $(SOUND_BIN_DIR)/%.s $(BUILD_DIR)/%

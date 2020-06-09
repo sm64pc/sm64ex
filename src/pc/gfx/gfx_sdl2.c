@@ -32,6 +32,10 @@
 
 #include "src/pc/controller/controller_keyboard.h"
 
+#ifdef DISCORDRPC
+#include "pc/discord/discordrpc.h"
+#endif
+
 // TODO: figure out if this shit even works
 #ifdef VERSION_EU
 # define FRAMERATE 25
