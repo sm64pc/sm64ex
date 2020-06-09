@@ -55,6 +55,8 @@ s8 gRedCoinsCollected;
 extern u8 gLastCompletedCourseNum;
 extern u8 gLastCompletedStarNum;
 
+extern u16 configAutosave;
+
 enum DialogBoxState {
     DIALOG_STATE_OPENING,
     DIALOG_STATE_VERTICAL,
@@ -3036,6 +3038,18 @@ s16 render_course_complete_screen(void) {
 
     switch (gDialogBoxState) {
         case DIALOG_STATE_OPENING:
+            if (configAutosave == 2 || configAutosave == 3) {
+                level_set_transition(0, 0);
+                gDialogBoxState = DIALOG_STATE_OPENING;
+                gMenuMode = -1;
+                num = gDialogLineNum;
+                gCourseDoneMenuTimer = 0;
+                gCourseCompleteCoins = 0;
+                gCourseCompleteCoinsEqual = 0;
+                gHudFlash = 0;
+
+                return num;
+            }
             render_course_complete_lvl_info_and_hud_str();
             if (gCourseDoneMenuTimer > 100 && gCourseCompleteCoinsEqual == 1) {
                 gDialogBoxState = DIALOG_STATE_VERTICAL;
