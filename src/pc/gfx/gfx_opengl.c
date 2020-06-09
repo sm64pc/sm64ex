@@ -182,7 +182,11 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
     bool opt_alpha = (shader_id & SHADER_OPT_ALPHA) != 0;
     bool opt_fog = (shader_id & SHADER_OPT_FOG) != 0;
     bool opt_texture_edge = (shader_id & SHADER_OPT_TEXTURE_EDGE) != 0;
+#ifdef USE_GLES
+    bool opt_noise = false;
+#else
     bool opt_noise = (shader_id & SHADER_OPT_NOISE) != 0;
+#endif
 
     bool used_textures[2] = { 0, 0 };
     int num_inputs = 0;
