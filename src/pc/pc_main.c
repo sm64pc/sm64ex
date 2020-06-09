@@ -183,7 +183,7 @@ void main_func(void) {
 #ifdef EXTERNAL_DATA
     // precache data if needed
     if (configPrecacheRes) {
-        printf("precaching data\n");
+        fprintf(stdout, "precaching data\n");
         fflush(stdout);
         gfx_precache_textures();
     }

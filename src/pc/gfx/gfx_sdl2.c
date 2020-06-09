@@ -199,7 +199,7 @@ static void gfx_sdl_init(void) {
 static void gfx_sdl_main_loop(void (*run_one_game_iter)(void)) {
     Uint32 t;
 #ifdef DISCORDRPC
-    discordInit();
+    discord_init();
 #endif
     while (1) {
         t = SDL_GetTicks();
@@ -266,7 +266,7 @@ static void gfx_sdl_handle_events(void) {
                 break;
             case SDL_QUIT:
 #ifdef DISCORDRPC
-                discordShutdown();
+                discord_shutdown();
 #endif
                 game_exit();
                 break;

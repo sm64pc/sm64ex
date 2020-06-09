@@ -2,8 +2,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
+
+#include "macros.h"
 #include "PR/ultratypes.h"
-#include "memory.h"
+#include "game/memory.h"
 #include "pc/configfile.h"
 #include "discordrpc.h"
 
@@ -11,57 +13,57 @@
 
 // Thanks Microsoft for being non posix compliant
 #if defined(_WIN32)
-#include <windows.h>
-#define DISCORDLIBEXT ".dll"
-#define dlopen(lib, flag) LoadLibrary(TEXT(lib))
-#define dlerror() ""
-#define dlsym(handle, func) GetProcAddress(handle, func)
-#define dlclose(handle) FreeLibrary(handle)
+# include <windows.h>
+# define DISCORDLIBEXT ".dll"
+# define dlopen(lib, flag) LoadLibrary(TEXT(lib))
+# define dlerror() ""
+# define dlsym(handle, func) (void *)GetProcAddress(handle, func)
+# define dlclose(handle) FreeLibrary(handle)
 #elif defined(__APPLE__)
-#include <dlfcn.h>
-#define DISCORDLIBEXT ".dylib"
+# include <dlfcn.h>
+# define DISCORDLIBEXT ".dylib"
 #elif defined(__linux__) || defined(__FreeBSD__) // lets make the bold assumption for FreeBSD
-#include <dlfcn.h>
-#define DISCORDLIBEXT ".so"
+# include <dlfcn.h>
+# define DISCORDLIBEXT ".so"
 #else
-#error Unknown System
+# error Unknown System
 #endif
-#define DISCORDLIB DISCORDLIBFILE DISCORDLIBEXT
 
+#define DISCORDLIB DISCORDLIBFILE DISCORDLIBEXT
 #define DISCORD_APP_ID  "709083908708237342"
 #define DISCORD_UPDATE_RATE 5
 
-time_t lastUpdatedTime;
-
-DiscordRichPresence discordRichPresence;
-bool initd = false;
-
-void* handle;
-
-void (*Discord_Initialize)(const char*, DiscordEventHandlers*, int, const char*);
-void (*Discord_Shutdown)(void);
-void (*Discord_ClearPresence)(void);
-void (*Discord_UpdatePresence)(DiscordEventHandlers*);
-
 extern s16 gCurrCourseNum;
 extern s16 gCurrActNum;
-s16 lastCourseNum = -1;
-s16 lastActNum = -1;
-
 extern u8 seg2_course_name_table[];
 extern u8 seg2_act_name_table[];
+
+static time_t lastUpdatedTime;
+
+static DiscordRichPresence discordRichPresence;
+static bool initd = false;
+
+static void* handle;
+
+void (*Discord_Initialize)(const char *, DiscordEventHandlers *, int, const char *);
+void (*Discord_Shutdown)(void);
+void (*Discord_ClearPresence)(void);
+void (*Discord_UpdatePresence)(DiscordRichPresence *);
+
+static s16 lastCourseNum = -1;
+static s16 lastActNum = -1;
 
 #ifdef VERSION_EU
 extern s32 gInGameLanguage;
 #endif
 
-char stage[188];
-char act[188];
+static char stage[188];
+static char act[188];
 
-char smallImageKey[5];
-char largeImageKey[5];
+static char smallImageKey[5];
+static char largeImageKey[5];
 
-char charset[0xFF+1] = {
+static const char charset[0xFF+1] = {
     ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', // 7
     ' ', ' ', 'a', 'b', 'c', 'd', 'e', 'f', // 15
     'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', // 23
@@ -96,31 +98,29 @@ char charset[0xFF+1] = {
     ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '  // 255
 };
 
-void convertstring(const u8 *str, char* output)
-{
+static void convertstring(const u8 *str, char* output) {
     s32 strPos = 0;
     bool capitalizeChar = true;
 
-    while (str[strPos] != 0xFF) 
-    {
-        if (str[strPos] < 0xFF)
-        {
+    while (str[strPos] != 0xFF)  {
+        if (str[strPos] < 0xFF) {
             output[strPos] = charset[str[strPos]];
 
             // if the char is a letter we can capatalize it
-            if (capitalizeChar && 0x0A <= str[strPos] && str[strPos] <= 0x23)
-            {
+            if (capitalizeChar && 0x0A <= str[strPos] && str[strPos] <= 0x23) {
                 output[strPos] -= ('a' - 'A');
                 capitalizeChar = false;
             }
 
+        } else {
+            output[strPos] = ' ';
         }
-        else output[strPos] = ' ';
 
-        switch (output[strPos]) // decide if the next character should be capitalized
-        {
+        // decide if the next character should be capitalized
+        switch (output[strPos]) {
             case ' ':
-                if (str[strPos] != 158) fprintf(stdout, "Unknown Character (%i)\n", str[strPos]); // inform that an unknown char was found
+                if (str[strPos] != 158)
+                    fprintf(stdout, "Unknown Character (%i)\n", str[strPos]); // inform that an unknown char was found
             case '-':
                 capitalizeChar = true;
                 break;
@@ -135,29 +135,24 @@ void convertstring(const u8 *str, char* output)
     output[strPos] = '\0';
 }
 
-void OnReady( const DiscordUser* user )
-{
-    discordReset();
+static void on_ready(UNUSED const DiscordUser* user) {
+    discord_reset();
 }
 
-void InitializeDiscord()
-{
+static void init_discord(void) {
     DiscordEventHandlers handlers;
     memset(&handlers, 0, sizeof(handlers));
-    handlers.ready = OnReady;
+    handlers.ready = on_ready;
 
     Discord_Initialize(DISCORD_APP_ID, &handlers, false, "");
 
     initd = true;
 }
 
-void SetDetails()
-{
-    if (lastCourseNum != gCurrCourseNum)
-    {
+static void set_details(void) {
+    if (lastCourseNum != gCurrCourseNum) {
         // If we are in in Course 0 we are in the castle which doesn't have a string
-        if (gCurrCourseNum)
-        {
+        if (gCurrCourseNum) {
             void **courseNameTbl;
 
 #ifndef VERSION_EU
@@ -178,22 +173,20 @@ void SetDetails()
             u8 *courseName = segmented_to_virtual(courseNameTbl[gCurrCourseNum - 1]);
 
             convertstring(&courseName[3], stage);
+        } else {
+            strcpy(stage, "Peach's Castle");
         }
-        else strcpy(stage, "Peach's Castle");
 
         lastCourseNum = gCurrCourseNum;
     }
 }
 
-void SetState()
-{
-    if (lastActNum != gCurrActNum || lastCourseNum != gCurrCourseNum)
-    {
+static void set_state(void) {
+    if (lastActNum != gCurrActNum || lastCourseNum != gCurrCourseNum) {
         // when exiting a stage the act doesn't get reset
-        if (gCurrActNum && gCurrCourseNum)
-        {
-            if (gCurrCourseNum < 19) // any stage over 19 is a special stage without acts
-            {
+        if (gCurrActNum && gCurrCourseNum) {
+            // any stage over 19 is a special stage without acts
+            if (gCurrCourseNum < 19) {
                 void **actNameTbl;
 #ifndef VERSION_EU
                 actNameTbl = segmented_to_virtual(seg2_act_name_table);
@@ -213,34 +206,29 @@ void SetState()
                 u8 *actName = actName = segmented_to_virtual(actNameTbl[(gCurrCourseNum - 1) * 6 + gCurrActNum - 1]);
 
                 convertstring(actName, act);
-            }
-            else
-            {
+            } else {
                 act[0] = '\0';
                 gCurrActNum = 0;
             }
+        } else { 
+            act[0] = '\0';
         }
-        else act[0] = '\0';
 
         lastActNum = gCurrActNum;
     }
 }
 
-void SetLogo()
-{
+void set_logo(void) {
     if (lastCourseNum)
-    {
         snprintf(largeImageKey, sizeof(largeImageKey), "%d", lastCourseNum);
-    }
-    else strcpy(largeImageKey, "0");
-
+    else 
+        strcpy(largeImageKey, "0");
 
     /*
     if (lastActNum)
-    {
         snprintf(smallImageKey, sizeof(largeImageKey), "%d", lastActNum);
-    }
-    else smallImageKey[0] = '\0';
+    else
+        smallImageKey[0] = '\0';
     */
 
     discordRichPresence.largeImageKey = largeImageKey;
@@ -249,35 +237,28 @@ void SetLogo()
     //discordRichPresence.smallImageText = "";
 }
 
-void discordUpdateRichPresence()
-{   
+void discord_update_rich_presence(void) {
     if (!configDiscordRPC || !initd) return;
     if (time(NULL) < lastUpdatedTime + DISCORD_UPDATE_RATE) return;
 
     lastUpdatedTime = time(NULL);
 
-    SetState();
-    SetDetails();
-    SetLogo();
+    set_state();
+    set_details();
+    set_logo();
     Discord_UpdatePresence(&discordRichPresence);
 }
 
-void discordShutdown()
-{
-    if (handle)
-    {
+void discord_shutdown(void) {
+    if (handle) {
         Discord_ClearPresence();
         Discord_Shutdown();
-
         dlclose(handle);
     }
+}
 
-};
-
-void discordInit()
-{
-    if (configDiscordRPC)
-    {
+void discord_init(void) {
+    if (configDiscordRPC) {
         handle = dlopen(DISCORDLIB, RTLD_LAZY);
         if (!handle) {
             fprintf(stderr, "Unable to load Discord\n%s\n", dlerror());
@@ -289,23 +270,20 @@ void discordInit()
         Discord_ClearPresence = dlsym(handle, "Discord_ClearPresence");
         Discord_UpdatePresence = dlsym(handle, "Discord_UpdatePresence");
 
-        InitializeDiscord();
+        init_discord();
 
         discordRichPresence.details = stage;
         discordRichPresence.state = act;
 
-
         lastUpdatedTime = 0;
     }
-};
+}
 
-void discordReset()
-{
+void discord_reset(void) {
     memset( &discordRichPresence, 0, sizeof( discordRichPresence ) );
 
-    SetState();
-    SetDetails();
-    SetLogo();
-    (*Discord_UpdatePresence)(&discordRichPresence);
-} 
-
+    set_state();
+    set_details();
+    set_logo();
+    Discord_UpdatePresence(&discordRichPresence);
+}
