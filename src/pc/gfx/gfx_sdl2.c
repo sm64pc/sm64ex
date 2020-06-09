@@ -32,6 +32,10 @@
 
 #include "src/pc/controller/controller_keyboard.h"
 
+#ifdef DISCORDRPC
+#include "pc/discord/discordrpc.h"
+#endif
+
 // TODO: figure out if this shit even works
 #ifdef VERSION_EU
 # define FRAMERATE 25
@@ -194,6 +198,9 @@ static void gfx_sdl_init(void) {
 
 static void gfx_sdl_main_loop(void (*run_one_game_iter)(void)) {
     Uint32 t;
+#ifdef DISCORDRPC
+    discordInit();
+#endif
     while (1) {
         t = SDL_GetTicks();
         run_one_game_iter();
@@ -258,6 +265,9 @@ static void gfx_sdl_handle_events(void) {
                 }
                 break;
             case SDL_QUIT:
+#ifdef DISCORDRPC
+                discordShutdown();
+#endif
                 game_exit();
                 break;
         }

@@ -46,6 +46,8 @@ EXT_OPTIONS_MENU ?= 1
 TEXTSAVES ?= 0
 # Load resources from external files
 EXTERNAL_DATA ?= 0
+# Enable Discord Rich Presence
+DISCORDRPC ?= 0
 
 # Various workarounds for weird toolchains
 
@@ -274,6 +276,10 @@ LEVEL_DIRS := $(patsubst levels/%,%,$(dir $(wildcard levels/*/header.h)))
 SRC_DIRS := src src/engine src/game src/audio src/menu src/buffers actors levels bin data assets src/pc src/pc/gfx src/pc/audio src/pc/controller src/pc/fs src/pc/fs/packtypes
 ASM_DIRS :=
 
+ifeq ($(DISCORDRPC),1)
+  SRC_DIRS += src/pc/discord
+endif
+
 BIN_DIRS := bin bin/$(VERSION)
 
 ULTRA_SRC_DIRS := lib/src lib/src/math
@@ -441,6 +447,18 @@ ULTRA_O_FILES := $(foreach file,$(ULTRA_S_FILES),$(BUILD_DIR)/$(file:.s=.o)) \
 
 GODDARD_O_FILES := $(foreach file,$(GODDARD_C_FILES),$(BUILD_DIR)/$(file:.c=.o))
 
+RPC_LIBS :=
+ifeq ($(DISCORDRPC),1)
+  ifeq ($(WINDOWS_BUILD),1)
+    RPC_LIBS := src/pc/discord/lib/libdiscord-rpc.dll
+  else ifeq ($(OSX_BUILD),1) 
+    # needs testing
+    RPC_LIBS := src/pc/discord/lib/libdiscord-rpc.dylib
+  else
+    RPC_LIBS := src/pc/discord/lib/libdiscord-rpc.so
+  endif
+endif
+
 # Automatic dependency files
 DEP_FILES := $(O_FILES:.o=.d) $(ULTRA_O_FILES:.o=.d) $(GODDARD_O_FILES:.o=.d) $(BUILD_DIR)/$(LD_SCRIPT).d
 
@@ -468,7 +486,9 @@ endif
 
 LD := $(CC)
 
-ifeq ($(WINDOWS_BUILD),1)
+ifeq ($(DISCORDRPC),1)
+  LD := $(CXX)
+else ifeq ($(WINDOWS_BUILD),1)
   ifeq ($(CROSS),i686-w64-mingw32.static-) # fixes compilation in MXE on Linux and WSL
     LD := $(CC)
   else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
@@ -527,6 +547,12 @@ endif
 ifeq ($(NODRAWINGDISTANCE),1)
   CC_CHECK += -DNODRAWINGDISTANCE
   CFLAGS += -DNODRAWINGDISTANCE
+endif
+
+# Check for Discord Rich Presence option
+ifeq ($(DISCORDRPC),1)
+CC_CHECK += -DDISCORDRPC
+CFLAGS += -DDISCORDRPC
 endif
 
 # Check for texture fix option
@@ -588,6 +614,9 @@ ifeq ($(OSX_BUILD),1)
 LDFLAGS := -lm -framework OpenGL `$(SDLCONFIG) --libs` -no-pie -lpthread `pkg-config --libs libusb-1.0 glfw3 glew`
 else
 LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(SDLCONFIG) --libs` -no-pie -lpthread
+ifeq ($(DISCORDRPC),1)
+	LDFLAGS += -ldl -Wl,-rpath .
+endif
 endif
 endif # End of LDFLAGS
 
@@ -622,6 +651,13 @@ ZEROTERM = $(PYTHON) $(TOOLS_DIR)/zeroterm.py
 ######################## Targets #############################
 
 all: $(EXE)
+
+# thank you apple very cool
+ifeq ($(HOST_OS),Darwin)
+  CP := gcp
+else
+  CP := cp
+endif
 
 ifeq ($(EXTERNAL_DATA),1)
 
@@ -668,6 +704,9 @@ test: $(ROM)
 
 load: $(ROM)
 	$(LOADER) $(LOADER_FLAGS) $<
+
+$(BUILD_DIR)/$(RPC_LIBS):
+	@$(CP) -f $(RPC_LIBS) $(BUILD_DIR)
 
 libultra: $(BUILD_DIR)/libultra.a
 
@@ -735,11 +774,17 @@ $(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h $(BUILD
 $(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
 $(BUILD_DIR)/src/game/options_menu.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
 O_FILES += $(BUILD_DIR)/bin/eu/translation_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
+ifeq ($(DISCORDRPC),1)
+$(BUILD_DIR)/src/pc/discord/discordrpc.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
+endif
 else
 $(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h
 $(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h
 $(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h
 $(BUILD_DIR)/src/game/options_menu.o: $(BUILD_DIR)/include/text_strings.h
+ifeq ($(DISCORDRPC),1)
+$(BUILD_DIR)/src/pc/discord/discordrpc.o: $(BUILD_DIR)/include/text_strings.h
+endif
 endif
 
 ################################################################
@@ -922,7 +967,7 @@ $(BUILD_DIR)/%.o: %.s
 
 
 
-$(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES)
+$(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(BUILD_DIR)/$(RPC_LIBS)
 	$(LD) -L $(BUILD_DIR) -o $@ $(O_FILES) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(LDFLAGS)
 
 .PHONY: all clean distclean default diff test load libultra res
