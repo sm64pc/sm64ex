@@ -479,14 +479,34 @@ static void gfx_opengl_draw_triangles(float buf_vbo[], size_t buf_vbo_len, size_
     glDrawArrays(GL_TRIANGLES, 0, 3 * buf_vbo_num_tris);
 }
 
+static inline bool gl_get_version(int *major, int *minor, bool *is_es) {
+    const char *vstr = (const char *)glGetString(GL_VERSION);
+    if (!vstr || !vstr[0]) return false;
+
+    if (!strncmp(vstr, "OpenGL ES ", 10)) {
+        vstr += 10;
+        *is_es = true;
+    } else if (!strncmp(vstr, "OpenGL ES-CM ", 13)) {
+        vstr += 13;
+        *is_es = true;
+    }
+
+    return (sscanf(vstr, "%d.%d", major, minor) == 2);
+}
+
 static void gfx_opengl_init(void) {
-#if FOR_WINDOWS
-    glewInit();
+#if FOR_WINDOWS || defined(OSX_BUILD)
+    GLenum err;
+    if ((err = glewInit()) != GLEW_OK)
+        sys_fatal("could not init GLEW:\n%s", glewGetErrorString(err));
 #endif
 
-#ifdef OSX_BUILD
-    glewInit();
-#endif
+    // check GL version
+    int vmajor, vminor;
+    bool is_es = false;
+    gl_get_version(&vmajor, &vminor, &is_es);
+    if (vmajor < 2 && vminor < 1 && !is_es)
+        sys_fatal("OpenGL 2.1+ is required.\nReported version: %s%d.%d", is_es ? "ES" : "", vmajor, vminor);
 
     glGenBuffers(1, &opengl_vbo);
     

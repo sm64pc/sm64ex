@@ -510,7 +510,9 @@ static inline bool gl_get_version(int *major, int *minor, bool *is_es) {
 
 static void gfx_opengl_init(void) {
 #if FOR_WINDOWS || defined(OSX_BUILD)
-    glewInit();
+    GLenum err;
+    if ((err = glewInit()) != GLEW_OK)
+        sys_fatal("could not init GLEW:\n%s", glewGetErrorString(err));
 #endif
 
     // check GL version
@@ -518,7 +520,7 @@ static void gfx_opengl_init(void) {
     bool is_es = false;
     gl_get_version(&vmajor, &vminor, &is_es);
     if (vmajor < 2 && vminor < 2 && !is_es)
-        sys_fatal("OpenGL 1.2+ is required. Reported version: %s%d.%d\n", is_es ? "ES" : "", vmajor, vminor);
+        sys_fatal("OpenGL 1.2+ is required.\nReported version: %s%d.%d", is_es ? "ES" : "", vmajor, vminor);
 
     // check extensions that we need
     const bool supported =
