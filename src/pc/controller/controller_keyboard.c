@@ -113,6 +113,8 @@ struct ControllerAPI controller_keyboard = {
     keyboard_init,
     keyboard_read,
     keyboard_rawkey,
+    NULL,
+    NULL,
     keyboard_bindkeys,
     keyboard_shutdown
 };

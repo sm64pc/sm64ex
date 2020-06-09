@@ -14,6 +14,7 @@
 #include "controller_sdl.h"
 #include "../configfile.h"
 #include "../platform.h"
+#include "../fs/fs.h"
 
 #include "game/level_update.h"
 
@@ -92,15 +93,17 @@ static void controller_sdl_init(void) {
     }
 
     // try loading an external gamecontroller mapping file
-    char gcpath[SYS_MAX_PATH];
-    snprintf(gcpath, sizeof(gcpath), "%s/gamecontrollerdb.txt", sys_save_path());
-    int nummaps = SDL_GameControllerAddMappingsFromFile(gcpath);
-    if (nummaps < 0) {
-        snprintf(gcpath, sizeof(gcpath), "%s/gamecontrollerdb.txt", sys_data_path());
-        nummaps = SDL_GameControllerAddMappingsFromFile(gcpath);
+    uint64_t gcsize = 0;
+    void *gcdata = fs_load_file("gamecontrollerdb.txt", &gcsize);
+    if (gcdata && gcsize) {
+        SDL_RWops *rw = SDL_RWFromConstMem(gcdata, gcsize);
+        if (rw) {
+            int nummaps = SDL_GameControllerAddMappingsFromRW(rw, SDL_TRUE);
+            if (nummaps >= 0)
+                printf("loaded %d controller mappings from 'gamecontrollerdb.txt'\n", nummaps);
+        }
+        free(gcdata);
     }
-    if (nummaps >= 0)
-        printf("loaded %d controller mappings from '%s'\n", nummaps, gcpath);
 
 #ifdef BETTERCAMERA
     if (newcam_mouse == 1)
@@ -111,6 +114,24 @@ static void controller_sdl_init(void) {
     controller_sdl_bind();
 
     init_ok = true;
+}
+
+static SDL_Haptic *controller_sdl_init_haptics(const int joy) {
+    SDL_Haptic *hap = SDL_HapticOpen(joy);
+    if (!hap) return NULL;
+
+    if (SDL_HapticRumbleSupported(hap) != SDL_TRUE) {
+        SDL_HapticClose(hap);
+        return NULL;
+    }
+
+    if (SDL_HapticRumbleInit(hap) != 0) {
+        SDL_HapticClose(hap);
+        return NULL;
+    }
+
+    printf("controller %s has haptics support, rumble enabled\n", SDL_JoystickNameForIndex(joy));
+    return hap;
 }
 
 static void controller_sdl_read(OSContPad *pad) {
@@ -138,15 +159,18 @@ static void controller_sdl_read(OSContPad *pad) {
     SDL_GameControllerUpdate();
 
     if (sdl_cntrl != NULL && !SDL_GameControllerGetAttached(sdl_cntrl)) {
+        SDL_HapticClose(sdl_haptic);
         SDL_GameControllerClose(sdl_cntrl);
         sdl_cntrl = NULL;
+        sdl_haptic = NULL;
     }
+
     if (sdl_cntrl == NULL) {
         for (int i = 0; i < SDL_NumJoysticks(); i++) {
             if (SDL_IsGameController(i)) {
                 sdl_cntrl = SDL_GameControllerOpen(i);
-                sdl_haptic = SDL_HapticOpen(i);
                 if (sdl_cntrl != NULL) {
+                    sdl_haptic = controller_sdl_init_haptics(i);
                     break;
                 }
             }
@@ -220,6 +244,16 @@ static void controller_sdl_read(OSContPad *pad) {
     }
 }
 
+static void controller_sdl_rumble_play(f32 strength, f32 length) {
+    if (sdl_haptic)
+        SDL_HapticRumblePlay(sdl_haptic, strength, (u32)(length * 1000.0f));
+}
+
+static void controller_sdl_rumble_stop(void) {
+    if (sdl_haptic)
+        SDL_HapticRumbleStop(sdl_haptic);
+}
+
 static u32 controller_sdl_rawkey(void) {
     if (last_joybutton != VK_INVALID) {
         const u32 ret = last_joybutton;
@@ -252,42 +286,13 @@ static void controller_sdl_shutdown(void) {
     init_ok = false;
 }
 
-u32 controller_rumble_init(void) {
-    if (SDL_HapticRumbleSupported(sdl_haptic) != SDL_TRUE) {
-        // printf("Controller does not support haptics! %s\n", SDL_GetError());
-        return 1;
-    }
-    if (SDL_HapticRumbleInit(sdl_haptic) != 0) {
-        printf("Unable to initialize rumble! %s\n", SDL_GetError());
-        return 1;
-    }
-    return 0;
-}
-
-
-s32 controller_rumble_play(f32 strength, u32 length) {
-    if (SDL_HapticRumblePlay(sdl_haptic, strength, length) != 0) {
-        printf("Unable to start rumble! %s\n", SDL_GetError());
-        return -1;
-    } else {
-        return 0;
-    }
-}
-
-s32 controller_rumble_stop(void) {
-    if (SDL_HapticRumbleStop(sdl_haptic) != 0) {
-        printf("Unable to stop rumble! %s\n", SDL_GetError());
-        return -1;
-    } else {
-        return 0;
-    }
-}
-
 struct ControllerAPI controller_sdl = {
     VK_BASE_SDL_GAMEPAD,
     controller_sdl_init,
     controller_sdl_read,
     controller_sdl_rawkey,
+    controller_sdl_rumble_play,
+    controller_sdl_rumble_stop,
     controller_sdl_bind,
     controller_sdl_shutdown
 };

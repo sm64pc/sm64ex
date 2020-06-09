@@ -10,6 +10,8 @@ default: all
 # These options can either be changed by modifying the makefile, or
 # by building with 'make SETTING=value'. 'make clean' may be required.
 
+# Build debug version (default)
+DEBUG ?= 1
 # Version of the game to build
 VERSION ?= us
 # Graphics microcode used
@@ -56,6 +58,11 @@ NO_LDIV ?= 0
 
 LEGACY_GL ?= 0
 
+# Misc settings for EXTERNAL_DATA
+
+BASEDIR ?= res
+BASEPACK ?= base.zip
+
 # Automatic settings for PC port(s)
 
 NON_MATCHING := 1
@@ -75,9 +82,9 @@ else
 endif
 
 ifeq ($(TARGET_WEB),0)
-ifeq ($(HOST_OS),Windows)
-WINDOWS_BUILD := 1
-endif
+  ifeq ($(HOST_OS),Windows)
+    WINDOWS_BUILD := 1
+  endif
 endif
 
 # MXE overrides
@@ -96,8 +103,6 @@ endif
 
 ifneq ($(TARGET_BITS),0)
   BITS := -m$(TARGET_BITS)
-else
-  BITS :=
 endif
 
 # Release (version) flag defs
@@ -268,7 +273,7 @@ LEVEL_DIRS := $(patsubst levels/%,%,$(dir $(wildcard levels/*/header.h)))
 # Directories containing source files
 
 # Hi, I'm a PC
-SRC_DIRS := src src/engine src/game src/audio src/menu src/buffers actors levels bin data assets src/pc src/pc/gfx src/pc/audio src/pc/controller
+SRC_DIRS := src src/engine src/game src/audio src/menu src/buffers actors levels bin data assets src/pc src/pc/gfx src/pc/audio src/pc/controller src/pc/fs src/pc/fs/packtypes
 ASM_DIRS :=
 
 ifeq ($(DISCORDRPC),1)
@@ -286,14 +291,10 @@ GODDARD_SRC_DIRS := src/goddard src/goddard/dynlists
 MIPSISET := -mips2
 MIPSBIT := -32
 
-ifeq ($(VERSION),eu)
-  OPT_FLAGS := -O2
-else
-ifeq ($(VERSION),sh)
-  OPT_FLAGS := -O2
+ifeq ($(DEBUG),1)
+  OPT_FLAGS := -g
 else
   OPT_FLAGS := -O2
-endif
 endif
 
 # Set BITS (32/64) to compile for
@@ -302,10 +303,6 @@ OPT_FLAGS += $(BITS)
 ifeq ($(TARGET_WEB),1)
   OPT_FLAGS := -O2 -g4 --source-map-base http://localhost:8080/
 endif
-
-# Use a default opt flag for gcc, then override if RPi
-
-# OPT_FLAGS := -O2 # "Whole-compile optimization flag" Breaks sound on x86.
 
 ifeq ($(TARGET_RPI),1)
 	machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
@@ -351,10 +348,6 @@ GODDARD_C_FILES := $(foreach dir,$(GODDARD_SRC_DIRS),$(wildcard $(dir)/*.c))
 
 GENERATED_C_FILES := $(BUILD_DIR)/assets/mario_anim_data.c $(BUILD_DIR)/assets/demo_data.c \
   $(addprefix $(BUILD_DIR)/bin/,$(addsuffix _skybox.c,$(notdir $(basename $(wildcard textures/skyboxes/*.png)))))
-
-ifeq ($(WINDOWS_BUILD),0)
-  CXX_FILES :=
-endif
 
 # We need to keep this for now
 # If we're not N64 use below
@@ -594,10 +587,11 @@ endif
 
 # Load external textures
 ifeq ($(EXTERNAL_DATA),1)
-  CC_CHECK += -DEXTERNAL_DATA
-  CFLAGS += -DEXTERNAL_DATA
+  CC_CHECK += -DEXTERNAL_DATA -DFS_BASEDIR="\"$(BASEDIR)\""
+  CFLAGS += -DEXTERNAL_DATA -DFS_BASEDIR="\"$(BASEDIR)\""
   # tell skyconv to write names instead of actual texture data and save the split tiles so we can use them later
-  SKYCONV_ARGS := --store-names --write-tiles "$(BUILD_DIR)/textures/skybox_tiles"
+  SKYTILE_DIR := $(BUILD_DIR)/textures/skybox_tiles
+  SKYCONV_ARGS := --store-names --write-tiles "$(SKYTILE_DIR)"
 endif
 
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
@@ -667,20 +661,31 @@ endif
 
 ifeq ($(EXTERNAL_DATA),1)
 
-# depend on resources as well
-all: res
+BASEPACK_PATH := $(BUILD_DIR)/$(BASEDIR)/$(BASEPACK)
+BASEPACK_LST := $(BUILD_DIR)/basepack.lst
 
-# prepares the resource folder for external data
-res: $(EXE)
-	@mkdir -p $(BUILD_DIR)/res/sound
-	@$(CP) -r -f textures/ $(BUILD_DIR)/res/
-	@$(CP) -r -f $(BUILD_DIR)/textures/skybox_tiles/ $(BUILD_DIR)/res/textures/
-	@$(CP) -f $(SOUND_BIN_DIR)/sound_data.ctl $(BUILD_DIR)/res/sound/
-	@$(CP) -f $(SOUND_BIN_DIR)/sound_data.tbl $(BUILD_DIR)/res/sound/
-	@$(CP) -f $(SOUND_BIN_DIR)/sequences.bin $(BUILD_DIR)/res/sound/
-	@$(CP) -f $(SOUND_BIN_DIR)/bank_sets $(BUILD_DIR)/res/sound/
-	@find actors -name \*.png -exec $(CP) --parents {} $(BUILD_DIR)/res/ \;
-	@find levels -name \*.png -exec $(CP) --parents {} $(BUILD_DIR)/res/ \;
+# depend on resources as well
+all: $(BASEPACK_PATH)
+
+# phony target for building resources
+res: $(BASEPACK_PATH)
+
+# prepares the basepack.lst
+$(BASEPACK_LST): $(EXE)
+	@mkdir -p $(BUILD_DIR)/$(BASEDIR)
+	@echo -n > $(BASEPACK_LST)
+	@echo "$(BUILD_DIR)/sound/bank_sets sound/bank_sets" >> $(BASEPACK_LST)
+	@echo "$(BUILD_DIR)/sound/sequences.bin sound/sequences.bin" >> $(BASEPACK_LST)
+	@echo "$(BUILD_DIR)/sound/sound_data.ctl sound/sound_data.ctl" >> $(BASEPACK_LST)
+	@echo "$(BUILD_DIR)/sound/sound_data.tbl sound/sound_data.tbl" >> $(BASEPACK_LST)
+	@$(foreach f, $(wildcard $(SKYTILE_DIR)/*), echo $(f) gfx/$(f:$(BUILD_DIR)/%=%) >> $(BASEPACK_LST);)
+	@find actors -name \*.png -exec echo "{} gfx/{}" >> $(BASEPACK_LST) \;
+	@find levels -name \*.png -exec echo "{} gfx/{}" >> $(BASEPACK_LST) \;
+	@find textures -name \*.png -exec echo "{} gfx/{}" >> $(BASEPACK_LST) \;
+
+# prepares the resource ZIP with base data
+$(BASEPACK_PATH): $(BASEPACK_LST)
+	@$(PYTHON) $(TOOLS_DIR)/mkzip.py $(BASEPACK_LST) $(BASEPACK_PATH)
 
 endif
 

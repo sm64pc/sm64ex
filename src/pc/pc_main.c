@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #ifdef TARGET_WEB
 #include <emscripten.h>
@@ -22,7 +23,9 @@
 #include "cliopts.h"
 #include "configfile.h"
 #include "controller/controller_api.h"
+#include "fs/fs.h"
 
+#include "game/game_init.h"
 #include "game/main.h"
 #include "game/thread6.h"
 
@@ -67,7 +70,7 @@ void send_display_list(struct SPTask *spTask) {
 void produce_one_frame(void) {
     gfx_start_frame();
     game_loop_one_iteration();
-    thread6_rumble_loop();
+    thread6_rumble_loop(NULL);
     
     int samples_left = audio_api->buffered();
     u32 num_audio_samples = samples_left < audio_api->get_desired_buffered() ? 544 : 528;
@@ -153,6 +156,10 @@ void main_func(void) {
     main_pool_init(pool, pool + sizeof(pool) / sizeof(pool[0]));
     gEffectsMemoryPool = mem_pool_init(0x4000, MEMORY_POOL_LEFT);
 
+    const char *gamedir = gCLIOpts.GameDir[0] ? gCLIOpts.GameDir : FS_BASEDIR;
+    const char *userpath = gCLIOpts.SavePath[0] ? gCLIOpts.SavePath : sys_user_path();
+    fs_init(sys_ropaths, gamedir, userpath);
+
     configfile_load(configfile_name());
 
     wm_api = &gfx_sdl;
@@ -170,8 +177,17 @@ void main_func(void) {
     sound_init();
 
     thread5_game_loop(NULL);
-    
+
     inited = true;
+
+#ifdef EXTERNAL_DATA
+    // precache data if needed
+    if (configPrecacheRes) {
+        printf("precaching data\n");
+        fflush(stdout);
+        gfx_precache_textures();
+    }
+#endif
 
 #ifdef TARGET_WEB
     emscripten_set_main_loop(em_main_loop, 0, 0);

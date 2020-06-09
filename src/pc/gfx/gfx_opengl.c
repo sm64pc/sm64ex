@@ -33,6 +33,7 @@
 
 #endif
 
+#include "../platform.h"
 #include "gfx_cc.h"
 #include "gfx_rendering_api.h"
 
@@ -317,7 +318,7 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
         fprintf(stderr, "Vertex shader compilation failed\n");
         glGetShaderInfoLog(vertex_shader, max_length, &max_length, &error_log[0]);
         fprintf(stderr, "%s\n", &error_log[0]);
-        abort();
+        sys_fatal("vertex shader compilation failed (see terminal)");
     }
     
     GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -331,7 +332,7 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
         fprintf(stderr, "Fragment shader compilation failed\n");
         glGetShaderInfoLog(fragment_shader, max_length, &max_length, &error_log[0]);
         fprintf(stderr, "%s\n", &error_log[0]);
-        abort();
+        sys_fatal("fragment shader compilation failed (see terminal)");
     }
     
     GLuint shader_program = glCreateProgram();

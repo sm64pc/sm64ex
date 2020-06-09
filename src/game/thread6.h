@@ -15,5 +15,6 @@ extern void func_sh_8024CA04(void);
 extern void cancel_rumble(void);
 extern void create_thread_6(void);
 extern void rumble_thread_update_vi(void);
+extern void thread6_rumble_loop(void *a0);
 
 #endif // _THREAD_6_H

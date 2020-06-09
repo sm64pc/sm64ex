@@ -26,6 +26,7 @@
 
 #include "../platform.h"
 #include "../configfile.h"
+#include "../fs/fs.h"
 
 #define SUPPORT_CHECK(x) assert(x)
 
@@ -494,6 +495,28 @@ static void import_texture_ci8(int tile) {
 
 #else // EXTERNAL_DATA
 
+static inline void load_texture(const char *fullpath) {
+    int w, h;
+    u64 imgsize = 0;
+    u8 *imgdata = fs_load_file(fullpath, &imgsize);
+    if (!imgdata) {
+        fprintf(stderr, "could not open texture: `%s`\n", fullpath);
+        return;
+    }
+
+    // TODO: implement stbi_callbacks or some shit instead of loading the whole texture
+    u8 *data = stbi_load_from_memory(imgdata, imgsize, &w, &h, NULL, 4);
+    free(imgdata);
+    if (!data) {
+        fprintf(stderr, "could not load texture: `%s`\n", fullpath);
+        return;
+    }
+
+    gfx_rapi->upload_texture(data, w, h);
+    stbi_image_free(data); // don't need this anymore
+}
+
+
 // this is taken straight from n64graphics
 static bool texname_to_texformat(const char *name, u8 *fmt, u8 *siz) {
     static const struct {
@@ -531,7 +554,7 @@ static bool texname_to_texformat(const char *name, u8 *fmt, u8 *siz) {
 // calls import_texture() on every texture in the res folder
 // we can get the format and size from the texture files
 // and then cache them using gfx_texture_cache_lookup
-static bool preload_texture(const char *path) {
+static bool preload_texture(void *user, const char *path) {
     // strip off the extension
     char texname[SYS_MAX_PATH];
     strncpy(texname, path, sizeof(texname));
@@ -546,53 +569,18 @@ static bool preload_texture(const char *path) {
         return true; // just skip it, might be a stray skybox or something
     }
 
-    // strip off the data path
-    const char *datapath = sys_data_path();
-    const unsigned int datalen = strlen(datapath);
-    const char *actualname = (!strncmp(texname, datapath, datalen)) ?
-        texname + datalen + 1 : texname;
-    // skip any separators
-    while (*actualname == '/' || *actualname == '\\') ++actualname;
+    char *actualname = texname;
+    // strip off the prefix // TODO: make a fs_ function for this shit
+    if (!strncmp(FS_TEXTUREDIR "/", actualname, 4)) actualname += 4;
     // this will be stored in the hashtable, so make a copy
     actualname = sys_strdup(actualname);
     assert(actualname);
 
     struct TextureHashmapNode *n;
-    if (!gfx_texture_cache_lookup(0, &n, actualname, fmt, siz)) {
-        // new texture, load it
-        int w, h;
-        u8 *data = stbi_load(path, &w, &h, NULL, 4);
-        if (!data) {
-            fprintf(stderr, "could not load texture: `%s`\n", path);
-            return false;
-        }
-        // upload it
-        gfx_rapi->upload_texture(data, w, h);
-        stbi_image_free(data);
-    }
+    if (!gfx_texture_cache_lookup(0, &n, actualname, fmt, siz))
+        load_texture(path); // new texture, load it
 
     return true;
-}
-
-static inline void load_texture(const char *name) {
-    static char fpath[SYS_MAX_PATH];
-    int w, h;
-    const char *texname = name;
-
-    if (!texname[0]) {
-        fprintf(stderr, "empty texture name at %p\n", texname);
-        return;
-    }
-
-    snprintf(fpath, sizeof(fpath), "%s/%s.png", sys_data_path(), texname);
-    u8 *data = stbi_load(fpath, &w, &h, NULL, 4);
-    if (!data) {
-        fprintf(stderr, "could not load texture: `%s`\n", fpath);
-        return;
-    }
-
-    gfx_rapi->upload_texture(data, w, h);
-    stbi_image_free(data); // don't need this anymore
 }
 
 #endif // EXTERNAL_DATA
@@ -614,7 +602,9 @@ static void import_texture(int tile) {
 #ifdef EXTERNAL_DATA
     // the "texture data" is actually a C string with the path to our texture in it
     // load it from an external image in our data path
-    load_texture((const char*)rdp.loaded_texture[tile].addr);
+    char texname[SYS_MAX_PATH];
+    snprintf(texname, sizeof(texname), FS_TEXTUREDIR "/%s.png", (const char*)rdp.loaded_texture[tile].addr);
+    load_texture(texname);
 #else
     // the texture data is actual texture data
     int t0 = get_time();
@@ -625,7 +615,7 @@ static void import_texture(int tile) {
         else if (siz == G_IM_SIZ_16b) {
             import_texture_rgba16(tile);
         } else {
-            abort();
+            sys_fatal("unsupported RGBA texture size: %u", siz);
         }
     } else if (fmt == G_IM_FMT_IA) {
         if (siz == G_IM_SIZ_4b) {
@@ -635,7 +625,7 @@ static void import_texture(int tile) {
         } else if (siz == G_IM_SIZ_16b) {
             import_texture_ia16(tile);
         } else {
-            abort();
+            sys_fatal("unsupported IA texture size: %u", siz);
         }
     } else if (fmt == G_IM_FMT_CI) {
         if (siz == G_IM_SIZ_4b) {
@@ -643,7 +633,7 @@ static void import_texture(int tile) {
         } else if (siz == G_IM_SIZ_8b) {
             import_texture_ci8(tile);
         } else {
-            abort();
+            sys_fatal("unsupported CI texture size: %u", siz);
         }
     } else if (fmt == G_IM_FMT_I) {
         if (siz == G_IM_SIZ_4b) {
@@ -651,10 +641,10 @@ static void import_texture(int tile) {
         } else if (siz == G_IM_SIZ_8b) {
             import_texture_i8(tile);
         } else {
-            abort();
+            sys_fatal("unsupported I texture size: %u", siz);
         }
     } else {
-        abort();
+        sys_fatal("unsupported texture format: %u", fmt);
     }
     int t1 = get_time();
     //printf("Time diff: %d\n", t1 - t0);
@@ -1758,17 +1748,17 @@ void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi) {
         0x05200200,
         0x03200200
     };
-    for (size_t i = 0; i < sizeof(precomp_shaders) / sizeof(uint32_t); i++) {
+
+    for (size_t i = 0; i < sizeof(precomp_shaders) / sizeof(uint32_t); i++)
         gfx_lookup_or_create_shader_program(precomp_shaders[i]);
-    }
-    #ifdef EXTERNAL_DATA
-    // preload all textures if needed
-    if (configPrecacheRes) {
-        printf("Precaching textures from `%s`\n", sys_data_path());
-        sys_dir_walk(sys_data_path(), preload_texture, true);
-    }
-    #endif
 }
+
+#ifdef EXTERNAL_DATA
+void gfx_precache_textures(void) {
+    // preload all textures
+    fs_walk(FS_TEXTUREDIR, preload_texture, NULL, true);
+}
+#endif
 
 void gfx_start_frame(void) {
     gfx_wapi->handle_events();

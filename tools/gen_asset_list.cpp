@@ -222,7 +222,7 @@ tuple<string, string, vector<string>> compileSoundData(const string& lang) {
 }
 
 int main() {
-    intentional syntax error; // (see comment at top of file)
+    //intentional syntax error; // (see comment at top of file)
     map<string, string> assets;
     map<string, vector<pair<string, int>>> soundAssets;
 

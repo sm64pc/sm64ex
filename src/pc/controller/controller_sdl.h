@@ -7,8 +7,4 @@
 
 extern struct ControllerAPI controller_sdl;
 
-u32 controller_rumble_init(void);
-s32 controller_rumble_play(f32 strength, u32 length);
-s32 controller_rumble_stop(void);
-
 #endif
