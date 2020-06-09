@@ -25,10 +25,10 @@
 #include <SDL2/SDL.h>
 #define GL_GLEXT_PROTOTYPES 1
 
-#ifdef OSX_BUILD
-#include <SDL2/SDL_opengl.h>
-#else
+#ifdef USE_GLES
 #include <SDL2/SDL_opengles2.h>
+#else
+#include <SDL2/SDL_opengl.h>
 #endif
 
 #endif
