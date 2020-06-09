@@ -13,7 +13,6 @@
 #if defined(_WIN32)
 #include <windows.h>
 #define DISCORDLIBEXT ".dll"
-#define itoa(int, str) itoa(int, str, "10")
 #define dlopen(lib, flag) LoadLibrary(TEXT(lib))
 #define dlerror() ""
 #define dlsym(handle, func) GetProcAddress(handle, func)
@@ -136,35 +135,6 @@ void convertstring(const u8 *str, char* output)
     output[strPos] = '\0';
 }
 
-#ifndef _WIN32
-void reverse(char s[])
-{
-    int i, j;
-    char c;
-
-    for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
-        c = s[i];
-        s[i] = s[j];
-        s[j] = c;
-    }
-}
-
-void itoa(int n, char s[])
-{
-    int i, sign;
-
-    if (n < 0)
-    n = -n;
-    i = 0;
-    do {
-        s[i++] = n % 10 + '0';
-    } while ((n /= 10) > 0);
-
-    s[i] = '\0';
-    reverse(s);
-}
-#endif
-
 void OnReady( const DiscordUser* user )
 {
     discordReset();
@@ -260,7 +230,7 @@ void SetLogo()
 {
     if (lastCourseNum)
     {
-        itoa(lastCourseNum, largeImageKey);
+        snprintf(largeImageKey, sizeof(largeImageKey), "%d", lastCourseNum);
     }
     else strcpy(largeImageKey, "0");
 
@@ -268,7 +238,7 @@ void SetLogo()
     /*
     if (lastActNum)
     {
-        itoa(lastActNum, smallImageKey);
+        snprintf(smallImageKey, sizeof(largeImageKey), "%d", lastActNum);
     }
     else smallImageKey[0] = '\0';
     */
