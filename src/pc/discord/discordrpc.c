@@ -176,7 +176,7 @@ void InitializeDiscord()
     memset(&handlers, 0, sizeof(handlers));
     handlers.ready = OnReady;
 
-    (*Discord_Initialize)(DISCORD_APP_ID, &handlers, false, "");
+    Discord_Initialize(DISCORD_APP_ID, &handlers, false, "");
 
     initd = true;
 }
@@ -296,8 +296,8 @@ void discordShutdown()
 {
     if (handle)
     {
-        (*Discord_ClearPresence)();
-        (*Discord_Shutdown)();
+        Discord_ClearPresence();
+        Discord_Shutdown();
 
         dlclose(handle);
     }
