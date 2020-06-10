@@ -4,33 +4,28 @@
 #include <stdbool.h>
 
 #ifndef _LANGUAGE_C
-#define _LANGUAGE_C
+# define _LANGUAGE_C
 #endif
 #include <PR/gbi.h>
 
 #ifdef __MINGW32__
-#define FOR_WINDOWS 1
+# define FOR_WINDOWS 1
 #else
-#define FOR_WINDOWS 0
+# define FOR_WINDOWS 0
 #endif
 
-#if FOR_WINDOWS
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <SDL2/SDL.h>
-#define GL_GLEXT_PROTOTYPES 1
-#include <SDL2/SDL_opengl.h>
+#if FOR_WINDOWS || defined(OSX_BUILD)
+# define GLEW_STATIC
+# include <GL/glew.h>
+#endif
 
-#else
 #include <SDL2/SDL.h>
-#define GL_GLEXT_PROTOTYPES 1
 
+#define GL_GLEXT_PROTOTYPES 1
 #ifdef USE_GLES
-#include <SDL2/SDL_opengles2.h>
+# include <SDL2/SDL_opengles2.h>
 #else
-#include <SDL2/SDL_opengl.h>
-#endif
-
+# include <SDL2/SDL_opengl.h>
 #endif
 
 #include "../platform.h"

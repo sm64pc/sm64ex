@@ -5,21 +5,21 @@
 #include <assert.h>
 
 #ifndef _LANGUAGE_C
-#define _LANGUAGE_C
+# define _LANGUAGE_C
 #endif
 #include <PR/gbi.h>
 
 #ifdef __MINGW32__
-#define FOR_WINDOWS 1
+# define FOR_WINDOWS 1
 #else
-#define FOR_WINDOWS 0
+# define FOR_WINDOWS 0
 #endif
 
 #include <SDL2/SDL.h>
 
 #if FOR_WINDOWS || defined(OSX_BUILD)
-#define GLEW_STATIC
-#include <GL/glew.h>
+# define GLEW_STATIC
+# include <GL/glew.h>
 #endif
 
 #define GL_GLEXT_PROTOTYPES 1
