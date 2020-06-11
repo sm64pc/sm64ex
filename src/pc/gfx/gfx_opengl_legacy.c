@@ -1,4 +1,4 @@
-#ifdef LEGACY_GL
+#ifdef RAPI_GL_LEGACY
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -603,4 +603,4 @@ struct GfxRenderingAPI gfx_opengl_api = {
     gfx_opengl_shutdown
 };
 
-#endif // LEGACY_GL
+#endif // RAPI_GL_LEGACY

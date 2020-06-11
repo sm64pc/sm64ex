@@ -80,6 +80,7 @@ static const u8 optsVideoStr[][32] = {
     { TEXT_OPT_VSYNC },
     { TEXT_OPT_DOUBLE },
     { TEXT_OPT_HUD },
+    { TEXT_OPT_THREEPOINT },
 };
 
 static const u8 optsAudioStr[][32] = {
@@ -122,6 +123,7 @@ static const u8 bindStr[][32] = {
 static const u8 *filterChoices[] = {
     optsVideoStr[2],
     optsVideoStr[3],
+    optsVideoStr[8],
 };
 
 static const u8 *vsyncChoices[] = {

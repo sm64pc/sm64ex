@@ -1,3 +1,5 @@
+#ifdef CAPI_SDL2
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -296,3 +298,5 @@ struct ControllerAPI controller_sdl = {
     controller_sdl_bind,
     controller_sdl_shutdown
 };
+
+#endif // CAPI_SDL2
