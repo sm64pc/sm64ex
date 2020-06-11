@@ -175,15 +175,29 @@ void main_func(void) {
 
     #if defined(RAPI_D3D11)
     rendering_api = &gfx_d3d11_api;
+    # define RAPI_NAME "DirectX 11"
     #elif defined(RAPI_D3D12)
     rendering_api = &gfx_d3d12_api;
+    # define RAPI_NAME "DirectX 12"
     #elif defined(RAPI_GL) || defined(RAPI_GL_LEGACY)
     rendering_api = &gfx_opengl_api;
+    # ifdef USE_GLES
+    #  define RAPI_NAME "OpenGL ES"
+    # else
+    #  define RAPI_NAME "OpenGL"
+    # endif
     #else
     #error No rendering API!
     #endif
 
-    gfx_init(wm_api, rendering_api);
+    char window_title[96] =
+    "Super Mario 64 PC port (" RAPI_NAME ")"
+    #ifdef NIGHTLY
+    " nightly " GIT_HASH
+    #endif
+    ;
+
+    gfx_init(wm_api, rendering_api, window_title);
     wm_api->set_keyboard_callbacks(keyboard_on_key_down, keyboard_on_key_up, keyboard_on_all_keys_up);
 
     if (audio_api == NULL && audio_sdl.init()) 
