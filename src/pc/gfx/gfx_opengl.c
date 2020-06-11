@@ -42,7 +42,7 @@ struct ShaderProgram {
     bool used_textures[2];
     uint8_t num_floats;
     GLint attrib_locations[7];
-    GLint uniform_locations[6];
+    GLint uniform_locations[5];
     uint8_t attrib_sizes[7];
     uint8_t num_attribs;
     bool used_noise;
@@ -67,7 +67,6 @@ static struct GLTexture *opengl_tex[2];
 static int opengl_curtex = 0;
 
 static uint32_t frame_count;
-static uint32_t current_height;
 
 static bool gfx_opengl_z_is_from_0_to_1(void) {
     return false;
@@ -85,10 +84,8 @@ static void gfx_opengl_vertex_array_set_attribs(struct ShaderProgram *prg) {
 }
 
 static inline void gfx_opengl_set_shader_uniforms(struct ShaderProgram *prg) {
-    if (prg->used_noise) {
-        glUniform1i(prg->uniform_locations[4], frame_count);
-        glUniform1i(prg->uniform_locations[5], current_height);
-    }
+    if (prg->used_noise)
+        glUniform1f(prg->uniform_locations[4], (float)frame_count);
 }
 
 static inline void gfx_opengl_set_texture_uniforms(struct ShaderProgram *prg, const int tile) {
@@ -332,8 +329,7 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
     }
 
     if (opt_alpha && opt_noise) {
-        append_line(fs_buf, &fs_len, "uniform int frame_count;");
-        append_line(fs_buf, &fs_len, "uniform int window_height;");
+        append_line(fs_buf, &fs_len, "uniform float frame_count;");
 
         append_line(fs_buf, &fs_len, "float random(in vec3 value) {");
         append_line(fs_buf, &fs_len, "    float random = dot(sin(value), vec3(12.9898, 78.233, 37.719));");
@@ -374,9 +370,8 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
         }
     }
 
-    if (opt_alpha && opt_noise) {
-        append_line(fs_buf, &fs_len, "texel.a *= floor(random(vec3(floor(gl_FragCoord.xy * float(window_height)), float(frame_count))) + 0.5);");
-    }
+    if (opt_alpha && opt_noise) 
+        append_line(fs_buf, &fs_len, "texel.a *= floor(random(floor(vec3(gl_FragCoord.xy, frame_count))) + 0.5);");
 
     if (opt_alpha) {
         append_line(fs_buf, &fs_len, "gl_FragColor = texel;");
@@ -483,7 +478,6 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
 
     if (opt_alpha && opt_noise) {
         prg->uniform_locations[4] = glGetUniformLocation(shader_program, "frame_count");
-        prg->uniform_locations[5] = glGetUniformLocation(shader_program, "window_height");
         prg->used_noise = true;
     } else {
         prg->used_noise = false;
@@ -579,7 +573,6 @@ static void gfx_opengl_set_zmode_decal(bool zmode_decal) {
 
 static void gfx_opengl_set_viewport(int x, int y, int width, int height) {
     glViewport(x, y, width, height);
-    current_height = height;
 }
 
 static void gfx_opengl_set_scissor(int x, int y, int width, int height) {

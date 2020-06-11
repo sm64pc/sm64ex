@@ -1307,9 +1307,9 @@ static void gfx_d3d11_start_frame(void) {
         // No high values, as noise starts to look ugly
         d3d.per_frame_cb_data.noise_frame = 0;
     }
-    float aspect_ratio = (float) d3d.current_width / (float) d3d.current_height;
-    d3d.per_frame_cb_data.noise_scale_x = 120 * aspect_ratio; // 120 = N64 height resolution (240) / 2
-    d3d.per_frame_cb_data.noise_scale_y = 120;
+
+    d3d.per_frame_cb_data.noise_scale_x = (float) d3d.current_width;
+    d3d.per_frame_cb_data.noise_scale_y = (float) d3d.current_height;
 
     D3D11_MAPPED_SUBRESOURCE ms;
     ZeroMemory(&ms, sizeof(D3D11_MAPPED_SUBRESOURCE));
