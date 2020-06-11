@@ -1,0 +1,50 @@
+afIdentifyFD(3)
+===============
+
+NAME
+----
+afIdentifyFD, afIdentifyNamedFD - identify the format of a file descriptor
+
+SYNOPSIS
+--------
+  #include <audiofile.h>
+
+  int afIdenfityFD(int fd);
+  int afIdentifyNamedFD(int fd, const char *path, int *implemented);
+
+PARAMETERS
+----------
+'fd' is a file descriptor to be examined.
+
+'path' is the path to the file to be examined.
+
+'implemented' is a pointer to an integer whose value will be set to 0 or 1
+by `afIdentifyNamedFD`.
+
+RETURN VALUE
+------------
+`afIdentifyFD` and `afIdentifyNamedFD` return an integer value indicating
+the format of the specified file. If the format could not be identified
+or if the file is not a valid audio file, the value `AF_FILE_UNKNOWN`
+is returned.
+
+DESCRIPTION
+-----------
+`afIdentifyFD` and `afIdentifyNamedFD` examine the given file descriptor
+to determine the file's format.
+
+ERRORS
+------
+`afIdentifyFD` and `afIdentifyNamedFD` can produce the following errors:
+
+`AF_BAD_READ`:: A call to `read` failed
+`AF_BAD_WRITE`:: A call to `write` failed.
+`AF_BAD_LSEEK`:: A call to `lseek` failed.
+
+SEE ALSO
+--------
+linkaf:afOpenFile[3]
+
+AUTHOR
+------
+Michael Pruett <michael@68k.org>
