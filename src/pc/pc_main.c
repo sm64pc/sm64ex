@@ -165,6 +165,11 @@ void main_func(void) {
 
     configfile_load(configfile_name());
 
+    if (gCLIOpts.FullScreen == 1)
+        configWindow.fullscreen = true;
+    else if (gCLIOpts.FullScreen == 2)
+        configWindow.fullscreen = false;
+
     #if defined(WAPI_SDL1) || defined(WAPI_SDL2)
     wm_api = &gfx_sdl;
     #elif defined(WAPI_DXGI)

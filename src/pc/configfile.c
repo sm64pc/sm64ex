@@ -6,17 +6,11 @@
 #include <assert.h>
 #include <ctype.h>
 
-#ifdef WAPI_SDL2
-# include <SDL2/SDL.h>
-# define WINDOWPOS_CENTERED SDL_WINDOWPOS_CENTERED
-#else
-# define WINDOWPOS_CENTERED 0
-#endif
-
 #include "platform.h"
 #include "configfile.h"
 #include "cliopts.h"
 #include "gfx/gfx_screen_config.h"
+#include "gfx/gfx_window_manager_api.h"
 #include "controller/controller_api.h"
 #include "fs/fs.h"
 
@@ -45,8 +39,8 @@ struct ConfigOption {
 
 // Video/audio stuff
 ConfigWindow configWindow       = {
-    .x = WINDOWPOS_CENTERED,
-    .y = WINDOWPOS_CENTERED,
+    .x = WAPI_WIN_CENTERPOS,
+    .y = WAPI_WIN_CENTERPOS,
     .w = DESIRED_SCREEN_WIDTH,
     .h = DESIRED_SCREEN_HEIGHT,
     .vsync = 1,
