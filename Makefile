@@ -54,9 +54,16 @@ DISCORDRPC ?= 0
 NO_BZERO_BCOPY ?= 0
 NO_LDIV ?= 0
 
-# Use OpenGL 1.3 renderer
+# Backend selection
 
-LEGACY_GL ?= 0
+# Renderers: GL, GL_LEGACY, D3D11, D3D12
+RENDER_API ?= GL
+# Window managers: SDL2, DXGI (forced if D3D11 or D3D12 in RENDER_API)
+WINDOW_API ?= SDL2
+# Audio backends: SDL2
+AUDIO_API ?= SDL2
+# Controller backends (can have multiple, space separated): SDL2
+CONTROLLER_API ?= SDL2
 
 # Misc settings for EXTERNAL_DATA
 
@@ -205,6 +212,22 @@ COMPARE := 0
 
 ifeq ($(TARGET_WEB),1)
   VERSION_CFLAGS := $(VERSION_CFLAGS) -DTARGET_WEB
+endif
+
+# Check backends
+
+ifneq (,$(filter $(RENDER_API),D3D11 D3D12))
+  ifneq ($(WINDOWS_BUILD),1)
+    $(error DirectX is only supported on Windows)
+  endif
+  ifneq ($(WINDOW_API),DXGI)
+    $(warning DirectX renderers require DXGI, forcing WINDOW_API value)
+    WINDOW_API := DXGI
+  endif
+else
+  ifeq ($(WINDOW_API),DXGI)
+    $(error DXGI can only be used with DirectX renderers)
+  endif
 endif
 
 ################### Universal Dependencies ###################
@@ -515,18 +538,68 @@ endif
 PYTHON := python3
 SDLCONFIG := $(CROSS)sdl2-config
 
+# configure backend flags
+
+BACKEND_CFLAGS := -DRAPI_$(RENDER_API)=1 -DWAPI_$(WINDOW_API)=1 -DAAPI_$(AUDIO_API)=1
+# can have multiple controller APIs
+BACKEND_CFLAGS += $(foreach capi,$(CONTROLLER_API),-DCAPI_$(capi)=1)
+BACKEND_LDFLAGS :=
+SDL2_USED := 0
+
+# for now, it's either SDL+GL or DXGI+DirectX, so choose based on WAPI
+ifeq ($(WINDOW_API),DXGI)
+  DXBITS := `cat $(ENDIAN_BITWIDTH) | tr ' ' '\n' | tail -1`
+  ifeq ($(RENDER_API),D3D11)
+    BACKEND_LDFLAGS += -ld3d11
+  else ifeq ($(RENDER_API),D3D12)
+    BACKEND_LDFLAGS += -ld3d12
+  endif
+  BACKEND_LDFLAGS += -ld3dcompiler -ldxgi -ldxguid
+  BACKEND_LDFLAGS += -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -static
+else ifeq ($(WINDOW_API),SDL2)
+  ifeq ($(WINDOWS_BUILD),1)
+    BACKEND_LDFLAGS += -lglew32 -lglu32 -lopengl32
+  else ifeq ($(TARGET_RPI),1)
+    BACKEND_LDFLAGS += -lGLESv2
+  else ifeq ($(OSX_BUILD),1)
+    BACKEND_LDFLAGS += -framework OpenGL `pkg-config --libs glew`
+  else
+    BACKEND_LDFLAGS += -lGL
+  endif
+  SDL_USED := 2
+endif
+
+ifeq ($(AUDIO_API),SDL2)
+  SDL_USED := 2
+endif
+
+ifneq (,$(findstring SDL,$(CONTROLLER_API)))
+  SDL_USED := 2
+endif
+
+# SDL can be used by different systems, so we consolidate all of that shit into this
+ifeq ($(SDL_USED),2)
+  BACKEND_CFLAGS += -DHAVE_SDL2=1 `$(SDLCONFIG) --cflags`
+  ifeq ($(WINDOWS_BUILD),1)
+    BACKEND_LDFLAGS += `$(SDLCONFIG) --static-libs` -lsetupapi -luser32 -limm32 -lOle32 -loleaut32 -lshell32 -lwinmm -lversion
+  else
+    BACKEND_LDFLAGS += `$(SDLCONFIG) --libs`
+  endif
+endif
+
 ifeq ($(WINDOWS_BUILD),1)
-CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags` -DUSE_SDL=2
-CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags` -DUSE_SDL=2
+  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS)
+  CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(BACKEND_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv
 
 else ifeq ($(TARGET_WEB),1)
-CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
-CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv -s USE_SDL=2
+  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
+  CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(BACKEND_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv -s USE_SDL=2
 
 # Linux / Other builds below
 else
-CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags` -DUSE_SDL=2
-CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags` -DUSE_SDL=2
+  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS)
+  CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(BACKEND_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv
+
 endif
 
 # Check for enhancement options
@@ -598,26 +671,28 @@ ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
 
 ifeq ($(TARGET_WEB),1)
 LDFLAGS := -lm -lGL -lSDL2 -no-pie -s TOTAL_MEMORY=20MB -g4 --source-map-base http://localhost:8080/ -s "EXTRA_EXPORTED_RUNTIME_METHODS=['callMain']"
+
 else ifeq ($(WINDOWS_BUILD),1)
-  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -static
+  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread $(BACKEND_LDFLAGS) -static
   ifeq ($(CROSS),)
     LDFLAGS += -no-pie
   endif
   ifeq ($(WINDOWS_CONSOLE),1)
     LDFLAGS += -mconsole
   endif
+
 else ifeq ($(TARGET_RPI),1)
-# Linux / Other builds below
-LDFLAGS := $(OPT_FLAGS) -lm -lGLESv2 `$(SDLCONFIG) --libs` -no-pie
+  LDFLAGS := $(OPT_FLAGS) -lm $(BACKEND_LDFLAGS) -no-pie
+
+else ifeq ($(OSX_BUILD),1)
+  LDFLAGS := -lm $(BACKEND_LDFLAGS) -no-pie -lpthread
+
 else
-ifeq ($(OSX_BUILD),1)
-LDFLAGS := -lm -framework OpenGL `$(SDLCONFIG) --libs` -no-pie -lpthread `pkg-config --libs libusb-1.0 glfw3 glew`
-else
-LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(SDLCONFIG) --libs` -no-pie -lpthread
-ifeq ($(DISCORDRPC),1)
-	LDFLAGS += -ldl -Wl,-rpath .
-endif
-endif
+  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm $(BACKEND_LDFLAGS) -no-pie -lpthread
+  ifeq ($(DISCORDRPC),1)
+    LDFLAGS += -ldl -Wl,-rpath .
+  endif
+
 endif # End of LDFLAGS
 
 # Prevent a crash with -sopt

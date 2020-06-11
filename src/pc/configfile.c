@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <ctype.h>
 
-#if USE_SDL == 2
+#ifdef WAPI_SDL2
 # include <SDL2/SDL.h>
 # define WINDOWPOS_CENTERED SDL_WINDOWPOS_CENTERED
 #else
