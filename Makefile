@@ -553,6 +553,7 @@ ifeq ($(WINDOW_API),DXGI)
     BACKEND_LDFLAGS += -ld3d11
   else ifeq ($(RENDER_API),D3D12)
     BACKEND_LDFLAGS += -ld3d12
+    BACKEND_CFLAGS += -Iinclude/dxsdk
   endif
   BACKEND_LDFLAGS += -ld3dcompiler -ldxgi -ldxguid
   BACKEND_LDFLAGS += -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -static

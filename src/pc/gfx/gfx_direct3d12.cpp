@@ -23,10 +23,10 @@
 #include <rpcndr.h>
 #include <initguid.h>
 
-#include "dxsdk/dxgi.h"
-#include "dxsdk/dxgi1_4.h"
-#include "dxsdk/d3d12.h"
-#include "dxsdk/d3dcompiler.h"
+#include <dxgi.h>
+#include <dxgi1_4.h>
+#include <d3d12.h>
+#include <d3dcompiler.h>
 
 #include "dxsdk/d3dx12.h"
 
@@ -36,8 +36,10 @@
 #include <PR/gbi.h>
 
 extern "C" {
+#include "../cliopts.h"
 #include "../configfile.h"
 #include "../platform.h"
+#include "../pc_main.h"
 }
 
 #include "gfx_cc.h"
@@ -790,11 +792,19 @@ static void onkeyup(WPARAM w_param, LPARAM l_param) {
 
 LRESULT CALLBACK gfx_d3d12_dxgi_wnd_proc(HWND h_wnd, UINT message, WPARAM w_param, LPARAM l_param) {
     switch (message) {
+        case WM_MOVE: {
+            const int x = (short)LOWORD(l_param);
+            const int y = (short)HIWORD(l_param);
+            configWindow.x = (x < 0) ? 0 : x;
+            configWindow.y = (y < 0) ? 0 : y;
+            break;
+        }
         case WM_SIZE:
             gfx_d3d12_dxgi_on_resize();
             break;
         case WM_DESTROY:
-            exit(0);
+            game_exit();
+            break;
         case WM_PAINT:
             if (d3d.run_one_game_iter != nullptr)
                 d3d.run_one_game_iter();
