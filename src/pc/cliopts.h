@@ -4,6 +4,9 @@
 struct PCCLIOptions  {
     unsigned int SkipIntro;
     unsigned int FullScreen;
+    unsigned int LevelSelect;
+    unsigned int Profiler;
+    unsigned int Debug;
     char ConfigFile[1024];
 };
 

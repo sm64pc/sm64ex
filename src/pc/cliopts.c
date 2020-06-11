@@ -15,6 +15,9 @@ static void print_help(void) {
     printf("%-20s\tSkips the Peach and Castle intro when starting a new game.\n", "--skip-intro");
     printf("%-20s\tStarts the game in full screen mode.\n", "--fullscreen");
     printf("%-20s\tStarts the game in windowed mode.\n", "--windowed");
+    printf("%-20s\tOffers the user a level select menu.\n", "--levelselect");
+    printf("%-20s\tEnables profiler bar on the screen bottom.\n", "--profiler");
+    printf("%-20s\tEnables simple debug display.\n", "--debug");
     printf("%-20s\tSaves the configuration file as CONFIGNAME.\n", "--configfile CONFIGNAME");
 }
 
@@ -35,6 +38,15 @@ void parse_cli_opts(int argc, char* argv[]) {
 
         else if (strcmp(argv[i], "--cheats") == 0) // Enable cheats menu
             Cheats.EnableCheats = true;
+
+        else if (strcmp(argv[i], "--levelselect") == 0) // Open game in fullscreen
+            gCLIOpts.LevelSelect = 1;
+
+        else if (strcmp(argv[i], "--profiler") == 0) // Open game in fullscreen
+            gCLIOpts.Profiler = 1;
+
+        else if (strcmp(argv[i], "--debug") == 0) // Open game in fullscreen
+            gCLIOpts.Debug = 1;
 
         // Print help
         else if (strcmp(argv[i], "--help") == 0) {

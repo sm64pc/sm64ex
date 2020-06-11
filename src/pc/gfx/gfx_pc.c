@@ -295,6 +295,7 @@ static void import_texture_rgba16(int tile) {
     uint8_t rgba32_buf[8192];
     
     for (uint32_t i = 0; i < rdp.loaded_texture[tile].size_bytes / 2; i++) {
+        if (!rdp.loaded_texture[tile].addr) { memset(rgba32_buf, 0, sizeof rgba32_buf); continue; }
         uint16_t col16 = (rdp.loaded_texture[tile].addr[2 * i] << 8) | rdp.loaded_texture[tile].addr[2 * i + 1];
         uint8_t a = col16 & 1;
         uint8_t r = col16 >> 11;
