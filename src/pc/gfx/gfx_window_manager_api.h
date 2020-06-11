@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+// special value for window position that signifies centered position
+#define WAPI_WIN_CENTERPOS 0xFFFFFFFF
+
 typedef bool (*kb_callback_t)(int code);
 
 struct GfxWindowManagerAPI {

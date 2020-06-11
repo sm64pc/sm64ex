@@ -15,8 +15,10 @@
 #include <d3dcompiler.h>
 
 extern "C" {
+#include "../cliopts.h"
 #include "../configfile.h"
 #include "../platform.h"
+#include "../pc_main.h"
 }
 
 #ifndef _LANGUAGE_C
@@ -142,8 +144,11 @@ static uint8_t sync_interval;
 static RECT last_window_rect;
 static bool is_full_screen, last_maximized_state;
 
-static void toggle_borderless_window_full_screen() {
+static void toggle_borderless_window_full_screen(void) {
     if (is_full_screen) {
+        // set this right away so the fucking wndproc doesn't bother with anything stupid
+        is_full_screen = false;
+
         RECT r = last_window_rect;
 
         // Set in window mode with the last saved position and size
@@ -156,9 +161,10 @@ static void toggle_borderless_window_full_screen() {
             SetWindowPos(h_wnd, NULL, r.left, r.top, r.right - r.left, r.bottom - r.top, SWP_FRAMECHANGED);
             ShowWindow(h_wnd, SW_RESTORE);
         }
-
-        is_full_screen = false;
     } else {
+        // set this right away so the fucking wndproc doesn't bother with anything stupid
+        is_full_screen = true;
+
         // Save if window is maximized or not
         WINDOWPLACEMENT window_placement;
         window_placement.length = sizeof(WINDOWPLACEMENT);
@@ -167,6 +173,10 @@ static void toggle_borderless_window_full_screen() {
 
         // Save window position and size if the window is not maximized
         GetWindowRect(h_wnd, &last_window_rect);
+        configWindow.x = last_window_rect.left;
+        configWindow.y = last_window_rect.top;
+        configWindow.w = last_window_rect.right - last_window_rect.left;
+        configWindow.h = last_window_rect.bottom - last_window_rect.top;
 
         // Get in which monitor the window is
         HMONITOR h_monitor = MonitorFromWindow(h_wnd, MONITOR_DEFAULTTONEAREST);
@@ -180,8 +190,6 @@ static void toggle_borderless_window_full_screen() {
         // Set borderless full screen to that monitor
         SetWindowLongPtr(h_wnd, GWL_STYLE, WS_VISIBLE | WS_POPUP);
         SetWindowPos(h_wnd, HWND_TOP, r.left, r.top, r.right - r.left, r.bottom - r.top, SWP_FRAMECHANGED);
-
-        is_full_screen = true;
     }
 }
 
@@ -250,6 +258,20 @@ static void create_render_target_views(uint32_t width, uint32_t height) {
     d3d.current_height = height;
 }
 
+static void update_screen_settings(void) {
+    if (configWindow.fullscreen != is_full_screen)
+        toggle_borderless_window_full_screen();
+    if (!is_full_screen) {
+        const int screen_width = GetSystemMetrics(SM_CXSCREEN);
+        const int screen_height = GetSystemMetrics(SM_CYSCREEN);
+        const int xpos = (configWindow.x == WAPI_WIN_CENTERPOS) ? (screen_width - configWindow.w) * 0.5 : configWindow.x;
+        const int ypos = (configWindow.y == WAPI_WIN_CENTERPOS) ? (screen_height - configWindow.h) * 0.5 : configWindow.y;
+        RECT wr = { xpos, ypos, xpos + (int)configWindow.w, ypos + (int)configWindow.h };
+        AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);
+        SetWindowPos(h_wnd, NULL, wr.left, wr.top, wr.right - wr.left, wr.bottom - wr.top, SWP_NOACTIVATE | SWP_NOZORDER);
+    }
+}
+
 static void calculate_sync_interval() {
     const POINT ptZero = { 0, 0 };
     HMONITOR h_monitor = MonitorFromPoint(ptZero, MONITOR_DEFAULTTOPRIMARY);
@@ -278,10 +300,24 @@ static void calculate_sync_interval() {
 
 LRESULT CALLBACK gfx_d3d11_dxgi_wnd_proc(HWND h_wnd, UINT message, WPARAM w_param, LPARAM l_param) {
     switch (message) {
+        case WM_MOVE:
+            if (!is_full_screen) {
+                const int x = (short)LOWORD(l_param);
+                const int y = (short)HIWORD(l_param);
+                configWindow.x = (x < 0) ? 0 : x;
+                configWindow.y = (y < 0) ? 0 : y;
+            }
+            break;
         case WM_SIZE: {
             RECT rect;
             GetClientRect(h_wnd, &rect);
-            create_render_target_views(rect.right - rect.left, rect.bottom - rect.top);
+            const int w = rect.right - rect.left;
+            const int h = rect.bottom - rect.top;
+            if (!is_full_screen) {
+                configWindow.w = w;
+                configWindow.h = h;
+            }
+            create_render_target_views(w, h);
             break;
         }
         case WM_EXITSIZEMOVE: {
@@ -304,7 +340,7 @@ LRESULT CALLBACK gfx_d3d11_dxgi_wnd_proc(HWND h_wnd, UINT message, WPARAM w_para
 #if DEBUG_D3D
             d3d.debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 #endif
-            exit(0);
+            game_exit();
             break;
         }
         case WM_ACTIVATEAPP: {
@@ -333,11 +369,29 @@ LRESULT CALLBACK gfx_d3d11_dxgi_wnd_proc(HWND h_wnd, UINT message, WPARAM w_para
             }
             break;
         }
-        default: {
-            return DefWindowProcW(h_wnd, message, w_param, l_param);
-        }
+        default:
+            break;
     }
-    return 0;
+
+    // check if we should change size or fullscreen state
+
+    if (configWindow.reset) {
+        last_maximized_state = false;
+        configWindow.reset = false;
+        configWindow.x = WAPI_WIN_CENTERPOS;
+        configWindow.y = WAPI_WIN_CENTERPOS;
+        configWindow.w = DESIRED_SCREEN_WIDTH;
+        configWindow.h = DESIRED_SCREEN_HEIGHT;
+        configWindow.fullscreen = false;
+        configWindow.settings_changed = true;
+    }
+
+    if (configWindow.settings_changed) {
+        configWindow.settings_changed = false;
+        update_screen_settings();
+    }
+
+    return DefWindowProcW(h_wnd, message, w_param, l_param);
 }
 
 static void gfx_d3d11_dxgi_init(const char *window_title) {
@@ -375,12 +429,12 @@ static void gfx_d3d11_dxgi_init(const char *window_title) {
 
     is_full_screen = false;
 
-    // Center window
+    // Center window if the current position in the config is set to auto, otherwise use that position
 
     int screen_width = GetSystemMetrics(SM_CXSCREEN);
     int screen_height = GetSystemMetrics(SM_CYSCREEN);
-    int xPos = (screen_width - wr.right) * 0.5;
-    int yPos = (screen_height - wr.bottom) * 0.5;
+    int xPos = (configWindow.x == WAPI_WIN_CENTERPOS) ? (screen_width - wr.right) * 0.5 : configWindow.x;
+    int yPos = (configWindow.y == WAPI_WIN_CENTERPOS) ? (screen_height - wr.bottom) * 0.5 : configWindow.y;
     SetWindowPos(h_wnd, 0, xPos, yPos, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 
     // Check if a lower latency flip model can be used
@@ -586,9 +640,12 @@ static void gfx_d3d11_dxgi_init(const char *window_title) {
 
     calculate_sync_interval();
 
-    // Show the window
+    // Reshape the window according to the config values
 
-    ShowWindow(h_wnd, SW_SHOW);
+    update_screen_settings();
+
+    if (!is_full_screen)
+        ShowWindow(h_wnd, SW_SHOW);
 }
 
 static void gfx_d3d11_dxgi_shutdown(void) {
