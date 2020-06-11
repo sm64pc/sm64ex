@@ -310,22 +310,22 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
     if (used_textures[0] || used_textures[1]) {
         if (configFiltering == 2) {
             append_line(fs_buf, &fs_len, "#define TEX_OFFSET(off) texture2D(tex, texCoord - (off)/texSize)");
-            append_line(fs_buf, &fs_len, "lowp vec4 filter3point(in sampler2D tex, in mediump vec2 texCoord, in mediump vec2 texSize) {");
-            append_line(fs_buf, &fs_len, "  mediump vec2 offset = fract(texCoord*texSize - vec2(0.5));");
+            append_line(fs_buf, &fs_len, "vec4 filter3point(in sampler2D tex, in vec2 texCoord, in vec2 texSize) {");
+            append_line(fs_buf, &fs_len, "  vec2 offset = fract(texCoord*texSize - vec2(0.5));");
             append_line(fs_buf, &fs_len, "  offset -= step(1.0, offset.x + offset.y);");
-            append_line(fs_buf, &fs_len, "  lowp vec4 c0 = TEX_OFFSET(offset);");
-            append_line(fs_buf, &fs_len, "  lowp vec4 c1 = TEX_OFFSET(vec2(offset.x - sign(offset.x), offset.y));");
-            append_line(fs_buf, &fs_len, "  lowp vec4 c2 = TEX_OFFSET(vec2(offset.x, offset.y - sign(offset.y)));");
+            append_line(fs_buf, &fs_len, "  vec4 c0 = TEX_OFFSET(offset);");
+            append_line(fs_buf, &fs_len, "  vec4 c1 = TEX_OFFSET(vec2(offset.x - sign(offset.x), offset.y));");
+            append_line(fs_buf, &fs_len, "  vec4 c2 = TEX_OFFSET(vec2(offset.x, offset.y - sign(offset.y)));");
             append_line(fs_buf, &fs_len, "  return c0 + abs(offset.x)*(c1-c0) + abs(offset.y)*(c2-c0);");
             append_line(fs_buf, &fs_len, "}");
-            append_line(fs_buf, &fs_len, "lowp vec4 sampleTex(in sampler2D tex, in mediump vec2 uv, in mediump vec2 texSize, in bool filter) {");
+            append_line(fs_buf, &fs_len, "vec4 sampleTex(in sampler2D tex, in vec2 uv, in vec2 texSize, in bool filter) {");
             append_line(fs_buf, &fs_len, "if (filter)");
             append_line(fs_buf, &fs_len, "return filter3point(tex, uv, texSize);");
             append_line(fs_buf, &fs_len, "else");
             append_line(fs_buf, &fs_len, "return texture2D(tex, uv);");
             append_line(fs_buf, &fs_len, "}");
         } else {
-            append_line(fs_buf, &fs_len, "lowp vec4 sampleTex(in sampler2D tex, in mediump vec2 uv, in mediump vec2 texSize, in bool filter) {");
+            append_line(fs_buf, &fs_len, "vec4 sampleTex(in sampler2D tex, in vec2 uv, in vec2 texSize, in bool filter) {");
             append_line(fs_buf, &fs_len, "return texture2D(tex, uv);");
             append_line(fs_buf, &fs_len, "}");
         }
