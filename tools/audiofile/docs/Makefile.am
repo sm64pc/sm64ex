@@ -57,13 +57,10 @@ dist_man3_MANS = $(DOCS_MAN3) $(DOCS_MAN3_EXTRA)
 ASCIIDOCFLAGS = -arevnumber=$(VERSION) -amansource="Audio File Library"
 A2XFLAGS = $(ASCIIDOCFLAGS) -d manpage -f manpage
 
-%.html: %.txt
+.html: .txt
 	$(ASCIIDOC) $(ASCIIDOCFLAGS) -b html4 -d manpage -f asciidoc.conf $<
 
-%.1: %.1.txt
-	$(A2X) $(A2XFLAGS) --asciidoc-opts="-f asciidoc.conf" $<
-
-%.3: %.3.txt
+.1.3: .1.txt .3.txt
 	$(A2X) $(A2XFLAGS) --asciidoc-opts="-f asciidoc.conf" $<
 
 html: $(DOCS_HTML)

@@ -15,6 +15,8 @@ EXTRA_DIST = \
 
 pkgconfig_DATA = audiofile.pc
 
+ACLOCAL_AMFLAGS = -I m4
+
 dist-hook: audiofile.spec
 	cp audiofile.spec $(distdir)
 
