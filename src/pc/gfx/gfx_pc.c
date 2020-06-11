@@ -1718,18 +1718,7 @@ void gfx_get_dimensions(uint32_t *width, uint32_t *height) {
     gfx_wapi->get_dimensions(width, height);
 }
 
-void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi) {
-    char window_title[96] =
-    #ifndef USE_GLES
-    "Super Mario 64 PC port (OpenGL)"
-    #else
-    "Super Mario 64 PC port (OpenGL_ES2)"
-    #endif
-    #ifdef NIGHTLY
-    " nightly " GIT_HASH
-    #endif
-    ;
-
+void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi, const char *window_title) {
     gfx_wapi = wapi;
     gfx_rapi = rapi;
     gfx_wapi->init(window_title);
