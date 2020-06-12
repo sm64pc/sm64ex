@@ -57,6 +57,7 @@ ConfigWindow configWindow       = {
 };
 unsigned int configFiltering    = 1;          // 0=force nearest, 1=linear, (TODO) 2=three-point
 unsigned int configMasterVolume = MAX_VOLUME; // 0 - MAX_VOLUME
+unsigned int configMusicVolume = 100;
 
 // Keyboard mappings (VK_ values, by default keyboard/gamepad/mouse)
 unsigned int configKeyA[MAX_BINDS]          = { 0x0026,   0x1000,     0x1103     };
@@ -105,6 +106,7 @@ static const struct ConfigOption options[] = {
     {.name = "vsync",                .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.vsync},
     {.name = "texture_filtering",    .type = CONFIG_TYPE_UINT, .uintValue = &configFiltering},
     {.name = "master_volume",        .type = CONFIG_TYPE_UINT, .uintValue = &configMasterVolume},
+    {.name = "music_enabled",        .type = CONFIG_TYPE_UINT, .uintValue = &configMasterVolume},
     {.name = "key_a",                .type = CONFIG_TYPE_BIND, .uintValue = configKeyA},
     {.name = "key_b",                .type = CONFIG_TYPE_BIND, .uintValue = configKeyB},
     {.name = "key_start",            .type = CONFIG_TYPE_BIND, .uintValue = configKeyStart},
