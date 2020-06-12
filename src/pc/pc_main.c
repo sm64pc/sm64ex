@@ -73,6 +73,9 @@ void send_display_list(struct SPTask *spTask) {
 void produce_one_frame(void) {        
 
     gfx_start_frame();
+
+    setBackgroundMusicVolume((s32)configMusicVolume);
+
     game_loop_one_iteration();
     thread6_rumble_loop(NULL);        
 
@@ -87,9 +90,7 @@ void produce_one_frame(void) {
         u32 num_audio_samples = audio_cnt < 2 ? 528 : 544;*/
         create_next_audio_buffer(audio_buffer + i * (num_audio_samples * 2), num_audio_samples);
     }
-    //printf("Audio samples before submitting: %d\n", audio_api->buffered());    
-
-    setBackgroundMusicVolume(configMusicVolume / 100.0);
+    //printf("Audio samples before submitting: %d\n", audio_api->buffered());        
 
     // scale by master volume (0-127)
     const s32 mod = (s32)configMasterVolume;

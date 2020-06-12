@@ -2062,18 +2062,8 @@ void play_dialog_sound(u8 dialogID) {
 #endif
 }
 
-void setBackgroundMusicVolume(f32 volume){
-    bool needsToUpdate = false;
-    for(int i = 0; i < 16; i++){
-        f32 currentVolume = gSequencePlayers[SEQ_PLAYER_LEVEL].channels[i]->volume;
-        if(volume != currentVolume){
-            gSequencePlayers[SEQ_PLAYER_LEVEL].channels[i]->volume = volume;
-            needsToUpdate = true;
-        }
-    }
-    if(needsToUpdate){
-        update_game_sound();        
-    }
+void setBackgroundMusicVolume(s32 volume){
+    func_8031D838(SEQ_PLAYER_LEVEL, 0, volume);
 }
 
 void play_music(u8 player, u16 seqArgs, u16 fadeTimer) {

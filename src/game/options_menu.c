@@ -260,7 +260,7 @@ static struct Option optsVideo[] = {
 
 static struct Option optsAudio[] = {
     DEF_OPT_SCROLL( optsAudioStr[0], &configMasterVolume, 0, MAX_VOLUME, 1 ),
-    DEF_OPT_SCROLL( optsAudioStr[1], &configMusicVolume, 0, 100, 1),
+    DEF_OPT_SCROLL( optsAudioStr[1], &configMusicVolume, 0, MAX_VOLUME, 1),
 };
 
 static struct Option optsCheats[] = {

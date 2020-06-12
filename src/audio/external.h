@@ -37,7 +37,7 @@ void sound_banks_disable(u8 player, u16 bankMask);
 void sound_banks_enable(u8 player, u16 bankMask);
 void func_80320A4C(u8 bankIndex, u8 arg1);
 void play_dialog_sound(u8 dialogID);
-void setBackgroundMusicVolume(f32 volume);
+void setBackgroundMusicVolume(s32 volume);
 void play_music(u8 player, u16 seqArgs, u16 fadeTimer);
 void stop_background_music(u16 seqId);
 void fadeout_background_music(u16 arg0, u16 fadeOut);
