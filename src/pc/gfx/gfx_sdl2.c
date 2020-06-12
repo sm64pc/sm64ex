@@ -224,14 +224,12 @@ static void gfx_sdl_onkeydown(int scancode) {
         configWindow.fullscreen = !configWindow.fullscreen;
     
     for (int i=0; i < MAX_BINDS; i++) {
-        // I don't know why the scancode set in the options menu is one decimal
-        // higher than the actual keybind unless I messed something up when adding
-        // the keybind.
-        // Someone who understands this better than me could probably fix this.
-        if (state[configKeyFullscreen[i] - 1]) {
+        // This is kind of a hack.
+        if (translate_scancode(scancode) == configKeyFullscreen[i]) {
             configWindow.fullscreen = !configWindow.fullscreen;
         }
     }
+
 }
 
 static void gfx_sdl_onkeyup(int scancode) {
