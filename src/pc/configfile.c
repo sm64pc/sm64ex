@@ -100,7 +100,7 @@ static const struct ConfigOption options[] = {
     {.name = "vsync",                .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.vsync},
     {.name = "texture_filtering",    .type = CONFIG_TYPE_UINT, .uintValue = &configFiltering},
     {.name = "master_volume",        .type = CONFIG_TYPE_UINT, .uintValue = &configMasterVolume},
-    {.name = "music_volume",        .type = CONFIG_TYPE_UINT, .uintValue = &configMusicVolume},
+    {.name = "music_volume",         .type = CONFIG_TYPE_UINT, .uintValue = &configMusicVolume},
     {.name = "key_a",                .type = CONFIG_TYPE_BIND, .uintValue = configKeyA},
     {.name = "key_b",                .type = CONFIG_TYPE_BIND, .uintValue = configKeyB},
     {.name = "key_start",            .type = CONFIG_TYPE_BIND, .uintValue = configKeyStart},
