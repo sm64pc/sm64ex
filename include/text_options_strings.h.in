@@ -51,6 +51,8 @@
 #define TEXT_OPT_DOUBLE      _("DOUBLE")
 #define TEXT_RESET_WINDOW    _("RESET WINDOW")
 #define TEXT_OPT_HUD         _("HUD")
+#define TEXT_OPT_THREEPOINT  _("THREE POINT")
+#define TEXT_OPT_APPLY       _("APPLY")
 
 #define TEXT_BIND_A          _("A BUTTON")
 #define TEXT_BIND_B          _("B BUTTON")
@@ -110,6 +112,8 @@
 #define TEXT_OPT_DOUBLE      _("Double")
 #define TEXT_RESET_WINDOW    _("Reset Window")
 #define TEXT_OPT_HUD         _("HUD")
+#define TEXT_OPT_THREEPOINT  _("Three-point")
+#define TEXT_OPT_APPLY       _("Apply")
 
 #define TEXT_BIND_A          _("A Button")
 #define TEXT_BIND_B          _("B Button")
