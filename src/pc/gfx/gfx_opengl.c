@@ -1,4 +1,4 @@
-#ifndef LEGACY_GL
+#ifdef RAPI_GL
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -29,8 +29,11 @@
 #endif
 
 #include "../platform.h"
+#include "../configfile.h"
 #include "gfx_cc.h"
 #include "gfx_rendering_api.h"
+
+#define TEX_CACHE_STEP 512
 
 struct ShaderProgram {
     uint32_t shader_id;
@@ -39,19 +42,31 @@ struct ShaderProgram {
     bool used_textures[2];
     uint8_t num_floats;
     GLint attrib_locations[7];
+    GLint uniform_locations[5];
     uint8_t attrib_sizes[7];
     uint8_t num_attribs;
     bool used_noise;
-    GLint frame_count_location;
-    GLint window_height_location;
+};
+
+struct GLTexture {
+    GLuint gltex;
+    GLfloat size[2];
+    bool filter;
 };
 
 static struct ShaderProgram shader_program_pool[64];
 static uint8_t shader_program_pool_size;
 static GLuint opengl_vbo;
 
+static int tex_cache_size = 0;
+static int num_textures = 0;
+static struct GLTexture *tex_cache = NULL;
+
+static struct ShaderProgram *opengl_prg = NULL;
+static struct GLTexture *opengl_tex[2];
+static int opengl_curtex = 0;
+
 static uint32_t frame_count;
-static uint32_t current_height;
 
 static bool gfx_opengl_z_is_from_0_to_1(void) {
     return false;
@@ -68,25 +83,36 @@ static void gfx_opengl_vertex_array_set_attribs(struct ShaderProgram *prg) {
     }
 }
 
-static void gfx_opengl_set_uniforms(struct ShaderProgram *prg) {
-    if (prg->used_noise) {
-        glUniform1i(prg->frame_count_location, frame_count);
-        glUniform1i(prg->window_height_location, current_height);
+static inline void gfx_opengl_set_shader_uniforms(struct ShaderProgram *prg) {
+    if (prg->used_noise)
+        glUniform1f(prg->uniform_locations[4], (float)frame_count);
+}
+
+static inline void gfx_opengl_set_texture_uniforms(struct ShaderProgram *prg, const int tile) {
+    if (prg->used_textures[tile] && opengl_tex[tile]) {
+        glUniform2f(prg->uniform_locations[tile*2 + 0], opengl_tex[tile]->size[0], opengl_tex[tile]->size[1]);
+        glUniform1i(prg->uniform_locations[tile*2 + 1], opengl_tex[tile]->filter);
     }
 }
 
 static void gfx_opengl_unload_shader(struct ShaderProgram *old_prg) {
     if (old_prg != NULL) {
-        for (int i = 0; i < old_prg->num_attribs; i++) {
+        for (int i = 0; i < old_prg->num_attribs; i++)
             glDisableVertexAttribArray(old_prg->attrib_locations[i]);
-        }
+        if (old_prg == opengl_prg)
+            opengl_prg = NULL;
+    } else {
+        opengl_prg = NULL;
     }
 }
 
 static void gfx_opengl_load_shader(struct ShaderProgram *new_prg) {
+    opengl_prg = new_prg;
     glUseProgram(new_prg->opengl_program_id);
     gfx_opengl_vertex_array_set_attribs(new_prg);
-    gfx_opengl_set_uniforms(new_prg);
+    gfx_opengl_set_shader_uniforms(new_prg);
+    gfx_opengl_set_texture_uniforms(new_prg, 0);
+    gfx_opengl_set_texture_uniforms(new_prg, 1);
 }
 
 static void append_str(char *buf, size_t *len, const char *str) {
@@ -206,7 +232,7 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
     bool color_alpha_same = (shader_id & 0xfff) == ((shader_id >> 12) & 0xfff);
 
     char vs_buf[1024];
-    char fs_buf[1024];
+    char fs_buf[2048];
     size_t vs_len = 0;
     size_t fs_len = 0;
     size_t num_floats = 4;
@@ -265,14 +291,45 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
     }
     if (used_textures[0]) {
         append_line(fs_buf, &fs_len, "uniform sampler2D uTex0;");
+        append_line(fs_buf, &fs_len, "uniform vec2 uTex0Size;");
+        append_line(fs_buf, &fs_len, "uniform bool uTex0Filter;");
     }
     if (used_textures[1]) {
         append_line(fs_buf, &fs_len, "uniform sampler2D uTex1;");
+        append_line(fs_buf, &fs_len, "uniform vec2 uTex1Size;");
+        append_line(fs_buf, &fs_len, "uniform bool uTex1Filter;");
+    }
+
+    // 3 point texture filtering
+    // Original author: ArthurCarvalho
+    // Slightly modified GLSL implementation by twinaphex, mupen64plus-libretro project.
+
+    if (used_textures[0] || used_textures[1]) {
+        if (configFiltering == 2) {
+            append_line(fs_buf, &fs_len, "#define TEX_OFFSET(off) texture2D(tex, texCoord - (off)/texSize)");
+            append_line(fs_buf, &fs_len, "vec4 filter3point(in sampler2D tex, in vec2 texCoord, in vec2 texSize) {");
+            append_line(fs_buf, &fs_len, "  vec2 offset = fract(texCoord*texSize - vec2(0.5));");
+            append_line(fs_buf, &fs_len, "  offset -= step(1.0, offset.x + offset.y);");
+            append_line(fs_buf, &fs_len, "  vec4 c0 = TEX_OFFSET(offset);");
+            append_line(fs_buf, &fs_len, "  vec4 c1 = TEX_OFFSET(vec2(offset.x - sign(offset.x), offset.y));");
+            append_line(fs_buf, &fs_len, "  vec4 c2 = TEX_OFFSET(vec2(offset.x, offset.y - sign(offset.y)));");
+            append_line(fs_buf, &fs_len, "  return c0 + abs(offset.x)*(c1-c0) + abs(offset.y)*(c2-c0);");
+            append_line(fs_buf, &fs_len, "}");
+            append_line(fs_buf, &fs_len, "vec4 sampleTex(in sampler2D tex, in vec2 uv, in vec2 texSize, in bool filter) {");
+            append_line(fs_buf, &fs_len, "if (filter)");
+            append_line(fs_buf, &fs_len, "return filter3point(tex, uv, texSize);");
+            append_line(fs_buf, &fs_len, "else");
+            append_line(fs_buf, &fs_len, "return texture2D(tex, uv);");
+            append_line(fs_buf, &fs_len, "}");
+        } else {
+            append_line(fs_buf, &fs_len, "vec4 sampleTex(in sampler2D tex, in vec2 uv, in vec2 texSize, in bool filter) {");
+            append_line(fs_buf, &fs_len, "return texture2D(tex, uv);");
+            append_line(fs_buf, &fs_len, "}");
+        }
     }
 
     if (opt_alpha && opt_noise) {
-        append_line(fs_buf, &fs_len, "uniform int frame_count;");
-        append_line(fs_buf, &fs_len, "uniform int window_height;");
+        append_line(fs_buf, &fs_len, "uniform float frame_count;");
 
         append_line(fs_buf, &fs_len, "float random(in vec3 value) {");
         append_line(fs_buf, &fs_len, "    float random = dot(sin(value), vec3(12.9898, 78.233, 37.719));");
@@ -283,10 +340,10 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
     append_line(fs_buf, &fs_len, "void main() {");
 
     if (used_textures[0]) {
-        append_line(fs_buf, &fs_len, "vec4 texVal0 = texture2D(uTex0, vTexCoord);");
+        append_line(fs_buf, &fs_len, "vec4 texVal0 = sampleTex(uTex0, vTexCoord, uTex0Size, uTex0Filter);");
     }
     if (used_textures[1]) {
-        append_line(fs_buf, &fs_len, "vec4 texVal1 = texture2D(uTex1, vTexCoord);");
+        append_line(fs_buf, &fs_len, "vec4 texVal1 = sampleTex(uTex1, vTexCoord, uTex1Size, uTex1Filter);");
     }
 
     append_str(fs_buf, &fs_len, opt_alpha ? "vec4 texel = " : "vec3 texel = ");
@@ -313,9 +370,8 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
         }
     }
 
-    if (opt_alpha && opt_noise) {
-        append_line(fs_buf, &fs_len, "texel.a *= floor(random(vec3(floor(gl_FragCoord.xy * float(window_height)), float(frame_count))) + 0.5);");
-    }
+    if (opt_alpha && opt_noise) 
+        append_line(fs_buf, &fs_len, "texel.a *= floor(random(floor(vec3(gl_FragCoord.xy, frame_count))) + 0.5);");
 
     if (opt_alpha) {
         append_line(fs_buf, &fs_len, "gl_FragColor = texel;");
@@ -409,16 +465,19 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
 
     if (used_textures[0]) {
         GLint sampler_location = glGetUniformLocation(shader_program, "uTex0");
+        prg->uniform_locations[0] = glGetUniformLocation(shader_program, "uTex0Size");
+        prg->uniform_locations[1] = glGetUniformLocation(shader_program, "uTex0Filter");
         glUniform1i(sampler_location, 0);
     }
     if (used_textures[1]) {
         GLint sampler_location = glGetUniformLocation(shader_program, "uTex1");
+        prg->uniform_locations[2] = glGetUniformLocation(shader_program, "uTex1Size");
+        prg->uniform_locations[3] = glGetUniformLocation(shader_program, "uTex1Filter");
         glUniform1i(sampler_location, 1);
     }
 
     if (opt_alpha && opt_noise) {
-        prg->frame_count_location = glGetUniformLocation(shader_program, "frame_count");
-        prg->window_height_location = glGetUniformLocation(shader_program, "window_height");
+        prg->uniform_locations[4] = glGetUniformLocation(shader_program, "frame_count");
         prg->used_noise = true;
     } else {
         prg->used_noise = false;
@@ -443,18 +502,30 @@ static void gfx_opengl_shader_get_info(struct ShaderProgram *prg, uint8_t *num_i
 }
 
 static GLuint gfx_opengl_new_texture(void) {
-    GLuint ret;
-    glGenTextures(1, &ret);
-    return ret;
+    if (num_textures >= tex_cache_size) {
+        tex_cache_size += TEX_CACHE_STEP;
+        tex_cache = realloc(tex_cache, sizeof(struct GLTexture) * tex_cache_size);
+        if (!tex_cache) sys_fatal("out of memory allocating texture cache");
+        // invalidate these because they might be pointing to garbage now
+        opengl_tex[0] = NULL;
+        opengl_tex[1] = NULL;
+    }
+    glGenTextures(1, &tex_cache[num_textures].gltex);
+    return num_textures++;
 }
 
 static void gfx_opengl_select_texture(int tile, GLuint texture_id) {
-    glActiveTexture(GL_TEXTURE0 + tile);
-    glBindTexture(GL_TEXTURE_2D, texture_id);
+     opengl_tex[tile] = tex_cache + texture_id;
+     opengl_curtex = tile;
+     glActiveTexture(GL_TEXTURE0 + tile);
+     glBindTexture(GL_TEXTURE_2D, opengl_tex[tile]->gltex);
+     gfx_opengl_set_texture_uniforms(opengl_prg, tile);
 }
 
 static void gfx_opengl_upload_texture(uint8_t *rgba32_buf, int width, int height) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba32_buf);
+    opengl_tex[opengl_curtex]->size[0] = width;
+    opengl_tex[opengl_curtex]->size[1] = height;
 }
 
 static uint32_t gfx_cm_to_opengl(uint32_t val) {
@@ -471,6 +542,11 @@ static void gfx_opengl_set_sampler_parameters(int tile, bool linear_filter, uint
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, gfx_cm_to_opengl(cms));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, gfx_cm_to_opengl(cmt));
+    opengl_curtex = tile;
+    if (opengl_tex[tile]) {
+        opengl_tex[tile]->filter = linear_filter;
+        gfx_opengl_set_texture_uniforms(opengl_prg, tile);
+    }
 }
 
 static void gfx_opengl_set_depth_test(bool depth_test) {
@@ -497,7 +573,6 @@ static void gfx_opengl_set_zmode_decal(bool zmode_decal) {
 
 static void gfx_opengl_set_viewport(int x, int y, int width, int height) {
     glViewport(x, y, width, height);
-    current_height = height;
 }
 
 static void gfx_opengl_set_scissor(int x, int y, int width, int height) {
@@ -539,6 +614,10 @@ static void gfx_opengl_init(void) {
     if ((err = glewInit()) != GLEW_OK)
         sys_fatal("could not init GLEW:\n%s", glewGetErrorString(err));
 #endif
+
+    tex_cache_size = TEX_CACHE_STEP;
+    tex_cache = calloc(tex_cache_size, sizeof(struct GLTexture));
+    if (!tex_cache) sys_fatal("out of memory allocating texture cache");
 
     // check GL version
     int vmajor, vminor;
@@ -591,4 +670,4 @@ struct GfxRenderingAPI gfx_opengl_api = {
     gfx_opengl_shutdown
 };
 
-#endif // !LEGACY_GL
+#endif // RAPI_GL

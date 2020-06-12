@@ -1718,10 +1718,10 @@ void gfx_get_dimensions(uint32_t *width, uint32_t *height) {
     gfx_wapi->get_dimensions(width, height);
 }
 
-void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi) {
+void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi, const char *window_title) {
     gfx_wapi = wapi;
     gfx_rapi = rapi;
-    gfx_wapi->init();
+    gfx_wapi->init(window_title);
     gfx_rapi->init();
     
     // Used in the 120 star TAS

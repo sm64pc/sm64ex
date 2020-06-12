@@ -13,6 +13,8 @@
 
 #include "gfx/gfx_pc.h"
 #include "gfx/gfx_opengl.h"
+#include "gfx/gfx_direct3d11.h"
+#include "gfx/gfx_direct3d12.h"
 #include "gfx/gfx_sdl.h"
 
 #include "audio/audio_api.h"
@@ -23,6 +25,7 @@
 #include "cliopts.h"
 #include "configfile.h"
 #include "controller/controller_api.h"
+#include "controller/controller_keyboard.h"
 #include "fs/fs.h"
 
 #include "game/game_init.h"
@@ -165,9 +168,45 @@ void main_func(void) {
 
     configfile_load(configfile_name());
 
+    if (gCLIOpts.FullScreen == 1)
+        configWindow.fullscreen = true;
+    else if (gCLIOpts.FullScreen == 2)
+        configWindow.fullscreen = false;
+
+    #if defined(WAPI_SDL1) || defined(WAPI_SDL2)
     wm_api = &gfx_sdl;
+    #elif defined(WAPI_DXGI)
+    wm_api = &gfx_dxgi;
+    #else
+    #error No window API!
+    #endif
+
+    #if defined(RAPI_D3D11)
+    rendering_api = &gfx_d3d11_api;
+    # define RAPI_NAME "DirectX 11"
+    #elif defined(RAPI_D3D12)
+    rendering_api = &gfx_d3d12_api;
+    # define RAPI_NAME "DirectX 12"
+    #elif defined(RAPI_GL) || defined(RAPI_GL_LEGACY)
     rendering_api = &gfx_opengl_api;
-    gfx_init(wm_api, rendering_api);
+    # ifdef USE_GLES
+    #  define RAPI_NAME "OpenGL ES"
+    # else
+    #  define RAPI_NAME "OpenGL"
+    # endif
+    #else
+    #error No rendering API!
+    #endif
+
+    char window_title[96] =
+    "Super Mario 64 PC port (" RAPI_NAME ")"
+    #ifdef NIGHTLY
+    " nightly " GIT_HASH
+    #endif
+    ;
+
+    gfx_init(wm_api, rendering_api, window_title);
+    wm_api->set_keyboard_callbacks(keyboard_on_key_down, keyboard_on_key_up, keyboard_on_all_keys_up);
 
     if (audio_api == NULL && audio_sdl.init()) 
         audio_api = &audio_sdl;
@@ -196,7 +235,8 @@ void main_func(void) {
     emscripten_set_main_loop(em_main_loop, 0, 0);
     request_anim_frame(on_anim_frame);
 #else
-    wm_api->main_loop(produce_one_frame);
+    while (true)
+        wm_api->main_loop(produce_one_frame);
 #endif
 }
 
