@@ -106,10 +106,12 @@ const SDL_Scancode scancode_rmapping_nonextended[][2] = {
     {SDL_SCANCODE_KP_MULTIPLY, SDL_SCANCODE_PRINTSCREEN}
 };
 
-#define IS_FULLSCREEN (SDL_GetWindowFlags(wnd) & SDL_WINDOW_FULLSCREEN_DESKTOP)
+#define IS_FULLSCREEN() ((SDL_GetWindowFlags(wnd) & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
 
 static void gfx_sdl_set_fullscreen() {
-    if (configWindow.fullscreen == IS_FULLSCREEN)
+    if (configWindow.reset)
+        configWindow.fullscreen = false;
+    if (configWindow.fullscreen == IS_FULLSCREEN())
         return;
     if (configWindow.fullscreen) {
         SDL_SetWindowFullscreen(wnd, SDL_WINDOW_FULLSCREEN_DESKTOP);
@@ -122,25 +124,21 @@ static void gfx_sdl_set_fullscreen() {
 }
 
 static void gfx_sdl_reset_dimension_and_pos(void) {
-    if (configWindow.exiting_fullscreen) {
+    if (configWindow.exiting_fullscreen)
         configWindow.exiting_fullscreen = false;
-    } else if (configWindow.reset) {
+
+    if (configWindow.reset) {
         configWindow.x = WAPI_WIN_CENTERPOS;
         configWindow.y = WAPI_WIN_CENTERPOS;
         configWindow.w = DESIRED_SCREEN_WIDTH;
         configWindow.h = DESIRED_SCREEN_HEIGHT;
         configWindow.reset = false;
-
-        if (IS_FULLSCREEN) {
-            configWindow.fullscreen = false;
-            return;
-        }
     } else if (!configWindow.settings_changed) {
         return;
     }
 
-    int xpos = (configWindow.x = WAPI_WIN_CENTERPOS) ? SDL_WINDOWPOS_CENTERED : configWindow.x;
-    int ypos = (configWindow.y = WAPI_WIN_CENTERPOS) ? SDL_WINDOWPOS_CENTERED : configWindow.y;
+    int xpos = (configWindow.x == WAPI_WIN_CENTERPOS) ? SDL_WINDOWPOS_CENTERED : configWindow.x;
+    int ypos = (configWindow.y == WAPI_WIN_CENTERPOS) ? SDL_WINDOWPOS_CENTERED : configWindow.y;
 
     SDL_SetWindowSize(wnd, configWindow.w, configWindow.h);
     SDL_SetWindowPosition(wnd, xpos, ypos);
@@ -162,8 +160,8 @@ static void gfx_sdl_init(const char *window_title) {
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
-    int xpos = (configWindow.x = WAPI_WIN_CENTERPOS) ? SDL_WINDOWPOS_CENTERED : configWindow.x;
-    int ypos = (configWindow.y = WAPI_WIN_CENTERPOS) ? SDL_WINDOWPOS_CENTERED : configWindow.y;
+    int xpos = (configWindow.x == WAPI_WIN_CENTERPOS) ? SDL_WINDOWPOS_CENTERED : configWindow.x;
+    int ypos = (configWindow.y == WAPI_WIN_CENTERPOS) ? SDL_WINDOWPOS_CENTERED : configWindow.y;
 
     wnd = SDL_CreateWindow(
         window_title,
@@ -222,10 +220,10 @@ static void gfx_sdl_onkeydown(int scancode) {
 
     const Uint8 *state = SDL_GetKeyboardState(NULL);
 
-    if (state[SDL_SCANCODE_LALT] && state[SDL_SCANCODE_RETURN])
+    if (state[SDL_SCANCODE_LALT] && state[SDL_SCANCODE_RETURN]) {
         configWindow.fullscreen = !configWindow.fullscreen;
-    else if (state[SDL_SCANCODE_ESCAPE] && configWindow.fullscreen)
-        configWindow.fullscreen = false;
+        configWindow.settings_changed = true;
+    }
 }
 
 static void gfx_sdl_onkeyup(int scancode) {
@@ -247,11 +245,13 @@ static void gfx_sdl_handle_events(void) {
                 break;
 #endif
             case SDL_WINDOWEVENT: // TODO: Check if this makes sense to be included in the Web build
-                if (!(IS_FULLSCREEN || configWindow.exiting_fullscreen)) {
+                if (!IS_FULLSCREEN()) {
                     switch (event.window.event) {
                         case SDL_WINDOWEVENT_MOVED:
-                            configWindow.x = event.window.data1;
-                            configWindow.y = event.window.data2;
+                            if (!configWindow.exiting_fullscreen) {
+                                if (event.window.data1 >= 0) configWindow.x = event.window.data1;
+                                if (event.window.data2 >= 0) configWindow.y = event.window.data2;
+                            }
                             break;
                         case SDL_WINDOWEVENT_SIZE_CHANGED:
                             configWindow.w = event.window.data1;
@@ -270,8 +270,8 @@ static void gfx_sdl_handle_events(void) {
     }
 
     if (configWindow.settings_changed) {
-        gfx_sdl_reset_dimension_and_pos();
         gfx_sdl_set_fullscreen();
+        gfx_sdl_reset_dimension_and_pos();
         configWindow.settings_changed = false;
     }
 }
