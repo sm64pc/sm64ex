@@ -227,8 +227,9 @@ static void gfx_sdl_onkeydown(int scancode) {
     
     for (int i=0; i < MAX_BINDS; i++) {
         // This is kind of a hack.
-        if (translate_scancode(scancode) == configKeyFullscreen[i]) {
+        if (translate_scancode(scancode) == (int)configKeyFullscreen[i]) {
             configWindow.fullscreen = !configWindow.fullscreen;
+            configWindow.settings_changed = true;
         }
     }
 
