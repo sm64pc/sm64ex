@@ -23,10 +23,6 @@
 
 #include "gfx_dimensions.h"
 
-#ifdef DISCORDRPC
-#include "pc/discord/discordrpc.h"
-#endif
-
 struct SpawnInfo gPlayerSpawnInfos[1];
 struct GraphNode *D_8033A160[0x100];
 struct Area gAreaData[8];
@@ -425,8 +421,4 @@ void render_game(void) {
 
     D_8032CE74 = NULL;
     D_8032CE78 = 0;
-
-#ifdef DISCORDRPC
-    discord_update_rich_presence();
-#endif
 }

@@ -39,7 +39,7 @@ aifc_decode_CFLAGS := $(OPT_FLAG)
 aiff_extract_codebook_SOURCES := aiff_extract_codebook.c
 
 tabledesign_SOURCES := sdk-tools/tabledesign/codebook.c sdk-tools/tabledesign/estimate.c sdk-tools/tabledesign/print.c sdk-tools/tabledesign/tabledesign.c
-tabledesign_CFLAGS := -Wno-uninitialized -laudiofile -lstdc++
+tabledesign_CFLAGS := -Wno-uninitialized -Iaudiofile -Laudiofile -laudiofile -lstdc++ -lm
 
 vadpcm_enc_SOURCES := sdk-tools/adpcm/vadpcm_enc.c sdk-tools/adpcm/vpredictor.c sdk-tools/adpcm/quant.c sdk-tools/adpcm/util.c sdk-tools/adpcm/vencode.c
 vadpcm_enc_CFLAGS := -Wno-unused-result -Wno-uninitialized -Wno-sign-compare -Wno-absolute-value
@@ -50,11 +50,17 @@ extract_data_for_mio_CFLAGS := $(OPT_FLAG)
 skyconv_SOURCES := skyconv.c n64graphics.c utils.c
 skyconv_CFLAGS := $(OPT_FLAG) -lm
 
-all: $(PROGRAMS)
+LIBAUDIOFILE := audiofile/libaudiofile.a
+
+all: $(LIBAUDIOFILE) $(PROGRAMS)
+
+$(LIBAUDIOFILE):
+	@$(MAKE) -C audiofile
 
 clean:
 	$(RM) $(PROGRAMS)
 	$(RM) gen_asset_list
+	$(MAKE) -C audiofile clean
 
 define COMPILE
 $(1): $($1_SOURCES)

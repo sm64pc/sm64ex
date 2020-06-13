@@ -11,7 +11,7 @@ struct GfxDimensions {
 
 extern struct GfxDimensions gfx_current_dimensions;
 
-void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi);
+void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi, const char *window_title);
 void gfx_start_frame(void);
 void gfx_run(Gfx *commands);
 void gfx_end_frame(void);

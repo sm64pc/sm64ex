@@ -80,6 +80,8 @@ static const u8 optsVideoStr[][32] = {
     { TEXT_OPT_VSYNC },
     { TEXT_OPT_DOUBLE },
     { TEXT_OPT_HUD },
+    { TEXT_OPT_THREEPOINT },
+    { TEXT_OPT_APPLY },
 };
 
 static const u8 optsAudioStr[][32] = {
@@ -122,6 +124,7 @@ static const u8 bindStr[][32] = {
 static const u8 *filterChoices[] = {
     optsVideoStr[2],
     optsVideoStr[3],
+    optsVideoStr[8],
 };
 
 static const u8 *vsyncChoices[] = {
@@ -204,6 +207,10 @@ static void optvideo_reset_window(UNUSED struct Option *self, s32 arg) {
     }
 }
 
+static void optvideo_apply(UNUSED struct Option *self, s32 arg) {
+    if (!arg) configWindow.settings_changed = true;
+}
+
 /* submenu option lists */
 
 #ifdef BETTERCAMERA
@@ -245,8 +252,9 @@ static struct Option optsVideo[] = {
     DEF_OPT_TOGGLE( optsVideoStr[0], &configWindow.fullscreen ),
     DEF_OPT_CHOICE( optsVideoStr[5], &configWindow.vsync, vsyncChoices ),
     DEF_OPT_CHOICE( optsVideoStr[1], &configFiltering, filterChoices ),
-    DEF_OPT_BUTTON( optsVideoStr[4], optvideo_reset_window ),
     DEF_OPT_TOGGLE( optsVideoStr[7], &configHUD ),
+    DEF_OPT_BUTTON( optsVideoStr[4], optvideo_reset_window ),
+    DEF_OPT_BUTTON( optsVideoStr[9], optvideo_apply ),
 };
 
 static struct Option optsAudio[] = {
