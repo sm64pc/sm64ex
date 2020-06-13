@@ -2468,13 +2468,6 @@ void highlight_last_course_complete_stars(void) {
     gDialogLineNum = courseDone;
 }
 
-void unpause_game() {
-                level_set_transition(0, 0);
-                play_sound(SOUND_MENU_PAUSE_2, gDefaultSoundArgs);
-                gDialogBoxState = DIALOG_STATE_OPENING;
-                gMenuMode = -1;
-				}
-
 void print_hud_pause_colorful_str(void) {
     u8 textPause[] = { TEXT_PAUSE };
 
