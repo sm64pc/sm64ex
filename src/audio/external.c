@@ -2062,8 +2062,8 @@ void play_dialog_sound(u8 dialogID) {
 #endif
 }
 
-void setBackgroundMusicVolume(s32 volume){
-    func_8031D838(SEQ_PLAYER_LEVEL, 0, volume);
+void setSequencePlayerVolume(s32 player, s32 volume){
+    func_8031D838(player, 0, volume);
 }
 
 void play_music(u8 player, u16 seqArgs, u16 fadeTimer) {

@@ -85,8 +85,10 @@ static const u8 optsVideoStr[][32] = {
 };
 
 static const u8 optsAudioStr[][32] = {
-    { TEXT_OPT_MVOLUME },
-    { TEXT_OPT_TMUSIC },
+    { TEXT_OPT_MVOLUME },    
+    { TEXT_OPT_MUSIC_VOLUME },
+    { TEXT_OPT_SFX_VOLUME },
+    { TEXT_OPT_ENV_VOLUME },
 };
 
 static const u8 optsCheatsStr[][64] = {
@@ -261,6 +263,8 @@ static struct Option optsVideo[] = {
 static struct Option optsAudio[] = {
     DEF_OPT_SCROLL( optsAudioStr[0], &configMasterVolume, 0, MAX_VOLUME, 1 ),
     DEF_OPT_SCROLL( optsAudioStr[1], &configMusicVolume, 0, MAX_VOLUME, 1),
+    DEF_OPT_SCROLL( optsAudioStr[2], &configSfxVolume, 0, MAX_VOLUME, 1),
+    DEF_OPT_SCROLL( optsAudioStr[3], &configEnvVolume, 0, MAX_VOLUME, 1),
 };
 
 static struct Option optsCheats[] = {
