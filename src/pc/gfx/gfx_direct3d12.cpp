@@ -423,7 +423,8 @@ static void gfx_d3d12_upload_texture(uint8_t *rgba32_buf, int width, int height)
     texture_desc.SampleDesc.Count = 1;
     texture_desc.SampleDesc.Quality = 0;
     texture_desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-    texture_desc.Alignment = D3D12_SMALL_RESOURCE_PLACEMENT_ALIGNMENT;
+    texture_desc.Alignment = ((width + 31) / 32) * ((height + 31) / 32) > 16 ?
+        0 : D3D12_SMALL_RESOURCE_PLACEMENT_ALIGNMENT;
     
     D3D12_RESOURCE_ALLOCATION_INFO alloc_info = get_resource_allocation_info(&texture_desc);
     
