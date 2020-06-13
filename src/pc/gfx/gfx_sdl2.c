@@ -34,10 +34,6 @@
 
 #include "src/pc/controller/controller_keyboard.h"
 
-#ifdef DISCORDRPC
-#include "pc/discord/discordrpc.h"
-#endif
-
 // TODO: figure out if this shit even works
 #ifdef VERSION_EU
 # define FRAMERATE 25
@@ -50,7 +46,6 @@ static const Uint32 FRAME_TIME = 1000 / FRAMERATE;
 static SDL_Window *wnd;
 static SDL_GLContext ctx = NULL;
 static int inverted_scancode_table[512];
-static Uint32 frame_start = 0;
 
 static kb_callback_t kb_key_down = NULL;
 static kb_callback_t kb_key_up = NULL;
@@ -189,17 +184,11 @@ static void gfx_sdl_init(const char *window_title) {
 }
 
 static void gfx_sdl_main_loop(void (*run_one_game_iter)(void)) {
-    Uint32 t;
-#ifdef DISCORDRPC
-    discord_init();
-#endif
-    while (1) {
-        t = SDL_GetTicks();
-        run_one_game_iter();
-        t = SDL_GetTicks() - t;
-        if (t < FRAME_TIME && configWindow.vsync <= 1)
-            SDL_Delay(FRAME_TIME - t);
-    }
+    Uint32 t = SDL_GetTicks();
+    run_one_game_iter();
+    t = SDL_GetTicks() - t;
+    if (t < FRAME_TIME && configWindow.vsync <= 1)
+        SDL_Delay(FRAME_TIME - t);
 }
 
 static void gfx_sdl_get_dimensions(uint32_t *width, uint32_t *height) {
@@ -261,9 +250,6 @@ static void gfx_sdl_handle_events(void) {
                 }
                 break;
             case SDL_QUIT:
-#ifdef DISCORDRPC
-                discord_shutdown();
-#endif
                 game_exit();
                 break;
         }
@@ -283,7 +269,6 @@ static void gfx_sdl_set_keyboard_callbacks(kb_callback_t on_key_down, kb_callbac
 }
 
 static bool gfx_sdl_start_frame(void) {
-    frame_start = SDL_GetTicks();
     return true;
 }
 

@@ -32,6 +32,10 @@
 #include "game/main.h"
 #include "game/thread6.h"
 
+#ifdef DISCORDRPC
+#include "pc/discord/discordrpc.h"
+#endif
+
 OSMesg D_80339BEC;
 OSMesgQueue gSIEventMesgQueue;
 
@@ -106,6 +110,9 @@ void audio_shutdown(void) {
 }
 
 void game_deinit(void) {
+#ifdef DISCORDRPC
+    discord_shutdown();
+#endif
     configfile_save(configfile_name());
     controller_shutdown();
     audio_shutdown();
@@ -228,12 +235,20 @@ void main_func(void) {
     }
 #endif
 
+#ifdef DISCORDRPC
+    discord_init();
+#endif
+
 #ifdef TARGET_WEB
     emscripten_set_main_loop(em_main_loop, 0, 0);
     request_anim_frame(on_anim_frame);
 #else
-    while (true)
+    while (true) {
         wm_api->main_loop(produce_one_frame);
+#ifdef DISCORDRPC
+        discord_update_rich_presence();
+#endif
+    }
 #endif
 }
 
