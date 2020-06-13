@@ -18,8 +18,13 @@
 #include <vector>
 using namespace std;
 
-#define BSWAP32(x) ((((x) >> 24) & 0xff) | (((x) >> 8) & 0xff00) | (((x) << 8) & 0xff0000) | (((x) << 24) & 0xff000000U))
-#define BSWAP16(x) ((((x) >> 8) & 0xff) | (((x) << 8) & 0xff00))
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+# define BSWAP32(x) ((((x) >> 24) & 0xff) | (((x) >> 8) & 0xff00) | (((x) << 8) & 0xff0000) | (((x) << 24) & 0xff000000U))
+# define BSWAP16(x) ((((x) >> 8) & 0xff) | (((x) << 8) & 0xff00))
+#else
+# define BSWAP32(x) (x)
+# define BSWAP16(x) (x)
+#endif
 
 const char* OUTPUT_FILE = "assets.json";
 const size_t CHUNK_SIZE = 16;

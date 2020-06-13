@@ -387,7 +387,9 @@ void combine_skybox(const char *input, const char *output) {
     uint32_t table[W*H];
     if (fread(table, sizeof(table), 1, file) != 1) goto fail;
 
+    #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     reverse_endian((unsigned char *) table, W*H*4);
+    #endif
 
     uint32_t base = table[0];
     for (int i = 0; i < W*H; i++) {
