@@ -1215,8 +1215,23 @@ u8 sSquishScaleOverTime[16] = { 0x46, 0x32, 0x32, 0x3C, 0x46, 0x50, 0x50, 0x3C,
 void squish_mario_model(struct MarioState *m) {
     if (m->squishTimer != 0xFF) {
         // If no longer squished, scale back to default.
+        // Also handles the Tiny Mario and Huge Mario cheats.
         if (m->squishTimer == 0) {
-            vec3f_set(m->marioObj->header.gfx.scale, 1.0f, 1.0f, 1.0f);
+            if (Cheats.EnableCheats) {
+                if (Cheats.HugeMario) {
+                    vec3f_set(m->marioObj->header.gfx.scale, 2.5f, 2.5f, 2.5f);
+                }
+                else if (Cheats.TinyMario) {
+                    vec3f_set(m->marioObj->header.gfx.scale, 0.2f, 0.2f, 0.2f);
+                }
+                else {
+                    vec3f_set(m->marioObj->header.gfx.scale, 1.0f, 1.0f, 1.0f);
+                }
+            }
+            else {
+                vec3f_set(m->marioObj->header.gfx.scale, 1.0f, 1.0f, 1.0f);
+            }
+            
         }
         // If timer is less than 16, rubber-band Mario's size scale up and down.
         else if (m->squishTimer <= 16) {
@@ -1519,7 +1534,6 @@ void update_mario_health(struct MarioState *m) {
         // Play a noise to alert the player when Mario is close to drowning.
         if (((m->action & ACT_GROUP_MASK) == ACT_GROUP_SUBMERGED) && (m->health < 0x300)) {
             play_sound(SOUND_MOVING_ALMOST_DROWNING, gDefaultSoundArgs);
-#ifdef VERSION_SH
             if (!gRumblePakTimer) {
                 gRumblePakTimer = 36;
                 if (is_rumble_finished_and_queue_empty()) {
@@ -1528,7 +1542,6 @@ void update_mario_health(struct MarioState *m) {
             }
         } else {
             gRumblePakTimer = 0;
-#endif
         }
     }
 }
@@ -1706,7 +1719,6 @@ static void debug_update_mario_cap(u16 button, s32 flags, u16 capTimer, u16 capM
     }
 }
 
-#ifdef VERSION_SH
 void func_sh_8025574C(void) {
     if (gMarioState->particleFlags & PARTICLE_HORIZONTAL_STAR) {
         queue_rumble_data(5, 80);
@@ -1719,7 +1731,6 @@ void func_sh_8025574C(void) {
         reset_rumble_timers();
     }
 }
-#endif
 
 /**
  * Main function for executing Mario's behavior.
@@ -1816,9 +1827,7 @@ s32 execute_mario_action(UNUSED struct Object *o) {
 
         play_infinite_stairs_music();
         gMarioState->marioObj->oInteractStatus = 0;
-#ifdef VERSION_SH
         func_sh_8025574C();
-#endif
 
         return gMarioState->particleFlags;
     }
@@ -1928,7 +1937,7 @@ void init_mario_from_save_file(void) {
         save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_MIN - 1, COURSE_MAX - 1);
     gMarioState->numKeys = 0;
 
-    gMarioState->numLives = 4;
+    gMarioState->numLives = 0;
     gMarioState->health = 0x880;
 
     gMarioState->unkB8 = gMarioState->numStars;
