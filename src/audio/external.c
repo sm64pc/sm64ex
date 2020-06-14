@@ -15,6 +15,7 @@
 #include "seq_ids.h"
 #include "dialog_ids.h"
 #include "level_table.h"
+#include "pc/configfile.h"
 
 #ifdef VERSION_EU
 #define EU_FLOAT(x) x ## f
@@ -2061,6 +2062,10 @@ void play_dialog_sound(u8 dialogID) {
 #endif
 }
 
+void setSequencePlayerVolume(s32 player, s32 volume){
+    func_8031D838(player, 0, volume);
+}
+
 void play_music(u8 player, u16 seqArgs, u16 fadeTimer) {
     u8 seqId = seqArgs & 0xff;
     u8 priority = seqArgs >> 8;
@@ -2069,11 +2074,12 @@ void play_music(u8 player, u16 seqArgs, u16 fadeTimer) {
 
     // Except for the background music player, we don't support queued
     // sequences. Just play them immediately, stopping any old sequence.
+
     if (player != 0) {
         play_sequence(player, seqId, fadeTimer);
         return;
     }
-
+    
     // Abort if the queue is already full.
     if (sBackgroundMusicQueueSize == MAX_BG_MUSIC_QUEUE_SIZE) {
         return;

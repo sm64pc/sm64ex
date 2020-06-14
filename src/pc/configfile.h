@@ -21,6 +21,9 @@ typedef struct {
 extern ConfigWindow configWindow;
 extern unsigned int configFiltering;
 extern unsigned int configMasterVolume;
+extern unsigned int configMusicVolume;
+extern unsigned int configSfxVolume;
+extern unsigned int configEnvVolume;
 extern unsigned int configKeyA[];
 extern unsigned int configKeyB[];
 extern unsigned int configKeyStart[];
