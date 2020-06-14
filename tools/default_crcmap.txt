@@ -142,9 +142,9 @@
 0x33aa18f1, actors/exclamation_box/metal_cap_box_front.rgba16.png
 0x01295855, actors/exclamation_box/metal_cap_box_side.rgba16.png
 0x4868d6f8, actors/exclamation_box/vanish_cap_box_front.rgba16.png
-0x25fa6e30, actors/exclamation_box/vanish_cap_box_sides.rgba16.png
+0x25fa6e30, actors/exclamation_box/vanish_cap_box_side.rgba16.png
 0x109a876c, actors/exclamation_box/wing_cap_box_front.rgba16.png
-0x49dc8276, actors/exclamation_box/wing_cap_box_sides.rgba16.png
+0x49dc8276, actors/exclamation_box/wing_cap_box_side.rgba16.png
 0x86c1470d, actors/exclamation_box_outline/exclamation_box_outline.rgba16.png
 0x380f4109, actors/exclamation_box_outline/exclamation_point.rgba16.png
 0x33181fa0, actors/explosion/explosion_0.rgba16.png
