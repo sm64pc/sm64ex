@@ -6,6 +6,7 @@
 #include "game/segment2.h"
 #include "game/segment7.h"
 #include "intro_geo.h"
+#include "file_select.h"
 
 #include "gfx_dimensions.h"
 
@@ -236,6 +237,7 @@ Gfx *geo_game_over_tile(s32 sp40, struct GraphNode *sp44, UNUSED void *context) 
         gGameOverFrameCounter = 0;
         gGameOverTableIndex = -2;
         for (i = 0; i < (s32) sizeof(gameOverBackgroundTable); ++i) {
+			EraseAllFiles();
             gameOverBackgroundTable[i] = INTRO_BACKGROUND_GAME_OVER;
         }
     } else {

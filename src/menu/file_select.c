@@ -26,6 +26,13 @@
 #define LANGUAGE_FUNCTION sLanguageMode
 #endif
 
+ void EraseAllFiles() {
+ save_file_erase(SAVE_FILE_A);
+  save_file_erase(SAVE_FILE_B);
+   save_file_erase(SAVE_FILE_C);
+    save_file_erase(SAVE_FILE_D);
+ }
+
 /**
  * @file file_select.c
  * This file implements how the file select and it's menus render and function.
@@ -823,6 +830,7 @@ void copy_action_file_button(struct Object *copyButton, s32 copyFileButtonID) {
 /**
  * In the copy menu, checks if a button was clicked to play a sound, button state and other functions.
  */
+ 
 void check_copy_menu_clicked_buttons(struct Object *copyButton) {
     if (copyButton->oMenuButtonState == MENU_BUTTON_STATE_FULLSCREEN) {
         s32 buttonID;

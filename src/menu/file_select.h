@@ -128,6 +128,7 @@ extern u32 gGlobalTimer;
 
 extern void beh_yellow_background_menu_init(void);
 extern void beh_yellow_background_menu_loop(void);
+extern void EraseAllFiles(void);
 extern void bhv_menu_button_init(void);
 extern void bhv_menu_button_loop(void);
 extern void bhv_menu_button_manager_init(void);
