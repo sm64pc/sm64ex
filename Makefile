@@ -505,6 +505,7 @@ ifneq ($(TARGET_WEB),1) # As in, not-web PC port
   CXX := $(CROSS)g++
 else
   CC := emcc
+  CXX := emcc
 endif
 
 LD := $(CC)
