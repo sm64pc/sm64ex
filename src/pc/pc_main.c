@@ -75,12 +75,12 @@ void send_display_list(struct SPTask *spTask) {
 #define printf
 
 void produce_one_frame(void) {
-
     gfx_start_frame();
 
-    set_sequence_player_volume(SEQ_PLAYER_LEVEL, (f32)configMusicVolume / 127.0f);
-    set_sequence_player_volume(SEQ_PLAYER_SFX, (f32)configSfxVolume / 127.0f);
-    set_sequence_player_volume(SEQ_PLAYER_ENV, (f32)configEnvVolume / 127.0f);
+    const f32 master_mod = (f32)configMasterVolume / 127.0f;
+    set_sequence_player_volume(SEQ_PLAYER_LEVEL, (f32)configMusicVolume / 127.0f * master_mod);
+    set_sequence_player_volume(SEQ_PLAYER_SFX, (f32)configSfxVolume / 127.0f * master_mod);
+    set_sequence_player_volume(SEQ_PLAYER_ENV, (f32)configEnvVolume / 127.0f * master_mod);
 
     game_loop_one_iteration();
     thread6_rumble_loop(NULL);
@@ -98,13 +98,8 @@ void produce_one_frame(void) {
     }
     //printf("Audio samples before submitting: %d\n", audio_api->buffered());
 
-    // scale by master volume (0-127)
-    const s32 mod = (s32)configMasterVolume;
-    for (u32 i = 0; i < num_audio_samples * 4; ++i)
-        audio_buffer[i] = ((s32)audio_buffer[i] * mod) >> VOLUME_SHIFT;
-
     audio_api->play((u8*)audio_buffer, 2 * num_audio_samples * 4);
-        
+
     gfx_end_frame();
 }
 
