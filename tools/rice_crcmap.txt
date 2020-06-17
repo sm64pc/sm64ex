@@ -1577,8 +1577,8 @@
 0x006a1516, textures/skybox_tiles/wdw.58.rgba16.png
 0x0010fdc4, actors/sushi/sushi_snout.rgba16.png
 0x1195aecc, actors/chair/chair_bottom.rgba16.png
-0xb16edfa9, actors/exclamation_box/vanish_cap_box_sides.rgba16.png
-0x4838a16e, actors/exclamation_box/wing_cap_box_sides.rgba16.png
+0xb16edfa9, actors/exclamation_box/vanish_cap_box_side.rgba16.png
+0x4838a16e, actors/exclamation_box/wing_cap_box_side.rgba16.png
 0x2c14636c, actors/eyerok/eyerok_eye_mostly_closed.rgba16.png
 0x761e51a0, actors/eyerok/eyerok_eye_mostly_open.rgba16.png
 0x93944d54, actors/eyerok/eyerok_eye_open.rgba16.png

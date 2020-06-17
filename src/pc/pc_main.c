@@ -75,10 +75,16 @@ void send_display_list(struct SPTask *spTask) {
 #define printf
 
 void produce_one_frame(void) {
+
     gfx_start_frame();
+
+    set_sequence_player_volume(SEQ_PLAYER_LEVEL, (f32)configMusicVolume / 127.0f);
+    set_sequence_player_volume(SEQ_PLAYER_SFX, (f32)configSfxVolume / 127.0f);
+    set_sequence_player_volume(SEQ_PLAYER_ENV, (f32)configEnvVolume / 127.0f);
+
     game_loop_one_iteration();
     thread6_rumble_loop(NULL);
-    
+
     int samples_left = audio_api->buffered();
     u32 num_audio_samples = samples_left < audio_api->get_desired_buffered() ? 544 : 528;
     //printf("Audio samples: %d %u\n", samples_left, num_audio_samples);
@@ -98,7 +104,7 @@ void produce_one_frame(void) {
         audio_buffer[i] = ((s32)audio_buffer[i] * mod) >> VOLUME_SHIFT;
 
     audio_api->play((u8*)audio_buffer, 2 * num_audio_samples * 4);
-    
+        
     gfx_end_frame();
 }
 

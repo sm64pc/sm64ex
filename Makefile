@@ -211,7 +211,7 @@ VERSION_ASFLAGS := --defsym AVOID_UB=1
 COMPARE := 0
 
 ifeq ($(TARGET_WEB),1)
-  VERSION_CFLAGS := $(VERSION_CFLAGS) -DTARGET_WEB
+  VERSION_CFLAGS := $(VERSION_CFLAGS) -DTARGET_WEB -DUSE_GLES
 endif
 
 # Check backends
@@ -505,6 +505,7 @@ ifneq ($(TARGET_WEB),1) # As in, not-web PC port
   CXX := $(CROSS)g++
 else
   CC := emcc
+  CXX := emcc
 endif
 
 LD := $(CC)
