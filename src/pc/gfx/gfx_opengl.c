@@ -315,14 +315,14 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
             append_line(fs_buf, &fs_len, "  vec4 c2 = TEX_OFFSET(vec2(offset.x, offset.y - sign(offset.y)));");
             append_line(fs_buf, &fs_len, "  return c0 + abs(offset.x)*(c1-c0) + abs(offset.y)*(c2-c0);");
             append_line(fs_buf, &fs_len, "}");
-            append_line(fs_buf, &fs_len, "vec4 sampleTex(in sampler2D tex, in vec2 uv, in vec2 texSize, in bool filter) {");
-            append_line(fs_buf, &fs_len, "if (filter)");
+            append_line(fs_buf, &fs_len, "vec4 sampleTex(in sampler2D tex, in vec2 uv, in vec2 texSize, in bool dofilter) {");
+            append_line(fs_buf, &fs_len, "if (dofilter)");
             append_line(fs_buf, &fs_len, "return filter3point(tex, uv, texSize);");
             append_line(fs_buf, &fs_len, "else");
             append_line(fs_buf, &fs_len, "return texture2D(tex, uv);");
             append_line(fs_buf, &fs_len, "}");
         } else {
-            append_line(fs_buf, &fs_len, "vec4 sampleTex(in sampler2D tex, in vec2 uv, in vec2 texSize, in bool filter) {");
+            append_line(fs_buf, &fs_len, "vec4 sampleTex(in sampler2D tex, in vec2 uv, in vec2 texSize, in bool dofilter) {");
             append_line(fs_buf, &fs_len, "return texture2D(tex, uv);");
             append_line(fs_buf, &fs_len, "}");
         }
