@@ -76,19 +76,19 @@ static const u8 optsVideoStr[][32] = {
     { TEXT_OPT_TEXFILTER },
     { TEXT_OPT_NEAREST },
     { TEXT_OPT_LINEAR },
-    { TEXT_RESET_WINDOW },
+    { TEXT_OPT_RESETWND },
     { TEXT_OPT_VSYNC },
     { TEXT_OPT_DOUBLE },
     { TEXT_OPT_HUD },
-    { TEXT_OPT_THREEPOINT },
+    { TEXT_OPT_THREEPT },
     { TEXT_OPT_APPLY },
 };
 
 static const u8 optsAudioStr[][32] = {
     { TEXT_OPT_MVOLUME },    
-    { TEXT_OPT_MUSIC_VOLUME },
-    { TEXT_OPT_SFX_VOLUME },
-    { TEXT_OPT_ENV_VOLUME },
+    { TEXT_OPT_MUSVOLUME },
+    { TEXT_OPT_SFXVOLUME },
+    { TEXT_OPT_ENVVOLUME },
 };
 
 static const u8 optsCheatsStr[][64] = {
