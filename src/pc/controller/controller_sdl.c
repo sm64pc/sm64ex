@@ -1,3 +1,5 @@
+#ifdef CAPI_SDL2
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -14,6 +16,7 @@
 #include "controller_sdl.h"
 #include "../configfile.h"
 #include "../platform.h"
+#include "../fs/fs.h"
 
 #include "game/level_update.h"
 
@@ -34,6 +37,7 @@ extern u8 newcam_mouse;
 #endif
 
 static bool init_ok;
+static bool haptics_enabled;
 static SDL_GameController *sdl_cntrl;
 static SDL_Haptic *sdl_haptic;
 
@@ -86,21 +90,25 @@ static void controller_sdl_bind(void) {
 }
 
 static void controller_sdl_init(void) {
-    if (SDL_Init(SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS | SDL_INIT_HAPTIC) != 0) {
+    if (SDL_Init(SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS) != 0) {
         fprintf(stderr, "SDL init error: %s\n", SDL_GetError());
         return;
     }
 
+    haptics_enabled = (SDL_InitSubSystem(SDL_INIT_HAPTIC) == 0);
+
     // try loading an external gamecontroller mapping file
-    char gcpath[SYS_MAX_PATH];
-    snprintf(gcpath, sizeof(gcpath), "%s/gamecontrollerdb.txt", sys_save_path());
-    int nummaps = SDL_GameControllerAddMappingsFromFile(gcpath);
-    if (nummaps < 0) {
-        snprintf(gcpath, sizeof(gcpath), "%s/gamecontrollerdb.txt", sys_data_path());
-        nummaps = SDL_GameControllerAddMappingsFromFile(gcpath);
+    uint64_t gcsize = 0;
+    void *gcdata = fs_load_file("gamecontrollerdb.txt", &gcsize);
+    if (gcdata && gcsize) {
+        SDL_RWops *rw = SDL_RWFromConstMem(gcdata, gcsize);
+        if (rw) {
+            int nummaps = SDL_GameControllerAddMappingsFromRW(rw, SDL_TRUE);
+            if (nummaps >= 0)
+                printf("loaded %d controller mappings from 'gamecontrollerdb.txt'\n", nummaps);
+        }
+        free(gcdata);
     }
-    if (nummaps >= 0)
-        printf("loaded %d controller mappings from '%s'\n", nummaps, gcpath);
 
 #ifdef BETTERCAMERA
     if (newcam_mouse == 1)
@@ -114,6 +122,8 @@ static void controller_sdl_init(void) {
 }
 
 static SDL_Haptic *controller_sdl_init_haptics(const int joy) {
+    if (!haptics_enabled) return NULL;
+
     SDL_Haptic *hap = SDL_HapticOpen(joy);
     if (!hap) return NULL;
 
@@ -274,12 +284,18 @@ static void controller_sdl_shutdown(void) {
             SDL_GameControllerClose(sdl_cntrl);
             sdl_cntrl = NULL;
         }
+        SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
+    }
+
+    if (SDL_WasInit(SDL_INIT_HAPTIC)) {
         if (sdl_haptic) {
             SDL_HapticClose(sdl_haptic);
             sdl_haptic = NULL;
         }
-        SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
+        SDL_QuitSubSystem(SDL_INIT_HAPTIC);
     }
+
+    haptics_enabled = false;
     init_ok = false;
 }
 
@@ -293,3 +309,5 @@ struct ControllerAPI controller_sdl = {
     controller_sdl_bind,
     controller_sdl_shutdown
 };
+
+#endif // CAPI_SDL2

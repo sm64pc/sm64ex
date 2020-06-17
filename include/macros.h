@@ -59,11 +59,15 @@
 
 // Convenience macros for endian conversions
 #if IS_BIG_ENDIAN
-#define BE_TO_HOST16(x) (x)
-#define BE_TO_HOST32(x) (x)
+# define BE_TO_HOST16(x) (x)
+# define BE_TO_HOST32(x) (x)
+# define LE_TO_HOST16(x) BSWAP16(x)
+# define LE_TO_HOST32(x) BSWAP32(x)
 #else
-#define BE_TO_HOST16(x) BSWAP16(x)
-#define BE_TO_HOST32(x) BSWAP32(x)
+# define BE_TO_HOST16(x) BSWAP16(x)
+# define BE_TO_HOST32(x) BSWAP32(x)
+# define LE_TO_HOST16(x) (x)
+# define LE_TO_HOST32(x) (x)
 #endif
 
 #endif

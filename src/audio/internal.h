@@ -273,6 +273,7 @@ struct SequencePlayer
 #endif
     /*0x138, 0x140*/ uintptr_t bankDmaCurrDevAddr;
     /*0x13C, 0x144*/ ssize_t bankDmaRemaining;
+    /*     ext    */ f32 volumeScale;
 }; // size = 0x140, 0x148 on EU
 
 struct AdsrSettings

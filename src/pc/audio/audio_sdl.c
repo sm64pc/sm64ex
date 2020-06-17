@@ -1,3 +1,5 @@
+#ifdef AAPI_SDL2
+
 #include <SDL2/SDL.h>
 
 #include "audio_api.h"
@@ -58,3 +60,5 @@ struct AudioAPI audio_sdl = {
     audio_sdl_play,
     audio_sdl_shutdown
 };
+
+#endif

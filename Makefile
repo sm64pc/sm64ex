@@ -10,6 +10,8 @@ default: all
 # These options can either be changed by modifying the makefile, or
 # by building with 'make SETTING=value'. 'make clean' may be required.
 
+# Build debug version (default)
+DEBUG ?= 1
 # Version of the game to build
 VERSION ?= us
 # Graphics microcode used
@@ -44,15 +46,29 @@ EXT_OPTIONS_MENU ?= 1
 TEXTSAVES ?= 0
 # Load resources from external files
 EXTERNAL_DATA ?= 0
+# Enable Discord Rich Presence
+DISCORDRPC ?= 0
 
 # Various workarounds for weird toolchains
 
 NO_BZERO_BCOPY ?= 0
 NO_LDIV ?= 0
 
-# Use OpenGL 1.3 renderer
+# Backend selection
 
-LEGACY_GL ?= 0
+# Renderers: GL, GL_LEGACY, D3D11, D3D12
+RENDER_API ?= GL
+# Window managers: SDL2, DXGI (forced if D3D11 or D3D12 in RENDER_API)
+WINDOW_API ?= SDL2
+# Audio backends: SDL2
+AUDIO_API ?= SDL2
+# Controller backends (can have multiple, space separated): SDL2
+CONTROLLER_API ?= SDL2
+
+# Misc settings for EXTERNAL_DATA
+
+BASEDIR ?= res
+BASEPACK ?= base.zip
 
 # Automatic settings for PC port(s)
 
@@ -73,9 +89,9 @@ else
 endif
 
 ifeq ($(TARGET_WEB),0)
-ifeq ($(HOST_OS),Windows)
-WINDOWS_BUILD := 1
-endif
+  ifeq ($(HOST_OS),Windows)
+    WINDOWS_BUILD := 1
+  endif
 endif
 
 # MXE overrides
@@ -94,8 +110,6 @@ endif
 
 ifneq ($(TARGET_BITS),0)
   BITS := -m$(TARGET_BITS)
-else
-  BITS :=
 endif
 
 # Release (version) flag defs
@@ -197,7 +211,23 @@ VERSION_ASFLAGS := --defsym AVOID_UB=1
 COMPARE := 0
 
 ifeq ($(TARGET_WEB),1)
-  VERSION_CFLAGS := $(VERSION_CFLAGS) -DTARGET_WEB
+  VERSION_CFLAGS := $(VERSION_CFLAGS) -DTARGET_WEB -DUSE_GLES
+endif
+
+# Check backends
+
+ifneq (,$(filter $(RENDER_API),D3D11 D3D12))
+  ifneq ($(WINDOWS_BUILD),1)
+    $(error DirectX is only supported on Windows)
+  endif
+  ifneq ($(WINDOW_API),DXGI)
+    $(warning DirectX renderers require DXGI, forcing WINDOW_API value)
+    WINDOW_API := DXGI
+  endif
+else
+  ifeq ($(WINDOW_API),DXGI)
+    $(error DXGI can only be used with DirectX renderers)
+  endif
 endif
 
 ################### Universal Dependencies ###################
@@ -266,8 +296,12 @@ LEVEL_DIRS := $(patsubst levels/%,%,$(dir $(wildcard levels/*/header.h)))
 # Directories containing source files
 
 # Hi, I'm a PC
-SRC_DIRS := src src/engine src/game src/audio src/menu src/buffers actors levels bin data assets src/pc src/pc/gfx src/pc/audio src/pc/controller
+SRC_DIRS := src src/engine src/game src/audio src/menu src/buffers actors levels bin data assets src/pc src/pc/gfx src/pc/audio src/pc/controller src/pc/fs src/pc/fs/packtypes
 ASM_DIRS :=
+
+ifeq ($(DISCORDRPC),1)
+  SRC_DIRS += src/pc/discord
+endif
 
 BIN_DIRS := bin bin/$(VERSION)
 
@@ -280,14 +314,10 @@ GODDARD_SRC_DIRS := src/goddard src/goddard/dynlists
 MIPSISET := -mips2
 MIPSBIT := -32
 
-ifeq ($(VERSION),eu)
-  OPT_FLAGS := -O2
-else
-ifeq ($(VERSION),sh)
-  OPT_FLAGS := -O2
+ifeq ($(DEBUG),1)
+  OPT_FLAGS := -g
 else
   OPT_FLAGS := -O2
-endif
 endif
 
 # Set BITS (32/64) to compile for
@@ -296,10 +326,6 @@ OPT_FLAGS += $(BITS)
 ifeq ($(TARGET_WEB),1)
   OPT_FLAGS := -O2 -g4 --source-map-base http://localhost:8080/
 endif
-
-# Use a default opt flag for gcc, then override if RPi
-
-# OPT_FLAGS := -O2 # "Whole-compile optimization flag" Breaks sound on x86.
 
 ifeq ($(TARGET_RPI),1)
 	machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
@@ -345,10 +371,6 @@ GODDARD_C_FILES := $(foreach dir,$(GODDARD_SRC_DIRS),$(wildcard $(dir)/*.c))
 
 GENERATED_C_FILES := $(BUILD_DIR)/assets/mario_anim_data.c $(BUILD_DIR)/assets/demo_data.c \
   $(addprefix $(BUILD_DIR)/bin/,$(addsuffix _skybox.c,$(notdir $(basename $(wildcard textures/skyboxes/*.png)))))
-
-ifeq ($(WINDOWS_BUILD),0)
-  CXX_FILES :=
-endif
 
 # We need to keep this for now
 # If we're not N64 use below
@@ -448,6 +470,18 @@ ULTRA_O_FILES := $(foreach file,$(ULTRA_S_FILES),$(BUILD_DIR)/$(file:.s=.o)) \
 
 GODDARD_O_FILES := $(foreach file,$(GODDARD_C_FILES),$(BUILD_DIR)/$(file:.c=.o))
 
+RPC_LIBS :=
+ifeq ($(DISCORDRPC),1)
+  ifeq ($(WINDOWS_BUILD),1)
+    RPC_LIBS := lib/discord/libdiscord-rpc.dll
+  else ifeq ($(OSX_BUILD),1) 
+    # needs testing
+    RPC_LIBS := lib/discord/libdiscord-rpc.dylib
+  else
+    RPC_LIBS := lib/discord/libdiscord-rpc.so
+  endif
+endif
+
 # Automatic dependency files
 DEP_FILES := $(O_FILES:.o=.d) $(ULTRA_O_FILES:.o=.d) $(GODDARD_O_FILES:.o=.d) $(BUILD_DIR)/$(LD_SCRIPT).d
 
@@ -471,11 +505,14 @@ ifneq ($(TARGET_WEB),1) # As in, not-web PC port
   CXX := $(CROSS)g++
 else
   CC := emcc
+  CXX := emcc
 endif
 
 LD := $(CC)
 
-ifeq ($(WINDOWS_BUILD),1)
+ifeq ($(DISCORDRPC),1)
+  LD := $(CXX)
+else ifeq ($(WINDOWS_BUILD),1)
   ifeq ($(CROSS),i686-w64-mingw32.static-) # fixes compilation in MXE on Linux and WSL
     LD := $(CC)
   else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
@@ -502,18 +539,69 @@ endif
 PYTHON := python3
 SDLCONFIG := $(CROSS)sdl2-config
 
+# configure backend flags
+
+BACKEND_CFLAGS := -DRAPI_$(RENDER_API)=1 -DWAPI_$(WINDOW_API)=1 -DAAPI_$(AUDIO_API)=1
+# can have multiple controller APIs
+BACKEND_CFLAGS += $(foreach capi,$(CONTROLLER_API),-DCAPI_$(capi)=1)
+BACKEND_LDFLAGS :=
+SDL2_USED := 0
+
+# for now, it's either SDL+GL or DXGI+DirectX, so choose based on WAPI
+ifeq ($(WINDOW_API),DXGI)
+  DXBITS := `cat $(ENDIAN_BITWIDTH) | tr ' ' '\n' | tail -1`
+  ifeq ($(RENDER_API),D3D11)
+    BACKEND_LDFLAGS += -ld3d11
+  else ifeq ($(RENDER_API),D3D12)
+    BACKEND_LDFLAGS += -ld3d12
+    BACKEND_CFLAGS += -Iinclude/dxsdk
+  endif
+  BACKEND_LDFLAGS += -ld3dcompiler -ldxgi -ldxguid
+  BACKEND_LDFLAGS += -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -static
+else ifeq ($(WINDOW_API),SDL2)
+  ifeq ($(WINDOWS_BUILD),1)
+    BACKEND_LDFLAGS += -lglew32 -lglu32 -lopengl32
+  else ifeq ($(TARGET_RPI),1)
+    BACKEND_LDFLAGS += -lGLESv2
+  else ifeq ($(OSX_BUILD),1)
+    BACKEND_LDFLAGS += -framework OpenGL `pkg-config --libs glew`
+  else
+    BACKEND_LDFLAGS += -lGL
+  endif
+  SDL_USED := 2
+endif
+
+ifeq ($(AUDIO_API),SDL2)
+  SDL_USED := 2
+endif
+
+ifneq (,$(findstring SDL,$(CONTROLLER_API)))
+  SDL_USED := 2
+endif
+
+# SDL can be used by different systems, so we consolidate all of that shit into this
+ifeq ($(SDL_USED),2)
+  BACKEND_CFLAGS += -DHAVE_SDL2=1 `$(SDLCONFIG) --cflags`
+  ifeq ($(WINDOWS_BUILD),1)
+    BACKEND_LDFLAGS += `$(SDLCONFIG) --static-libs` -lsetupapi -luser32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion
+  else
+    BACKEND_LDFLAGS += `$(SDLCONFIG) --libs`
+  endif
+endif
+
 ifeq ($(WINDOWS_BUILD),1)
-CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags` -DUSE_SDL=2
-CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags` -DUSE_SDL=2
+  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS)
+  CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(BACKEND_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv
 
 else ifeq ($(TARGET_WEB),1)
-CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
-CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv -s USE_SDL=2
+  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
+  CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(BACKEND_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv -s USE_SDL=2
 
 # Linux / Other builds below
 else
-CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) `$(SDLCONFIG) --cflags` -DUSE_SDL=2
-CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv `$(SDLCONFIG) --cflags` -DUSE_SDL=2
+  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS)
+  CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(BACKEND_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv
+
 endif
 
 # Check for enhancement options
@@ -534,6 +622,12 @@ endif
 ifeq ($(NODRAWINGDISTANCE),1)
   CC_CHECK += -DNODRAWINGDISTANCE
   CFLAGS += -DNODRAWINGDISTANCE
+endif
+
+# Check for Discord Rich Presence option
+ifeq ($(DISCORDRPC),1)
+CC_CHECK += -DDISCORDRPC
+CFLAGS += -DDISCORDRPC
 endif
 
 # Check for texture fix option
@@ -568,33 +662,39 @@ endif
 
 # Load external textures
 ifeq ($(EXTERNAL_DATA),1)
-  CC_CHECK += -DEXTERNAL_DATA
-  CFLAGS += -DEXTERNAL_DATA
+  CC_CHECK += -DEXTERNAL_DATA -DFS_BASEDIR="\"$(BASEDIR)\""
+  CFLAGS += -DEXTERNAL_DATA -DFS_BASEDIR="\"$(BASEDIR)\""
   # tell skyconv to write names instead of actual texture data and save the split tiles so we can use them later
-  SKYCONV_ARGS := --store-names --write-tiles "$(BUILD_DIR)/textures/skybox_tiles"
+  SKYTILE_DIR := $(BUILD_DIR)/textures/skybox_tiles
+  SKYCONV_ARGS := --store-names --write-tiles "$(SKYTILE_DIR)"
 endif
 
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
 
 ifeq ($(TARGET_WEB),1)
 LDFLAGS := -lm -lGL -lSDL2 -no-pie -s TOTAL_MEMORY=20MB -g4 --source-map-base http://localhost:8080/ -s "EXTRA_EXPORTED_RUNTIME_METHODS=['callMain']"
+
 else ifeq ($(WINDOWS_BUILD),1)
-  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread -lglew32 `$(SDLCONFIG) --static-libs` -lm -lglu32 -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -lopengl32 -static
+  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread $(BACKEND_LDFLAGS) -static
   ifeq ($(CROSS),)
     LDFLAGS += -no-pie
   endif
   ifeq ($(WINDOWS_CONSOLE),1)
     LDFLAGS += -mconsole
   endif
+
 else ifeq ($(TARGET_RPI),1)
-# Linux / Other builds below
-LDFLAGS := $(OPT_FLAGS) -lm -lGLESv2 `$(SDLCONFIG) --libs` -no-pie
+  LDFLAGS := $(OPT_FLAGS) -lm $(BACKEND_LDFLAGS) -no-pie
+
+else ifeq ($(OSX_BUILD),1)
+  LDFLAGS := -lm $(BACKEND_LDFLAGS) -no-pie -lpthread
+
 else
-ifeq ($(OSX_BUILD),1)
-LDFLAGS := -lm -framework OpenGL `$(SDLCONFIG) --libs` -no-pie -lpthread `pkg-config --libs libusb-1.0 glfw3 glew`
-else
-LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm -lGL `$(SDLCONFIG) --libs` -no-pie -lpthread
-endif
+  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm $(BACKEND_LDFLAGS) -no-pie -lpthread
+  ifeq ($(DISCORDRPC),1)
+    LDFLAGS += -ldl -Wl,-rpath .
+  endif
+
 endif # End of LDFLAGS
 
 # Prevent a crash with -sopt
@@ -629,8 +729,6 @@ ZEROTERM = $(PYTHON) $(TOOLS_DIR)/zeroterm.py
 
 all: $(EXE)
 
-ifeq ($(EXTERNAL_DATA),1)
-
 # thank you apple very cool
 ifeq ($(HOST_OS),Darwin)
   CP := gcp
@@ -638,20 +736,33 @@ else
   CP := cp
 endif
 
-# depend on resources as well
-all: res
+ifeq ($(EXTERNAL_DATA),1)
 
-# prepares the resource folder for external data
-res: $(EXE)
-	@mkdir -p $(BUILD_DIR)/res/sound
-	@$(CP) -r -f textures/ $(BUILD_DIR)/res/
-	@$(CP) -r -f $(BUILD_DIR)/textures/skybox_tiles/ $(BUILD_DIR)/res/textures/
-	@$(CP) -f $(SOUND_BIN_DIR)/sound_data.ctl $(BUILD_DIR)/res/sound/
-	@$(CP) -f $(SOUND_BIN_DIR)/sound_data.tbl $(BUILD_DIR)/res/sound/
-	@$(CP) -f $(SOUND_BIN_DIR)/sequences.bin $(BUILD_DIR)/res/sound/
-	@$(CP) -f $(SOUND_BIN_DIR)/bank_sets $(BUILD_DIR)/res/sound/
-	@find actors -name \*.png -exec $(CP) --parents {} $(BUILD_DIR)/res/ \;
-	@find levels -name \*.png -exec $(CP) --parents {} $(BUILD_DIR)/res/ \;
+BASEPACK_PATH := $(BUILD_DIR)/$(BASEDIR)/$(BASEPACK)
+BASEPACK_LST := $(BUILD_DIR)/basepack.lst
+
+# depend on resources as well
+all: $(BASEPACK_PATH)
+
+# phony target for building resources
+res: $(BASEPACK_PATH)
+
+# prepares the basepack.lst
+$(BASEPACK_LST): $(EXE)
+	@mkdir -p $(BUILD_DIR)/$(BASEDIR)
+	@echo -n > $(BASEPACK_LST)
+	@echo "$(BUILD_DIR)/sound/bank_sets sound/bank_sets" >> $(BASEPACK_LST)
+	@echo "$(BUILD_DIR)/sound/sequences.bin sound/sequences.bin" >> $(BASEPACK_LST)
+	@echo "$(BUILD_DIR)/sound/sound_data.ctl sound/sound_data.ctl" >> $(BASEPACK_LST)
+	@echo "$(BUILD_DIR)/sound/sound_data.tbl sound/sound_data.tbl" >> $(BASEPACK_LST)
+	@$(foreach f, $(wildcard $(SKYTILE_DIR)/*), echo $(f) gfx/$(f:$(BUILD_DIR)/%=%) >> $(BASEPACK_LST);)
+	@find actors -name \*.png -exec echo "{} gfx/{}" >> $(BASEPACK_LST) \;
+	@find levels -name \*.png -exec echo "{} gfx/{}" >> $(BASEPACK_LST) \;
+	@find textures -name \*.png -exec echo "{} gfx/{}" >> $(BASEPACK_LST) \;
+
+# prepares the resource ZIP with base data
+$(BASEPACK_PATH): $(BASEPACK_LST)
+	@$(PYTHON) $(TOOLS_DIR)/mkzip.py $(BASEPACK_LST) $(BASEPACK_PATH)
 
 endif
 
@@ -670,6 +781,9 @@ test: $(ROM)
 
 load: $(ROM)
 	$(LOADER) $(LOADER_FLAGS) $<
+
+$(BUILD_DIR)/$(RPC_LIBS):
+	@$(CP) -f $(RPC_LIBS) $(BUILD_DIR)
 
 libultra: $(BUILD_DIR)/libultra.a
 
@@ -737,11 +851,17 @@ $(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h $(BUILD
 $(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
 $(BUILD_DIR)/src/game/options_menu.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
 O_FILES += $(BUILD_DIR)/bin/eu/translation_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
+ifeq ($(DISCORDRPC),1)
+  $(BUILD_DIR)/src/pc/discord/discordrpc.o: $(BUILD_DIR)/include/text_strings.h $(BUILD_DIR)/bin/eu/translation_en.o $(BUILD_DIR)/bin/eu/translation_de.o $(BUILD_DIR)/bin/eu/translation_fr.o
+endif
 else
 $(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h
 $(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h
 $(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h
 $(BUILD_DIR)/src/game/options_menu.o: $(BUILD_DIR)/include/text_strings.h
+ifeq ($(DISCORDRPC),1)
+  $(BUILD_DIR)/src/pc/discord/discordrpc.o: $(BUILD_DIR)/include/text_strings.h
+endif
 endif
 
 ################################################################
@@ -924,7 +1044,7 @@ $(BUILD_DIR)/%.o: %.s
 
 
 
-$(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES)
+$(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(BUILD_DIR)/$(RPC_LIBS)
 	$(LD) -L $(BUILD_DIR) -o $@ $(O_FILES) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(LDFLAGS)
 
 .PHONY: all clean distclean default diff test load libultra res
