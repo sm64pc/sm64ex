@@ -21,6 +21,7 @@
 #include "seq_ids.h"
 #include "course_table.h"
 #include "thread6.h"
+#include "pc/cheats.h"
 
 #define INT_GROUND_POUND_OR_TWIRL (1 << 0) // 0x01
 #define INT_PUNCH                 (1 << 1) // 0x02
@@ -763,6 +764,11 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
     u32 starIndex;
     u32 starGrabAction = ACT_STAR_DANCE_EXIT;
     u32 noExit = (o->oInteractionSubtype & INT_SUBTYPE_NO_EXIT) != 0;
+    u8 stayInLevelCommon = (Cheats.StayInLevel > 0 && Cheats.EnableCheats == TRUE && !(m->controller->buttonDown & L_TRIG) &&
+        !(gCurrLevelNum == LEVEL_BOWSER_1 || gCurrLevelNum == LEVEL_BOWSER_2 || gCurrLevelNum == LEVEL_BOWSER_3));
+    if (Cheats.StayInLevel > 0 && stayInLevelCommon == TRUE) {
+        noExit = TRUE;
+    }
     u32 grandStar = (o->oInteractionSubtype & INT_SUBTYPE_GRAND_STAR) != 0;
 
     if (m->health >= 0x100) {
@@ -820,7 +826,11 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
             return set_mario_action(m, ACT_JUMBO_STAR_CUTSCENE, 0);
         }
 
-        return set_mario_action(m, starGrabAction, noExit + 2 * grandStar);
+        if (Cheats.StayInLevel != 2 || stayInLevelCommon == FALSE) {
+            return set_mario_action(m, starGrabAction, noExit + 2 * grandStar);
+        }
+        //If nonstop StayInLevel is enabled, autosave
+        save_file_do_save(gCurrSaveFileNum - 1);
     }
 
     return FALSE;
