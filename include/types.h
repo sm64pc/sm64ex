@@ -1,5 +1,5 @@
-#ifndef _TYPES_H_
-#define _TYPES_H_
+#ifndef _SM64_TYPES_H_
+#define _SM64_TYPES_H_
 
 // This file contains various data types used in Super Mario 64 that don't yet
 // have an appropriate header.
@@ -30,9 +30,7 @@ struct Controller
   /*0x12*/ u16 buttonPressed;
   /*0x14*/ OSContStatus *statusData;
   /*0x18*/ OSContPad *controllerData;
-#ifdef VERSION_SH
   /*0x1C*/ int port;
-#endif
 };
 
 typedef f32 Vec2f[2];

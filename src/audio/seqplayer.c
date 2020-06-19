@@ -2227,6 +2227,10 @@ void init_sequence_players(void) {
 #endif
         gSequencePlayers[i].bankDmaInProgress = FALSE;
         gSequencePlayers[i].seqDmaInProgress = FALSE;
+
+        // only set this once at the start so it doesn't spike later
+        gSequencePlayers[i].volumeScale = 1.0f;
+
         init_note_lists(&gSequencePlayers[i].notePool);
         init_sequence_player(i);
     }

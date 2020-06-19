@@ -23,11 +23,15 @@
 #include "pc/controller/controller_api.h"
 
 #include <stdbool.h>
+#include "../../include/libc/stdlib.h"
 
 u8 optmenu_open = 0;
 
 static u8 optmenu_binding = 0;
 static u8 optmenu_bind_idx = 0;
+
+/* Keeps track of how many times the user has pressed L while in the options menu, so cheats can be unlocked */
+static s32 l_counter = 0;
 
 // How to add stuff:
 // strings: add them to include/text_strings.h.in
@@ -72,13 +76,19 @@ static const u8 optsVideoStr[][32] = {
     { TEXT_OPT_TEXFILTER },
     { TEXT_OPT_NEAREST },
     { TEXT_OPT_LINEAR },
-    { TEXT_RESET_WINDOW },
+    { TEXT_OPT_RESETWND },
     { TEXT_OPT_VSYNC },
     { TEXT_OPT_DOUBLE },
+    { TEXT_OPT_HUD },
+    { TEXT_OPT_THREEPT },
+    { TEXT_OPT_APPLY },
 };
 
 static const u8 optsAudioStr[][32] = {
-    { TEXT_OPT_MVOLUME },
+    { TEXT_OPT_MVOLUME },    
+    { TEXT_OPT_MUSVOLUME },
+    { TEXT_OPT_SFXVOLUME },
+    { TEXT_OPT_ENVVOLUME },
 };
 
 static const u8 optsCheatsStr[][64] = {
@@ -88,6 +98,9 @@ static const u8 optsCheatsStr[][64] = {
     { TEXT_OPT_CHEAT4 },
     { TEXT_OPT_CHEAT5 },
     { TEXT_OPT_CHEAT6 },
+    { TEXT_OPT_CHEAT7 },
+    { TEXT_OPT_CHEAT8 },
+    { TEXT_OPT_CHEAT9 },
 };
 
 static const u8 bindStr[][32] = {
@@ -107,11 +120,14 @@ static const u8 bindStr[][32] = {
     { TEXT_BIND_DOWN },
     { TEXT_BIND_LEFT },
     { TEXT_BIND_RIGHT },
+    { TEXT_OPT_DEADZONE },
+    { TEXT_OPT_RUMBLE }
 };
 
 static const u8 *filterChoices[] = {
     optsVideoStr[2],
     optsVideoStr[3],
+    optsVideoStr[8],
 };
 
 static const u8 *vsyncChoices[] = {
@@ -194,6 +210,10 @@ static void optvideo_reset_window(UNUSED struct Option *self, s32 arg) {
     }
 }
 
+static void optvideo_apply(UNUSED struct Option *self, s32 arg) {
+    if (!arg) configWindow.settings_changed = true;
+}
+
 /* submenu option lists */
 
 #ifdef BETTERCAMERA
@@ -225,17 +245,26 @@ static struct Option optsControls[] = {
     DEF_OPT_BIND( bindStr[13], configKeyStickDown ),
     DEF_OPT_BIND( bindStr[14], configKeyStickLeft ),
     DEF_OPT_BIND( bindStr[15], configKeyStickRight ),
+    // max deadzone is 31000; this is less than the max range of ~32768, but this
+    // way, the player can't accidentally lock themselves out of using the stick
+    DEF_OPT_SCROLL( bindStr[16], &configStickDeadzone, 0, 100, 1 ),
+    DEF_OPT_SCROLL( bindStr[17], &configRumbleStrength, 0, 100, 1)
 };
 
 static struct Option optsVideo[] = {
     DEF_OPT_TOGGLE( optsVideoStr[0], &configWindow.fullscreen ),
     DEF_OPT_CHOICE( optsVideoStr[5], &configWindow.vsync, vsyncChoices ),
     DEF_OPT_CHOICE( optsVideoStr[1], &configFiltering, filterChoices ),
+    DEF_OPT_TOGGLE( optsVideoStr[7], &configHUD ),
     DEF_OPT_BUTTON( optsVideoStr[4], optvideo_reset_window ),
+    DEF_OPT_BUTTON( optsVideoStr[9], optvideo_apply ),
 };
 
 static struct Option optsAudio[] = {
     DEF_OPT_SCROLL( optsAudioStr[0], &configMasterVolume, 0, MAX_VOLUME, 1 ),
+    DEF_OPT_SCROLL( optsAudioStr[1], &configMusicVolume, 0, MAX_VOLUME, 1),
+    DEF_OPT_SCROLL( optsAudioStr[2], &configSfxVolume, 0, MAX_VOLUME, 1),
+    DEF_OPT_SCROLL( optsAudioStr[3], &configEnvVolume, 0, MAX_VOLUME, 1),
 };
 
 static struct Option optsCheats[] = {
@@ -245,6 +274,9 @@ static struct Option optsCheats[] = {
     DEF_OPT_TOGGLE( optsCheatsStr[3], &Cheats.InfiniteLives ),
     DEF_OPT_TOGGLE( optsCheatsStr[4], &Cheats.SuperSpeed ),
     DEF_OPT_TOGGLE( optsCheatsStr[5], &Cheats.Responsive ),
+    DEF_OPT_TOGGLE( optsCheatsStr[6], &Cheats.ExitAnywhere ),
+    DEF_OPT_TOGGLE( optsCheatsStr[7], &Cheats.HugeMario ),
+    DEF_OPT_TOGGLE( optsCheatsStr[8], &Cheats.TinyMario ),
 
 };
 
@@ -450,7 +482,7 @@ void optmenu_draw(void) {
 //This has been separated for interesting reasons. Don't question it.
 void optmenu_draw_prompt(void) {
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
-    optmenu_draw_text(278, 212, menuStr[1 + optmenu_open], 0);
+    optmenu_draw_text(264, 212, menuStr[1 + optmenu_open], 0);
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 }
 
@@ -472,6 +504,9 @@ void optmenu_toggle(void) {
 
         currentMenu = &menuMain;
         optmenu_open = 1;
+        
+        /* Resets l_counter to 0 every time the options menu is open */
+        l_counter = 0;
     } else {
         #ifndef nosound
         play_sound(SOUND_MENU_MARIO_CASTLE_WARP2, gDefaultSoundArgs);
@@ -481,7 +516,7 @@ void optmenu_toggle(void) {
         newcam_init_settings(); // load bettercam settings from config vars
         #endif
         controller_reconfigure(); // rebind using new config values
-        configfile_save(gCLIOpts.ConfigFile);
+        configfile_save(configfile_name());
     }
 }
 
@@ -501,7 +536,19 @@ void optmenu_check_buttons(void) {
 
     if (gPlayer1Controller->buttonPressed & R_TRIG)
         optmenu_toggle();
-
+    
+    /* Enables cheats if the user press the L trigger 3 times while in the options menu. Also plays a sound. */
+    
+    if ((gPlayer1Controller->buttonPressed & L_TRIG) && !Cheats.EnableCheats) {
+        if (l_counter == 2) {
+                Cheats.EnableCheats = true;
+                play_sound(SOUND_MENU_STAR_SOUND, gDefaultSoundArgs);
+                l_counter = 0;
+        } else {
+            l_counter++;
+        }
+    }
+    
     if (!optmenu_open) return;
 
     u8 allowInput = 0;

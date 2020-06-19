@@ -9,8 +9,11 @@
 #include "include/text_strings.h"
 #include "engine/surface_collision.h"
 #include "pc/configfile.h"
+#if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR) 
+//quick and dirty fix for some older MinGW.org mingwrt
+#else
 #include <stdio.h>
-
+#endif
 
 
 /**
@@ -71,9 +74,9 @@ struct newcam_hardpos newcam_fixedcam[] =
 #endif // noaccel
 
 s16 newcam_yaw; //Z axis rotation
-s8 newcam_yaw_acc;
+s16 newcam_yaw_acc;
 s16 newcam_tilt = 1500; //Y axis rotation
-s8 newcam_tilt_acc;
+s16 newcam_tilt_acc;
 u16 newcam_distance = 750; //The distance the camera stays from the player
 u16 newcam_distance_target = 750; //The distance the player camera tries to reach.
 f32 newcam_pos_target[3]; //The position the camera is basing calculations off. *usually* Mario.
@@ -126,7 +129,7 @@ void newcam_init(struct Camera *c, u8 dv)
         case LEVEL_CCM: if (gCurrAreaIndex == 1) {newcam_yaw = -0x4000; newcam_tilt = 2000; newcam_distance_target = newcam_distance_values[1];} else newcam_mode = NC_MODE_SLIDE; break;
         case LEVEL_WDW: newcam_yaw = 0x2000; newcam_tilt = 3000; newcam_distance_target = newcam_distance_values[1]; break;
         case 27: newcam_mode = NC_MODE_SLIDE; break;
-        case LEVEL_THI: if (gCurrAreaIndex == 2) newcam_mode = NC_MODE_SLIDE; break;
+        case LEVEL_TTM: if (gCurrAreaIndex == 2) newcam_mode = NC_MODE_SLIDE; break;
     }
 
     newcam_distance = newcam_distance_target;
@@ -184,14 +187,20 @@ void newcam_diagnostics(void)
     print_text_fmt_int(32,32,"DISTANCE %d",newcam_distance);
 }
 
-static s16 newcam_adjust_value(s16 var, s16 val)
+static s16 newcam_adjust_value(s16 var, s16 val, s16 max)
 {
-    var += val;
-    if (var > 100)
-        var = 100;
-    if (var < -100)
-        var = -100;
-
+    if (val > 0)
+    {
+        var += val;
+        if (var > max)
+            var = max;
+    }
+    else if (val < 0)
+    {
+        var += val;
+        if (var < max)
+            var = max;
+    }
     return var;
 }
 
@@ -216,9 +225,9 @@ static int ivrt(u8 axis)
     if (axis == 0)
     {
         if (newcam_invertX == 0)
-            return 1;
-        else
             return -1;
+        else
+            return 1;
     }
     else
     {
@@ -231,6 +240,8 @@ static int ivrt(u8 axis)
 
 static void newcam_rotate_button(void)
 {
+    f32 intendedXMag;
+    f32 intendedYMag;
     if ((newcam_modeflags & NC_FLAG_8D || newcam_modeflags & NC_FLAG_4D) && newcam_modeflags & NC_FLAG_XTURN) //8 directional camera rotation input for buttons.
     {
         if ((gPlayer1Controller->buttonPressed & L_CBUTTONS) && newcam_analogue == 0)
@@ -261,27 +272,33 @@ static void newcam_rotate_button(void)
     if (newcam_modeflags & NC_FLAG_XTURN)
     {
         if ((gPlayer1Controller->buttonDown & L_CBUTTONS) && newcam_analogue == 0)
-            newcam_yaw_acc = newcam_adjust_value(newcam_yaw_acc,accel);
+            newcam_yaw_acc = newcam_adjust_value(newcam_yaw_acc,accel, 100);
         else if ((gPlayer1Controller->buttonDown & R_CBUTTONS) && newcam_analogue == 0)
-            newcam_yaw_acc = newcam_adjust_value(newcam_yaw_acc,-accel);
+            newcam_yaw_acc = newcam_adjust_value(newcam_yaw_acc,-accel, -100);
         else
+        if (!newcam_analogue)
+        {
             #ifdef noaccel
             newcam_yaw_acc = 0;
             #else
             newcam_yaw_acc -= (newcam_yaw_acc*newcam_degrade);
             #endif
+        }
     }
 
     if (gPlayer1Controller->buttonDown & U_CBUTTONS && newcam_modeflags & NC_FLAG_YTURN && newcam_analogue == 0)
-        newcam_tilt_acc = newcam_adjust_value(newcam_tilt_acc,accel);
+        newcam_tilt_acc = newcam_adjust_value(newcam_tilt_acc,accel, 100);
     else if (gPlayer1Controller->buttonDown & D_CBUTTONS && newcam_modeflags & NC_FLAG_YTURN && newcam_analogue == 0)
-        newcam_tilt_acc = newcam_adjust_value(newcam_tilt_acc,-accel);
+        newcam_tilt_acc = newcam_adjust_value(newcam_tilt_acc,-accel, -100);
     else
+    if (!newcam_analogue)
+    {
         #ifdef noaccel
         newcam_tilt_acc = 0;
         #else
         newcam_tilt_acc -= (newcam_tilt_acc*newcam_degrade);
         #endif
+    }
 
     newcam_framessincec[0] += 1;
     newcam_framessincec[1] += 1;
@@ -313,12 +330,14 @@ static void newcam_rotate_button(void)
 
     if (newcam_analogue == 1) //There's not much point in keeping this behind a check, but it wouldn't hurt, just incase any 2player shenanigans ever happen, it makes it easy to disable.
     { //The joystick values cap at 80, so divide by 8 to get the same net result at maximum turn as the button
+        intendedXMag = gPlayer2Controller->stickX*1.25;
+        intendedYMag = gPlayer2Controller->stickY*1.25;
         if (ABS(gPlayer2Controller->stickX) > 20 && newcam_modeflags & NC_FLAG_XTURN)
         {
             if (newcam_modeflags & NC_FLAG_8D)
             {
                 if (newcam_cstick_down == 0)
-                    {
+                {
                     newcam_cstick_down = 1;
                     newcam_centering = 1;
                     #ifndef nosound
@@ -341,18 +360,24 @@ static void newcam_rotate_button(void)
                 }
             }
             else
-                newcam_yaw_acc = newcam_adjust_value(newcam_yaw_acc,(-gPlayer2Controller->stickX/4));
+            {
+                newcam_yaw_acc = newcam_adjust_value(newcam_yaw_acc,-gPlayer2Controller->stickX/8, intendedXMag);
+            }
         }
         else
+        if (newcam_analogue)
         {
             newcam_cstick_down = 0;
             newcam_yaw_acc -= (newcam_yaw_acc*newcam_degrade);
         }
 
         if (ABS(gPlayer2Controller->stickY) > 20 && newcam_modeflags & NC_FLAG_YTURN)
-            newcam_tilt_acc = newcam_adjust_value(newcam_tilt_acc,(-gPlayer2Controller->stickY/4));
+            newcam_tilt_acc = newcam_adjust_value(newcam_tilt_acc,-gPlayer2Controller->stickY/8, intendedYMag);
         else
+        if (newcam_analogue)
+        {
             newcam_tilt_acc -= (newcam_tilt_acc*newcam_degrade);
+        }
     }
 
     if (newcam_mouse == 1)
@@ -414,9 +439,9 @@ static void newcam_update_values(void)
 {//For tilt, this just limits it so it doesn't go further than 90 degrees either way. 90 degrees is actually 16384, but can sometimes lead to issues, so I just leave it shy of 90.
     u8 waterflag = 0;
     if (newcam_modeflags & NC_FLAG_XTURN)
-        newcam_yaw += (ivrt(0)*(newcam_yaw_acc*(newcam_sensitivityX/10)));
+        newcam_yaw += ((ivrt(0)*(newcam_yaw_acc*(newcam_sensitivityX/10))));
     if (((newcam_tilt < 12000 && newcam_tilt_acc*ivrt(1) > 0) || (newcam_tilt > -12000 && newcam_tilt_acc*ivrt(1) < 0)) && newcam_modeflags & NC_FLAG_YTURN)
-        newcam_tilt += (ivrt(1)*(newcam_tilt_acc*(newcam_sensitivityY/10)));
+        newcam_tilt += ((ivrt(1)*(newcam_tilt_acc*(newcam_sensitivityY/10))));
     else
     {
         if (newcam_tilt > 12000)

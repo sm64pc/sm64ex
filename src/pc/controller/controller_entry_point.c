@@ -1,9 +1,11 @@
 #include "lib/src/libultra_internal.h"
 #include "lib/src/osContInternal.h"
+#include "macros.h"
+
+#include "../configfile.h"
 
 #include "controller_recorded_tas.h"
 #include "controller_keyboard.h"
-
 #include "controller_sdl.h"
 
 // Analog camera movement by Pathétique (github.com/vrmiguel), y0shin and Mors
@@ -20,7 +22,7 @@ static struct ControllerAPI *controller_implementations[] = {
     &controller_keyboard,
 };
 
-s32 osContInit(OSMesgQueue *mq, u8 *controllerBits, OSContStatus *status) {
+s32 osContInit(UNUSED OSMesgQueue *mq, u8 *controllerBits, UNUSED OSContStatus *status) {
     for (size_t i = 0; i < sizeof(controller_implementations) / sizeof(struct ControllerAPI *); i++) {
         controller_implementations[i]->init();
     }
@@ -28,7 +30,23 @@ s32 osContInit(OSMesgQueue *mq, u8 *controllerBits, OSContStatus *status) {
     return 0;
 }
 
-s32 osContStartReadData(OSMesgQueue *mesg) {
+s32 osMotorStart(UNUSED void *pfs) {
+    // Since rumble stops by osMotorStop, its duration is not nessecary.
+    // Set it to 5 seconds and hope osMotorStop() is called in time.
+    controller_rumble_play(configRumbleStrength / 100.0f, 5.0f);
+    return 0;
+}
+
+s32 osMotorStop(UNUSED void *pfs) {
+    controller_rumble_stop();
+    return 0;
+}
+
+u32 osMotorInit(UNUSED OSMesgQueue *mq, UNUSED void *pfs, UNUSED s32 port) {
+    return 0; // rumble is initialized in the specific backend's init function
+}
+
+s32 osContStartReadData(UNUSED OSMesgQueue *mesg) {
     return 0;
 }
 
@@ -40,7 +58,8 @@ void osContGetReadData(OSContPad *pad) {
 
 #ifdef BETTERCAMERA
     uint32_t magnitude_sq = (uint32_t)(rightx * rightx) + (uint32_t)(righty * righty);
-    if (magnitude_sq > (uint32_t)(DEADZONE * DEADZONE)) {
+    uint32_t stickDeadzoneActual = configStickDeadzone * DEADZONE_STEP;
+    if (magnitude_sq > (uint32_t)(stickDeadzoneActual * stickDeadzoneActual)) {
         c_rightx = rightx / 0x100;
         int stick_y = -righty / 0x100;
         c_righty = stick_y == 128 ? 127 : stick_y;
@@ -76,5 +95,19 @@ void controller_reconfigure(void) {
     for (size_t i = 0; i < sizeof(controller_implementations) / sizeof(struct ControllerAPI *); i++) {
         if (controller_implementations[i]->reconfig)
             controller_implementations[i]->reconfig();
+    }
+}
+
+void controller_rumble_play(float str, float time) {
+    for (size_t i = 0; i < sizeof(controller_implementations) / sizeof(struct ControllerAPI *); i++) {
+        if (controller_implementations[i]->rumble_play)
+            controller_implementations[i]->rumble_play(str, time);
+    }
+}
+
+void controller_rumble_stop(void) {
+    for (size_t i = 0; i < sizeof(controller_implementations) / sizeof(struct ControllerAPI *); i++) {
+        if (controller_implementations[i]->rumble_stop)
+            controller_implementations[i]->rumble_stop();
     }
 }

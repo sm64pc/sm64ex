@@ -160,4 +160,4 @@ void eu_set_language(u16 language);
 u16 eu_get_language(void);
 #endif
 
-#endif
+#endif // _SAVE_FILE_H_

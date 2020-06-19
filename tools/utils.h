@@ -7,8 +7,9 @@
 
 // printing size_t varies by compiler
 #if defined(_MSC_VER) || defined(__MINGW32__)
+  #include <windows.h>
   #define SIZE_T_FORMAT "%Iu"
-  #define realpath(N,R) _fullpath((R),(N),_MAX_PATH)
+  #define realpath(N,R) _fullpath((R),(N),MAX_PATH)
 #else
   #define SIZE_T_FORMAT "%zu"
 #endif
@@ -70,6 +71,7 @@ typedef struct
 // global verbosity setting
 extern int g_verbosity;
 
+#undef ERROR
 #define ERROR(...) fprintf(stderr, __VA_ARGS__)
 #define INFO(...) if (g_verbosity) printf(__VA_ARGS__)
 #define INFO_HEX(...) if (g_verbosity) print_hex(__VA_ARGS__)

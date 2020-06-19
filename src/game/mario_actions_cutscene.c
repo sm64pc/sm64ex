@@ -3,7 +3,6 @@
 #include "prevent_bss_reordering.h"
 #include "sm64.h"
 #include "gfx_dimensions.h"
-//#include "game.h"
 #include "game_init.h"
 #include "sound_init.h"
 #include "level_update.h"
@@ -1179,9 +1178,7 @@ s32 act_death_exit(struct MarioState *m) {
 #else
         play_sound(SOUND_MARIO_OOOF2, m->marioObj->header.gfx.cameraToObject);
 #endif
-#ifdef VERSION_SH
         queue_rumble_data(5, 80);
-#endif
         m->numLives--;
         // restore 7.75 units of health
         m->healCounter = 31;
@@ -1214,9 +1211,7 @@ s32 act_falling_death_exit(struct MarioState *m) {
 #else
         play_sound(SOUND_MARIO_OOOF2, m->marioObj->header.gfx.cameraToObject);
 #endif
-#ifdef VERSION_SH
         queue_rumble_data(5, 80);
-#endif
         m->numLives--;
         // restore 7.75 units of health
         m->healCounter = 31;
@@ -1261,9 +1256,7 @@ s32 act_special_death_exit(struct MarioState *m) {
     }
 
     if (launch_mario_until_land(m, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_BACKWARD_AIR_KB, -24.0f)) {
-#ifdef VERSION_SH
         queue_rumble_data(5, 80);
-#endif
         m->numLives--;
         m->healCounter = 31;
     }
@@ -1347,9 +1340,7 @@ s32 act_bbh_enter_spin(struct MarioState *m) {
             m->flags &= ~MARIO_UNKNOWN_08;
             if (perform_air_step(m, 0) == AIR_STEP_LANDED) {
                 level_trigger_warp(m, WARP_OP_UNKNOWN_02);
-#ifdef VERSION_SH
                 queue_rumble_data(15, 80);
-#endif
                 m->actionState = 4;
             }
             if (m->actionState == 2) {
@@ -1415,12 +1406,10 @@ s32 act_teleport_fade_out(struct MarioState *m) {
     set_mario_animation(m, m->prevAction == ACT_CROUCHING ? MARIO_ANIM_CROUCHING
                                                           : MARIO_ANIM_FIRST_PERSON);
                                                           
-#ifdef VERSION_SH
     if (m->actionTimer == 0) {
         queue_rumble_data(30, 70);
         func_sh_8024C89C(2);
     }
-#endif
 
     m->flags |= MARIO_TELEPORTING;
 
@@ -1441,12 +1430,10 @@ s32 act_teleport_fade_in(struct MarioState *m) {
     play_sound_if_no_flag(m, SOUND_ACTION_TELEPORT, MARIO_ACTION_SOUND_PLAYED);
     set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
 
-#ifdef VERSION_SH
     if (m->actionTimer == 0) {
         queue_rumble_data(30, 70);
         func_sh_8024C89C(2);
     }
-#endif
 
     if (m->actionTimer < 32) {
         m->flags |= MARIO_TELEPORTING;
@@ -1535,9 +1522,7 @@ s32 act_squished(struct MarioState *m) {
                 // Both of the 1.8's are really floats, but one of them has to
                 // be written as a double for this to match on EU.
                 vec3f_set(m->marioObj->header.gfx.scale, 1.8, 0.05f, 1.8f);
-#ifdef VERSION_SH
                 queue_rumble_data(10, 80);
-#endif
                 m->actionState = 1;
             }
             break;
@@ -1639,9 +1624,7 @@ void stuck_in_ground_handler(struct MarioState *m, s32 animation, s32 unstuckFra
     if (animFrame == -1) {
         play_sound_and_spawn_particles(m, SOUND_ACTION_TERRAIN_STUCK_IN_GROUND, 1);
     } else if (animFrame == unstuckFrame) {
-#ifdef VERSION_SH
         queue_rumble_data(5, 80);
-#endif
         play_sound_and_spawn_particles(m, SOUND_ACTION_UNSTUCK_FROM_GROUND, 1);
     } else if (animFrame == target2 || animFrame == target3) {
         play_mario_landing_sound(m, SOUND_ACTION_TERRAIN_LANDING);

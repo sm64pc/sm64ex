@@ -1,3 +1,5 @@
+#ifdef CAPI_SDL2
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -13,6 +15,8 @@
 #include "controller_api.h"
 #include "controller_sdl.h"
 #include "../configfile.h"
+#include "../platform.h"
+#include "../fs/fs.h"
 
 #include "game/level_update.h"
 
@@ -33,8 +37,9 @@ extern u8 newcam_mouse;
 #endif
 
 static bool init_ok;
+static bool haptics_enabled;
 static SDL_GameController *sdl_cntrl;
-
+static SDL_Haptic *sdl_haptic;
 
 static u32 num_joy_binds = 0;
 static u32 num_mouse_binds = 0;
@@ -71,6 +76,10 @@ static void controller_sdl_bind(void) {
     controller_add_binds(A_BUTTON,     configKeyA);
     controller_add_binds(B_BUTTON,     configKeyB);
     controller_add_binds(Z_TRIG,       configKeyZ);
+    controller_add_binds(STICK_UP,     configKeyStickUp);
+    controller_add_binds(STICK_LEFT,   configKeyStickLeft);
+    controller_add_binds(STICK_DOWN,   configKeyStickDown);
+    controller_add_binds(STICK_RIGHT,  configKeyStickRight);
     controller_add_binds(U_CBUTTONS,   configKeyCUp);
     controller_add_binds(L_CBUTTONS,   configKeyCLeft);
     controller_add_binds(D_CBUTTONS,   configKeyCDown);
@@ -86,6 +95,21 @@ static void controller_sdl_init(void) {
         return;
     }
 
+    haptics_enabled = (SDL_InitSubSystem(SDL_INIT_HAPTIC) == 0);
+
+    // try loading an external gamecontroller mapping file
+    uint64_t gcsize = 0;
+    void *gcdata = fs_load_file("gamecontrollerdb.txt", &gcsize);
+    if (gcdata && gcsize) {
+        SDL_RWops *rw = SDL_RWFromConstMem(gcdata, gcsize);
+        if (rw) {
+            int nummaps = SDL_GameControllerAddMappingsFromRW(rw, SDL_TRUE);
+            if (nummaps >= 0)
+                printf("loaded %d controller mappings from 'gamecontrollerdb.txt'\n", nummaps);
+        }
+        free(gcdata);
+    }
+
 #ifdef BETTERCAMERA
     if (newcam_mouse == 1)
         SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -95,6 +119,26 @@ static void controller_sdl_init(void) {
     controller_sdl_bind();
 
     init_ok = true;
+}
+
+static SDL_Haptic *controller_sdl_init_haptics(const int joy) {
+    if (!haptics_enabled) return NULL;
+
+    SDL_Haptic *hap = SDL_HapticOpen(joy);
+    if (!hap) return NULL;
+
+    if (SDL_HapticRumbleSupported(hap) != SDL_TRUE) {
+        SDL_HapticClose(hap);
+        return NULL;
+    }
+
+    if (SDL_HapticRumbleInit(hap) != 0) {
+        SDL_HapticClose(hap);
+        return NULL;
+    }
+
+    printf("controller %s has haptics support, rumble enabled\n", SDL_JoystickNameForIndex(joy));
+    return hap;
 }
 
 static void controller_sdl_read(OSContPad *pad) {
@@ -117,20 +161,23 @@ static void controller_sdl_read(OSContPad *pad) {
     // remember buttons that changed from 0 to 1
     last_mouse = (mouse_buttons ^ mouse) & mouse;
     mouse_buttons = mouse;
-    
 #endif
 
     SDL_GameControllerUpdate();
 
     if (sdl_cntrl != NULL && !SDL_GameControllerGetAttached(sdl_cntrl)) {
+        SDL_HapticClose(sdl_haptic);
         SDL_GameControllerClose(sdl_cntrl);
         sdl_cntrl = NULL;
+        sdl_haptic = NULL;
     }
+
     if (sdl_cntrl == NULL) {
         for (int i = 0; i < SDL_NumJoysticks(); i++) {
             if (SDL_IsGameController(i)) {
                 sdl_cntrl = SDL_GameControllerOpen(i);
                 if (sdl_cntrl != NULL) {
+                    sdl_haptic = controller_sdl_init_haptics(i);
                     break;
                 }
             }
@@ -147,9 +194,23 @@ static void controller_sdl_read(OSContPad *pad) {
         if (pressed) last_joybutton = i;
     }
 
+    u32 buttons_down = 0;
     for (u32 i = 0; i < num_joy_binds; ++i)
         if (joy_buttons[joy_binds[i][0]])
-            pad->button |= joy_binds[i][1];
+            buttons_down |= joy_binds[i][1];
+
+    pad->button |= buttons_down;
+
+    const u32 xstick = buttons_down & STICK_XMASK;
+    const u32 ystick = buttons_down & STICK_YMASK;
+    if (xstick == STICK_LEFT)
+        pad->stick_x = -128;
+    else if (xstick == STICK_RIGHT)
+        pad->stick_x = 127;
+    if (ystick == STICK_DOWN)
+        pad->stick_y = -128;
+    else if (ystick == STICK_UP)
+        pad->stick_y = 127;
 
     int16_t leftx = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_LEFTX);
     int16_t lefty = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_LEFTY);
@@ -182,11 +243,22 @@ static void controller_sdl_read(OSContPad *pad) {
     if (rtrig > 30 * 256) pad->button |= R_TRIG;
 
     uint32_t magnitude_sq = (uint32_t)(leftx * leftx) + (uint32_t)(lefty * lefty);
-    if (magnitude_sq > (uint32_t)(DEADZONE * DEADZONE)) {
+    uint32_t stickDeadzoneActual = configStickDeadzone * DEADZONE_STEP;
+    if (magnitude_sq > (uint32_t)(stickDeadzoneActual * stickDeadzoneActual)) {
         pad->stick_x = leftx / 0x100;
         int stick_y = -lefty / 0x100;
         pad->stick_y = stick_y == 128 ? 127 : stick_y;
     }
+}
+
+static void controller_sdl_rumble_play(f32 strength, f32 length) {
+    if (sdl_haptic)
+        SDL_HapticRumblePlay(sdl_haptic, strength, (u32)(length * 1000.0f));
+}
+
+static void controller_sdl_rumble_stop(void) {
+    if (sdl_haptic)
+        SDL_HapticRumbleStop(sdl_haptic);
 }
 
 static u32 controller_sdl_rawkey(void) {
@@ -214,6 +286,16 @@ static void controller_sdl_shutdown(void) {
         }
         SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
     }
+
+    if (SDL_WasInit(SDL_INIT_HAPTIC)) {
+        if (sdl_haptic) {
+            SDL_HapticClose(sdl_haptic);
+            sdl_haptic = NULL;
+        }
+        SDL_QuitSubSystem(SDL_INIT_HAPTIC);
+    }
+
+    haptics_enabled = false;
     init_ok = false;
 }
 
@@ -222,6 +304,10 @@ struct ControllerAPI controller_sdl = {
     controller_sdl_init,
     controller_sdl_read,
     controller_sdl_rawkey,
+    controller_sdl_rumble_play,
+    controller_sdl_rumble_stop,
     controller_sdl_bind,
     controller_sdl_shutdown
 };
+
+#endif // CAPI_SDL2

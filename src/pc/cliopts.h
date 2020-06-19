@@ -1,10 +1,14 @@
 #ifndef _CLIOPTS_H
 #define _CLIOPTS_H
 
+#include "platform.h"
+
 struct PCCLIOptions  {
     unsigned int SkipIntro;
     unsigned int FullScreen;
-    char ConfigFile[1024];
+    char ConfigFile[SYS_MAX_PATH];
+    char SavePath[SYS_MAX_PATH];
+    char GameDir[SYS_MAX_PATH];
 };
 
 extern struct PCCLIOptions gCLIOpts;
