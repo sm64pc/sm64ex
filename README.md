@@ -1,32 +1,30 @@
-# sm64pc
-OpenGL adaptation of [n64decomp/sm64](https://github.com/n64decomp/sm64). 
+# sm64ex
+Fork of [sm64-port/sm64-port](https://github.com/sm64-port/sm64-port) with additional features. 
 
 Feel free to report bugs and contribute, but remember, there must be **no upload of any copyrighted asset**. 
-Run `./extract_assets.py --clean && make clean` or `make distclean` to remove ROM-originated content. This port has been made possible mostly thanks to [Emill](https://github.com/Emill) and his [n64-fast3d-engine](https://github.com/Emill/n64-fast3d-engine/) renderer.
+Run `./extract_assets.py --clean && make clean` or `make distclean` to remove ROM-originated content.
 
-
-Please contribute **first** to the [nightly branch](https://github.com/sm64pc/sm64pc/tree/nightly/). New functionality will be merged to master once they're considered to be well-tested.
+Please contribute **first** to the [nightly branch](https://github.com/sm64pc/sm64ex/tree/nightly/). New functionality will be merged to master once they're considered to be well-tested.
 
 *Read this in other languages: [Español](README_es_ES.md), [Português](README_pt_BR.md) or [简体中文](README_zh_CN.md).*
 
-## Features
+## New features
 
- * Native rendering. You can now play SM64 without the need of an emulator. 
- * Variable aspect ratio and resolution. The game can now correctly render at basically any window size.
- * Native xinput controller support. On Linux, DualShock 4 has been confirmed to work plug-and-play.
- * Analog camera control and mouse look. (Activate with `make BETTERCAMERA=1`.)
- * An option to disable drawing distances. (Activate with `make NODRAWINGDISTANCE=1`.)
- * Model and texture fixes. (Activate with `make TEXTURE_FIX=1`.)
- * In-game control binding.
+ * Options menu with various settings, including button remapping.
+ * Optional external data loading (so far only textures and assembled soundbanks), providing support for custom texture packs.
+ * Optional analog camera and mouse look (using [Puppycam](https://github.com/FazanaJ/puppycam)).
+ * Optional OpenGL1.3-based renderer for older machines, as well as the original GL2.1, D3D11 and D3D12 renderers from Emill's [n64-fast3d-engine](https://github.com/Emill/n64-fast3d-engine/).
+ * Option to disable drawing distances.
+ * Optional odel and texture fixes (e.g. the smoke texture).
  * Skip introductory Peach & Lakitu cutscenes with the `--skip-intro` CLI option
- * Disabling the HUD.
- * Cheats menu in Options. (Activate with `--cheats`) Please note that if a cheat asks you to press "L" it's referring to the N64 button. Check your bindings and make sure you have the "L" button mapped to a button in your controller.
- * Text-based save support. (Activate with `make TEXTSAVES=1`.)
- * Recent changes in Nightly have moved the save and configuration file path to `%HOMEPATH%\AppData\Roaming\sm64pc` on Windows and `$HOME/.local/share/sm64pc` on Linux. This behaviour can be changed with the `--savepath` CLI option.
-   For example `--savepath .` will read saves from the current directory (which not always matches the exe directory, but most of the time it does);
+ * Cheats menu in Options (activate with `--cheats` or by pressing L thrice in the pause menu).
+ * Support for both little-endian and big-endian save files (meaning you can use save files from both sm64-port and most emulators), as well as an optional text-based save format.
+
+Recent changes in Nightly have moved the save and configuration file path to `%HOMEPATH%\AppData\Roaming\sm64pc` on Windows and `$HOME/.local/share/sm64pc` on Linux. This behaviour can be changed with the `--savepath` CLI option.
+For example `--savepath .` will read saves from the current directory (which not always matches the exe directory, but most of the time it does);
    `--savepath '!'` will read saves from the executable directory.
 
 ## Building
-For building instructions, please refer to the [wiki](https://github.com/sm64pc/sm64pc/wiki).
+For building instructions, please refer to the [wiki](https://github.com/sm64pc/sm64ex/wiki).
 
 **Make sure you have MXE first before attempting to compile for Windows on Linux and WSL. Follow the guide on the wiki.**
