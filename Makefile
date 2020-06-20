@@ -354,73 +354,25 @@ LEVEL_C_FILES := $(wildcard levels/*/leveldata.c) $(wildcard levels/*/script.c) 
 C_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c)) $(LEVEL_C_FILES)
 CXX_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
 S_FILES := $(foreach dir,$(ASM_DIRS),$(wildcard $(dir)/*.s))
-ULTRA_C_FILES := $(foreach dir,$(ULTRA_SRC_DIRS),$(wildcard $(dir)/*.c))
 GODDARD_C_FILES := $(foreach dir,$(GODDARD_SRC_DIRS),$(wildcard $(dir)/*.c))
 
 GENERATED_C_FILES := $(BUILD_DIR)/assets/mario_anim_data.c $(BUILD_DIR)/assets/demo_data.c \
   $(addprefix $(BUILD_DIR)/bin/,$(addsuffix _skybox.c,$(notdir $(basename $(wildcard textures/skyboxes/*.png)))))
 
-# We need to keep this for now
-# If we're not N64 use below
+ULTRA_C_FILES := \
+  alBnkfNew.c \
+  guLookAtRef.c \
+  guMtxF2L.c \
+  guNormalize.c \
+  guOrthoF.c \
+  guPerspectiveF.c \
+  guRotateF.c \
+  guScaleF.c \
+  guTranslateF.c \
+  ldiv.c
 
-  ULTRA_C_FILES_SKIP := \
-    sqrtf.c \
-    string.c \
-    sprintf.c \
-    _Printf.c \
-    kdebugserver.c \
-    osInitialize.c \
-    func_802F7140.c \
-    func_802F71F0.c \
-    func_802F4A20.c \
-    EU_D_802f4330.c \
-    D_802F4380.c \
-    osLeoDiskInit.c \
-    osCreateThread.c \
-    osDestroyThread.c \
-    osStartThread.c \
-    osSetThreadPri.c \
-    osPiStartDma.c \
-    osPiRawStartDma.c \
-    osPiRawReadIo.c \
-    osPiGetCmdQueue.c \
-    osJamMesg.c \
-    osSendMesg.c \
-    osRecvMesg.c \
-    osSetEventMesg.c \
-    osTimer.c \
-    osSetTimer.c \
-    osSetTime.c \
-    osCreateViManager.c \
-    osViSetSpecialFeatures.c \
-    osVirtualToPhysical.c \
-    osViBlack.c \
-    osViSetEvent.c \
-    osViSetMode.c \
-    osViSwapBuffer.c \
-    osSpTaskLoadGo.c \
-    osCreatePiManager.c \
-    osGetTime.c \
-    osEepromProbe.c \
-    osEepromWrite.c \
-    osEepromLongWrite.c \
-    osEepromRead.c \
-    osEepromLongRead.c \
-    osContInit.c \
-    osContStartReadData.c \
-    osAiGetLength.c \
-    osAiSetFrequency.c \
-    osAiSetNextBuffer.c \
-    __osViInit.c \
-    __osSyncPutChars.c \
-    __osAtomicDec.c \
-    __osSiRawStartDma.c \
-    __osViSwapContext.c \
-    __osViGetCurrentContext.c \
-    __osDevMgrMain.c
-
-  C_FILES := $(filter-out src/game/main.c,$(C_FILES))
-  ULTRA_C_FILES := $(filter-out $(addprefix lib/src/,$(ULTRA_C_FILES_SKIP)),$(ULTRA_C_FILES))
+C_FILES := $(filter-out src/game/main.c,$(C_FILES))
+ULTRA_C_FILES := $(addprefix lib/src/,$(ULTRA_C_FILES))
 
 # "If we're not N64, use the above"
 
