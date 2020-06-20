@@ -72,7 +72,13 @@ void send_display_list(struct SPTask *spTask) {
     gfx_run((Gfx *)spTask->task.t.data_ptr);
 }
 
-#define printf
+#ifdef VERSION_EU
+#define SAMPLES_HIGH 656
+#define SAMPLES_LOW 640
+#else
+#define SAMPLES_HIGH 544
+#define SAMPLES_LOW 528
+#endif
 
 void produce_one_frame(void) {
     gfx_start_frame();
@@ -86,9 +92,9 @@ void produce_one_frame(void) {
     thread6_rumble_loop(NULL);
 
     int samples_left = audio_api->buffered();
-    u32 num_audio_samples = samples_left < audio_api->get_desired_buffered() ? 544 : 528;
+    u32 num_audio_samples = samples_left < audio_api->get_desired_buffered() ? SAMPLES_HIGH : SAMPLES_LOW;
     //printf("Audio samples: %d %u\n", samples_left, num_audio_samples);
-    s16 audio_buffer[544 * 2 * 2];
+    s16 audio_buffer[SAMPLES_HIGH * 2 * 2];
     for (int i = 0; i < 2; i++) {
         /*if (audio_cnt-- == 0) {
             audio_cnt = 2;
@@ -98,7 +104,7 @@ void produce_one_frame(void) {
     }
     //printf("Audio samples before submitting: %d\n", audio_api->buffered());
 
-    audio_api->play((u8*)audio_buffer, 2 * num_audio_samples * 4);
+    audio_api->play((u8 *)audio_buffer, 2 * num_audio_samples * 4);
 
     gfx_end_frame();
 }

@@ -894,13 +894,13 @@ void audio_init() {
     UNUSED s8 pad[32];
     u8 buf[0x10];
 #endif
-    s32 i, j, k;
+    s32 i, j, UNUSED k;
     UNUSED s32 lim1; // lim1 unused in EU
 #ifdef VERSION_EU
     u8 buf[0x10];
     s32 UNUSED lim2, lim3;
 #else
-    s32 lim2, lim3;
+    s32 lim2, UNUSED lim3;
 #endif
     u32 size;
     UNUSED u64 *ptr64;
@@ -920,7 +920,6 @@ void audio_init() {
     for (i = 0; i <= lim2 / 8 - 1; i++) {
         ((u64 *) gAudioHeap)[i] = 0;
     }
-
 #else
     for (i = 0; i < gAudioHeapSize / 8; i++) {
         ((u64 *) gAudioHeap)[i] = 0;
