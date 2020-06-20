@@ -2,7 +2,6 @@
 #include <stdio.h>
 
 #include "sm64.h"
-#include "prevent_bss_reordering.h"
 #include "audio/external.h"
 #include "game_init.h"
 #include "memory.h"
@@ -12,6 +11,12 @@
 #include "segments.h"
 #include "main.h"
 #include "thread6.h"
+
+/**
+ * WARNING!
+ * This entry point is deprecated because TARGET_N64 is no longer required for building PC version.
+ * The new entry point is located in 'pc/pc_main.c'
+ **/
 
 // Message IDs
 #define MESG_SP_COMPLETE 100
@@ -25,11 +30,6 @@ OSThread gIdleThread;
 OSThread gMainThread;
 OSThread gGameLoopThread;
 OSThread gSoundThread;
-#ifdef VERSION_SH
-OSThread gRumblePakThread;
-
-s32 gRumblePakPfs; // Actually an OSPfs but we don't have that header yet
-#endif
 
 OSIoMesg gDmaIoMesg;
 OSMesg D_80339BEC;
@@ -38,19 +38,20 @@ OSMesgQueue gSIEventMesgQueue;
 OSMesgQueue gPIMesgQueue;
 OSMesgQueue gIntrMesgQueue;
 OSMesgQueue gSPTaskMesgQueue;
-#ifdef VERSION_SH
-OSMesgQueue gRumblePakSchedulerMesgQueue;
-OSMesgQueue gRumbleThreadVIMesgQueue;
-#endif
 OSMesg gDmaMesgBuf[1];
 OSMesg gPIMesgBuf[32];
 OSMesg gSIEventMesgBuf[1];
 OSMesg gIntrMesgBuf[16];
 OSMesg gUnknownMesgBuf[16];
+
 #ifdef VERSION_SH
+OSThread gRumblePakThread;
+OSMesgQueue gRumblePakSchedulerMesgQueue;
+OSMesgQueue gRumbleThreadVIMesgQueue;
 OSMesg gRumblePakSchedulerMesgBuf[1];
 OSMesg gRumbleThreadVIMesgBuf[1];
 
+s32 gRumblePakPfs; // Actually an OSPfs but we don't have that header yet
 struct RumbleData gRumbleDataQueue[3];
 struct StructSH8031D9B0 gCurrRumbleSettings;
 #endif
@@ -246,7 +247,7 @@ void handle_vblank(void) {
     receive_new_tasks();
 
     // First try to kick off an audio task. If the gfx task is currently
-    // running, we need to asychronously interrupt it -- handle_sp_complete
+    // running, we need to asynchronously interrupt it -- handle_sp_complete
     // will pick up on what we're doing and start the audio task for us.
     // If there is already an audio task running, there is nothing to do.
     // If there is no audio task available, try a gfx task instead.
@@ -268,9 +269,8 @@ void handle_vblank(void) {
             start_sptask(M_GFXTASK);
         }
     }
-#ifdef VERSION_SH
+
     rumble_thread_update_vi();
-#endif
 
     // Notify the game loop about the vblank.
     if (gVblankHandler1 != NULL) {

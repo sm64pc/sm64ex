@@ -113,7 +113,7 @@ struct VibratoState {
 
 // Pitch sliding by up to one octave in the positive direction. Negative
 // direction is "supported" by setting extent to be negative. The code
-// exterpolates exponentially in the wrong direction in that case, but that
+// extrapolates exponentially in the wrong direction in that case, but that
 // doesn't prevent seqplayer from doing it, AFAICT.
 struct Portamento {
     u8 mode; // bit 0x80 denotes something; the rest are an index 0-5
@@ -273,6 +273,7 @@ struct SequencePlayer
 #endif
     /*0x138, 0x140*/ uintptr_t bankDmaCurrDevAddr;
     /*0x13C, 0x144*/ ssize_t bankDmaRemaining;
+    /*     ext    */ f32 volumeScale;
 }; // size = 0x140, 0x148 on EU
 
 struct AdsrSettings
@@ -686,4 +687,4 @@ struct EuAudioCmd {
     } u2;
 };
 
-#endif /* AUDIO_INTERNAL_H */
+#endif // AUDIO_INTERNAL_H

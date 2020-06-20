@@ -13,7 +13,7 @@ void fish_act_spawn(void) {
     s32 schoolQuantity;
     s16 model;
     f32 minDistToMario;
-    struct Animation **fishAnimation;
+    const struct Animation * const*fishAnimation;
     struct Object *fishObject;
     switch (o->oBehParams2ndByte) {
         
@@ -62,11 +62,13 @@ void fish_act_spawn(void) {
  * Y coordinate is greater than 2000.0f then spawn another fish.
  */
 void fish_act_respawn(void) {
+#ifndef NODRAWINGDISTANCE
     if (gCurrLevelNum != LEVEL_SA) {
         if (gMarioObject->oPosY - o->oPosY > 2000.0f) {
             o->oAction = FISH_ACT_RESPAWN;
         }
     }
+#endif
 }
 
 /**

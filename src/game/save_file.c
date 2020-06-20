@@ -1,5 +1,4 @@
 #include <ultra64.h>
-#include <stdio.h>
 #include "sm64.h"
 #include "game_init.h"
 #include "main.h"
@@ -104,14 +103,10 @@ static s32 read_eeprom_data(void *buffer, s32 size) {
         u32 offset = (u32)((u8 *) buffer - (u8 *) &gSaveBuffer) / 8;
 
         do {
-#ifdef VERSION_SH
             block_until_rumble_pak_free();
-#endif
             triesLeft--;
             status = osEepromLongRead(&gSIEventMesgQueue, offset, buffer, size);
-#ifdef VERSION_SH
             release_rumble_pak_control();
-#endif
         } while (triesLeft > 0 && status != 0);
     }
 
@@ -132,14 +127,10 @@ static s32 write_eeprom_data(void *buffer, s32 size, const uintptr_t baseofs) {
         u32 offset = (u32)baseofs >> 3;
 
         do {
-#ifdef VERSION_SH
             block_until_rumble_pak_free();
-#endif
             triesLeft--;
             status = osEepromLongWrite(&gSIEventMesgQueue, offset, buffer, size);
-#ifdef VERSION_SH
             release_rumble_pak_control();
-#endif
         } while (triesLeft > 0 && status != 0);
     }
 
@@ -400,7 +391,6 @@ BAD_RETURN(s32) save_file_copy(s32 srcFileIndex, s32 destFileIndex) {
 
 void save_file_load_all(void) {
     s32 file;
-    s32 validSlots;
 
     gMainMenuDataModified = FALSE;
     gSaveFileModified = FALSE;
@@ -414,6 +404,7 @@ void save_file_load_all(void) {
     gSaveFileModified = TRUE;
     gMainMenuDataModified = TRUE;
 #else
+    s32 validSlots;
     read_eeprom_data(&gSaveBuffer, sizeof(gSaveBuffer));
 
     if (save_file_need_bswap(&gSaveBuffer))
@@ -620,7 +611,7 @@ u32 save_file_get_star_flags(s32 fileIndex, s32 courseIndex) {
 
 /**
  * Add to the bitset of obtained stars in the specified course.
- * If course is -1, add ot the bitset of obtained castle secret stars.
+ * If course is -1, add to the bitset of obtained castle secret stars.
  */
 void save_file_set_star_flags(s32 fileIndex, s32 courseIndex, u32 starFlags) {
     if (courseIndex == -1) {
@@ -752,7 +743,7 @@ s32 check_warp_checkpoint(struct WarpNode *warpNode) {
         warpNode->destNode = gWarpCheckpoint.warpNode;
         isWarpCheckpointActive = TRUE;
     } else {
-        // Disable the warp checkpoint just incase the other 2 conditions failed?
+        // Disable the warp checkpoint just in case the other 2 conditions failed?
         gWarpCheckpoint.courseNum = COURSE_NONE;
     }
 

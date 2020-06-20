@@ -1,18 +1,16 @@
-#include <ultra64.h>
+#include <PR/ultratypes.h>
 
 #include "sm64.h"
-#include "game/level_update.h"
 #include "game/debug.h"
-#include "game/camera.h"
+#include "game/level_update.h"
 #include "game/mario.h"
-#include "behavior_script.h"
+#include "game/object_list_processor.h"
 #include "surface_collision.h"
 #include "surface_load.h"
-#include "game/object_list_processor.h"
 #include "math_util.h"
 
 /**************************************************
- *                      WALLS                      *
+ *                      WALLS                     *
  **************************************************/
 
 /**
@@ -220,14 +218,13 @@ s32 find_wall_collisions(struct WallCollisionData *colData) {
 }
 
 /**************************************************
- *                     CEILINGS                    *
+ *                     CEILINGS                   *
  **************************************************/
 
 /**
  * Iterate through the list of ceilings and find the first ceiling over a given point.
  */
-static struct Surface *find_ceil_from_list(struct SurfaceNode *surfaceNode, s32 x, s32 y, s32 z,
-                                           f32 *pheight) {
+static struct Surface *find_ceil_from_list(struct SurfaceNode *surfaceNode, s32 x, s32 y, s32 z, f32 *pheight) {
     register struct Surface *surf;
     register s32 x1, z1, x2, z2, x3, z3;
     struct Surface *ceil = NULL;
@@ -356,7 +353,7 @@ f32 find_ceil(f32 posX, f32 posY, f32 posZ, struct Surface **pceil) {
 }
 
 /**************************************************
- *                     FLOORS                      *
+ *                     FLOORS                     *
  **************************************************/
 
 /**
@@ -400,8 +397,7 @@ f32 find_floor_height_and_data(f32 xPos, f32 yPos, f32 zPos, struct FloorGeometr
 /**
  * Iterate through the list of floors and find the first floor under a given point.
  */
-static struct Surface *find_floor_from_list(struct SurfaceNode *surfaceNode, s32 x, s32 y, s32 z,
-                                            f32 *pheight) {
+static struct Surface *find_floor_from_list(struct SurfaceNode *surfaceNode, s32 x, s32 y, s32 z, f32 *pheight) {
     register struct Surface *surf;
     register s32 x1, z1, x2, z2, x3, z3;
     f32 nx, ny, nz;
@@ -485,7 +481,7 @@ f32 find_floor_height(f32 x, f32 y, f32 z) {
 }
 
 /**
- * Find the highest dynamic floor under a given position. Perhaps originally static and
+ * Find the highest dynamic floor under a given position. Perhaps originally static
  * and dynamic floors were checked separately.
  */
 f32 unused_find_dynamic_floor(f32 xPos, f32 yPos, f32 zPos, struct Surface **pfloor) {
@@ -585,7 +581,7 @@ f32 find_floor(f32 xPos, f32 yPos, f32 zPos, struct Surface **pfloor) {
 }
 
 /**************************************************
- *               ENVIRONMENTAL BOXES               *
+ *               ENVIRONMENTAL BOXES              *
  **************************************************/
 
 /**
@@ -664,7 +660,7 @@ f32 find_poison_gas_level(f32 x, f32 z) {
 }
 
 /**************************************************
- *                      DEBUG                      *
+ *                      DEBUG                     *
  **************************************************/
 
 /**
@@ -742,7 +738,7 @@ void debug_surface_list_info(f32 xPos, f32 zPos) {
  * Perhaps an original implementation of surfaces before they were more specialized.
  */
 s32 unused_resolve_floor_or_ceil_collisions(s32 checkCeil, f32 *px, f32 *py, f32 *pz, f32 radius,
-                                                   struct Surface **psurface, f32 *surfaceHeight) {
+                                            struct Surface **psurface, f32 *surfaceHeight) {
     f32 nx, ny, nz, oo;
     f32 x = *px;
     f32 y = *py;

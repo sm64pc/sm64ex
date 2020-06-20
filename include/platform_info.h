@@ -7,4 +7,4 @@
 
 #define DOUBLE_SIZE_ON_64_BIT(size) ((size) * (sizeof(void *) / 4))
 
-#endif
+#endif // PLATFORM_INFO_H

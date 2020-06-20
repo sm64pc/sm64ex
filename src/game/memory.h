@@ -1,6 +1,9 @@
-#ifndef _MEMORY_H_
-#define _MEMORY_H_
+#ifndef MEMORY_H
+#define MEMORY_H
 
+#include <PR/ultratypes.h>
+
+#include "types.h"
 
 #define MEMORY_POOL_LEFT  0
 #define MEMORY_POOL_RIGHT 1
@@ -15,6 +18,8 @@ struct AllocOnlyPool
 };
 
 struct MemoryPool;
+struct MarioAnimation;
+struct Animation;
 
 #ifndef INCLUDED_FROM_MEMORY_C
 // Declaring this variable extern puts it in the wrong place in the bss order
@@ -52,7 +57,8 @@ void *mem_pool_alloc(struct MemoryPool *pool, u32 size);
 void mem_pool_free(struct MemoryPool *pool, void *addr);
 
 void *alloc_display_list(u32 size);
+
 void func_80278A78(struct MarioAnimation *a, void *b, struct Animation *target);
 s32 load_patchable_table(struct MarioAnimation *a, u32 b);
 
-#endif
+#endif // MEMORY_H

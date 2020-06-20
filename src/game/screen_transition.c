@@ -1,16 +1,17 @@
-#include <ultra64.h>
+#include <PR/ultratypes.h>
+#include <PR/gbi.h>
 
-#include "sm64.h"
-#include "gfx_dimensions.h"
 #include "area.h"
-#include "game/game_init.h"
-#include "engine/math_util.h"
-#include "engine/graph_node.h"
-#include "screen_transition.h"
-#include "memory.h"
-#include "geo_misc.h"
-#include "segment2.h"
 #include "camera.h"
+#include "engine/graph_node.h"
+#include "engine/math_util.h"
+#include "game/game_init.h"
+#include "geo_misc.h"
+#include "gfx_dimensions.h"
+#include "memory.h"
+#include "screen_transition.h"
+#include "segment2.h"
+#include "sm64.h"
 
 u8 sTransitionColorFadeCount[4] = { 0 };
 u16 sTransitionTextureFadeCount[2] = { 0 };
@@ -183,7 +184,7 @@ s32 render_textured_transition(s8 fadeTimer, s8 transTime, struct WarpTransition
         gDPPipeSync(gDisplayListHead++);
         gDPSetCombineMode(gDisplayListHead++, G_CC_MODULATEIDECALA, G_CC_MODULATEIDECALA);
         gDPSetRenderMode(gDisplayListHead++, G_RM_AA_XLU_SURF, G_RM_AA_XLU_SURF2);
-        gDPSetTextureFilter(gDisplayListHead++, G_TF_BILERP); 
+        gDPSetTextureFilter(gDisplayListHead++, G_TF_BILERP);
         switch (transTexType) {
         case TRANS_TYPE_MIRROR:
             gDPLoadTextureBlock(gDisplayListHead++, sTextureTransitionID[texID], G_IM_FMT_IA, G_IM_SIZ_8b, 32, 64, 0,
@@ -241,10 +242,8 @@ int render_screen_transition(s8 fadeTimer, s8 transType, u8 transTime, struct Wa
 }
 
 Gfx *render_cannon_circle_base(void) {
-
     Vtx *verts = alloc_display_list(8 * sizeof(*verts));
     Gfx *dlist = alloc_display_list(20 * sizeof(*dlist));
-
     Gfx *g = dlist;
 
     if (verts != NULL && dlist != NULL) {
@@ -253,6 +252,7 @@ Gfx *render_cannon_circle_base(void) {
         make_vertex(verts, 2, SCREEN_WIDTH, SCREEN_HEIGHT, -1, 1152, 192, 0, 0, 0, 255);
         make_vertex(verts, 3, 0, SCREEN_HEIGHT, -1, -1152, 192, 0, 0, 0, 255);
 
+        // Render black rectangles outside the 4:3 area.
         make_vertex(verts, 4, GFX_DIMENSIONS_FROM_LEFT_EDGE(0), 0, -1, 0, 0, 0, 0, 0, 255);
         make_vertex(verts, 5, GFX_DIMENSIONS_FROM_RIGHT_EDGE(0), 0, -1, 0, 0, 0, 0, 0, 255);
         make_vertex(verts, 6, GFX_DIMENSIONS_FROM_RIGHT_EDGE(0), SCREEN_HEIGHT, -1, 0, 0, 0, 0, 0, 255);
@@ -281,7 +281,7 @@ Gfx *render_cannon_circle_base(void) {
     return dlist;
 }
 
-Gfx *geo_cannon_circle_base(s32 callContext, struct GraphNode *node, UNUSED f32 mtx[4][4]) {
+Gfx *geo_cannon_circle_base(s32 callContext, struct GraphNode *node, UNUSED Mat4 mtx) {
     struct GraphNodeGenerated *graphNode = (struct GraphNodeGenerated *) node;
     Gfx *dlist = NULL;
 

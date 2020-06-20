@@ -8,7 +8,7 @@ struct PCCLIOptions  {
     unsigned int FullScreen;
     char ConfigFile[SYS_MAX_PATH];
     char SavePath[SYS_MAX_PATH];
-    char DataPath[SYS_MAX_PATH];
+    char GameDir[SYS_MAX_PATH];
 };
 
 extern struct PCCLIOptions gCLIOpts;

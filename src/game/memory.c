@@ -1,19 +1,17 @@
-#include <ultra64.h>
+#include <PR/ultratypes.h>
 #include <string.h>
 
 #include "sm64.h"
 
 #define INCLUDED_FROM_MEMORY_C
 
+#include "buffers/buffers.h"
 #include "decompress.h"
 #include "game_init.h"
 #include "main.h"
-#include "segments.h"
 #include "memory.h"
-
-extern u8 _engineSegmentRomStart[];
-extern u8 _engineSegmentRomEnd[];
-extern u8 gDecompressionHeap[];
+#include "segment_symbols.h"
+#include "segments.h"
 
 // round up to the next multiple
 #define ALIGN4(val) (((val) + 0x3) & ~0x3)
@@ -80,7 +78,7 @@ void *segmented_to_virtual(const void *addr) {
     return (void *) addr;
 }
 
-void *virtual_to_segmented(u32 segment, const void *addr) {
+void *virtual_to_segmented(UNUSED u32 segment, const void *addr) {
     return (void *) addr;
 }
 
@@ -432,7 +430,7 @@ s32 load_patchable_table(struct MarioAnimation *a, u32 index) {
     u32 size;
 
     if (index < sp20->count) {
-        do { 
+        do {
             addr = sp20->srcAddr + sp20->anim[index].offset;
             size = sp20->anim[index].size;
         } while (0);

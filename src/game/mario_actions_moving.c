@@ -1,4 +1,4 @@
-#include <ultra64.h>
+#include <PR/ultratypes.h>
 
 #include "sm64.h"
 #include "mario.h"
@@ -261,7 +261,7 @@ s32 update_sliding(struct MarioState *m, f32 stopSpeed) {
 
     oldSpeed = sqrtf(m->slideVelX * m->slideVelX + m->slideVelZ * m->slideVelZ);
 
-    //! This is attempting to use trig derivatives to rotate mario's speed.
+    //! This is attempting to use trig derivatives to rotate Mario's speed.
     // It is slightly off/asymmetric since it uses the new X speed, but the old
     // Z speed.
     m->slideVelX += m->slideVelZ * (m->intendedMag / 32.0f) * sideward * 0.05f;
@@ -1252,9 +1252,8 @@ s32 act_riding_shell_ground(struct MarioState *m) {
     }
 
     adjust_sound_for_speed(m);
-#ifdef VERSION_SH
+    
     reset_rumble_timers();
-#endif
     return FALSE;
 }
 
@@ -1358,9 +1357,8 @@ s32 act_burning_ground(struct MarioState *m) {
     }
 
     m->marioBodyState->eyeState = MARIO_EYES_DEAD;
-#ifdef VERSION_SH
+
     reset_rumble_timers();
-#endif
     return FALSE;
 }
 
@@ -1376,9 +1374,7 @@ void common_slide_action(struct MarioState *m, u32 endAction, u32 airAction, s32
     vec3f_copy(val14, m->pos);
     play_sound(SOUND_MOVING_TERRAIN_SLIDE + m->terrainSoundAddend, m->marioObj->header.gfx.cameraToObject);
 
-#ifdef VERSION_SH
     reset_rumble_timers();
-#endif
 
     adjust_sound_for_speed(m);
 
@@ -1502,9 +1498,7 @@ s32 act_crouch_slide(struct MarioState *m) {
 
 s32 act_slide_kick_slide(struct MarioState *m) {
     if (m->input & INPUT_A_PRESSED) {
-#ifdef VERSION_SH
         queue_rumble_data(5, 80);
-#endif
         return set_jumping_action(m, ACT_FORWARD_ROLLOUT, 0);
     }
 
@@ -1534,9 +1528,7 @@ s32 act_slide_kick_slide(struct MarioState *m) {
 s32 stomach_slide_action(struct MarioState *m, u32 stopAction, u32 airAction, s32 animation) {
     if (m->actionTimer == 5) {
         if (!(m->input & INPUT_ABOVE_SLIDE) && (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED))) {
-#ifdef VERSION_SH
             queue_rumble_data(5, 80);
-#endif
             return drop_and_set_mario_action(
                 m, m->forwardVel >= 0.0f ? ACT_FORWARD_ROLLOUT : ACT_BACKWARD_ROLLOUT, 0);
         }
@@ -1570,9 +1562,7 @@ s32 act_hold_stomach_slide(struct MarioState *m) {
 
 s32 act_dive_slide(struct MarioState *m) {
     if (!(m->input & INPUT_ABOVE_SLIDE) && (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED))) {
-#ifdef VERSION_SH
         queue_rumble_data(5, 80);
-#endif
         return set_mario_action(m, m->forwardVel > 0.0f ? ACT_FORWARD_ROLLOUT : ACT_BACKWARD_ROLLOUT,
                                 0);
     }
@@ -1580,7 +1570,7 @@ s32 act_dive_slide(struct MarioState *m) {
     play_mario_landing_sound_once(m, SOUND_ACTION_TERRAIN_BODY_HIT_GROUND);
 
     //! If the dive slide ends on the same frame that we pick up on object,
-    // mario will not be in the dive slide action for the call to
+    // Mario will not be in the dive slide action for the call to
     // mario_check_object_grab, and so will end up in the regular picking action,
     // rather than the picking up after dive action.
 
@@ -1769,8 +1759,8 @@ u32 common_landing_action(struct MarioState *m, s16 animation, u32 airAction) {
 
 s32 common_landing_cancels(struct MarioState *m, struct LandingAction *landingAction,
                            s32 (*setAPressAction)(struct MarioState *, u32, u32)) {
-    //! Everything here, incuding floor steepness, is checked before checking
-    // if mario is actually on the floor. This leads to e.g. remote sliding.
+    //! Everything here, including floor steepness, is checked before checking
+    // if Mario is actually on the floor. This leads to e.g. remote sliding.
 
     if (m->floor->normal.y < 0.2923717f) {
         return mario_push_off_steep_floor(m, landingAction->verySteepAction, 0);
@@ -1863,7 +1853,7 @@ s32 act_long_jump_land(struct MarioState *m) {
         m->forwardVel = 0.0f;
     }
 #endif
-
+    
     if (!(m->input & INPUT_Z_DOWN)) {
         m->input &= ~INPUT_A_PRESSED;
     }

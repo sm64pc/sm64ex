@@ -1,4 +1,4 @@
-#include <ultra64.h>
+#include <PR/ultratypes.h>
 
 #include "sm64.h"
 #include "object_helpers.h"
@@ -174,7 +174,7 @@ void spawn_macro_objects(s16 areaIndex, s16 *macroObjList) {
 void spawn_macro_objects_hardcoded(s16 areaIndex, s16 *macroObjList) {
     UNUSED u8 pad[8];
 
-    // This version of macroObjList has the preset and Y-Rotation seperated,
+    // This version of macroObjList has the preset and Y-Rotation separated,
     // and lacks behavior params. Might be an early version of the macro object list?
     s16 macroObjX;
     s16 macroObjY;

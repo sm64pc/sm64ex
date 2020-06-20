@@ -1,17 +1,18 @@
-#include <ultra64.h>
+#include <PR/ultratypes.h>
 
-#include "sm64.h"
+#include "behavior_data.h"
+#include "debug.h"
 #include "engine/behavior_script.h"
-#include "object_helpers.h"
-#include "audio/external.h"
-#include "print.h"
 #include "engine/surface_collision.h"
-#include "mario.h"
 #include "game_init.h"
 #include "main.h"
-#include "debug.h"
+#include "object_constants.h"
+#include "object_fields.h"
+#include "object_helpers.h"
 #include "object_list_processor.h"
-#include "behavior_data.h"
+#include "print.h"
+#include "sm64.h"
+#include "types.h"
 
 #define DEBUG_INFO_NOFLAGS (0 << 0)
 #define DEBUG_INFO_FLAG_DPRINT (1 << 0)
@@ -391,7 +392,7 @@ static void try_change_debug_page(void) {
  * sDebugSysCursor. This is used to adjust enemy and effect behaviors
  * on the fly. (unused)
  */
-#ifndef VERSION_SH
+#ifdef VERSION_SH
 static
 #endif
 void try_modify_debug_controls(void) {
@@ -524,7 +525,7 @@ void try_do_mario_debug_object_spawn(void) {
 }
 
 // TODO: figure out what this is
-#ifndef VERSION_SH
+#ifdef VERSION_SH
 static
 #endif
 void debug_print_obj_move_flags(void) {

@@ -1,7 +1,6 @@
 #include <ultra64.h>
 #include <string.h>
 
-
 #include "sm64.h"
 #include "audio/external.h"
 #include "buffers/framebuffers.h"
@@ -19,13 +18,11 @@
 #include "geo_layout.h"
 #include "graph_node.h"
 #include "level_script.h"
+#include "level_misc_macros.h"
 #include "math_util.h"
 #include "surface_collision.h"
 #include "surface_load.h"
 #include "level_table.h"
-
-#define CMD_SIZE_SHIFT (sizeof(void *) >> 3)
-#define CMD_PROCESS_OFFSET(offset) ((offset & 3) | ((offset & ~3) << CMD_SIZE_SHIFT))
 
 #define CMD_GET(type, offset) (*(type *) (CMD_PROCESS_OFFSET(offset) + (u8 *) sCurrentCmd))
 
@@ -356,7 +353,7 @@ static void level_cmd_begin_area(void) {
 
         sCurrAreaIndex = areaIndex;
         screenArea->areaIndex = areaIndex;
-        gAreas[areaIndex].unk04 = (struct GraphNode *) screenArea;
+        gAreas[areaIndex].unk04 = screenArea;
 
         if (node != NULL) {
             gAreas[areaIndex].camera = (struct Camera *) node->config.camera;
@@ -604,15 +601,14 @@ static void level_cmd_set_gamma(void) {
 
 static void level_cmd_set_terrain_data(void) {
     if (sCurrAreaIndex != -1) {
-
         Collision *data;
         u32 size;
 
+        // The game modifies the terrain data and must be reset upon level reload.
         data = segmented_to_virtual(CMD_GET(void *, 4));
         size = get_area_terrain_size(data) * sizeof(Collision);
         gAreas[sCurrAreaIndex].terrainData = alloc_only_pool_alloc(sLevelPool, size);
         memcpy(gAreas[sCurrAreaIndex].terrainData, data, size);
-
     }
     sCurrentCmd = CMD_NEXT;
 }
@@ -626,15 +622,15 @@ static void level_cmd_set_rooms(void) {
 
 static void level_cmd_set_macro_objects(void) {
     if (sCurrAreaIndex != -1) {
-
+        // The game modifies the macro object data (for example marking coins as taken),
+        // so it must be reset when the level reloads.
         MacroObject *data = segmented_to_virtual(CMD_GET(void *, 4));
         s32 len = 0;
-        while (data[len++] != 0x001E) {
+        while (data[len++] != MACRO_OBJECT_END()) {
             len += 4;
         }
         gAreas[sCurrAreaIndex].macroObjects = alloc_only_pool_alloc(sLevelPool, len * sizeof(MacroObject));
         memcpy(gAreas[sCurrAreaIndex].macroObjects, data, len * sizeof(MacroObject));
-
     }
     sCurrentCmd = CMD_NEXT;
 }

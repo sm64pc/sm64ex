@@ -213,6 +213,11 @@ static void assign_tile_positions() {
     }
 }
 
+// Provide a replacement for realpath on Windows
+#ifdef _WIN32
+#define realpath(path, resolved_path) _fullpath(resolved_path, path, PATH_MAX)
+#endif
+
 /* write pngs to disc */
 void write_tiles() {
     const ImageProps props = IMAGE_PROPERTIES[type][true];
@@ -387,7 +392,9 @@ void combine_skybox(const char *input, const char *output) {
     uint32_t table[W*H];
     if (fread(table, sizeof(table), 1, file) != 1) goto fail;
 
+    #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     reverse_endian((unsigned char *) table, W*H*4);
+    #endif
 
     uint32_t base = table[0];
     for (int i = 0; i < W*H; i++) {
@@ -496,6 +503,7 @@ static void usage() {
 
 // Modified from n64split
 static int parse_arguments(int argc, char *argv[]) {
+    programName = argv[0];
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "--combine") == 0) {
             if (++i >= argc || mode != InvalidMode) {

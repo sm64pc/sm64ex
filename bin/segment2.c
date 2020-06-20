@@ -2499,23 +2499,19 @@ static const Lights1 segment2_lights_unused = gdSPDefLights1(
 
 // 0x02014470 - 0x020144B0
 static const Mtx matrix_identity = {
-
     {{1.0f, 0.0f, 0.0f, 0.0f},
     {0.0f, 1.0f, 0.0f, 0.0f},
     {0.0f, 0.0f, 1.0f, 0.0f},
     {0.0f, 0.0f, 0.0f, 1.0f}}
-
 };
 
 
 // 0x020144B0 - 0x020144F0
 static const Mtx matrix_fullscreen = {
-
     {{2.0f / SCREEN_WIDTH, 0.0f, 0.0f, 0.0f},
     {0.0f, 2.0f / SCREEN_HEIGHT, 0.0f, 0.0f},
     {0.0f, 0.0f, -1.0f, 0.0f},
     {-1.0f, -1.0f, -1.0f, 1.0f}}
-
 };
 
 
