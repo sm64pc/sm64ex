@@ -176,6 +176,16 @@ static size_t buf_vbo_num_tris;
 static struct GfxWindowManagerAPI *gfx_wapi;
 static struct GfxRenderingAPI *gfx_rapi;
 
+// 4x4 pink-black checkerboard texture to indicate missing textures
+#define MISSING_W 4
+#define MISSING_H 4
+static const uint8_t missing_texture[MISSING_W * MISSING_H * 4] = {
+    0xFF, 0x00, 0xFF, 0xFF,  0xFF, 0x00, 0xFF, 0xFF,  0x00, 0x00, 0x00, 0xFF,  0x00, 0x00, 0x00, 0xFF,
+    0xFF, 0x00, 0xFF, 0xFF,  0xFF, 0x00, 0xFF, 0xFF,  0x00, 0x00, 0x00, 0xFF,  0x00, 0x00, 0x00, 0xFF,
+    0x00, 0x00, 0x00, 0xFF,  0x00, 0x00, 0x00, 0xFF,  0xFF, 0x00, 0xFF, 0xFF,  0xFF, 0x00, 0xFF, 0xFF,
+    0x00, 0x00, 0x00, 0xFF,  0x00, 0x00, 0x00, 0xFF,  0xFF, 0x00, 0xFF, 0xFF,  0xFF, 0x00, 0xFF, 0xFF,
+};
+
 #ifdef EXTERNAL_DATA
 static inline size_t string_hash(const uint8_t *str) {
     size_t h = 0;
@@ -500,22 +510,22 @@ static void import_texture_ci8(int tile) {
 static inline void load_texture(const char *fullpath) {
     int w, h;
     u64 imgsize = 0;
+
     u8 *imgdata = fs_load_file(fullpath, &imgsize);
-    if (!imgdata) {
-        fprintf(stderr, "could not open texture: `%s`\n", fullpath);
-        return;
+    if (imgdata) {
+        // TODO: implement stbi_callbacks or some shit instead of loading the whole texture
+        u8 *data = stbi_load_from_memory(imgdata, imgsize, &w, &h, NULL, 4);
+        free(imgdata);
+        if (data) {
+            gfx_rapi->upload_texture(data, w, h);
+            stbi_image_free(data); // don't need this anymore
+            return;
+        }
     }
 
-    // TODO: implement stbi_callbacks or some shit instead of loading the whole texture
-    u8 *data = stbi_load_from_memory(imgdata, imgsize, &w, &h, NULL, 4);
-    free(imgdata);
-    if (!data) {
-        fprintf(stderr, "could not load texture: `%s`\n", fullpath);
-        return;
-    }
-
-    gfx_rapi->upload_texture(data, w, h);
-    stbi_image_free(data); // don't need this anymore
+    fprintf(stderr, "could not load texture: `%s`\n", fullpath);
+    // replace with missing texture
+    gfx_rapi->upload_texture(missing_texture, MISSING_W, MISSING_H);
 }
 
 
