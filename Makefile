@@ -930,7 +930,7 @@ $(SOUND_BIN_DIR)/%.o: $(SOUND_BIN_DIR)/%.s
 ifeq ($(EXTERNAL_DATA),1)
 
 $(SOUND_BIN_DIR)/%.inc.c: $(SOUND_BIN_DIR)/%
-	$(ZEROTERM) "$(patsubst %.inc.c,%,$^)" | hexdump -v -e '1/1 "0x%X,"' > $@
+	$(ZEROTERM) "$(patsubst $(BUILD_DIR)/%,%,$^)" | hexdump -v -e '1/1 "0x%X,"' > $@
 
 else
 
