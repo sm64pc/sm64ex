@@ -10,12 +10,12 @@ default: all
 # These options can either be changed by modifying the makefile, or
 # by building with 'make SETTING=value'. 'make clean' may be required.
 
-# Build debug version (default)
-DEBUG ?= 1
+# Build debug version
+DEBUG ?= 0
 # Version of the game to build
 VERSION ?= us
 # Graphics microcode used
-GRUCODE ?= f3d_old
+GRUCODE ?= f3dex2e
 # If COMPARE is 1, check the output sha1sum when building 'all'
 COMPARE ?= 1
 # If NON_MATCHING is 1, define the NON_MATCHING and AVOID_UB macros when building (recommended)
@@ -72,8 +72,6 @@ BASEPACK ?= base.zip
 
 # Automatic settings for PC port(s)
 
-NON_MATCHING := 1
-GRUCODE := f3dex2e
 WINDOWS_BUILD ?= 0
 
 # Attempt to detect OS
@@ -116,20 +114,16 @@ endif
 
 ifeq ($(VERSION),jp)
   VERSION_DEF := VERSION_JP
-  GRUCODE_DEF := F3D_OLD
 else
 ifeq ($(VERSION),us)
   VERSION_DEF := VERSION_US
-  GRUCODE_DEF := F3D_OLD
 else
 ifeq ($(VERSION),eu)
   VERSION_DEF := VERSION_EU
-  GRUCODE_DEF := F3D_NEW
 else
 ifeq ($(VERSION),sh)
   $(warning Building SH is experimental and is prone to breaking. Try at your own risk.)
   VERSION_DEF := VERSION_SH
-  GRUCODE_DEF := F3D_NEW
 # TODO: GET RID OF THIS!!! We should mandate assets for Shindou like EU but we dont have the addresses extracted yet so we'll just pretend you have everything extracted for now.
   NOEXTRACT := 1
 else
@@ -159,14 +153,14 @@ ifeq ($(GRUCODE),f3dex) # Fast3DEX
   TARGET := $(TARGET).f3dex
   COMPARE := 0
 else
-ifeq ($(GRUCODE), f3dex2) # Fast3DEX2
+ifeq ($(GRUCODE),f3dex2) # Fast3DEX2
   GRUCODE_DEF := F3DEX_GBI_2
   GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1
   TARGET := $(TARGET).f3dex2
   COMPARE := 0
 else
-ifeq ($(GRUCODE), f3dex2e) # Fast3DEX2 Extended (PC default)
-  GRUCODE_CFLAGS := -DF3DEX_GBI_2E
+ifeq ($(GRUCODE),f3dex2e) # Fast3DEX2 Extended (PC default)
+  GRUCODE_DEF := F3DEX_GBI_2E
   TARGET := $(TARGET).f3dex2e
   COMPARE := 0
 else
