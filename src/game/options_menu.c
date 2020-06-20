@@ -69,6 +69,7 @@ static const u8 optsCameraStr[][32] = {
     { TEXT_OPT_ANALOGUE },
     { TEXT_OPT_MOUSE },
     { TEXT_OPT_CAMD },
+    { TEXT_OPT_CAMON },
 };
 
 static const u8 optsVideoStr[][32] = {
@@ -218,12 +219,13 @@ static void optvideo_apply(UNUSED struct Option *self, s32 arg) {
 
 #ifdef BETTERCAMERA
 static struct Option optsCamera[] = {
-    DEF_OPT_TOGGLE( optsCameraStr[6], &configEnableCamera ),
+    DEF_OPT_TOGGLE( optsCameraStr[9], &configEnableCamera ),
+    DEF_OPT_TOGGLE( optsCameraStr[6], &configCameraAnalog ),
     DEF_OPT_TOGGLE( optsCameraStr[7], &configCameraMouse ),
     DEF_OPT_TOGGLE( optsCameraStr[2], &configCameraInvertX ),
     DEF_OPT_TOGGLE( optsCameraStr[3], &configCameraInvertY ),
-    DEF_OPT_SCROLL( optsCameraStr[0], &configCameraXSens, 10, 250, 1 ),
-    DEF_OPT_SCROLL( optsCameraStr[1], &configCameraYSens, 10, 250, 1 ),
+    DEF_OPT_SCROLL( optsCameraStr[0], &configCameraXSens, 1, 100, 1 ),
+    DEF_OPT_SCROLL( optsCameraStr[1], &configCameraYSens, 1, 100, 1 ),
     DEF_OPT_SCROLL( optsCameraStr[4], &configCameraAggr, 0, 100, 1 ),
     DEF_OPT_SCROLL( optsCameraStr[5], &configCameraPan, 0, 100, 1 ),
     DEF_OPT_SCROLL( optsCameraStr[8], &configCameraDegrade, 0, 100, 1 ),

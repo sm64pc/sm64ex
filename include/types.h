@@ -31,6 +31,8 @@ struct Controller
   /*0x14*/ OSContStatus *statusData;
   /*0x18*/ OSContPad *controllerData;
   /*0x1C*/ int port;
+  /*ext */ s16 extStickX;       // additional (right) stick values
+  /*ext */ s16 extStickY;
 };
 
 typedef f32 Vec2f[2];

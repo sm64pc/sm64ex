@@ -52,6 +52,7 @@ extern bool         configCameraInvertX;
 extern bool         configCameraInvertY;
 extern bool         configEnableCamera;
 extern bool         configCameraMouse;
+extern bool         configCameraAnalog;
 #endif
 extern bool         configHUD;
 extern bool         configSkipIntro;

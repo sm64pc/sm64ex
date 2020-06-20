@@ -85,6 +85,7 @@ unsigned int configCameraDegrade = 10; // 0 - 100%
 bool         configCameraInvertX = true;
 bool         configCameraInvertY = false;
 bool         configEnableCamera  = false;
+bool         configCameraAnalog  = true;
 bool         configCameraMouse   = false;
 #endif
 bool         configSkipIntro     = 0;
@@ -126,6 +127,7 @@ static const struct ConfigOption options[] = {
     #endif
     #ifdef BETTERCAMERA
     {.name = "bettercam_enable",     .type = CONFIG_TYPE_BOOL, .boolValue = &configEnableCamera},
+    {.name = "bettercam_analog",     .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraAnalog},
     {.name = "bettercam_mouse_look", .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraMouse},
     {.name = "bettercam_invertx",    .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraInvertX},
     {.name = "bettercam_inverty",    .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraInvertY},

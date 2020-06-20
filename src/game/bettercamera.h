@@ -27,17 +27,17 @@ enum newcam_flagvalues
 };
 
 extern void newcam_init_settings(void);
+extern void newcam_disable(void);
 extern void newcam_diagnostics(void);
 
-
-extern u8 newcam_sensitivityX; //How quick the camera works.
-extern u8 newcam_sensitivityY;
-extern u8 newcam_invertX;
-extern u8 newcam_invertY;
-extern u8 newcam_panlevel; //How much the camera sticks out a bit in the direction you're looking.
-extern u8 newcam_aggression; //How much the camera tries to centre itself to Mario's facing and movement.
+extern s16 newcam_sensitivityX; //How quick the camera works.
+extern s16 newcam_sensitivityY;
+extern s16 newcam_invertX;
+extern s16 newcam_invertY;
+extern s16 newcam_panlevel; //How much the camera sticks out a bit in the direction you're looking.
+extern s16 newcam_aggression; //How much the camera tries to centre itself to Mario's facing and movement.
 extern u8 newcam_active; // basically the thing that governs if newcam is on.
-extern u8 newcam_analogue;
+extern s16 newcam_analogue;
 extern u16 newcam_intendedmode;
 
 extern u16 newcam_mode;
