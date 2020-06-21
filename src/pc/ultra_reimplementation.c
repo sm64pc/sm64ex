@@ -5,8 +5,6 @@
 #include "platform.h"
 #include "fs/fs.h"
 
-#define SAVE_FILENAME "sm64_save_file.bin"
-
 #ifdef TARGET_WEB
 #include <emscripten.h>
 #endif
