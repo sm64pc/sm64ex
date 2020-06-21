@@ -138,6 +138,9 @@ void newcam_init(struct Camera *c, u8 dv) {
     newcam_saved_defmode = -1;
     newcam_saved_mode = -1;
 
+    // this will be set in init_settings() if enabled
+    newcam_active = 0;
+
     newcam_distance = newcam_distance_target;
     newcam_intendedmode = newcam_mode;
     newcam_modeflags = newcam_mode;
