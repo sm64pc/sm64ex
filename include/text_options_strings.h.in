@@ -49,8 +49,10 @@
 #define TEXT_OPT_MVOLUME   _("マスターおんりょう")
 #define TEXT_OPT_VSYNC     _("すいちょくどうき")
 #define TEXT_OPT_DOUBLE    _("２ばいそく")
-#define TEXT_RESET_WINDOW  _("ウィンドウリセット")
 #define TEXT_OPT_HUD       _("HUD")
+#define TEXT_OPT_THREEPT   _("3ポイント")
+#define TEXT_OPT_APPLY     _("てきようする")
+#define TEXT_OPT_RESETWND  _("ウィンドウリセット")
 
 #define TEXT_BIND_A        _("Aボタン")
 #define TEXT_BIND_B        _("Bボタン")
@@ -75,7 +77,7 @@
 #define TEXT_OPT_CHEAT4    _("ライフむげん")
 #define TEXT_OPT_CHEAT5    _("ちょうこうそくか")
 #define TEXT_OPT_CHEAT6    _("ちょうこうかんどコントロール")
-#define TEXT_OPT_CHEAT7    _("いつでもコースからでられる")
+#define TEXT_OPT_CHEAT7    _("いつでもコースからでる")
 #define TEXT_OPT_CHEAT8    _("きょだいマリオ")
 #define TEXT_OPT_CHEAT9    _("ミニマリオ")
 
