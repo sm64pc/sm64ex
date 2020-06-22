@@ -54,7 +54,7 @@
 #define TEXT_OPT_VSYNC     _("すいちょくどうき")
 #define TEXT_OPT_DOUBLE    _("２ばいそく")
 #define TEXT_OPT_HUD       _("HUD")
-#define TEXT_OPT_THREEPT   _("3ポイント")
+#define TEXT_OPT_THREEPT   _("３ポイント")
 #define TEXT_OPT_APPLY     _("てきようする")
 #define TEXT_OPT_RESETWND  _("ウィンドウリセット")
 
