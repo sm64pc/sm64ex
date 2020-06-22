@@ -5,13 +5,14 @@
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
-#include <SDL2/SDL.h>
 
 #include "platform.h"
 #include "configfile.h"
 #include "cliopts.h"
 #include "gfx/gfx_screen_config.h"
+#include "gfx/gfx_window_manager_api.h"
 #include "controller/controller_api.h"
+#include "fs/fs.h"
 
 #define ARRAY_LEN(arr) (sizeof(arr) / sizeof(arr[0]))
 
@@ -38,8 +39,8 @@ struct ConfigOption {
 
 // Video/audio stuff
 ConfigWindow configWindow       = {
-    .x = SDL_WINDOWPOS_CENTERED,
-    .y = SDL_WINDOWPOS_CENTERED,
+    .x = WAPI_WIN_CENTERPOS,
+    .y = WAPI_WIN_CENTERPOS,
     .w = DESIRED_SCREEN_WIDTH,
     .h = DESIRED_SCREEN_HEIGHT,
     .vsync = 1,
@@ -50,6 +51,9 @@ ConfigWindow configWindow       = {
 };
 unsigned int configFiltering    = 1;          // 0=force nearest, 1=linear, (TODO) 2=three-point
 unsigned int configMasterVolume = MAX_VOLUME; // 0 - MAX_VOLUME
+unsigned int configMusicVolume = MAX_VOLUME;
+unsigned int configSfxVolume = MAX_VOLUME;
+unsigned int configEnvVolume = MAX_VOLUME;
 
 // Keyboard mappings (VK_ values, by default keyboard/gamepad/mouse)
 unsigned int configKeyA[MAX_BINDS]          = { 0x0026,   0x1000,     0x1103     };
@@ -81,10 +85,14 @@ unsigned int configCameraDegrade = 10; // 0 - 100%
 bool         configCameraInvertX = true;
 bool         configCameraInvertY = false;
 bool         configEnableCamera  = false;
+bool         configCameraAnalog  = true;
 bool         configCameraMouse   = false;
 #endif
-unsigned int configSkipIntro     = 0;
+bool         configSkipIntro     = 0;
 bool         configHUD           = true;
+#ifdef DISCORDRPC
+bool         configDiscordRPC    = true;
+#endif
 
 static const struct ConfigOption options[] = {
     {.name = "fullscreen",           .type = CONFIG_TYPE_BOOL, .boolValue = &configWindow.fullscreen},
@@ -95,6 +103,9 @@ static const struct ConfigOption options[] = {
     {.name = "vsync",                .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.vsync},
     {.name = "texture_filtering",    .type = CONFIG_TYPE_UINT, .uintValue = &configFiltering},
     {.name = "master_volume",        .type = CONFIG_TYPE_UINT, .uintValue = &configMasterVolume},
+    {.name = "music_volume",         .type = CONFIG_TYPE_UINT, .uintValue = &configMusicVolume},
+    {.name = "sfx_volume",           .type = CONFIG_TYPE_UINT, .uintValue = &configSfxVolume},
+    {.name = "env_volume",           .type = CONFIG_TYPE_UINT, .uintValue = &configEnvVolume},
     {.name = "key_a",                .type = CONFIG_TYPE_BIND, .uintValue = configKeyA},
     {.name = "key_b",                .type = CONFIG_TYPE_BIND, .uintValue = configKeyB},
     {.name = "key_start",            .type = CONFIG_TYPE_BIND, .uintValue = configKeyStart},
@@ -116,6 +127,7 @@ static const struct ConfigOption options[] = {
     #endif
     #ifdef BETTERCAMERA
     {.name = "bettercam_enable",     .type = CONFIG_TYPE_BOOL, .boolValue = &configEnableCamera},
+    {.name = "bettercam_analog",     .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraAnalog},
     {.name = "bettercam_mouse_look", .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraMouse},
     {.name = "bettercam_invertx",    .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraInvertX},
     {.name = "bettercam_inverty",    .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraInvertY},
@@ -125,12 +137,15 @@ static const struct ConfigOption options[] = {
     {.name = "bettercam_pan_level",  .type = CONFIG_TYPE_UINT, .uintValue = &configCameraPan},
     {.name = "bettercam_degrade",    .type = CONFIG_TYPE_UINT, .uintValue = &configCameraDegrade},
     #endif
-    {.name = "skip_intro",           .type = CONFIG_TYPE_UINT, .uintValue = &configSkipIntro},    // Add this back!
+    {.name = "skip_intro",           .type = CONFIG_TYPE_BOOL, .uintValue = &configSkipIntro},
+    #ifdef DISCORDRPC
+    {.name = "discordrpc_enable",    .type = CONFIG_TYPE_BOOL, .boolValue = &configDiscordRPC},
+    #endif 
 };
 
 // Reads an entire line from a file (excluding the newline character) and returns an allocated string
 // Returns NULL if no lines could be read from the file
-static char *read_file_line(FILE *file) {
+static char *read_file_line(fs_file_t *file) {
     char *buffer;
     size_t bufferSize = 8;
     size_t offset = 0; // offset in buffer to write
@@ -138,7 +153,7 @@ static char *read_file_line(FILE *file) {
     buffer = malloc(bufferSize);
     while (1) {
         // Read a line from the file
-        if (fgets(buffer + offset, bufferSize - offset, file) == NULL) {
+        if (fs_readline(file, buffer + offset, bufferSize - offset) == NULL) {
             free(buffer);
             return NULL; // Nothing could be read.
         }
@@ -151,7 +166,7 @@ static char *read_file_line(FILE *file) {
             break;
         }
 
-        if (feof(file)) // EOF was reached
+        if (fs_eof(file)) // EOF was reached
             break;
 
         // If no newline or EOF was reached, then the whole line wasn't read.
@@ -205,24 +220,17 @@ static unsigned int tokenize_string(char *str, int maxTokens, char **tokens) {
 
 // Gets the config file path and caches it
 const char *configfile_name(void) {
-    static char cfgpath[SYS_MAX_PATH] = { 0 };
-    if (!cfgpath[0]) {
-        if (gCLIOpts.ConfigFile[0])
-            snprintf(cfgpath, sizeof(cfgpath), "%s", gCLIOpts.ConfigFile);
-        else
-            snprintf(cfgpath, sizeof(cfgpath), "%s/%s", sys_save_path(), CONFIGFILE_DEFAULT);
-    }
-    return cfgpath;
+    return (gCLIOpts.ConfigFile[0]) ? gCLIOpts.ConfigFile : CONFIGFILE_DEFAULT;
 }
 
 // Loads the config file specified by 'filename'
 void configfile_load(const char *filename) {
-    FILE *file;
+    fs_file_t *file;
     char *line;
 
     printf("Loading configuration from '%s'\n", filename);
 
-    file = fopen(filename, "r");
+    file = fs_open(filename);
     if (file == NULL) {
         // Create a new config file and save defaults
         printf("Config file '%s' not found. Creating it.\n", filename);
@@ -286,7 +294,7 @@ void configfile_load(const char *filename) {
         free(line);
     }
 
-    fclose(file);
+    fs_close(file);
 }
 
 // Writes the config file to 'filename'
@@ -295,7 +303,7 @@ void configfile_save(const char *filename) {
 
     printf("Saving configuration to '%s'\n", filename);
 
-    file = fopen(filename, "w");
+    file = fopen(fs_get_write_path(filename), "w");
     if (file == NULL) {
         // error
         return;

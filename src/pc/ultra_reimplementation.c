@@ -3,6 +3,7 @@
 #include "lib/src/libultra_internal.h"
 #include "macros.h"
 #include "platform.h"
+#include "fs/fs.h"
 
 #ifdef TARGET_WEB
 #include <emscripten.h>
@@ -19,15 +20,42 @@ s32 osPiStartDma(UNUSED OSIoMesg *mb, UNUSED s32 priority, UNUSED s32 direction,
     return 0;
 }
 
+void osCreateMesgQueue(OSMesgQueue *mq, OSMesg *msgBuf, s32 count) {
+    mq->validCount = 0;
+    mq->first = 0;
+    mq->msgCount = count;
+    mq->msg = msgBuf;
+    return;
+}
+
 void osSetEventMesg(UNUSED OSEvent e, UNUSED OSMesgQueue *mq, UNUSED OSMesg msg) {
 }
 s32 osJamMesg(UNUSED OSMesgQueue *mq, UNUSED OSMesg msg, UNUSED s32 flag) {
     return 0;
 }
 s32 osSendMesg(UNUSED OSMesgQueue *mq, UNUSED OSMesg msg, UNUSED s32 flag) {
+#ifdef VERSION_EU
+    s32 index;
+    if (mq->validCount >= mq->msgCount) {
+        return -1;
+    }
+    index = (mq->first + mq->validCount) % mq->msgCount;
+    mq->msg[index] = msg;
+    mq->validCount++;
+#endif
     return 0;
 }
 s32 osRecvMesg(UNUSED OSMesgQueue *mq, UNUSED OSMesg *msg, UNUSED s32 flag) {
+#ifdef VERSION_EU
+    if (mq->validCount == 0) {
+        return -1;
+    }
+    if (msg != NULL) {
+        *msg = *(mq->first + mq->msg);
+    }
+    mq->first = (mq->first + 1) % mq->msgCount;
+    mq->validCount--;
+#endif
     return 0;
 }
 
@@ -120,17 +148,15 @@ s32 osEepromLongRead(UNUSED OSMesgQueue *mq, u8 address, u8 *buffer, int nbytes)
         ret = 0;
     }
 #else
-    char save_path[SYS_MAX_PATH] = { 0 };
-    snprintf(save_path, sizeof(save_path), "%s/sm64_save_file.bin", sys_save_path());
-    FILE *fp = fopen(save_path, "rb");
+    fs_file_t *fp = fs_open(SAVE_FILENAME);
     if (fp == NULL) {
         return -1;
     }
-    if (fread(content, 1, 512, fp) == 512) {
+    if (fs_read(fp, content, 512) == 512) {
         memcpy(buffer, content + address * 8, nbytes);
         ret = 0;
     }
-    fclose(fp);
+    fs_close(fp);
 #endif
     return ret;
 }
@@ -152,9 +178,7 @@ s32 osEepromLongWrite(UNUSED OSMesgQueue *mq, u8 address, u8 *buffer, int nbytes
     }, content);
     s32 ret = 0;
 #else
-    char save_path[SYS_MAX_PATH] = { 0 };
-    snprintf(save_path, sizeof(save_path), "%s/sm64_save_file.bin", sys_save_path());
-    FILE *fp = fopen(save_path, "wb");
+    FILE *fp = fopen(fs_get_write_path(SAVE_FILENAME), "wb");
     if (fp == NULL) {
         return -1;
     }

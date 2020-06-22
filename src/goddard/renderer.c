@@ -1,26 +1,25 @@
 #include <ultra64.h>
-#include <macros.h>
 #include <stdarg.h>
 #include <stdio.h>
 
 #ifndef VERSION_EU
 #include "prevent_bss_reordering.h"
 #endif
-#include "gd_types.h"
-#include "gd_macros.h"
-#include "dynlists/dynlists.h"
-
-#include "renderer.h"
-#include "gd_main.h"
-#include "gd_memory.h"
-#include "sfx.h"
-#include "draw_objects.h"
-#include "objects.h"
-#include "dynlist_proc.h"
 #include "debug_utils.h"
-#include "skin.h"
+#include "draw_objects.h"
+#include "dynlist_proc.h"
+#include "dynlists/dynlists.h"
+#include "gd_macros.h"
+#include "gd_main.h"
 #include "gd_math.h"
+#include "gd_memory.h"
+#include "gd_types.h"
+#include "macros.h"
+#include "objects.h"
+#include "renderer.h"
+#include "sfx.h"
 #include "shape_helper.h"
+#include "skin.h"
 
 #include "config.h"
 #include "gfx_dimensions.h"
@@ -129,7 +128,7 @@ static struct ObjGroup *sCarSceneGrp;   // @ 801BB0B8
 static s32 D_801BB0BC; // vtx's to load into RPD? Vtx len in GD Dl and in the lower bank (AF30)
 static struct ObjView *sYoshiSceneView; // @ 801BB0C0
 static s32 D_801BB0C4;                  // first offset into D_801BAF30
-static struct ObjView *sMSceneView;     // @ 801BB0C8; mario scene view
+static struct ObjView *sMSceneView;     // @ 801BB0C8; Mario scene view
 static s32 D_801BB0CC;                  // Vtx start in GD Dl
 static struct ObjView *sCarSceneView;   // @ 801BB0D0
 static s32 sUpdateYoshiScene;           // @ 801BB0D4; update dl Vtx from ObjVertex?
@@ -1231,7 +1230,7 @@ void gdm_maketestdl(s32 id) {
         case 1:
             reset_nets_and_gadgets(sYoshiSceneGrp);
             break;
-        case 2: // normal mario head
+        case 2: // normal Mario head
             if (sMarioSceneGrp == NULL) {
                 load_mario_head(animate_mario_head_normal);
                 sMarioSceneGrp = gMarioFaceGrp; // gMarioFaceGrp set by load_mario_head
@@ -1239,7 +1238,7 @@ void gdm_maketestdl(s32 id) {
             }
             sMSceneView = make_view_withgrp("mscene", sMarioSceneGrp);
             break;
-        case 3: // game over mario head
+        case 3: // game over Mario head
             if (sMarioSceneGrp == NULL) {
                 load_mario_head(animate_mario_head_gameover);
                 sMarioSceneGrp = gMarioFaceGrp;
@@ -1716,10 +1715,8 @@ u32 Unknown8019EC88(Gfx *dl, UNUSED s32 arg1) {
 }
 
 /* 24D4C4 -> 24D63C; orig name: func_8019ECF4 */
-void mat4_to_mtx(const Mat4f *src, Mtx *dst) {
-
-    guMtxF2L(src, dst);
-
+void mat4_to_mtx(Mat4f *src, Mtx *dst) {
+    guMtxF2L(*src, dst);
 }
 
 /* 24D63C -> 24D6E4; orig name: func_8019EE6C */
@@ -1790,8 +1787,7 @@ void func_8019F2C4(f32 arg0, s8 arg1) {
 }
 
 /* 24DAE8 -> 24E1A8 */
-void func_8019F318(struct ObjCamera *cam, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6,
-                   f32 arg7) {
+void func_8019F318(struct ObjCamera *cam, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7) {
     LookAt *lookat; // 5c
 
     arg7 *= RAD_PER_DEG;
@@ -1879,7 +1875,7 @@ void check_tri_display(s32 vtxcount) {
 }
 
 /* 24E230 -> 24E6C0; orig name: func_8019FA60 */
-Vtx *make_Vtx_if_new(f32 x, f32 y, f32 z, f32 alpha) {
+Vtx *make_vtx_if_new(f32 x, f32 y, f32 z, f32 alpha) {
     Vtx *vtx = NULL; // 1c
     s32 i;           // 18
 
@@ -1929,9 +1925,9 @@ void add_tri_to_dl(f32 x1, f32 y1, f32 z1, f32 x2, f32 y2, f32 z2, f32 x3, f32 y
     Vtx *vtx; // 24
 
     vtx = &DL_CURRENT_VTX(sCurrentGdDl);
-    make_Vtx_if_new(x1, y1, z1, 1.0f);
-    make_Vtx_if_new(x2, y2, z2, 1.0f);
-    make_Vtx_if_new(x3, y3, z3, 1.0f);
+    make_vtx_if_new(x1, y1, z1, 1.0f);
+    make_vtx_if_new(x2, y2, z2, 1.0f);
+    make_vtx_if_new(x3, y3, z3, 1.0f);
 
     gSPVertex(next_gfx(), osVirtualToPhysical(vtx), 3, 0);
     gSP1Triangle(next_gfx(), 0, 1, 2, 0);
@@ -2779,7 +2775,7 @@ void gd_init_controllers(void) {
 }
 
 /* 252BAC -> 252BC0 */
-void Proc801A43DC(UNUSED struct GdObj *obj) {
+void func_801A43DC(UNUSED struct GdObj *obj) {
 }
 
 /* 252BC0 -> 252BE0 */
@@ -2788,18 +2784,18 @@ void *func_801A43F0(UNUSED const char *menufmt, ...) {
 }
 
 /* 252BE0 -> 252BF0 */
-void Proc801A4410(UNUSED void *arg0) {
+void func_801A4410(UNUSED void *arg0) {
 }
 
 /* 252BF0 -> 252C08 */
-void Proc801A4424(UNUSED void *arg0) {
+void func_801A4424(UNUSED void *arg0) {
 }
 
 /* 252C08 -> 252C70 */
-void func_801A4438(f32 arg0, f32 arg1, f32 arg2) {
-    D_801BB0E8.x = arg0 - (sActiveView->lowerRight.x / 2.0f);
-    D_801BB0E8.y = (sActiveView->lowerRight.y / 2.0f) - arg1;
-    D_801BB0E8.z = arg2;
+void func_801A4438(f32 x, f32 y, f32 z) {
+    D_801BB0E8.x = x - (sActiveView->lowerRight.x / 2.0f);
+    D_801BB0E8.y = (sActiveView->lowerRight.y / 2.0f) - y;
+    D_801BB0E8.z = z;
 }
 
 /* 252C70 -> 252DB4 */
@@ -3287,7 +3283,7 @@ void Unknown801A5AE0(s32 arg0) {
 }
 
 /* 254328 -> 2543B8; orig name: func_801A5B58 */
-void set_Vtx_tc_buf(f32 tcS, f32 tcT) {
+void set_vtx_tc_buf(f32 tcS, f32 tcT) {
     sVtxCvrtTCBuf[0] = (s16)(tcS * 512.0f);
     sVtxCvrtTCBuf[1] = (s16)(tcT * 512.0f);
 }

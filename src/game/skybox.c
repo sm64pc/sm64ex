@@ -1,14 +1,14 @@
-#include <ultra64.h>
+#include <PR/ultratypes.h>
 
-#include "sm64.h"
-#include "gfx_dimensions.h"
-#include "engine/math_util.h"
-#include "memory.h"
 #include "area.h"
+#include "engine/math_util.h"
+#include "geo_misc.h"
+#include "gfx_dimensions.h"
+#include "level_update.h"
+#include "memory.h"
 #include "save_file.h"
 #include "segment2.h"
-#include "level_update.h"
-#include "geo_misc.h"
+#include "sm64.h"
 
 
 /**

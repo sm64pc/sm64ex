@@ -26,10 +26,6 @@ This allows you to draw 3D boxes for debugging purposes.
 Call the `debug_box` function whenever you want to draw one. `debug_box` by default takes two arguments: a center and bounds vec3f. This will draw a box starting from the point (center - bounds) to (center + bounds).
 Use `debug_box_rot` to draw a box rotated in the xz-plane. If you want to draw a box by specifying min and max points, use `debug_box_pos` instead.
 
-## FPS Counter - `fps.patch`
-
-This patch provides an in-game FPS counter to measure the frame rate.
-
 ## iQue Player Support - `ique_support.patch`
 
 This enhancement allows the same ROM to work on both the Nintendo 64 and the iQue Player.

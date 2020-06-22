@@ -31,4 +31,4 @@
 // What's the point of having a border if we're not an N64?
 #define BORDER_HEIGHT 0 // Never use a border as not-N64
 
-#endif
+#endif // CONFIG_H

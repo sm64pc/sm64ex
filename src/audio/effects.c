@@ -1,5 +1,4 @@
 #include <ultra64.h>
-#include <macros.h>
 
 #include "effects.h"
 #include "load.h"
@@ -18,7 +17,8 @@ static void sequence_channel_process_sound(struct SequenceChannel *seqChannel, s
     s32 i;
 
     if (seqChannel->changes.as_bitfields.volume || recalculateVolume) {
-        channelVolume = seqChannel->volume * seqChannel->volumeScale * seqChannel->seqPlayer->appliedFadeVolume;
+        channelVolume = seqChannel->volume * seqChannel->volumeScale *
+            seqChannel->seqPlayer->appliedFadeVolume * seqChannel->seqPlayer->volumeScale;
         if (seqChannel->seqPlayer->muted && (seqChannel->muteBehavior & MUTE_BEHAVIOR_SOFTEN) != 0) {
             channelVolume = seqChannel->seqPlayer->muteVolumeScale * channelVolume;
         }
@@ -59,7 +59,8 @@ static void sequence_channel_process_sound(struct SequenceChannel *seqChannel) {
     f32 panFromChannel;
     s32 i;
 
-    channelVolume = seqChannel->volume * seqChannel->volumeScale * seqChannel->seqPlayer->fadeVolume;
+    channelVolume = seqChannel->volume * seqChannel->volumeScale *
+        seqChannel->seqPlayer->fadeVolume * seqChannel->seqPlayer->volumeScale;
     if (seqChannel->seqPlayer->muted && (seqChannel->muteBehavior & MUTE_BEHAVIOR_SOFTEN) != 0) {
         channelVolume *= seqChannel->seqPlayer->muteVolumeScale;
     }

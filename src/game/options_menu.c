@@ -69,6 +69,7 @@ static const u8 optsCameraStr[][32] = {
     { TEXT_OPT_ANALOGUE },
     { TEXT_OPT_MOUSE },
     { TEXT_OPT_CAMD },
+    { TEXT_OPT_CAMON },
 };
 
 static const u8 optsVideoStr[][32] = {
@@ -76,14 +77,19 @@ static const u8 optsVideoStr[][32] = {
     { TEXT_OPT_TEXFILTER },
     { TEXT_OPT_NEAREST },
     { TEXT_OPT_LINEAR },
-    { TEXT_RESET_WINDOW },
+    { TEXT_OPT_RESETWND },
     { TEXT_OPT_VSYNC },
     { TEXT_OPT_DOUBLE },
     { TEXT_OPT_HUD },
+    { TEXT_OPT_THREEPT },
+    { TEXT_OPT_APPLY },
 };
 
 static const u8 optsAudioStr[][32] = {
-    { TEXT_OPT_MVOLUME },
+    { TEXT_OPT_MVOLUME },    
+    { TEXT_OPT_MUSVOLUME },
+    { TEXT_OPT_SFXVOLUME },
+    { TEXT_OPT_ENVVOLUME },
 };
 
 static const u8 optsCheatsStr[][64] = {
@@ -122,6 +128,7 @@ static const u8 bindStr[][32] = {
 static const u8 *filterChoices[] = {
     optsVideoStr[2],
     optsVideoStr[3],
+    optsVideoStr[8],
 };
 
 static const u8 *vsyncChoices[] = {
@@ -204,16 +211,21 @@ static void optvideo_reset_window(UNUSED struct Option *self, s32 arg) {
     }
 }
 
+static void optvideo_apply(UNUSED struct Option *self, s32 arg) {
+    if (!arg) configWindow.settings_changed = true;
+}
+
 /* submenu option lists */
 
 #ifdef BETTERCAMERA
 static struct Option optsCamera[] = {
-    DEF_OPT_TOGGLE( optsCameraStr[6], &configEnableCamera ),
+    DEF_OPT_TOGGLE( optsCameraStr[9], &configEnableCamera ),
+    DEF_OPT_TOGGLE( optsCameraStr[6], &configCameraAnalog ),
     DEF_OPT_TOGGLE( optsCameraStr[7], &configCameraMouse ),
     DEF_OPT_TOGGLE( optsCameraStr[2], &configCameraInvertX ),
     DEF_OPT_TOGGLE( optsCameraStr[3], &configCameraInvertY ),
-    DEF_OPT_SCROLL( optsCameraStr[0], &configCameraXSens, 10, 250, 1 ),
-    DEF_OPT_SCROLL( optsCameraStr[1], &configCameraYSens, 10, 250, 1 ),
+    DEF_OPT_SCROLL( optsCameraStr[0], &configCameraXSens, 1, 100, 1 ),
+    DEF_OPT_SCROLL( optsCameraStr[1], &configCameraYSens, 1, 100, 1 ),
     DEF_OPT_SCROLL( optsCameraStr[4], &configCameraAggr, 0, 100, 1 ),
     DEF_OPT_SCROLL( optsCameraStr[5], &configCameraPan, 0, 100, 1 ),
     DEF_OPT_SCROLL( optsCameraStr[8], &configCameraDegrade, 0, 100, 1 ),
@@ -245,12 +257,16 @@ static struct Option optsVideo[] = {
     DEF_OPT_TOGGLE( optsVideoStr[0], &configWindow.fullscreen ),
     DEF_OPT_CHOICE( optsVideoStr[5], &configWindow.vsync, vsyncChoices ),
     DEF_OPT_CHOICE( optsVideoStr[1], &configFiltering, filterChoices ),
-    DEF_OPT_BUTTON( optsVideoStr[4], optvideo_reset_window ),
     DEF_OPT_TOGGLE( optsVideoStr[7], &configHUD ),
+    DEF_OPT_BUTTON( optsVideoStr[4], optvideo_reset_window ),
+    DEF_OPT_BUTTON( optsVideoStr[9], optvideo_apply ),
 };
 
 static struct Option optsAudio[] = {
     DEF_OPT_SCROLL( optsAudioStr[0], &configMasterVolume, 0, MAX_VOLUME, 1 ),
+    DEF_OPT_SCROLL( optsAudioStr[1], &configMusicVolume, 0, MAX_VOLUME, 1),
+    DEF_OPT_SCROLL( optsAudioStr[2], &configSfxVolume, 0, MAX_VOLUME, 1),
+    DEF_OPT_SCROLL( optsAudioStr[3], &configEnvVolume, 0, MAX_VOLUME, 1),
 };
 
 static struct Option optsCheats[] = {

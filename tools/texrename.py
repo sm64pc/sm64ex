@@ -53,7 +53,7 @@ try:
                 crc = int(crcstr[2:], 16)
             else:
                 crc = int(crcstr)
-            crcmap.append((crc, os.path.join(outpath, tok[1].strip())))
+            crcmap.append((crc, os.path.join(outpath, 'gfx', tok[1].strip())))
 except OSError as e:
     print('could not open {0}: {1}'.format(mapfname, e))
 except ValueError as e:
