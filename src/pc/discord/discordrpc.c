@@ -54,6 +54,7 @@ static s16 lastCourseNum = -1;
 static s16 lastActNum = -1;
 
 #ifdef VERSION_EU
+#include "eu_translation.h"
 extern s32 gInGameLanguage;
 #endif
 
@@ -159,13 +160,13 @@ static void set_details(void) {
             courseNameTbl = segmented_to_virtual(seg2_course_name_table);
 #else
             switch (gInGameLanguage) {
-                case LANGUAGE_ENGLISH:
+                case LANG_ENGLISH:
                     courseNameTbl = segmented_to_virtual(course_name_table_eu_en);
                     break;
-                case LANGUAGE_FRENCH:
+                case LANG_FRENCH:
                     courseNameTbl = segmented_to_virtual(course_name_table_eu_fr);
                     break;
-                case LANGUAGE_GERMAN:
+                case LANG_GERMAN:
                     courseNameTbl = segmented_to_virtual(course_name_table_eu_de);
                     break;
             }
@@ -192,13 +193,13 @@ static void set_state(void) {
                 actNameTbl = segmented_to_virtual(seg2_act_name_table);
 #else
                 switch (gInGameLanguage) {
-                    case LANGUAGE_ENGLISH:
+                    case LANG_ENGLISH:
                         actNameTbl = segmented_to_virtual(act_name_table_eu_en);
                         break;
-                    case LANGUAGE_FRENCH:
+                    case LANG_FRENCH:
                         actNameTbl = segmented_to_virtual(act_name_table_eu_fr);
                         break;
-                    case LANGUAGE_GERMAN:
+                    case LANG_GERMAN:
                         actNameTbl = segmented_to_virtual(act_name_table_eu_de);
                         break;
                 }
