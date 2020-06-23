@@ -6,6 +6,7 @@
 #include "macros.h"
 #include "PR/ultratypes.h"
 #include "game/memory.h"
+#include "game/save_file.h"
 #include "pc/configfile.h"
 #include "discordrpc.h"
 
@@ -160,13 +161,13 @@ static void set_details(void) {
             courseNameTbl = segmented_to_virtual(seg2_course_name_table);
 #else
             switch (gInGameLanguage) {
-                case LANG_ENGLISH:
+                case LANGUAGE_ENGLISH:
                     courseNameTbl = segmented_to_virtual(course_name_table_eu_en);
                     break;
-                case LANG_FRENCH:
+                case LANGUAGE_FRENCH:
                     courseNameTbl = segmented_to_virtual(course_name_table_eu_fr);
                     break;
-                case LANG_GERMAN:
+                case LANGUAGE_GERMAN:
                     courseNameTbl = segmented_to_virtual(course_name_table_eu_de);
                     break;
             }
@@ -193,13 +194,13 @@ static void set_state(void) {
                 actNameTbl = segmented_to_virtual(seg2_act_name_table);
 #else
                 switch (gInGameLanguage) {
-                    case LANG_ENGLISH:
+                    case LANGUAGE_ENGLISH:
                         actNameTbl = segmented_to_virtual(act_name_table_eu_en);
                         break;
-                    case LANG_FRENCH:
+                    case LANGUAGE_FRENCH:
                         actNameTbl = segmented_to_virtual(act_name_table_eu_fr);
                         break;
-                    case LANG_GERMAN:
+                    case LANGUAGE_GERMAN:
                         actNameTbl = segmented_to_virtual(act_name_table_eu_de);
                         break;
                 }
