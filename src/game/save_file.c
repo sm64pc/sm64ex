@@ -702,6 +702,9 @@ void eu_set_language(u16 language) {
 }
 
 u16 eu_get_language(void) {
+    // check if the language is in range, in case we loaded a US save with garbage padding or something
+    if (gSaveBuffer.menuData[0].language >= LANGUAGE_MAX)
+        eu_set_language(LANGUAGE_ENGLISH); // reset it to english if not
     return gSaveBuffer.menuData[0].language;
 }
 #endif
