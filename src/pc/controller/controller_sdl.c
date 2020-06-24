@@ -25,6 +25,8 @@
 #define VK_BASE_SDL_MOUSE (VK_BASE_SDL_GAMEPAD + VK_OFS_SDL_MOUSE)
 #define MAX_JOYBINDS 32
 #define MAX_MOUSEBUTTONS 8 // arbitrary
+#define MAX_JOYBUTTONS 32  // arbitrary; includes virtual keys for triggers
+#define AXIS_THRESHOLD (30 * 256)
 
 int mouse_x;
 int mouse_y;
@@ -43,7 +45,7 @@ static u32 num_mouse_binds = 0;
 static u32 joy_binds[MAX_JOYBINDS][2];
 static u32 mouse_binds[MAX_JOYBINDS][2];
 
-static bool joy_buttons[SDL_CONTROLLER_BUTTON_MAX ] = { false };
+static bool joy_buttons[MAX_JOYBUTTONS] = { false };
 static u32 mouse_buttons = 0;
 static u32 last_mouse = VK_INVALID;
 static u32 last_joybutton = VK_INVALID;
@@ -138,6 +140,12 @@ static SDL_Haptic *controller_sdl_init_haptics(const int joy) {
     return hap;
 }
 
+static inline void update_button(const int i, const bool new) {
+    const bool pressed = !joy_buttons[i] && new;
+    joy_buttons[i] = new;
+    if (pressed) last_joybutton = i;
+}
+
 static void controller_sdl_read(OSContPad *pad) {
     if (!init_ok) {
         return;
@@ -184,31 +192,6 @@ static void controller_sdl_read(OSContPad *pad) {
         }
     }
 
-    for (u32 i = 0; i < SDL_CONTROLLER_BUTTON_MAX; ++i) {
-        const bool new = SDL_GameControllerGetButton(sdl_cntrl, i);
-        const bool pressed = !joy_buttons[i] && new;
-        joy_buttons[i] = new;
-        if (pressed) last_joybutton = i;
-    }
-
-    u32 buttons_down = 0;
-    for (u32 i = 0; i < num_joy_binds; ++i)
-        if (joy_buttons[joy_binds[i][0]])
-            buttons_down |= joy_binds[i][1];
-
-    pad->button |= buttons_down;
-
-    const u32 xstick = buttons_down & STICK_XMASK;
-    const u32 ystick = buttons_down & STICK_YMASK;
-    if (xstick == STICK_LEFT)
-        pad->stick_x = -128;
-    else if (xstick == STICK_RIGHT)
-        pad->stick_x = 127;
-    if (ystick == STICK_DOWN)
-        pad->stick_y = -128;
-    else if (ystick == STICK_UP)
-        pad->stick_y = 127;
-
     int16_t leftx = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_LEFTX);
     int16_t lefty = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_LEFTY);
     int16_t rightx = SDL_GameControllerGetAxis(sdl_cntrl, SDL_CONTROLLER_AXIS_RIGHTX);
@@ -231,13 +214,36 @@ static void controller_sdl_read(OSContPad *pad) {
     }
 #endif
 
+    for (u32 i = 0; i < SDL_CONTROLLER_BUTTON_MAX; ++i) {
+        const bool new = SDL_GameControllerGetButton(sdl_cntrl, i);
+        update_button(i, new);
+    }
+
+    update_button(VK_LTRIGGER - VK_BASE_SDL_GAMEPAD, ltrig > AXIS_THRESHOLD);
+    update_button(VK_RTRIGGER - VK_BASE_SDL_GAMEPAD, rtrig > AXIS_THRESHOLD);
+
+    u32 buttons_down = 0;
+    for (u32 i = 0; i < num_joy_binds; ++i)
+        if (joy_buttons[joy_binds[i][0]])
+            buttons_down |= joy_binds[i][1];
+
+    pad->button |= buttons_down;
+
+    const u32 xstick = buttons_down & STICK_XMASK;
+    const u32 ystick = buttons_down & STICK_YMASK;
+    if (xstick == STICK_LEFT)
+        pad->stick_x = -128;
+    else if (xstick == STICK_RIGHT)
+        pad->stick_x = 127;
+    if (ystick == STICK_DOWN)
+        pad->stick_y = -128;
+    else if (ystick == STICK_UP)
+        pad->stick_y = 127;
+
     if (rightx < -0x4000) pad->button |= L_CBUTTONS;
     if (rightx > 0x4000) pad->button |= R_CBUTTONS;
     if (righty < -0x4000) pad->button |= U_CBUTTONS;
     if (righty > 0x4000) pad->button |= D_CBUTTONS;
-
-    if (ltrig > 30 * 256) pad->button |= Z_TRIG;
-    if (rtrig > 30 * 256) pad->button |= R_TRIG;
 
     uint32_t magnitude_sq = (uint32_t)(leftx * leftx) + (uint32_t)(lefty * lefty);
     uint32_t stickDeadzoneActual = configStickDeadzone * DEADZONE_STEP;

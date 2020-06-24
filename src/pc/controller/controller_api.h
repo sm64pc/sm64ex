@@ -5,6 +5,10 @@
 #define VK_INVALID 0xFFFF
 #define VK_SIZE 0x1000
 
+// virtual buttons for left and right analog triggers
+#define VK_LTRIGGER 0x101A
+#define VK_RTRIGGER 0x101B
+
 // fake buttons for binding the stick directions
 #define STICK_UP    0x80000
 #define STICK_DOWN  0x40000
