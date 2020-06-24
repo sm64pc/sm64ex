@@ -155,7 +155,11 @@ static s16 newcam_clamp(s16 value, s16 min, s16 max) {
         return value;
 }
 
-void newcam_toggle(const bool enabled) {
+void newcam_toggle(bool enabled) {
+    // force-disable if a demo is being played
+    if (gCurrDemoInput)
+        enabled = false;
+
     if (enabled && !newcam_active) {
         newcam_active = 1;
         newcam_saved_mode = gLakituState.mode;
