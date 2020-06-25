@@ -3183,7 +3183,11 @@ const BehaviorScript bhvFloorTrapInCastle[] = {
 
 const BehaviorScript bhvTree[] = {
     BEGIN(OBJ_LIST_POLELIKE),
+    #ifdef BETTERCAMERA
     CYLBOARD(),
+    #else
+    BILLBOARD(),
+    #endif
     OR_INT(oFlags, OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE),
     SET_INT(oInteractType, INTERACT_POLE),
     SET_HITBOX(/*Radius*/ 80, /*Height*/ 500),
