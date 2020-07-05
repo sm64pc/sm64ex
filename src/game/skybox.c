@@ -50,9 +50,9 @@ struct Skybox {
     /// The camera's pitch, which is bounded by +-16384, which maps to -90 to 90 degrees
     s16 pitch;
     /// The skybox's X position in world space
-    s32 scaledX;
+    f32 scaledX;
     /// The skybox's Y position in world space
-    s32 scaledY;
+    f32 scaledY;
 
     /// The index of the upper-left tile in the 3x3 grid that gets drawn
     s32 upperLeftTile;
@@ -135,16 +135,14 @@ u8 sSkyboxColors[][3] = {
  *                 (how far is the camera rotated from 0, scaled 0 to 1)   *
  *                 (the screen width)
  */
-int calculate_skybox_scaled_x(s8 player, f32 fov) {
+f32 calculate_skybox_scaled_x(s8 player, f32 fov) {
     f32 yaw = sSkyBoxInfo[player].yaw;
 
     //! double literals are used instead of floats
-    f32 yawScaled = SCREEN_WIDTH * 360.0 * yaw / (fov * 65536.0);
-    // Round the scaled yaw. Since yaw is a u16, it doesn't need to check for < 0
-    s32 scaledX = yawScaled + 0.5;
+    f32 scaledX = SCREEN_WIDTH * 360.0 * yaw / (fov * 65536.0);
 
     if (scaledX > SKYBOX_WIDTH) {
-        scaledX -= scaledX / SKYBOX_WIDTH * SKYBOX_WIDTH;
+        scaledX -= (s32) scaledX / SKYBOX_WIDTH * SKYBOX_WIDTH;
     }
     return SKYBOX_WIDTH - scaledX;
 }
@@ -155,17 +153,16 @@ int calculate_skybox_scaled_x(s8 player, f32 fov) {
  * fov may have been used in an earlier version, but the developers changed the function to always use
  * 90 degrees.
  */
-int calculate_skybox_scaled_y(s8 player, UNUSED f32 fov) {
+f32 calculate_skybox_scaled_y(s8 player, UNUSED f32 fov) {
     // Convert pitch to degrees. Pitch is bounded between -90 (looking down) and 90 (looking up).
     f32 pitchInDegrees = (f32) sSkyBoxInfo[player].pitch * 360.0 / 65535.0;
 
     // Scale by 360 / fov
     f32 degreesToScale = 360.0f * pitchInDegrees / 90.0;
-    s32 roundedY = round_float(degreesToScale);
 
     // Since pitch can be negative, and the tile grid starts 1 octant above the camera's focus, add
     // 5 octants to the y position
-    s32 scaledY = roundedY + 5 * SKYBOX_TILE_HEIGHT;
+    f32 scaledY = degreesToScale + 5 * SKYBOX_TILE_HEIGHT;
 
     if (scaledY > SKYBOX_HEIGHT) {
         scaledY = SKYBOX_HEIGHT;
