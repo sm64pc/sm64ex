@@ -1,7 +1,7 @@
 #!/bin/bash
 # Super Mario 64 PC on Raspberry Pi
-# Find latest updates and code on https://www.github.com/sm64pc/sm64pc
-# NOTE: If you clone the repo, source must be copied in ~/src/sm64pi/sm64pc/
+# Find latest updates and code on https://www.github.com/sm64pc/sm64ex
+# NOTE: If you clone the repo, source must be copied in ~/src/sm64pc/sm64ex/
 # ToDo: Test on more Pi models with fresh Raspbian and allow existing src folders to be updated.
 #
 clear
@@ -12,7 +12,7 @@ lowmem=0
 pi=0
 pimodel=$(uname -m 2>/dev/null || echo unknown)
 pitype=$(tr -d '\0' < /sys/firmware/devicetree/base/model)
-repo_url="https://github.com/sm64pc/sm64pc"
+repo_url="https://github.com/sm64pc/sm64ex"
 
 if [[ $pimodel =~ "armv6" ]]
 then
@@ -233,10 +233,10 @@ clear
 echo "Super Mario 64 RPi preparation & downloader"
 echo ""
 echo "Checking in current directory and"
-echo "checking in "$HOME"/src/sm64pi/sm64pc/ for existing Super Mario 64 PC files"
+echo "checking in "$HOME"/src/sm64pc/sm64ex/ for existing Super Mario 64 PC files"
 echo ""
 sm64dircur=$(ls ./Makefile)
-sm64dir=$(ls $HOME/src/sm64pi/sm64pc/Makefile)
+sm64dir=$(ls $HOME/src/sm64pc/sm64ex/Makefile)
 
 if [[ $sm64dircur =~ "Makefile" ]] #If current directory has a makefile
 then
@@ -256,7 +256,7 @@ then
     curdir=1 
     fi
 
-else #Do a fresh compile in HOME/src/sm64pi/sm64pc/
+else #Do a fresh compile in HOME/src/sm64pc/sm64ex/
     sm64dir=0;
     curdir=0;
 fi
@@ -273,16 +273,16 @@ read -p "Proceed? (Y/N): " gitins
 if [[ $gitins =~ [Yy] ]]
 then
 echo ""
-echo "Creating directory "$HOME"/src/sm64pi"
+echo "Creating directory "$HOME"/src/sm64pc"
 mkdir $HOME/src/
 cd $HOME/src/
-mkdir $HOME/src/sm64pi
-cd $HOME/src/sm64pi
+mkdir $HOME/src/sm64pc
+cd $HOME/src/sm64pc
 
 echo ""
 echo "Downloading latest Super Mario 64 PC-port code"
 git clone ${repo_url}
-cd $HOME/src/sm64pi/sm64pc/
+cd $HOME/src/sm64pc/sm64ex/
 echo "Download complete"
 echo ""
 sleep 2
@@ -302,14 +302,14 @@ if [[ $curdir == 1 ]]
 then
 echo "Assets will be extracted from "$PWD" "
 else
-echo "Assets will be extracted from $HOME/src/sm64pi/sm64pc/baserom.(us/eu/jp).z64 "
+echo "Assets will be extracted from $HOME/src/sm64pc/sm64ex/baserom.(us/eu/jp).z64 "
 fi
 
 if [[ $curdir == 1 ]]
 then
 sm64z64=$(find ./* | grep baserom) #See if current directory is prepped
 else
-sm64z64=$(find $HOME/src/sm64pi/sm64pc/* | grep baserom) #see if fresh compile directory is prepped
+sm64z64=$(find $HOME/src/sm64pc/sm64ex/* | grep baserom) #see if fresh compile directory is prepped
 fi
 
 if [[ $sm64z64 =~ "baserom" ]]
@@ -331,7 +331,7 @@ echo $PWD
 echo ""
 else
 echo ""
-echo $HOME/src/sm64pi/sm64pc/
+echo $HOME/src/sm64pc/sm64ex/
 fi
 
 sleep 5
@@ -347,7 +347,7 @@ echo ""
 
 if [[ $curdir != 1 ]] # If we're not compiling from a git zip / random directory
 then
-cd $HOME/src/sm64pi/sm64pc/
+cd $HOME/src/sm64pc/sm64ex/
 fi
 
 echo "Beginning Super Mario 64 RasPi compilation!"
@@ -373,7 +373,7 @@ if [[ $curdir == 1 ]]
 then
 sm64done=$(find ./build/*/* | grep .arm)
 else
-sm64done=$(find $HOME/src/sm64pi/sm64pc/build/*/* | grep .arm)
+sm64done=$(find $HOME/src/sm64pc/sm64ex/build/*/* | grep .arm)
 fi
 
 echo ""
@@ -386,7 +386,7 @@ if [[ $curdir == 1 ]]
 then
 $sm64loc=$(ls ./build/*pc/*.arm)
 else
-$sm64loc=$(ls $HOME/src/sm64pi/sm64pc/build/*pc/*.arm)
+$sm64loc=$(ls $HOME/src/sm64pc/sm64ex/build/*pc/*.arm)
 fi
 
 echo $sm64loc
