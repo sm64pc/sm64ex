@@ -569,12 +569,24 @@ static void gfx_opengl_init(void) {
     TEXENV_COMBINE_OP(1, GL_SRC_COLOR, GL_SRC_ALPHA);
 }
 
+static void gfx_opengl_on_resize(void) {
+}
+
 static void gfx_opengl_start_frame(void) {
     glDisable(GL_SCISSOR_TEST);
     glDepthMask(GL_TRUE); // Must be set to clear Z-buffer
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_SCISSOR_TEST);
+}
+
+static void gfx_opengl_end_frame(void) {
+}
+
+static void gfx_opengl_finish_render(void) {
+}
+
+static void gfx_opengl_shutdown(void) {
 }
 
 static void gfx_opengl_shutdown(void) {
@@ -599,7 +611,10 @@ struct GfxRenderingAPI gfx_opengl_api = {
     gfx_opengl_set_use_alpha,
     gfx_opengl_draw_triangles,
     gfx_opengl_init,
+    gfx_opengl_on_resize,
     gfx_opengl_start_frame,
+    gfx_opengl_end_frame,
+    gfx_opengl_finish_render,
     gfx_opengl_shutdown
 };
 

@@ -487,10 +487,7 @@ SDL2_USED := 0
 # for now, it's either SDL+GL or DXGI+DirectX, so choose based on WAPI
 ifeq ($(WINDOW_API),DXGI)
   DXBITS := `cat $(ENDIAN_BITWIDTH) | tr ' ' '\n' | tail -1`
-  ifeq ($(RENDER_API),D3D11)
-    BACKEND_LDFLAGS += -ld3d11
-  else ifeq ($(RENDER_API),D3D12)
-    BACKEND_LDFLAGS += -ld3d12
+  ifeq ($(RENDER_API),D3D12)
     BACKEND_CFLAGS += -Iinclude/dxsdk
   endif
   BACKEND_LDFLAGS += -ld3dcompiler -ldxgi -ldxguid
