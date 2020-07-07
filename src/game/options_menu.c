@@ -79,7 +79,7 @@ static const u8 optsVideoStr[][32] = {
     { TEXT_OPT_LINEAR },
     { TEXT_OPT_RESETWND },
     { TEXT_OPT_VSYNC },
-    { TEXT_OPT_DOUBLE },
+    { TEXT_OPT_AUTO },
     { TEXT_OPT_HUD },
     { TEXT_OPT_THREEPT },
     { TEXT_OPT_APPLY },

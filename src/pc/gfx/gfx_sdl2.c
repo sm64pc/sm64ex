@@ -25,6 +25,7 @@
 #endif // End of OS-Specific GL defines
 
 #include <stdio.h>
+#include <unistd.h>
 
 #include "gfx_window_manager_api.h"
 #include "gfx_screen_config.h"
@@ -41,8 +42,6 @@
 # define FRAMERATE 30
 #endif
 
-static const Uint32 FRAME_TIME = 1000 / FRAMERATE;
-
 static SDL_Window *wnd;
 static SDL_GLContext ctx = NULL;
 static int inverted_scancode_table[512];
@@ -50,6 +49,11 @@ static int inverted_scancode_table[512];
 static kb_callback_t kb_key_down = NULL;
 static kb_callback_t kb_key_up = NULL;
 static void (*kb_all_keys_up)(void) = NULL;
+
+// whether to use timer for frame control
+static bool use_timer = true;
+static Uint64 qpc_freq = 1;
+static Uint64 frame_time = 1;
 
 const SDL_Scancode windows_scancode_table[] = {
   /*  0                        1                            2                         3                            4                     5                            6                            7  */
@@ -103,7 +107,57 @@ const SDL_Scancode scancode_rmapping_nonextended[][2] = {
 
 #define IS_FULLSCREEN() ((SDL_GetWindowFlags(wnd) & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
 
-static void gfx_sdl_set_fullscreen() {
+int test_vsync(void) {
+    // Even if SDL_GL_SetSwapInterval succeeds, it doesn't mean that VSync actually works.
+    // A 60 Hz monitor should have a swap interval of 16.67 milliseconds.
+    // Try to detect the length of a vsync by swapping buffers some times.
+    // Since the graphics card may enqueue a fixed number of frames,
+    // first send in four dummy frames to hopefully fill the queue.
+    // This method will fail if the refresh rate is changed, which, in
+    // combination with that we can't control the queue size (i.e. lag)
+    // is a reason this generic SDL2 backend should only be used as last resort.
+
+    for (int i = 0; i < 8; ++i)
+        SDL_GL_SwapWindow(wnd);
+
+    Uint32 start = SDL_GetTicks();
+    SDL_GL_SwapWindow(wnd);
+    SDL_GL_SwapWindow(wnd);
+    SDL_GL_SwapWindow(wnd);
+    SDL_GL_SwapWindow(wnd);
+    Uint32 end = SDL_GetTicks();
+
+    const float average = 4.0 * 1000.0 / (end - start);
+
+    if (average > 27.0f && average < 33.0f) return 1;
+    if (average > 57.0f && average < 63.0f) return 2;
+    if (average > 86.0f && average < 94.0f) return 3;
+    if (average > 115.0f && average < 125.0f) return 4;
+
+    return 0;
+}
+
+static inline void gfx_sdl_set_vsync(int mode) {
+    if (mode > 1) {
+        // try to detect refresh rate
+        SDL_GL_SetSwapInterval(1);
+        const int vblanks = test_vsync();
+        if (vblanks) {
+            printf("determined swap interval: %d\n", vblanks);
+            SDL_GL_SetSwapInterval(vblanks);
+            use_timer = false;
+            return;
+        } else {
+            printf("could not determine swap interval, falling back to timer sync\n");
+            mode = 0;
+        }
+    }
+
+    SDL_GL_SetSwapInterval(mode);
+    use_timer = (mode <= 1);
+}
+
+static void gfx_sdl_set_fullscreen(void) {
     if (configWindow.reset)
         configWindow.fullscreen = false;
     if (configWindow.fullscreen == IS_FULLSCREEN())
@@ -137,7 +191,8 @@ static void gfx_sdl_reset_dimension_and_pos(void) {
 
     SDL_SetWindowSize(wnd, configWindow.w, configWindow.h);
     SDL_SetWindowPosition(wnd, xpos, ypos);
-    SDL_GL_SetSwapInterval(configWindow.vsync); // in case vsync changed
+    // in case vsync changed
+    gfx_sdl_set_vsync(configWindow.vsync);
 }
 
 static void gfx_sdl_init(const char *window_title) {
@@ -165,9 +220,12 @@ static void gfx_sdl_init(const char *window_title) {
     );
     ctx = SDL_GL_CreateContext(wnd);
 
-    SDL_GL_SetSwapInterval(configWindow.vsync);
+    gfx_sdl_set_vsync(configWindow.vsync);
 
     gfx_sdl_set_fullscreen();
+
+    qpc_freq = SDL_GetPerformanceFrequency();
+    frame_time = qpc_freq / FRAMERATE;
 
     for (size_t i = 0; i < sizeof(windows_scancode_table) / sizeof(SDL_Scancode); i++) {
         inverted_scancode_table[windows_scancode_table[i]] = i;
@@ -184,15 +242,20 @@ static void gfx_sdl_init(const char *window_title) {
 }
 
 static void gfx_sdl_main_loop(void (*run_one_game_iter)(void)) {
-    Uint32 t = SDL_GetTicks();
+    Uint64 t = SDL_GetPerformanceCounter();
     run_one_game_iter();
-    t = SDL_GetTicks() - t;
-    if (t < FRAME_TIME && configWindow.vsync <= 1)
-        SDL_Delay(FRAME_TIME - t);
+    t = SDL_GetPerformanceCounter() - t;
+    if (t < frame_time && use_timer) {
+        const Uint64 us = (frame_time - t) * 1000000 / qpc_freq;
+        usleep(us);
+    }
 }
 
 static void gfx_sdl_get_dimensions(uint32_t *width, uint32_t *height) {
-    SDL_GetWindowSize(wnd, width, height);
+    int w, h;
+    SDL_GetWindowSize(wnd, &w, &h);
+    if (width) *width = w;
+    if (height) *height = h;
 }
 
 static int translate_scancode(int scancode) {
