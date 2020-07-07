@@ -8,6 +8,7 @@
 #define MEMORY_POOL_LEFT  0
 #define MEMORY_POOL_RIGHT 1
 
+#define GFX_POOL_SIZE (512 * 1024)
 
 struct AllocOnlyPool
 {

@@ -9,8 +9,6 @@
 #include "types.h"
 #include "memory.h"
 
-#define GFX_POOL_SIZE 64000
-
 struct GfxPool {
     Gfx buffer[GFX_POOL_SIZE];
     struct SPTask spTask;
