@@ -54,6 +54,7 @@ static void (*kb_all_keys_up)(void) = NULL;
 static bool use_timer = true;
 // time between consequtive game frames
 static const Uint32 frame_time = 1000 / FRAMERATE;
+static Uint32 frame_start = 0;
 
 const SDL_Scancode windows_scancode_table[] = {
   /*  0                        1                            2                         3                            4                     5                            6                            7  */
@@ -239,11 +240,7 @@ static void gfx_sdl_init(const char *window_title) {
 }
 
 static void gfx_sdl_main_loop(void (*run_one_game_iter)(void)) {
-    Uint32 t = SDL_GetTicks();
     run_one_game_iter();
-    t = SDL_GetTicks() - t;
-    if (t < frame_time && use_timer)
-        SDL_Delay(frame_time - t);
 }
 
 static void gfx_sdl_get_dimensions(uint32_t *width, uint32_t *height) {
@@ -327,10 +324,18 @@ static void gfx_sdl_set_keyboard_callbacks(kb_callback_t on_key_down, kb_callbac
 }
 
 static bool gfx_sdl_start_frame(void) {
+    frame_start = SDL_GetTicks();
     return true;
 }
 
+static inline void sync_framerate_with_timer(void) {
+    const Uint32 elapsed = SDL_GetTicks() - frame_start;
+    if (elapsed < frame_time)
+        SDL_Delay(frame_time - elapsed);
+}
+
 static void gfx_sdl_swap_buffers_begin(void) {
+    if (use_timer) sync_framerate_with_timer();
     SDL_GL_SwapWindow(wnd);
 }
 
