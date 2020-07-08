@@ -52,8 +52,8 @@ static void (*kb_all_keys_up)(void) = NULL;
 
 // whether to use timer for frame control
 static bool use_timer = true;
-static Uint64 qpc_freq = 1;
-static Uint64 frame_time = 1;
+// time between consequtive game frames
+static const Uint32 frame_time = 1000 / FRAMERATE;
 
 const SDL_Scancode windows_scancode_table[] = {
   /*  0                        1                            2                         3                            4                     5                            6                            7  */
@@ -148,8 +148,8 @@ static inline void gfx_sdl_set_vsync(int mode) {
             use_timer = false;
             return;
         } else {
-            printf("could not determine swap interval, falling back to timer sync\n");
-            mode = 0;
+            printf("could not determine swap interval, falling back to one vblank + timer sync\n");
+            mode = 1;
         }
     }
 
@@ -224,9 +224,6 @@ static void gfx_sdl_init(const char *window_title) {
 
     gfx_sdl_set_fullscreen();
 
-    qpc_freq = SDL_GetPerformanceFrequency();
-    frame_time = qpc_freq / FRAMERATE;
-
     for (size_t i = 0; i < sizeof(windows_scancode_table) / sizeof(SDL_Scancode); i++) {
         inverted_scancode_table[windows_scancode_table[i]] = i;
     }
@@ -242,13 +239,11 @@ static void gfx_sdl_init(const char *window_title) {
 }
 
 static void gfx_sdl_main_loop(void (*run_one_game_iter)(void)) {
-    Uint64 t = SDL_GetPerformanceCounter();
+    Uint32 t = SDL_GetTicks();
     run_one_game_iter();
-    t = SDL_GetPerformanceCounter() - t;
-    if (t < frame_time && use_timer) {
-        const Uint64 us = (frame_time - t) * 1000000 / qpc_freq;
-        usleep(us);
-    }
+    t = SDL_GetTicks() - t;
+    if (t < frame_time && use_timer)
+        SDL_Delay(frame_time - t);
 }
 
 static void gfx_sdl_get_dimensions(uint32_t *width, uint32_t *height) {
