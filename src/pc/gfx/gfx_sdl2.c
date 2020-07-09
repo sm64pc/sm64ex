@@ -133,6 +133,7 @@ int test_vsync(void) {
     if (average > 57.0f && average < 63.0f) return 2;
     if (average > 86.0f && average < 94.0f) return 3;
     if (average > 115.0f && average < 125.0f) return 4;
+    if (average > 234.0f && average < 246.0f) return 8;
 
     return 0;
 }
