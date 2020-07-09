@@ -53,8 +53,7 @@ static void (*kb_all_keys_up)(void) = NULL;
 // whether to use timer for frame control
 static bool use_timer = true;
 // time between consequtive game frames
-static const Uint32 frame_time = 1000 / FRAMERATE;
-static Uint32 frame_start = 0;
+static const int frame_time = 1000 / FRAMERATE;
 
 const SDL_Scancode windows_scancode_table[] = {
   /*  0                        1                            2                         3                            4                     5                            6                            7  */
@@ -138,8 +137,8 @@ int test_vsync(void) {
     return 0;
 }
 
-static inline void gfx_sdl_set_vsync(int mode) {
-    if (mode > 1) {
+static inline void gfx_sdl_set_vsync(const bool enabled) {
+    if (enabled) {
         // try to detect refresh rate
         SDL_GL_SetSwapInterval(1);
         const int vblanks = test_vsync();
@@ -149,13 +148,12 @@ static inline void gfx_sdl_set_vsync(int mode) {
             use_timer = false;
             return;
         } else {
-            printf("could not determine swap interval, falling back to one vblank + timer sync\n");
-            mode = 1;
+            printf("could not determine swap interval, falling back to timer sync\n");
         }
     }
 
-    SDL_GL_SetSwapInterval(mode);
-    use_timer = (mode <= 1);
+    use_timer = true;
+    SDL_GL_SetSwapInterval(0);
 }
 
 static void gfx_sdl_set_fullscreen(void) {
@@ -324,14 +322,15 @@ static void gfx_sdl_set_keyboard_callbacks(kb_callback_t on_key_down, kb_callbac
 }
 
 static bool gfx_sdl_start_frame(void) {
-    frame_start = SDL_GetTicks();
     return true;
 }
 
 static inline void sync_framerate_with_timer(void) {
-    const Uint32 elapsed = SDL_GetTicks() - frame_start;
+    static Uint32 last_time = 0;
+    const int elapsed = SDL_GetTicks() - last_time;
     if (elapsed < frame_time)
         SDL_Delay(frame_time - elapsed);
+    last_time += frame_time;
 }
 
 static void gfx_sdl_swap_buffers_begin(void) {

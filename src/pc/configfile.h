@@ -10,7 +10,7 @@
 
 typedef struct {
     unsigned int x, y, w, h;
-    unsigned int vsync;
+    bool vsync;
     bool reset;
     bool fullscreen;
     bool exiting_fullscreen;

@@ -255,7 +255,7 @@ static struct Option optsControls[] = {
 
 static struct Option optsVideo[] = {
     DEF_OPT_TOGGLE( optsVideoStr[0], &configWindow.fullscreen ),
-    DEF_OPT_CHOICE( optsVideoStr[5], &configWindow.vsync, vsyncChoices ),
+    DEF_OPT_TOGGLE( optsVideoStr[5], &configWindow.vsync ),
     DEF_OPT_CHOICE( optsVideoStr[1], &configFiltering, filterChoices ),
     DEF_OPT_TOGGLE( optsVideoStr[7], &configHUD ),
     DEF_OPT_BUTTON( optsVideoStr[4], optvideo_reset_window ),
