@@ -576,7 +576,6 @@ static Gfx gd_dl_red_sparkle_4_dup[] = {
     gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, gd_texture_sparkle_4), // 4 again, correct texture would be 5
     gsSPBranchList(gd_dl_sparkle),
 };
-
 #else
 static Gfx gd_dl_red_sparkle_5[] = {
     gsDPPipeSync(),
@@ -628,7 +627,6 @@ static Gfx gd_dl_silver_sparkle_4_dup[] = {
     gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, gd_texture_sparkle_4), // 4 again, correct texture would be 5
     gsSPBranchList(gd_dl_sparkle),
 };
-
 #else
 static Gfx gd_dl_silver_sparkle_5[] = {
     gsDPPipeSync(),
