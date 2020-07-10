@@ -328,6 +328,8 @@ static bool gfx_sdl_start_frame(void) {
 
 static inline void sync_framerate_with_timer(void) {
     static Uint32 last_time = 0;
+    // get base timestamp on the first frame (might be different from 0)
+    if (last_time == 0) last_time = SDL_GetTicks();
     const int elapsed = SDL_GetTicks() - last_time;
     if (elapsed < frame_time)
         SDL_Delay(frame_time - elapsed);
