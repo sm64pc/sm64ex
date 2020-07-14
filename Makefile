@@ -438,8 +438,8 @@ AS := i686-w64-mingw32-as
 endif
 
 ifneq ($(TARGET_WEB),1) # As in, not-web PC port
-  CC := $(CROSS)gcc
-  CXX := $(CROSS)g++
+  CC ?= $(CROSS)gcc
+  CXX ?= $(CROSS)g++
 else
   CC := emcc
   CXX := emcc
