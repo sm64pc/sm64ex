@@ -356,7 +356,7 @@ CXX_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
 S_FILES := $(foreach dir,$(ASM_DIRS),$(wildcard $(dir)/*.s))
 GODDARD_C_FILES := $(foreach dir,$(GODDARD_SRC_DIRS),$(wildcard $(dir)/*.c))
 
-GENERATED_C_FILES := $(BUILD_DIR)/assets/mario_anim_data.c $(BUILD_DIR)/assets/demo_data.c \
+GENERATED_C_FILES := $(BUILD_DIR)/assets/mario_anim_data.c $(BUILD_DIR)/assets/demo_data.c 
   $(addprefix $(BUILD_DIR)/bin/,$(addsuffix _skybox.c,$(notdir $(basename $(wildcard textures/skyboxes/*.png)))))
 
 ULTRA_C_FILES := \
@@ -426,7 +426,7 @@ DEP_FILES := $(O_FILES:.o=.d) $(ULTRA_O_FILES:.o=.d) $(GODDARD_O_FILES:.o=.d) $(
 SEG_FILES := $(SEGMENT_ELF_FILES) $(ACTOR_ELF_FILES) $(LEVEL_ELF_FILES)
 
 ##################### Compiler Options #######################
-INCLUDE_CFLAGS := -I include -I $(BUILD_DIR) -I $(BUILD_DIR)/include -I src -I .
+INCLUDE_CFLAGS := -I include -I $(BUILD_DIR) -I $(BUILD_DIR)/include -I src -I
 ENDIAN_BITWIDTH := $(BUILD_DIR)/endian-and-bitwidth
 
 # Huge deleted N64 section was here
@@ -460,7 +460,7 @@ else ifeq ($(WINDOWS_BUILD),1)
 endif
 
 ifeq ($(WINDOWS_BUILD),1) # fixes compilation in MXE on Linux and WSL
-  CPP := cpp -P
+  CPP ?= cpp -P
   OBJCOPY := objcopy
   OBJDUMP := $(CROSS)objdump
 else ifeq ($(OSX_BUILD),1)
@@ -468,7 +468,7 @@ else ifeq ($(OSX_BUILD),1)
   OBJDUMP := i686-w64-mingw32-objdump
   OBJCOPY := i686-w64-mingw32-objcopy
 else # Linux & other builds
-  CPP := $(CROSS)cpp -P
+  CPP ?= $(CROSS)cpp -P
   OBJCOPY := $(CROSS)objcopy
   OBJDUMP := $(CROSS)objdump
 endif
