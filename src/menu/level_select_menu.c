@@ -46,7 +46,8 @@ int run_press_start_demo_timer(s32 timer) {
             if ((++gDemoCountdown) == PRESS_START_DEMO_TIMER) {
                 // start the demo. 800 frames has passed while
                 // player is idle on PRESS START screen.
-
+//D_U_801A7C34 == 1;
+                D_U_801A7C34 = 1;
                 // start the Mario demo animation for the demo list.
                 load_patchable_table(&gDemo, gDemoInputListID);
 
@@ -54,6 +55,7 @@ int run_press_start_demo_timer(s32 timer) {
                 // the first sequence.
                 if (++gDemoInputListID == gDemo.animDmaTable->count) {
                     gDemoInputListID = 0;
+
                 }
 
                 // add 1 (+4) to the pointer to skip the demoID.
@@ -64,6 +66,8 @@ int run_press_start_demo_timer(s32 timer) {
             }
         } else { // activity was detected, so reset the demo countdown.
             gDemoCountdown = 0;
+
+
         }
     }
     return timer;
@@ -76,6 +80,7 @@ int start_demo(int timer)
 {
 	gCurrDemoInput = NULL;
 	gPressedStart = 0;
+
     // start the mario demo animation for the demo list.
     //func_80278AD4(&gDemo, gDemoInputListID_2);
 
@@ -84,6 +89,8 @@ int start_demo(int timer)
 
     if((++gDemoInputListID_2) == gDemo.animDmaTable->count)
         gDemoInputListID_2 = 0;
+
+
 
     gCurrDemoInput = ((struct DemoInput *) gDemo.targetAnim) + 1; // add 1 (+4) to the pointer to skip the demoID.
     timer = (s8)((struct DemoInput *) gDemo.targetAnim)->timer; // TODO: see if making timer s8 matches
@@ -163,21 +170,30 @@ int intro_default(void) {
 
 #ifndef VERSION_JP
     if (D_U_801A7C34 == 1) {
-        play_sound(SOUND_MARIO_HELLO, gDefaultSoundArgs);
+        if (gGlobalTimer < 0x81) {
+            play_sound(SOUND_MARIO_HELLO, gDefaultSoundArgs);
+        } else {
+            play_sound(SOUND_MARIO_PRESS_START_TO_PLAY, gDefaultSoundArgs);
+        }
         D_U_801A7C34 = 0;
     }
 #endif
     print_intro_text();
 
     if (gPlayer1Controller->buttonPressed & START_BUTTON) {
+#ifdef VERSION_JP
         play_sound(SOUND_MENU_STAR_SOUND, gDefaultSoundArgs);
         sp1C = 100 + gDebugLevelSelect;
-#ifndef VERSION_JP        
+         
+#else
+        play_sound(SOUND_MENU_STAR_SOUND, gDefaultSoundArgs);
+        sp1C = 100 + gDebugLevelSelect;
         D_U_801A7C34 = 1;
 #endif
     }
     return run_press_start_demo_timer(sp1C);
 }
+
 
 int intro_game_over(void) {
     s32 sp1C = 0;
@@ -215,6 +231,7 @@ s32 lvl_intro_update(s16 arg1, UNUSED s32 arg2) {
             retVar = intro_play_its_a_me_mario();
             break;
         case 1:
+
             retVar = intro_default();
             break;
         case 2:
