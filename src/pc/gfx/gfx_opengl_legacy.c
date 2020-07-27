@@ -589,9 +589,6 @@ static void gfx_opengl_finish_render(void) {
 static void gfx_opengl_shutdown(void) {
 }
 
-static void gfx_opengl_shutdown(void) {
-}
-
 struct GfxRenderingAPI gfx_opengl_api = {
     gfx_opengl_z_is_from_0_to_1,
     gfx_opengl_unload_shader,
