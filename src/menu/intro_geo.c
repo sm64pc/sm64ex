@@ -1,5 +1,6 @@
 #include <PR/ultratypes.h>
 
+#include "engine/math_util.h"
 #include "game/memory.h"
 #include "game/segment2.h"
 #include "game/segment7.h"
@@ -70,6 +71,18 @@ s8 gameOverBackgroundTable[] = {
 s8 gameOverBackgroundFlipOrder[] = { 0x00, 0x01, 0x02, 0x03, 0x07, 0x0B,
                                      0x0a, 0x09, 0x08, 0x04, 0x05, 0x06 };
 
+static Gfx *sIntroScalePos;
+static Vec3f sIntroScale;
+
+void patch_title_screen_scales(void) {
+    if (sIntroScalePos != NULL) {
+        Mtx *scaleMat = alloc_display_list(sizeof(*scaleMat));
+        guScale(scaleMat, sIntroScale[0], sIntroScale[1], sIntroScale[2]);
+        gSPMatrix(sIntroScalePos, scaleMat, G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
+        sIntroScalePos = NULL;
+    }
+}
+
 Gfx *geo_title_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context) {
     struct GraphNode *graphNode; // sp4c
     Gfx *displayList;            // sp48
@@ -80,6 +93,8 @@ Gfx *geo_title_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context) {
     f32 scaleX;                  // sp34
     f32 scaleY;                  // sp30
     f32 scaleZ;                  // sp2c
+    Vec3f scale;
+    Vec3f scaleInterpolated;
     graphNode = sp54;
     displayList = NULL;
     displayListIter = NULL;
@@ -110,7 +125,11 @@ Gfx *geo_title_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context) {
             scaleY = 0.0f;
             scaleZ = 0.0f;
         }
-        guScale(scaleMat, scaleX, scaleY, scaleZ);
+        vec3f_set(scale, scaleX, scaleY, scaleZ);
+        interpolate_vectors(scaleInterpolated, sIntroScale, scale);
+        vec3f_set(sIntroScale, scaleX, scaleY, scaleZ);
+        guScale(scaleMat, scaleInterpolated[0], scaleInterpolated[1], scaleInterpolated[2]);
+        sIntroScalePos = displayListIter;
         gSPMatrix(displayListIter++, scaleMat, G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
         gSPDisplayList(displayListIter++, &intro_seg7_dl_0700B3A0);
         gSPPopMatrix(displayListIter++, G_MTX_MODELVIEW);

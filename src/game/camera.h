@@ -657,6 +657,8 @@ struct LakituState
     /// Mario's action from the previous frame. Only used to determine if Mario just finished a dive.
     /*0xB8*/ u32 lastFrameAction;
     /*0xBC*/ s16 unused;
+
+    u32 skipCameraInterpolationTimestamp;
 };
 
 // bss order hack to not affect BSS order. if possible, remove me, but it will be hard to match otherwise

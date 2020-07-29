@@ -16,6 +16,19 @@
 u8 sTransitionColorFadeCount[4] = { 0 };
 u16 sTransitionTextureFadeCount[2] = { 0 };
 
+static Gfx *sScreenTransitionVerticesPos[2];
+static Vtx *sScreenTransitionVertices;
+
+void patch_screen_transition_interpolated(void) {
+    if (sScreenTransitionVerticesPos[0] != NULL) {
+        gSPVertex(sScreenTransitionVerticesPos[0], VIRTUAL_TO_PHYSICAL(sScreenTransitionVertices), 8, 0);
+        gSPVertex(sScreenTransitionVerticesPos[1], VIRTUAL_TO_PHYSICAL(sScreenTransitionVertices), 4, 0);
+        sScreenTransitionVerticesPos[0] = NULL;
+        sScreenTransitionVerticesPos[1] = NULL;
+        sScreenTransitionVertices = NULL;
+    }
+}
+
 s32 set_and_reset_transition_fade_timer(s8 fadeTimer, u8 transTime) {
     s32 reset = FALSE;
 
@@ -85,13 +98,28 @@ s32 render_fade_transition_into_color(s8 fadeTimer, u8 transTime, struct WarpTra
     return dl_transition_color(fadeTimer, transTime, transData, alpha);
 }
 
+#if 0
+
 s16 calc_tex_transition_radius(s8 fadeTimer, s8 transTime, struct WarpTransitionData *transData) {
     f32 texRadius = transData->endTexRadius - transData->startTexRadius;
     f32 radiusTime = sTransitionColorFadeCount[fadeTimer] * texRadius / (f32)(transTime - 1);
     f32 result = transData->startTexRadius + radiusTime;
 
-    return (s16)(result + 0.5);;
+    return (s16)(result + 0.5);
 }
+
+#else
+
+s16 calc_tex_transition_radius(s8 fadeTimer, f32 interpolationFraction, s8 transTime, struct WarpTransitionData *transData) {
+    f32 texRadius = transData->endTexRadius - transData->startTexRadius;
+    f32 radiusTime = (sTransitionColorFadeCount[fadeTimer] == 0 ? 0 :
+                      sTransitionColorFadeCount[fadeTimer] - 1 + interpolationFraction) * texRadius / (f32)(transTime - 1);
+    f32 result = transData->startTexRadius + radiusTime;
+
+    return (s16)(result + 0.5);
+}
+
+#endif
 
 f32 calc_tex_transition_time(s8 fadeTimer, s8 transTime, struct WarpTransitionData *transData) {
     f32 startX = transData->startTexX;
@@ -166,6 +194,8 @@ void *sTextureTransitionID[] = {
     texture_transition_bowser_half,
 };
 
+#if 0
+
 s32 render_textured_transition(s8 fadeTimer, s8 transTime, struct WarpTransitionData *transData, s8 texID, s8 transTexType) {
     f32 texTransTime = calc_tex_transition_time(fadeTimer, transTime, transData);
     u16 texTransPos = convert_tex_transition_angle_to_pos(transData);
@@ -205,6 +235,56 @@ s32 render_textured_transition(s8 fadeTimer, s8 transTime, struct WarpTransition
     }
     return set_and_reset_transition_fade_timer(fadeTimer, transTime);
 }
+
+#else
+
+s32 render_textured_transition(s8 fadeTimer, s8 transTime, struct WarpTransitionData *transData, s8 texID, s8 transTexType) {
+    f32 texTransTime = calc_tex_transition_time(fadeTimer, transTime, transData);
+    u16 texTransPos = convert_tex_transition_angle_to_pos(transData);
+    s16 centerTransX = center_tex_transition_x(transData, texTransTime, texTransPos);
+    s16 centerTransY = center_tex_transition_y(transData, texTransTime, texTransPos);
+    s16 texTransRadius = calc_tex_transition_radius(fadeTimer, 1.0f, transTime, transData);
+    s16 texTransRadiusInterpolated = calc_tex_transition_radius(fadeTimer, 0.5f, transTime, transData);
+    Vtx *verts = alloc_display_list(8 * sizeof(*verts));
+    Vtx *vertsInterpolated = alloc_display_list(8 * sizeof(*vertsInterpolated));
+
+    if (verts != NULL && vertsInterpolated != NULL) {
+        load_tex_transition_vertex(verts, fadeTimer, transData, centerTransX, centerTransY, texTransRadius, transTexType);
+        load_tex_transition_vertex(vertsInterpolated, fadeTimer, transData, centerTransX, centerTransY, texTransRadiusInterpolated, transTexType);
+        sScreenTransitionVertices = verts;
+        gSPDisplayList(gDisplayListHead++, dl_proj_mtx_fullscreen)
+        gDPSetCombineMode(gDisplayListHead++, G_CC_SHADE, G_CC_SHADE);
+        gDPSetRenderMode(gDisplayListHead++, G_RM_AA_OPA_SURF, G_RM_AA_OPA_SURF2);
+        sScreenTransitionVerticesPos[0] = gDisplayListHead;
+        gSPVertex(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(vertsInterpolated), 8, 0);
+        gSPDisplayList(gDisplayListHead++, dl_transition_draw_filled_region);
+        gDPPipeSync(gDisplayListHead++);
+        gDPSetCombineMode(gDisplayListHead++, G_CC_MODULATEIDECALA, G_CC_MODULATEIDECALA);
+        gDPSetRenderMode(gDisplayListHead++, G_RM_AA_XLU_SURF, G_RM_AA_XLU_SURF2);
+        gDPSetTextureFilter(gDisplayListHead++, G_TF_BILERP);
+        switch (transTexType) {
+        case TRANS_TYPE_MIRROR:
+            gDPLoadTextureBlock(gDisplayListHead++, sTextureTransitionID[texID], G_IM_FMT_IA, G_IM_SIZ_8b, 32, 64, 0,
+                G_TX_WRAP | G_TX_MIRROR, G_TX_WRAP | G_TX_MIRROR, 5, 6, G_TX_NOLOD, G_TX_NOLOD);
+            break;
+        case TRANS_TYPE_CLAMP:
+            gDPLoadTextureBlock(gDisplayListHead++, sTextureTransitionID[texID], G_IM_FMT_IA, G_IM_SIZ_8b, 64, 64, 0,
+                G_TX_CLAMP, G_TX_CLAMP, 6, 6, G_TX_NOLOD, G_TX_NOLOD);
+            break;
+        }
+        gSPTexture(gDisplayListHead++, 0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON);
+        sScreenTransitionVerticesPos[1] = gDisplayListHead;
+        gSPVertex(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(vertsInterpolated), 4, 0);
+        gSPDisplayList(gDisplayListHead++, dl_draw_quad_verts_0123);
+        gSPTexture(gDisplayListHead++, 0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_OFF);
+        gSPDisplayList(gDisplayListHead++, dl_screen_transition_end);
+        sTransitionTextureFadeCount[fadeTimer] += transData->texTimer;
+    } else {
+    }
+    return set_and_reset_transition_fade_timer(fadeTimer, transTime);
+}
+
+#endif
 
 int render_screen_transition(s8 fadeTimer, s8 transType, u8 transTime, struct WarpTransitionData *transData) {
     switch (transType) {
