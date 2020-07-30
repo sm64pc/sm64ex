@@ -155,7 +155,7 @@ struct CreditsEntry sCreditsSequence[] = {
     { LEVEL_NONE, 0, 1, 0, { 0, 0, 0 }, NULL },
 };
 
-struct MarioState gMarioStates[1];
+struct MarioState gMarioStates[2];
 struct HudDisplay gHudDisplay;
 s16 sCurrPlayMode;
 u16 D_80339ECA;
@@ -371,21 +371,23 @@ void init_mario_after_warp(void) {
     u32 marioSpawnType = get_mario_spawn_type(spawnNode->object);
 
     if (gMarioState->action != ACT_UNINITIALIZED) {
-        gPlayerSpawnInfos[0].startPos[0] = (s16) spawnNode->object->oPosX;
-        gPlayerSpawnInfos[0].startPos[1] = (s16) spawnNode->object->oPosY;
-        gPlayerSpawnInfos[0].startPos[2] = (s16) spawnNode->object->oPosZ;
+        for (int i = 0; i < 2; i++) {
+            gPlayerSpawnInfos[i].startPos[0] = (s16) spawnNode->object->oPosX;
+            gPlayerSpawnInfos[i].startPos[1] = (s16) spawnNode->object->oPosY;
+            gPlayerSpawnInfos[i].startPos[2] = (s16) spawnNode->object->oPosZ;
 
-        gPlayerSpawnInfos[0].startAngle[0] = 0;
-        gPlayerSpawnInfos[0].startAngle[1] = spawnNode->object->oMoveAngleYaw;
-        gPlayerSpawnInfos[0].startAngle[2] = 0;
+            gPlayerSpawnInfos[i].startAngle[0] = 0;
+            gPlayerSpawnInfos[i].startAngle[1] = spawnNode->object->oMoveAngleYaw;
+            gPlayerSpawnInfos[i].startAngle[2] = 0;
 
-        if (marioSpawnType == MARIO_SPAWN_DOOR_WARP) {
-            init_door_warp(&gPlayerSpawnInfos[0], sWarpDest.arg);
-        }
+            if (marioSpawnType == MARIO_SPAWN_DOOR_WARP) {
+                init_door_warp(&gPlayerSpawnInfos[i], sWarpDest.arg);
+            }
 
-        if (sWarpDest.type == WARP_TYPE_CHANGE_LEVEL || sWarpDest.type == WARP_TYPE_CHANGE_AREA) {
-            gPlayerSpawnInfos[0].areaIndex = sWarpDest.areaIdx;
-            load_mario_area();
+            if (sWarpDest.type == WARP_TYPE_CHANGE_LEVEL || sWarpDest.type == WARP_TYPE_CHANGE_AREA) {
+                gPlayerSpawnInfos[i].areaIndex = sWarpDest.areaIdx;
+                if (i == 0) { load_mario_area(); }
+            }
         }
 
         init_mario();
@@ -504,12 +506,14 @@ void warp_credits(void) {
 
     load_area(sWarpDest.areaIdx);
 
-    vec3s_set(gPlayerSpawnInfos[0].startPos, gCurrCreditsEntry->marioPos[0],
-              gCurrCreditsEntry->marioPos[1], gCurrCreditsEntry->marioPos[2]);
+    for (int i = 0; i < 2; i++) {
+        vec3s_set(gPlayerSpawnInfos[i].startPos, gCurrCreditsEntry->marioPos[0],
+                  gCurrCreditsEntry->marioPos[1], gCurrCreditsEntry->marioPos[2]);
 
-    vec3s_set(gPlayerSpawnInfos[0].startAngle, 0, 0x100 * gCurrCreditsEntry->marioAngle, 0);
+        vec3s_set(gPlayerSpawnInfos[i].startAngle, 0, 0x100 * gCurrCreditsEntry->marioAngle, 0);
 
-    gPlayerSpawnInfos[0].areaIndex = sWarpDest.areaIdx;
+        gPlayerSpawnInfos[i].areaIndex = sWarpDest.areaIdx;
+    }
 
     load_mario_area();
     init_mario();

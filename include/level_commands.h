@@ -188,6 +188,11 @@
     CMD_W(behArg), \
     CMD_PTR(beh)
 
+#define LUIGI(unk3, behArg, beh) \
+    CMD_BBBB(0x3F, 0x0C, 0x00, unk3), \
+    CMD_W(behArg), \
+    CMD_PTR(beh)
+
 #define WARP_NODE(id, destLevel, destArea, destNode, flags) \
     CMD_BBBB(0x26, 0x08, id, destLevel), \
     CMD_BBBB(destArea, destNode, flags, 0x00)

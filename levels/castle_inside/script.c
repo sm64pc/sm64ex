@@ -227,6 +227,7 @@ const LevelScript level_castle_inside_entry[] = {
     LOAD_RAW(         /*seg*/ 0x0D, _group15_geoSegmentRomStart,  _group15_geoSegmentRomEnd),
     ALLOC_LEVEL_POOL(),
     MARIO(/*model*/ MODEL_MARIO, /*behParam*/ 0x00000001, /*beh*/ bhvMario),
+    LUIGI(/*model*/ MODEL_MARIO, /*behParam*/ 0x00000002, /*beh*/ bhvLuigi),
     JUMP_LINK(script_func_global_16),
     LOAD_MODEL_FROM_GEO(MODEL_CASTLE_BOWSER_TRAP,        castle_geo_000F18),
     LOAD_MODEL_FROM_GEO(MODEL_CASTLE_WATER_LEVEL_PILLAR, castle_geo_001940),

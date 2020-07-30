@@ -24,7 +24,7 @@
 
 #include "gfx_dimensions.h"
 
-struct SpawnInfo gPlayerSpawnInfos[1];
+struct SpawnInfo gPlayerSpawnInfos[2];
 struct GraphNode *D_8033A160[0x100];
 struct Area gAreaData[8];
 
@@ -187,7 +187,8 @@ void clear_areas(void) {
     gCurrentArea = NULL;
     gWarpTransition.isActive = FALSE;
     gWarpTransition.pauseRendering = FALSE;
-    gMarioSpawnInfo->areaIndex = -1;
+    gPlayerSpawnInfos[0].areaIndex = -1;
+    gPlayerSpawnInfos[1].areaIndex = -1;
 
     for (i = 0; i < 8; i++) {
         gAreaData[i].index = i;

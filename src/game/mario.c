@@ -1839,6 +1839,10 @@ s32 execute_mario_action(UNUSED struct Object *o) {
  **************************************************/
 
 void init_mario(void) {
+    bool isMario = (gMarioState == &gMarioStates[0]);
+    if (isMario && gMarioObject == NULL) { goto skippy; }
+    if (!isMario && gLuigiObject == NULL) { goto skippy; }
+
     Vec3s capPos;
     struct Object *capObject;
 
@@ -1875,12 +1879,13 @@ void init_mario(void) {
         find_water_level(gMarioSpawnInfo->startPos[0], gMarioSpawnInfo->startPos[2]);
 
     gMarioState->area = gCurrentArea;
-    gMarioState->marioObj = gMarioObject;
+    gMarioState->marioObj = isMario ? gMarioObject : gLuigiObject;
     gMarioState->marioObj->header.gfx.unk38.animID = -1;
     vec3s_copy(gMarioState->faceAngle, gMarioSpawnInfo->startAngle);
     vec3s_set(gMarioState->angleVel, 0, 0, 0);
     vec3s_to_vec3f(gMarioState->pos, gMarioSpawnInfo->startPos);
     vec3f_set(gMarioState->vel, 0, 0, 0);
+    if (!isMario) { gMarioState->pos[0] -= 50; }
     gMarioState->floorHeight =
         find_floor(gMarioState->pos[0], gMarioState->pos[1], gMarioState->pos[2], &gMarioState->floor);
 
@@ -1919,15 +1924,23 @@ void init_mario(void) {
 
         capObject->oMoveAngleYaw = 0;
     }
+
+skippy:
+    if (isMario) {
+        gMarioState = &gMarioStates[1];
+        init_mario();
+        gMarioState = &gMarioStates[0];
+    }
 }
 
 void init_mario_from_save_file(void) {
     gMarioState->unk00 = 0;
     gMarioState->flags = 0;
     gMarioState->action = 0;
-    gMarioState->spawnInfo = &gPlayerSpawnInfos[0];
+    int i = (gMarioState == &gMarioStates[0]) ? 0 : 1;
+    gMarioState->spawnInfo = &gPlayerSpawnInfos[i];
     gMarioState->statusForCamera = &gPlayerCameraState[0];
-    gMarioState->marioBodyState = &gBodyStates[0];
+    gMarioState->marioBodyState = &gBodyStates[i];
     gMarioState->controller = &gControllers[0];
     gMarioState->animation = &D_80339D10;
 
@@ -1944,4 +1957,10 @@ void init_mario_from_save_file(void) {
 
     gHudDisplay.coins = 0;
     gHudDisplay.wedges = 8;
+
+    if (gMarioState == &gMarioStates[0]) {
+        gMarioState = &gMarioStates[1];
+        init_mario_from_save_file();
+        gMarioState = &gMarioStates[0];
+    }
 }

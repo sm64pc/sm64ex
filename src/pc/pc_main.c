@@ -282,6 +282,7 @@ void main_func(void) {
 #ifdef DISCORDRPC
         discord_update_rich_presence();
 #endif
+        fflush(stdout);
     }
 #endif
 }
