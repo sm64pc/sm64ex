@@ -74,6 +74,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>..\include;..\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -503,6 +504,7 @@
     <ClCompile Include="..\actors\manta\geo.inc.c" />
     <ClCompile Include="..\actors\manta\model.inc.c" />
     <ClCompile Include="..\actors\mario\geo.inc.c" />
+    <ClCompile Include="..\actors\mario\geo2.inc.c" />
     <ClCompile Include="..\actors\mario\model.inc.c" />
     <ClCompile Include="..\actors\mario_cap\geo.inc.c" />
     <ClCompile Include="..\actors\mario_cap\model.inc.c" />

@@ -14928,6 +14928,9 @@
     <ClCompile Include="..\tools\utils.c">
       <Filter>Source Files\tools</Filter>
     </ClCompile>
+    <ClCompile Include="..\actors\mario\geo2.inc.c">
+      <Filter>Source Files\actors\mario</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\actors\common0.h">
