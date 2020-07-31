@@ -78,3 +78,6 @@ sm64config.txt
 !/sound/**/*custom*/**/*.aiff
 !/assets/**/*custom*.bin
 !/assets/**/*custom*/**/*.bin
+
+# visual studio
+build-windows-visual-studio/.vs
