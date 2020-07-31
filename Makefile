@@ -34,6 +34,8 @@ OSX_BUILD ?= 0
 TARGET_ARCH ?= native
 TARGET_BITS ?= 0
 
+# Disable immediate load by default
+IMMEDIATELOAD ?= 0
 # Disable better camera by default
 BETTERCAMERA ?= 0
 # Disable no drawing distance by default
@@ -539,6 +541,12 @@ else
 endif
 
 # Check for enhancement options
+
+# Check for immediate load option
+ifeq ($(IMMEDIATELOAD),1)
+  CC_CHECK += -DIMMEDIATELOAD
+  CFLAGS += -DIMMEDIATELOAD
+endif
 
 # Check for Puppycam option
 ifeq ($(BETTERCAMERA),1)

@@ -1115,9 +1115,13 @@ void check_sound_mode_menu_clicked_buttons(struct Object *soundModeButton) {
  * retuning sSelectedFileNum to a save value defined in fileNum.
  */
 void load_main_menu_save_file(struct Object *fileButton, s32 fileNum) {
+#ifdef IMMEDIATELOAD
+    sSelectedFileNum = fileNum;
+#else
     if (fileButton->oMenuButtonState == MENU_BUTTON_STATE_FULLSCREEN) {
         sSelectedFileNum = fileNum;
     }
+#endif
 }
 
 /**
@@ -1593,6 +1597,11 @@ void handle_cursor_button_input(void) {
             sClickPos[1] = sCursorPos[1];
             sCursorClickingTimer = 1;
         }
+#ifdef IMMEDIATELOAD
+        sClickPos[0] = sCursorPos[0];
+        sClickPos[1] = sCursorPos[1];
+        sCursorClickingTimer = 1;
+#endif
     }
 }
 
