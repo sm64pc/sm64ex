@@ -1941,7 +1941,7 @@ skippy:
 
 void init_mario_from_save_file(void) {
     bool isMario = (gMarioState == &gMarioStates[0]);
-    gMarioState->unk00 = 0;
+    gMarioState->unk00 = isMario ? 0 : 1;
     gMarioState->flags = 0;
     gMarioState->action = 0;
     int i = isMario ? 0 : 1;
