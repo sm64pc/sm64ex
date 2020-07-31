@@ -1,4 +1,4 @@
-// Normal Mario Geo
+// Normal Luigi Geo
 
 // 0x170002E0
 const GeoLayout luigi_geo_face_and_wings[] = {

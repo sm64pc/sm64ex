@@ -1277,7 +1277,7 @@ void debug_print_speed_action_normal(struct MarioState *m) {
  */
 void update_mario_button_inputs(struct MarioState *m) {
     // disable Luigi inputs
-    if (m != &gMarioStates[1]) { return; }
+    //if (m != &gMarioStates[1]) { return; }
 
     if (m->controller->buttonPressed & A_BUTTON) {
         m->input |= INPUT_A_PRESSED;
@@ -1320,7 +1320,7 @@ void update_mario_button_inputs(struct MarioState *m) {
  */
 void update_mario_joystick_inputs(struct MarioState *m) {
     // disable Luigi inputs
-    if (m != &gMarioStates[1]) { return; }
+    //if (m != &gMarioStates[1]) { return; }
 
     struct Controller *controller = m->controller;
     f32 mag = ((controller->stickMag / 64.0f) * (controller->stickMag / 64.0f)) * 64.0f;
@@ -1891,7 +1891,7 @@ void init_mario(void) {
     vec3s_set(gMarioState->angleVel, 0, 0, 0);
     vec3s_to_vec3f(gMarioState->pos, gMarioSpawnInfo->startPos);
     vec3f_set(gMarioState->vel, 0, 0, 0);
-    if (!isMario) { gMarioState->pos[0] -= 50; }
+    if (!isMario) { gMarioState->pos[0] -= 150; }
     gMarioState->floorHeight =
         find_floor(gMarioState->pos[0], gMarioState->pos[1], gMarioState->pos[2], &gMarioState->floor);
 

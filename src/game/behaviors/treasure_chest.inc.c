@@ -98,6 +98,7 @@ void bhv_treasure_chest_bottom_loop(void) {
     }
 
     cur_obj_push_mario_away_from_cylinder(150.0f, 150.0f);
+    cur_obj_push_luigi_away_from_cylinder(150.0f, 150.0f);
     o->oInteractStatus = 0;
 }
 

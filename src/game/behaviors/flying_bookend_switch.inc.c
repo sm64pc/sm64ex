@@ -299,5 +299,6 @@ void bhv_book_switch_loop(void) {
         o->oPosX += o->parentObj->oForwardVel;
         o->oPosZ = o->oHomeZ - o->oBookSwitchUnkF4;
         cur_obj_push_mario_away_from_cylinder(70.0f, 70.0f);
+        cur_obj_push_luigi_away_from_cylinder(70.0f, 70.0f);
     }
 }

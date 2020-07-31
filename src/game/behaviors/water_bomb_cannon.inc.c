@@ -87,6 +87,7 @@ void water_bomb_cannon_act_2(void) {
 
 void bhv_water_bomb_cannon_loop(void) {
     cur_obj_push_mario_away_from_cylinder(220.0f, 300.0f);
+    cur_obj_push_luigi_away_from_cylinder(220.0f, 300.0f);
 
     switch (o->oAction) {
         case 0:

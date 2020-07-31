@@ -34,6 +34,7 @@ void bhv_beta_chest_bottom_init(void) {
  */
 void bhv_beta_chest_bottom_loop(void) {
     cur_obj_push_mario_away_from_cylinder(200.0f, 200.0f);
+    cur_obj_push_luigi_away_from_cylinder(200.0f, 200.0f);
 }
 
 /**

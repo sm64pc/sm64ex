@@ -68,7 +68,7 @@ int detect_object_hurtbox_overlap(struct Object *a, struct Object *b) {
     f32 sp28 = a->hurtboxRadius + b->hurtboxRadius;
     f32 sp24 = sqrtf(sp34 * sp34 + sp2C * sp2C);
 
-    if (a == gMarioObject) {
+    if (a == gMarioObject || a == gLuigiObject) {
         b->oInteractionSubtype |= INT_SUBTYPE_DELAY_INVINCIBILITY;
     }
 
@@ -82,7 +82,7 @@ int detect_object_hurtbox_overlap(struct Object *a, struct Object *b) {
         if (sp20 < sp38) {
             return 0;
         }
-        if (a == gMarioObject) {
+        if (a == gMarioObject || a == gLuigiObject) {
             b->oInteractionSubtype &= ~INT_SUBTYPE_DELAY_INVINCIBILITY;
         }
         return 1;

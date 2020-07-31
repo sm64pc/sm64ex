@@ -185,7 +185,9 @@ void bhv_racing_penguin_update(void) {
     cur_obj_move_standard(78);
     cur_obj_align_gfx_with_floor();
     cur_obj_push_mario_away_from_cylinder(sRacingPenguinData[o->oBehParams2ndByte].radius,
-                                      sRacingPenguinData[o->oBehParams2ndByte].height);
+                                          sRacingPenguinData[o->oBehParams2ndByte].height);
+    cur_obj_push_luigi_away_from_cylinder(sRacingPenguinData[o->oBehParams2ndByte].radius,
+                                          sRacingPenguinData[o->oBehParams2ndByte].height);
 }
 
 void bhv_penguin_race_finish_line_update(void) {

@@ -2224,6 +2224,19 @@ void cur_obj_push_mario_away(f32 radius) {
     }
 }
 
+void cur_obj_push_luigi_away(f32 radius) {
+    f32 luigiRelX = gLuigiObject->oPosX - o->oPosX;
+    f32 luigiRelZ = gLuigiObject->oPosZ - o->oPosZ;
+    f32 luigiDist = sqrtf(sqr(luigiRelX) + sqr(luigiRelZ));
+
+    if (luigiDist < radius) {
+        //! If this function pushes luigi out of bounds, it will trigger luigi's
+        //  oob failsafe
+        gMarioStates[1].pos[0] += (radius - luigiDist) / radius * luigiRelX;
+        gMarioStates[1].pos[2] += (radius - luigiDist) / radius * luigiRelZ;
+    }
+}
+
 void cur_obj_push_mario_away_from_cylinder(f32 radius, f32 extentY) {
     f32 marioRelY = gMarioObject->oPosY - o->oPosY;
 
@@ -2233,6 +2246,18 @@ void cur_obj_push_mario_away_from_cylinder(f32 radius, f32 extentY) {
 
     if (marioRelY < extentY) {
         cur_obj_push_mario_away(radius);
+    }
+}
+
+void cur_obj_push_luigi_away_from_cylinder(f32 radius, f32 extentY) {
+    f32 marioRelY = gLuigiObject->oPosY - o->oPosY;
+
+    if (marioRelY < 0) {
+        marioRelY = -marioRelY;
+    }
+
+    if (marioRelY < extentY) {
+        cur_obj_push_luigi_away(radius);
     }
 }
 
@@ -2794,7 +2819,7 @@ s32 obj_attack_collided_from_other_object(struct Object *obj) {
     if (numCollidedObjs != 0) {
         other = obj->collidedObjs[0];
 
-        if (other != gMarioObject) {
+        if (other != gMarioObject && other != gLuigiObject) {
             other->oInteractStatus |= ATTACK_PUNCH | INT_STATUS_WAS_ATTACKED | INT_STATUS_INTERACTED
                                       | INT_STATUS_TOUCHED_BOB_OMB;
             touchedOtherObject = TRUE;
