@@ -1276,6 +1276,9 @@ void debug_print_speed_action_normal(struct MarioState *m) {
  * Update the button inputs for Mario.
  */
 void update_mario_button_inputs(struct MarioState *m) {
+    // disable Luigi inputs
+    if (m != &gMarioStates[1]) { return; }
+
     if (m->controller->buttonPressed & A_BUTTON) {
         m->input |= INPUT_A_PRESSED;
     }
@@ -1316,6 +1319,9 @@ void update_mario_button_inputs(struct MarioState *m) {
  * Updates the joystick intended magnitude.
  */
 void update_mario_joystick_inputs(struct MarioState *m) {
+    // disable Luigi inputs
+    if (m != &gMarioStates[1]) { return; }
+
     struct Controller *controller = m->controller;
     f32 mag = ((controller->stickMag / 64.0f) * (controller->stickMag / 64.0f)) * 64.0f;
 
@@ -1934,15 +1940,16 @@ skippy:
 }
 
 void init_mario_from_save_file(void) {
+    bool isMario = (gMarioState == &gMarioStates[0]);
     gMarioState->unk00 = 0;
     gMarioState->flags = 0;
     gMarioState->action = 0;
-    int i = (gMarioState == &gMarioStates[0]) ? 0 : 1;
+    int i = isMario ? 0 : 1;
     gMarioState->spawnInfo = &gPlayerSpawnInfos[i];
-    gMarioState->statusForCamera = &gPlayerCameraState[0];
+    gMarioState->statusForCamera = &gPlayerCameraState[i];
     gMarioState->marioBodyState = &gBodyStates[i];
     gMarioState->controller = &gControllers[0];
-    gMarioState->animation = &D_80339D10;
+    gMarioState->animation = &D_80339D10[i];
 
     gMarioState->numCoins = 0;
     gMarioState->numStars =
@@ -1958,7 +1965,7 @@ void init_mario_from_save_file(void) {
     gHudDisplay.coins = 0;
     gHudDisplay.wedges = 8;
 
-    if (gMarioState == &gMarioStates[0]) {
+    if (isMario) {
         gMarioState = &gMarioStates[1];
         init_mario_from_save_file();
         gMarioState = &gMarioStates[0];

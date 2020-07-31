@@ -430,14 +430,14 @@ Gfx *geo_mario_head_rotation(s32 callContext, struct GraphNode *node, UNUSED Mat
  */
 Gfx *geo_switch_mario_hand(s32 callContext, struct GraphNode *node, UNUSED Mat4 *c) {
     struct GraphNodeSwitchCase *switchCase = (struct GraphNodeSwitchCase *) node;
-    struct MarioBodyState *bodyState = &gBodyStates[0];
+    struct MarioBodyState *bodyState = &gBodyStates[switchCase->numCases >> 1];
 
     if (callContext == GEO_CONTEXT_RENDER) {
         if (bodyState->handState == MARIO_HAND_FISTS) {
             // switch between fists (0) and open (1)
             switchCase->selectedCase = ((bodyState->action & ACT_FLAG_SWIMMING_OR_FLYING) != 0);
         } else {
-            if (switchCase->numCases == 0) {
+            if ((switchCase->numCases & 0x01) == 0) {
                 switchCase->selectedCase =
                     (bodyState->handState < 5) ? bodyState->handState : MARIO_HAND_OPEN;
             } else {
@@ -461,17 +461,17 @@ Gfx *geo_mario_hand_foot_scaler(s32 callContext, struct GraphNode *node, UNUSED 
     static s16 sMarioAttackAnimCounter = 0;
     struct GraphNodeGenerated *asGenerated = (struct GraphNodeGenerated *) node;
     struct GraphNodeScale *scaleNode = (struct GraphNodeScale *) node->next;
-    struct MarioBodyState *bodyState = &gBodyStates[0];
+    struct MarioBodyState *bodyState = &gBodyStates[asGenerated->parameter >> 2];
 
     if (callContext == GEO_CONTEXT_RENDER) {
         scaleNode->scale = 1.0f;
-        if (asGenerated->parameter == bodyState->punchState >> 6) {
+        if ((asGenerated->parameter & 0x03) == bodyState->punchState >> 6) {
             if (sMarioAttackAnimCounter != gAreaUpdateCounter && (bodyState->punchState & 0x3F) > 0) {
                 bodyState->punchState -= 1;
                 sMarioAttackAnimCounter = gAreaUpdateCounter;
             }
             scaleNode->scale =
-                gMarioAttackScaleAnimation[asGenerated->parameter * 6 + (bodyState->punchState & 0x3F)]
+                gMarioAttackScaleAnimation[(asGenerated->parameter & 0x03) * 6 + (bodyState->punchState & 0x3F)]
                 / 10.0f;
         }
     }
