@@ -42,7 +42,7 @@ void butterfly_step(s32 speed) {
 }
 
 void butterfly_calculate_angle(void) {
-    struct Object* player = nearest_player_object(o->oPosX, o->oPosY, o->oPosZ);
+    struct Object* player = nearest_player_to_object(o);
     player->oPosX += 5 * o->oButterflyYPhase / 4;
     player->oPosZ += 5 * o->oButterflyYPhase / 4;
     obj_turn_toward_object(o, player, 16, 0x300);
@@ -59,7 +59,7 @@ void butterfly_act_rest(void) {
         cur_obj_init_animation(0);
 
         o->oAction = BUTTERFLY_ACT_FOLLOW_MARIO;
-        struct Object* player = nearest_player_object(o->oPosX, o->oPosY, o->oPosZ);
+        struct Object* player = nearest_player_to_object(o);
         o->oMoveAngleYaw = player->header.gfx.angle[1];
     }
 }

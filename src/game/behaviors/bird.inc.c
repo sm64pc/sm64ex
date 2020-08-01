@@ -15,7 +15,7 @@
 static void bird_act_inactive(void) {
     // Start flying if the object is a spawned bird or if it's a spawner bird
     // and Mario is within 2000 units.
-    struct Object* player = nearest_player_object(o->oPosX, o->oPosY, o->oPosZ);
+    struct Object* player = nearest_player_to_object(o);
     if (o->oBehParams2ndByte == BIRD_BP_SPAWNED || dist_between_objects(o, player) < 2000.0f) {
         // If the object is a spawner bird, play the sound of birds flying away,
         // and spawn 6 spawned birds (which will start flying on the next frame).

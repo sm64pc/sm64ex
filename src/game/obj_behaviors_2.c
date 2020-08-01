@@ -882,9 +882,10 @@ static void treat_far_home_as_mario(f32 threshold) {
         o->oAngleToMario = atan2s(dz, dx);
         o->oDistanceToMario = 25000.0f;
     } else {
-        dx = o->oHomeX - gMarioObject->oPosX;
-        dy = o->oHomeY - gMarioObject->oPosY;
-        dz = o->oHomeZ - gMarioObject->oPosZ;
+        struct Object* player = nearest_player_to_object(o);
+        dx = o->oHomeX - player->oPosX;
+        dy = o->oHomeY - player->oPosY;
+        dz = o->oHomeZ - player->oPosZ;
         distance = sqrtf(dx * dx + dy * dy + dz * dz);
 
         if (distance > threshold) {

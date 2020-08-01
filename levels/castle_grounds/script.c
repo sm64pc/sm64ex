@@ -91,6 +91,7 @@ static const LevelScript script_func_local_4[] = {
     OBJECT(/*model*/ MODEL_YOSHI,     /*pos*/     0, 3174, -5625, /*angle*/ 0, 0, 0, /*behParam*/ 0x00000000, /*beh*/ bhvYoshi),
     // TESTING BELOW
     OBJECT(/*model*/ MODEL_BLACK_BOBOMB, /*pos*/ -2028, 260, 4664, /*angle*/ 0, 0, 0, /*behParam*/ 0x00000000, /*beh*/ bhvBobomb),
+    OBJECT(/*model*/ MODEL_GOOMBA, /*pos*/ -2028, 260, 3264, /*angle*/ 0, 0, 0, /*behParam*/ 0x00000000, /*beh*/ bhvGoomba),
     RETURN(),
 };
 

@@ -74,12 +74,13 @@ void bhv_goomba_triplet_spawner_update(void) {
     s32 dAngle;
     s16 dx;
     s16 dz;
+    struct Object* player = nearest_player_to_object(o);
 
     // If mario is close enough and the goombas aren't currently loaded, then
     // spawn them
     if (o->oAction == GOOMBA_TRIPLET_SPAWNER_ACT_UNLOADED) {
 #ifndef NODRAWINGDISTANCE
-        if (o->oDistanceToMario < 3000.0f) {
+        if (dist_between_objects(o, player) < 3000.0f) {
 #endif
             // The spawner is capable of spawning more than 3 goombas, but this
             // is not used in the game
@@ -102,7 +103,7 @@ void bhv_goomba_triplet_spawner_update(void) {
             o->oAction += 1;
 #ifndef NODRAWINGDISTANCE
         }
-    } else if (o->oDistanceToMario > 4000.0f) {
+    } else if (dist_between_objects(o, player) > 4000.0f) {
         // If mario is too far away, enter the unloaded action. The goombas
         // will detect this and unload themselves
         o->oAction = GOOMBA_TRIPLET_SPAWNER_ACT_UNLOADED;
@@ -176,15 +177,18 @@ static void goomba_act_walk(void) {
     if (o->oGoombaTurningAwayFromWall) {
         o->oGoombaTurningAwayFromWall = obj_resolve_collisions_and_turn(o->oGoombaTargetYaw, 0x200);
     } else {
+        struct Object* player = nearest_player_to_object(o);
+        int distanceToPlayer = dist_between_objects(o, player);
+        int angleToPlayer = obj_angle_to_object(o, player);
         // If far from home, walk toward home.
-        if (o->oDistanceToMario >= 25000.0f) {
-            o->oGoombaTargetYaw = o->oAngleToMario;
+        if (distanceToPlayer >= 25000.0f) {
+            o->oGoombaTargetYaw = angleToPlayer;
             o->oGoombaWalkTimer = random_linear_offset(20, 30);
         }
 
         if (!(o->oGoombaTurningAwayFromWall =
                   obj_bounce_off_walls_edges_objects(&o->oGoombaTargetYaw))) {
-            if (o->oDistanceToMario < 500.0f) {
+            if (distanceToPlayer < 500.0f) {
                 // If close to mario, begin chasing him. If not already chasing
                 // him, jump first
 
@@ -192,7 +196,7 @@ static void goomba_act_walk(void) {
                     goomba_begin_jump();
                 }
 
-                o->oGoombaTargetYaw = o->oAngleToMario;
+                o->oGoombaTargetYaw = angleToPlayer;
                 o->oGoombaRelativeSpeed = 20.0f;
             } else {
                 // If mario is far away, walk at a normal pace, turning randomly
@@ -229,8 +233,10 @@ static void goomba_act_attacked_mario(void) {
     } else {
         //! This can happen even when the goomba is already in the air. It's
         //  hard to chain these in practice
+        struct Object* player = nearest_player_to_object(o);
+        int angleToPlayer = obj_angle_to_object(o, player);
         goomba_begin_jump();
-        o->oGoombaTargetYaw = o->oAngleToMario;
+        o->oGoombaTargetYaw = angleToPlayer;
         o->oGoombaTurningAwayFromWall = FALSE;
     }
 }

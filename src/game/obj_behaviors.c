@@ -517,17 +517,17 @@ s32 is_point_within_radius_of_mario(f32 x, f32 y, f32 z, s32 dist) {
 /**
  * Returns either gMarioObject or gLuigiObject depending on what is closer
  */
-struct Object* nearest_player_object(f32 x, f32 y, f32 z) {
-    f32 mx = gMarioObject->header.gfx.pos[0] - x;
-    f32 my = gMarioObject->header.gfx.pos[1] - y;
-    f32 mz = gMarioObject->header.gfx.pos[2] - z;
+struct Object* nearest_player_to_object(struct Object *obj) {
+    f32 mx = gMarioObject->header.gfx.pos[0] - obj->oPosX;
+    f32 my = gMarioObject->header.gfx.pos[1] - obj->oPosY;
+    f32 mz = gMarioObject->header.gfx.pos[2] - obj->oPosZ;
     mx *= mx;
     my *= my;
     mz *= mz;
 
-    f32 lx = gLuigiObject->header.gfx.pos[0] - x;
-    f32 ly = gLuigiObject->header.gfx.pos[1] - y;
-    f32 lz = gLuigiObject->header.gfx.pos[2] - z;
+    f32 lx = gLuigiObject->header.gfx.pos[0] - obj->oPosX;
+    f32 ly = gLuigiObject->header.gfx.pos[1] - obj->oPosY;
+    f32 lz = gLuigiObject->header.gfx.pos[2] - obj->oPosZ;
     lx *= lx;
     ly *= ly;
     lz *= lz;

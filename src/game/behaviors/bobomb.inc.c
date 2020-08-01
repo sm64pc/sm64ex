@@ -48,7 +48,7 @@ void bobomb_check_interactions(void) {
     {
         if ((o->oInteractStatus & INT_STATUS_MARIO_UNK1) != 0)
         {
-            struct Object* player = nearest_player_object(o->oPosX, o->oPosY, o->oPosZ);
+            struct Object* player = nearest_player_to_object(o);
             o->oMoveAngleYaw = player->header.gfx.angle[1];
             o->oForwardVel = 25.0;
             o->oVelY = 30.0;
@@ -74,7 +74,7 @@ void bobomb_act_patrol(void) {
     o->oForwardVel = 5.0;
 
     collisionFlags = object_step();
-    struct Object* player = nearest_player_object(o->oPosX, o->oPosY, o->oPosZ);
+    struct Object* player = nearest_player_to_object(o);
     if ((obj_return_home_if_safe(o, o->oHomeX, o->oHomeY, o->oHomeZ, 400) == 1)
         && (obj_check_if_facing_toward_angle(o->oMoveAngleYaw, obj_angle_to_object(o, player), 0x2000) == 1)) {
         o->oBobombFuseLit = 1;
@@ -95,7 +95,7 @@ void bobomb_act_chase_mario(void) {
     if (sp1a == 5 || sp1a == 16)
         cur_obj_play_sound_2(SOUND_OBJ_BOBOMB_WALK);
 
-    struct Object* player = nearest_player_object(o->oPosX, o->oPosY, o->oPosZ);
+    struct Object* player = nearest_player_to_object(o);
     obj_turn_toward_object(o, player, 16, 0x800);
     obj_check_floor_death(collisionFlags, sObjFloor);
 }
@@ -179,7 +179,7 @@ void bobomb_free_loop(void) {
 void bobomb_held_loop(void) {
     o->header.gfx.node.flags |= GRAPH_RENDER_INVISIBLE;
     cur_obj_init_animation(1);
-    struct Object* player = nearest_player_object(o->oPosX, o->oPosY, o->oPosZ);
+    struct Object* player = nearest_player_to_object(o);
     cur_obj_set_pos_relative(player, 0, 60.0f, 100.0);
 
     o->oBobombFuseLit = 1;
@@ -302,7 +302,7 @@ void bobomb_buddy_act_idle(void) {
     if ((sp1a == 5) || (sp1a == 16))
         cur_obj_play_sound_2(SOUND_OBJ_BOBOMB_WALK);
 
-    struct Object* player = nearest_player_object(o->oPosX, o->oPosY, o->oPosZ);
+    struct Object* player = nearest_player_to_object(o);
     if (dist_between_objects(o, player) < 1000.0f)
         o->oMoveAngleYaw = approach_s16_symmetric(o->oMoveAngleYaw, obj_angle_to_object(o, player), 0x140);
 
@@ -392,7 +392,7 @@ void bobomb_buddy_act_turn_to_talk(void) {
     if ((sp1e == 5) || (sp1e == 16))
         cur_obj_play_sound_2(SOUND_OBJ_BOBOMB_WALK);
 
-    struct Object* player = nearest_player_object(o->oPosX, o->oPosY, o->oPosZ);
+    struct Object* player = nearest_player_to_object(o);
     int angleToPlayer = obj_angle_to_object(o, player);
     o->oMoveAngleYaw = approach_s16_symmetric(o->oMoveAngleYaw, angleToPlayer, 0x1000);
     if ((s16) o->oMoveAngleYaw == (s16) angleToPlayer)
