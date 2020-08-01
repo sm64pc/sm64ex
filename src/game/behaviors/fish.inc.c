@@ -43,7 +43,9 @@ void fish_act_spawn(void) {
      * Fish moves at random with a max-range of 700.0f.
      */
 #ifndef NODRAWINGDISTANCE
-    if (o->oDistanceToMario < minDistToMario || gCurrLevelNum == LEVEL_SA) {
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    if (distanceToPlayer < minDistToMario || gCurrLevelNum == LEVEL_SA) {
 #endif
         for (i = 0; i < schoolQuantity; i++) {
             fishObject = spawn_object(o, model, bhvFish);
@@ -64,7 +66,8 @@ void fish_act_spawn(void) {
 void fish_act_respawn(void) {
 #ifndef NODRAWINGDISTANCE
     if (gCurrLevelNum != LEVEL_SA) {
-        if (gMarioObject->oPosY - o->oPosY > 2000.0f) {
+        struct Object* player = nearest_player_to_object(o);
+        if (player->oPosY - o->oPosY > 2000.0f) {
             o->oAction = FISH_ACT_RESPAWN;
         }
     }
@@ -116,7 +119,11 @@ void fish_regroup(s32 speed) {
  * Moves fish forward at a random velocity and sets a random rotation.
  */
 void fish_group_act_rotation(void) {
-    f32 fishY = o->oPosY - gMarioObject->oPosY;
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    int angleToPlayer = obj_angle_to_object(o, player);
+
+    f32 fishY = o->oPosY - player->oPosY;
     
     // Alters speed of animation for natural movement.
     if (o->oTimer < 10) {
@@ -140,8 +147,8 @@ void fish_group_act_rotation(void) {
     }
     
     // Interact with Mario through rotating towards him.
-    o->oFishPosY = gMarioObject->oPosY + o->oFishRandomOffset;
-    cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x400);
+    o->oFishPosY = player->oPosY + o->oFishRandomOffset;
+    cur_obj_rotate_yaw_toward(angleToPlayer, 0x400);
     
     // If fish groups are too close, call fish_regroup()
     if (o->oPosY < o->oFishWaterLevel - 50.0f) {
@@ -164,7 +171,7 @@ void fish_group_act_rotation(void) {
      * Delete current fish and create a new one if distance to Mario is
      * smaller than his distance to oFishRespawnDistance + 150.0f.
      */
-    if (o->oDistanceToMario < o->oFishRespawnDistance + 150.0f) {
+    if (distanceToPlayer < o->oFishRespawnDistance + 150.0f) {
         o->oAction = FISH_ACT_RESPAWN;
     }
 }
@@ -173,10 +180,14 @@ void fish_group_act_rotation(void) {
  * Interactively maneuver fish in relation to its distance from other fish and Mario.
  */
 void fish_group_act_move(void) {
-    f32 fishY = o->oPosY - gMarioObject->oPosY;
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    int angleToPlayer = obj_angle_to_object(o, player);
+
+    f32 fishY = o->oPosY - player->oPosY;
     // Marked unused, but has arithmetic performed on it in a useless manner.
     UNUSED s32 distance;
-    o->oFishPosY = gMarioObject->oPosY + o->oFishRandomOffset;
+    o->oFishPosY = player->oPosY + o->oFishRandomOffset;
     /**
      * Set fish variables to random floats when timer reaches zero and plays sound effect.
      * This allows fish to move in seemingly natural patterns.
@@ -185,10 +196,10 @@ void fish_group_act_move(void) {
         o->oFishActiveDistance = random_float() * 300.0f;
         o->oFishRandomSpeed = random_float() * 1024.0f + 1024.0f;
         o->oFishRandomVel = random_float() * 4.0f + 8.0f + 5.0f;
-        if (o->oDistanceToMario < 600.0f) {
+        if (distanceToPlayer < 600.0f) {
             distance = 1;
         } else {
-            distance = (s32)(1.0 / (o->oDistanceToMario / 600.0));
+            distance = (s32)(1.0 / (distanceToPlayer / 600.0));
         }
         distance *= 127;
         cur_obj_play_sound_2(SOUND_GENERAL_MOVING_WATER);
@@ -203,9 +214,9 @@ void fish_group_act_move(void) {
     if (o->oForwardVel < o->oFishRandomVel) {
         o->oForwardVel = o->oForwardVel + 0.5;
     }
-    o->oFishPosY = gMarioObject->oPosY + o->oFishRandomOffset;
+    o->oFishPosY = player->oPosY + o->oFishRandomOffset;
     // Rotate fish away from Mario.
-    cur_obj_rotate_yaw_toward(o->oAngleToMario + 0x8000, o->oFishRandomSpeed);
+    cur_obj_rotate_yaw_toward(angleToPlayer + 0x8000, o->oFishRandomSpeed);
     // If fish groups are too close, call fish_regroup()
     if (o->oPosY < o->oFishWaterLevel - 50.0f) {
         if (fishY < 0.0f) {
@@ -223,7 +234,7 @@ void fish_group_act_move(void) {
         }
     }
     // If distance to Mario is too great, then set fish to active.
-    if (o->oDistanceToMario > o->oFishActiveDistance + 500.0f) {
+    if (distanceToPlayer > o->oFishActiveDistance + 500.0f) {
         o->oAction = FISH_ACT_ACTIVE;
     }
 }
