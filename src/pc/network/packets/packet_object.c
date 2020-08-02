@@ -30,6 +30,7 @@ void network_send_object(struct SyncObject* so) {
     packet_write(&p, &o->oMoveAngleYaw, 4);
 
     if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) { so->syncDeactive++; }
+    so->ticksSinceUpdate = 0;
     network_send(&p);
 }
 
@@ -83,14 +84,23 @@ void forget_sync_object(struct SyncObject* so) {
 
 void network_update_objects(void) {
     for (int i = 0; i < MAX_SYNC_OBJECTS; i++) {
-        if (syncObjects[i].o == NULL) { continue; }
+        struct SyncObject* so = &syncObjects[i];
+        if (so->o == NULL) { continue; }
 
-        if (syncObjects[i].o->oSyncID != i || syncObjects[i].syncDeactive > 10) {
-            forget_sync_object(&syncObjects[i]);
+        // check for stale sync object
+        if (so->o->oSyncID != i || so->syncDeactive > 10) {
+            forget_sync_object(so);
             continue;
         }
+        so->ticksSinceUpdate++;
 
-        if (!should_own_object(&syncObjects[i])) { continue; }
+        // check if we should be the one syncing this object
+        if (!should_own_object(so)) { continue; }
+
+        // check update rate
+        int updateRate = player_distance(&gMarioStates[0], so->o) / 50;
+        if (gMarioStates[0].heldObj == so->o) { updateRate = 0; }
+        if (so->ticksSinceUpdate < updateRate) { continue; }
 
         network_send_object(&syncObjects[i]);
     }
