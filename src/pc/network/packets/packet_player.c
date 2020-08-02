@@ -29,8 +29,8 @@ void network_receive_player(struct Packet* p) {
     packet_read(p, &heldSyncID, 4);
 
     if (heldSyncID != NULL) {
-        assert(syncObjects[heldSyncID] != NULL);
-        gMarioStates[1].heldObj = syncObjects[heldSyncID];
+        assert(syncObjects[heldSyncID].o != NULL);
+        gMarioStates[1].heldObj = syncObjects[heldSyncID].o;
         gMarioStates[1].heldObj->heldByPlayerIndex = 1;
     }
 

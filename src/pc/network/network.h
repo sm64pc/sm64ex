@@ -9,10 +9,6 @@
 #define PACKET_LENGTH 1024
 #define NETWORKTYPESTR (networkType == NT_CLIENT ? "Client" : "Server")
 
-extern struct MarioState gMarioStates[];
-extern enum NetworkType networkType;
-extern struct Object* syncObjects[];
-
 enum PacketType {
     PACKET_PLAYER,
     PACKET_OBJECT
@@ -23,6 +19,17 @@ struct Packet {
     bool error;
     char buffer[PACKET_LENGTH];
 };
+
+struct SyncObject {
+    struct Object* o;
+    bool owned;
+    unsigned int ticksSinceUpdate;
+    unsigned int syncDeactive;
+};
+
+extern struct MarioState gMarioStates[];
+extern enum NetworkType networkType;
+extern struct SyncObject syncObjects[];
 
 void network_init(enum NetworkType networkType);
 void network_init_object(struct Object *object);
@@ -39,7 +46,7 @@ void packet_read(struct Packet* packet, void* data, int length);
 void network_send_player(void);
 void network_receive_player(struct Packet* p);
 
-void network_send_object(struct Object* o);
+void network_update_objects(void);
 void network_receive_object(struct Packet* p);
 
 #endif

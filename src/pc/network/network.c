@@ -77,7 +77,7 @@ void network_update(void) {
     if (networkType == NT_NONE) { return; }
 
     network_send_player();
-    network_send_object(NULL);
+    network_update_objects();
 
     do {
         struct sockaddr_in rxAddr;
