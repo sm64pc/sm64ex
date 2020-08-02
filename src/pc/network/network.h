@@ -2,13 +2,16 @@
 #define NETWORK_H
 
 #include <types.h>
+#include <assert.h>
 #include "../cliopts.h"
 
+#define MAX_SYNC_OBJECTS 256
 #define PACKET_LENGTH 1024
 #define NETWORKTYPESTR (networkType == NT_CLIENT ? "Client" : "Server")
 
 extern struct MarioState gMarioStates[];
 extern enum NetworkType networkType;
+extern struct Object* syncObjects[];
 
 enum PacketType {
     PACKET_PLAYER,

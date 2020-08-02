@@ -193,7 +193,7 @@ s32 act_picking_up(struct MarioState *m) {
         }
     }
 
-    if (m->actionState == 1) {
+    if (m->actionState == 1 && m->heldObj != NULL) {
         if (m->heldObj->oInteractionSubtype & INT_SUBTYPE_GRABS_MARIO) {
             m->marioBodyState->grabPos = GRAB_POS_HEAVY_OBJ;
             set_mario_animation(m, MARIO_ANIM_GRAB_HEAVY_OBJECT);

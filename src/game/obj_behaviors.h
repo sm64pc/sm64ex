@@ -87,7 +87,7 @@ void bhv_bobomb_bully_death_smoke_init(void);
 void bhv_bobomb_explosion_bubble_init(void);
 void bhv_bobomb_explosion_bubble_loop(void);
 void bhv_respawner_loop(void);
-void create_respawner(s32 arg0, const BehaviorScript *behToSpawn, s32 minSpawnDist);
+void create_respawner(s32 arg0, const BehaviorScript *behToSpawn, s32 minSpawnDist, u32 syncID);
 void bhv_small_bully_init(void);
 void bhv_big_bully_init(void);
 void bully_check_mario_collision(void);

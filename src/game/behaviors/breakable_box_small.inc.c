@@ -65,7 +65,7 @@ void breakable_box_small_released_loop(void) {
 
     // Despawn, and create a corkbox respawner
     if (o->oBreakableBoxSmallFramesSinceReleased > 900) {
-        create_respawner(MODEL_BREAKABLE_BOX_SMALL, bhvBreakableBoxSmall, 3000);
+        create_respawner(MODEL_BREAKABLE_BOX_SMALL, bhvBreakableBoxSmall, 3000, o->oSyncID);
         o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
     }
 }
@@ -82,7 +82,7 @@ void breakable_box_small_idle_loop(void) {
 
         case 101:
             o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
-            create_respawner(MODEL_BREAKABLE_BOX_SMALL, bhvBreakableBoxSmall, 3000);
+            create_respawner(MODEL_BREAKABLE_BOX_SMALL, bhvBreakableBoxSmall, 3000, o->oSyncID);
             break;
     }
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{8ADFCAB9-E7D6-4588-86B5-A128DA4F811D}</ProjectGuid>
     <RootNamespace>sm64ex</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -41,7 +41,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -74,7 +74,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\include;..\src;$(IncludePath)</IncludePath>
+    <IncludePath>..\include;..\src;.\;..\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -3944,6 +3944,9 @@
     <ClCompile Include="..\src\pc\ini.c" />
     <ClCompile Include="..\src\pc\mixer.c" />
     <ClCompile Include="..\src\pc\network\network.c" />
+    <ClCompile Include="..\src\pc\network\packets\packet_object.c" />
+    <ClCompile Include="..\src\pc\network\packets\packet_player.c" />
+    <ClCompile Include="..\src\pc\network\packets\packet_read_write.c" />
     <ClCompile Include="..\src\pc\pc_main.c" />
     <ClCompile Include="..\src\pc\platform.c" />
     <ClCompile Include="..\src\pc\ultra_reimplementation.c" />
@@ -3979,7 +3982,6 @@
     <ClCompile Include="..\tools\textconv.c" />
     <ClCompile Include="..\tools\utf8.c" />
     <ClCompile Include="..\tools\utils.c" />
-    <ClCompile Include="packet_player.c" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\actors\common0.h" />

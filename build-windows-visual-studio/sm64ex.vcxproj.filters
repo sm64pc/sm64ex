@@ -14943,7 +14943,13 @@
     <ClCompile Include="..\src\pc\network\network.c">
       <Filter>Source Files\src\pc\network</Filter>
     </ClCompile>
-    <ClCompile Include="packet_player.c">
+    <ClCompile Include="..\src\pc\network\packets\packet_object.c">
+      <Filter>Source Files\src\pc\network\packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pc\network\packets\packet_player.c">
+      <Filter>Source Files\src\pc\network\packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pc\network\packets\packet_read_write.c">
       <Filter>Source Files\src\pc\network\packets</Filter>
     </ClCompile>
   </ItemGroup>
