@@ -1581,7 +1581,9 @@ s32 act_dive_slide(struct MarioState *m) {
 
     if (mario_check_object_grab(m)) {
         mario_grab_used_object(m);
-        m->marioBodyState->grabPos = GRAB_POS_LIGHT_OBJ;
+        if (m->heldObj != NULL) {
+            m->marioBodyState->grabPos = GRAB_POS_LIGHT_OBJ;
+        }
         return TRUE;
     }
 

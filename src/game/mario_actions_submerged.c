@@ -778,8 +778,10 @@ static s32 check_water_grab(struct MarioState *m) {
         if (dAngleToObject >= -0x2AAA && dAngleToObject <= 0x2AAA) {
             m->usedObj = object;
             mario_grab_used_object(m);
-            m->marioBodyState->grabPos = GRAB_POS_LIGHT_OBJ;
-            return TRUE;
+            if (m->heldObj != NULL) {
+                m->marioBodyState->grabPos = GRAB_POS_LIGHT_OBJ;
+                return TRUE;
+            }
         }
     }
 

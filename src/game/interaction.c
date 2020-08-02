@@ -285,6 +285,7 @@ void mario_stop_riding_object(struct MarioState *m) {
 }
 
 void mario_grab_used_object(struct MarioState *m) {
+    if (m->usedObj == NULL || m->usedObj->oHeldState == HELD_HELD) { return; }
     if (m->heldObj == NULL) {
         m->heldObj = m->usedObj;
         obj_set_held_state(m->heldObj, bhvCarrySomething3);
@@ -417,6 +418,8 @@ struct Object *mario_get_collided_object(struct MarioState *m, u32 interactType)
 u32 mario_check_object_grab(struct MarioState *m) {
     u32 result = FALSE;
     void *script;
+
+    if (m->interactObj == NULL || m->interactObj->oHeldState == HELD_HELD) { return FALSE; }
 
     if (m->input & INPUT_INTERACT_OBJ_GRABBABLE) {
         script = virtual_to_segmented(0x13, m->interactObj->behavior);

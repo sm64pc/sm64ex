@@ -719,9 +719,11 @@ s32 act_dive(struct MarioState *m) {
     set_mario_animation(m, MARIO_ANIM_DIVE);
     if (mario_check_object_grab(m)) {
         mario_grab_used_object(m);
-        m->marioBodyState->grabPos = GRAB_POS_LIGHT_OBJ;
-        if (m->action != ACT_DIVE) {
-            return TRUE;
+        if (m->heldObj != NULL) {
+            m->marioBodyState->grabPos = GRAB_POS_LIGHT_OBJ;
+            if (m->action != ACT_DIVE) {
+                return TRUE;
+            }
         }
     }
 

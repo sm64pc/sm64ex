@@ -187,8 +187,10 @@ s32 act_picking_up(struct MarioState *m) {
         // to unload. This allows you to pick up a vacant or newly loaded object
         // slot (cloning via fake object).
         mario_grab_used_object(m);
-        play_sound_if_no_flag(m, SOUND_MARIO_HRMM, MARIO_MARIO_SOUND_PLAYED);
-        m->actionState = 1;
+        if (m->heldObj != NULL) {
+            play_sound_if_no_flag(m, SOUND_MARIO_HRMM, MARIO_MARIO_SOUND_PLAYED);
+            m->actionState = 1;
+        }
     }
 
     if (m->actionState == 1) {
@@ -315,8 +317,10 @@ s32 act_picking_up_bowser(struct MarioState *m) {
         m->angleVel[1] = 0;
         m->marioBodyState->grabPos = GRAB_POS_BOWSER;
         mario_grab_used_object(m);
-        queue_rumble_data(5, 80);
-        play_sound(SOUND_MARIO_HRMM, m->marioObj->header.gfx.cameraToObject);
+        if (m->heldObj != NULL) {
+            queue_rumble_data(5, 80);
+            play_sound(SOUND_MARIO_HRMM, m->marioObj->header.gfx.cameraToObject);
+        }
     }
 
     set_mario_animation(m, MARIO_ANIM_GRAB_BOWSER);
