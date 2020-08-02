@@ -102,6 +102,7 @@ static const u8 optsCheatsStr[][64] = {
     { TEXT_OPT_CHEAT7 },
     { TEXT_OPT_CHEAT8 },
     { TEXT_OPT_CHEAT9 },
+    { TEXT_OPT_FOREVER_CAP },
 };
 
 static const u8 bindStr[][32] = {
