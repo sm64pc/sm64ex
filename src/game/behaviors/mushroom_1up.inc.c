@@ -3,7 +3,8 @@
 void bhv_1up_interact(void) {
     UNUSED s32 sp1C;
 
-    if (obj_check_if_collided_with_object(o, gMarioObject) == 1) {
+    struct Object* player = nearest_player_to_object(o);
+    if (obj_check_if_collided_with_object(o, player) == 1) {
         play_sound(SOUND_GENERAL_COLLECT_1UP, gDefaultSoundArgs);
         gMarioState->numLives++;
         o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
@@ -40,12 +41,13 @@ void one_up_loop_in_air(void) {
 }
 
 void pole_1up_move_towards_mario(void) {
-    f32 sp34 = gMarioObject->header.gfx.pos[0] - o->oPosX;
-    f32 sp30 = gMarioObject->header.gfx.pos[1] + 120.0f - o->oPosY;
-    f32 sp2C = gMarioObject->header.gfx.pos[2] - o->oPosZ;
+    struct Object* player = nearest_player_to_object(o);
+    f32 sp34 = player->header.gfx.pos[0] - o->oPosX;
+    f32 sp30 = player->header.gfx.pos[1] + 120.0f - o->oPosY;
+    f32 sp2C = player->header.gfx.pos[2] - o->oPosZ;
     s16 sp2A = atan2s(sqrtf(sqr(sp34) + sqr(sp2C)), sp30);
 
-    obj_turn_toward_object(o, gMarioObject, 16, 0x1000);
+    obj_turn_toward_object(o, player, 16, 0x1000);
     o->oMoveAnglePitch = approach_s16_symmetric(o->oMoveAnglePitch, sp2A, 0x1000);
     o->oVelY = sins(o->oMoveAnglePitch) * 30.0f;
     o->oForwardVel = coss(o->oMoveAnglePitch) * 30.0f;
@@ -53,8 +55,11 @@ void pole_1up_move_towards_mario(void) {
 }
 
 void one_up_move_away_from_mario(s16 sp1A) {
+    struct Object* player = nearest_player_to_object(o);
+    int angleToPlayer = obj_angle_to_object(o, player);
+
     o->oForwardVel = 8.0f;
-    o->oMoveAngleYaw = o->oAngleToMario + 0x8000;
+    o->oMoveAngleYaw = angleToPlayer + 0x8000;
     bhv_1up_interact();
     if (sp1A & 0x02)
         o->oAction = 2;
@@ -248,8 +253,9 @@ void bhv_1up_hidden_loop(void) {
 }
 
 void bhv_1up_hidden_trigger_loop(void) {
+    struct Object* player = nearest_player_to_object(o);
     struct Object *sp1C;
-    if (obj_check_if_collided_with_object(o, gMarioObject) == 1) {
+    if (obj_check_if_collided_with_object(o, player) == 1) {
         sp1C = cur_obj_nearest_object_with_behavior(bhvHidden1up);
         if (sp1C != NULL)
             sp1C->o1UpHiddenUnkF4++;
@@ -295,7 +301,8 @@ void bhv_1up_hidden_in_pole_loop(void) {
 void bhv_1up_hidden_in_pole_trigger_loop(void) {
     struct Object *sp1C;
 
-    if (obj_check_if_collided_with_object(o, gMarioObject) == 1) {
+    struct Object* player = nearest_player_to_object(o);
+    if (obj_check_if_collided_with_object(o, player) == 1) {
         sp1C = cur_obj_nearest_object_with_behavior(bhvHidden1upInPole);
         if (sp1C != NULL) {
             sp1C->o1UpHiddenUnkF4++;
