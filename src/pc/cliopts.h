@@ -3,9 +3,16 @@
 
 #include "platform.h"
 
+enum NetworkType {
+    NT_NONE,
+    NT_SERVER,
+    NT_CLIENT
+};
+
 struct PCCLIOptions  {
     unsigned int SkipIntro;
     unsigned int FullScreen;
+    enum NetworkType Network;
     char ConfigFile[SYS_MAX_PATH];
     char SavePath[SYS_MAX_PATH];
     char GameDir[SYS_MAX_PATH];

@@ -11,6 +11,8 @@
 #include "game/memory.h"
 #include "audio/external.h"
 
+#include "network/network.h"
+
 #include "gfx/gfx_pc.h"
 
 #include "gfx/gfx_opengl.h"
@@ -103,6 +105,7 @@ static inline void patch_interpolations(void) {
 }
 
 void produce_one_frame(void) {
+    network_update();
     gfx_start_frame();
 
     const f32 master_mod = (f32)configMasterVolume / 127.0f;
@@ -151,6 +154,7 @@ void game_deinit(void) {
     controller_shutdown();
     audio_shutdown();
     gfx_shutdown();
+    network_shutdown();
     inited = false;
 }
 
@@ -253,6 +257,7 @@ void main_func(void) {
         audio_api = &audio_null;
     }
 
+    network_init(gCLIOpts.Network);
     audio_init();
     sound_init();
 

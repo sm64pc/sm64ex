@@ -48,6 +48,12 @@ void parse_cli_opts(int argc, char* argv[]) {
         else if (strcmp(argv[i], "--windowed") == 0) // Open game in windowed mode
             gCLIOpts.FullScreen = 2;
 
+        else if (strcmp(argv[i], "--server") == 0) // Host server
+            gCLIOpts.Network = NT_SERVER;
+
+        else if (strcmp(argv[i], "--client") == 0) // Join server
+            gCLIOpts.Network = NT_CLIENT;
+
         else if (strcmp(argv[i], "--cheats") == 0) // Enable cheats menu
             Cheats.EnableCheats = true;
 

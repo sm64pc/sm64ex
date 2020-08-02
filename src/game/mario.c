@@ -39,6 +39,8 @@
 #include "bettercamera.h"
 #endif
 
+#include "../pc/network/network.h"
+
 u32 unused80339F10;
 s8 filler80339F1C[20];
 
@@ -1276,8 +1278,8 @@ void debug_print_speed_action_normal(struct MarioState *m) {
  * Update the button inputs for Mario.
  */
 void update_mario_button_inputs(struct MarioState *m) {
-    // disable Luigi inputs
-    //if (m != &gMarioStates[1]) { return; }
+    // don't update Luigi inputs
+    if (m != &gMarioStates[0]) { return; }
 
     if (m->controller->buttonPressed & A_BUTTON) {
         m->input |= INPUT_A_PRESSED;
@@ -1319,8 +1321,8 @@ void update_mario_button_inputs(struct MarioState *m) {
  * Updates the joystick intended magnitude.
  */
 void update_mario_joystick_inputs(struct MarioState *m) {
-    // disable Luigi inputs
-    //if (m != &gMarioStates[1]) { return; }
+    // don't update Luigi inputs
+    if (m != &gMarioStates[0]) { return; }
 
     struct Controller *controller = m->controller;
     f32 mag = ((controller->stickMag / 64.0f) * (controller->stickMag / 64.0f)) * 64.0f;
@@ -1410,7 +1412,8 @@ void update_mario_geometry_inputs(struct MarioState *m) {
  */
 void update_mario_inputs(struct MarioState *m) {
     m->particleFlags = 0;
-    m->input = 0;
+    if (m == &gMarioStates[0]) { m->input = 0; }
+
     m->collidedObjInteractTypes = m->marioObj->collidedObjInteractTypes;
     m->flags &= 0xFFFFFF;
 
@@ -1937,6 +1940,8 @@ skippy:
         init_mario();
         gMarioState = &gMarioStates[0];
     }
+
+    network_track(gMarioStates);
 }
 
 void init_mario_from_save_file(void) {
@@ -1948,7 +1953,7 @@ void init_mario_from_save_file(void) {
     gMarioState->spawnInfo = &gPlayerSpawnInfos[i];
     gMarioState->statusForCamera = &gPlayerCameraState[i];
     gMarioState->marioBodyState = &gBodyStates[i];
-    gMarioState->controller = &gControllers[0];
+    gMarioState->controller = &gControllers[i];
     gMarioState->animation = &D_80339D10[i];
 
     gMarioState->numCoins = 0;
