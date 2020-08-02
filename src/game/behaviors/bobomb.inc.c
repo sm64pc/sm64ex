@@ -179,8 +179,7 @@ void bobomb_free_loop(void) {
 void bobomb_held_loop(void) {
     o->header.gfx.node.flags |= GRAPH_RENDER_INVISIBLE;
     cur_obj_init_animation(1);
-    // LUIGI TODO: we need to be able to get the player that is actually holding it.
-    struct Object* player = nearest_player_to_object(o);
+    struct Object* player = gMarioStates[o->heldByPlayerIndex].marioObj;
     cur_obj_set_pos_relative(player, 0, 60.0f, 100.0);
 
     o->oBobombFuseLit = 1;
