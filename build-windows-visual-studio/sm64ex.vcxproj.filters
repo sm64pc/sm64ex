@@ -3418,6 +3418,9 @@
     <Filter Include="Header Files\src\pc\network">
       <UniqueIdentifier>{1c96986a-a883-42fa-adb0-1f0998af2961}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\src\pc\network\packets">
+      <UniqueIdentifier>{f7dcd9e2-f84f-4c82-96c5-0dc32d408693}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\actors\amp\anims\anim_0800401C.inc.c">
@@ -14937,8 +14940,11 @@
     <ClCompile Include="..\actors\mario\geo2.inc.c">
       <Filter>Source Files\actors\mario</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\pc\network\network_pc.c">
+    <ClCompile Include="..\src\pc\network\network.c">
       <Filter>Source Files\src\pc\network</Filter>
+    </ClCompile>
+    <ClCompile Include="packet_player.c">
+      <Filter>Source Files\src\pc\network\packets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -15841,10 +15847,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\pc\network\network_api.h">
-      <Filter>Header Files\src\pc\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\pc\network\network_pc.h">
+    <ClInclude Include="..\src\pc\network\network.h">
       <Filter>Header Files\src\pc\network</Filter>
     </ClInclude>
   </ItemGroup>

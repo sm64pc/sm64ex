@@ -3943,7 +3943,7 @@
     <ClCompile Include="..\src\pc\gfx\gfx_sdl2.c" />
     <ClCompile Include="..\src\pc\ini.c" />
     <ClCompile Include="..\src\pc\mixer.c" />
-    <ClCompile Include="..\src\pc\network\network_pc.c" />
+    <ClCompile Include="..\src\pc\network\network.c" />
     <ClCompile Include="..\src\pc\pc_main.c" />
     <ClCompile Include="..\src\pc\platform.c" />
     <ClCompile Include="..\src\pc\ultra_reimplementation.c" />
@@ -3979,6 +3979,7 @@
     <ClCompile Include="..\tools\textconv.c" />
     <ClCompile Include="..\tools\utf8.c" />
     <ClCompile Include="..\tools\utils.c" />
+    <ClCompile Include="packet_player.c" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\actors\common0.h" />
@@ -4282,8 +4283,7 @@
     <ClCompile Include="..\tools\utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\pc\network\network_api.h" />
-    <ClInclude Include="..\src\pc\network\network_pc.h" />
+    <ClInclude Include="..\src\pc\network\network.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

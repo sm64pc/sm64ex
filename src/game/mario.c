@@ -39,8 +39,6 @@
 #include "bettercamera.h"
 #endif
 
-#include "../pc/network/network.h"
-
 u32 unused80339F10;
 s8 filler80339F1C[20];
 
@@ -1940,8 +1938,6 @@ skippy:
         init_mario();
         gMarioState = &gMarioStates[0];
     }
-
-    network_track(gMarioStates);
 }
 
 void init_mario_from_save_file(void) {
