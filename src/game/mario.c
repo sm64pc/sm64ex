@@ -1321,9 +1321,6 @@ void update_mario_button_inputs(struct MarioState *m) {
  * Updates the joystick intended magnitude.
  */
 void update_mario_joystick_inputs(struct MarioState *m) {
-    // don't update Luigi inputs
-    if (m != &gMarioStates[0]) { return; }
-
     struct Controller *controller = m->controller;
     f32 mag = ((controller->stickMag / 64.0f) * (controller->stickMag / 64.0f)) * 64.0f;
 
@@ -1332,6 +1329,9 @@ void update_mario_joystick_inputs(struct MarioState *m) {
     } else {
         m->intendedMag = mag / 8.0f;
     }
+
+    // don't update Luigi inputs past this point
+    if (m != &gMarioStates[0]) { return; }
 
     if (m->intendedMag > 0.0f) {
 #ifndef BETTERCAMERA

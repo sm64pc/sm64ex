@@ -118,8 +118,7 @@ void network_update(void) {
         if (rc != 96 + 20 + 320) {
             printf("%s received error: %s\n", NETWORKTYPESTR, rc);
             break;
-        }
-        else if (marioStates != NULL) {
+        } else if (marioStates != NULL) {
             int oldActionState = marioStates[1].actionState;
             memcpy(&marioStates[1], &buffer[0], 96);
             memcpy(marioStates[1].controller, &buffer[96], 20);

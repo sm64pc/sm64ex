@@ -458,7 +458,7 @@ void read_controller_inputs(void) {
     }
     run_demo_inputs();
 
-    for (i = 0; i < 2; i++) {
+    for (i = 0; i < 1; i++) {
         struct Controller *controller = &gControllers[i];
 
         // if we're receiving inputs, update the controller struct
