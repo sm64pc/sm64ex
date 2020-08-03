@@ -556,6 +556,7 @@
 #define /*0x104*/ oGoombaBlinkTimer          OBJECT_FIELD_S32(0x1F)
 #define /*0x108*/ oGoombaTurningAwayFromWall OBJECT_FIELD_S32(0x20)
 #define /*0x10C*/ oGoombaRelativeSpeed       OBJECT_FIELD_F32(0x21)
+#define /*0x110*/ oGoombaJumpCooldown        OBJECT_FIELD_U32(0x22)
 
 /* Haunted Chair */
 #define /*0x0F4*/ oHauntedChairUnkF4  OBJECT_FIELD_S32(0x1B)

@@ -11,10 +11,20 @@ void network_init_object(struct Object *o) {
         o->oSyncID = nextSyncID++;
     }
     assert(o->oSyncID < MAX_SYNC_OBJECTS);
-    syncObjects[o->oSyncID].o = o;
-    syncObjects[o->oSyncID].owned = false;
-    syncObjects[o->oSyncID].ticksSinceUpdate = -1;
-    syncObjects[o->oSyncID].syncDeactive = 0;
+    struct SyncObject* so = &syncObjects[o->oSyncID];
+    so->o = o;
+    so->owned = false;
+    so->ticksSinceUpdate = -1;
+    so->syncDeactive = 0;
+    so->extraFieldCount = 0;
+    memset(so->extraFields, 0, sizeof(void*) * MAX_SYNC_OBJECT_FIELDS);
+}
+
+void network_init_object_field(struct Object *o, void* field) {
+    assert(o->oSyncID != 0);
+    struct SyncObject* so = &syncObjects[o->oSyncID];
+    int index = so->extraFieldCount++;
+    so->extraFields[index] = field;
 }
 
 void network_send_object(struct SyncObject* so) {
@@ -28,6 +38,12 @@ void network_send_object(struct SyncObject* so) {
     packet_write(&p, &o->oAction, 4);
     packet_write(&p, &o->oHeldState, 4);
     packet_write(&p, &o->oMoveAngleYaw, 4);
+
+    packet_write(&p, &so->extraFieldCount, 1);
+    for (int i = 0; i < so->extraFieldCount; i++) {
+        assert(so->extraFields[i] != NULL);
+        packet_write(&p, so->extraFields[i], 4);
+    }
 
     if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) { so->syncDeactive++; }
     so->ticksSinceUpdate = 0;
@@ -54,6 +70,15 @@ void network_receive_object(struct Packet* p) {
     packet_read(p, &o->oAction, 4);
     packet_read(p, &o->oHeldState, 4);
     packet_read(p, &o->oMoveAngleYaw, 4);
+
+    // write extra fields
+    u8 extraFields = 0;
+    packet_read(p, &extraFields, 1);
+    assert(extraFields == so->extraFieldCount);
+    for (int i = 0; i < extraFields; i++) {
+        assert(so->extraFields[i] != NULL);
+        packet_read(p, so->extraFields[i], 4);
+    }
 
     if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) { so->syncDeactive++; }
 }

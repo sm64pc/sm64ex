@@ -37,3 +37,7 @@ void network_receive_player(struct Packet* p) {
     // restore action state, needed for jump kicking
     gMarioStates[1].actionState = oldActionState;
 }
+
+void network_update_player(void) {
+    network_send_player();
+}

@@ -126,6 +126,10 @@ void bhv_goomba_init(void) {
     o->oDamageOrCoinValue = sGoombaProperties[o->oGoombaSize].damage;
 
     o->oGravity = -8.0f / 3.0f * o->oGoombaScale;
+
+    network_init_object(o);
+    network_init_object_field(o, &o->oGoombaTargetYaw);
+    network_init_object_field(o, &o->oGoombaWalkTimer);
 }
 
 /**
@@ -136,6 +140,7 @@ static void goomba_begin_jump(void) {
     o->oAction = GOOMBA_ACT_JUMP;
     o->oForwardVel = 0.0f;
     o->oVelY = 50.0f / 3.0f * o->oGoombaScale;
+    o->oGoombaJumpCooldown = 10;
 }
 
 /**
@@ -206,7 +211,7 @@ static void goomba_act_walk(void) {
                 if (o->oGoombaWalkTimer != 0) {
                     o->oGoombaWalkTimer -= 1;
                 } else {
-                    if (random_u16() & 3) {
+                    if (random_u16() & 3 || o->oGoombaJumpCooldown > 0) {
                         o->oGoombaTargetYaw = obj_random_fixed_turn(0x2000);
                         o->oGoombaWalkTimer = random_linear_offset(100, 100);
                     } else {
@@ -218,6 +223,10 @@ static void goomba_act_walk(void) {
         }
 
         cur_obj_rotate_yaw_toward(o->oGoombaTargetYaw, 0x200);
+    }
+
+    if (o->oGoombaJumpCooldown > 0) {
+        o->oGoombaJumpCooldown--;
     }
 }
 
@@ -276,6 +285,7 @@ void huge_goomba_weakly_attacked(void) {
  */
 void bhv_goomba_update(void) {
     // PARTIAL_UPDATE
+    random_sync_reset();
 
     f32 animSpeed;
 

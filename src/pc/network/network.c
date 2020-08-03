@@ -76,7 +76,7 @@ void network_send(struct Packet* p) {
 void network_update(void) {
     if (networkType == NT_NONE) { return; }
 
-    network_send_player();
+    network_update_player();
     network_update_objects();
 
     do {

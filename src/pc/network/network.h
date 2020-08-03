@@ -6,6 +6,7 @@
 #include "../cliopts.h"
 
 #define MAX_SYNC_OBJECTS 256
+#define MAX_SYNC_OBJECT_FIELDS 16
 #define PACKET_LENGTH 1024
 #define NETWORKTYPESTR (networkType == NT_CLIENT ? "Client" : "Server")
 
@@ -25,6 +26,8 @@ struct SyncObject {
     bool owned;
     unsigned int ticksSinceUpdate;
     unsigned int syncDeactive;
+    u8 extraFieldCount;
+    void* extraFields[MAX_SYNC_OBJECT_FIELDS];
 };
 
 extern struct MarioState gMarioStates[];
@@ -43,7 +46,7 @@ void packet_write(struct Packet* packet, void* data, int length);
 void packet_read(struct Packet* packet, void* data, int length);
 
 // packet headers
-void network_send_player(void);
+void network_update_player(void);
 void network_receive_player(struct Packet* p);
 
 void network_update_objects(void);

@@ -29,6 +29,7 @@
 #define BHV_CMD_GET_ADDR_OF_CMD(index) (uintptr_t)(&gCurBhvCommand[index])
 
 static u16 gRandomSeed16;
+static u16 gSyncRandom;
 
 // Unused function that directly jumps to a behavior command and resets the object's stack index.
 static void goto_behavior_unused(const BehaviorScript *bhvAddr) {
@@ -36,8 +37,53 @@ static void goto_behavior_unused(const BehaviorScript *bhvAddr) {
     gCurrentObject->bhvStackIndex = 0;
 }
 
+void random_sync_reset(void) {
+    // seed the sync'd random seed with enough synchronzied information to be "unique enough"
+    gSyncRandom = (u16)gCurrentObject->oPosX
+                ^ (u16)gCurrentObject->oPosY
+                ^ (u16)gCurrentObject->oPosZ
+                ^ (u16)gCurrentObject->oVelX
+                ^ (u16)gCurrentObject->oVelY
+                ^ (u16)gCurrentObject->oVelZ
+                ^ (u16)gCurrentObject->oAction;
+}
+
+// Generate a pseudorandom integer from 0 to 65535 from the synchronized seed, and update the seed.
+u16 random_sync_u16(void) {
+    u16 temp1, temp2;
+
+    if (gSyncRandom == 22026) {
+        gSyncRandom = 0;
+    }
+
+    temp1 = (gSyncRandom & 0x00FF) << 8;
+    temp1 = temp1 ^ gSyncRandom;
+
+    gSyncRandom = ((temp1 & 0x00FF) << 8) + ((temp1 & 0xFF00) >> 8);
+
+    temp1 = ((temp1 & 0x00FF) << 1) ^ gSyncRandom;
+    temp2 = (temp1 >> 1) ^ 0xFF80;
+
+    if ((temp1 & 1) == 0) {
+        if (temp2 == 43605) {
+            gSyncRandom = 0;
+        }
+        else {
+            gSyncRandom = temp2 ^ 0x1FF4;
+        }
+    }
+    else {
+        gSyncRandom = temp2 ^ 0x8180;
+    }
+
+    return gSyncRandom;
+}
+
 // Generate a pseudorandom integer from 0 to 65535 from the random seed, and update the seed.
 u16 random_u16(void) {
+    // override this function for synchronized entities
+    if (gCurrentObject->oSyncID != 0) { return random_sync_u16(); }
+
     u16 temp1, temp2;
 
     if (gRandomSeed16 == 22026) {
