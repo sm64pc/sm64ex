@@ -102,6 +102,9 @@ static const u8 optsCheatsStr[][64] = {
     { TEXT_OPT_CHEAT7 },
     { TEXT_OPT_CHEAT8 },
     { TEXT_OPT_CHEAT9 },
+    { TEXT_OPT_WING_CAP },
+    { TEXT_OPT_METAL_CAP },
+    { TEXT_OPT_VANISH_CAP },
 };
 
 static const u8 bindStr[][32] = {
@@ -215,6 +218,22 @@ static void optvideo_apply(UNUSED struct Option *self, s32 arg) {
     if (!arg) configWindow.settings_changed = true;
 }
 
+static void setCap_Wing(UNUSED struct Option *self, s32 arg) {
+    Cheats.WingCap = true;
+    Cheats.MetalCap = false;
+    Cheats.VanishCap = false;
+}
+static void setCap_Metal(UNUSED struct Option *self, s32 arg) {
+    Cheats.WingCap = false;
+    Cheats.MetalCap = true;
+    Cheats.VanishCap = false;
+}
+static void setCap_Vanish(UNUSED struct Option *self, s32 arg) {
+    Cheats.WingCap = false;
+    Cheats.MetalCap = false;
+    Cheats.VanishCap = true;
+}
+
 /* submenu option lists */
 
 #ifdef BETTERCAMERA
@@ -279,6 +298,9 @@ static struct Option optsCheats[] = {
     DEF_OPT_TOGGLE( optsCheatsStr[6], &Cheats.ExitAnywhere ),
     DEF_OPT_TOGGLE( optsCheatsStr[7], &Cheats.HugeMario ),
     DEF_OPT_TOGGLE( optsCheatsStr[8], &Cheats.TinyMario ),
+    DEF_OPT_BUTTON( optsCheatsStr[9], setCap_Wing ),
+    DEF_OPT_BUTTON( optsCheatsStr[10], setCap_Metal ),
+    DEF_OPT_BUTTON( optsCheatsStr[11], setCap_Vanish ),
 
 };
 
