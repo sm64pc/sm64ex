@@ -16,6 +16,7 @@ struct CheatList {
     bool         WingCap;
     bool         MetalCap;
     bool         VanishCap;
+    bool         NormalCap;
 };
 
 extern struct CheatList Cheats;
