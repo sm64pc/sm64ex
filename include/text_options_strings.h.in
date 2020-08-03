@@ -84,6 +84,10 @@
 #define TEXT_OPT_CHEAT7    _("EXIT COURSE AT ANY TIME")
 #define TEXT_OPT_CHEAT8    _("HUGE MARIO")
 #define TEXT_OPT_CHEAT9    _("TINY MARIO")
+#define TEXT_OPT_WING_CAP    _("GET WING CAP")
+#define TEXT_OPT_METAL_CAP    _("GET METAL CAP")
+#define TEXT_OPT_VANISH_CAP    _("GET VANISH CAP")
+#define TEXT_OPT_NORMAL_CAP    _("RESET CAP")
 
 #else // VERSION
 
@@ -148,6 +152,10 @@
 #define TEXT_OPT_CHEAT7    _("Exit course at any time")
 #define TEXT_OPT_CHEAT8    _("Huge Mario")
 #define TEXT_OPT_CHEAT9    _("Tiny Mario")
+#define TEXT_OPT_WING_CAP    _("Get WING Cap")
+#define TEXT_OPT_METAL_CAP    _("Get METAL Cap")
+#define TEXT_OPT_VANISH_CAP    _("Get VANISH Cap")
+#define TEXT_OPT_NORMAL_CAP    _("Reset Cap")
 
 #endif // VERSION
 
