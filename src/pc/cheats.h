@@ -13,6 +13,9 @@ struct CheatList {
     bool         ExitAnywhere;
     bool         HugeMario;
     bool         TinyMario;
+    bool         WingCap;
+    bool         MetalCap;
+    bool         VanishCap;
 };
 
 extern struct CheatList Cheats;
