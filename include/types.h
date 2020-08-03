@@ -365,4 +365,11 @@ struct MarioState
     /*0xC4*/ f32 unkC4;
 };
 
+#define PLAY_MODE_NORMAL 0
+#define PLAY_MODE_PAUSED 2
+#define PLAY_MODE_CHANGE_AREA 3
+#define PLAY_MODE_CHANGE_LEVEL 4
+#define PLAY_MODE_FRAME_ADVANCE 5
+#define PLAY_MODE_SYNC_LEVEL 6
+
 #endif // _SM64_TYPES_H_

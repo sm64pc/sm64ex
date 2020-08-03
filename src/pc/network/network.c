@@ -76,8 +76,12 @@ void network_send(struct Packet* p) {
 void network_update(void) {
     if (networkType == NT_NONE) { return; }
 
-    network_update_player();
-    network_update_objects();
+    if (sCurrPlayMode == PLAY_MODE_SYNC_LEVEL) {
+        network_update_level_warp();
+    } else {
+        network_update_player();
+        network_update_objects();
+    }
 
     do {
         struct sockaddr_in rxAddr;
@@ -96,6 +100,7 @@ void network_update(void) {
         switch (p.buffer[0]) {
             case PACKET_PLAYER: network_receive_player(&p); break;
             case PACKET_OBJECT: network_receive_object(&p); break;
+            case PACKET_LEVEL_WARP: network_receive_level_warp(&p); break;
             default: printf("%s received unknown packet: %d\n", NETWORKTYPESTR, p.buffer[0]);
         }
 

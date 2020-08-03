@@ -26,6 +26,7 @@
 #define WARP_OP_CREDITS_START 0x17
 #define WARP_OP_CREDITS_NEXT  0x18
 #define WARP_OP_DEMO_END      0x19
+#define WARP_OP_FORCE_SYNC    0x20
 
 #define WARP_OP_TRIGGERS_LEVEL_SELECT 0x10
 
@@ -128,5 +129,7 @@ s32 lvl_init_from_save_file(UNUSED s16 arg0, s32 levelNum);
 s32 lvl_set_current_level(UNUSED s16 arg0, s32 levelNum);
 s32 lvl_play_the_end_screen_sound(UNUSED s16 arg0, UNUSED s32 arg1);
 void basic_update(UNUSED s16 *arg);
+
+s32 init_level(void);
 
 #endif // LEVEL_UPDATE_H

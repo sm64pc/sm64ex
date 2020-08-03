@@ -939,9 +939,11 @@ s32 act_going_through_door(struct MarioState *m) {
             set_mario_animation(m, MARIO_ANIM_PUSH_DOOR_WALK_IN);
         }
     }
-    m->faceAngle[1] = m->usedObj->oMoveAngleYaw;
-    m->pos[0] = m->usedObj->oPosX;
-    m->pos[2] = m->usedObj->oPosZ;
+    if (m->usedObj != NULL) {
+        m->faceAngle[1] = m->usedObj->oMoveAngleYaw;
+        m->pos[0] = m->usedObj->oPosX;
+        m->pos[2] = m->usedObj->oPosZ;
+    }
 
     update_mario_pos_for_anim(m);
     stop_and_set_height_to_floor(m);
@@ -966,12 +968,15 @@ s32 act_going_through_door(struct MarioState *m) {
 s32 act_warp_door_spawn(struct MarioState *m) {
     if (m->actionState == 0) {
         m->actionState = 1;
-        if (m->actionArg & 1) {
-            m->usedObj->oInteractStatus = 0x00040000;
-        } else {
-            m->usedObj->oInteractStatus = 0x00080000;
+        if (m->usedObj != NULL) {
+            if (m->actionArg & 1) {
+                m->usedObj->oInteractStatus = 0x00040000;
+            }
+            else {
+                m->usedObj->oInteractStatus = 0x00080000;
+            }
         }
-    } else if (m->usedObj->oAction == 0) {
+    } else if (m->usedObj == NULL || m->usedObj->oAction == 0) {
         if (gShouldNotPlayCastleMusic == TRUE && gCurrLevelNum == LEVEL_CASTLE) {
             set_mario_action(m, ACT_READING_AUTOMATIC_DIALOG, DIALOG_021);
         } else {

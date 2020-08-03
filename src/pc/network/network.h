@@ -12,7 +12,8 @@
 
 enum PacketType {
     PACKET_PLAYER,
-    PACKET_OBJECT
+    PACKET_OBJECT,
+    PACKET_LEVEL_WARP,
 };
 
 struct Packet {
@@ -31,6 +32,7 @@ struct SyncObject {
 };
 
 extern struct MarioState gMarioStates[];
+extern s16 sCurrPlayMode;
 extern enum NetworkType networkType;
 extern struct SyncObject syncObjects[];
 
@@ -51,5 +53,8 @@ void network_receive_player(struct Packet* p);
 
 void network_update_objects(void);
 void network_receive_object(struct Packet* p);
+
+void network_update_level_warp(void);
+void network_receive_level_warp(struct Packet* p);
 
 #endif

@@ -1898,7 +1898,7 @@ void render_dialog_entries(void) {
 
 // Calls a gMenuMode value defined by render_menus_and_dialogs cases
 void set_menu_mode(s16 mode) {
-    if (gMenuMode == -1) {
+    if (gMenuMode == -1 || mode == -1) {
         gMenuMode = mode;
     }
 }
@@ -2751,6 +2751,28 @@ s16 render_pause_courses_and_castle(void) {
     return 0;
 }
 
+s16 render_sync_level_screen(void) {
+    // black screen
+    create_dl_translation_matrix(MENU_MTX_PUSH, GFX_DIMENSIONS_FROM_LEFT_EDGE(0), 240.0f, 0);
+    create_dl_scale_matrix(MENU_MTX_NOPUSH,
+        GFX_DIMENSIONS_ASPECT_RATIO * SCREEN_HEIGHT / 130.0f, 3.0f, 1.0f);
+    gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, 255);
+    gSPDisplayList(gDisplayListHead++, dl_draw_text_bg_box);
+    gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
+
+
+    // text
+    u8 colorFade = sins(gDialogColorFadeTimer) * 50.0f + 200.0f;
+    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
+    gDPSetEnvColor(gDisplayListHead++, colorFade, colorFade, colorFade, 255);
+    u8 synchronizing[] = { 0x1C,0x22,0x17,0x0C,0x11,0x1B,0x18,0x17,0x12,0x02,0x12,0x17,0x10,0xFF };
+    //                        s    y    n    c    h    r    o    n    i    z    i    n    g   \0
+    print_hud_lut_string(HUD_LUT_GLOBAL, 70, 200, synchronizing);
+    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
+
+    return 0;
+}
+
 #if defined(VERSION_JP) || defined(VERSION_SH)
 #define TXT_HISCORE_X 112
 #define TXT_HISCORE_Y 48
@@ -3137,6 +3159,9 @@ s16 render_menus_and_dialogs() {
                 break;
             case 3:
                 mode = render_course_complete_screen();
+                break;
+            case 4:
+                mode = render_sync_level_screen();
                 break;
         }
 

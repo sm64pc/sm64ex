@@ -34,12 +34,7 @@
 #include "pc/pc_main.h"
 #include "pc/cliopts.h"
 #include "pc/configfile.h"
-
-#define PLAY_MODE_NORMAL 0
-#define PLAY_MODE_PAUSED 2
-#define PLAY_MODE_CHANGE_AREA 3
-#define PLAY_MODE_CHANGE_LEVEL 4
-#define PLAY_MODE_FRAME_ADVANCE 5
+#include "pc/network/network.h"
 
 #define WARP_TYPE_NOT_WARPING 0
 #define WARP_TYPE_CHANGE_LEVEL 1
@@ -1040,6 +1035,11 @@ s32 play_mode_paused(void) {
     return 0;
 }
 
+s32 play_mode_sync_level(void) {
+    set_menu_mode(RENDER_SYNC_LEVEL_SCREEN);
+    return 0;
+}
+
 /**
  * Debug mode that lets you frame advance by pressing D-pad down. Unfortunately
  * it uses the pause camera, making it basically unusable in most levels.
@@ -1154,6 +1154,9 @@ s32 update_level(void) {
         case PLAY_MODE_FRAME_ADVANCE:
             changeLevel = play_mode_frame_advance();
             break;
+        case PLAY_MODE_SYNC_LEVEL:
+            changeLevel = play_mode_sync_level();
+            break;
     }
 
     if (changeLevel) {
@@ -1229,6 +1232,9 @@ s32 init_level(void) {
         sound_banks_disable(2, 0x0330);
     }
 
+    if (networkType != NT_NONE) {
+        set_play_mode(PLAY_MODE_SYNC_LEVEL);
+    }
     return 1;
 }
 
