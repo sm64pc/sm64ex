@@ -1408,6 +1408,16 @@ void update_mario_inputs(struct MarioState *m) {
     m->collidedObjInteractTypes = m->marioObj->collidedObjInteractTypes;
     m->flags &= 0xFFFFFF;
 
+    if(Cheats.EnableCheats) {
+        if(Cheats.WingCap) {
+            m->flags |= MARIO_WING_CAP;  
+        } else if(Cheats.MetalCap) {
+            m->flags |= MARIO_METAL_CAP;  
+        } else if(Cheats.VanishCap) {
+            m->flags |= MARIO_VANISH_CAP;  
+        }
+    }
+    
     update_mario_button_inputs(m);
     update_mario_joystick_inputs(m);
     update_mario_geometry_inputs(m);
