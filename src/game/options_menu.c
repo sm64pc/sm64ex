@@ -221,21 +221,12 @@ static void optvideo_apply(UNUSED struct Option *self, s32 arg) {
 
 static void setCap_Wing(UNUSED struct Option *self, s32 arg) {
     Cheats.WingCap = true;
-    Cheats.MetalCap = false;
-    Cheats.VanishCap = false;
-    Cheats.NormalCap = false;
 }
 static void setCap_Metal(UNUSED struct Option *self, s32 arg) {
-    Cheats.WingCap = false;
     Cheats.MetalCap = true;
-    Cheats.VanishCap = false;
-    Cheats.NormalCap = false;
 }
 static void setCap_Vanish(UNUSED struct Option *self, s32 arg) {
-    Cheats.WingCap = false;
-    Cheats.MetalCap = false;
     Cheats.VanishCap = true;
-    Cheats.NormalCap = false;
 }
 static void setCap_Normal(UNUSED struct Option *self, s32 arg) {
     Cheats.WingCap = false;
