@@ -85,7 +85,15 @@ static void keyboard_init(void) {
 #endif
 }
 
+static void debug_breakpoint_here(void) {
+    // create easy breakpoint position for debugging
+}
+
 static void keyboard_read(OSContPad *pad) {
+    // create easy breakpoint position for debugging
+    if (keyboard_buttons_down & L_TRIG) {
+        debug_breakpoint_here();
+    }
     pad->button |= keyboard_buttons_down;
     const u32 xstick = keyboard_buttons_down & STICK_XMASK;
     const u32 ystick = keyboard_buttons_down & STICK_YMASK;

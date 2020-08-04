@@ -794,6 +794,7 @@ s16 geo_update_animation_frame(struct GraphNodeObject_sub *obj, s32 *accelAssist
     struct Animation *anim;
 
     anim = obj->curAnim;
+    if (anim == NULL) { return obj->animFrame; }
 
     if (obj->animTimer == gAreaUpdateCounter || anim->flags & ANIM_FLAG_2) {
         if (accelAssist != NULL) {

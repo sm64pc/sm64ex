@@ -221,6 +221,8 @@ void draw_skybox_tile_grid(Gfx **dlist, s8 background, s8 player, s8 colorIndex)
     for (row = 0; row < 3; row++) {
         for (col = 0; col < 3; col++) {
             s32 tileIndex = sSkyBoxInfo[player].upperLeftTile + row * SKYBOX_COLS + col;
+            // UGLY HACK: if the camera moves weird after a level transition this can go too high
+            if (tileIndex > 79) { tileIndex = 79; }
             const u8 *const texture =
                 (*(SkyboxTexture *) segmented_to_virtual(sSkyboxTextures[background]))[tileIndex];
             Vtx *vertices = make_skybox_rect(tileIndex, colorIndex);
