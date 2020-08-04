@@ -395,7 +395,7 @@ s32 act_reading_npc_dialog(struct MarioState *m) {
         headTurnAmount = 384;
     }
 
-    if (m->actionState < 8) {
+    if (m->actionState < 8 && m->usedObj != NULL) {
         // turn to NPC
         angleToNPC = mario_obj_angle_to_object(m, m->usedObj);
         m->faceAngle[1] =
@@ -454,7 +454,7 @@ s32 act_reading_automatic_dialog(struct MarioState *m) {
 
     m->actionState++;
     if (m->actionState == 2) {
-        enable_time_stop();
+        //enable_time_stop();
     }
     if (m->actionState < 9) {
         set_mario_animation(m, m->prevAction == ACT_STAR_DANCE_WATER ? MARIO_ANIM_WATER_IDLE
@@ -464,11 +464,15 @@ s32 act_reading_automatic_dialog(struct MarioState *m) {
     } else {
         // set Mario dialog
         if (m->actionState == 9) {
-            actionArg = m->actionArg;
-            if (GET_HIGH_U16_OF_32(actionArg) == 0) {
-                create_dialog_box(GET_LOW_U16_OF_32(actionArg));
-            } else {
-                create_dialog_box_with_var(GET_HIGH_U16_OF_32(actionArg), GET_LOW_U16_OF_32(actionArg));
+            // only show dialog for local player
+            if (m == &gMarioStates[0]) {
+                actionArg = m->actionArg;
+                if (GET_HIGH_U16_OF_32(actionArg) == 0) {
+                    create_dialog_box(GET_LOW_U16_OF_32(actionArg));
+                }
+                else {
+                    create_dialog_box_with_var(GET_HIGH_U16_OF_32(actionArg), GET_LOW_U16_OF_32(actionArg));
+                }
             }
         }
         // wait until dialog is done
@@ -483,7 +487,7 @@ s32 act_reading_automatic_dialog(struct MarioState *m) {
         }
         // finished action
         else if (m->actionState == 25) {
-            disable_time_stop();
+            //disable_time_stop();
             if (gShouldNotPlayCastleMusic) {
                 gShouldNotPlayCastleMusic = FALSE;
                 play_cutscene_music(SEQUENCE_ARGS(0, SEQ_LEVEL_INSIDE_CASTLE));
@@ -503,6 +507,7 @@ s32 act_reading_automatic_dialog(struct MarioState *m) {
 }
 
 s32 act_reading_sign(struct MarioState *m) {
+
     struct Object *marioObj = m->marioObj;
 
     play_sound_if_no_flag(m, SOUND_ACTION_READ_SIGN, MARIO_ACTION_SOUND_PLAYED);
@@ -510,8 +515,10 @@ s32 act_reading_sign(struct MarioState *m) {
     switch (m->actionState) {
         // start dialog
         case 0:
-            trigger_cutscene_dialog(1);
-            enable_time_stop();
+            if (m == &gMarioStates[0]) {
+                trigger_cutscene_dialog(1);
+            }
+            //enable_time_stop();
             // reading sign
             set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
             m->actionState = 1;
@@ -523,7 +530,9 @@ s32 act_reading_sign(struct MarioState *m) {
             m->pos[2] += marioObj->oMarioReadingSignDPosZ / 11.0f;
             // create the text box
             if (m->actionTimer++ == 10) {
-                create_dialog_inverted_box(m->usedObj->oBehParams2ndByte);
+                if (m == &gMarioStates[0]) {
+                    create_dialog_inverted_box(m->usedObj->oBehParams2ndByte);
+                }
                 m->actionState = 2;
             }
             break;
@@ -531,7 +540,7 @@ s32 act_reading_sign(struct MarioState *m) {
         case 2:
             // dialog finished
             if (gCamera->cutscene == 0) {
-                disable_time_stop();
+                //disable_time_stop();
                 set_mario_action(m, ACT_IDLE, 0);
             }
             break;

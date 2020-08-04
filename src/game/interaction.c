@@ -1,4 +1,5 @@
 #include <PR/ultratypes.h>
+#include <string.h>
 
 #include "area.h"
 #include "actors/common1.h"
@@ -896,6 +897,20 @@ u32 interact_warp(struct MarioState *m, UNUSED u32 interactType, struct Object *
     return FALSE;
 }
 
+u32 display_door_dialog(struct MarioState *m, u32 actionArg) {
+    if (m != &gMarioStates[0]) { return FALSE; }
+    // ugly hack: save the last place we opened a dialog to prevent dialog spam
+    static f32 lastDialogPosition[3] = { 0 };
+    f32 dx = m->pos[0] - lastDialogPosition[0]; dx *= dx;
+    f32 dy = m->pos[1] - lastDialogPosition[1]; dy *= dy;
+    f32 dz = m->pos[2] - lastDialogPosition[2]; dz *= dz;
+    f32 dist = sqrt(dx + dy + dz);
+    if (dist < 300) { return FALSE; }
+    memcpy(lastDialogPosition, &m->pos[0], sizeof(f32) * 3);
+
+    return set_mario_action(m, ACT_READING_AUTOMATIC_DIALOG, actionArg);
+}
+
 u32 interact_warp_door(struct MarioState *m, UNUSED u32 interactType, struct Object *o) {
     u32 doorAction = 0;
     u32 saveFlags = save_file_get_flags();
@@ -905,12 +920,9 @@ u32 interact_warp_door(struct MarioState *m, UNUSED u32 interactType, struct Obj
     if (m->action == ACT_WALKING || m->action == ACT_DECELERATING) {
         if (warpDoorId == 1 && !(saveFlags & SAVE_FLAG_UNLOCKED_UPSTAIRS_DOOR)) {
             if (!(saveFlags & SAVE_FLAG_HAVE_KEY_2)) {
-                if (!sDisplayingDoorText) {
-                    set_mario_action(m, ACT_READING_AUTOMATIC_DIALOG,
-                                     (saveFlags & SAVE_FLAG_HAVE_KEY_1) ? DIALOG_023 : DIALOG_022);
+                if (display_door_dialog(m, (saveFlags & SAVE_FLAG_HAVE_KEY_1) ? DIALOG_023 : DIALOG_022)) {
+                    sDisplayingDoorText = TRUE;
                 }
-                sDisplayingDoorText = TRUE;
-
                 return FALSE;
             }
 
@@ -919,13 +931,9 @@ u32 interact_warp_door(struct MarioState *m, UNUSED u32 interactType, struct Obj
 
         if (warpDoorId == 2 && !(saveFlags & SAVE_FLAG_UNLOCKED_BASEMENT_DOOR)) {
             if (!(saveFlags & SAVE_FLAG_HAVE_KEY_1)) {
-                if (!sDisplayingDoorText) {
-                    // Moat door skip was intended confirmed
-                    set_mario_action(m, ACT_READING_AUTOMATIC_DIALOG,
-                                     (saveFlags & SAVE_FLAG_HAVE_KEY_2) ? DIALOG_023 : DIALOG_022);
+                if (display_door_dialog(m, (saveFlags & SAVE_FLAG_HAVE_KEY_2) ? DIALOG_023 : DIALOG_022)) {
+                    sDisplayingDoorText = TRUE;
                 }
-                sDisplayingDoorText = TRUE;
-
                 return FALSE;
             }
 
@@ -1047,8 +1055,10 @@ u32 interact_door(struct MarioState *m, UNUSED u32 interactType, struct Object *
 
             text += requiredNumStars - numStars;
 
-            sDisplayingDoorText = TRUE;
-            return set_mario_action(m, ACT_READING_AUTOMATIC_DIALOG, text);
+            if (display_door_dialog(m, text)) {
+                sDisplayingDoorText = TRUE;
+                return TRUE;
+            }
         }
     } else if (m->action == ACT_IDLE && sDisplayingDoorText == TRUE && requiredNumStars == 70) {
         m->interactObj = o;

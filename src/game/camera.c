@@ -8973,7 +8973,7 @@ BAD_RETURN(s32) cutscene_dialog_start(struct Camera *c) {
 
 
     cutscene_soften_music(c);
-    set_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_DIALOG);
+    //set_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_DIALOG);
 
 #ifndef VERSION_JP
     if (c->mode == CAMERA_MODE_BOSS_FIGHT) {
@@ -9092,7 +9092,7 @@ BAD_RETURN(s32) cutscene_dialog_set_flag(UNUSED struct Camera *c) {
 BAD_RETURN(s32) cutscene_dialog_end(struct Camera *c) {
     sStatusFlags |= CAM_FLAG_UNUSED_CUTSCENE_ACTIVE;
     c->cutscene = 0;
-    clear_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_DIALOG);
+    //clear_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_DIALOG);
 }
 
 /**
@@ -9135,7 +9135,7 @@ BAD_RETURN(s32) cutscene_read_message(struct Camera *c) {
         case 0:
             if (get_dialog_id() != -1) {
                 sCutsceneVars[0].angle[0] += 1;
-                set_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_DIALOG);
+                //set_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_DIALOG);
             }
             break;
         // Leave the dialog.
@@ -9150,7 +9150,7 @@ BAD_RETURN(s32) cutscene_read_message(struct Camera *c) {
                 retrieve_info_star(c);
                 transition_next_state(c, 15);
                 sStatusFlags |= CAM_FLAG_UNUSED_CUTSCENE_ACTIVE;
-                clear_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_DIALOG);
+                //clear_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_DIALOG);
                 // Retrieve previous state
                 sCUpCameraPitch = sCutsceneVars[1].angle[0];
                 sModeOffsetYaw = sCutsceneVars[1].angle[1];
