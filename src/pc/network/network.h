@@ -6,6 +6,8 @@
 #include <assert.h>
 #include "../cliopts.h"
 
+#define SYNC_DISTANCE_ONLY_DEATH -1
+#define SYNC_DISTANCE_INFINITE 0
 #define MAX_SYNC_OBJECTS 256
 #define MAX_SYNC_OBJECT_FIELDS 16
 #define PACKET_LENGTH 1024
@@ -21,11 +23,14 @@ enum PacketType {
 struct Packet {
     int cursor;
     bool error;
+    bool reliable;
+    u16 seqId;
     char buffer[PACKET_LENGTH];
 };
 
 struct SyncObject {
     struct Object* o;
+    float maxSyncDistance;
     bool owned;
     unsigned int ticksSinceUpdate;
     unsigned int syncDeactive;
@@ -40,7 +45,7 @@ extern enum NetworkType networkType;
 extern struct SyncObject syncObjects[];
 
 void network_init(enum NetworkType networkType);
-void network_init_object(struct Object *object);
+void network_init_object(struct Object *object, float maxSyncDistance);
 void network_send(struct Packet* p);
 void network_update(void);
 void network_shutdown(void);

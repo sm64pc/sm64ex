@@ -127,7 +127,7 @@ void bhv_goomba_init(void) {
 
     o->oGravity = -8.0f / 3.0f * o->oGoombaScale;
 
-    network_init_object(o);
+    network_init_object(o, 4000);
     network_init_object_field(o, &o->oGoombaTargetYaw);
     network_init_object_field(o, &o->oGoombaWalkTimer);
 }

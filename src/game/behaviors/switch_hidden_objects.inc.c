@@ -29,6 +29,8 @@ void breakable_box_init(void) {
             cur_obj_scale(1.5f);
             break;
     }
+    network_init_object(o, SYNC_DISTANCE_ONLY_DEATH);
+    network_init_object_field(o, &o->oInteractStatus);
 }
 
 void hidden_breakable_box_actions(void) {

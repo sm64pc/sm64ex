@@ -6,16 +6,17 @@
 u32 nextSyncID = 1;
 struct SyncObject syncObjects[MAX_SYNC_OBJECTS] = { 0 };
 
-void network_init_object(struct Object *o) {
+void network_init_object(struct Object *o, float maxSyncDistance) {
     if (o->oSyncID == 0) {
         o->oSyncID = nextSyncID++;
     }
     assert(o->oSyncID < MAX_SYNC_OBJECTS);
     struct SyncObject* so = &syncObjects[o->oSyncID];
     so->o = o;
+    so->maxSyncDistance = maxSyncDistance;
     so->owned = false;
     so->ticksSinceUpdate = -1;
-    so->syncDeactive = 0;
+    so->syncDeactive = false;
     so->extraFieldCount = 0;
     memset(so->extraFields, 0, sizeof(void*) * MAX_SYNC_OBJECT_FIELDS);
 }
@@ -45,7 +46,11 @@ void network_send_object(struct SyncObject* so) {
         packet_write(&p, so->extraFields[i], 4);
     }
 
-    if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) { so->syncDeactive++; }
+    if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) {
+        so->syncDeactive = true;
+        p.reliable = true;
+    }
+
     so->ticksSinceUpdate = 0;
     network_send(&p);
 }
@@ -64,6 +69,22 @@ void network_receive_object(struct Packet* p) {
     struct Object* o = syncObjects[syncId].o;
     if (o == NULL) { printf("%s failed to receive object!\n", NETWORKTYPESTR); return; }
 
+    // make sure it's active
+    if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) {
+        return;
+    }
+
+    // sync only death
+    if (so->maxSyncDistance == SYNC_DISTANCE_ONLY_DEATH) {
+        s16 activeFlags;
+        packet_read(p, &activeFlags, 2);
+        if (activeFlags == ACTIVE_FLAG_DEACTIVATED) {
+            so->o->oSyncDeath = 1;
+            so->syncDeactive = true;
+        }
+        return;
+    }
+
     // write object flags
     packet_read(p, &o->activeFlags, 2);
     packet_read(p, &o->oPosX, 28);
@@ -80,7 +101,6 @@ void network_receive_object(struct Packet* p) {
         packet_read(p, so->extraFields[i], 4);
     }
 
-    if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) { so->syncDeactive++; }
 }
 
 float player_distance(struct MarioState* marioState, struct Object* o) {
@@ -104,7 +124,7 @@ void forget_sync_object(struct SyncObject* so) {
     so->o = NULL;
     so->owned = false;
     so->ticksSinceUpdate = -1;
-    so->syncDeactive = 0;
+    so->syncDeactive = false;
 }
 
 void network_update_objects(void) {
@@ -113,7 +133,7 @@ void network_update_objects(void) {
         if (so->o == NULL) { continue; }
 
         // check for stale sync object
-        if (so->o->oSyncID != i || so->syncDeactive > 10) {
+        if (so->o->oSyncID != i || so->syncDeactive) {
             forget_sync_object(so);
             continue;
         }
@@ -123,7 +143,15 @@ void network_update_objects(void) {
         if (!should_own_object(so)) { continue; }
 
         // check update rate
-        int updateRate = player_distance(&gMarioStates[0], so->o) / 50;
+        if (so->maxSyncDistance == SYNC_DISTANCE_ONLY_DEATH) {
+            if (so->o->activeFlags != ACTIVE_FLAG_DEACTIVATED) { continue; }
+            network_send_object(&syncObjects[i]);
+            continue;
+        }
+
+        float dist = player_distance(&gMarioStates[0], so->o);
+        if (so->maxSyncDistance != SYNC_DISTANCE_INFINITE && dist > so->maxSyncDistance) { continue; }
+        int updateRate = dist / 50;
         if (gMarioStates[0].heldObj == so->o) { updateRate = 0; }
         if (so->ticksSinceUpdate < updateRate) { continue; }
 
