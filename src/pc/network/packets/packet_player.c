@@ -10,7 +10,7 @@ void network_send_player(void) {
                    : NULL;
 
     struct Packet p;
-    packet_init(&p, PACKET_PLAYER);
+    packet_init(&p, PACKET_PLAYER, false);
     packet_write(&p, &gMarioStates[0], 96);
     packet_write(&p, gMarioStates[0].controller, 20);
     packet_write(&p, gMarioStates[0].marioObj->rawData.asU32, 320);

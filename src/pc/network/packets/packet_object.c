@@ -3,12 +3,18 @@
 #include "object_fields.h"
 #include "object_constants.h"
 
-u32 nextSyncID = 1;
+u8 nextSyncID = 1;
 struct SyncObject syncObjects[MAX_SYNC_OBJECTS] = { 0 };
 
 void network_init_object(struct Object *o, float maxSyncDistance) {
     if (o->oSyncID == 0) {
-        o->oSyncID = nextSyncID++;
+        for (int i = 0; i < MAX_SYNC_OBJECTS; i++) {
+            if (syncObjects[nextSyncID].o == NULL) { break; }
+            nextSyncID = (nextSyncID + 1) % MAX_SYNC_OBJECTS;
+        }
+        assert(syncObjects[nextSyncID].o == NULL);
+        o->oSyncID = nextSyncID;
+        nextSyncID = (nextSyncID + 1) % MAX_SYNC_OBJECTS;
     }
     assert(o->oSyncID < MAX_SYNC_OBJECTS);
     struct SyncObject* so = &syncObjects[o->oSyncID];
@@ -16,7 +22,6 @@ void network_init_object(struct Object *o, float maxSyncDistance) {
     so->maxSyncDistance = maxSyncDistance;
     so->owned = false;
     so->ticksSinceUpdate = -1;
-    so->syncDeactive = false;
     so->extraFieldCount = 0;
     memset(so->extraFields, 0, sizeof(void*) * MAX_SYNC_OBJECT_FIELDS);
 }
@@ -28,11 +33,13 @@ void network_init_object_field(struct Object *o, void* field) {
     so->extraFields[index] = field;
 }
 
-void network_send_object(struct SyncObject* so) {
-    struct Object* o = so->o;
+void network_send_object(struct Object* o) {
+    struct SyncObject* so = &syncObjects[o->oSyncID];
+    if (so == NULL) { return; }
 
+    bool reliable = (o->activeFlags == ACTIVE_FLAG_DEACTIVATED);
     struct Packet p;
-    packet_init(&p, PACKET_OBJECT);
+    packet_init(&p, PACKET_OBJECT, reliable);
     packet_write(&p, &o->oSyncID, 4);
     packet_write(&p, &o->activeFlags, 2);
     packet_write(&p, &o->oPosX, 28);
@@ -46,12 +53,10 @@ void network_send_object(struct SyncObject* so) {
         packet_write(&p, so->extraFields[i], 4);
     }
 
-    if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) {
-        so->syncDeactive = true;
-        p.reliable = true;
-    }
-
     so->ticksSinceUpdate = 0;
+
+    if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) { forget_sync_object(so); }
+
     network_send(&p);
 }
 
@@ -80,7 +85,7 @@ void network_receive_object(struct Packet* p) {
         packet_read(p, &activeFlags, 2);
         if (activeFlags == ACTIVE_FLAG_DEACTIVATED) {
             so->o->oSyncDeath = 1;
-            so->syncDeactive = true;
+            forget_sync_object(so);
         }
         return;
     }
@@ -101,6 +106,11 @@ void network_receive_object(struct Packet* p) {
         packet_read(p, so->extraFields[i], 4);
     }
 
+    // deactivated
+    if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) {
+        forget_sync_object(so);
+    }
+
 }
 
 float player_distance(struct MarioState* marioState, struct Object* o) {
@@ -115,6 +125,7 @@ float player_distance(struct MarioState* marioState, struct Object* o) {
 }
 
 bool should_own_object(struct SyncObject* so) {
+    if (so->o->oHeldState == HELD_HELD && so->o->heldByPlayerIndex == 0) { return true; }
     if (player_distance(&gMarioStates[0], so->o) > player_distance(&gMarioStates[1], so->o)) { return false; }
     if (so->o->oHeldState == HELD_HELD && so->o->heldByPlayerIndex != 0) { return false; }
     return true;
@@ -124,7 +135,6 @@ void forget_sync_object(struct SyncObject* so) {
     so->o = NULL;
     so->owned = false;
     so->ticksSinceUpdate = -1;
-    so->syncDeactive = false;
 }
 
 void network_update_objects(void) {
@@ -133,7 +143,8 @@ void network_update_objects(void) {
         if (so->o == NULL) { continue; }
 
         // check for stale sync object
-        if (so->o->oSyncID != i || so->syncDeactive) {
+        if (so->o->oSyncID != i) {
+            printf("ERROR! Sync ID mismatch!\n");
             forget_sync_object(so);
             continue;
         }
@@ -145,7 +156,7 @@ void network_update_objects(void) {
         // check update rate
         if (so->maxSyncDistance == SYNC_DISTANCE_ONLY_DEATH) {
             if (so->o->activeFlags != ACTIVE_FLAG_DEACTIVATED) { continue; }
-            network_send_object(&syncObjects[i]);
+            network_send_object(syncObjects[i].o);
             continue;
         }
 
@@ -155,7 +166,7 @@ void network_update_objects(void) {
         if (gMarioStates[0].heldObj == so->o) { updateRate = 0; }
         if (so->ticksSinceUpdate < updateRate) { continue; }
 
-        network_send_object(&syncObjects[i]);
+        network_send_object(syncObjects[i].o);
     }
 
 }

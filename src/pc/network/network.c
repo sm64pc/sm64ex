@@ -66,11 +66,15 @@ void network_send(struct Packet* p) {
     txAddr.sin_port = txPort;
     txAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
+    network_remember_reliable(p);
+
     int rc = sendto(gSocket, p->buffer, p->cursor, 0, (SOCKADDR *)& txAddr, sizeof(txAddr));
     if (rc == SOCKET_ERROR) {
         wprintf(L"%s sendto failed with error: %d\n", NETWORKTYPESTR, WSAGetLastError());
         return;
     }
+
+    p->sent = true;
 }
 
 void network_update(void) {
@@ -89,7 +93,7 @@ void network_update(void) {
     do {
         struct sockaddr_in rxAddr;
         int rxAddrSize = sizeof(rxAddr);
-        struct Packet p = { .cursor = 1 };
+        struct Packet p = { .cursor = 3 };
         int rc = recvfrom(gSocket, p.buffer, PACKET_LENGTH, 0, (SOCKADDR *)&rxAddr, &rxAddrSize);
         if (rc == SOCKET_ERROR) {
             int error = WSAGetLastError();
@@ -101,6 +105,7 @@ void network_update(void) {
         if (rc == 0) { break; }
 
         switch (p.buffer[0]) {
+            case PACKET_ACK: network_receive_ack(&p); break;
             case PACKET_PLAYER: network_receive_player(&p); break;
             case PACKET_OBJECT: network_receive_object(&p); break;
             case PACKET_LEVEL_WARP: network_receive_level_warp(&p); break;
@@ -108,8 +113,12 @@ void network_update(void) {
             default: printf("%s received unknown packet: %d\n", NETWORKTYPESTR, p.buffer[0]);
         }
 
+        // send an ACK if requested
+        network_send_ack(&p);
+
     }  while (1);
 
+    network_update_reliable();
 }
 
 void network_shutdown(void) {

@@ -7,7 +7,7 @@ int warpTimeout = 0;
 
 void network_send_level_warp(void) {
     struct Packet p;
-    packet_init(&p, PACKET_LEVEL_WARP);
+    packet_init(&p, PACKET_LEVEL_WARP, false);
     packet_write(&p, &sCurrPlayMode, 2);
     packet_write(&p, &gCurrLevelNum, 2);
     packet_write(&p, &sDelayedWarpArg, 4);

@@ -14,6 +14,7 @@
 #define NETWORKTYPESTR (networkType == NT_CLIENT ? "Client" : "Server")
 
 enum PacketType {
+    PACKET_ACK,
     PACKET_PLAYER,
     PACKET_OBJECT,
     PACKET_LEVEL_WARP,
@@ -25,6 +26,7 @@ struct Packet {
     bool error;
     bool reliable;
     u16 seqId;
+    bool sent;
     char buffer[PACKET_LENGTH];
 };
 
@@ -33,7 +35,6 @@ struct SyncObject {
     float maxSyncDistance;
     bool owned;
     unsigned int ticksSinceUpdate;
-    unsigned int syncDeactive;
     u8 extraFieldCount;
     void* extraFields[MAX_SYNC_OBJECT_FIELDS];
 };
@@ -51,11 +52,16 @@ void network_update(void);
 void network_shutdown(void);
 
 // packet read / write
-void packet_init(struct Packet* packet, enum PacketType packetType);
+void packet_init(struct Packet* packet, enum PacketType packetType, bool reliable);
 void packet_write(struct Packet* packet, void* data, int length);
 void packet_read(struct Packet* packet, void* data, int length);
 
 // packet headers
+void network_send_ack(struct Packet* p);
+void network_receive_ack(struct Packet* p);
+void network_remember_reliable(struct Packet* p);
+void network_update_reliable(void);
+
 void network_update_player(void);
 void network_receive_player(struct Packet* p);
 

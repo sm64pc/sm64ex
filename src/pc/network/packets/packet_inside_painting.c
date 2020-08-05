@@ -32,7 +32,7 @@ void network_send_inside_painting(void) {
     populate_packet_data(&data);
 
     struct Packet p;
-    packet_init(&p, PACKET_INSIDE_PAINTING);
+    packet_init(&p, PACKET_INSIDE_PAINTING, false);
     packet_write(&p, &data, sizeof(struct PacketDataInsidePainting));
     network_send(&p);
 
