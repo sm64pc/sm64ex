@@ -174,6 +174,11 @@ s8 D_8032C9E0 = 0;
 u8 unused3[4];
 u8 unused4[2];
 
+u8 gInsidePainting = false;
+u8 gControlPainting = false;
+u8 gWaitingForRemotePainting = false;
+struct WarpNode gPaintingWarpNode = { 0 };
+
 u16 level_control_timer(s32 timerOp) {
     switch (timerOp) {
         case TIMER_CONTROL_SHOW:
@@ -657,36 +662,46 @@ struct WarpNode *get_painting_warp_node(void) {
  */
 void initiate_painting_warp(void) {
     if (gCurrentArea->paintingWarpNodes != NULL && gMarioState->floor != NULL) {
-        struct WarpNode warpNode;
         struct WarpNode *pWarpNode = get_painting_warp_node();
 
         if (pWarpNode != NULL) {
             if (gMarioState->action & ACT_FLAG_INTANGIBLE) {
                 play_painting_eject_sound();
             } else if (pWarpNode->id != 0) {
-                warpNode = *pWarpNode;
-
-                if (!(warpNode.destLevel & 0x80)) {
-                    D_8032C9E0 = check_warp_checkpoint(&warpNode);
-                }
-
-                initiate_warp(warpNode.destLevel & 0x7F, warpNode.destArea, warpNode.destNode, 0);
-                check_if_should_set_warp_checkpoint(&warpNode);
-
-                play_transition_after_delay(WARP_TRANSITION_FADE_INTO_COLOR, 30, 255, 255, 255, 45);
-                level_set_transition(74, basic_update);
-
+                initiate_painting_warp_node(pWarpNode, false);
+                gControlPainting = true;
+                gWaitingForRemotePainting = true;
                 set_mario_action(gMarioState, ACT_DISAPPEARED, 0);
-
                 gMarioState->marioObj->header.gfx.node.flags &= ~GRAPH_RENDER_ACTIVE;
-
-                play_sound(SOUND_MENU_STAR_SOUND, gDefaultSoundArgs);
-                fadeout_music(398);
-                queue_rumble_data(80, 70);
-                func_sh_8024C89C(1);
             }
         }
     }
+}
+
+void initiate_painting_warp_node(struct WarpNode *pWarpNode, u8 instant) {
+    if (pWarpNode->id == 0) { return; }
+
+    gControlPainting = false;
+    gWaitingForRemotePainting = false;
+    gInsidePainting = true;
+
+    gPaintingWarpNode = *pWarpNode;
+    struct WarpNode warpNode = *pWarpNode;
+
+    if (!(warpNode.destLevel & 0x80)) {
+        D_8032C9E0 = check_warp_checkpoint(&warpNode);
+    }
+
+    initiate_warp(warpNode.destLevel & 0x7F, warpNode.destArea, warpNode.destNode, 0);
+    check_if_should_set_warp_checkpoint(&warpNode);
+
+    play_transition_after_delay(WARP_TRANSITION_FADE_INTO_COLOR, 30, 255, 255, 255, instant ? 1 : 45);
+    level_set_transition(instant ? 1 : 74, basic_update);
+
+    play_sound(SOUND_MENU_STAR_SOUND, gDefaultSoundArgs);
+    fadeout_music(398);
+    queue_rumble_data(80, 70);
+    func_sh_8024C89C(1);
 }
 
 /**

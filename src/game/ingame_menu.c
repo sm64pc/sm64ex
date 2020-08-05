@@ -2761,13 +2761,12 @@ s16 render_sync_level_screen(void) {
     gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
 
 
-    // text
+    // synchronizing text
     u8 colorFade = sins(gDialogColorFadeTimer) * 50.0f + 200.0f;
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, colorFade, colorFade, colorFade, 255);
-    u8 synchronizing[] = { 0x1C,0x22,0x17,0x0C,0x11,0x1B,0x18,0x17,0x12,0x02,0x12,0x17,0x10,0xFF };
-    //                        s    y    n    c    h    r    o    n    i    z    i    n    g   \0
-    print_hud_lut_string(HUD_LUT_GLOBAL, 70, 200, synchronizing);
+    u8 synchronizing[] = { TEXT_SYNCHRONIZING };
+    print_hud_lut_string(HUD_LUT_GLOBAL, 80, 200, synchronizing);
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
 
     return 0;

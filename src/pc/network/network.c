@@ -76,7 +76,10 @@ void network_send(struct Packet* p) {
 void network_update(void) {
     if (networkType == NT_NONE) { return; }
 
-    if (sCurrPlayMode == PLAY_MODE_SYNC_LEVEL) {
+    // TODO: refactor the way we do these update functions, it will get messy quick
+    if (gInsidePainting && sCurrPlayMode == PLAY_MODE_CHANGE_LEVEL) {
+        network_update_inside_painting();
+    } else if (sCurrPlayMode == PLAY_MODE_SYNC_LEVEL) {
         network_update_level_warp();
     } else {
         network_update_player();
@@ -101,6 +104,7 @@ void network_update(void) {
             case PACKET_PLAYER: network_receive_player(&p); break;
             case PACKET_OBJECT: network_receive_object(&p); break;
             case PACKET_LEVEL_WARP: network_receive_level_warp(&p); break;
+            case PACKET_INSIDE_PAINTING: network_receive_inside_painting(&p); break;
             default: printf("%s received unknown packet: %d\n", NETWORKTYPESTR, p.buffer[0]);
         }
 

@@ -190,6 +190,7 @@ s16 find_mario_anim_flags_and_translation(struct Object *obj, s32 yaw, Vec3s tra
     f32 dz;
 
     struct Animation *curAnim = (void *) obj->header.gfx.unk38.curAnim;
+    if (curAnim == NULL) { return 0; }
     s16 animFrame = geo_update_animation_frame(&obj->header.gfx.unk38, NULL);
     u16 *animIndex = segmented_to_virtual((void *) curAnim->index);
     s16 *animValues = segmented_to_virtual((void *) curAnim->values);
@@ -1846,6 +1847,8 @@ s32 execute_mario_action(UNUSED struct Object *o) {
  **************************************************/
 
 void init_mario(void) {
+    gInsidePainting = false;
+
     bool isMario = (gMarioState == &gMarioStates[0]);
     if (isMario && gMarioObject == NULL) { goto skippy; }
     if (!isMario && gLuigiObject == NULL) { goto skippy; }

@@ -1,6 +1,7 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
+#include <time.h>
 #include <types.h>
 #include <assert.h>
 #include "../cliopts.h"
@@ -14,6 +15,7 @@ enum PacketType {
     PACKET_PLAYER,
     PACKET_OBJECT,
     PACKET_LEVEL_WARP,
+    PACKET_INSIDE_PAINTING,
 };
 
 struct Packet {
@@ -32,6 +34,7 @@ struct SyncObject {
 };
 
 extern struct MarioState gMarioStates[];
+extern u8 gInsidePainting;
 extern s16 sCurrPlayMode;
 extern enum NetworkType networkType;
 extern struct SyncObject syncObjects[];
@@ -56,5 +59,8 @@ void network_receive_object(struct Packet* p);
 
 void network_update_level_warp(void);
 void network_receive_level_warp(struct Packet* p);
+
+void network_update_inside_painting(void);
+void network_receive_inside_painting(struct Packet* p);
 
 #endif

@@ -12,7 +12,7 @@ void network_send_level_warp(void) {
     packet_write(&p, &gCurrLevelNum, 2);
     packet_write(&p, &sDelayedWarpArg, 4);
     packet_write(&p, &sSourceWarpNodeId, 2);
-    
+
     network_send(&p);
 }
 
@@ -22,7 +22,6 @@ void network_receive_level_warp(struct Packet* p) {
     s16 remoteLevelNum;
     s32 remoteWarpArg;
     s16 remoteWarpNodeId;
-    struct WarpDest remoteWarpDest;
 
     packet_read(p, &remotePlayMode, 2);
     packet_read(p, &remoteLevelNum, 2);

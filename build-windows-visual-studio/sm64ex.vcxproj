@@ -3944,6 +3944,7 @@
     <ClCompile Include="..\src\pc\ini.c" />
     <ClCompile Include="..\src\pc\mixer.c" />
     <ClCompile Include="..\src\pc\network\network.c" />
+    <ClCompile Include="..\src\pc\network\packets\packet_inside_painting.c" />
     <ClCompile Include="..\src\pc\network\packets\packet_level_warp.c" />
     <ClCompile Include="..\src\pc\network\packets\packet_object.c" />
     <ClCompile Include="..\src\pc\network\packets\packet_player.c" />

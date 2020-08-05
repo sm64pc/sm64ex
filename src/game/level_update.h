@@ -65,6 +65,10 @@ extern struct CreditsEntry *gCurrCreditsEntry;
 
 extern struct MarioState gMarioStates[];
 extern struct MarioState *gMarioState;
+extern u8 gInsidePainting;
+extern u8 gControlPainting;
+extern u8 gWaitingForRemotePainting;
+extern struct WarpNode gPaintingWarpNode;
 
 extern s16 sCurrPlayMode;
 extern u16 D_80339ECA;
@@ -131,5 +135,8 @@ s32 lvl_play_the_end_screen_sound(UNUSED s16 arg0, UNUSED s32 arg1);
 void basic_update(UNUSED s16 *arg);
 
 s32 init_level(void);
+
+void initiate_painting_warp_node(struct WarpNode *pWarpNode, u8 instant);
+void star_select_finish_selection(void);
 
 #endif // LEVEL_UPDATE_H

@@ -43,11 +43,11 @@ static s8 sVisibleStars;
 static u8 sInitSelectedActNum;
 
 // Index value of the act selected in the act menu.
-static s8 sSelectedActIndex = 0;
+s8 sSelectedActIndex = 0;
 
 // Index value of the star that is selectable in the act menu.
 // Excluding the next star, it doesn't count other transparent stars.
-static s8 sSelectableStarIndex = 0;
+s8 sSelectableStarIndex = 0;
 
 // Act Selector menu timer that keeps counting until you choose an act.
 static s32 sActSelectorMenuTimer = 0;
@@ -172,7 +172,7 @@ void bhv_act_selector_loop(void) {
         // Sometimes, stars are not selectable even if they appear on the screen.
         // This code filters selectable and non-selectable stars.
         sSelectedActIndex = 0;
-        handle_menu_scrolling(MENU_SCROLL_HORIZONTAL, &sSelectableStarIndex, 0, sObtainedStars);
+        if (gControlPainting) { handle_menu_scrolling(MENU_SCROLL_HORIZONTAL, &sSelectableStarIndex, 0, sObtainedStars); }
         starIndexCounter = sSelectableStarIndex;
         for (i = 0; i < sVisibleStars; i++) {
             // Can the star be selected (is it either already completed or the first non-completed mission)
@@ -186,7 +186,7 @@ void bhv_act_selector_loop(void) {
         }
     } else {
         // If all stars are collected then they are all selectable.
-        handle_menu_scrolling(MENU_SCROLL_HORIZONTAL, &sSelectableStarIndex, 0, sVisibleStars - 1);
+        if (gControlPainting) { handle_menu_scrolling(MENU_SCROLL_HORIZONTAL, &sSelectableStarIndex, 0, sVisibleStars - 1); }
         sSelectedActIndex = sSelectableStarIndex;
     }
 
@@ -257,6 +257,17 @@ void print_course_number(void) {
  * Print act selector strings, some with special checks.
  */
 void print_act_selector_strings(void) {
+    // synchronizing text
+    if (!gControlPainting || gWaitingForRemotePainting) {
+        static int fadeTimer = 0;
+        u8 colorFade = sin(fadeTimer++ * 0.2f) * 50.0f + 200.0f;
+        gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
+        gDPSetEnvColor(gDisplayListHead++, colorFade, colorFade, colorFade, 255);
+        u8 synchronizing[] = { TEXT_SYNCHRONIZING };
+        print_hud_lut_string(HUD_LUT_GLOBAL, 80, 8, synchronizing);
+        gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
+    }
+
 #ifdef VERSION_EU
     unsigned char myScore[][10] = { {TEXT_MYSCORE}, {TEXT_MY_SCORE_FR}, {TEXT_MY_SCORE_DE} };
 #else
@@ -414,7 +425,8 @@ s32 lvl_init_act_selector_values_and_stars(UNUSED s32 arg, UNUSED s32 unused) {
  * Also updates objects and returns act number selected after is chosen.
  */
 s32 lvl_update_obj_and_load_act_button_actions(UNUSED s32 arg, UNUSED s32 unused) {
-    if (sActSelectorMenuTimer >= 11) {
+    u8 allowSelection = (gControlPainting && !gWaitingForRemotePainting);
+    if (sActSelectorMenuTimer >= 11 && allowSelection) {
         // If any of these buttons are pressed, play sound and go to course act
 #ifndef VERSION_EU
         if ((gPlayer3Controller->buttonPressed & A_BUTTON)
@@ -423,21 +435,25 @@ s32 lvl_update_obj_and_load_act_button_actions(UNUSED s32 arg, UNUSED s32 unused
 #else
         if ((gPlayer3Controller->buttonPressed & (A_BUTTON | START_BUTTON | B_BUTTON | Z_TRIG))) {
 #endif
-#if defined(VERSION_JP) || defined(VERSION_SH)
-            play_sound(SOUND_MENU_STAR_SOUND, gDefaultSoundArgs);
-#else
-            play_sound(SOUND_MENU_STAR_SOUND_LETS_A_GO, gDefaultSoundArgs);
-#endif
-            if (sInitSelectedActNum >= sSelectedActIndex + 1) {
-                sLoadedActNum = sSelectedActIndex + 1;
-            } else {
-                sLoadedActNum = sInitSelectedActNum;
-            }
-            gDialogCourseActNum = sSelectedActIndex + 1;
+            star_select_finish_selection();
         }
     }
 
     area_update_objects();
     sActSelectorMenuTimer++;
     return sLoadedActNum;
+}
+
+void star_select_finish_selection(void) {
+#if defined(VERSION_JP) || defined(VERSION_SH)
+    play_sound(SOUND_MENU_STAR_SOUND, gDefaultSoundArgs);
+#else
+    play_sound(SOUND_MENU_STAR_SOUND_LETS_A_GO, gDefaultSoundArgs);
+#endif
+    if (sInitSelectedActNum >= sSelectedActIndex + 1) {
+        sLoadedActNum = sSelectedActIndex + 1;
+    } else {
+        sLoadedActNum = sInitSelectedActNum;
+    }
+    gDialogCourseActNum = sSelectedActIndex + 1;
 }
