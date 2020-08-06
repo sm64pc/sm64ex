@@ -86,10 +86,10 @@ void bhv_koopa_init(void) {
     }
 
     network_init_object(o, 4000.0f);
-    network_init_object_field(o, &o->oSubAction);
     network_init_object_field(o, &o->oKoopaTargetYaw);
     network_init_object_field(o, &o->oKoopaCountdown);
     network_init_object_field(o, &o->oKoopaMovementType);
+    network_init_object_field(o, &o->oKoopaUnshelledTimeUntilTurn);
 }
 
 /**

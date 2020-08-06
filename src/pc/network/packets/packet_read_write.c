@@ -24,6 +24,7 @@ void packet_write(struct Packet* packet, void* data, int length) {
 
 void packet_read(struct Packet* packet, void* data, int length) {
     if (data == NULL) { packet->error = true; return; }
-    memcpy(data, &packet->buffer[packet->cursor], length);
-    packet->cursor += length;
+    int cursor = packet->cursor;
+    memcpy(data, &packet->buffer[cursor], length);
+    packet->cursor = cursor + length;
 }

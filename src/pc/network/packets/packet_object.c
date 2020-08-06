@@ -24,6 +24,7 @@ void network_init_object(struct Object *o, float maxSyncDistance) {
     so->ticksSinceUpdate = -1;
     so->extraFieldCount = 0;
     so->behavior = o->behavior;
+    so->onEventId = 0;
     memset(so->extraFields, 0, sizeof(void*) * MAX_SYNC_OBJECT_FIELDS);
 }
 
@@ -34,18 +35,29 @@ void network_init_object_field(struct Object *o, void* field) {
     so->extraFields[index] = field;
 }
 
+bool network_owns_object(struct Object* o) {
+    struct SyncObject* so = &syncObjects[o->oSyncID];
+    if (so == NULL) { return false; }
+    return so->owned;
+}
+
 void network_send_object(struct Object* o) {
     struct SyncObject* so = &syncObjects[o->oSyncID];
     if (so == NULL) { return; }
 
-    bool reliable = (o->activeFlags == ACTIVE_FLAG_DEACTIVATED);
+    so->onEventId++;
+
+    bool reliable = (o->activeFlags == ACTIVE_FLAG_DEACTIVATED || so->maxSyncDistance == SYNC_DISTANCE_ONLY_EVENTS);
     struct Packet p;
     packet_init(&p, PACKET_OBJECT, reliable);
     packet_write(&p, &o->oSyncID, 4);
+    packet_write(&p, &so->onEventId, 2);
     packet_write(&p, &so->behavior, sizeof(void*));
     packet_write(&p, &o->activeFlags, 2);
     packet_write(&p, &o->oPosX, 28);
     packet_write(&p, &o->oAction, 4);
+    packet_write(&p, &o->oSubAction, 4);
+    packet_write(&p, &o->oInteractStatus, 4);
     packet_write(&p, &o->oHeldState, 4);
     packet_write(&p, &o->oMoveAngleYaw, 4);
 
@@ -61,6 +73,8 @@ void network_send_object(struct Object* o) {
 
     if (o->behavior != so->behavior) {
         printf("network_send_object() BEHAVIOR MISMATCH!\n");
+        forget_sync_object(so);
+        return;
     }
 
     network_send(&p);
@@ -85,6 +99,20 @@ void network_receive_object(struct Packet* p) {
         return;
     }
 
+    // make sure this is the newest event possible
+    volatile u16 eventId = 0;
+    packet_read(p, &eventId, 2);
+    if (so->onEventId > eventId && (u16)abs(eventId - so->onEventId) < USHRT_MAX / 2) { return; }
+    so->onEventId = eventId;
+
+    // make sure the behaviors match
+    packet_read(p, &so->behavior, sizeof(void*));
+    if (o->behavior != so->behavior) {
+        printf("network_receive_object() BEHAVIOR MISMATCH!\n");
+        forget_sync_object(so);
+        return;
+    }
+
     // sync only death
     if (so->maxSyncDistance == SYNC_DISTANCE_ONLY_DEATH) {
         s16 activeFlags;
@@ -97,10 +125,11 @@ void network_receive_object(struct Packet* p) {
     }
 
     // write object flags
-    packet_read(p, &so->behavior, sizeof(void*));
     packet_read(p, &o->activeFlags, 2);
     packet_read(p, &o->oPosX, 28);
     packet_read(p, &o->oAction, 4);
+    packet_read(p, &o->oSubAction, 4);
+    packet_read(p, &o->oInteractStatus, 4);
     packet_read(p, &o->oHeldState, 4);
     packet_read(p, &o->oMoveAngleYaw, 4);
 
@@ -111,10 +140,6 @@ void network_receive_object(struct Packet* p) {
     for (int i = 0; i < extraFields; i++) {
         assert(so->extraFields[i] != NULL);
         packet_read(p, so->extraFields[i], 4);
-    }
-
-    if (o->behavior != so->behavior) {
-        printf("network_receive_object() BEHAVIOR MISMATCH!\n");
     }
 
     // deactivated
@@ -161,7 +186,8 @@ void network_update_objects(void) {
         so->ticksSinceUpdate++;
 
         // check if we should be the one syncing this object
-        if (!should_own_object(so)) { continue; }
+        so->owned = should_own_object(so);
+        if (!so->owned) { continue; }
 
         // check update rate
         if (so->maxSyncDistance == SYNC_DISTANCE_ONLY_DEATH) {

@@ -6,7 +6,8 @@
 #include <assert.h>
 #include "../cliopts.h"
 
-#define SYNC_DISTANCE_ONLY_DEATH -1
+#define SYNC_DISTANCE_ONLY_DEATH -1.0f
+#define SYNC_DISTANCE_ONLY_EVENTS -2.0f
 #define SYNC_DISTANCE_INFINITE 0
 #define MAX_SYNC_OBJECTS 256
 #define MAX_SYNC_OBJECT_FIELDS 16
@@ -36,6 +37,7 @@ struct SyncObject {
     bool owned;
     unsigned int ticksSinceUpdate;
     void* behavior;
+    u16 onEventId;
     u8 extraFieldCount;
     void* extraFields[MAX_SYNC_OBJECT_FIELDS];
 };
@@ -66,6 +68,7 @@ void network_update_reliable(void);
 void network_update_player(void);
 void network_receive_player(struct Packet* p);
 
+bool network_owns_object(struct Object* o);
 void network_update_objects(void);
 void network_receive_object(struct Packet* p);
 

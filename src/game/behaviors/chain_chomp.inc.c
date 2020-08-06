@@ -30,7 +30,7 @@ static struct ObjectHitbox sChainChompHitbox = {
 void bhv_chain_chomp_chain_part_update(void) {
     struct ChainSegment *segment;
 
-    if (o->parentObj->oAction == CHAIN_CHOMP_ACT_UNLOAD_CHAIN) {
+    if (o->parentObj->behavior != &bhvChainChomp || o->parentObj->oAction == CHAIN_CHOMP_ACT_UNLOAD_CHAIN) {
         obj_mark_for_deletion(o);
     } else if (o->oBehParams2ndByte != CHAIN_CHOMP_CHAIN_PART_BP_PIVOT) {
         segment = &o->parentObj->oChainChompSegments[o->oBehParams2ndByte];
@@ -54,7 +54,9 @@ static void chain_chomp_act_uninitialized(void) {
     s32 i;
 
 #ifndef NODRAWINGDISTANCE
-    if (o->oDistanceToMario < 3000.0f) {
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    if (distanceToPlayer < 3000.0f) {
 #endif
         segments = mem_pool_alloc(gObjectMemoryPool, 5 * sizeof(struct ChainSegment));
         if (segments != NULL) {
@@ -177,9 +179,13 @@ static void chain_chomp_sub_act_turn(void) {
     chain_chomp_restore_normal_chain_lengths();
     obj_move_pitch_approach(0, 0x100);
 
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    int angleToPlayer = obj_angle_to_object(o, player);
+
     if (o->oMoveFlags & OBJ_MOVE_MASK_ON_GROUND) {
-        cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x400);
-        if (abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw) < 0x800) {
+        cur_obj_rotate_yaw_toward(angleToPlayer, 0x400);
+        if (abs_angle_diff(angleToPlayer, o->oMoveAngleYaw) < 0x800 && distanceToPlayer < 3000) {
             if (o->oTimer > 30) {
                 if (cur_obj_check_anim_frame(0)) {
                     cur_obj_reverse_animation();
@@ -208,7 +214,7 @@ static void chain_chomp_sub_act_turn(void) {
             o->oVelY = 20.0f;
         }
     } else {
-        cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x190);
+        cur_obj_rotate_yaw_toward(angleToPlayer, 0x190);
         o->oTimer = 0;
     }
 }
@@ -280,9 +286,12 @@ static void chain_chomp_released_lunge_around(void) {
 
     // Finish bounce
     if (o->oMoveFlags & OBJ_MOVE_MASK_ON_GROUND) {
+        struct Object* player = nearest_player_to_object(o);
+        int angleToPlayer = obj_angle_to_object(o, player);
+
         // Before first bounce, turn toward mario and wait 2 seconds
         if (o->oChainChompNumLunges == 0) {
-            if (cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x320)) {
+            if (cur_obj_rotate_yaw_toward(angleToPlayer, 0x320)) {
                 if (o->oTimer > 60) {
                     o->oChainChompNumLunges += 1;
                     // enable wall collision
@@ -294,7 +303,7 @@ static void chain_chomp_released_lunge_around(void) {
         } else {
             if (++o->oChainChompNumLunges <= 5) {
                 cur_obj_play_sound_2(SOUND_GENERAL_CHAIN_CHOMP1);
-                o->oMoveAngleYaw = o->oAngleToMario + random_sign() * 0x2000;
+                o->oMoveAngleYaw = angleToPlayer + random_sign() * 0x2000;
                 o->oForwardVel = 30.0f;
                 o->oVelY = 50.0f;
             } else {
@@ -364,7 +373,9 @@ static void chain_chomp_act_move(void) {
 
     // Unload chain if mario is far enough
 #ifndef NODRAWINGDISTANCE
-    if (o->oChainChompReleaseStatus == CHAIN_CHOMP_NOT_RELEASED && o->oDistanceToMario > 4000.0f) {
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    if (o->oChainChompReleaseStatus == CHAIN_CHOMP_NOT_RELEASED && distanceToPlayer > 4000.0f) {
         o->oAction = CHAIN_CHOMP_ACT_UNLOAD_CHAIN;
         o->oForwardVel = o->oVelY = 0.0f;
     } else {
@@ -468,7 +479,11 @@ static void chain_chomp_act_unload_chain(void) {
     o->oAction = CHAIN_CHOMP_ACT_UNINITIALIZED;
 
     if (o->oChainChompReleaseStatus != CHAIN_CHOMP_NOT_RELEASED) {
+        for (u8 i = 0; i < 5; i++) {
+            obj_mark_for_deletion(&o->oChainChompSegments[i]);
+        }
         obj_mark_for_deletion(o);
+        obj_mark_for_deletion(o->parentObj);
     }
 }
 
@@ -476,6 +491,10 @@ static void chain_chomp_act_unload_chain(void) {
  * Update function for chain chomp.
  */
 void bhv_chain_chomp_update(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, 1000.0f);
+    }
+
     switch (o->oAction) {
         case CHAIN_CHOMP_ACT_UNINITIALIZED:
             chain_chomp_act_uninitialized();
@@ -493,11 +512,21 @@ void bhv_chain_chomp_update(void) {
  * Update function for wooden post.
  */
 void bhv_wooden_post_update(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->oWoodenPostMarioPounding);
+        network_init_object_field(o, &o->oWoodenPostOffsetY);
+        network_init_object_field(o, &o->oWoodenPostSpeedY);
+        network_init_object_field(o, &o->oWoodenPostTotalMarioAngle);
+        network_init_object_field(o, &o->oTimer);
+    }
+
     // When ground pounded by mario, drop by -45 + -20
     if (!o->oWoodenPostMarioPounding) {
         if ((o->oWoodenPostMarioPounding = cur_obj_is_mario_ground_pounding_platform())) {
             cur_obj_play_sound_2(SOUND_GENERAL_POUND_WOOD_POST);
             o->oWoodenPostSpeedY = -70.0f;
+            if (network_owns_object(o)) { network_send_object(o); }
         }
     } else if (approach_f32_ptr(&o->oWoodenPostSpeedY, 0.0f, 25.0f)) {
         // Stay still until mario is done ground pounding
@@ -516,20 +545,25 @@ void bhv_wooden_post_update(void) {
     if (o->oWoodenPostOffsetY != 0.0f) {
         o->oPosY = o->oHomeY + o->oWoodenPostOffsetY;
     } else if (!(o->oBehParams & WOODEN_POST_BP_NO_COINS_MASK)) {
+        struct Object* player = nearest_player_to_object(o);
+        int distanceToPlayer = dist_between_objects(o, player);
+        int angleToPlayer = obj_angle_to_object(o, player);
+
         // Reset the timer once mario is far enough
-        if (o->oDistanceToMario > 400.0f) {
+        if (distanceToPlayer > 400.0f) {
             o->oTimer = o->oWoodenPostTotalMarioAngle = 0;
         } else {
             // When mario runs around the post 3 times within 200 frames, spawn
             // coins
-            o->oWoodenPostTotalMarioAngle += (s16)(o->oAngleToMario - o->oWoodenPostPrevAngleToMario);
+            o->oWoodenPostTotalMarioAngle += (s16)(angleToPlayer - o->oWoodenPostPrevAngleToMario);
             if (absi(o->oWoodenPostTotalMarioAngle) > 0x30000 && o->oTimer < 200) {
+                if (network_owns_object(o)) { network_send_object(o); }
                 obj_spawn_loot_yellow_coins(o, 5, 20.0f);
                 set_object_respawn_info_bits(o, 1);
             }
         }
 
-        o->oWoodenPostPrevAngleToMario = o->oAngleToMario;
+        o->oWoodenPostPrevAngleToMario = angleToPlayer;
     }
 }
 

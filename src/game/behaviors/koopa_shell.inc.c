@@ -54,8 +54,6 @@ void koopa_shell_spawn_sparkles(f32 a) {
 void bhv_koopa_shell_loop(void) {
     if (o->oSyncID == 0) {
         network_init_object(o, 500.0f);
-        network_init_object_field(o, &o->oInteractStatus);
-        network_init_object_field(o, &o->oAction);
     }
 
     struct Surface *sp34;
