@@ -1,5 +1,5 @@
 # sm64ex
-Fork of [sm64-port/sm64-port](https://github.com/sm64-port/sm64-port) with additional features. 
+Fork of [sm64ex](https://github.com/sm64pc/sm64ex)
 
 Feel free to report bugs and contribute, but remember, there must be **no upload of any copyrighted asset**. 
 Run `./extract_assets.py --clean && make clean` or `make distclean` to remove ROM-originated content.
