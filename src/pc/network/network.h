@@ -35,6 +35,7 @@ struct SyncObject {
     float maxSyncDistance;
     bool owned;
     unsigned int ticksSinceUpdate;
+    void* behavior;
     u8 extraFieldCount;
     void* extraFields[MAX_SYNC_OBJECT_FIELDS];
 };

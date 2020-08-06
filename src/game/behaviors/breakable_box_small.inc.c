@@ -20,7 +20,7 @@ void bhv_breakable_box_small_init(void) {
     obj_set_hitbox(o, &sBreakableBoxSmallHitbox);
     o->oAnimState = 1;
     o->activeFlags |= ACTIVE_FLAG_UNK9;
-    network_init_object(o, 500);
+    network_init_object(o, 500.0f);
 }
 
 void small_breakable_box_spawn_dust(void) {

@@ -16,7 +16,7 @@ void koopa_shell_spawn_water_drop(void) {
     UNUSED s32 unused;
     struct Object *drop;
     spawn_object(o, MODEL_WAVE_TRAIL, bhvObjectWaveTrail);
-    if (gMarioStates->forwardVel > 10.0f) {
+    if (gMarioStates[o->heldByPlayerIndex].forwardVel > 10.0f) {
         drop = spawn_object_with_scale(o, MODEL_WHITE_PARTICLE_SMALL, bhvWaterDroplet, 1.5f);
         drop->oVelY = random_float() * 30.0f;
         obj_translate_xz_random(drop, 110.0f);
@@ -52,21 +52,32 @@ void koopa_shell_spawn_sparkles(f32 a) {
 }
 
 void bhv_koopa_shell_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, 500.0f);
+        network_init_object_field(o, &o->oInteractStatus);
+        network_init_object_field(o, &o->oAction);
+    }
+
     struct Surface *sp34;
     obj_set_hitbox(o, &sKoopaShellHitbox);
     cur_obj_scale(1.0f);
+    struct Object* player = NULL;
     switch (o->oAction) {
         case 0:
             cur_obj_update_floor_and_walls();
             cur_obj_if_hit_wall_bounce_away();
-            if (o->oInteractStatus & INT_STATUS_INTERACTED)
+            if (o->oInteractStatus & INT_STATUS_INTERACTED) {
                 o->oAction++;
+                player = nearest_player_to_object(o);
+                o->heldByPlayerIndex = (player == gMarioObject) ? 0 : 1;
+            }
             o->oFaceAngleYaw += 0x1000;
             cur_obj_move_standard(-20);
             koopa_shell_spawn_sparkles(10.0f);
             break;
         case 1:
-            obj_copy_pos(o, gMarioObject);
+            player = gMarioStates[o->heldByPlayerIndex].marioObj;
+            obj_copy_pos(o, player);
             sp34 = cur_obj_update_floor_height_and_get_floor();
             if (absf(find_water_level(o->oPosX, o->oPosZ) - o->oPosY) < 10.0f)
                 koopa_shell_spawn_water_drop();
@@ -77,7 +88,7 @@ void bhv_koopa_shell_loop(void) {
                     koopa_shell_spawn_sparkles(10.0f);
             } else
                 koopa_shell_spawn_sparkles(10.0f);
-            o->oFaceAngleYaw = gMarioObject->oMoveAngleYaw;
+            o->oFaceAngleYaw = player->oMoveAngleYaw;
             if (o->oInteractStatus & INT_STATUS_STOP_RIDING) {
                 obj_mark_for_deletion(o);
                 spawn_mist_particles();

@@ -17,7 +17,7 @@ void bhv_bobomb_init(void) {
     o->oFriction = 0.8;
     o->oBuoyancy = 1.3;
     o->oInteractionSubtype = INT_SUBTYPE_KICKABLE;
-    network_init_object(o, 4000);
+    network_init_object(o, 4000.0f);
 }
 
 void bobomb_spawn_coin(void) {

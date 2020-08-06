@@ -23,6 +23,7 @@ void network_init_object(struct Object *o, float maxSyncDistance) {
     so->owned = false;
     so->ticksSinceUpdate = -1;
     so->extraFieldCount = 0;
+    so->behavior = o->behavior;
     memset(so->extraFields, 0, sizeof(void*) * MAX_SYNC_OBJECT_FIELDS);
 }
 
@@ -41,6 +42,7 @@ void network_send_object(struct Object* o) {
     struct Packet p;
     packet_init(&p, PACKET_OBJECT, reliable);
     packet_write(&p, &o->oSyncID, 4);
+    packet_write(&p, &so->behavior, sizeof(void*));
     packet_write(&p, &o->activeFlags, 2);
     packet_write(&p, &o->oPosX, 28);
     packet_write(&p, &o->oAction, 4);
@@ -56,6 +58,10 @@ void network_send_object(struct Object* o) {
     so->ticksSinceUpdate = 0;
 
     if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) { forget_sync_object(so); }
+
+    if (o->behavior != so->behavior) {
+        printf("network_send_object() BEHAVIOR MISMATCH!\n");
+    }
 
     network_send(&p);
 }
@@ -91,6 +97,7 @@ void network_receive_object(struct Packet* p) {
     }
 
     // write object flags
+    packet_read(p, &so->behavior, sizeof(void*));
     packet_read(p, &o->activeFlags, 2);
     packet_read(p, &o->oPosX, 28);
     packet_read(p, &o->oAction, 4);
@@ -106,11 +113,14 @@ void network_receive_object(struct Packet* p) {
         packet_read(p, so->extraFields[i], 4);
     }
 
+    if (o->behavior != so->behavior) {
+        printf("network_receive_object() BEHAVIOR MISMATCH!\n");
+    }
+
     // deactivated
     if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) {
         forget_sync_object(so);
     }
-
 }
 
 float player_distance(struct MarioState* marioState, struct Object* o) {
