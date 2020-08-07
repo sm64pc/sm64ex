@@ -23,6 +23,10 @@ void bhv_seesaw_platform_init(void) {
     if (o->oBehParams2ndByte == 2) {
         o->oCollisionDistance = 2000.0f;
     }
+
+    network_init_object(o, 1000.0f);
+    network_init_object_field(o, &o->oSeesawPlatformPitchVel);
+    network_init_object_field(o, &o->oFaceAnglePitch);
 }
 
 /**
@@ -36,9 +40,29 @@ void bhv_seesaw_platform_update(void) {
         cur_obj_play_sound_1(SOUND_ENV_BOAT_ROCKING1);
     }
 
-    if (gMarioObject->platform == o) {
+    f32 x = 0;
+    f32 y = 0;
+    f32 z = 0;
+    u8 playersTouched = 0;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (gMarioStates[i].marioObj->platform == o) {
+            x += gMarioStates[i].marioObj->oPosX;
+            y += gMarioStates[i].marioObj->oPosY;
+            z += gMarioStates[i].marioObj->oPosZ;
+            playersTouched++;
+        }
+    }
+
+    if (playersTouched > 0) {
+        x /= (f32)playersTouched;
+        y /= (f32)playersTouched;
+        z /= (f32)playersTouched;
+
+        int distanceToPlayer = dist_between_object_and_point(o, x, y, z);
+        int angleToPlayer = obj_angle_to_point(o, x, y, z);
+
         // Rotate toward mario
-        f32 rotation = o->oDistanceToMario * coss(o->oAngleToMario - o->oMoveAngleYaw);
+        f32 rotation = distanceToPlayer * coss(angleToPlayer - o->oMoveAngleYaw);
         UNUSED s32 unused;
 
         // Deceleration is faster than acceleration

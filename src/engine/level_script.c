@@ -666,7 +666,7 @@ static void level_cmd_unload_area(void) {
 }
 
 static void level_cmd_set_mario_start_pos(void) {
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < MAX_PLAYERS; i++) {
         gPlayerSpawnInfos[i].areaIndex = CMD_GET(u8, 2);
 
     #if IS_64_BIT

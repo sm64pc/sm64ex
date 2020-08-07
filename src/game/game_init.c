@@ -43,9 +43,9 @@ OSMesg D_80339CD4;
 struct VblankHandler gGameVblankHandler;
 uintptr_t gPhysicalFrameBuffers[3];
 uintptr_t gPhysicalZBuffer;
-void *D_80339CF0[2];
+void *D_80339CF0[MAX_PLAYERS];
 void *D_80339CF4;
-struct MarioAnimation D_80339D10[2];
+struct MarioAnimation D_80339D10[MAX_PLAYERS];
 struct MarioAnimation gDemo;
 UNUSED u8 filler80339D30[0x90];
 
@@ -547,7 +547,7 @@ void setup_game_memory(void) {
     gPhysicalFrameBuffers[0] = VIRTUAL_TO_PHYSICAL(gFrameBuffer0);
     gPhysicalFrameBuffers[1] = VIRTUAL_TO_PHYSICAL(gFrameBuffer1);
     gPhysicalFrameBuffers[2] = VIRTUAL_TO_PHYSICAL(gFrameBuffer2);
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < MAX_PLAYERS; i++) {
         D_80339CF0[i] = main_pool_alloc(0x4000, MEMORY_POOL_LEFT);
         set_segment_base_addr(17, (void *)D_80339CF0[i]);
         func_80278A78(&D_80339D10[i], gMarioAnims, D_80339CF0[i]);

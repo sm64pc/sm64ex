@@ -20,49 +20,53 @@ struct Object *gMarioPlatform = NULL;
  * within 4 units of the floor. Set his referenced platform object accordingly.
  */
 void update_mario_platform(void) {
-    struct Surface *floor;
-    UNUSED u32 unused;
-    f32 marioX;
-    f32 marioY;
-    f32 marioZ;
-    f32 floorHeight;
-    u32 awayFromFloor;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        struct Surface *floor;
+        UNUSED u32 unused;
+        f32 marioX;
+        f32 marioY;
+        f32 marioZ;
+        f32 floorHeight;
+        u32 awayFromFloor;
 
-    if (gMarioObject == NULL) {
-        return;
-    }
+        struct Object* player = gMarioStates[i].marioObj;
 
-    //! If Mario moves onto a rotating platform in a PU, the find_floor call
-    //  will detect the platform and he will end up receiving a large amount
-    //  of displacement since he is considered to be far from the platform's
-    //  axis of rotation.
+        if (player == NULL) {
+            return;
+        }
 
-    marioX = gMarioObject->oPosX;
-    marioY = gMarioObject->oPosY;
-    marioZ = gMarioObject->oPosZ;
-    floorHeight = find_floor(marioX, marioY, marioZ, &floor);
+        //! If Mario moves onto a rotating platform in a PU, the find_floor call
+        //  will detect the platform and he will end up receiving a large amount
+        //  of displacement since he is considered to be far from the platform's
+        //  axis of rotation.
 
-    if (absf(marioY - floorHeight) < 4.0f) {
-        awayFromFloor = 0;
-    } else {
-        awayFromFloor = 1;
-    }
+        marioX = player->oPosX;
+        marioY = player->oPosY;
+        marioZ = player->oPosZ;
+        floorHeight = find_floor(marioX, marioY, marioZ, &floor);
 
-    switch (awayFromFloor) {
-        case 1:
-            gMarioPlatform = NULL;
-            gMarioObject->platform = NULL;
-            break;
+        if (absf(marioY - floorHeight) < 4.0f) {
+            awayFromFloor = 0;
+        } else {
+            awayFromFloor = 1;
+        }
 
-        case 0:
-            if (floor != NULL && floor->object != NULL) {
-                gMarioPlatform = floor->object;
-                gMarioObject->platform = floor->object;
-            } else {
+        switch (awayFromFloor) {
+            case 1:
                 gMarioPlatform = NULL;
-                gMarioObject->platform = NULL;
-            }
-            break;
+                player->platform = NULL;
+                break;
+
+            case 0:
+                if (floor != NULL && floor->object != NULL) {
+                    gMarioPlatform = floor->object;
+                    player->platform = floor->object;
+                } else {
+                    gMarioPlatform = NULL;
+                    player->platform = NULL;
+                }
+                break;
+        }
     }
 }
 
@@ -88,7 +92,7 @@ void set_mario_pos(f32 x, f32 y, f32 z) {
  * Apply one frame of platform rotation to Mario or an object using the given
  * platform. If isMario is 0, use gCurrentObject.
  */
-void apply_platform_displacement(u32 isMario, struct Object *platform) {
+void apply_platform_displacement(u32 playerIndex, struct Object *platform) {
     f32 x;
     f32 y;
     f32 z;
@@ -108,9 +112,11 @@ void apply_platform_displacement(u32 isMario, struct Object *platform) {
     rotation[1] = platform->oAngleVelYaw;
     rotation[2] = platform->oAngleVelRoll;
 
-    if (isMario) {
+    if (playerIndex != (u32)-1) {
         D_8032FEC0 = 0;
-        get_mario_pos(&x, &y, &z);
+        x = gMarioStates[playerIndex].pos[0];
+        y = gMarioStates[playerIndex].pos[1];
+        z = gMarioStates[playerIndex].pos[2];
     } else {
         x = gCurrentObject->oPosX;
         y = gCurrentObject->oPosY;
@@ -125,8 +131,8 @@ void apply_platform_displacement(u32 isMario, struct Object *platform) {
         unused2 = rotation[2];
         unused3 = platform->oFaceAngleYaw;
 
-        if (isMario) {
-            gMarioStates[0].faceAngle[1] += rotation[1];
+        if (playerIndex != (u32)-1) {
+            gMarioStates[playerIndex].faceAngle[1] += rotation[1];
         }
 
         platformPosX = platform->oPosX;
@@ -156,8 +162,10 @@ void apply_platform_displacement(u32 isMario, struct Object *platform) {
         z = platformPosZ + newObjectOffset[2];
     }
 
-    if (isMario) {
-        set_mario_pos(x, y, z);
+    if (playerIndex != (u32)-1) {
+        gMarioStates[playerIndex].pos[0] = x;
+        gMarioStates[playerIndex].pos[1] = y;
+        gMarioStates[playerIndex].pos[2] = z;
     } else {
         gCurrentObject->oPosX = x;
         gCurrentObject->oPosY = y;
@@ -169,11 +177,14 @@ void apply_platform_displacement(u32 isMario, struct Object *platform) {
  * If Mario's platform is not null, apply platform displacement.
  */
 void apply_mario_platform_displacement(void) {
-    struct Object *platform;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        struct Object* player = gMarioStates[i].marioObj;
+        if (player == NULL) { continue; }
 
-    platform = gMarioPlatform;
-    if (!(gTimeStopState & TIME_STOP_ACTIVE) && gMarioObject != NULL && platform != NULL) {
-        apply_platform_displacement(1, platform);
+        struct Object *platform = player->platform;
+        if (!(gTimeStopState & TIME_STOP_ACTIVE) && player != NULL && platform != NULL) {
+            apply_platform_displacement(i, platform);
+        }
     }
 }
 

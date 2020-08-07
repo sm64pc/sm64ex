@@ -372,4 +372,9 @@ struct MarioState
 #define PLAY_MODE_FRAME_ADVANCE 5
 #define PLAY_MODE_SYNC_LEVEL 6
 
+// NOTE: this defines the maximum number of players...
+//       HOWEVER, simply increasing this to 3 will not magically work
+//       many things will have to be overhauled!
+#define MAX_PLAYERS 2
+
 #endif // _SM64_TYPES_H_

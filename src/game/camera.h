@@ -667,7 +667,7 @@ struct LakituState
 extern s16 sSelectionFlags;
 extern s16 sCameraSoundFlags;
 extern u16 sCButtonsPressed;
-extern struct PlayerCameraState gPlayerCameraState[2];
+extern struct PlayerCameraState gPlayerCameraState[MAX_PLAYERS];
 extern struct LakituState gLakituState;
 extern s16 gCameraMovementFlags;
 extern s32 gObjCutsceneDone;

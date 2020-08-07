@@ -1033,7 +1033,7 @@ void bowser_free_update(void) {
     struct Object *platform;
     UNUSED f32 floorHeight;
     if ((platform = o->platform) != NULL)
-        apply_platform_displacement(0, platform);
+        apply_platform_displacement((u32)-1, platform);
     o->oBowserUnk10E = 0;
     cur_obj_update_floor_and_walls();
     cur_obj_call_action_function(sBowserActions);

@@ -30,7 +30,7 @@ void network_receive_collect_star(struct Packet* p) {
     save_file_collect_star_or_key(coinScore, starIndex);
 
     s32 numStars = save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_MIN - 1, COURSE_MAX - 1);
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < MAX_PLAYERS; i++) {
         gMarioStates[i].numStars = numStars;
     }
 

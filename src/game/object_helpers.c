@@ -301,6 +301,14 @@ f32 dist_between_objects(struct Object *obj1, struct Object *obj2) {
     return sqrtf(dx * dx + dy * dy + dz * dz);
 }
 
+f32 dist_between_object_and_point(struct Object *obj, f32 pointX, f32 pointY, f32 pointZ) {
+    f32 dx = (f32)obj->oPosX - pointX;
+    f32 dy = (f32)obj->oPosY - pointY;
+    f32 dz = (f32)obj->oPosZ - pointZ;
+
+    return sqrtf(dx * dx + dy * dy + dz * dz);
+}
+
 void cur_obj_forward_vel_approach_upward(f32 target, f32 increment) {
     if (o->oForwardVel >= target) {
         o->oForwardVel = target;
@@ -388,6 +396,17 @@ s16 obj_angle_to_object(struct Object *obj1, struct Object *obj2) {
 
     z1 = obj1->oPosZ; z2 = obj2->oPosZ; //ordering of instructions..
     x1 = obj1->oPosX; x2 = obj2->oPosX;
+
+    angle = atan2s(z2 - z1, x2 - x1);
+    return angle;
+}
+
+s16 obj_angle_to_point(struct Object *obj, f32 pointX, f32 pointY, f32 pointZ) {
+    f32 z1, x1, z2, x2;
+    s16 angle;
+
+    z1 = obj->oPosZ; z2 = pointZ; //ordering of instructions..
+    x1 = obj->oPosX; x2 = pointX;
 
     angle = atan2s(z2 - z1, x2 - x1);
     return angle;

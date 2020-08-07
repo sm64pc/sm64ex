@@ -820,7 +820,7 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
         save_file_collect_star_or_key(m->numCoins, starIndex);
 
         s32 numStars = save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_MIN - 1, COURSE_MAX - 1);
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < MAX_PLAYERS; i++) {
             gMarioStates[i].numStars = numStars;
         }
 

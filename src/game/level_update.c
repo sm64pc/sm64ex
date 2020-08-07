@@ -150,7 +150,7 @@ struct CreditsEntry sCreditsSequence[] = {
     { LEVEL_NONE, 0, 1, 0, { 0, 0, 0 }, NULL },
 };
 
-struct MarioState gMarioStates[2];
+struct MarioState gMarioStates[MAX_PLAYERS];
 struct HudDisplay gHudDisplay;
 s16 sCurrPlayMode;
 u16 D_80339ECA;
@@ -371,7 +371,7 @@ void init_mario_after_warp(void) {
     u32 marioSpawnType = get_mario_spawn_type(spawnNode->object);
 
     if (gMarioState->action != ACT_UNINITIALIZED) {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < MAX_PLAYERS; i++) {
             gPlayerSpawnInfos[i].startPos[0] = (s16) spawnNode->object->oPosX;
             gPlayerSpawnInfos[i].startPos[1] = (s16) spawnNode->object->oPosY;
             gPlayerSpawnInfos[i].startPos[2] = (s16) spawnNode->object->oPosZ;
@@ -506,7 +506,7 @@ void warp_credits(void) {
 
     load_area(sWarpDest.areaIdx);
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < MAX_PLAYERS; i++) {
         vec3s_set(gPlayerSpawnInfos[i].startPos, gCurrCreditsEntry->marioPos[0],
                   gCurrCreditsEntry->marioPos[1], gCurrCreditsEntry->marioPos[2]);
 
