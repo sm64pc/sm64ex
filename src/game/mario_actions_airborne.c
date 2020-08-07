@@ -985,9 +985,14 @@ s32 act_burning_jump(struct MarioState *m) {
 
     m->health -= 10;
     if (m->health < 0x100) {
-        m->health = 0xFF;
+        if (m != &gMarioStates[0]) {
+            // never kill remote marios
+            m->health = 0x100;
+        } else {
+            m->health = 0xFF;
+        }
     }
-    
+
     reset_rumble_timers();
     return FALSE;
 }
@@ -1006,7 +1011,12 @@ s32 act_burning_fall(struct MarioState *m) {
 
     m->health -= 10;
     if (m->health < 0x100) {
-        m->health = 0xFF;
+        if (m != &gMarioStates[0]) {
+            // never kill remote marios
+            m->health = 0x100;
+        } else {
+            m->health = 0xFF;
+        }
     }
 
     reset_rumble_timers();

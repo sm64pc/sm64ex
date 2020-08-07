@@ -773,7 +773,13 @@ s32 act_eaten_by_bubba(struct MarioState *m) {
     play_sound_if_no_flag(m, SOUND_MARIO_DYING, MARIO_ACTION_SOUND_PLAYED);
     set_mario_animation(m, MARIO_ANIM_A_POSE);
     m->marioObj->header.gfx.node.flags &= ~GRAPH_RENDER_ACTIVE;
-    m->health = 0xFF;
+    if (m != &gMarioStates[0]) {
+        // never kill remote marios
+        m->health = 0x100;
+    } else {
+        m->health = 0xFF;
+    }
+
     if (m->actionTimer++ == 60) {
         level_trigger_warp(m, WARP_OP_DEATH);
     }
@@ -1499,6 +1505,7 @@ s32 act_shocked(struct MarioState *m) {
 }
 
 s32 act_squished(struct MarioState *m) {
+
     UNUSED s32 pad;
     f32 squishAmount;
     f32 spaceUnderCeil;
@@ -1513,7 +1520,13 @@ s32 act_squished(struct MarioState *m) {
         case 0:
             if (spaceUnderCeil > 160.0f) {
                 m->squishTimer = 0;
-                return set_mario_action(m, ACT_IDLE, 0);
+                // prevent infinite loop for remote players
+                if (m == &gMarioStates[0]) {
+                    return set_mario_action(m, ACT_IDLE, 0);
+                } else {
+                    set_mario_action(m, ACT_IDLE, 0);
+                    return FALSE;
+                }
             }
 
             m->squishTimer = 0xFF;
@@ -1587,7 +1600,13 @@ s32 act_squished(struct MarioState *m) {
     // squished for more than 10 seconds, so kill Mario
     if (m->actionArg++ > 300) {
         // 0 units of health
-        m->health = 0x00FF;
+        if (m != &gMarioStates[0]) {
+            // never kill remote marios
+            m->health = 0x100;
+        } else {
+            m->health = 0xFF;
+        }
+
         m->hurtCounter = 0;
         level_trigger_warp(m, WARP_OP_DEATH);
         // woosh, he's gone!
@@ -2634,6 +2653,10 @@ static s32 act_end_waving_cutscene(struct MarioState *m) {
 }
 
 static s32 check_for_instant_quicksand(struct MarioState *m) {
+    if (m != &gMarioStates[0]) {
+        // never kill remote marios
+        return FALSE;
+    }
     if (m->floor->type == SURFACE_INSTANT_QUICKSAND && m->action & ACT_FLAG_INVULNERABLE
         && m->action != ACT_QUICKSAND_DEATH) {
         update_mario_sound_and_camera(m);

@@ -1232,7 +1232,7 @@ void squish_mario_model(struct MarioState *m) {
             else {
                 vec3f_set(m->marioObj->header.gfx.scale, 1.0f, 1.0f, 1.0f);
             }
-            
+
         }
         // If timer is less than 16, rubber-band Mario's size scale up and down.
         else if (m->squishTimer <= 16) {
@@ -1421,7 +1421,7 @@ void update_mario_inputs(struct MarioState *m) {
     update_mario_geometry_inputs(m);
 
     debug_print_speed_action_normal(m);
-    
+
     /* Moonjump cheat */
     while (Cheats.MoonJump == true && Cheats.EnableCheats == true && m->controller->buttonDown & L_TRIG ){
         m->vel[1] = 25;
@@ -1536,7 +1536,12 @@ void update_mario_health(struct MarioState *m) {
             m->health = 0x880;
         }
         if (m->health < 0x100) {
-            m->health = 0xFF;
+            if (m != &gMarioStates[0]) {
+                // never kill remote marios
+                m->health = 0x100;
+            } else {
+                m->health = 0xFF;
+            }
         }
 
         // Play a noise to alert the player when Mario is close to drowning.

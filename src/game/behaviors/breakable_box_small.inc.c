@@ -21,6 +21,8 @@ void bhv_breakable_box_small_init(void) {
     o->oAnimState = 1;
     o->activeFlags |= ACTIVE_FLAG_UNK9;
     network_init_object(o, 500.0f);
+    network_init_object_field(o, &o->oBreakableBoxSmallReleased);
+    network_init_object_field(o, &o->oBreakableBoxSmallFramesSinceReleased);
 }
 
 void small_breakable_box_spawn_dust(void) {

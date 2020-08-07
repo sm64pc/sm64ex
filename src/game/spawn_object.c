@@ -197,7 +197,9 @@ void unload_object(struct Object *obj) {
     obj->header.gfx.node.flags &= ~GRAPH_RENDER_CYLBOARD;
     obj->header.gfx.node.flags &= ~GRAPH_RENDER_ACTIVE;
 
-    if (obj->oSyncID != 0) { network_send_object(obj); }
+    if (obj->oSyncID != 0) {
+        network_send_object(obj);
+    }
 
     deallocate_object(&gFreeObjectList, &obj->header);
 }

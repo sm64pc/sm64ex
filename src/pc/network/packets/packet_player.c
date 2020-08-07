@@ -14,6 +14,8 @@ void network_send_player(void) {
     packet_write(&p, &gMarioStates[0], 96);
     packet_write(&p, gMarioStates[0].controller, 20);
     packet_write(&p, gMarioStates[0].marioObj->rawData.asU32, 320);
+    packet_write(&p, &gMarioStates[0].health, 2);
+
     packet_write(&p, &heldSyncID, 4);
     network_send(&p);
 }
@@ -26,12 +28,15 @@ void network_receive_player(struct Packet* p) {
     packet_read(p, &gMarioStates[1], 96);
     packet_read(p, gMarioStates[1].controller, 20);
     packet_read(p, &gMarioStates[1].marioObj->rawData.asU32, 320);
+    packet_write(p, &gMarioStates[1].health, 2);
     packet_read(p, &heldSyncID, 4);
 
     if (heldSyncID != NULL) {
         assert(syncObjects[heldSyncID].o != NULL);
         gMarioStates[1].heldObj = syncObjects[heldSyncID].o;
         gMarioStates[1].heldObj->heldByPlayerIndex = 1;
+    } else {
+        gMarioStates[1].heldObj = NULL;
     }
 
     // restore action state, needed for jump kicking
