@@ -2,6 +2,7 @@
 #include "../network.h"
 #include "object_fields.h"
 #include "object_constants.h"
+#include "behavior_data.h"
 
 u8 nextSyncID = 1;
 struct SyncObject syncObjects[MAX_SYNC_OBJECTS] = { 0 };
@@ -60,6 +61,7 @@ void network_send_object(struct Object* o) {
     packet_write(&p, &o->oInteractStatus, 4);
     packet_write(&p, &o->oHeldState, 4);
     packet_write(&p, &o->oMoveAngleYaw, 4);
+    packet_write(&p, &o->oTimer, 4);
 
     packet_write(&p, &so->extraFieldCount, 1);
     for (int i = 0; i < so->extraFieldCount; i++) {
@@ -132,6 +134,7 @@ void network_receive_object(struct Packet* p) {
     packet_read(p, &o->oInteractStatus, 4);
     packet_read(p, &o->oHeldState, 4);
     packet_read(p, &o->oMoveAngleYaw, 4);
+    packet_read(p, &o->oTimer, 4);
 
     // write extra fields
     u8 extraFields = 0;

@@ -493,6 +493,8 @@ static void chain_chomp_act_unload_chain(void) {
 void bhv_chain_chomp_update(void) {
     if (o->oSyncID == 0) {
         network_init_object(o, 1000.0f);
+        network_init_object_field(o, &o->oChainChompUnk104);
+        network_init_object_field(o, &o->header.gfx.unk38.animFrame);
     }
 
     switch (o->oAction) {
