@@ -22,11 +22,20 @@ void network_init_object(struct Object *o, float maxSyncDistance) {
     so->o = o;
     so->maxSyncDistance = maxSyncDistance;
     so->owned = false;
-    so->ticksSinceUpdate = -1;
+    so->clockSinceUpdate = clock();
     so->extraFieldCount = 0;
     so->behavior = o->behavior;
     so->onEventId = 0;
+    so->fullObjectSync = false;
+    so->maxUpdateRate = 0;
     memset(so->extraFields, 0, sizeof(void*) * MAX_SYNC_OBJECT_FIELDS);
+}
+
+void network_object_settings(struct Object *o, bool fullObjectSync, float maxUpdateRate) {
+    assert(o->oSyncID != 0);
+    struct SyncObject* so = &syncObjects[o->oSyncID];
+    so->fullObjectSync = fullObjectSync;
+    so->maxUpdateRate = maxUpdateRate;
 }
 
 void network_init_object_field(struct Object *o, void* field) {
@@ -55,21 +64,26 @@ void network_send_object(struct Object* o) {
     packet_write(&p, &so->onEventId, 2);
     packet_write(&p, &so->behavior, sizeof(void*));
     packet_write(&p, &o->activeFlags, 2);
-    packet_write(&p, &o->oPosX, 28);
-    packet_write(&p, &o->oAction, 4);
-    packet_write(&p, &o->oSubAction, 4);
-    packet_write(&p, &o->oInteractStatus, 4);
-    packet_write(&p, &o->oHeldState, 4);
-    packet_write(&p, &o->oMoveAngleYaw, 4);
-    packet_write(&p, &o->oTimer, 4);
 
-    packet_write(&p, &so->extraFieldCount, 1);
-    for (int i = 0; i < so->extraFieldCount; i++) {
-        assert(so->extraFields[i] != NULL);
-        packet_write(&p, so->extraFields[i], 4);
+    if (so->fullObjectSync) {
+        packet_write(&p, o->rawData.asU32, 320);
+    } else {
+        packet_write(&p, &o->oPosX, 28);
+        packet_write(&p, &o->oAction, 4);
+        packet_write(&p, &o->oSubAction, 4);
+        packet_write(&p, &o->oInteractStatus, 4);
+        packet_write(&p, &o->oHeldState, 4);
+        packet_write(&p, &o->oMoveAngleYaw, 4);
+        packet_write(&p, &o->oTimer, 4);
+
+        packet_write(&p, &so->extraFieldCount, 1);
+        for (int i = 0; i < so->extraFieldCount; i++) {
+            assert(so->extraFields[i] != NULL);
+            packet_write(&p, so->extraFields[i], 4);
+        }
     }
 
-    so->ticksSinceUpdate = 0;
+    so->clockSinceUpdate = clock();
 
     if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) { forget_sync_object(so); }
 
@@ -90,7 +104,7 @@ void network_receive_object(struct Packet* p) {
 
     // retrieve SyncObject
     struct SyncObject* so = &syncObjects[syncId];
-    so->ticksSinceUpdate = 0;
+    so->clockSinceUpdate = clock();
 
     // extract Object
     struct Object* o = syncObjects[syncId].o;
@@ -128,13 +142,18 @@ void network_receive_object(struct Packet* p) {
 
     // write object flags
     packet_read(p, &o->activeFlags, 2);
-    packet_read(p, &o->oPosX, 28);
-    packet_read(p, &o->oAction, 4);
-    packet_read(p, &o->oSubAction, 4);
-    packet_read(p, &o->oInteractStatus, 4);
-    packet_read(p, &o->oHeldState, 4);
-    packet_read(p, &o->oMoveAngleYaw, 4);
-    packet_read(p, &o->oTimer, 4);
+
+    if (so->fullObjectSync) {
+        packet_read(p, o->rawData.asU32, 320);
+    } else {
+        packet_read(p, &o->oPosX, 28);
+        packet_read(p, &o->oAction, 4);
+        packet_read(p, &o->oSubAction, 4);
+        packet_read(p, &o->oInteractStatus, 4);
+        packet_read(p, &o->oHeldState, 4);
+        packet_read(p, &o->oMoveAngleYaw, 4);
+        packet_read(p, &o->oTimer, 4);
+    }
 
     // write extra fields
     u8 extraFields = 0;
@@ -172,7 +191,6 @@ bool should_own_object(struct SyncObject* so) {
 void forget_sync_object(struct SyncObject* so) {
     so->o = NULL;
     so->owned = false;
-    so->ticksSinceUpdate = -1;
 }
 
 void network_update_objects(void) {
@@ -186,7 +204,6 @@ void network_update_objects(void) {
             forget_sync_object(so);
             continue;
         }
-        so->ticksSinceUpdate++;
 
         // check if we should be the one syncing this object
         so->owned = should_own_object(so);
@@ -201,9 +218,14 @@ void network_update_objects(void) {
 
         float dist = player_distance(&gMarioStates[0], so->o);
         if (so->maxSyncDistance != SYNC_DISTANCE_INFINITE && dist > so->maxSyncDistance) { continue; }
-        int updateRate = dist / 50;
+        float updateRate = dist / 1000.0f;
         if (gMarioStates[0].heldObj == so->o) { updateRate = 0; }
-        if (so->ticksSinceUpdate < updateRate) { continue; }
+
+        if (so->maxUpdateRate > 0 && updateRate < so->maxUpdateRate) { updateRate = so->maxUpdateRate; }
+        if (updateRate < 0.33f) { updateRate = 0.33f; }
+
+        float timeSinceUpdate = ((float)clock() - (float)so->clockSinceUpdate) / (float)CLOCKS_PER_SEC;
+        if (timeSinceUpdate < updateRate) { continue; }
 
         network_send_object(syncObjects[i].o);
     }
