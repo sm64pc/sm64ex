@@ -812,10 +812,17 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
         m->usedObj = o;
 
         starIndex = (o->oBehParams >> 24) & 0x1F;
+
+        if (m == &gMarioStates[0]) {
+            // sync the star collection
+            network_send_collect_star(m->numCoins, starIndex);
+        }
         save_file_collect_star_or_key(m->numCoins, starIndex);
 
-        m->numStars =
-            save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_MIN - 1, COURSE_MAX - 1);
+        s32 numStars = save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_MIN - 1, COURSE_MAX - 1);
+        for (int i = 0; i < 2; i++) {
+            gMarioStates[i].numStars = numStars;
+        }
 
         if (!noExit) {
             drop_queued_background_music();
@@ -858,6 +865,11 @@ u32 interact_bbh_entrance(struct MarioState *m, UNUSED u32 interactType, struct 
 
 u32 interact_warp(struct MarioState *m, UNUSED u32 interactType, struct Object *o) {
     u32 action;
+
+    if (m != &gMarioStates[0]) {
+        // don't do for remote players
+        return FALSE;
+    }
 
     if (o->oInteractionSubtype & INT_SUBTYPE_FADING_WARP) {
         action = m->action;
@@ -1792,7 +1804,10 @@ void mario_process_interactions(struct MarioState *m) {
         sDisplayingDoorText = FALSE;
     }
     if (!(m->marioObj->collidedObjInteractTypes & INTERACT_WARP)) {
-        sJustTeleported = FALSE;
+        if (m == &gMarioStates[0]) {
+            // limit to only local mario
+            sJustTeleported = FALSE;
+        }
     }
 }
 

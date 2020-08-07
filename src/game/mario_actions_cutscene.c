@@ -1436,7 +1436,10 @@ s32 act_teleport_fade_out(struct MarioState *m) {
     }
 
     if (m->actionTimer++ == 20) {
-        level_trigger_warp(m, WARP_OP_TELEPORT);
+        if (m == &gMarioStates[0]) {
+            // only do for local player
+            level_trigger_warp(m, WARP_OP_TELEPORT);
+        }
     }
 
     stop_and_set_height_to_floor(m);

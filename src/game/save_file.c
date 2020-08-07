@@ -474,6 +474,7 @@ void save_file_reload(void) {
  * If coin score is greater than the current high score, update it.
  */
 void save_file_collect_star_or_key(s16 coinScore, s16 starIndex) {
+
     s32 fileIndex = gCurrSaveFileNum - 1;
     s32 courseIndex = gCurrCourseNum - 1;
 

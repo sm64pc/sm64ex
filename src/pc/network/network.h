@@ -20,6 +20,7 @@ enum PacketType {
     PACKET_OBJECT,
     PACKET_LEVEL_WARP,
     PACKET_INSIDE_PAINTING,
+    PACKET_COLLECT_STAR,
 };
 
 struct Packet {
@@ -78,4 +79,6 @@ void network_receive_level_warp(struct Packet* p);
 void network_update_inside_painting(void);
 void network_receive_inside_painting(struct Packet* p);
 
+void network_send_collect_star(s16 coinScore, s16 starIndex);
+void network_receive_collect_star(struct Packet* p);
 #endif
