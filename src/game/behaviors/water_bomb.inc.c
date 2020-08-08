@@ -33,6 +33,7 @@ void bhv_water_bomb_spawner_update(void) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &o->oWaterBombSpawnerBombActive);
         network_init_object_field(o, &o->oWaterBombSpawnerTimeToSpawn);
+        network_object_settings(o, FALSE, 0, TRUE);
     }
 
     f32 latDistToMario = 9999;

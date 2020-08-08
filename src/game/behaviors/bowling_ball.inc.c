@@ -180,41 +180,69 @@ void bhv_generic_bowling_ball_spawner_init(void) {
 }
 
 void bhv_generic_bowling_ball_spawner_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_object_settings(o, FALSE, 0, TRUE);
+    }
+
     struct Object *bowlingBall;
 
     if (o->oTimer == 256)
         o->oTimer = 0;
 
+    struct Object* player = nearest_player_to_object(o);
+
     if (is_point_within_radius_of_mario(o->oPosX, o->oPosY, o->oPosZ, 1000)
-        || (o->oPosY < gMarioObject->header.gfx.pos[1]))
+        || (o->oPosY < player->header.gfx.pos[1]))
         return;
 
     if ((o->oTimer & o->oBBallSpawnerPeriodMinus1) == 0) /* Modulus */
     {
         if (is_point_within_radius_of_mario(o->oPosX, o->oPosY, o->oPosZ, o->oBBallSpawnerMaxSpawnDist)) {
             if ((s32)(random_float() * o->oBBallSpawnerSpawnOdds) == 0) {
+                if (!network_owns_object(o)) {
+                    return;
+                }
+                // this branch only runs for one player at a time
                 bowlingBall = spawn_object(o, MODEL_BOWLING_BALL, bhvBowlingBall);
                 bowlingBall->oBehParams2ndByte = o->oBehParams2ndByte;
+
+                // send out the bowlingBall object
+                struct Object* spawn_objects[] = { bowlingBall };
+                u32 models[] = { MODEL_BOWLING_BALL };
+                network_send_spawn_objects(spawn_objects, models, 1);
             }
         }
     }
 }
 
 void bhv_thi_bowling_ball_spawner_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_object_settings(o, FALSE, 0, TRUE);
+    }
+
     struct Object *bowlingBall;
+    struct Object* player = nearest_player_to_object(o);
 
     if (o->oTimer == 256)
         o->oTimer = 0;
 
     if (is_point_within_radius_of_mario(o->oPosX, o->oPosY, o->oPosZ, 800)
-        || (o->oPosY < gMarioObject->header.gfx.pos[1]))
+        || (o->oPosY < player->header.gfx.pos[1]))
         return;
 
     if ((o->oTimer % 64) == 0) {
         if (is_point_within_radius_of_mario(o->oPosX, o->oPosY, o->oPosZ, 12000)) {
-            if ((s32)(random_float() * 1.5) == 0) {
+            if (network_owns_object(o) && (s32)(random_float() * 1.5) == 0) {
+                // this branch only runs for one player at a time
                 bowlingBall = spawn_object(o, MODEL_BOWLING_BALL, bhvBowlingBall);
                 bowlingBall->oBehParams2ndByte = o->oBehParams2ndByte;
+
+                // send out the bowlingBall object
+                struct Object* spawn_objects[] = { bowlingBall };
+                u32 models[] = { MODEL_BOWLING_BALL };
+                network_send_spawn_objects(spawn_objects, models, 1);
             }
         }
     }
@@ -224,6 +252,9 @@ void bhv_bob_pit_bowling_ball_init(void) {
     o->oGravity = 12.0f;
     o->oFriction = 1.0f;
     o->oBuoyancy = 2.0f;
+
+    network_init_object(o, 5000.0f);
+    network_object_settings(o, FALSE, 5.0f, TRUE);
 }
 
 void bhv_bob_pit_bowling_ball_loop(void) {

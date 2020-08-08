@@ -13,6 +13,7 @@
 #include "game/object_list_processor.h"
 #include "graph_node.h"
 #include "surface_collision.h"
+#include "pc/network/network.h"
 
 // Macros for retrieving arguments from behavior scripts.
 #define BHV_CMD_GET_1ST_U8(index)  (u8)((gCurBhvCommand[index] >> 24) & 0xFF) // unused
@@ -63,7 +64,12 @@ void force_replicable_seed(u8 always) {
 // Generate a pseudorandom integer from 0 to 65535 from the random seed, and update the seed.
 u16 random_u16(void) {
     // override this function for synchronized entities
-    if (gCurrentObject->oSyncID != 0) { force_replicable_seed(FALSE); }
+    if (gCurrentObject->oSyncID != 0) {
+        struct SyncObject* so = &syncObjects[gCurrentObject->oSyncID];
+        if (so->o != NULL && !so->keepRandomSeed) {
+            force_replicable_seed(FALSE);
+        }
+    }
 
     u16 temp1, temp2;
 

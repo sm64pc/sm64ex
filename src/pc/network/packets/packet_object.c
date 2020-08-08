@@ -27,15 +27,17 @@ void network_init_object(struct Object *o, float maxSyncDistance) {
     so->behavior = o->behavior;
     so->onEventId = 0;
     so->fullObjectSync = false;
+    so->keepRandomSeed = false;
     so->maxUpdateRate = 0;
     memset(so->extraFields, 0, sizeof(void*) * MAX_SYNC_OBJECT_FIELDS);
 }
 
-void network_object_settings(struct Object *o, bool fullObjectSync, float maxUpdateRate) {
+void network_object_settings(struct Object *o, bool fullObjectSync, float maxUpdateRate, bool keepRandomSeed) {
     assert(o->oSyncID != 0);
     struct SyncObject* so = &syncObjects[o->oSyncID];
     so->fullObjectSync = fullObjectSync;
     so->maxUpdateRate = maxUpdateRate;
+    so->keepRandomSeed = keepRandomSeed;
 }
 
 void network_init_object_field(struct Object *o, void* field) {
