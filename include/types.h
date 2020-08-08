@@ -376,5 +376,15 @@ struct MarioState
 //       HOWEVER, simply increasing this to 3 will not magically work
 //       many things will have to be overhauled!
 #define MAX_PLAYERS 2
+// still deciding to increase it?
+// networking will have to be rewritten to have more than one destination. 'reliable' messages would need to be sent per-player
+// things that base priority on whether they are the host or not would need priority based on player index instead
+// player 2's mario2.geo file will need a different one for player 3, 4, 5, etc... and will need values within it adjusted in a similar manner (diff them)
+// read all of the code surrounding a search through the entire codebase of the following:
+// gLuigiObject
+// gMarioObject
+// gMarioState[0]
+// gMarioState[1]
+// luigi
 
 #endif // _SM64_TYPES_H_

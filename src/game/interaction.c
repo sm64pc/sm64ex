@@ -748,6 +748,11 @@ void reset_mario_pitch(struct MarioState *m) {
 }
 
 u32 interact_coin(struct MarioState *m, UNUSED u32 interactType, struct Object *o) {
+    if (m != &gMarioStates[0]) {
+        // only collect locally
+        return FALSE;
+    }
+
     m->numCoins += o->oDamageOrCoinValue;
     m->healCounter += 4 * o->oDamageOrCoinValue;
 
@@ -761,6 +766,8 @@ u32 interact_coin(struct MarioState *m, UNUSED u32 interactType, struct Object *
     if (o->oDamageOrCoinValue >= 2) {
         queue_rumble_data(5, 80);
     }
+
+    network_send_collect_coin(o);
 
     return FALSE;
 }

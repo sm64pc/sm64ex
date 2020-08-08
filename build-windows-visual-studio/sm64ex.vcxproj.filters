@@ -14961,6 +14961,12 @@
     <ClCompile Include="..\src\pc\network\packets\packet_inside_painting.c">
       <Filter>Source Files\src\pc\network\packets</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\pc\network\packets\packet_collect_star.c">
+      <Filter>Source Files\src\pc\network\packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pc\network\packets\packet_collect_coin.c">
+      <Filter>Source Files\src\pc\network\packets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\actors\common0.h">

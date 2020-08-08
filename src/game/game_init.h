@@ -32,7 +32,7 @@ extern OSMesg D_80339CD4;
 extern struct VblankHandler gGameVblankHandler;
 extern uintptr_t gPhysicalFrameBuffers[3];
 extern uintptr_t gPhysicalZBuffer;
-extern void *D_80339CF0[2];
+extern void *D_80339CF0[MAX_PLAYERS];
 extern void *D_80339CF4;
 extern struct SPTask *gGfxSPTask;
 extern Gfx *gDisplayListHead;
@@ -51,7 +51,7 @@ extern struct DemoInput gRecordedDemoInput;
 
 // this area is the demo input + the header. when the demo is loaded in, there is a header the size
 // of a single word next to the input list. this word is the current ID count.
-extern struct MarioAnimation D_80339D10[2];
+extern struct MarioAnimation D_80339D10[MAX_PLAYERS];
 extern struct MarioAnimation gDemo;
 
 extern u8 gMarioAnims[];

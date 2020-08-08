@@ -1634,6 +1634,7 @@ static void obj_spawn_loot_coins(struct Object *obj, s32 numCoins, f32 sp30,
         spawnHeight = obj->oPosY;
     }
 
+    force_replicable_seed(TRUE);
     for (i = 0; i < numCoins; i++) {
         if (obj->oNumLootCoins <= 0) {
             break;
@@ -1657,6 +1658,7 @@ void obj_spawn_loot_yellow_coins(struct Object *obj, s32 numCoins, f32 sp28) {
 }
 
 void cur_obj_spawn_loot_coin_at_mario_pos(void) {
+    force_replicable_seed(TRUE);
     struct Object *coin;
     if (o->oNumLootCoins <= 0) {
         return;
@@ -2940,6 +2942,7 @@ s32 cur_obj_check_interacted(void) {
 }
 
 void cur_obj_spawn_loot_blue_coin(void) {
+    force_replicable_seed(TRUE);
     if (o->oNumLootCoins >= 5) {
         spawn_object(o, MODEL_BLUE_COIN, bhvMrIBlueCoin);
         o->oNumLootCoins -= 5;

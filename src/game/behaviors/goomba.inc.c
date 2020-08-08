@@ -285,7 +285,6 @@ void huge_goomba_weakly_attacked(void) {
  */
 void bhv_goomba_update(void) {
     // PARTIAL_UPDATE
-    random_sync_reset();
 
     f32 animSpeed;
 

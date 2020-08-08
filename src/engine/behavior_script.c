@@ -29,7 +29,6 @@
 #define BHV_CMD_GET_ADDR_OF_CMD(index) (uintptr_t)(&gCurBhvCommand[index])
 
 static u16 gRandomSeed16;
-static u16 gSyncRandom;
 
 // Unused function that directly jumps to a behavior command and resets the object's stack index.
 static void goto_behavior_unused(const BehaviorScript *bhvAddr) {
@@ -37,52 +36,34 @@ static void goto_behavior_unused(const BehaviorScript *bhvAddr) {
     gCurrentObject->bhvStackIndex = 0;
 }
 
-void random_sync_reset(void) {
-    // seed the sync'd random seed with enough synchronzied information to be "unique enough"
-    gSyncRandom = (u16)gCurrentObject->oPosX
-                ^ (u16)gCurrentObject->oPosY
-                ^ (u16)gCurrentObject->oPosZ
-                ^ (u16)gCurrentObject->oVelX
-                ^ (u16)gCurrentObject->oVelY
-                ^ (u16)gCurrentObject->oVelZ
-                ^ (u16)gCurrentObject->oAction;
-}
-
-// Generate a pseudorandom integer from 0 to 65535 from the synchronized seed, and update the seed.
-u16 random_sync_u16(void) {
-    u16 temp1, temp2;
-
-    if (gSyncRandom == 22026) {
-        gSyncRandom = 0;
+void force_replicable_seed(u8 always) {
+    // force the seed to consistent values
+    extern u16 gRandomSeed16;
+    extern u32 gGlobalTimer;
+    static u32 lastTimer = 0;
+    static f32 lastPos[3] = { 0 };
+    if (gGlobalTimer == lastTimer
+        && lastPos[0] == gCurrentObject->oPosX / 10
+        && lastPos[1] == gCurrentObject->oPosY / 10
+        && lastPos[2] == gCurrentObject->oPosZ / 10
+        && !always) {
+        return;
     }
-
-    temp1 = (gSyncRandom & 0x00FF) << 8;
-    temp1 = temp1 ^ gSyncRandom;
-
-    gSyncRandom = ((temp1 & 0x00FF) << 8) + ((temp1 & 0xFF00) >> 8);
-
-    temp1 = ((temp1 & 0x00FF) << 1) ^ gSyncRandom;
-    temp2 = (temp1 >> 1) ^ 0xFF80;
-
-    if ((temp1 & 1) == 0) {
-        if (temp2 == 43605) {
-            gSyncRandom = 0;
-        }
-        else {
-            gSyncRandom = temp2 ^ 0x1FF4;
-        }
+    gRandomSeed16 = (u16)(gCurrentObject->oPosX / 1000.0f)
+                  ^ (u16)(gCurrentObject->oPosY / 1000.0f)
+                  ^ (u16)(gCurrentObject->oPosZ / 1000.0f);
+    if (!always) {
+        lastPos[0] = gCurrentObject->oPosX / 10;
+        lastPos[1] = gCurrentObject->oPosY / 10;
+        lastPos[2] = gCurrentObject->oPosZ / 10;
+        lastTimer = gGlobalTimer;
     }
-    else {
-        gSyncRandom = temp2 ^ 0x8180;
-    }
-
-    return gSyncRandom;
 }
 
 // Generate a pseudorandom integer from 0 to 65535 from the random seed, and update the seed.
 u16 random_u16(void) {
     // override this function for synchronized entities
-    if (gCurrentObject->oSyncID != 0) { return random_sync_u16(); }
+    if (gCurrentObject->oSyncID != 0) { force_replicable_seed(FALSE); }
 
     u16 temp1, temp2;
 

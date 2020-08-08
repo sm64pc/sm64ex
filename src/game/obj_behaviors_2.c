@@ -743,6 +743,7 @@ static s32 obj_handle_attacks(struct ObjectHitbox *hitbox, s32 attackedMarioActi
                     break;
 
                 case ATTACK_HANDLER_SQUISHED_WITH_BLUE_COIN:
+                    force_replicable_seed(TRUE);
                     o->oNumLootCoins = -1;
                     obj_set_squished_action();
                     break;
