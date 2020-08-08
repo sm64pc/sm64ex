@@ -188,7 +188,7 @@ void bhv_mips_act_idle(void) {
 
     // Spawn a star if he was just picked up for the first time.
     if (o->oMipsStarStatus == MIPS_STAR_STATUS_SHOULD_SPAWN_STAR) {
-        bhv_spawn_star_no_level_exit(o->oBehParams2ndByte + 3);
+        bhv_spawn_star_no_level_exit(o, o->oBehParams2ndByte + 3);
         o->oMipsStarStatus = MIPS_STAR_STATUS_ALREADY_SPAWNED_STAR;
     }
 }

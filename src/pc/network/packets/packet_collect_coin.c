@@ -101,7 +101,7 @@ void network_receive_collect_coin(struct Packet* p) {
     if (COURSE_IS_MAIN_COURSE(gCurrCourseNum)
         && gMarioStates[0].numCoins - coin->oDamageOrCoinValue < 100
         && gMarioStates[0].numCoins >= 100) {
-        bhv_spawn_star_no_level_exit(6);
+        bhv_spawn_star_no_level_exit(gMarioStates[1].marioObj, 6);
     }
 
     return;
@@ -115,7 +115,7 @@ SANITY_CHECK_COINS:;
     if (COURSE_IS_MAIN_COURSE(gCurrCourseNum)
         && oldCoinCount < 100
         && gMarioStates[0].numCoins >= 100) {
-        bhv_spawn_star_no_level_exit(6);
+        bhv_spawn_star_no_level_exit(gMarioStates[1].marioObj, 6);
     }
 
 }

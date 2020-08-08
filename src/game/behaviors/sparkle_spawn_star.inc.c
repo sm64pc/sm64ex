@@ -33,9 +33,23 @@ void set_sparkle_spawn_star_hitbox(void) {
 void set_home_to_mario(void) {
     f32 sp1C;
     f32 sp18;
-    o->oHomeX = gMarioObject->oPosX;
-    o->oHomeZ = gMarioObject->oPosZ;
-    o->oHomeY = gMarioObject->oPosY;
+    u8 parentIsMario = FALSE;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (o->parentObj == gMarioStates[i].marioObj) {
+            parentIsMario = TRUE;
+            break;
+        }
+    }
+    if (parentIsMario) {
+        o->oHomeX = o->parentObj->oPosX;
+        o->oHomeZ = o->parentObj->oPosZ;
+        o->oHomeY = o->parentObj->oPosY;
+
+    } else {
+        o->oHomeX = gMarioObject->oPosX;
+        o->oHomeZ = gMarioObject->oPosZ;
+        o->oHomeY = gMarioObject->oPosY;
+    }
     o->oHomeY += 250.0f;
     o->oPosY = o->oHomeY;
     sp1C = o->oHomeX - o->oPosX;
@@ -110,8 +124,8 @@ void bhv_spawned_star_loop(void) {
     o->oInteractStatus = 0;
 }
 
-void bhv_spawn_star_no_level_exit(u32 sp20) {
-    struct Object *sp1C = spawn_object(o, MODEL_STAR, bhvSpawnedStarNoLevelExit);
+void bhv_spawn_star_no_level_exit(struct Object* object, u32 sp20) {
+    struct Object *sp1C = spawn_object(object, MODEL_STAR, bhvSpawnedStarNoLevelExit);
     sp1C->oBehParams = sp20 << 24;
     sp1C->oInteractionSubtype = INT_SUBTYPE_NO_EXIT;
     obj_set_angle(sp1C, 0, 0, 0);

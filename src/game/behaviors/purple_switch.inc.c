@@ -7,6 +7,18 @@
  */
 
 void bhv_purple_switch_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+    }
+
+    u8 anyPlayerOnPlatform = FALSE;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (gMarioState[i].marioObj->platform == o) {
+            anyPlayerOnPlatform = TRUE;
+            break;
+        }
+    }
+
     UNUSED s32 unused;
     switch (o->oAction) {
         /**
@@ -19,6 +31,7 @@ void bhv_purple_switch_loop(void) {
             if (gMarioObject->platform == o && !(gMarioStates->action & MARIO_UNKNOWN_13)) {
                 if (lateral_dist_between_objects(o, gMarioObject) < 127.5) {
                     o->oAction = PURPLE_SWITCH_PRESSED;
+                    network_send_object(o);
                 }
             }
             break;
@@ -41,7 +54,7 @@ void bhv_purple_switch_loop(void) {
          */
         case PURPLE_SWITCH_TICKING:
             if (o->oBehParams2ndByte != 0) {
-                if (o->oBehParams2ndByte == 1 && gMarioObject->platform != o) {
+                if (o->oBehParams2ndByte == 1 && !anyPlayerOnPlatform) {
                     o->oAction++;
                 } else {
                     if (o->oTimer < 360) {
@@ -71,7 +84,7 @@ void bhv_purple_switch_loop(void) {
          * unpressed state.
          */
         case PURPLE_SWITCH_WAIT_FOR_MARIO_TO_GET_OFF:
-            if (!cur_obj_is_mario_on_platform()) {
+            if (!anyPlayerOnPlatform) {
                 o->oAction = PURPLE_SWITCH_UNPRESSED;
             }
             break;
