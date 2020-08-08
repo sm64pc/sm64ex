@@ -28,7 +28,7 @@ void network_receive_player(struct Packet* p) {
     packet_read(p, &gMarioStates[1], 96);
     packet_read(p, gMarioStates[1].controller, 20);
     packet_read(p, &gMarioStates[1].marioObj->rawData.asU32, 320);
-    packet_write(p, &gMarioStates[1].health, 2);
+    packet_read(p, &gMarioStates[1].health, 2);
     packet_read(p, &heldSyncID, 4);
 
     if (heldSyncID != NULL) {
