@@ -29,36 +29,65 @@ static struct ObjectHitbox sWaterBombHitbox = {
  * Spawn water bombs targeting mario when he comes in range.
  */
 void bhv_water_bomb_spawner_update(void) {
-    f32 latDistToMario;
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->oWaterBombSpawnerBombActive);
+        network_init_object_field(o, &o->oWaterBombSpawnerTimeToSpawn);
+    }
+
+    f32 latDistToMario = 9999;
     f32 spawnerRadius;
+    struct MarioState* marioState = NULL;
+    struct Object* player = NULL;
+
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        f32 latDist = lateral_dist_between_objects(o, gMarioStates[i].marioObj);
+        if (latDist < latDistToMario) {
+            latDistToMario = latDist;
+            player = gMarioStates[i].marioObj;
+            marioState = &gMarioStates[i];
+        }
+    }
 
     spawnerRadius = 50 * (u16)(o->oBehParams >> 16) + 200.0f;
-    latDistToMario = lateral_dist_between_objects(o, gMarioObject);
 
     // When mario is in range and a water bomb isn't already active
     if (!o->oWaterBombSpawnerBombActive && latDistToMario < spawnerRadius
-        && gMarioObject->oPosY - o->oPosY < 1000.0f) {
+        && player->oPosY - o->oPosY < 1000.0f) {
         if (o->oWaterBombSpawnerTimeToSpawn != 0) {
             o->oWaterBombSpawnerTimeToSpawn -= 1;
-        } else {
-            struct Object *waterBomb =
-                spawn_object_relative(0, 0, 2000, 0, o, MODEL_WATER_BOMB, bhvWaterBomb);
+        } else if (network_owns_object(o)) {
+            // this branch only runs for one player at a time
+
+            struct Object *waterBomb = spawn_object_relative(0, 0, 2000, 0, o, MODEL_WATER_BOMB, bhvWaterBomb);
 
             if (waterBomb != NULL) {
                 // Drop farther ahead of mario when he is moving faster
-                f32 waterBombDistToMario = 28.0f * gMarioStates[0].forwardVel + 100.0f;
+                f32 waterBombDistToMario = 28.0f * marioState->forwardVel + 100.0f;
 
                 waterBomb->oAction = WATER_BOMB_ACT_INIT;
 
-                waterBomb->oPosX =
-                    gMarioObject->oPosX + waterBombDistToMario * sins(gMarioObject->oMoveAngleYaw);
-                waterBomb->oPosZ =
-                    gMarioObject->oPosZ + waterBombDistToMario * coss(gMarioObject->oMoveAngleYaw);
+                waterBomb->oPosX = player->oPosX + waterBombDistToMario * sins(player->oMoveAngleYaw);
+                waterBomb->oPosZ = player->oPosZ + waterBombDistToMario * coss(player->oMoveAngleYaw);
 
-                spawn_object(waterBomb, MODEL_WATER_BOMB_SHADOW, bhvWaterBombShadow);
+                struct Object *waterBombShadow = spawn_object(waterBomb, MODEL_WATER_BOMB_SHADOW, bhvWaterBombShadow);
 
                 o->oWaterBombSpawnerBombActive = TRUE;
                 o->oWaterBombSpawnerTimeToSpawn = random_linear_offset(0, 50);
+
+                // update the spawner
+                network_send_object(o);
+
+                // send out the waterBomb objects
+                struct Object* spawn_objects[] = {
+                    waterBomb,
+                    waterBombShadow
+                };
+                u32 models[] = {
+                    MODEL_WATER_BOMB,
+                    MODEL_WATER_BOMB_SHADOW
+                };
+                network_send_spawn_objects(spawn_objects, models, 2);
             }
         }
     }
@@ -128,7 +157,9 @@ static void water_bomb_act_drop(void) {
             set_camera_shake_from_point(SHAKE_POS_SMALL, o->oPosX, o->oPosY, o->oPosZ);
 
             // Move toward mario
-            o->oMoveAngleYaw = o->oAngleToMario;
+            struct Object* player = nearest_player_to_object(o);
+            int angleToPlayer = obj_angle_to_object(o, player);
+            o->oMoveAngleYaw = angleToPlayer;
             o->oForwardVel = 10.0f;
             o->oWaterBombStretchSpeed = -40.0f;
         }

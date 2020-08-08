@@ -117,5 +117,4 @@ SANITY_CHECK_COINS:;
         && gMarioStates[0].numCoins >= 100) {
         bhv_spawn_star_no_level_exit(gMarioStates[1].marioObj, 6);
     }
-
 }

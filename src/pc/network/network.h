@@ -18,6 +18,7 @@ enum PacketType {
     PACKET_ACK,
     PACKET_PLAYER,
     PACKET_OBJECT,
+    PACKET_SPAWN_OBJECTS,
     PACKET_LEVEL_WARP,
     PACKET_INSIDE_PAINTING,
     PACKET_COLLECT_STAR,
@@ -75,7 +76,11 @@ void network_receive_player(struct Packet* p);
 
 bool network_owns_object(struct Object* o);
 void network_update_objects(void);
+void network_send_object(struct Object* o);
 void network_receive_object(struct Packet* p);
+
+void network_send_spawn_objects(struct Object* objects[], u32 models[], u8 objectCount);
+void network_receive_spawn_objects(struct Packet* p);
 
 void network_update_level_warp(void);
 void network_receive_level_warp(struct Packet* p);
