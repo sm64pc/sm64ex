@@ -121,23 +121,35 @@ struct Object *spawn_star(struct Object *sp30, f32 sp34, f32 sp38, f32 sp3C) {
     return sp30;
 }
 
-void spawn_default_star(f32 sp20, f32 sp24, f32 sp28) {
-    struct Object *sp1C;
-    sp1C = spawn_star(sp1C, sp20, sp24, sp28);
-    sp1C->oBehParams2ndByte = 0;
+struct Object* spawn_default_star(f32 x, f32 y, f32 z) {
+    if (gSpawnedStarDefault) { return NULL; }
+    struct Object *star;
+    star = spawn_star(star, x, y, z);
+    star->oBehParams2ndByte = 0;
+    gSpawnedStarDefault = TRUE;
+    network_send_spawn_star(star, 0, x, y, z);
+    return star;
 }
 
-void spawn_red_coin_cutscene_star(f32 sp20, f32 sp24, f32 sp28) {
-    struct Object *sp1C;
-    sp1C = spawn_star(sp1C, sp20, sp24, sp28);
-    sp1C->oBehParams2ndByte = 1;
+struct Object* spawn_red_coin_cutscene_star(f32 x, f32 y, f32 z) {
+    if (gSpawnedStarRedCoin) { return NULL; }
+    struct Object * star;
+    star = spawn_star(star, x, y, z);
+    star->oBehParams2ndByte = 1;
+    gSpawnedStarRedCoin = TRUE;
+    network_send_spawn_star(star, 1, x, y, z);
+    return star;
 }
 
-void spawn_no_exit_star(f32 sp20, f32 sp24, f32 sp28) {
-    struct Object *sp1C;
-    sp1C = spawn_star(sp1C, sp20, sp24, sp28);
-    sp1C->oBehParams2ndByte = 1;
-    sp1C->oInteractionSubtype |= INT_SUBTYPE_NO_EXIT;
+struct Object* spawn_no_exit_star(f32 x, f32 y, f32 z) {
+    if (gSpawnedStarHidden) { return NULL; }
+    struct Object * star;
+    star = spawn_star(star, x, y, z);
+    star->oBehParams2ndByte = 1;
+    star->oInteractionSubtype |= INT_SUBTYPE_NO_EXIT;
+    gSpawnedStarHidden = TRUE;
+    network_send_spawn_star(star, 2, x, y, z);
+    return star;
 }
 
 void bhv_hidden_red_coin_star_init(void) {

@@ -576,4 +576,8 @@ Gfx *geo_scale_bowser_key(s32 run, struct GraphNode *node, UNUSED f32 mtx[4][4])
 extern struct WaterDropletParams gShallowWaterSplashDropletParams;
 extern struct WaterDropletParams gShallowWaterWaveDropletParams;
 
+struct Object* spawn_default_star(f32 x, f32 y, f32 z);
+struct Object* spawn_red_coin_cutscene_star(f32 x, f32 y, f32 z);
+struct Object* spawn_no_exit_star(f32 x, f32 y, f32 z);
+
 #endif // BEHAVIOR_ACTIONS_H

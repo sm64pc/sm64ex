@@ -762,7 +762,7 @@ u32 interact_coin(struct MarioState *m, UNUSED u32 interactType, struct Object *
         && m->numCoins >= 100) {
         bhv_spawn_star_no_level_exit(m->marioObj, 6);
     }
-   
+
     if (o->oDamageOrCoinValue >= 2) {
         queue_rumble_data(5, 80);
     }
@@ -779,6 +779,9 @@ u32 interact_water_ring(struct MarioState *m, UNUSED u32 interactType, struct Ob
 }
 
 u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct Object *o) {
+    // only allow for local player
+    if (m != &gMarioStates[0]) { return; }
+
     u32 starIndex;
     u32 starGrabAction = ACT_STAR_DANCE_EXIT;
     u32 noExit = (o->oInteractionSubtype & INT_SUBTYPE_NO_EXIT) != 0;
@@ -822,7 +825,7 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
 
         if (m == &gMarioStates[0]) {
             // sync the star collection
-            network_send_collect_star(m->numCoins, starIndex);
+            network_send_collect_star(o, m->numCoins, starIndex);
         }
         save_file_collect_star_or_key(m->numCoins, starIndex);
 
@@ -1127,7 +1130,7 @@ u32 interact_tornado(struct MarioState *m, UNUSED u32 interactType, struct Objec
 
         play_sound(SOUND_MARIO_WAAAOOOW, m->marioObj->header.gfx.cameraToObject);
         queue_rumble_data(30, 60);
-        
+
         return set_mario_action(m, ACT_TORNADO_TWIRLING, m->action == ACT_TWIRLING);
     }
 
@@ -1149,7 +1152,7 @@ u32 interact_whirlpool(struct MarioState *m, UNUSED u32 interactType, struct Obj
 
         play_sound(SOUND_MARIO_WAAAOOOW, m->marioObj->header.gfx.cameraToObject);
         queue_rumble_data(30, 60);
-        
+
         return set_mario_action(m, ACT_CAUGHT_IN_WHIRLPOOL, 0);
     }
 
@@ -1184,7 +1187,7 @@ u32 interact_flame(struct MarioState *m, UNUSED u32 interactType, struct Object 
     if (!sInvulnerable && !(m->flags & MARIO_METAL_CAP) && !(m->flags & MARIO_VANISH_CAP)
         && !(o->oInteractionSubtype & get_invincibility_flag(m))) {
         queue_rumble_data(5, 80);
-        
+
         o->oInteractStatus = INT_STATUS_INTERACTED;
         m->interactObj = o;
 
@@ -1284,7 +1287,7 @@ u32 interact_bully(struct MarioState *m, UNUSED u32 interactType, struct Object 
         push_mario_out_of_object(m, o, 5.0f);
         drop_and_set_mario_action(m, bully_knock_back_mario(m), 0);
         queue_rumble_data(5, 80);
-        
+
         return TRUE;
     }
 

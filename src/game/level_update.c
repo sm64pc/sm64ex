@@ -1190,6 +1190,10 @@ s32 init_level(void) {
     sTransitionTimer = 0;
     D_80339EE0 = 0;
 
+    gSpawnedStarDefault = 0;
+    gSpawnedStarRedCoin = 0;
+    gSpawnedStarHidden = 0;
+
     if (gCurrCreditsEntry == NULL) {
         gHudDisplay.flags = HUD_DISPLAY_DEFAULT;
     } else {
@@ -1237,7 +1241,7 @@ s32 init_level(void) {
             set_background_music(gCurrentArea->musicParam, gCurrentArea->musicParam2, 0);
         }
     }
-    
+
     if (gCurrDemoInput == NULL) {
         cancel_rumble();
     }
