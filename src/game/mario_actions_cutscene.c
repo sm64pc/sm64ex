@@ -1114,7 +1114,8 @@ s32 act_exit_land_save_dialog(struct MarioState *m) {
         case 0:
             set_mario_animation(m, m->actionArg == 0 ? MARIO_ANIM_GENERAL_LAND
                                                      : MARIO_ANIM_LAND_FROM_SINGLE_JUMP);
-            if (is_anim_past_end(m)) {
+            // only allow for local player
+            if (m == &gMarioStates[0] && is_anim_past_end(m)) {
                 if (gLastCompletedCourseNum != COURSE_BITDW
                     && gLastCompletedCourseNum != COURSE_BITFS) {
                     enable_time_stop();
@@ -1150,7 +1151,8 @@ s32 act_exit_land_save_dialog(struct MarioState *m) {
                     play_sound(SOUND_ACTION_UNKNOWN45C, m->marioObj->header.gfx.cameraToObject);
                     // no break
             }
-            handle_save_menu(m);
+            // only allow for local player
+            if (m == &gMarioStates[0]) { handle_save_menu(m); }
             break;
         // exit without cap
         case 2:
@@ -1162,7 +1164,8 @@ s32 act_exit_land_save_dialog(struct MarioState *m) {
                 m->marioBodyState->eyeState = MARIO_EYES_HALF_CLOSED;
             }
 
-            handle_save_menu(m);
+            // only allow for local player
+            if (m == &gMarioStates[0]) { handle_save_menu(m); }
             break;
         // exit with cap
         case 3:
@@ -1180,7 +1183,8 @@ s32 act_exit_land_save_dialog(struct MarioState *m) {
                     cutscene_put_cap_on(m);
                     break;
             }
-            handle_save_menu(m);
+            // only allow for local player
+            if (m == &gMarioStates[0]) { handle_save_menu(m); }
             break;
     }
 
