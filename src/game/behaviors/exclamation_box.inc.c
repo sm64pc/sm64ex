@@ -71,9 +71,10 @@ void exclamation_box_act_2(void) {
         o->oPosY = o->oHomeY;
         o->oGraphYOffset = 0.0f;
     }
-    if (cur_obj_was_attacked_or_ground_pounded()) {
+    if (o->oExclamationBoxUnkFC == 0x4000 || cur_obj_was_attacked_or_ground_pounded()) {
         cur_obj_become_intangible();
         o->oExclamationBoxUnkFC = 0x4000;
+        network_send_object(o);
         o->oVelY = 30.0f;
         o->oGravity = -8.0f;
         o->oFloorHeight = o->oPosY;
@@ -141,6 +142,10 @@ void (*sExclamationBoxActions[])(void) = { exclamation_box_act_0, exclamation_bo
                                            exclamation_box_act_4, exclamation_box_act_5 };
 
 void bhv_exclamation_box_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->oExclamationBoxUnkFC);
+    }
     cur_obj_scale(2.0f);
     cur_obj_call_action_function(sExclamationBoxActions);
 }
