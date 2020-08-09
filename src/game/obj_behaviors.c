@@ -519,42 +519,25 @@ s32 is_point_within_radius_of_mario(f32 x, f32 y, f32 z, s32 dist) {
  * Returns either gMarioObject or gLuigiObject depending on what is closer
  */
 struct MarioState* nearest_mario_state_to_object(struct Object *obj) {
-    f32 mx = gMarioState[0].marioObj->header.gfx.pos[0] - obj->oPosX;
-    f32 my = gMarioState[0].marioObj->header.gfx.pos[1] - obj->oPosY;
-    f32 mz = gMarioState[0].marioObj->header.gfx.pos[2] - obj->oPosZ;
-    mx *= mx;
-    my *= my;
-    mz *= mz;
+    struct MarioState* nearest = NULL;
+    f32 nearestDist = 0;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        float dist = dist_between_objects(obj, gMarioState[i].marioObj);
+        if (nearest == NULL || dist < nearestDist) {
+            nearest = &gMarioState[i];
+            nearestDist = dist;
+        }
+    }
 
-    f32 lx = gMarioState[1].marioObj->header.gfx.pos[0] - obj->oPosX;
-    f32 ly = gMarioState[1].marioObj->header.gfx.pos[1] - obj->oPosY;
-    f32 lz = gMarioState[1].marioObj->header.gfx.pos[2] - obj->oPosZ;
-    lx *= lx;
-    ly *= ly;
-    lz *= lz;
-
-    return (mx + my + mz <= lx + ly + lz) ? &gMarioState[0] : &gMarioState[1];
+    return nearest;
 }
 
 /**
  * Returns either gMarioObject or gLuigiObject depending on what is closer
  */
 struct Object* nearest_player_to_object(struct Object *obj) {
-    f32 mx = gMarioObject->header.gfx.pos[0] - obj->oPosX;
-    f32 my = gMarioObject->header.gfx.pos[1] - obj->oPosY;
-    f32 mz = gMarioObject->header.gfx.pos[2] - obj->oPosZ;
-    mx *= mx;
-    my *= my;
-    mz *= mz;
-
-    f32 lx = gLuigiObject->header.gfx.pos[0] - obj->oPosX;
-    f32 ly = gLuigiObject->header.gfx.pos[1] - obj->oPosY;
-    f32 lz = gLuigiObject->header.gfx.pos[2] - obj->oPosZ;
-    lx *= lx;
-    ly *= ly;
-    lz *= lz;
-
-    return (mx + my + mz <= lx + ly + lz) ? gMarioObject : gLuigiObject;
+    struct MarioState* nearest = nearest_mario_state_to_object(obj);
+    return nearest->marioObj;
 }
 
 /**
@@ -734,19 +717,21 @@ s8 current_mario_room_check(s16 room) {
 /**
  * Triggers dialog when Mario is facing an object and controls it while in the dialog.
  */
-s16 trigger_obj_dialog_when_facing(s32 *inDialog, s16 dialogID, f32 dist, s32 actionArg) {
+s16 trigger_obj_dialog_when_facing(struct MarioState* m, s32 *inDialog, s16 dialogID, f32 dist, s32 actionArg) {
     s16 dialogueResponse;
 
+    int angleToPlayer = obj_angle_to_object(o, m->marioObj);
+
     if ((is_point_within_radius_of_mario(o->oPosX, o->oPosY, o->oPosZ, (s32) dist) == 1
-         && obj_check_if_facing_toward_angle(o->oFaceAngleYaw, gMarioObject->header.gfx.angle[1] + 0x8000, 0x1000) == 1
-         && obj_check_if_facing_toward_angle(o->oMoveAngleYaw, o->oAngleToMario, 0x1000) == 1)
+         && obj_check_if_facing_toward_angle(o->oFaceAngleYaw, m->marioObj->header.gfx.angle[1] + 0x8000, 0x1000) == 1
+         && obj_check_if_facing_toward_angle(o->oMoveAngleYaw, angleToPlayer, 0x1000) == 1)
         || (*inDialog == 1)) {
         *inDialog = 1;
 
-        if (set_mario_npc_dialog(actionArg) == 2) { //If Mario is speaking.
+        if (set_mario_npc_dialog(m, actionArg) == 2) { //If Mario is speaking.
             dialogueResponse = cutscene_object_with_dialog(CUTSCENE_DIALOG, o, dialogID);
             if (dialogueResponse != 0) {
-                set_mario_npc_dialog(0);
+                set_mario_npc_dialog(m, 0);
                 *inDialog = 0;
                 return dialogueResponse;
             }

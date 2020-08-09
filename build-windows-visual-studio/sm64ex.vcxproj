@@ -3952,6 +3952,7 @@
     <ClCompile Include="..\src\pc\network\packets\packet_player.c" />
     <ClCompile Include="..\src\pc\network\packets\packet_read_write.c" />
     <ClCompile Include="..\src\pc\network\packets\packet_reliable.c" />
+    <ClCompile Include="..\src\pc\network\packets\packet_spawn_objects.c" />
     <ClCompile Include="..\src\pc\pc_main.c" />
     <ClCompile Include="..\src\pc\platform.c" />
     <ClCompile Include="..\src\pc\ultra_reimplementation.c" />

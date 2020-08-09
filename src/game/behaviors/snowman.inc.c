@@ -124,12 +124,12 @@ void bhv_snowmans_bottom_loop(void) {
     switch (o->oAction) {
         case 0:
             if (is_point_within_radius_of_mario(o->oPosX, o->oPosY, o->oPosZ, 400) == 1
-                && set_mario_npc_dialog(1) == 2) {
+                && set_mario_npc_dialog(&gMarioState[0], 1) == 2) {
                 sp1E = cutscene_object_with_dialog(CUTSCENE_DIALOG, o, DIALOG_110);
                 if (sp1E) {
                     o->oForwardVel = 10.0f;
                     o->oAction = 1;
-                    set_mario_npc_dialog(0);
+                    set_mario_npc_dialog(&gMarioState[0], 0);
                 }
             }
             break;
@@ -191,7 +191,7 @@ void bhv_snowmans_head_loop(void) {
 
     switch (o->oAction) {
         case 0:
-            if (trigger_obj_dialog_when_facing(&o->oSnowmansHeadUnkF4, DIALOG_109, 400.0f, 1))
+            if (trigger_obj_dialog_when_facing(&gMarioState[0], &o->oSnowmansHeadUnkF4, DIALOG_109, 400.0f, 1))
                 o->oAction = 1;
             break;
 
@@ -215,7 +215,7 @@ void bhv_snowmans_head_loop(void) {
             break;
 
         case 4:
-            if (trigger_obj_dialog_when_facing(&o->oSnowmansHeadUnkF4, DIALOG_111, 700.0f, 2)) {
+            if (trigger_obj_dialog_when_facing(&gMarioState[0], &o->oSnowmansHeadUnkF4, DIALOG_111, 700.0f, 2)) {
                 spawn_mist_particles();
                 spawn_default_star(-4700.0f, -1024.0f, 1890.0f);
                 o->oAction = 1;

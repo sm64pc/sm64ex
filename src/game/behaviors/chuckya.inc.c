@@ -1,29 +1,34 @@
 // chuckya.c.inc
 
 void common_anchor_mario_behavior(f32 sp28, f32 sp2C, s32 sp30) {
-    switch (o->parentObj->oChuckyaUnk88) {
-        case 0:
-            break;
-        case 1:
-            obj_set_gfx_pos_at_obj_pos(gMarioObject, o);
-            break;
-        case 2:
-            gMarioObject->oInteractStatus |= (sp30 + INT_STATUS_MARIO_UNK2);
-            gMarioStates->forwardVel = sp28;
-            gMarioStates->vel[1] = sp2C;
-            o->parentObj->oChuckyaUnk88 = 0;
-            break;
-        case 3:
-            gMarioObject->oInteractStatus |=
-                (INT_STATUS_MARIO_UNK2 + INT_STATUS_MARIO_UNK6); // loads 2 interactions at once?
-            gMarioStates->forwardVel = 10.0f;
-            gMarioStates->vel[1] = 10.0f;
-            o->parentObj->oChuckyaUnk88 = 0;
-            break;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        struct MarioState* marioState = &gMarioStates[i];
+        struct Object* player = gMarioStates[i].marioObj;
+        if (marioState->heldByObj != o->parentObj && marioState->heldByObj != o) { continue; }
+        switch (o->parentObj->oChuckyaUnk88) {
+            case 0:
+                break;
+            case 1:
+                obj_set_gfx_pos_at_obj_pos(player, o);
+                break;
+            case 2:
+                player->oInteractStatus |= (sp30 + INT_STATUS_MARIO_UNK2);
+                marioState->forwardVel = sp28;
+                marioState->vel[1] = sp2C;
+                o->parentObj->oChuckyaUnk88 = 0;
+                break;
+            case 3:
+                player->oInteractStatus |=
+                    (INT_STATUS_MARIO_UNK2 + INT_STATUS_MARIO_UNK6); // loads 2 interactions at once?
+                marioState->forwardVel = 10.0f;
+                marioState->vel[1] = 10.0f;
+                o->parentObj->oChuckyaUnk88 = 0;
+                break;
+        }
+        o->oMoveAngleYaw = o->parentObj->oMoveAngleYaw;
+        if (o->parentObj->activeFlags == ACTIVE_FLAG_DEACTIVATED)
+            obj_mark_for_deletion(o);
     }
-    o->oMoveAngleYaw = o->parentObj->oMoveAngleYaw;
-    if (o->parentObj->activeFlags == ACTIVE_FLAG_DEACTIVATED)
-        obj_mark_for_deletion(o);
 }
 
 void bhv_chuckya_anchor_mario_loop(void) {

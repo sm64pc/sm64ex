@@ -28,7 +28,7 @@ void whomp_act_0(void) {
                 cur_obj_set_pos_to_home();
                 o->oHealth = 3;
             }
-        } else if (cur_obj_update_dialog_with_cutscene(2, 1, CUTSCENE_DIALOG, DIALOG_114))
+        } else if (cur_obj_update_dialog_with_cutscene(&gMarioState[0], 2, 1, CUTSCENE_DIALOG, DIALOG_114))
             o->oAction = 2;
     } else if (o->oDistanceToMario < 500.0f)
         o->oAction = 1;
@@ -209,7 +209,7 @@ void whomp_act_6(void) {
 
 void whomp_act_8(void) {
     if (o->oBehParams2ndByte != 0) {
-        if (cur_obj_update_dialog_with_cutscene(2, 2, CUTSCENE_DIALOG, DIALOG_115)) {
+        if (cur_obj_update_dialog_with_cutscene(&gMarioState[0], 2, 2, CUTSCENE_DIALOG, DIALOG_115)) {
             obj_set_angle(o, 0, 0, 0);
             cur_obj_hide();
             cur_obj_become_intangible();

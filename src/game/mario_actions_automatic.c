@@ -652,14 +652,18 @@ s32 act_grabbed(struct MarioState *m) {
     if (m->marioObj->oInteractStatus & INT_STATUS_MARIO_UNK2) {
         s32 thrown = (m->marioObj->oInteractStatus & INT_STATUS_MARIO_UNK6) == 0;
 
-        m->faceAngle[1] = m->usedObj->oMoveAngleYaw;
+        if (m->usedObj != NULL) {
+            m->faceAngle[1] = m->usedObj->oMoveAngleYaw;
+        }
+
         vec3f_copy(m->pos, m->marioObj->header.gfx.pos);
         queue_rumble_data(5, 60);
 
+        m->heldByObj = NULL;
         return set_mario_action(m, (m->forwardVel >= 0.0f) ? ACT_THROWN_FORWARD : ACT_THROWN_BACKWARD,
                                 thrown);
     }
-
+    if (m->usedObj != NULL) { m->heldByObj = m->usedObj; }
     set_mario_animation(m, MARIO_ANIM_BEING_GRABBED);
     return FALSE;
 }

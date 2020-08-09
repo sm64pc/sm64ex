@@ -1,5 +1,22 @@
 // king_bobomb.c.inc
 
+struct MarioState* king_bobomb_nearest_mario_state() {
+    struct MarioState* nearest = NULL;
+    f32 nearestDist = 0;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        float ydiff = (o->oPosY - gMarioStates[i].marioObj->oPosY);
+        if (ydiff >= 1200) { continue; }
+
+        float dist = dist_between_objects(o, gMarioState[i].marioObj);
+        if (nearest == NULL || dist < nearestDist) {
+            nearest = &gMarioState[i];
+            nearestDist = dist;
+        }
+    }
+
+    return nearest;
+}
+
 // Copy of geo_update_projectile_pos_from_parent
 Gfx *geo_update_held_mario_pos(s32 run, UNUSED struct GraphNode *node, Mat4 mtx) {
     Mat4 sp20;
@@ -20,6 +37,16 @@ void bhv_bobomb_anchor_mario_loop(void) {
     common_anchor_mario_behavior(50.0f, 50.0f, 64);
 }
 
+u8 cur_obj_update_dialog_with_cutscene_hack(s32 actionArg, s32 dialogFlags, s32 cutsceneTable, s32 dialogID) {
+    // disable dialogs, too weird to sync
+    return TRUE;
+    /*if (nearest_mario_state_to_object(o) == &gMarioStates[0]) {
+        cur_obj_update_dialog_with_cutscene(&gMarioState[0], actionArg, dialogFlags, cutsceneTable, dialogID);
+    } else {
+        return FALSE;
+    }*/
+}
+
 void king_bobomb_act_0(void) {
 #ifndef VERSION_JP
     o->oForwardVel = 0;
@@ -31,21 +58,21 @@ void king_bobomb_act_0(void) {
         cur_obj_init_animation_with_sound(5);
         cur_obj_set_pos_to_home();
         o->oHealth = 3;
-        if (cur_obj_can_mario_activate_textbox_2(500.0f, 100.0f)) {
+        if (nearest_mario_state_to_object(o) == &gMarioStates[0] && cur_obj_can_mario_activate_textbox_2(&gMarioStates[0], 500.0f, 100.0f)) {
             o->oSubAction++;
             func_8031FFB4(SEQ_PLAYER_LEVEL, 60, 40);
         }
-    } else if (cur_obj_update_dialog_with_cutscene(2, 1, CUTSCENE_DIALOG, DIALOG_017)) {
+    } else if (cur_obj_update_dialog_with_cutscene_hack(2, 1, CUTSCENE_DIALOG, DIALOG_017)) {
         o->oAction = 2;
         o->oFlags |= OBJ_FLAG_HOLDABLE;
     }
 }
 
 int mario_is_far_below_object(f32 arg0) {
-    if (arg0 < o->oPosY - gMarioObject->oPosY)
-        return 1;
-    else
-        return 0;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (arg0 >= o->oPosY - gMarioStates[i].marioObj->oPosY) { return FALSE; }
+    }
+    return TRUE;
 }
 
 void king_bobomb_act_2(void) {
@@ -67,7 +94,11 @@ void king_bobomb_act_2(void) {
             cur_obj_init_animation_with_sound(11);
         if (o->oKingBobombUnk108 == 0) {
             o->oForwardVel = 3.0f;
-            cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x100);
+            struct MarioState* marioState = king_bobomb_nearest_mario_state();
+            if (marioState != NULL) {
+                int angleToPlayer = obj_angle_to_object(o, marioState->marioObj);
+                cur_obj_rotate_yaw_toward(angleToPlayer, 0x100);
+            }
         } else {
             o->oForwardVel = 0.0f;
             o->oKingBobombUnk108--;
@@ -127,9 +158,17 @@ void king_bobomb_act_1(void) {
     o->oForwardVel = 0;
     o->oVelY = 0;
     cur_obj_init_animation_with_sound(11);
-    o->oMoveAngleYaw = approach_s16_symmetric(o->oMoveAngleYaw, o->oAngleToMario, 512);
-    if (o->oDistanceToMario < 2500.0f)
+    struct MarioState* marioState = king_bobomb_nearest_mario_state();
+    int distanceToPlayer = (marioState != NULL) ? dist_between_objects(o, marioState->marioObj) : 3000;
+
+    if (marioState != NULL) {
+        int angleToPlayer = obj_angle_to_object(o, marioState->marioObj);
+        o->oMoveAngleYaw = approach_s16_symmetric(o->oMoveAngleYaw, angleToPlayer, 512);
+    }
+
+    if (distanceToPlayer < 2500.0f)
         o->oAction = 2;
+
     if (mario_is_far_below_object(1200.0f)) {
         o->oAction = 0;
         stop_background_music(SEQUENCE_ARGS(4, SEQ_EVENT_BOSS));
@@ -162,15 +201,20 @@ void king_bobomb_act_6(void) {
             }
         } else {
             cur_obj_init_animation_with_sound(11);
-            if (cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x800) == 1)
-                o->oAction = 2;
+            struct MarioState* marioState = king_bobomb_nearest_mario_state();
+            if (marioState != NULL) {
+                int angleToPlayer = obj_angle_to_object(o, marioState->marioObj);
+                if (cur_obj_rotate_yaw_toward(angleToPlayer, 0x800) == 1) {
+                    o->oAction = 2;
+                }
+            }
         }
     }
 }
 
 void king_bobomb_act_7(void) {
     cur_obj_init_animation_with_sound(2);
-    if (cur_obj_update_dialog_with_cutscene(2, 2, CUTSCENE_DIALOG, DIALOG_116)) {
+    if (cur_obj_update_dialog_with_cutscene_hack(2, 2, CUTSCENE_DIALOG, DIALOG_116)) {
         create_sound_spawner(SOUND_OBJ_KING_WHOMP_DEATH);
         cur_obj_hide();
         cur_obj_become_intangible();
@@ -258,11 +302,11 @@ void king_bobomb_act_5(void) { // bobomb returns home
                 o->oAction = 0;
                 stop_background_music(SEQUENCE_ARGS(4, SEQ_EVENT_BOSS));
             }
-            if (cur_obj_can_mario_activate_textbox_2(500.0f, 100.0f))
+            if (nearest_mario_state_to_object(o) == &gMarioStates[0] && cur_obj_can_mario_activate_textbox_2(&gMarioStates[0], 500.0f, 100.0f))
                 o->oSubAction++;
             break;
         case 4:
-            if (cur_obj_update_dialog_with_cutscene(2, 1, CUTSCENE_DIALOG, DIALOG_128))
+            if (cur_obj_update_dialog_with_cutscene_hack(2, 1, CUTSCENE_DIALOG, DIALOG_128))
                 o->oAction = 2;
             break;
     }
@@ -296,7 +340,9 @@ void king_bobomb_move(void) {
     cur_obj_call_action_function(sKingBobombActions);
     exec_anim_sound_state(sKingBobombSoundStates);
 #ifndef NODRAWINGDISTANCE
-    if (o->oDistanceToMario < 5000.0f)
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    if (distanceToPlayer < 5000.0f)
 #endif
         cur_obj_enable_rendering();
 #ifndef NODRAWINGDISTANCE
@@ -306,6 +352,15 @@ void king_bobomb_move(void) {
 }
 
 void bhv_king_bobomb_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, 4000.0f);
+        network_init_object_field(o, &o->oKingBobombUnk88);
+        network_init_object_field(o, &o->oFlags);
+        network_init_object_field(o, &o->oHealth);
+        network_init_object_field(o, &o->oDialogState);
+        network_init_object_field(o, &o->oDialogResponse);
+    }
+
     f32 sp34 = 20.0f;
     f32 sp30 = 50.0f;
     UNUSED u8 pad[8];

@@ -726,6 +726,9 @@ s16 find_floor_slope(struct MarioState *m, s16 yawOffset) {
  * Adjusts Mario's camera and sound based on his action status.
  */
 void update_mario_sound_and_camera(struct MarioState *m) {
+    // only update for local player
+    if (m != &gMarioStates[0]) { return; }
+
     u32 action = m->action;
     s32 camPreset = m->area->camera->mode;
 
@@ -1678,7 +1681,7 @@ void mario_update_hitbox_and_cap_model(struct MarioState *m) {
         //  this can be paused through to give continual invisibility. This leads to
         //  no interaction with objects.
         if (gGlobalTimer & 1) {
-            gMarioState->marioObj->header.gfx.node.flags |= GRAPH_RENDER_INVISIBLE;
+            m->marioObj->header.gfx.node.flags |= GRAPH_RENDER_INVISIBLE;
         }
     }
 

@@ -7062,7 +7062,7 @@ void copy_spline_segment(struct CutsceneSplinePoint dst[], struct CutsceneSpline
 s16 cutscene_common_set_dialog_state(s32 state) {
     s16 timer = gCutsceneTimer;
     // If the dialog ended, return CUTSCENE_LOOP, which would end the cutscene shot
-    if (set_mario_npc_dialog(state) == 2) {
+    if (set_mario_npc_dialog(&gMarioState[0], state) == 2) {
         timer = CUTSCENE_LOOP;
     }
     return timer;

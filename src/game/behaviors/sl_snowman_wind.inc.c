@@ -15,13 +15,13 @@ void bhv_sl_snowman_wind_loop(void) {
         // Check if Mario is within 1000 units of the center of the bridge, and ready to speak.
         vec3f_copy_2(tempPos, &o->oPosX);
         obj_set_pos(o, 1100, 3328, 1164); // Position is in the middle of the ice bridge
-        if (cur_obj_can_mario_activate_textbox(1000.0f, 30.0f, 0x7FFF))
+        if (cur_obj_can_mario_activate_textbox(&gMarioState[0], 1000.0f, 30.0f, 0x7FFF))
             o->oSubAction++;
         vec3f_copy_2(&o->oPosX, tempPos);
         
     // Mario has come close, begin dialog.
     } else if (o->oSubAction == SL_SNOWMAN_WIND_ACT_TALKING) {
-        if (cur_obj_update_dialog(2, 2, DIALOG_153, 0))
+        if (cur_obj_update_dialog(&gMarioState[0], 2, 2, DIALOG_153, 0))
             o->oSubAction++;
         
     // Blowing, spawn wind particles (SL_SNOWMAN_WIND_ACT_BLOWING)

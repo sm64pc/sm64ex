@@ -331,14 +331,14 @@ void cutscene_put_cap_on(struct MarioState *m) {
  * 2: Mario mat not be riding a shell or be invulnerable.
  * 3: Mario must not be in first person mode.
  */
-s32 mario_ready_to_speak(void) {
-    u32 actionGroup = gMarioState->action & ACT_GROUP_MASK;
+s32 mario_ready_to_speak(struct MarioState* m) {
+    u32 actionGroup = m->action & ACT_GROUP_MASK;
     s32 isReadyToSpeak = FALSE;
 
-    if ((gMarioState->action == ACT_WAITING_FOR_DIALOG || actionGroup == ACT_GROUP_STATIONARY
+    if ((m->action == ACT_WAITING_FOR_DIALOG || actionGroup == ACT_GROUP_STATIONARY
          || actionGroup == ACT_GROUP_MOVING)
-        && (!(gMarioState->action & (ACT_FLAG_RIDING_SHELL | ACT_FLAG_INVULNERABLE))
-            && gMarioState->action != ACT_FIRST_PERSON)) {
+        && (!(m->action & (ACT_FLAG_RIDING_SHELL | ACT_FLAG_INVULNERABLE))
+            && m->action != ACT_FIRST_PERSON)) {
         isReadyToSpeak = TRUE;
     }
 
@@ -351,24 +351,24 @@ s32 mario_ready_to_speak(void) {
 // 0 = not in dialog
 // 1 = starting dialog
 // 2 = speaking
-s32 set_mario_npc_dialog(s32 actionArg) {
+s32 set_mario_npc_dialog(struct MarioState* m, s32 actionArg) {
     s32 dialogState = 0;
 
     // in dialog
-    if (gMarioState->action == ACT_READING_NPC_DIALOG) {
-        if (gMarioState->actionState < 8) {
+    if (m->action == ACT_READING_NPC_DIALOG) {
+        if (m->actionState < 8) {
             dialogState = 1; // starting dialog
         }
-        if (gMarioState->actionState == 8) {
+        if (m->actionState == 8) {
             if (actionArg == 0) {
-                gMarioState->actionState++; // exit dialog
+                m->actionState++; // exit dialog
             } else {
                 dialogState = 2;
             }
         }
-    } else if (actionArg != 0 && mario_ready_to_speak()) {
-        gMarioState->usedObj = gCurrentObject;
-        set_mario_action(gMarioState, ACT_READING_NPC_DIALOG, actionArg);
+    } else if (actionArg != 0 && mario_ready_to_speak(m)) {
+        m->usedObj = gCurrentObject;
+        set_mario_action(m, ACT_READING_NPC_DIALOG, actionArg);
         dialogState = 1; // starting dialog
     }
 

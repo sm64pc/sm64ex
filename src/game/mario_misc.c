@@ -124,7 +124,7 @@ static void toad_message_opaque(void) {
 }
 
 static void toad_message_talking(void) {
-    if (cur_obj_update_dialog_with_cutscene(3, 1, CUTSCENE_DIALOG, gCurrentObject->oToadMessageDialogId)
+    if (cur_obj_update_dialog_with_cutscene(&gMarioState[0], 3, 1, CUTSCENE_DIALOG, gCurrentObject->oToadMessageDialogId)
         != 0) {
         gCurrentObject->oToadMessageRecentlyTalked = 1;
         gCurrentObject->oToadMessageState = TOAD_MESSAGE_FADING;

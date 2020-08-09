@@ -464,7 +464,7 @@ static void boo_act_4(void) {
         dialogID = DIALOG_107;
     }
 
-    if (cur_obj_update_dialog(2, 2, dialogID, 0)) {
+    if (cur_obj_update_dialog(&gMarioState[0], 2, 2, dialogID, 0)) {
         create_sound_spawner(SOUND_OBJ_DYING_ENEMY1);
         obj_mark_for_deletion(o);
 

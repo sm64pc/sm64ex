@@ -63,25 +63,26 @@ void network_send_object(struct Object* o) {
     struct Packet p;
     packet_init(&p, PACKET_OBJECT, reliable);
     packet_write(&p, &o->oSyncID, 4);
-    packet_write(&p, &so->onEventId, 2);
+    packet_write(&p, &so->onEventId, sizeof(u16));
     packet_write(&p, &so->behavior, sizeof(void*));
-    packet_write(&p, &o->activeFlags, 2);
+    packet_write(&p, &o->activeFlags, sizeof(s16));
+    packet_write(&p, &o->header.gfx.node.flags, sizeof(s16));
 
     if (so->fullObjectSync) {
-        packet_write(&p, o->rawData.asU32, 320);
+        packet_write(&p, o->rawData.asU32, sizeof(u32) * 80);
     } else {
-        packet_write(&p, &o->oPosX, 28);
-        packet_write(&p, &o->oAction, 4);
-        packet_write(&p, &o->oSubAction, 4);
-        packet_write(&p, &o->oInteractStatus, 4);
-        packet_write(&p, &o->oHeldState, 4);
-        packet_write(&p, &o->oMoveAngleYaw, 4);
-        packet_write(&p, &o->oTimer, 4);
+        packet_write(&p, &o->oPosX, sizeof(u32) * 7);
+        packet_write(&p, &o->oAction, sizeof(u32));
+        packet_write(&p, &o->oSubAction, sizeof(u32));
+        packet_write(&p, &o->oInteractStatus, sizeof(u32));
+        packet_write(&p, &o->oHeldState, sizeof(u32));
+        packet_write(&p, &o->oMoveAngleYaw, sizeof(u32));
+        packet_write(&p, &o->oTimer, sizeof(u32));
 
-        packet_write(&p, &so->extraFieldCount, 1);
+        packet_write(&p, &so->extraFieldCount, sizeof(u8));
         for (int i = 0; i < so->extraFieldCount; i++) {
             assert(so->extraFields[i] != NULL);
-            packet_write(&p, so->extraFields[i], 4);
+            packet_write(&p, so->extraFields[i], sizeof(u32));
         }
     }
 
@@ -101,7 +102,7 @@ void network_send_object(struct Object* o) {
 void network_receive_object(struct Packet* p) {
     // get sync ID
     u32 syncId;
-    packet_read(p, &syncId, 4);
+    packet_read(p, &syncId, sizeof(u32));
     assert(syncId < MAX_SYNC_OBJECTS);
 
     // retrieve SyncObject
@@ -119,7 +120,7 @@ void network_receive_object(struct Packet* p) {
 
     // make sure this is the newest event possible
     volatile u16 eventId = 0;
-    packet_read(p, &eventId, 2);
+    packet_read(p, &eventId, sizeof(u16));
     if (so->onEventId > eventId && (u16)abs(eventId - so->onEventId) < USHRT_MAX / 2) { return; }
     so->onEventId = eventId;
 
@@ -134,7 +135,7 @@ void network_receive_object(struct Packet* p) {
     // sync only death
     if (so->maxSyncDistance == SYNC_DISTANCE_ONLY_DEATH) {
         s16 activeFlags;
-        packet_read(p, &activeFlags, 2);
+        packet_read(p, &activeFlags, sizeof(u16));
         if (activeFlags == ACTIVE_FLAG_DEACTIVATED) {
             so->o->oSyncDeath = 1;
             forget_sync_object(so);
@@ -142,28 +143,33 @@ void network_receive_object(struct Packet* p) {
         return;
     }
 
+    if (gMarioStates[0].heldObj == o) {
+        return;
+    }
+
     // write object flags
-    packet_read(p, &o->activeFlags, 2);
+    packet_read(p, &o->activeFlags, sizeof(u16));
+    packet_read(p, &o->header.gfx.node.flags, sizeof(s16));
 
     if (so->fullObjectSync) {
-        packet_read(p, o->rawData.asU32, 320);
+        packet_read(p, o->rawData.asU32, sizeof(u32) * 80);
     } else {
-        packet_read(p, &o->oPosX, 28);
-        packet_read(p, &o->oAction, 4);
-        packet_read(p, &o->oSubAction, 4);
-        packet_read(p, &o->oInteractStatus, 4);
-        packet_read(p, &o->oHeldState, 4);
-        packet_read(p, &o->oMoveAngleYaw, 4);
-        packet_read(p, &o->oTimer, 4);
+        packet_read(p, &o->oPosX, sizeof(u32) * 7);
+        packet_read(p, &o->oAction, sizeof(u32));
+        packet_read(p, &o->oSubAction, sizeof(u32));
+        packet_read(p, &o->oInteractStatus, sizeof(u32));
+        packet_read(p, &o->oHeldState, sizeof(u32));
+        packet_read(p, &o->oMoveAngleYaw, sizeof(u32));
+        packet_read(p, &o->oTimer, sizeof(u32));
     }
 
     // write extra fields
     u8 extraFields = 0;
-    packet_read(p, &extraFields, 1);
+    packet_read(p, &extraFields, sizeof(u8));
     assert(extraFields == so->extraFieldCount);
     for (int i = 0; i < extraFields; i++) {
         assert(so->extraFields[i] != NULL);
-        packet_read(p, so->extraFields[i], 4);
+        packet_read(p, so->extraFields[i], sizeof(u32));
     }
 
     // deactivated

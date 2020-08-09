@@ -19,7 +19,7 @@ void bhv_racing_penguin_init(void) {
 
 static void racing_penguin_act_wait_for_mario(void) {
     if (o->oTimer > o->oRacingPenguinInitTextCooldown && o->oPosY - gMarioObject->oPosY <= 0.0f
-        && cur_obj_can_mario_activate_textbox_2(400.0f, 400.0f)) {
+        && cur_obj_can_mario_activate_textbox_2(&gMarioState[0], 400.0f, 400.0f)) {
         o->oAction = RACING_PENGUIN_ACT_SHOW_INIT_TEXT;
     }
 }
@@ -28,7 +28,7 @@ static void racing_penguin_act_show_init_text(void) {
     s32 response;
     struct Object *child;
 
-    response = obj_update_race_proposition_dialog(sRacingPenguinData[o->oBehParams2ndByte].text);
+    response = obj_update_race_proposition_dialog(&gMarioStates[0], sRacingPenguinData[o->oBehParams2ndByte].text);
     if (response == 1) {
         child = cur_obj_nearest_object_with_behavior(bhvPenguinRaceFinishLine);
         child->parentObj = o;
@@ -122,7 +122,7 @@ static void racing_penguin_act_show_final_text(void) {
             cur_obj_init_animation_with_sound(3);
             o->oForwardVel = 0.0f;
 
-            if (cur_obj_can_mario_activate_textbox_2(400.0f, 400.0f)) {
+            if (cur_obj_can_mario_activate_textbox_2(&gMarioState[0], 400.0f, 400.0f)) {
                 if (o->oRacingPenguinMarioWon) {
                     if (o->oRacingPenguinMarioCheated) {
                         o->oRacingPenguinFinalTextbox = DIALOG_132;
@@ -144,7 +144,7 @@ static void racing_penguin_act_show_final_text(void) {
             o->oForwardVel = 4.0f;
         }
     } else if (o->oRacingPenguinFinalTextbox > 0) {
-        if ((textResult = cur_obj_update_dialog_with_cutscene(2, 1, CUTSCENE_DIALOG, o->oRacingPenguinFinalTextbox)) != 0) {
+        if ((textResult = cur_obj_update_dialog_with_cutscene(&gMarioState[0], 2, 1, CUTSCENE_DIALOG, o->oRacingPenguinFinalTextbox)) != 0) {
             o->oRacingPenguinFinalTextbox = -1;
             o->oTimer = 0;
         }

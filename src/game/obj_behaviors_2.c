@@ -97,12 +97,12 @@ static s16 obj_get_pitch_from_vel(void) {
  * If the player declines the race, then disable time stop and allow Mario to
  * move again.
  */
-static s32 obj_update_race_proposition_dialog(s16 dialogID) {
+static s32 obj_update_race_proposition_dialog(struct MarioState* m, s16 dialogID) {
     s32 dialogResponse =
-        cur_obj_update_dialog_with_cutscene(2, DIALOG_UNK2_FLAG_0 | DIALOG_UNK2_LEAVE_TIME_STOP_ENABLED, CUTSCENE_RACE_DIALOG, dialogID);
+        cur_obj_update_dialog_with_cutscene(m, 2, DIALOG_UNK2_FLAG_0 | DIALOG_UNK2_LEAVE_TIME_STOP_ENABLED, CUTSCENE_RACE_DIALOG, dialogID);
 
     if (dialogResponse == 2) {
-        set_mario_npc_dialog(0);
+        set_mario_npc_dialog(m, 0);
         disable_time_stop_including_mario();
     }
 
