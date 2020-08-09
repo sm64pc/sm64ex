@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <limits.h>
 #include "../network.h"
 #include "object_fields.h"
 #include "object_constants.h"
