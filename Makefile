@@ -68,7 +68,6 @@ CONTROLLER_API ?= SDL2
 # Misc settings for EXTERNAL_DATA
 
 BASEDIR ?= res
-BASEPACK ?= base.zip
 
 # Automatic settings for PC port(s)
 
@@ -671,7 +670,7 @@ endif
 
 ifeq ($(EXTERNAL_DATA),1)
 
-BASEPACK_PATH := $(BUILD_DIR)/$(BASEDIR)/$(BASEPACK)
+BASEPACK_PATH := $(BUILD_DIR)/$(BASEDIR)/
 BASEPACK_LST := $(BUILD_DIR)/basepack.lst
 
 # depend on resources as well
