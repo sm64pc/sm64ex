@@ -33,7 +33,8 @@ const LevelScript level_bowser_2_entry[] = {
     LOAD_MIO0(        /*seg*/ 0x06, _group12_mio0SegmentRomStart, _group12_mio0SegmentRomEnd),
     LOAD_RAW(         /*seg*/ 0x0D, _group12_geoSegmentRomStart, _group12_geoSegmentRomEnd),
     ALLOC_LEVEL_POOL(),
-    MARIO(/*model*/ MODEL_MARIO, /*behParam*/ 0x00000001, /*beh*/ bhvMario),
+    MARIO (/*model*/ MODEL_MARIO,  /*behParam*/ 0x00000001, /*beh*/ bhvMario),
+    MARIO2(/*model*/ MODEL_MARIO2, /*behParam*/ 0x00000002, /*beh*/ bhvMario2),
     JUMP_LINK(script_func_global_13),
     LOAD_MODEL_FROM_GEO(MODEL_BOWSER_2_TILTING_ARENA, bowser_2_geo_000170),
 

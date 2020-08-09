@@ -37,7 +37,8 @@ const LevelScript level_sa_entry[] = {
     LOAD_MIO0(        /*seg*/ 0x06, _group13_mio0SegmentRomStart, _group13_mio0SegmentRomEnd),
     LOAD_RAW(         /*seg*/ 0x0D, _group13_geoSegmentRomStart,  _group13_geoSegmentRomEnd),
     ALLOC_LEVEL_POOL(),
-    MARIO(/*model*/ MODEL_MARIO, /*behParam*/ 0x00000001, /*beh*/ bhvMario),
+    MARIO (/*model*/ MODEL_MARIO,  /*behParam*/ 0x00000001, /*beh*/ bhvMario),
+    MARIO2(/*model*/ MODEL_MARIO2, /*behParam*/ 0x00000002, /*beh*/ bhvMario2),
     JUMP_LINK(script_func_global_5),
     JUMP_LINK(script_func_global_14),
 
