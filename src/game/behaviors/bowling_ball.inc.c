@@ -182,7 +182,7 @@ void bhv_generic_bowling_ball_spawner_init(void) {
 void bhv_generic_bowling_ball_spawner_loop(void) {
     if (o->oSyncID == 0) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
-        network_object_settings(o, FALSE, 0, TRUE);
+        network_object_settings(o, FALSE, 0, TRUE, NULL);
     }
 
     struct Object *bowlingBall;
@@ -219,7 +219,7 @@ void bhv_generic_bowling_ball_spawner_loop(void) {
 void bhv_thi_bowling_ball_spawner_loop(void) {
     if (o->oSyncID == 0) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
-        network_object_settings(o, FALSE, 0, TRUE);
+        network_object_settings(o, FALSE, 0, TRUE, NULL);
     }
 
     struct Object *bowlingBall;
@@ -254,7 +254,7 @@ void bhv_bob_pit_bowling_ball_init(void) {
     o->oBuoyancy = 2.0f;
 
     network_init_object(o, 5000.0f);
-    network_object_settings(o, FALSE, 5.0f, TRUE);
+    network_object_settings(o, FALSE, 5.0f, TRUE, NULL);
 }
 
 void bhv_bob_pit_bowling_ball_loop(void) {

@@ -673,80 +673,84 @@ s32 act_in_cannon(struct MarioState *m) {
     s16 startFacePitch = m->faceAngle[0];
     s16 startFaceYaw = m->faceAngle[1];
 
-    switch (m->actionState) {
-        case 0:
-            m->marioObj->header.gfx.node.flags &= ~GRAPH_RENDER_ACTIVE;
-            m->usedObj->oInteractStatus = INT_STATUS_INTERACTED;
+    if (m->usedObj != NULL) {
+        switch (m->actionState) {
+            case 0:
+                m->marioObj->header.gfx.node.flags &= ~GRAPH_RENDER_ACTIVE;
+                m->usedObj->oInteractStatus = INT_STATUS_INTERACTED;
 
-            m->statusForCamera->cameraEvent = CAM_EVENT_CANNON;
-            m->statusForCamera->usedObj = m->usedObj;
+                m->statusForCamera->cameraEvent = CAM_EVENT_CANNON;
+                m->statusForCamera->usedObj = m->usedObj;
 
-            vec3f_set(m->vel, 0.0f, 0.0f, 0.0f);
+                vec3f_set(m->vel, 0.0f, 0.0f, 0.0f);
 
-            m->pos[0] = m->usedObj->oPosX;
-            m->pos[1] = m->usedObj->oPosY + 350.0f;
-            m->pos[2] = m->usedObj->oPosZ;
+                m->pos[0] = m->usedObj->oPosX;
+                m->pos[1] = m->usedObj->oPosY + 350.0f;
+                m->pos[2] = m->usedObj->oPosZ;
 
-            m->forwardVel = 0.0f;
+                m->forwardVel = 0.0f;
 
-            m->actionState = 1;
-            break;
+                m->actionState = 1;
+                break;
 
-        case 1:
-            if (m->usedObj->oAction == 1) {
-                m->faceAngle[0] = m->usedObj->oMoveAnglePitch;
-                m->faceAngle[1] = m->usedObj->oMoveAngleYaw;
+            case 1:
+                if (m->usedObj->oAction == 1) {
+                    m->faceAngle[0] = m->usedObj->oMoveAnglePitch;
+                    m->faceAngle[1] = m->usedObj->oMoveAngleYaw;
 
-                marioObj->oMarioCannonObjectYaw = m->usedObj->oMoveAngleYaw;
-                marioObj->oMarioCannonInputYaw = 0;
+                    marioObj->oMarioCannonObjectYaw = m->usedObj->oMoveAngleYaw;
+                    marioObj->oMarioCannonInputYaw = 0;
 
-                m->actionState = 2;
-            }
-            break;
-
-        case 2:
-            m->faceAngle[0] -= (s16)(m->controller->stickY * 10.0f);
-            marioObj->oMarioCannonInputYaw -= (s16)(m->controller->stickX * 10.0f);
-
-            if (m->faceAngle[0] > 0x38E3) {
-                m->faceAngle[0] = 0x38E3;
-            }
-            if (m->faceAngle[0] < 0) {
-                m->faceAngle[0] = 0;
-            }
-
-            if (marioObj->oMarioCannonInputYaw > 0x4000) {
-                marioObj->oMarioCannonInputYaw = 0x4000;
-            }
-            if (marioObj->oMarioCannonInputYaw < -0x4000) {
-                marioObj->oMarioCannonInputYaw = -0x4000;
-            }
-
-            m->faceAngle[1] = marioObj->oMarioCannonObjectYaw + marioObj->oMarioCannonInputYaw;
-            if (m->input & INPUT_A_PRESSED) {
-                m->forwardVel = 100.0f * coss(m->faceAngle[0]);
-
-                m->vel[1] = 100.0f * sins(m->faceAngle[0]);
-
-                m->pos[0] += 120.0f * coss(m->faceAngle[0]) * sins(m->faceAngle[1]);
-                m->pos[1] += 120.0f * sins(m->faceAngle[0]);
-                m->pos[2] += 120.0f * coss(m->faceAngle[0]) * coss(m->faceAngle[1]);
-
-                play_sound(SOUND_ACTION_FLYING_FAST, m->marioObj->header.gfx.cameraToObject);
-                play_sound(SOUND_OBJ_POUNDING_CANNON, m->marioObj->header.gfx.cameraToObject);
-
-                m->marioObj->header.gfx.node.flags |= GRAPH_RENDER_ACTIVE;
-
-                set_mario_action(m, ACT_SHOT_FROM_CANNON, 0);
-                queue_rumble_data(60, 70);
-                m->usedObj->oAction = 2;
-                return FALSE;
-            } else {
-                if (m->faceAngle[0] != startFacePitch || m->faceAngle[1] != startFaceYaw) {
-                    play_sound(SOUND_MOVING_AIM_CANNON, m->marioObj->header.gfx.cameraToObject);
-                    reset_rumble_timers_2(0);
+                    m->actionState = 2;
                 }
-            }
+                break;
+
+            case 2:
+                m->faceAngle[0] -= (s16)(m->controller->stickY * 10.0f);
+                marioObj->oMarioCannonInputYaw -= (s16)(m->controller->stickX * 10.0f);
+
+                if (m->faceAngle[0] > 0x38E3) {
+                    m->faceAngle[0] = 0x38E3;
+                }
+                if (m->faceAngle[0] < 0) {
+                    m->faceAngle[0] = 0;
+                }
+
+                if (marioObj->oMarioCannonInputYaw > 0x4000) {
+                    marioObj->oMarioCannonInputYaw = 0x4000;
+                }
+                if (marioObj->oMarioCannonInputYaw < -0x4000) {
+                    marioObj->oMarioCannonInputYaw = -0x4000;
+                }
+
+                m->faceAngle[1] = marioObj->oMarioCannonObjectYaw + marioObj->oMarioCannonInputYaw;
+
+                extern struct MarioState gMarioStates[];
+                if (m->input & INPUT_A_PRESSED && m == &gMarioStates[0]) {
+                    m->forwardVel = 100.0f * coss(m->faceAngle[0]);
+
+                    m->vel[1] = 100.0f * sins(m->faceAngle[0]);
+
+                    m->pos[0] += 120.0f * coss(m->faceAngle[0]) * sins(m->faceAngle[1]);
+                    m->pos[1] += 120.0f * sins(m->faceAngle[0]);
+                    m->pos[2] += 120.0f * coss(m->faceAngle[0]) * coss(m->faceAngle[1]);
+
+                    play_sound(SOUND_ACTION_FLYING_FAST, m->marioObj->header.gfx.cameraToObject);
+                    play_sound(SOUND_OBJ_POUNDING_CANNON, m->marioObj->header.gfx.cameraToObject);
+
+                    m->marioObj->header.gfx.node.flags |= GRAPH_RENDER_ACTIVE;
+
+                    set_mario_action(m, ACT_SHOT_FROM_CANNON, 0);
+                    queue_rumble_data(60, 70);
+                    m->usedObj->oAction = 2;
+                    return FALSE;
+                } else {
+                    if (m->faceAngle[0] != startFacePitch || m->faceAngle[1] != startFaceYaw) {
+                        play_sound(SOUND_MOVING_AIM_CANNON, m->marioObj->header.gfx.cameraToObject);
+                        reset_rumble_timers_2(0);
+                    }
+                }
+        }
     }
 
     vec3f_copy(m->marioObj->header.gfx.pos, m->pos);

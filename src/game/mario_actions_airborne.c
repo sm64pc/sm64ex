@@ -1648,7 +1648,10 @@ s32 act_jump_kick(struct MarioState *m) {
 }
 
 s32 act_shot_from_cannon(struct MarioState *m) {
-    if (m->area->camera->mode != CAMERA_MODE_BEHIND_MARIO) {
+    // only allow for local player
+    u8 allowCameraChange = (m == &gMarioStates[0]);
+
+    if (allowCameraChange && m->area->camera->mode != CAMERA_MODE_BEHIND_MARIO) {
         m->statusForCamera->cameraEvent = CAM_EVENT_SHOT_FROM_CANNON;
     }
 
@@ -1667,14 +1670,16 @@ s32 act_shot_from_cannon(struct MarioState *m) {
             set_mario_action(m, ACT_DIVE_SLIDE, 0);
             m->faceAngle[0] = 0;
 #ifndef BETTERCAMERA
-            set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
+            if (allowCameraChange) { set_camera_mode(m->area->camera, m->area->camera->defMode, 1); }
 #else
-            if (newcam_active == 0)
-                set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
-            else
-            {
-                m->area->camera->mode = CAMERA_MODE_NEWCAM;
-                gLakituState.mode = CAMERA_MODE_NEWCAM;
+            if (allowCameraChange) {
+                if (newcam_active == 0)
+                    set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
+                else
+                {
+                    m->area->camera->mode = CAMERA_MODE_NEWCAM;
+                    gLakituState.mode = CAMERA_MODE_NEWCAM;
+                }
             }
 #endif
             queue_rumble_data(5, 80);
@@ -1691,14 +1696,16 @@ s32 act_shot_from_cannon(struct MarioState *m) {
             m->particleFlags |= PARTICLE_VERTICAL_STAR;
             set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
 #ifndef BETTERCAMERA
-            set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
+            if (allowCameraChange) { set_camera_mode(m->area->camera, m->area->camera->defMode, 1); }
 #else
-            if (newcam_active == 0)
-                set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
-            else
-            {
-                m->area->camera->mode = CAMERA_MODE_NEWCAM;
-                gLakituState.mode = CAMERA_MODE_NEWCAM;
+            if (allowCameraChange) {
+                if (newcam_active == 0)
+                    set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
+                else
+                {
+                    m->area->camera->mode = CAMERA_MODE_NEWCAM;
+                    gLakituState.mode = CAMERA_MODE_NEWCAM;
+                }
             }
 #endif
             break;

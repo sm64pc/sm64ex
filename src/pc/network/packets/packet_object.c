@@ -29,15 +29,17 @@ void network_init_object(struct Object *o, float maxSyncDistance) {
     so->fullObjectSync = false;
     so->keepRandomSeed = false;
     so->maxUpdateRate = 0;
+    so->ignore_if_true = NULL;
     memset(so->extraFields, 0, sizeof(void*) * MAX_SYNC_OBJECT_FIELDS);
 }
 
-void network_object_settings(struct Object *o, bool fullObjectSync, float maxUpdateRate, bool keepRandomSeed) {
+void network_object_settings(struct Object *o, bool fullObjectSync, float maxUpdateRate, bool keepRandomSeed, u8 ignore_if_true(struct Object*)) {
     assert(o->oSyncID != 0);
     struct SyncObject* so = &syncObjects[o->oSyncID];
     so->fullObjectSync = fullObjectSync;
     so->maxUpdateRate = maxUpdateRate;
     so->keepRandomSeed = keepRandomSeed;
+    so->ignore_if_true = ignore_if_true;
 }
 
 void network_init_object_field(struct Object *o, void* field) {
@@ -65,19 +67,25 @@ void network_send_object(struct Object* o) {
     packet_write(&p, &o->oSyncID, 4);
     packet_write(&p, &so->onEventId, sizeof(u16));
     packet_write(&p, &so->behavior, sizeof(void*));
-    packet_write(&p, &o->activeFlags, sizeof(s16));
-    packet_write(&p, &o->header.gfx.node.flags, sizeof(s16));
+
+    if (so->maxSyncDistance != SYNC_DISTANCE_ONLY_EVENTS) {
+        packet_write(&p, &o->activeFlags, sizeof(s16));
+        packet_write(&p, &o->header.gfx.node.flags, sizeof(s16));
+    }
 
     if (so->fullObjectSync) {
         packet_write(&p, o->rawData.asU32, sizeof(u32) * 80);
     } else {
-        packet_write(&p, &o->oPosX, sizeof(u32) * 7);
-        packet_write(&p, &o->oAction, sizeof(u32));
-        packet_write(&p, &o->oSubAction, sizeof(u32));
-        packet_write(&p, &o->oInteractStatus, sizeof(u32));
-        packet_write(&p, &o->oHeldState, sizeof(u32));
-        packet_write(&p, &o->oMoveAngleYaw, sizeof(u32));
-        packet_write(&p, &o->oTimer, sizeof(u32));
+
+        if (so->maxSyncDistance != SYNC_DISTANCE_ONLY_EVENTS) {
+            packet_write(&p, &o->oPosX, sizeof(u32) * 7);
+            packet_write(&p, &o->oAction, sizeof(u32));
+            packet_write(&p, &o->oSubAction, sizeof(u32));
+            packet_write(&p, &o->oInteractStatus, sizeof(u32));
+            packet_write(&p, &o->oHeldState, sizeof(u32));
+            packet_write(&p, &o->oMoveAngleYaw, sizeof(u32));
+            packet_write(&p, &o->oTimer, sizeof(u32));
+        }
 
         packet_write(&p, &so->extraFieldCount, sizeof(u8));
         for (int i = 0; i < so->extraFieldCount; i++) {
@@ -108,6 +116,7 @@ void network_receive_object(struct Packet* p) {
     // retrieve SyncObject
     struct SyncObject* so = &syncObjects[syncId];
     so->clockSinceUpdate = clock();
+    if (so->ignore_if_true != NULL && (*so->ignore_if_true)(so->o)) { return; }
 
     // extract Object
     struct Object* o = syncObjects[syncId].o;
@@ -148,28 +157,34 @@ void network_receive_object(struct Packet* p) {
     }
 
     // write object flags
-    packet_read(p, &o->activeFlags, sizeof(u16));
-    packet_read(p, &o->header.gfx.node.flags, sizeof(s16));
+    if (so->maxSyncDistance != SYNC_DISTANCE_ONLY_EVENTS) {
+        packet_read(p, &o->activeFlags, sizeof(u16));
+        packet_read(p, &o->header.gfx.node.flags, sizeof(s16));
+    }
 
     if (so->fullObjectSync) {
         packet_read(p, o->rawData.asU32, sizeof(u32) * 80);
     } else {
-        packet_read(p, &o->oPosX, sizeof(u32) * 7);
-        packet_read(p, &o->oAction, sizeof(u32));
-        packet_read(p, &o->oSubAction, sizeof(u32));
-        packet_read(p, &o->oInteractStatus, sizeof(u32));
-        packet_read(p, &o->oHeldState, sizeof(u32));
-        packet_read(p, &o->oMoveAngleYaw, sizeof(u32));
-        packet_read(p, &o->oTimer, sizeof(u32));
-    }
 
-    // write extra fields
-    u8 extraFields = 0;
-    packet_read(p, &extraFields, sizeof(u8));
-    assert(extraFields == so->extraFieldCount);
-    for (int i = 0; i < extraFields; i++) {
-        assert(so->extraFields[i] != NULL);
-        packet_read(p, so->extraFields[i], sizeof(u32));
+        if (so->maxSyncDistance != SYNC_DISTANCE_ONLY_EVENTS) {
+            packet_read(p, &o->oPosX, sizeof(u32) * 7);
+            packet_read(p, &o->oAction, sizeof(u32));
+            packet_read(p, &o->oSubAction, sizeof(u32));
+            packet_read(p, &o->oInteractStatus, sizeof(u32));
+            packet_read(p, &o->oHeldState, sizeof(u32));
+            packet_read(p, &o->oMoveAngleYaw, sizeof(u32));
+            packet_read(p, &o->oTimer, sizeof(u32));
+        }
+
+        // write extra fields
+        u8 extraFields = 0;
+        packet_read(p, &extraFields, sizeof(u8));
+        assert(extraFields == so->extraFieldCount);
+        for (int i = 0; i < extraFields; i++) {
+            assert(so->extraFields[i] != NULL);
+            packet_read(p, so->extraFields[i], sizeof(u32));
+        }
+
     }
 
     // deactivated

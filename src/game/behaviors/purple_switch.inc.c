@@ -9,6 +9,8 @@
 void bhv_purple_switch_loop(void) {
     if (o->oSyncID == 0) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->oAction);
+        network_init_object_field(o, &o->oTimer);
     }
 
     u8 anyPlayerOnPlatform = FALSE;
@@ -76,6 +78,7 @@ void bhv_purple_switch_loop(void) {
             cur_obj_scale_over_time(2, 3, 0.2f, 1.5f);
             if (o->oTimer == 3) {
                 o->oAction = PURPLE_SWITCH_IDLE;
+                network_send_object(o);
             }
             break;
         /**

@@ -528,7 +528,7 @@ void bhv_wooden_post_update(void) {
         if ((o->oWoodenPostMarioPounding = cur_obj_is_mario_ground_pounding_platform())) {
             cur_obj_play_sound_2(SOUND_GENERAL_POUND_WOOD_POST);
             o->oWoodenPostSpeedY = -70.0f;
-            if (network_owns_object(o)) { network_send_object(o); }
+            network_send_object(o);
         }
     } else if (approach_f32_ptr(&o->oWoodenPostSpeedY, 0.0f, 25.0f)) {
         // Stay still until mario is done ground pounding
@@ -559,7 +559,7 @@ void bhv_wooden_post_update(void) {
             // coins
             o->oWoodenPostTotalMarioAngle += (s16)(angleToPlayer - o->oWoodenPostPrevAngleToMario);
             if (absi(o->oWoodenPostTotalMarioAngle) > 0x30000 && o->oTimer < 200) {
-                if (network_owns_object(o)) { network_send_object(o); }
+                network_send_object(o);
                 obj_spawn_loot_yellow_coins(o, 5, 20.0f);
                 set_object_respawn_info_bits(o, 1);
             }

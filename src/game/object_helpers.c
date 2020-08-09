@@ -2257,8 +2257,17 @@ void cur_obj_push_mario_away_from_cylinder(f32 radius, f32 extentY) {
             marioRelY = -marioRelY;
         }
 
-        if (marioRelY < extentY) {
-            cur_obj_push_mario_away(radius);
+        if (marioRelY >= extentY) { continue; }
+
+        f32 marioRelX = player->oPosX - o->oPosX;
+        f32 marioRelZ = player->oPosZ - o->oPosZ;
+        f32 marioDist = sqrtf(sqr(marioRelX) + sqr(marioRelZ));
+
+        if (marioDist < radius) {
+            //! If this function pushes Mario out of bounds, it will trigger Mario's
+            //  oob failsafe
+            gMarioStates[i].pos[0] += (radius - marioDist) / radius * marioRelX;
+            gMarioStates[i].pos[2] += (radius - marioDist) / radius * marioRelZ;
         }
     }
 }

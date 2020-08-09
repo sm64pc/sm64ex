@@ -12,6 +12,8 @@ static struct ObjectHitbox sBobombHitbox = {
     /* hurtboxHeight:     */ 0,
 };
 
+static u32 forceCannonOpen = FALSE;
+
 void bhv_bobomb_init(void) {
     o->oGravity = 2.5;
     o->oFriction = 0.8;
@@ -287,6 +289,13 @@ void bhv_bobomb_buddy_init(void) {
     o->oFriction = 0.8;
     o->oBuoyancy = 1.3;
     o->oInteractionSubtype = INT_SUBTYPE_NPC;
+
+    if (o->oBobombBuddyRole == BOBOMB_BUDDY_ROLE_CANNON) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->oBobombBuddyHasTalkedToMario);
+        network_init_object_field(o, &o->oBobombBuddyCannonStatus);
+        network_init_object_field(o, &forceCannonOpen);
+    }
 }
 
 void bobomb_buddy_act_idle(void) {
@@ -328,6 +337,11 @@ void bobomb_buddy_cannon_dialog(s16 dialogFirstText, s16 dialogSecondText) {
             buddyText = cutscene_object_with_dialog(CUTSCENE_DIALOG, o, dialogFirstText);
             if (buddyText != 0) {
                 save_file_set_cannon_unlocked();
+
+                forceCannonOpen = TRUE;
+                network_send_object(o);
+                forceCannonOpen = FALSE;
+
                 cannonClosed = cur_obj_nearest_object_with_behavior(bhvCannonClosed);
                 if (cannonClosed != 0)
                     o->oBobombBuddyCannonStatus = BOBOMB_BUDDY_CANNON_OPENING;
@@ -357,6 +371,7 @@ void bobomb_buddy_cannon_dialog(s16 dialogFirstText, s16 dialogSecondText) {
             o->oInteractStatus = 0;
             o->oAction = BOBOMB_BUDDY_ACT_IDLE;
             o->oBobombBuddyCannonStatus = BOBOMB_BUDDY_CANNON_OPENED;
+            network_send_object(o);
             break;
     }
 }
@@ -421,6 +436,11 @@ void bobomb_buddy_actions(void) {
 }
 
 void bhv_bobomb_buddy_loop(void) {
+    if (forceCannonOpen) {
+        save_file_set_cannon_unlocked();
+        forceCannonOpen = FALSE;
+    }
+
     bobomb_buddy_actions();
 
     curr_obj_random_blink(&o->oBobombBuddyBlinkTimer);

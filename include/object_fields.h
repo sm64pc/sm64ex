@@ -349,9 +349,10 @@
 #define /*0x1AC*/ oTripletButterflyScalePhase        OBJECT_FIELD_S32(0x49)
 
 /* Cannon */
-#define /*0x0F4*/ oCannonUnkF4  OBJECT_FIELD_S32(0x1B)
-#define /*0x0F8*/ oCannonUnkF8  OBJECT_FIELD_S32(0x1C)
-#define /*0x10C*/ oCannonUnk10C OBJECT_FIELD_S32(0x21)
+#define /*0x0F4*/ oCannonUnkF4   OBJECT_FIELD_S32(0x1B)
+#define /*0x0F8*/ oCannonUnkF8   OBJECT_FIELD_S32(0x1C)
+#define /*0x10C*/ oCannonUnk10C  OBJECT_FIELD_S32(0x21)
+#define /*0x110*/ oCannonIsLocal OBJECT_FIELD_S32(0x22)
 
 /* Cap */
 #define /*0x0F4*/ oCapUnkF4 OBJECT_FIELD_S32(0x1B)
