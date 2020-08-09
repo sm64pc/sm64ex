@@ -2,6 +2,7 @@
 #include "../network.h"
 #include "object_fields.h"
 #include "object_constants.h"
+#include "behavior_table.h"
 #include "course_table.h"
 #include "src/game/interaction.h"
 #include "src/engine/math_util.h"
@@ -46,11 +47,12 @@ static struct Object* find_nearest_coin(const BehaviorScript *behavior, f32* pos
 }
 
 void network_send_collect_coin(struct Object* o) {
+    enum BehaviorId behaviorId = get_id_from_behavior(o->behavior);
+
     struct Packet p;
     packet_init(&p, PACKET_COLLECT_COIN, true);
-
     packet_write(&p, &localCoinId, sizeof(u8));
-    packet_write(&p, &o->behavior, sizeof(void*));
+    packet_write(&p, &behaviorId, sizeof(enum BehaviorId));
     packet_write(&p, &o->oPosX, sizeof(f32) * 3);
     packet_write(&p, &gMarioStates[0].numCoins, sizeof(s16));
     packet_write(&p, &o->oDamageOrCoinValue, sizeof(s32));
@@ -61,16 +63,19 @@ void network_send_collect_coin(struct Object* o) {
 
 void network_receive_collect_coin(struct Packet* p) {
     u8 remoteCoinId = 0;
+    enum BehaviorId behaviorId;
     void* behavior = NULL;
     f32 pos[3] = { 0 };
     s16 numCoins = 0;
     s32 coinValue = 0;
 
     packet_read(p, &remoteCoinId, sizeof(u8));
-    packet_read(p, &behavior, sizeof(void*));
+    packet_read(p, &behaviorId, sizeof(enum BehaviorId));
     packet_read(p, &pos, sizeof(f32) * 3);
     packet_read(p, &numCoins, sizeof(s16));
     packet_read(p, &coinValue, sizeof(s32));
+
+    behavior = get_behavior_from_id(behaviorId);
 
     // check if remote coin id has already been seen
     for (int i = 0; i < MAX_REMOTE_COIN_IDS; i++) {

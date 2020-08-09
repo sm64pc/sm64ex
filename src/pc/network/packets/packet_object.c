@@ -4,6 +4,7 @@
 #include "object_fields.h"
 #include "object_constants.h"
 #include "behavior_data.h"
+#include "behavior_table.h"
 
 u8 nextSyncID = 1;
 struct SyncObject syncObjects[MAX_SYNC_OBJECTS] = { 0 };
@@ -62,12 +63,14 @@ void network_send_object(struct Object* o) {
 
     so->onEventId++;
 
+    enum BehaviorId behaviorId = get_id_from_behavior(o->behavior);
     bool reliable = (o->activeFlags == ACTIVE_FLAG_DEACTIVATED || so->maxSyncDistance == SYNC_DISTANCE_ONLY_EVENTS);
+
     struct Packet p;
     packet_init(&p, PACKET_OBJECT, reliable);
     packet_write(&p, &o->oSyncID, 4);
     packet_write(&p, &so->onEventId, sizeof(u16));
-    packet_write(&p, &so->behavior, sizeof(void*));
+    packet_write(&p, &behaviorId, sizeof(enum BehaviorId));
 
     if (so->maxSyncDistance != SYNC_DISTANCE_ONLY_EVENTS) {
         packet_write(&p, &o->activeFlags, sizeof(s16));
@@ -135,7 +138,9 @@ void network_receive_object(struct Packet* p) {
     so->onEventId = eventId;
 
     // make sure the behaviors match
-    packet_read(p, &so->behavior, sizeof(void*));
+    enum BehaviorId behaviorId;
+    packet_read(p, &behaviorId, sizeof(enum BehaviorId));
+    so->behavior = get_behavior_from_id(behaviorId);
     if (o->behavior != so->behavior) {
         printf("network_receive_object() BEHAVIOR MISMATCH!\n");
         forget_sync_object(so);

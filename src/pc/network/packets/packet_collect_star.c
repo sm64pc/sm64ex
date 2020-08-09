@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "../network.h"
+#include "behavior_table.h"
 #include "course_table.h"
 #include "object_fields.h"
 #include "object_constants.h"
@@ -40,13 +41,15 @@ static struct Object* find_nearest_star(const BehaviorScript* behavior, f32* pos
 }
 
 void network_send_collect_star(struct Object* o, s16 coinScore, s16 starIndex) {
+    enum BehaviorId behaviorId = get_id_from_behavior(o->behavior);
+
     struct Packet p;
     packet_init(&p, PACKET_COLLECT_STAR, true);
 
     packet_write(&p, &gCurrSaveFileNum, sizeof(s16));
     packet_write(&p, &gCurrCourseNum, sizeof(s16));
     packet_write(&p, &o->oPosX, sizeof(u32) * 3);
-    packet_write(&p, &o->behavior, sizeof(void*));
+    packet_write(&p, &behaviorId, sizeof(enum BehaviorId));
     packet_write(&p, &coinScore, sizeof(s16));
     packet_write(&p, &starIndex, sizeof(s16));
 
@@ -55,6 +58,7 @@ void network_send_collect_star(struct Object* o, s16 coinScore, s16 starIndex) {
 
 void network_receive_collect_star(struct Packet* p) {
     u32 pos[3] = { 0 };
+    enum BehaviorId behaviorId;
     void* behavior = NULL;
     s16 coinScore, starIndex;
     s16 lastSaveFileNum = gCurrSaveFileNum;
@@ -63,9 +67,11 @@ void network_receive_collect_star(struct Packet* p) {
     packet_read(p, &gCurrSaveFileNum, sizeof(s16));
     packet_read(p, &gCurrCourseNum, sizeof(s16));
     packet_read(p, &pos, sizeof(u32) * 3);
-    packet_read(p, &behavior, sizeof(void*));
+    packet_read(p, &behaviorId, sizeof(enum BehaviorId));
     packet_read(p, &coinScore, sizeof(s16));
     packet_read(p, &starIndex, sizeof(s16));
+
+    behavior = get_behavior_from_id(behaviorId);
 
     save_file_collect_star_or_key(coinScore, starIndex);
 

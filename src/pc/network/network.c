@@ -5,8 +5,9 @@
 #include "socket/socket.h"
 
 enum NetworkType networkType;
-SOCKET gSocket;
-unsigned short txPort;
+static SOCKET gSocket;
+static char* txIp = "127.0.0.1";
+static unsigned short txPort;
 
 void network_init(enum NetworkType inNetworkType) {
     networkType = inNetworkType;
@@ -38,7 +39,7 @@ void network_send(struct Packet* p) {
     memcpy(&p->buffer[p->dataLength], &hash, sizeof(u32));
 
     // send
-    int rc = socket_send(gSocket, "127.0.0.1", txPort, p->buffer, p->cursor + sizeof(u32));
+    int rc = socket_send(gSocket, txIp, txPort, p->buffer, p->cursor + sizeof(u32));
     if (rc != NO_ERROR) { return; }
     p->sent = true;
 }

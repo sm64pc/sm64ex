@@ -880,6 +880,13 @@ static s32 bhv_cmd_animate_texture(void) {
     return BHV_PROC_CONTINUE;
 }
 
+// Command 0x39: Defines the id of the behavior script, used for synchronization
+// Usage: ID(index)
+static s32 bhv_cmd_id(void) {
+    gCurBhvCommand++;
+    return BHV_PROC_CONTINUE;
+}
+
 void stub_behavior_script_2(void) {
 }
 
@@ -941,7 +948,8 @@ static BhvCommandProc BehaviorCmdTable[] = {
     bhv_cmd_disable_rendering, //35
     bhv_cmd_set_int_unused, //36
     bhv_cmd_spawn_water_droplet, //37
-    bhv_cmd_cylboard //38
+    bhv_cmd_cylboard, //38
+    bhv_cmd_id //38
 };
 
 // Execute the behavior script of the current object, process the object flags, and other miscellaneous code for updating objects.
