@@ -65,6 +65,9 @@ static struct KoopaTheQuickProperties sKoopaTheQuickProperties[] = {
     { DIALOG_009, DIALOG_031, thi_seg7_trajectory_koopa, { 7100, -1300, -6000 } }
 };
 
+static u32 forceStartRace = FALSE;
+static u32 forceEndRace = FALSE;
+
 /**
  * Initialization function.
  */
@@ -85,11 +88,19 @@ void bhv_koopa_init(void) {
         o->oKoopaAgility = 1.0f;
     }
 
-    network_init_object(o, 4000.0f);
-    network_init_object_field(o, &o->oKoopaTargetYaw);
-    network_init_object_field(o, &o->oKoopaCountdown);
-    network_init_object_field(o, &o->oKoopaMovementType);
-    network_init_object_field(o, &o->oKoopaUnshelledTimeUntilTurn);
+    if (o->oKoopaMovementType >= KOOPA_BP_KOOPA_THE_QUICK_BASE) {
+        // koopa the quick
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &forceStartRace);
+
+    } else {
+        // normal koopa
+        network_init_object(o, 4000.0f);
+        network_init_object_field(o, &o->oKoopaTargetYaw);
+        network_init_object_field(o, &o->oKoopaCountdown);
+        network_init_object_field(o, &o->oKoopaMovementType);
+        network_init_object_field(o, &o->oKoopaUnshelledTimeUntilTurn);
+    }
 }
 
 /**
@@ -529,9 +540,11 @@ s32 obj_begin_race(s32 noTimer) {
 static void koopa_the_quick_act_wait_before_race(void) {
     koopa_shelled_act_stopped();
 
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+
     if (o->oKoopaTheQuickInitTextboxCooldown != 0) {
         o->oKoopaTheQuickInitTextboxCooldown -= 1;
-    } else if (cur_obj_can_mario_activate_textbox_2(&gMarioState[0], 400.0f, 400.0f)) {
+    } else if (marioState == &gMarioState[0] && cur_obj_can_mario_activate_textbox_2(gMarioState, 400.0f, 400.0f)) {
         //! The next action doesn't execute until next frame, giving mario one
         //  frame where he can jump, and thus no longer be ready to speak.
         //  (On J, he has two frames and doing this enables time stop - see
@@ -542,14 +555,29 @@ static void koopa_the_quick_act_wait_before_race(void) {
     }
 }
 
+static void koopa_the_quick_force_start_race(void) {
+    forceStartRace = FALSE;
+    gMarioShotFromCannon = FALSE;
+    o->oAction = KOOPA_THE_QUICK_ACT_RACE;
+    o->oForwardVel = 0.0f;
+
+    o->parentObj = cur_obj_nearest_object_with_behavior(bhvKoopaRaceEndpoint);
+    o->oPathedStartWaypoint = o->oPathedPrevWaypoint = segmented_to_virtual(sKoopaTheQuickProperties[o->oKoopaTheQuickRaceIndex].path);
+
+    o->oKoopaTurningAwayFromWall = FALSE;
+    o->oFlags |= OBJ_FLAG_ACTIVE_FROM_AFAR;
+}
+
 /**
  * Display the dialog asking mario if he wants to race. Begin the race or
  * return to the waiting action.
  */
 static void koopa_the_quick_act_show_init_text(void) {
-    s32 response = obj_update_race_proposition_dialog(
-        &gMarioStates[0], sKoopaTheQuickProperties[o->oKoopaTheQuickRaceIndex].initText);
-    UNUSED s32 unused;
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+    s32 response = 0;
+    if (marioState == &gMarioStates[0]) {
+        response = obj_update_race_proposition_dialog(&gMarioStates[0], sKoopaTheQuickProperties[o->oKoopaTheQuickRaceIndex].initText);
+    }
 
     if (response == 1) {
         gMarioShotFromCannon = FALSE;
@@ -562,6 +590,10 @@ static void koopa_the_quick_act_show_init_text(void) {
 
         o->oKoopaTurningAwayFromWall = FALSE;
         o->oFlags |= OBJ_FLAG_ACTIVE_FROM_AFAR;
+
+        forceStartRace = TRUE;
+        network_send_object(o);
+        forceStartRace = FALSE;
         ;
     } else if (response == 2) {
         o->oAction = KOOPA_THE_QUICK_ACT_WAIT_BEFORE_RACE;
@@ -742,8 +774,10 @@ static void koopa_the_quick_act_stop(void) {
 static void koopa_the_quick_act_after_race(void) {
     cur_obj_init_animation_with_sound(7);
 
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+
     if (o->parentObj->oKoopaRaceEndpointUnk100 == 0) {
-        if (cur_obj_can_mario_activate_textbox_2(&gMarioState[0], 400.0f, 400.0f)) {
+        if (marioState == &gMarioState[0] && cur_obj_can_mario_activate_textbox_2(&gMarioState[0], 400.0f, 400.0f)) {
             stop_background_music(SEQUENCE_ARGS(4, SEQ_LEVEL_SLIDE));
 
             // Determine which text to display
@@ -755,8 +789,7 @@ static void koopa_the_quick_act_after_race(void) {
                     o->parentObj->oKoopaRaceEndpointUnk100 = DIALOG_006;
                 } else {
                     // Mario won
-                    o->parentObj->oKoopaRaceEndpointUnk100 =
-                        sKoopaTheQuickProperties[o->oKoopaTheQuickRaceIndex].winText;
+                    o->parentObj->oKoopaRaceEndpointUnk100 = sKoopaTheQuickProperties[o->oKoopaTheQuickRaceIndex].winText;
                 }
             } else {
                 // KtQ won
@@ -766,15 +799,17 @@ static void koopa_the_quick_act_after_race(void) {
             o->oFlags &= ~OBJ_FLAG_ACTIVE_FROM_AFAR;
         }
     } else if (o->parentObj->oKoopaRaceEndpointUnk100 > 0) {
-        s32 dialogResponse = cur_obj_update_dialog_with_cutscene(&gMarioState[0], 2, 1, CUTSCENE_DIALOG, o->parentObj->oKoopaRaceEndpointUnk100);
-        if (dialogResponse != 0) {
-            o->parentObj->oKoopaRaceEndpointUnk100 = -1;
-            o->oTimer = 0;
+        if (marioState == &gMarioState[0]) {
+            s32 dialogResponse = cur_obj_update_dialog_with_cutscene(&gMarioState[0], 2, 1, CUTSCENE_DIALOG, o->parentObj->oKoopaRaceEndpointUnk100);
+            if (dialogResponse != 0) {
+                o->parentObj->oKoopaRaceEndpointUnk100 = -1;
+                o->oTimer = 0;
+            }
         }
     } else if (o->parentObj->oKoopaRaceEndpointRaceStatus != 0) {
         spawn_default_star(sKoopaTheQuickProperties[o->oKoopaTheQuickRaceIndex].starPos[0],
-                   sKoopaTheQuickProperties[o->oKoopaTheQuickRaceIndex].starPos[1],
-                   sKoopaTheQuickProperties[o->oKoopaTheQuickRaceIndex].starPos[2]);
+                           sKoopaTheQuickProperties[o->oKoopaTheQuickRaceIndex].starPos[1],
+                           sKoopaTheQuickProperties[o->oKoopaTheQuickRaceIndex].starPos[2]);
 
         o->parentObj->oKoopaRaceEndpointRaceStatus = 0;
     }
@@ -786,6 +821,8 @@ static void koopa_the_quick_act_after_race(void) {
 static void koopa_the_quick_update(void) {
     cur_obj_update_floor_and_walls();
     obj_update_blinking(&o->oKoopaBlinkTimer, 10, 15, 3);
+
+    if (forceStartRace) { koopa_the_quick_force_start_race(); }
 
     switch (o->oAction) {
         case KOOPA_THE_QUICK_ACT_WAIT_BEFORE_RACE:
@@ -856,10 +893,34 @@ void bhv_koopa_update(void) {
     obj_face_yaw_approach(o->oMoveAngleYaw, 0x600);
 }
 
+void koopa_the_quick_force_end_race(void) {
+    o->oKoopaRaceEndpointRaceEnded = TRUE;
+    level_control_timer(TIMER_CONTROL_STOP);
+
+    if (!o->oKoopaRaceEndpointKoopaFinished) {
+        network_send_object(o);
+        play_race_fanfare();
+        if (gMarioShotFromCannon) {
+            o->oKoopaRaceEndpointRaceStatus = -1;
+        }
+        else {
+            o->oKoopaRaceEndpointRaceStatus = 1;
+        }
+    }
+    forceEndRace = FALSE;
+}
+
 /**
  * Update function for bhvKoopaRaceEndpoint.
  */
 void bhv_koopa_race_endpoint_update(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &forceEndRace);
+    }
+
+    if (forceEndRace) { koopa_the_quick_force_end_race(); }
+
     if (o->oKoopaRaceEndpointRaceBegun && !o->oKoopaRaceEndpointRaceEnded) {
         struct Object* player = nearest_player_to_object(o);
         int distanceToPlayer = dist_between_objects(o, player);
@@ -868,6 +929,10 @@ void bhv_koopa_race_endpoint_update(void) {
             level_control_timer(TIMER_CONTROL_STOP);
 
             if (!o->oKoopaRaceEndpointKoopaFinished) {
+                forceEndRace = TRUE;
+                network_send_object(o);
+                forceEndRace = FALSE;
+
                 play_race_fanfare();
                 if (gMarioShotFromCannon) {
                     o->oKoopaRaceEndpointRaceStatus = -1;
