@@ -212,6 +212,12 @@ void bhv_1up_jump_on_approach_loop(void) {
 }
 
 void bhv_1up_hidden_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->oVelY);
+        network_init_object_field(o, &o->oAction);
+        network_init_object_field(o, &o->header.gfx.node.flags);
+    }
     s16 sp26;
     switch (o->oAction) {
         case 0:
@@ -221,6 +227,7 @@ void bhv_1up_hidden_loop(void) {
                 o->oAction = 3;
                 o->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
                 play_sound(SOUND_GENERAL2_1UP_APPEAR, gDefaultSoundArgs);
+                network_send_object(o);
             }
             break;
 
@@ -253,18 +260,29 @@ void bhv_1up_hidden_loop(void) {
 }
 
 void bhv_1up_hidden_trigger_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->o1UpForceSpawn);
+    }
     struct Object* player = nearest_player_to_object(o);
     struct Object *sp1C;
-    if (obj_check_if_collided_with_object(o, player) == 1) {
+    if (o->o1UpForceSpawn || obj_check_if_collided_with_object(o, player) == 1) {
         sp1C = cur_obj_nearest_object_with_behavior(bhvHidden1up);
         if (sp1C != NULL)
             sp1C->o1UpHiddenUnkF4++;
-
+        o->o1UpForceSpawn = TRUE;
+        network_send_object(o);
         o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
     }
 }
 
 void bhv_1up_hidden_in_pole_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->oVelY);
+        network_init_object_field(o, &o->oAction);
+        network_init_object_field(o, &o->header.gfx.node.flags);
+    }
     UNUSED s16 sp26;
     switch (o->oAction) {
         case 0:
@@ -274,6 +292,7 @@ void bhv_1up_hidden_in_pole_loop(void) {
                 o->oAction = 3;
                 o->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
                 play_sound(SOUND_GENERAL2_1UP_APPEAR, gDefaultSoundArgs);
+                network_send_object(o);
             }
             break;
 
@@ -299,29 +318,39 @@ void bhv_1up_hidden_in_pole_loop(void) {
 }
 
 void bhv_1up_hidden_in_pole_trigger_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->o1UpForceSpawn);
+    }
     struct Object *sp1C;
 
     struct Object* player = nearest_player_to_object(o);
-    if (obj_check_if_collided_with_object(o, player) == 1) {
+    if (o->o1UpForceSpawn || obj_check_if_collided_with_object(o, player) == 1) {
         sp1C = cur_obj_nearest_object_with_behavior(bhvHidden1upInPole);
         if (sp1C != NULL) {
             sp1C->o1UpHiddenUnkF4++;
-            ;
         }
-
+        o->o1UpForceSpawn = TRUE;
+        network_send_object(o);
         o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
     }
 }
 
 void bhv_1up_hidden_in_pole_spawner_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->o1UpForceSpawn);
+    }
+
     s8 sp2F;
 
-    if (is_point_within_radius_of_mario(o->oPosX, o->oPosY, o->oPosZ, 700)) {
+    if (o->o1UpForceSpawn || is_point_within_radius_of_mario(o->oPosX, o->oPosY, o->oPosZ, 700)) {
         spawn_object_relative(2, 0, 50, 0, o, MODEL_1UP, bhvHidden1upInPole);
         for (sp2F = 0; sp2F < 2; sp2F++) {
             spawn_object_relative(0, 0, sp2F * -200, 0, o, MODEL_NONE, bhvHidden1upInPoleTrigger);
         }
-
+        o->o1UpForceSpawn = TRUE;
+        network_send_object(o);
         o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
     }
 }
