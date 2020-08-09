@@ -27,6 +27,7 @@ enum PacketType {
 };
 
 struct Packet {
+    int dataLength;
     int cursor;
     bool error;
     bool reliable;
@@ -67,6 +68,8 @@ void network_shutdown(void);
 void packet_init(struct Packet* packet, enum PacketType packetType, bool reliable);
 void packet_write(struct Packet* packet, void* data, int length);
 void packet_read(struct Packet* packet, void* data, int length);
+u32 packet_hash(struct Packet* packet);
+bool packet_check_hash(struct Packet* packet);
 
 // packet headers
 void network_send_ack(struct Packet* p);

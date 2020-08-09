@@ -10,6 +10,7 @@ void packet_init(struct Packet* packet, enum PacketType packetType, bool reliabl
         nextSeqNum++;
         if (nextSeqNum == 0) { nextSeqNum++;  }
     }
+    packet->dataLength = 3;
     packet->cursor = 3;
     packet->error = false;
     packet->reliable = reliable;
@@ -19,6 +20,7 @@ void packet_init(struct Packet* packet, enum PacketType packetType, bool reliabl
 void packet_write(struct Packet* packet, void* data, int length) {
     if (data == NULL) { packet->error = true; return; }
     memcpy(&packet->buffer[packet->cursor], data, length);
+    packet->dataLength += length;
     packet->cursor += length;
 }
 
@@ -27,4 +29,21 @@ void packet_read(struct Packet* packet, void* data, int length) {
     int cursor = packet->cursor;
     memcpy(data, &packet->buffer[cursor], length);
     packet->cursor = cursor + length;
+}
+
+u32 packet_hash(struct Packet* packet) {
+    u32 hash = 0;
+    int byte = 0;
+    for (int i = 0; i < packet->dataLength; i++) {
+        hash ^= ((u32)packet->buffer[i]) << (8 * byte);
+        byte = (byte + 1) % sizeof(u32);
+    }
+    return hash;
+}
+
+bool packet_check_hash(struct Packet* packet) {
+    u32 localHash = packet_hash(packet);
+    u32 packetHash = 0;
+    memcpy(&packetHash, &packet->buffer[packet->dataLength], sizeof(u32));
+    return localHash == packetHash;
 }

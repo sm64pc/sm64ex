@@ -71,6 +71,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>../;../include/;../src/;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -3953,6 +3954,7 @@
     <ClCompile Include="..\src\pc\network\packets\packet_read_write.c" />
     <ClCompile Include="..\src\pc\network\packets\packet_reliable.c" />
     <ClCompile Include="..\src\pc\network\packets\packet_spawn_objects.c" />
+    <ClCompile Include="..\src\pc\network\packets\packet_spawn_star.c" />
     <ClCompile Include="..\src\pc\pc_main.c" />
     <ClCompile Include="..\src\pc\platform.c" />
     <ClCompile Include="..\src\pc\ultra_reimplementation.c" />

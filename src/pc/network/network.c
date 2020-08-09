@@ -68,7 +68,9 @@ void network_send(struct Packet* p) {
 
     network_remember_reliable(p);
 
-    int rc = sendto(gSocket, p->buffer, p->cursor, 0, (SOCKADDR *)& txAddr, sizeof(txAddr));
+    u32 hash = packet_hash(p);
+    memcpy(&p->buffer[p->dataLength], &hash, sizeof(u32));
+    int rc = sendto(gSocket, p->buffer, p->cursor + sizeof(u32), 0, (SOCKADDR *)& txAddr, sizeof(txAddr));
     if (rc == SOCKET_ERROR) {
         wprintf(L"%s sendto failed with error: %d\n", NETWORKTYPESTR, WSAGetLastError());
         return;
@@ -103,6 +105,11 @@ void network_update(void) {
             break;
         }
         if (rc == 0) { break; }
+
+        p.dataLength = rc - sizeof(u32);
+        if (!packet_check_hash(&p)) {
+            printf("Invalid packet!\n");
+        }
 
         switch (p.buffer[0]) {
             case PACKET_ACK: network_receive_ack(&p); break;
