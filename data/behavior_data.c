@@ -3522,14 +3522,14 @@ const BehaviorScript bhvMario[] = {
     END_LOOP(),
 };
 
-const BehaviorScript bhvLuigi[] = {
+const BehaviorScript bhvMario2[] = {
     BEGIN(OBJ_LIST_PLAYER),
     SET_INT(oIntangibleTimer, 0),
     OR_INT(oFlags, OBJ_FLAG_0100),
     OR_INT(oUnk94, 0x0001),
     SET_HITBOX(/*Radius*/ 37, /*Height*/ 160),
     BEGIN_LOOP(),
-        CALL_NATIVE(bhv_luigi_update),
+        CALL_NATIVE(bhv_mario2_update),
     END_LOOP(),
 };
 

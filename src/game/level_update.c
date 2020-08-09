@@ -1253,6 +1253,16 @@ s32 init_level(void) {
     if (networkType != NT_NONE) {
         set_play_mode(PLAY_MODE_SYNC_LEVEL);
     }
+
+    // set mario/luigi model
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (i == 0) {
+            gMarioState[i].marioObj->header.gfx.sharedChild = gLoadedGraphNodes[(networkType == NT_SERVER) ? MODEL_MARIO : MODEL_LUIGI];
+        } else {
+            gMarioState[i].marioObj->header.gfx.sharedChild = gLoadedGraphNodes[(networkType == NT_SERVER) ? MODEL_LUIGI2 : MODEL_MARIO2];
+        }
+    }
+
     return 1;
 }
 

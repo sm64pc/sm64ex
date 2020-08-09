@@ -8,7 +8,7 @@
 
 static u8 localCoinId = 1;
 
-// the remoteCoinId stuff is only valid for 'luigi' aka the one remote player
+// two-player hack: the remoteCoinId stuff is only valid for the one remote player
 // will need to be extended if MAX_PLAYERS is ever increased
 #define MAX_REMOTE_COIN_IDS 16
 static u8 remoteCoinIds[MAX_REMOTE_COIN_IDS] = { 0 };

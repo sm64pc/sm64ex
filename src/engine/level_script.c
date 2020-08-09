@@ -438,7 +438,7 @@ static void level_cmd_init_mario(void) {
     sCurrentCmd = CMD_NEXT;
 }
 
-static void level_cmd_init_luigi(void) {
+static void level_cmd_init_mario2(void) {
     vec3s_set(gPlayerSpawnInfos[1].startPos, 0, 0, 0);
     vec3s_set(gPlayerSpawnInfos[1].startAngle, 0, 0, 0);
 
@@ -747,8 +747,8 @@ static void level_cmd_get_or_set_var(void) {
             case 4:
                 gCurrAreaIndex = sRegister;
                 break;
-            case 5: 
-                gPressedStart = sRegister; 
+            case 5:
+                gPressedStart = sRegister;
                 break;
         }
     } else {
@@ -768,8 +768,8 @@ static void level_cmd_get_or_set_var(void) {
             case 4:
                 sRegister = gCurrAreaIndex;
                 break;
-            case 5: 
-                sRegister = gPressedStart; 
+            case 5:
+                sRegister = gPressedStart;
                 break;
         }
     }
@@ -874,7 +874,7 @@ static void (*LevelScriptJumpTable[])(void) = {
     /*3C*/ level_cmd_get_or_set_var,
     /*3D*/ level_cmd_advdemo,
     /*3E*/ level_cmd_cleardemoptr,
-    /*3F*/ level_cmd_init_luigi,
+    /*3F*/ level_cmd_init_mario2,
 };
 
 struct LevelCommand *level_script_execute(struct LevelCommand *cmd) {

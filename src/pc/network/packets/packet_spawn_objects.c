@@ -6,7 +6,7 @@
 
 static u8 localSpawnId = 1;
 
-// the remoteSpawnId stuff is only valid for 'luigi' aka the one remote player
+// two-player hack: the remoteSpawnId stuff is only valid for the one remote player
 // will need to be extended if MAX_PLAYERS is ever increased
 #define MAX_REMOTE_SPAWN_IDS 16
 static u8 remoteSpawnIds[MAX_REMOTE_SPAWN_IDS] = { 0 };

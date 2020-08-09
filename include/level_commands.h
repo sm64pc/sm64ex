@@ -188,7 +188,7 @@
     CMD_W(behArg), \
     CMD_PTR(beh)
 
-#define LUIGI(unk3, behArg, beh) \
+#define MARIO2(unk3, behArg, beh) \
     CMD_BBBB(0x3F, 0x0C, 0x00, unk3), \
     CMD_W(behArg), \
     CMD_PTR(beh)
@@ -282,7 +282,7 @@
 
 #define ADV_DEMO() \
     CMD_BBH(0x3D, 0x04, 0x0000)
-    
+
 #define CLEAR_DEMO_PTR() \
     CMD_BBH(0x3E, 0x04, 0x0000)
 

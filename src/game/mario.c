@@ -1280,7 +1280,7 @@ void debug_print_speed_action_normal(struct MarioState *m) {
  * Update the button inputs for Mario.
  */
 void update_mario_button_inputs(struct MarioState *m) {
-    // don't update Luigi inputs
+    // don't update remote inputs
     if (m != &gMarioStates[0]) { return; }
 
     if (m->controller->buttonPressed & A_BUTTON) {
@@ -1332,7 +1332,7 @@ void update_mario_joystick_inputs(struct MarioState *m) {
         m->intendedMag = mag / 8.0f;
     }
 
-    // don't update Luigi inputs past this point
+    // don't update remote inputs past this point
     if (m != &gMarioStates[0]) { return; }
 
     if (m->intendedMag > 0.0f) {
@@ -1857,9 +1857,9 @@ s32 execute_mario_action(UNUSED struct Object *o) {
 void init_mario(void) {
     gInsidePainting = false;
 
-    bool isMario = (gMarioState == &gMarioStates[0]);
-    if (isMario && gMarioObject == NULL) { goto skippy; }
-    if (!isMario && gLuigiObject == NULL) { goto skippy; }
+    bool isLocal = (gMarioState == &gMarioStates[0]);
+    if (isLocal && gMarioObject == NULL) { goto skippy; }
+    if (!isLocal && gMario2Object == NULL) { goto skippy; }
 
     Vec3s capPos;
     struct Object *capObject;
@@ -1897,13 +1897,13 @@ void init_mario(void) {
         find_water_level(gMarioSpawnInfo->startPos[0], gMarioSpawnInfo->startPos[2]);
 
     gMarioState->area = gCurrentArea;
-    gMarioState->marioObj = isMario ? gMarioObject : gLuigiObject;
+    gMarioState->marioObj = isLocal ? gMarioObject : gMario2Object;
     gMarioState->marioObj->header.gfx.unk38.animID = -1;
     vec3s_copy(gMarioState->faceAngle, gMarioSpawnInfo->startAngle);
     vec3s_set(gMarioState->angleVel, 0, 0, 0);
     vec3s_to_vec3f(gMarioState->pos, gMarioSpawnInfo->startPos);
     vec3f_set(gMarioState->vel, 0, 0, 0);
-    if (!isMario) { gMarioState->pos[0] -= 150; }
+    if (!isLocal) { gMarioState->pos[0] -= 150; }
     gMarioState->floorHeight =
         find_floor(gMarioState->pos[0], gMarioState->pos[1], gMarioState->pos[2], &gMarioState->floor);
 
@@ -1944,7 +1944,7 @@ void init_mario(void) {
     }
 
 skippy:
-    if (isMario) {
+    if (isLocal) {
         gMarioState = &gMarioStates[1];
         init_mario();
         gMarioState = &gMarioStates[0];
@@ -1952,11 +1952,11 @@ skippy:
 }
 
 void init_mario_from_save_file(void) {
-    bool isMario = (gMarioState == &gMarioStates[0]);
-    gMarioState->unk00 = isMario ? 0 : 1;
+    bool isLocal = (gMarioState == &gMarioStates[0]);
+    gMarioState->unk00 = isLocal ? 0 : 1;
     gMarioState->flags = 0;
     gMarioState->action = 0;
-    int i = isMario ? 0 : 1;
+    int i = isLocal ? 0 : 1;
     gMarioState->spawnInfo = &gPlayerSpawnInfos[i];
     gMarioState->statusForCamera = &gPlayerCameraState[i];
     gMarioState->marioBodyState = &gBodyStates[i];
@@ -1977,7 +1977,7 @@ void init_mario_from_save_file(void) {
     gHudDisplay.coins = 0;
     gHudDisplay.wedges = 8;
 
-    if (isMario) {
+    if (isLocal) {
         gMarioState = &gMarioStates[1];
         init_mario_from_save_file();
         gMarioState = &gMarioStates[0];

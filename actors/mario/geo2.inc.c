@@ -1,7 +1,7 @@
-// Normal Luigi Geo
+// Player 2's Mario Geo
 
 // 0x170002E0
-const GeoLayout luigi_geo_face_and_wings[] = {
+const GeoLayout mario2_geo_face_and_wings[] = {
    GEO_ASM(1, geo_mario_head_rotation),
    GEO_ROTATION_NODE(0x00, 0, 0, 0),
    GEO_OPEN_NODE(),
@@ -51,7 +51,7 @@ const GeoLayout luigi_geo_face_and_wings[] = {
 };
 
 // 0x1700041C
-const GeoLayout luigi_geo_left_hand[] = {
+const GeoLayout mario2_geo_left_hand[] = {
    GEO_SWITCH_CASE(3, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_OPAQUE, 60, 0, 0, NULL),
@@ -71,7 +71,7 @@ const GeoLayout luigi_geo_left_hand[] = {
 };
 
 // 0x17000494
-const GeoLayout luigi_geo_right_hand[] = {
+const GeoLayout mario2_geo_right_hand[] = {
    GEO_SWITCH_CASE(2, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_OPAQUE, 60, 0, 0, NULL),
@@ -100,7 +100,7 @@ const GeoLayout luigi_geo_right_hand[] = {
 // The body loads all the parts with some shared dls to apply the solid color of the dl that has it, the same rule applies to the medium and low poly geos
 
 // 0x1700053C
-const GeoLayout luigi_geo_body[] = {
+const GeoLayout mario2_geo_body[] = {
    GEO_ANIMATED_PART(LAYER_OPAQUE, 0, 0, 0, NULL),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_OPAQUE, 0, 0, 0, mario_butt), // starts sharing solid color with mario_torso (blue)
@@ -113,7 +113,7 @@ const GeoLayout luigi_geo_body[] = {
             GEO_OPEN_NODE(),
                GEO_ANIMATED_PART(LAYER_OPAQUE, 87, 0, 0, NULL),
                GEO_OPEN_NODE(),
-                  GEO_BRANCH(1, luigi_geo_face_and_wings), // stops sharing because faces has its own dl
+                  GEO_BRANCH(1, mario2_geo_face_and_wings), // stops sharing because faces has its own dl
                GEO_CLOSE_NODE(),
                GEO_ANIMATED_PART(LAYER_OPAQUE, 67, -10, 79, NULL),
                GEO_OPEN_NODE(),
@@ -121,7 +121,7 @@ const GeoLayout luigi_geo_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_OPAQUE, 65, 0, 0, mario_left_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_geo_left_hand), // stops sharing because hand has its solid color (white)
+                        GEO_BRANCH(1, mario2_geo_left_hand), // stops sharing because hand has its solid color (white)
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -131,7 +131,7 @@ const GeoLayout luigi_geo_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_OPAQUE, 65, 0, 0, mario_right_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_geo_right_hand), // stops sharing because hand has its solid color (white)
+                        GEO_BRANCH(1, mario2_geo_right_hand), // stops sharing because hand has its solid color (white)
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -170,7 +170,7 @@ const GeoLayout luigi_geo_body[] = {
 };
 
 // 0x170006F8
-const GeoLayout luigi_geo_medium_poly_left_hand[] = {
+const GeoLayout mario2_geo_medium_poly_left_hand[] = {
    GEO_SWITCH_CASE(3, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_OPAQUE, 60, 0, 0, NULL),
@@ -190,7 +190,7 @@ const GeoLayout luigi_geo_medium_poly_left_hand[] = {
 };
 
 // 0x17000770
-const GeoLayout luigi_geo_medium_poly_right_hand[] = {
+const GeoLayout mario2_geo_medium_poly_right_hand[] = {
    GEO_SWITCH_CASE(2, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_OPAQUE, 60, 0, 0, NULL),
@@ -217,7 +217,7 @@ const GeoLayout luigi_geo_medium_poly_right_hand[] = {
 };
 
 // 0x17000818
-const GeoLayout luigi_geo_medium_poly_body[] = {
+const GeoLayout mario2_geo_medium_poly_body[] = {
    GEO_ANIMATED_PART(LAYER_OPAQUE, 0, 0, 0, NULL),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_OPAQUE, 0, 0, 0, mario_medium_poly_butt), // starts sharing solid color with mario_torso (blue)
@@ -230,7 +230,7 @@ const GeoLayout luigi_geo_medium_poly_body[] = {
             GEO_OPEN_NODE(),
                GEO_ANIMATED_PART(LAYER_OPAQUE, 87, 0, 0, NULL),
                GEO_OPEN_NODE(),
-                  GEO_BRANCH(1, luigi_geo_face_and_wings), // stops sharing because faces has its own dl - medium poly mario uses high poly face
+                  GEO_BRANCH(1, mario2_geo_face_and_wings), // stops sharing because faces has its own dl - medium poly mario uses high poly face
                GEO_CLOSE_NODE(),
                GEO_ANIMATED_PART(LAYER_OPAQUE, 67, -10, 79, NULL),
                GEO_OPEN_NODE(),
@@ -238,7 +238,7 @@ const GeoLayout luigi_geo_medium_poly_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_OPAQUE, 65, 0, 0, mario_medium_poly_left_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_geo_medium_poly_left_hand), // stops sharing because hand has its solid color (white)
+                        GEO_BRANCH(1, mario2_geo_medium_poly_left_hand), // stops sharing because hand has its solid color (white)
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -248,7 +248,7 @@ const GeoLayout luigi_geo_medium_poly_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_OPAQUE, 65, 0, 0, mario_medium_poly_right_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_geo_medium_poly_right_hand), // stops sharing because hand has its solid color (white)
+                        GEO_BRANCH(1, mario2_geo_medium_poly_right_hand), // stops sharing because hand has its solid color (white)
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -287,7 +287,7 @@ const GeoLayout luigi_geo_medium_poly_body[] = {
 };
 
 // 0x170009D4
-const GeoLayout luigi_geo_low_poly_face_and_wings[] = {
+const GeoLayout mario2_geo_low_poly_face_and_wings[] = {
    GEO_ASM(1, geo_mario_head_rotation),
    GEO_ROTATION_NODE(0x00, 0, 0, 0),
    GEO_OPEN_NODE(),
@@ -337,7 +337,7 @@ const GeoLayout luigi_geo_low_poly_face_and_wings[] = {
 };
 
 // 0x17000B10
-const GeoLayout luigi_geo_low_poly_left_hand[] = {
+const GeoLayout mario2_geo_low_poly_left_hand[] = {
    GEO_SWITCH_CASE(3, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_OPAQUE, 60, 0, 0, NULL),
@@ -357,7 +357,7 @@ const GeoLayout luigi_geo_low_poly_left_hand[] = {
 };
 
 // 0x17000B88
-const GeoLayout luigi_geo_low_poly_right_hand[] = {
+const GeoLayout mario2_geo_low_poly_right_hand[] = {
    GEO_SWITCH_CASE(2, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_OPAQUE, 60, 0, 0, NULL),
@@ -384,7 +384,7 @@ const GeoLayout luigi_geo_low_poly_right_hand[] = {
 };
 
 // 0x17000C30
-const GeoLayout luigi_geo_low_poly_body[] = {
+const GeoLayout mario2_geo_low_poly_body[] = {
    GEO_ANIMATED_PART(LAYER_OPAQUE, 0, 0, 0, NULL),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_OPAQUE, 0, 0, 0, mario_low_poly_butt), // starts sharing solid color with mario_torso (blue)
@@ -397,7 +397,7 @@ const GeoLayout luigi_geo_low_poly_body[] = {
             GEO_OPEN_NODE(),
                GEO_ANIMATED_PART(LAYER_OPAQUE, 87, 0, 0, NULL),
                GEO_OPEN_NODE(),
-                  GEO_BRANCH(1, luigi_geo_low_poly_face_and_wings), // stops sharing because faces has its own dl
+                  GEO_BRANCH(1, mario2_geo_low_poly_face_and_wings), // stops sharing because faces has its own dl
                GEO_CLOSE_NODE(),
                GEO_ANIMATED_PART(LAYER_OPAQUE, 67, -10, 79, NULL),
                GEO_OPEN_NODE(),
@@ -405,7 +405,7 @@ const GeoLayout luigi_geo_low_poly_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_OPAQUE, 65, 0, 0, mario_low_poly_left_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_geo_low_poly_left_hand), // stops sharing because hand has its solid color (white)
+                        GEO_BRANCH(1, mario2_geo_low_poly_left_hand), // stops sharing because hand has its solid color (white)
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -415,7 +415,7 @@ const GeoLayout luigi_geo_low_poly_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_OPAQUE, 65, 0, 0, mario_low_poly_right_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_geo_low_poly_right_hand), // stops sharing because hand has its solid color (white)
+                        GEO_BRANCH(1, mario2_geo_low_poly_right_hand), // stops sharing because hand has its solid color (white)
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -456,7 +456,7 @@ const GeoLayout luigi_geo_low_poly_body[] = {
 // Vanish Mario Geo
 
 // 0x17000DEC
-const GeoLayout luigi_vanish_geo_face_and_wings[] = {
+const GeoLayout mario2_vanish_geo_face_and_wings[] = {
    GEO_ASM(1, geo_mario_head_rotation),
    GEO_ROTATION_NODE(0x00, 0, 0, 0),
    GEO_OPEN_NODE(),
@@ -506,7 +506,7 @@ const GeoLayout luigi_vanish_geo_face_and_wings[] = {
 };
 
 // 0x17000F28
-const GeoLayout luigi_vanish_geo_left_hand[] = {
+const GeoLayout mario2_vanish_geo_left_hand[] = {
    GEO_SWITCH_CASE(3, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_TRANSPARENT, 60, 0, 0, NULL),
@@ -526,7 +526,7 @@ const GeoLayout luigi_vanish_geo_left_hand[] = {
 };
 
 // 0x17000FA0
-const GeoLayout luigi_vanish_geo_right_hand[] = {
+const GeoLayout mario2_vanish_geo_right_hand[] = {
    GEO_SWITCH_CASE(2, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_TRANSPARENT, 60, 0, 0, NULL),
@@ -555,7 +555,7 @@ const GeoLayout luigi_vanish_geo_right_hand[] = {
 // Same rule body as Normal Mario
 
 // 0x17001048
-const GeoLayout luigi_vanish_geo_body[] = {
+const GeoLayout mario2_vanish_geo_body[] = {
    GEO_ANIMATED_PART(LAYER_TRANSPARENT, 0, 0, 0, NULL),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_TRANSPARENT, 0, 0, 0, mario_butt),
@@ -568,7 +568,7 @@ const GeoLayout luigi_vanish_geo_body[] = {
             GEO_OPEN_NODE(),
                GEO_ANIMATED_PART(LAYER_TRANSPARENT, 87, 0, 0, NULL),
                GEO_OPEN_NODE(),
-                  GEO_BRANCH(1, luigi_vanish_geo_face_and_wings),
+                  GEO_BRANCH(1, mario2_vanish_geo_face_and_wings),
                GEO_CLOSE_NODE(),
                GEO_ANIMATED_PART(LAYER_TRANSPARENT, 67, -10, 79, NULL),
                GEO_OPEN_NODE(),
@@ -576,7 +576,7 @@ const GeoLayout luigi_vanish_geo_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_TRANSPARENT, 65, 0, 0, mario_left_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_vanish_geo_left_hand),
+                        GEO_BRANCH(1, mario2_vanish_geo_left_hand),
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -586,7 +586,7 @@ const GeoLayout luigi_vanish_geo_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_TRANSPARENT, 65, 0, 0, mario_right_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_vanish_geo_right_hand),
+                        GEO_BRANCH(1, mario2_vanish_geo_right_hand),
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -625,7 +625,7 @@ const GeoLayout luigi_vanish_geo_body[] = {
 };
 
 // 0x17001204
-const GeoLayout luigi_vanish_geo_medium_poly_left_hand[] = {
+const GeoLayout mario2_vanish_geo_medium_poly_left_hand[] = {
    GEO_SWITCH_CASE(3, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_TRANSPARENT, 60, 0, 0, NULL),
@@ -645,7 +645,7 @@ const GeoLayout luigi_vanish_geo_medium_poly_left_hand[] = {
 };
 
 // 0x1700127C
-const GeoLayout luigi_vanish_geo_medium_poly_right_hand[] = {
+const GeoLayout mario2_vanish_geo_medium_poly_right_hand[] = {
    GEO_SWITCH_CASE(2, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_TRANSPARENT, 60, 0, 0, NULL),
@@ -672,7 +672,7 @@ const GeoLayout luigi_vanish_geo_medium_poly_right_hand[] = {
 };
 
 // 0x17001324
-const GeoLayout luigi_vanish_geo_medium_poly_body[] = {
+const GeoLayout mario2_vanish_geo_medium_poly_body[] = {
    GEO_ANIMATED_PART(LAYER_TRANSPARENT, 0, 0, 0, NULL),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_TRANSPARENT, 0, 0, 0, mario_medium_poly_butt),
@@ -685,7 +685,7 @@ const GeoLayout luigi_vanish_geo_medium_poly_body[] = {
             GEO_OPEN_NODE(),
                GEO_ANIMATED_PART(LAYER_TRANSPARENT, 87, 0, 0, NULL),
                GEO_OPEN_NODE(),
-                  GEO_BRANCH(1, luigi_vanish_geo_face_and_wings),
+                  GEO_BRANCH(1, mario2_vanish_geo_face_and_wings),
                GEO_CLOSE_NODE(),
                GEO_ANIMATED_PART(LAYER_TRANSPARENT, 67, -10, 79, NULL),
                GEO_OPEN_NODE(),
@@ -693,7 +693,7 @@ const GeoLayout luigi_vanish_geo_medium_poly_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_TRANSPARENT, 65, 0, 0, mario_medium_poly_left_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_vanish_geo_medium_poly_left_hand),
+                        GEO_BRANCH(1, mario2_vanish_geo_medium_poly_left_hand),
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -703,7 +703,7 @@ const GeoLayout luigi_vanish_geo_medium_poly_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_TRANSPARENT, 65, 0, 0, mario_medium_poly_right_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_vanish_geo_medium_poly_right_hand),
+                        GEO_BRANCH(1, mario2_vanish_geo_medium_poly_right_hand),
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -742,7 +742,7 @@ const GeoLayout luigi_vanish_geo_medium_poly_body[] = {
 };
 
 // 0x170014E0
-const GeoLayout luigi_vanish_geo_low_poly_face_and_wings[] = {
+const GeoLayout mario2_vanish_geo_low_poly_face_and_wings[] = {
    GEO_ASM(1, geo_mario_head_rotation),
    GEO_ROTATION_NODE(0x00, 0, 0, 0),
    GEO_OPEN_NODE(),
@@ -792,7 +792,7 @@ const GeoLayout luigi_vanish_geo_low_poly_face_and_wings[] = {
 };
 
 // 0x1700161C
-const GeoLayout luigi_vanish_geo_low_poly_left_hand[] = {
+const GeoLayout mario2_vanish_geo_low_poly_left_hand[] = {
    GEO_SWITCH_CASE(3, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_TRANSPARENT, 60, 0, 0, NULL),
@@ -812,7 +812,7 @@ const GeoLayout luigi_vanish_geo_low_poly_left_hand[] = {
 };
 
 // 0x17001694
-const GeoLayout luigi_vanish_geo_low_poly_right_hand[] = {
+const GeoLayout mario2_vanish_geo_low_poly_right_hand[] = {
    GEO_SWITCH_CASE(2, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_TRANSPARENT, 60, 0, 0, NULL),
@@ -839,7 +839,7 @@ const GeoLayout luigi_vanish_geo_low_poly_right_hand[] = {
 };
 
 // 0x1700173C
-const GeoLayout luigi_vanish_geo_low_poly_body[] = {
+const GeoLayout mario2_vanish_geo_low_poly_body[] = {
    GEO_ANIMATED_PART(LAYER_TRANSPARENT, 0, 0, 0, NULL),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_TRANSPARENT, 0, 0, 0, mario_low_poly_butt),
@@ -852,7 +852,7 @@ const GeoLayout luigi_vanish_geo_low_poly_body[] = {
             GEO_OPEN_NODE(),
                GEO_ANIMATED_PART(LAYER_TRANSPARENT, 87, 0, 0, NULL),
                GEO_OPEN_NODE(),
-                  GEO_BRANCH(1, luigi_vanish_geo_low_poly_face_and_wings),
+                  GEO_BRANCH(1, mario2_vanish_geo_low_poly_face_and_wings),
                GEO_CLOSE_NODE(),
                GEO_ANIMATED_PART(LAYER_TRANSPARENT, 67, -10, 79, NULL),
                GEO_OPEN_NODE(),
@@ -860,7 +860,7 @@ const GeoLayout luigi_vanish_geo_low_poly_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_TRANSPARENT, 65, 0, 0, mario_low_poly_left_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_vanish_geo_low_poly_left_hand),
+                        GEO_BRANCH(1, mario2_vanish_geo_low_poly_left_hand),
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -870,7 +870,7 @@ const GeoLayout luigi_vanish_geo_low_poly_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_TRANSPARENT, 65, 0, 0, mario_low_poly_right_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_vanish_geo_low_poly_right_hand),
+                        GEO_BRANCH(1, mario2_vanish_geo_low_poly_right_hand),
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -911,7 +911,7 @@ const GeoLayout luigi_vanish_geo_low_poly_body[] = {
 // Metal Mario Geo
 
 // 0x170018F8
-const GeoLayout luigi_metal_geo_face_and_wings[] = {
+const GeoLayout mario2_metal_geo_face_and_wings[] = {
    GEO_ASM(1, geo_mario_head_rotation),
    GEO_ROTATION_NODE(0x00, 0, 0, 0),
    GEO_OPEN_NODE(),
@@ -941,7 +941,7 @@ const GeoLayout luigi_metal_geo_face_and_wings[] = {
 };
 
 // 0x170019A4
-const GeoLayout luigi_metal_geo_left_hand[] = {
+const GeoLayout mario2_metal_geo_left_hand[] = {
    GEO_SWITCH_CASE(3, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_OPAQUE, 60, 0, 0, NULL),
@@ -961,7 +961,7 @@ const GeoLayout luigi_metal_geo_left_hand[] = {
 };
 
 // 0x17001A1C
-const GeoLayout luigi_metal_geo_right_hand[] = {
+const GeoLayout mario2_metal_geo_right_hand[] = {
    GEO_SWITCH_CASE(2, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_OPAQUE, 60, 0, 0, NULL),
@@ -990,7 +990,7 @@ const GeoLayout luigi_metal_geo_right_hand[] = {
 // A difference from Normal Mario is that the dls after the butt and left thigh shares the metal texture of it, same rule applies to the medium and low poly geos
 
 // 0x17001AC4
-const GeoLayout luigi_metal_geo_body[] = {
+const GeoLayout mario2_metal_geo_body[] = {
    GEO_ANIMATED_PART(LAYER_OPAQUE, 0, 0, 0, NULL),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_OPAQUE, 0, 0, 0, mario_metal_butt), // starts sharing metal texture with the dls below
@@ -1003,7 +1003,7 @@ const GeoLayout luigi_metal_geo_body[] = {
             GEO_OPEN_NODE(),
                GEO_ANIMATED_PART(LAYER_OPAQUE, 87, 0, 0, NULL),
                GEO_OPEN_NODE(),
-                  GEO_BRANCH(1, luigi_metal_geo_face_and_wings), // unlike normal mario geo, these dls still share the metal texture
+                  GEO_BRANCH(1, mario2_metal_geo_face_and_wings), // unlike normal mario geo, these dls still share the metal texture
                GEO_CLOSE_NODE(),
                GEO_ANIMATED_PART(LAYER_OPAQUE, 67, -10, 79, NULL),
                GEO_OPEN_NODE(),
@@ -1011,7 +1011,7 @@ const GeoLayout luigi_metal_geo_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_OPAQUE, 65, 0, 0, mario_left_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_metal_geo_left_hand),
+                        GEO_BRANCH(1, mario2_metal_geo_left_hand),
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -1021,7 +1021,7 @@ const GeoLayout luigi_metal_geo_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_OPAQUE, 65, 0, 0, mario_right_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_metal_geo_right_hand), // stop sharing because the wing metal cap of it
+                        GEO_BRANCH(1, mario2_metal_geo_right_hand), // stop sharing because the wing metal cap of it
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -1060,7 +1060,7 @@ const GeoLayout luigi_metal_geo_body[] = {
 };
 
 // 0x17001C80
-const GeoLayout luigi_metal_geo_medium_poly_left_hand[] = {
+const GeoLayout mario2_metal_geo_medium_poly_left_hand[] = {
    GEO_SWITCH_CASE(3, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_OPAQUE, 60, 0, 0, NULL),
@@ -1080,7 +1080,7 @@ const GeoLayout luigi_metal_geo_medium_poly_left_hand[] = {
 };
 
 // 0x17001CF8
-const GeoLayout luigi_metal_geo_medium_poly_right_hand[] = {
+const GeoLayout mario2_metal_geo_medium_poly_right_hand[] = {
    GEO_SWITCH_CASE(2, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_OPAQUE, 60, 0, 0, NULL),
@@ -1107,7 +1107,7 @@ const GeoLayout luigi_metal_geo_medium_poly_right_hand[] = {
 };
 
 // 0x17001DA0
-const GeoLayout luigi_metal_geo_medium_poly_body[] = {
+const GeoLayout mario2_metal_geo_medium_poly_body[] = {
    GEO_ANIMATED_PART(LAYER_OPAQUE, 0, 0, 0, NULL),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_OPAQUE, 0, 0, 0, mario_metal_medium_poly_butt),
@@ -1120,7 +1120,7 @@ const GeoLayout luigi_metal_geo_medium_poly_body[] = {
             GEO_OPEN_NODE(),
                GEO_ANIMATED_PART(LAYER_OPAQUE, 87, 0, 0, NULL),
                GEO_OPEN_NODE(),
-                  GEO_BRANCH(1, luigi_metal_geo_face_and_wings),
+                  GEO_BRANCH(1, mario2_metal_geo_face_and_wings),
                GEO_CLOSE_NODE(),
                GEO_ANIMATED_PART(LAYER_OPAQUE, 67, -10, 79, NULL),
                GEO_OPEN_NODE(),
@@ -1128,7 +1128,7 @@ const GeoLayout luigi_metal_geo_medium_poly_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_OPAQUE, 65, 0, 0, mario_medium_poly_left_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_metal_geo_medium_poly_left_hand),
+                        GEO_BRANCH(1, mario2_metal_geo_medium_poly_left_hand),
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -1138,7 +1138,7 @@ const GeoLayout luigi_metal_geo_medium_poly_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_OPAQUE, 65, 0, 0, mario_medium_poly_right_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_metal_geo_medium_poly_right_hand),
+                        GEO_BRANCH(1, mario2_metal_geo_medium_poly_right_hand),
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -1177,7 +1177,7 @@ const GeoLayout luigi_metal_geo_medium_poly_body[] = {
 };
 
 // 0x17001F5C
-const GeoLayout luigi_metal_geo_low_poly_face_and_wings[] = {
+const GeoLayout mario2_metal_geo_low_poly_face_and_wings[] = {
    GEO_ASM(1, geo_mario_head_rotation),
    GEO_ROTATION_NODE(0x00, 0, 0, 0),
    GEO_OPEN_NODE(),
@@ -1207,7 +1207,7 @@ const GeoLayout luigi_metal_geo_low_poly_face_and_wings[] = {
 };
 
 // 0x17002008
-const GeoLayout luigi_metal_geo_low_poly_left_hand[] = {
+const GeoLayout mario2_metal_geo_low_poly_left_hand[] = {
    GEO_SWITCH_CASE(3, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_OPAQUE, 60, 0, 0, NULL),
@@ -1227,7 +1227,7 @@ const GeoLayout luigi_metal_geo_low_poly_left_hand[] = {
 };
 
 // 0x17002080
-const GeoLayout luigi_metal_geo_low_poly_right_hand[] = {
+const GeoLayout mario2_metal_geo_low_poly_right_hand[] = {
    GEO_SWITCH_CASE(2, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_OPAQUE, 60, 0, 0, NULL),
@@ -1254,7 +1254,7 @@ const GeoLayout luigi_metal_geo_low_poly_right_hand[] = {
 };
 
 // 0x17002128
-const GeoLayout luigi_metal_geo_low_poly_body[] = {
+const GeoLayout mario2_metal_geo_low_poly_body[] = {
    GEO_ANIMATED_PART(LAYER_OPAQUE, 0, 0, 0, NULL),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_OPAQUE, 0, 0, 0, mario_metal_low_poly_butt),
@@ -1267,7 +1267,7 @@ const GeoLayout luigi_metal_geo_low_poly_body[] = {
             GEO_OPEN_NODE(),
                GEO_ANIMATED_PART(LAYER_OPAQUE, 87, 0, 0, NULL),
                GEO_OPEN_NODE(),
-                  GEO_BRANCH(1, luigi_metal_geo_low_poly_face_and_wings),
+                  GEO_BRANCH(1, mario2_metal_geo_low_poly_face_and_wings),
                GEO_CLOSE_NODE(),
                GEO_ANIMATED_PART(LAYER_OPAQUE, 67, -10, 79, NULL),
                GEO_OPEN_NODE(),
@@ -1275,7 +1275,7 @@ const GeoLayout luigi_metal_geo_low_poly_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_OPAQUE, 65, 0, 0, mario_low_poly_left_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_metal_geo_low_poly_left_hand),
+                        GEO_BRANCH(1, mario2_metal_geo_low_poly_left_hand),
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -1285,7 +1285,7 @@ const GeoLayout luigi_metal_geo_low_poly_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_OPAQUE, 65, 0, 0, mario_low_poly_right_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_metal_geo_low_poly_right_hand),
+                        GEO_BRANCH(1, mario2_metal_geo_low_poly_right_hand),
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -1326,7 +1326,7 @@ const GeoLayout luigi_metal_geo_low_poly_body[] = {
 // Metal Vanish Mario Geo
 
 // 0x170022E4
-const GeoLayout luigi_metal_vanish_geo_face_and_wings[] = {
+const GeoLayout mario2_metal_vanish_geo_face_and_wings[] = {
    GEO_ASM(1, geo_mario_head_rotation),
    GEO_ROTATION_NODE(0x00, 0, 0, 0),
    GEO_OPEN_NODE(),
@@ -1356,7 +1356,7 @@ const GeoLayout luigi_metal_vanish_geo_face_and_wings[] = {
 };
 
 // 0x17002390
-const GeoLayout luigi_metal_vanish_geo_left_hand[] = {
+const GeoLayout mario2_metal_vanish_geo_left_hand[] = {
    GEO_SWITCH_CASE(2, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_TRANSPARENT, 60, 0, 0, NULL),
@@ -1376,7 +1376,7 @@ const GeoLayout luigi_metal_vanish_geo_left_hand[] = {
 };
 
 // 0x17002408
-const GeoLayout luigi_metal_vanish_geo_right_hand[] = {
+const GeoLayout mario2_metal_vanish_geo_right_hand[] = {
    GEO_SWITCH_CASE(2, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_TRANSPARENT, 60, 0, 0, NULL),
@@ -1405,7 +1405,7 @@ const GeoLayout luigi_metal_vanish_geo_right_hand[] = {
 // Same rules as Metal Mario
 
 // 0x170024B0
-const GeoLayout luigi_metal_vanish_geo_body[] = {
+const GeoLayout mario2_metal_vanish_geo_body[] = {
    GEO_ANIMATED_PART(LAYER_TRANSPARENT, 0, 0, 0, NULL),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_TRANSPARENT, 0, 0, 0, mario_metal_butt),
@@ -1418,7 +1418,7 @@ const GeoLayout luigi_metal_vanish_geo_body[] = {
             GEO_OPEN_NODE(),
                GEO_ANIMATED_PART(LAYER_TRANSPARENT, 87, 0, 0, NULL),
                GEO_OPEN_NODE(),
-                  GEO_BRANCH(1, luigi_metal_vanish_geo_face_and_wings),
+                  GEO_BRANCH(1, mario2_metal_vanish_geo_face_and_wings),
                GEO_CLOSE_NODE(),
                GEO_ANIMATED_PART(LAYER_TRANSPARENT, 67, -10, 79, NULL),
                GEO_OPEN_NODE(),
@@ -1426,7 +1426,7 @@ const GeoLayout luigi_metal_vanish_geo_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_TRANSPARENT, 65, 0, 0, mario_left_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_metal_vanish_geo_left_hand),
+                        GEO_BRANCH(1, mario2_metal_vanish_geo_left_hand),
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -1436,7 +1436,7 @@ const GeoLayout luigi_metal_vanish_geo_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_TRANSPARENT, 65, 0, 0, mario_right_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_metal_vanish_geo_right_hand),
+                        GEO_BRANCH(1, mario2_metal_vanish_geo_right_hand),
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -1475,7 +1475,7 @@ const GeoLayout luigi_metal_vanish_geo_body[] = {
 };
 
 // 0x1700266C
-const GeoLayout luigi_metal_vanish_geo_medium_poly_left_hand[] = {
+const GeoLayout mario2_metal_vanish_geo_medium_poly_left_hand[] = {
    GEO_SWITCH_CASE(2, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_TRANSPARENT, 60, 0, 0, NULL),
@@ -1495,7 +1495,7 @@ const GeoLayout luigi_metal_vanish_geo_medium_poly_left_hand[] = {
 };
 
 // 0x170026E4
-const GeoLayout luigi_metal_vanish_geo_medium_poly_right_hand[] = {
+const GeoLayout mario2_metal_vanish_geo_medium_poly_right_hand[] = {
    GEO_SWITCH_CASE(2, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_TRANSPARENT, 60, 0, 0, NULL),
@@ -1522,7 +1522,7 @@ const GeoLayout luigi_metal_vanish_geo_medium_poly_right_hand[] = {
 };
 
 // 0x1700278C
-const GeoLayout luigi_metal_vanish_geo_medium_poly_body[] = {
+const GeoLayout mario2_metal_vanish_geo_medium_poly_body[] = {
    GEO_ANIMATED_PART(LAYER_TRANSPARENT, 0, 0, 0, NULL),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_TRANSPARENT, 0, 0, 0, mario_metal_medium_poly_butt),
@@ -1535,7 +1535,7 @@ const GeoLayout luigi_metal_vanish_geo_medium_poly_body[] = {
             GEO_OPEN_NODE(),
                GEO_ANIMATED_PART(LAYER_TRANSPARENT, 87, 0, 0, NULL),
                GEO_OPEN_NODE(),
-                  GEO_BRANCH(1, luigi_metal_vanish_geo_face_and_wings),
+                  GEO_BRANCH(1, mario2_metal_vanish_geo_face_and_wings),
                GEO_CLOSE_NODE(),
                GEO_ANIMATED_PART(LAYER_TRANSPARENT, 67, -10, 79, NULL),
                GEO_OPEN_NODE(),
@@ -1543,7 +1543,7 @@ const GeoLayout luigi_metal_vanish_geo_medium_poly_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_TRANSPARENT, 65, 0, 0, mario_medium_poly_left_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_metal_vanish_geo_medium_poly_left_hand),
+                        GEO_BRANCH(1, mario2_metal_vanish_geo_medium_poly_left_hand),
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -1555,7 +1555,7 @@ const GeoLayout luigi_metal_vanish_geo_medium_poly_body[] = {
                      GEO_OPEN_NODE(),
                         GEO_SWITCH_CASE(2, geo_switch_mario_hand),
                         GEO_OPEN_NODE(),
-                           GEO_BRANCH(1, luigi_metal_vanish_geo_medium_poly_right_hand),
+                           GEO_BRANCH(1, mario2_metal_vanish_geo_medium_poly_right_hand),
                         GEO_CLOSE_NODE(),
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
@@ -1595,7 +1595,7 @@ const GeoLayout luigi_metal_vanish_geo_medium_poly_body[] = {
 };
 
 // 0x17002958
-const GeoLayout luigi_metal_vanish_geo_low_poly_face_and_wings[] = {
+const GeoLayout mario2_metal_vanish_geo_low_poly_face_and_wings[] = {
    GEO_ASM(1, geo_mario_head_rotation),
    GEO_ROTATION_NODE(0x00, 0, 0, 0),
    GEO_OPEN_NODE(),
@@ -1625,7 +1625,7 @@ const GeoLayout luigi_metal_vanish_geo_low_poly_face_and_wings[] = {
 };
 
 // 0x17002A04
-const GeoLayout luigi_metal_vanish_geo_low_poly_left_hand[] = {
+const GeoLayout mario2_metal_vanish_geo_low_poly_left_hand[] = {
    GEO_SWITCH_CASE(2, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_TRANSPARENT, 60, 0, 0, NULL),
@@ -1645,7 +1645,7 @@ const GeoLayout luigi_metal_vanish_geo_low_poly_left_hand[] = {
 };
 
 // 0x17002A7C
-const GeoLayout luigi_metal_vanish_geo_low_poly_right_hand[] = {
+const GeoLayout mario2_metal_vanish_geo_low_poly_right_hand[] = {
    GEO_SWITCH_CASE(2, geo_switch_mario_hand),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_TRANSPARENT, 60, 0, 0, NULL),
@@ -1672,7 +1672,7 @@ const GeoLayout luigi_metal_vanish_geo_low_poly_right_hand[] = {
 };
 
 // 0x17002B24
-const GeoLayout luigi_metal_vanish_geo_low_poly_body[] = {
+const GeoLayout mario2_metal_vanish_geo_low_poly_body[] = {
    GEO_ANIMATED_PART(LAYER_TRANSPARENT, 0, 0, 0, NULL),
    GEO_OPEN_NODE(),
       GEO_ANIMATED_PART(LAYER_TRANSPARENT, 0, 0, 0, mario_metal_low_poly_butt),
@@ -1685,7 +1685,7 @@ const GeoLayout luigi_metal_vanish_geo_low_poly_body[] = {
             GEO_OPEN_NODE(),
                GEO_ANIMATED_PART(LAYER_TRANSPARENT, 87, 0, 0, NULL),
                GEO_OPEN_NODE(),
-                  GEO_BRANCH(1, luigi_metal_vanish_geo_low_poly_face_and_wings),
+                  GEO_BRANCH(1, mario2_metal_vanish_geo_low_poly_face_and_wings),
                GEO_CLOSE_NODE(),
                GEO_ANIMATED_PART(LAYER_TRANSPARENT, 67, -10, 79, NULL),
                GEO_OPEN_NODE(),
@@ -1693,7 +1693,7 @@ const GeoLayout luigi_metal_vanish_geo_low_poly_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_TRANSPARENT, 65, 0, 0, mario_low_poly_left_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_metal_vanish_geo_low_poly_left_hand),
+                        GEO_BRANCH(1, mario2_metal_vanish_geo_low_poly_left_hand),
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -1703,7 +1703,7 @@ const GeoLayout luigi_metal_vanish_geo_low_poly_body[] = {
                   GEO_OPEN_NODE(),
                      GEO_ANIMATED_PART(LAYER_TRANSPARENT, 65, 0, 0, mario_low_poly_right_forearm_shared_dl),
                      GEO_OPEN_NODE(),
-                        GEO_BRANCH(1, luigi_metal_vanish_geo_low_poly_right_hand),
+                        GEO_BRANCH(1, mario2_metal_vanish_geo_low_poly_right_hand),
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
@@ -1744,13 +1744,13 @@ const GeoLayout luigi_metal_vanish_geo_low_poly_body[] = {
 // High Poly
 
 // 0x17002CE0
-const GeoLayout luigi_geo_load_body[] = {
+const GeoLayout mario2_geo_load_body[] = {
    GEO_SWITCH_CASE(1, geo_switch_mario_cap_effect),
    GEO_OPEN_NODE(),
-      GEO_BRANCH(1, luigi_geo_body),
-      GEO_BRANCH(1, luigi_vanish_geo_body),
-      GEO_BRANCH(1, luigi_metal_geo_body),
-      GEO_BRANCH(1, luigi_metal_vanish_geo_body),
+      GEO_BRANCH(1, mario2_geo_body),
+      GEO_BRANCH(1, mario2_vanish_geo_body),
+      GEO_BRANCH(1, mario2_metal_geo_body),
+      GEO_BRANCH(1, mario2_metal_vanish_geo_body),
    GEO_CLOSE_NODE(),
    GEO_RETURN(),
 };
@@ -1758,13 +1758,13 @@ const GeoLayout luigi_geo_load_body[] = {
 // Medium Poly
 
 // 0x17002D14
-const GeoLayout luigi_geo_load_medium_poly_body[] = {
+const GeoLayout mario2_geo_load_medium_poly_body[] = {
    GEO_SWITCH_CASE(1, geo_switch_mario_cap_effect),
    GEO_OPEN_NODE(),
-      GEO_BRANCH(1, luigi_geo_medium_poly_body),
-      GEO_BRANCH(1, luigi_vanish_geo_medium_poly_body),
-      GEO_BRANCH(1, luigi_metal_geo_medium_poly_body),
-      GEO_BRANCH(1, luigi_metal_vanish_geo_medium_poly_body),
+      GEO_BRANCH(1, mario2_geo_medium_poly_body),
+      GEO_BRANCH(1, mario2_vanish_geo_medium_poly_body),
+      GEO_BRANCH(1, mario2_metal_geo_medium_poly_body),
+      GEO_BRANCH(1, mario2_metal_vanish_geo_medium_poly_body),
    GEO_CLOSE_NODE(),
    GEO_RETURN(),
 };
@@ -1772,32 +1772,32 @@ const GeoLayout luigi_geo_load_medium_poly_body[] = {
 // Low Poly
 
 // 0x17002D48
-const GeoLayout luigi_geo_load_low_poly_body[] = {
+const GeoLayout mario2_geo_load_low_poly_body[] = {
    GEO_SWITCH_CASE(1, geo_switch_mario_cap_effect),
    GEO_OPEN_NODE(),
-      GEO_BRANCH(1, luigi_geo_low_poly_body),
-      GEO_BRANCH(1, luigi_vanish_geo_low_poly_body),
-      GEO_BRANCH(1, luigi_metal_geo_low_poly_body),
-      GEO_BRANCH(1, luigi_metal_vanish_geo_low_poly_body),
+      GEO_BRANCH(1, mario2_geo_low_poly_body),
+      GEO_BRANCH(1, mario2_vanish_geo_low_poly_body),
+      GEO_BRANCH(1, mario2_metal_geo_low_poly_body),
+      GEO_BRANCH(1, mario2_metal_vanish_geo_low_poly_body),
    GEO_CLOSE_NODE(),
    GEO_RETURN(),
 };
 
 // 0x17002D7C
-const GeoLayout luigi_geo_render_body[] = {
+const GeoLayout mario2_geo_render_body[] = {
    GEO_NODE_START(),
    GEO_OPEN_NODE(),
       GEO_RENDER_RANGE(-2048, 600),
       GEO_OPEN_NODE(),
-         GEO_BRANCH(1, luigi_geo_load_body),
+         GEO_BRANCH(1, mario2_geo_load_body),
       GEO_CLOSE_NODE(),
       GEO_RENDER_RANGE(600, 1600),
       GEO_OPEN_NODE(),
-         GEO_BRANCH(1, luigi_geo_load_medium_poly_body),
+         GEO_BRANCH(1, mario2_geo_load_medium_poly_body),
       GEO_CLOSE_NODE(),
       GEO_RENDER_RANGE(1600, 32767),
       GEO_OPEN_NODE(),
-         GEO_BRANCH(1, luigi_geo_load_low_poly_body),
+         GEO_BRANCH(1, mario2_geo_load_low_poly_body),
       GEO_CLOSE_NODE(),
    GEO_CLOSE_NODE(),
    GEO_RETURN(),
@@ -1806,7 +1806,7 @@ const GeoLayout luigi_geo_render_body[] = {
 // This last geo is used to load all of Mario Geo in the Level Scripts
 
 // 0x17002DD4
-const GeoLayout luigi_geo[] = {
+const GeoLayout mario2_geo[] = {
    GEO_SHADOW(SHADOW_CIRCLE_PLAYER, 0xB4, 100),
    GEO_OPEN_NODE(),
       GEO_SCALE(0x00, 16384),
@@ -1815,8 +1815,8 @@ const GeoLayout luigi_geo[] = {
          GEO_ASM(1, geo_mirror_mario_set_alpha),
          GEO_SWITCH_CASE(1, geo_switch_mario_stand_run),
          GEO_OPEN_NODE(),
-            GEO_BRANCH(1, luigi_geo_load_body),
-            GEO_BRANCH(1, luigi_geo_render_body),
+            GEO_BRANCH(1, mario2_geo_load_body),
+            GEO_BRANCH(1, mario2_geo_render_body),
          GEO_CLOSE_NODE(),
          GEO_ASM(1, geo_mirror_mario_backface_culling),
       GEO_CLOSE_NODE(),

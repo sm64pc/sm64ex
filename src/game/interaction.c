@@ -711,7 +711,7 @@ u32 take_damage_from_interact_object(struct MarioState *m) {
 int get_invincibility_flag(struct MarioState *m) {
     return (m == &gMarioStates[0])
                 ? INT_SUBTYPE_DELAY_INVINCIBILITY
-                : INT_SUBTYPE_DELAY_INVINCIBILITY_LUIGI;
+                : INT_SUBTYPE_DELAY_INVINCIBILITY_MARIO2;
 }
 
 u32 take_damage_and_knock_back(struct MarioState *m, struct Object *o) {

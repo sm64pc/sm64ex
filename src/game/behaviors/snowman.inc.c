@@ -152,7 +152,6 @@ void bhv_snowmans_bottom_loop(void) {
 
         case 4:
             cur_obj_push_mario_away_from_cylinder(210.0f, 550);
-            cur_obj_push_luigi_away_from_cylinder(210.0f, 550);
             break;
     }
 
@@ -224,7 +223,6 @@ void bhv_snowmans_head_loop(void) {
     }
 
     cur_obj_push_mario_away_from_cylinder(180.0f, 150.0f);
-    cur_obj_push_luigi_away_from_cylinder(180.0f, 150.0f);
 }
 
 void bhv_snowmans_body_checkpoint_loop(void) {

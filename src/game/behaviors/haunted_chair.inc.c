@@ -90,7 +90,6 @@ void haunted_chair_act_0(void) {
     }
 
     cur_obj_push_mario_away_from_cylinder(80.0f, 120.0f);
-    cur_obj_push_luigi_away_from_cylinder(80.0f, 120.0f);
 }
 
 void haunted_chair_act_1(void) {

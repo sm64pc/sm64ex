@@ -495,28 +495,23 @@ void obj_move_xyz_using_fvel_and_yaw(struct Object *obj) {
  * Checks if a point is within distance from Mario's graphical position. Test is exclusive.
  */
 s32 is_point_within_radius_of_mario(f32 x, f32 y, f32 z, s32 dist) {
-    f32 mGfxX = gMarioObject->header.gfx.pos[0];
-    f32 mGfxY = gMarioObject->header.gfx.pos[1];
-    f32 mGfxZ = gMarioObject->header.gfx.pos[2];
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        struct Object* player = gMarioStates[i].marioObj;
+        f32 mGfxX = player->header.gfx.pos[0];
+        f32 mGfxY = player->header.gfx.pos[1];
+        f32 mGfxZ = player->header.gfx.pos[2];
 
-    if ((x - mGfxX) * (x - mGfxX) + (y - mGfxY) * (y - mGfxY) + (z - mGfxZ) * (z - mGfxZ)
-        < (f32)(dist * dist)) {
-        return TRUE;
+        if ((x - mGfxX) * (x - mGfxX) + (y - mGfxY) * (y - mGfxY) + (z - mGfxZ) * (z - mGfxZ)
+            < (f32)(dist * dist)) {
+            return TRUE;
+        }
     }
 
-    mGfxX = gLuigiObject->header.gfx.pos[0];
-    mGfxY = gLuigiObject->header.gfx.pos[1];
-    mGfxZ = gLuigiObject->header.gfx.pos[2];
-
-    if ((x - mGfxX) * (x - mGfxX) + (y - mGfxY) * (y - mGfxY) + (z - mGfxZ) * (z - mGfxZ)
-        < (f32)(dist * dist)) {
-        return TRUE;
-    }
     return FALSE;
 }
 
 /**
- * Returns either gMarioObject or gLuigiObject depending on what is closer
+ * Returns closest MarioState
  */
 struct MarioState* nearest_mario_state_to_object(struct Object *obj) {
     struct MarioState* nearest = NULL;
@@ -533,7 +528,7 @@ struct MarioState* nearest_mario_state_to_object(struct Object *obj) {
 }
 
 /**
- * Returns either gMarioObject or gLuigiObject depending on what is closer
+ * Returns closest marioObj
  */
 struct Object* nearest_player_to_object(struct Object *obj) {
     struct MarioState* nearest = nearest_mario_state_to_object(obj);

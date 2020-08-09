@@ -631,7 +631,6 @@ static void koopa_the_quick_act_race(void) {
     if (obj_begin_race(FALSE)) {
         // Hitbox is slightly larger while racing
         cur_obj_push_mario_away_from_cylinder(180.0f, 300.0f);
-        cur_obj_push_luigi_away_from_cylinder(180.0f, 300.0f);
 
         if (cur_obj_follow_path(0) == PATH_REACHED_END) {
             o->oAction = KOOPA_THE_QUICK_ACT_DECELERATE;
@@ -817,7 +816,6 @@ static void koopa_the_quick_update(void) {
     }
 
     cur_obj_push_mario_away_from_cylinder(140.0f, 300.0f);
-    cur_obj_push_luigi_away_from_cylinder(140.0f, 300.0f);
     cur_obj_move_standard(-78);
 }
 

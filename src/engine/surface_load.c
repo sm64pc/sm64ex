@@ -765,7 +765,7 @@ void load_object_collision_model(void) {
 
     s16 *collisionData = gCurrentObject->collisionData;
     f32 marioDist = gCurrentObject->oDistanceToMario;
-    f32 luigiDist = gCurrentObject->oDistanceToMario;
+    f32 mario2Dist = gCurrentObject->oDistanceToMario;
     f32 tangibleDist = gCurrentObject->oCollisionDistance;
 
     // On an object's first frame, the distance is set to 19000.0f.
@@ -773,7 +773,7 @@ void load_object_collision_model(void) {
     if (gCurrentObject->oDistanceToMario == 19000.0f) {
         marioDist = dist_between_objects(gCurrentObject, gMarioObject);
     }
-    luigiDist = dist_between_objects(gCurrentObject, gLuigiObject);
+    mario2Dist = dist_between_objects(gCurrentObject, gMario2Object);
 
     // If the object collision is supposed to be loaded more than the
     // drawing distance of 4000, extend the drawing range.
@@ -783,7 +783,7 @@ void load_object_collision_model(void) {
 
     // Update if no Time Stop, in range, and in the current room.
     if (!(gTimeStopState & TIME_STOP_ACTIVE)
-        && (marioDist < tangibleDist || luigiDist < tangibleDist)
+        && (marioDist < tangibleDist || mario2Dist < tangibleDist)
         && !(gCurrentObject->activeFlags & ACTIVE_FLAG_IN_DIFFERENT_ROOM)) {
         collisionData++;
         transform_object_vertices(&collisionData, vertexData);

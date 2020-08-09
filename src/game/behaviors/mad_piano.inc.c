@@ -26,7 +26,6 @@ static void mad_piano_act_wait(void) {
     }
 
     cur_obj_push_mario_away_from_cylinder(280.0f, 150.0f);
-    cur_obj_push_luigi_away_from_cylinder(280.0f, 150.0f);
 }
 
 static void mad_piano_act_attack(void) {
