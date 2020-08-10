@@ -268,6 +268,10 @@ void load_mario_area(void) {
     func_80320890();
     load_area(gMarioSpawnInfo->areaIndex);
 
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        gMarioStates[i].spawnInfo->areaIndex = gCurrentArea->index;
+    }
+
     if (gCurrentArea->index == gMarioSpawnInfo->areaIndex) {
         gCurrentArea->flags |= 0x01;
         spawn_objects_from_info(0, gMarioSpawnInfo);
@@ -293,11 +297,16 @@ void change_area(s32 index) {
         load_area(index);
 
         gCurrentArea->flags = areaFlags;
-        gMarioObject->oActiveParticleFlags = 0;
+        for (int i = 0; i < MAX_PLAYERS; i++) {
+            gMarioStates[i].marioObj->oActiveParticleFlags = 0;
+        }
     }
 
     if (areaFlags & 0x01) {
-        gMarioObject->header.gfx.unk18 = index, gMarioSpawnInfo->areaIndex = index;
+        for (int i = 0; i < MAX_PLAYERS; i++) {
+            gMarioStates[i].marioObj->header.gfx.unk18 = index;
+            gMarioStates[i].spawnInfo->areaIndex = index;
+        }
     }
 }
 

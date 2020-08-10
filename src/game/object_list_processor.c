@@ -224,6 +224,7 @@ struct ParticleProperties sParticleTypes[] = {
 void copy_mario_state_to_object(void) {
     s32 i = 0;
     // L is real
+    // two-player hack
     if (gCurrentObject != gMarioObject) {
         i += 1;
     }

@@ -87,7 +87,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WINSOCK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -2231,6 +2231,7 @@
     <ClCompile Include="..\build\us_pc\textures\water\jrb_textures.0A800.rgba16.inc.c" />
     <ClCompile Include="..\build\us_pc\textures\water\jrb_textures.0B800.rgba16.inc.c" />
     <ClCompile Include="..\data\behavior_data.c" />
+    <ClCompile Include="..\data\behavior_table.c" />
     <ClCompile Include="..\include\trig_tables.inc.c" />
     <ClCompile Include="..\levels\bbh\areas\1\1\model.inc.c" />
     <ClCompile Include="..\levels\bbh\areas\1\10\model.inc.c" />
@@ -3955,6 +3956,9 @@
     <ClCompile Include="..\src\pc\network\packets\packet_reliable.c" />
     <ClCompile Include="..\src\pc\network\packets\packet_spawn_objects.c" />
     <ClCompile Include="..\src\pc\network\packets\packet_spawn_star.c" />
+    <ClCompile Include="..\src\pc\network\socket\socket.c" />
+    <ClCompile Include="..\src\pc\network\socket\socket_linux.c" />
+    <ClCompile Include="..\src\pc\network\socket\socket_windows.c" />
     <ClCompile Include="..\src\pc\pc_main.c" />
     <ClCompile Include="..\src\pc\platform.c" />
     <ClCompile Include="..\src\pc\ultra_reimplementation.c" />
@@ -4293,7 +4297,11 @@
     <ClCompile Include="..\tools\utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\behavior_table.h" />
     <ClInclude Include="..\src\pc\network\network.h" />
+    <ClInclude Include="..\src\pc\network\socket\socket.h" />
+    <ClInclude Include="..\src\pc\network\socket\socket_linux.h" />
+    <ClInclude Include="..\src\pc\network\socket\socket_windows.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

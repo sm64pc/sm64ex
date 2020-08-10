@@ -36,11 +36,6 @@
 #include "pc/configfile.h"
 #include "pc/network/network.h"
 
-#define WARP_TYPE_NOT_WARPING 0
-#define WARP_TYPE_CHANGE_LEVEL 1
-#define WARP_TYPE_CHANGE_AREA 2
-#define WARP_TYPE_SAME_AREA 3
-
 #define WARP_NODE_F0 0xF0
 #define WARP_NODE_DEATH 0xF1
 #define WARP_NODE_F2 0xF2
@@ -548,21 +543,24 @@ void check_instant_warp(void) {
             struct InstantWarp *warp = &gCurrentArea->instantWarps[index];
 
             if (warp->id != 0) {
-                gMarioState->pos[0] += warp->displacement[0];
-                gMarioState->pos[1] += warp->displacement[1];
-                gMarioState->pos[2] += warp->displacement[2];
+                for (int i = 0; i < MAX_PLAYERS; i++) {
+                    gMarioStates[i].pos[0] += warp->displacement[0];
+                    gMarioStates[i].pos[1] += warp->displacement[1];
+                    gMarioStates[i].pos[2] += warp->displacement[2];
 
-                gMarioState->marioObj->oPosX = gMarioState->pos[0];
-                gMarioState->marioObj->oPosY = gMarioState->pos[1];
-                gMarioState->marioObj->oPosZ = gMarioState->pos[2];
+                    gMarioStates[i].marioObj->oPosX = gMarioStates[i].pos[0];
+                    gMarioStates[i].marioObj->oPosY = gMarioStates[i].pos[1];
+                    gMarioStates[i].marioObj->oPosZ = gMarioStates[i].pos[2];
+                }
 
                 cameraAngle = gMarioState->area->camera->yaw;
-
                 change_area(warp->area);
-                gMarioState->area = gCurrentArea;
+
+                for (int i = 0; i < MAX_PLAYERS; i++) {
+                    gMarioStates[i].area = gCurrentArea;
+                }
 
                 warp_camera(warp->displacement[0], warp->displacement[1], warp->displacement[2]);
-
                 gMarioState->area->camera->yaw = cameraAngle;
             }
         }
@@ -1011,13 +1009,19 @@ s32 play_mode_normal(void) {
     // warp, change play mode accordingly.
     if (sCurrPlayMode == PLAY_MODE_NORMAL) {
         if (sWarpDest.type == WARP_TYPE_CHANGE_LEVEL) {
-            set_play_mode((networkType != NT_NONE) ? PLAY_MODE_SYNC_LEVEL : PLAY_MODE_CHANGE_LEVEL);
-            network_send_level_warp();
+            if (sWarpDest.type == WARP_TYPE_NOT_WARPING) {
+                set_play_mode(PLAY_MODE_CHANGE_LEVEL);
+            } else {
+                set_play_mode((networkType != NT_NONE) ? PLAY_MODE_SYNC_LEVEL : PLAY_MODE_CHANGE_LEVEL);
+                network_send_level_warp();
+            }
         } else if (sTransitionTimer != 0) {
-            ////////////////////////////////////
-            // todo: synchronize change_area. //
-            ////////////////////////////////////
-            set_play_mode(PLAY_MODE_CHANGE_AREA);
+            if (sWarpDest.type == WARP_TYPE_NOT_WARPING || gCurrentArea->index == sWarpDest.areaIdx) {
+                set_play_mode(PLAY_MODE_CHANGE_AREA);
+            } else {
+                set_play_mode((networkType != NT_NONE) ? PLAY_MODE_SYNC_LEVEL : PLAY_MODE_CHANGE_AREA);
+                network_send_level_warp();
+            }
         } else if (pressed_pause()) {
             lower_background_noise(1);
             cancel_rumble();
@@ -1257,15 +1261,6 @@ s32 init_level(void) {
 
     if (gMarioState->action == ACT_INTRO_CUTSCENE) {
         sound_banks_disable(2, 0x0330);
-    }
-
-    // set mario/luigi model
-    for (int i = 0; i < MAX_PLAYERS; i++) {
-        if (i == 0) {
-            gMarioState[i].marioObj->header.gfx.sharedChild = gLoadedGraphNodes[(networkType == NT_SERVER) ? MODEL_MARIO : MODEL_LUIGI];
-        } else {
-            gMarioState[i].marioObj->header.gfx.sharedChild = gLoadedGraphNodes[(networkType == NT_SERVER) ? MODEL_LUIGI2 : MODEL_MARIO2];
-        }
     }
 
     return 1;

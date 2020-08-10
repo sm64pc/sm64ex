@@ -50,6 +50,10 @@
 #define MARIO_SPAWN_LAUNCH_DEATH          0x25
 #define MARIO_SPAWN_UNKNOWN_27            0x27
 
+#define WARP_TYPE_NOT_WARPING 0
+#define WARP_TYPE_CHANGE_LEVEL 1
+#define WARP_TYPE_CHANGE_AREA 2
+#define WARP_TYPE_SAME_AREA 3
 
 struct CreditsEntry
 {

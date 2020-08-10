@@ -35,6 +35,7 @@
 #include "thread6.h"
 #include "pc/configfile.h"
 #include "pc/cheats.h"
+#include "pc/network/network.h"
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif
@@ -1941,6 +1942,13 @@ void init_mario(void) {
         capObject->oForwardVelS32 = 0;
 
         capObject->oMoveAngleYaw = 0;
+    }
+
+    // set mario/luigi model
+    if (isLocal) {
+        gMarioState->marioObj->header.gfx.sharedChild = gLoadedGraphNodes[(networkType == NT_SERVER) ? MODEL_MARIO : MODEL_LUIGI];
+    } else {
+        gMarioState->marioObj->header.gfx.sharedChild = gLoadedGraphNodes[(networkType == NT_SERVER) ? MODEL_LUIGI2 : MODEL_MARIO2];
     }
 
 skippy:

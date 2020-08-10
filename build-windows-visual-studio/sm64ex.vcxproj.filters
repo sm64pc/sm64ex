@@ -3421,6 +3421,12 @@
     <Filter Include="Source Files\src\pc\network\packets">
       <UniqueIdentifier>{f7dcd9e2-f84f-4c82-96c5-0dc32d408693}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\src\pc\network\socket">
+      <UniqueIdentifier>{d884729b-710d-45b4-8757-287303e2d8e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\src\pc\network\socket">
+      <UniqueIdentifier>{b1b4937e-775c-4a0c-92f5-48b010783e4d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\actors\amp\anims\anim_0800401C.inc.c">
@@ -14973,6 +14979,18 @@
     <ClCompile Include="..\src\pc\network\packets\packet_spawn_star.c">
       <Filter>Source Files\src\pc\network\packets</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\pc\network\socket\socket_linux.c">
+      <Filter>Source Files\src\pc\network\socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pc\network\socket\socket_windows.c">
+      <Filter>Source Files\src\pc\network\socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\pc\network\socket\socket.c">
+      <Filter>Source Files\src\pc\network\socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\data\behavior_table.c">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\actors\common0.h">
@@ -15876,6 +15894,18 @@
   <ItemGroup>
     <ClInclude Include="..\src\pc\network\network.h">
       <Filter>Header Files\src\pc\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\pc\network\socket\socket_linux.h">
+      <Filter>Header Files\src\pc\network\socket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\pc\network\socket\socket_windows.h">
+      <Filter>Header Files\src\pc\network\socket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\pc\network\socket\socket.h">
+      <Filter>Header Files\src\pc\network\socket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\behavior_table.h">
+      <Filter>Header Files\include</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

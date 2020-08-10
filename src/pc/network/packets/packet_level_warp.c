@@ -26,6 +26,7 @@ void network_receive_level_warp(struct Packet* p) {
     bool matchingDest = memcmp(&remoteWarpDest, &sWarpDest, sizeof(struct WarpDest)) == 0;
 
     if (remotePlayMode == PLAY_MODE_SYNC_LEVEL && (sCurrPlayMode == PLAY_MODE_NORMAL || sCurrPlayMode == PLAY_MODE_PAUSED)) {
+        if (remoteWarpDest.type == WARP_TYPE_NOT_WARPING) { return; }
         sCurrPlayMode = PLAY_MODE_SYNC_LEVEL;
         sWarpDest = remoteWarpDest;
         gMenuMode = -1;
@@ -38,9 +39,13 @@ void network_receive_level_warp(struct Packet* p) {
 
     if (remotePlayMode == PLAY_MODE_SYNC_LEVEL && sCurrPlayMode == PLAY_MODE_SYNC_LEVEL) {
         if (matchingDest) {
-            sCurrPlayMode = PLAY_MODE_CHANGE_LEVEL;
+            switch (sWarpDest.type) {
+                case WARP_TYPE_CHANGE_AREA: sCurrPlayMode = PLAY_MODE_CHANGE_AREA; break;
+                case WARP_TYPE_CHANGE_LEVEL: sCurrPlayMode = PLAY_MODE_CHANGE_LEVEL; break;
+            }
         } else {
             if (networkType == NT_CLIENT) {
+                if (remoteWarpDest.type == WARP_TYPE_NOT_WARPING) { return; }
                 // two-player hack: would need to use player index as priority
                 sWarpDest = remoteWarpDest;
             }
@@ -49,7 +54,11 @@ void network_receive_level_warp(struct Packet* p) {
         return;
     }
 
-    if (remotePlayMode == PLAY_MODE_CHANGE_LEVEL && sCurrPlayMode == PLAY_MODE_SYNC_LEVEL) {
-        sCurrPlayMode = PLAY_MODE_CHANGE_LEVEL;
+    if ((remotePlayMode == PLAY_MODE_CHANGE_LEVEL || remotePlayMode == PLAY_MODE_CHANGE_AREA) && sCurrPlayMode == PLAY_MODE_SYNC_LEVEL) {
+        if (remoteWarpDest.type == WARP_TYPE_NOT_WARPING) { return; }
+        switch (sWarpDest.type) {
+            case WARP_TYPE_CHANGE_AREA: sCurrPlayMode = PLAY_MODE_CHANGE_AREA; break;
+            case WARP_TYPE_CHANGE_LEVEL: sCurrPlayMode = PLAY_MODE_CHANGE_LEVEL; break;
+        }
     }
 }
