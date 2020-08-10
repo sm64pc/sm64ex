@@ -88,7 +88,7 @@ void network_receive_object(struct Packet* p);
 void network_send_spawn_objects(struct Object* objects[], u32 models[], u8 objectCount);
 void network_receive_spawn_objects(struct Packet* p);
 
-void network_send_spawn_star(struct Object* o, u8 starType, f32 x, f32 y, f32 z);
+void network_send_spawn_star(struct Object* o, u8 starType, f32 x, f32 y, f32 z, u32 behParams);
 void network_receive_spawn_star(struct Packet* p);
 
 void network_send_level_warp(void);

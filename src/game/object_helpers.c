@@ -1070,8 +1070,8 @@ s32 mario_is_in_air_action(void) {
     }
 }
 
-s32 mario_is_dive_sliding(void) {
-    if (gMarioStates[0].action == ACT_DIVE_SLIDE) {
+s32 mario_is_dive_sliding(struct MarioState* m) {
+    if (m->action == ACT_DIVE_SLIDE) {
         return TRUE;
     } else {
         return FALSE;
@@ -1509,6 +1509,15 @@ s32 obj_has_behavior(struct Object *obj, const BehaviorScript *behavior) {
     } else {
         return FALSE;
     }
+}
+
+f32 cur_obj_lateral_dist_from_obj_to_home(struct Object *obj) {
+    f32 dist;
+    f32 dx = o->oHomeX - obj->oPosX;
+    f32 dz = o->oHomeZ - obj->oPosZ;
+
+    dist = sqrtf(dx * dx + dz * dz);
+    return dist;
 }
 
 f32 cur_obj_lateral_dist_from_mario_to_home(void) {
