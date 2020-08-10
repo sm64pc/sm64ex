@@ -2686,7 +2686,7 @@ s16 render_pause_courses_and_castle(void) {
             shade_screen();
             render_pause_my_score_coins();
             render_pause_red_coins();
-            
+
 /* Added support for the "Exit course at any time" cheat */
             if ((gMarioStates[0].action & ACT_FLAG_PAUSE_EXIT) || (Cheats.EnableCheats && Cheats.ExitAnywhere)) {
                 render_pause_course_options(99, 93, &gDialogLineNum, 15);
@@ -3066,7 +3066,7 @@ void render_save_confirmation(s16 x, s16 y, s8 *index, s16 sp6e)
     u8 textContinueWithoutSave[] = { TEXT_CONTINUE_WITHOUT_SAVING };
 #endif
 
-    handle_menu_scrolling(MENU_SCROLL_VERTICAL, index, 1, 4); // Increased to '4' to handle Exit Game 
+    handle_menu_scrolling(MENU_SCROLL_VERTICAL, index, 1, 4); // Increased to '4' to handle Exit Game
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
@@ -3092,6 +3092,12 @@ s16 render_course_complete_screen(void) {
     gInGameLanguage = eu_get_language();
 #endif
 
+    // if we went into a painting, no more save menu!
+    if (gInsidePainting == TRUE) {
+        gMenuMode = -1;
+        return 0;
+    }
+
     switch (gDialogBoxState) {
         case DIALOG_STATE_OPENING:
             render_course_complete_lvl_info_and_hud_str();
@@ -3110,7 +3116,6 @@ s16 render_course_complete_screen(void) {
 #else
             render_save_confirmation(100, 86, &gDialogLineNum, 20);
 #endif
-
             if (gCourseDoneMenuTimer > 110
                 && (gPlayer3Controller->buttonPressed & A_BUTTON
                  || gPlayer3Controller->buttonPressed & START_BUTTON
