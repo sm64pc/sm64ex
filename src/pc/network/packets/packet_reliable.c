@@ -37,14 +37,14 @@ void network_send_ack(struct Packet* p) {
     // send back the ACK
     struct Packet ack = { 0 };
     packet_init(&ack, PACKET_ACK, false);
-    packet_write(&ack, &seqId, 2);
+    packet_write(&ack, &seqId, sizeof(u16));
     network_send(&ack);
 }
 
 void network_receive_ack(struct Packet* p) {
     // grab seq num
     u16 seqId = 0;
-    packet_read(p, &seqId, 2);
+    packet_read(p, &seqId, sizeof(u16));
 
     // find in list and remove
     struct PacketLinkedList* node = head;

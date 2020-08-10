@@ -72,7 +72,7 @@ void network_receive_spawn_objects(struct Packet* p) {
     packet_read(p, &remoteSpawnId, sizeof(u8));
     packet_read(p, &objectCount, sizeof(u8));
 
-    // check if remote coin id has already been seen
+    // check if remote spawn id has already been seen
     for (int i = 0; i < MAX_REMOTE_SPAWN_IDS; i++) {
         if (remoteSpawnIds[i] == remoteSpawnId) {
             // we already saw this event!

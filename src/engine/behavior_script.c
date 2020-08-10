@@ -949,7 +949,7 @@ static BhvCommandProc BehaviorCmdTable[] = {
     bhv_cmd_set_int_unused, //36
     bhv_cmd_spawn_water_droplet, //37
     bhv_cmd_cylboard, //38
-    bhv_cmd_id //38
+    bhv_cmd_id //39
 };
 
 // Execute the behavior script of the current object, process the object flags, and other miscellaneous code for updating objects.

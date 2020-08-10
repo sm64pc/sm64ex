@@ -8,10 +8,10 @@ int matchCount = 0;
 void network_send_level_warp(void) {
     struct Packet p;
     packet_init(&p, PACKET_LEVEL_WARP, false);
-    packet_write(&p, &sCurrPlayMode, 2);
-    packet_write(&p, &gCurrLevelNum, 2);
-    packet_write(&p, &sDelayedWarpArg, 4);
-    packet_write(&p, &sSourceWarpNodeId, 2);
+    packet_write(&p, &sCurrPlayMode, sizeof(s16));
+    packet_write(&p, &gCurrLevelNum, sizeof(s16));
+    packet_write(&p, &sDelayedWarpArg, sizeof(s32));
+    packet_write(&p, &sSourceWarpNodeId, sizeof(s16));
 
     network_send(&p);
 }
@@ -22,10 +22,10 @@ void network_receive_level_warp(struct Packet* p) {
     s32 remoteWarpArg;
     s16 remoteWarpNodeId;
 
-    packet_read(p, &remotePlayMode, 2);
-    packet_read(p, &remoteLevelNum, 2);
-    packet_read(p, &remoteWarpArg, 4);
-    packet_read(p, &remoteWarpNodeId, 2);
+    packet_read(p, &remotePlayMode, sizeof(s16));
+    packet_read(p, &remoteLevelNum, sizeof(s16));
+    packet_read(p, &remoteWarpArg, sizeof(s32));
+    packet_read(p, &remoteWarpNodeId, sizeof(s16));
 
     bool matching = (remoteLevelNum == gCurrLevelNum)
                  && (remoteWarpArg == sDelayedWarpArg)
