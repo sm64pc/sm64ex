@@ -47,6 +47,16 @@ void bhv_mr_blizzard_init(void) {
         o->oAction = MR_BLIZZARD_ACT_JUMP;
         o->oMrBlizzardGraphYOffset = 24.0f;
         o->oMrBlizzardTargetMoveYaw = o->oMoveAngleYaw;
+
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->oMrBlizzardTargetMoveYaw);
+        network_init_object_field(o, &o->oMrBlizzardTimer);
+        network_init_object_field(o, &o->oMrBlizzardDistFromHome);
+        network_init_object_field(o, &o->oForwardVel);
+        network_init_object_field(o, &o->oVelY);
+        network_init_object_field(o, &o->oPosX);
+        network_init_object_field(o, &o->oPosY);
+        network_init_object_field(o, &o->oPosZ);
     } else {
         if (o->oBehParams2ndByte != MR_BLIZZARD_STYPE_NO_CAP) {
             // Cap wearing Mr. Blizzard from SL.
@@ -58,6 +68,12 @@ void bhv_mr_blizzard_init(void) {
         // Mr. Blizzard starts under the floor holding nothing.
         o->oMrBlizzardGraphYOffset = -200.0f;
         o->oMrBlizzardHeldObj = NULL;
+
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->oMrBlizzardTargetMoveYaw);
+        network_init_object_field(o, &o->oAction);
+        network_init_object_field(o, &o->oMrBlizzardGraphYOffset);
+        network_init_object_field(o, &o->oMoveAngleYaw);
     }
 }
 
@@ -91,13 +107,16 @@ static void mr_blizzard_act_spawn_snowball(void) {
  */
 
 static void mr_blizzard_act_hide_unhide(void) {
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    int angleToPlayer = obj_angle_to_object(o, player);
 
-    if (o->oDistanceToMario < 1000.0f) {
+    if (distanceToPlayer < 1000.0f) {
         // If Mario is in range, move to rising action, make Mr. Blizzard visible,
         // make Mr. Blizzard tangible, and initialize GraphYVel.
         cur_obj_play_sound_2(SOUND_OBJ_SNOW_SAND2);
         o->oAction = MR_BLIZZARD_ACT_RISE_FROM_GROUND;
-        o->oMoveAngleYaw = o->oAngleToMario;
+        o->oMoveAngleYaw = angleToPlayer;
         o->oMrBlizzardGraphYVel = 42.0f;
 
         mr_blizzard_spawn_white_particles(8, -10, 15, 20, 10);
@@ -144,16 +163,19 @@ static void mr_blizzard_act_rise_from_ground(void) {
  */
 
 static void mr_blizzard_act_rotate(void) {
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    int angleToPlayer = obj_angle_to_object(o, player);
 
     s16 angleDiff;
     f32 prevDizziness;
     // While Mr. Blizzard is on the ground, rotate toward Mario at
     // 8.4375 degrees/frame.
     if (o->oMoveFlags & OBJ_MOVE_MASK_ON_GROUND) {
-        cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x600);
+        cur_obj_rotate_yaw_toward(angleToPlayer, 0x600);
 
         // Modify the ChangeInDizziness based on Mario's angle to Mr. Blizzard.
-        angleDiff = o->oAngleToMario - o->oMoveAngleYaw;
+        angleDiff = angleToPlayer - o->oMoveAngleYaw;
         if (angleDiff != 0) {
             if (angleDiff < 0) {
                 o->oMrBlizzardChangeInDizziness -= 8.0f;
@@ -186,16 +208,21 @@ static void mr_blizzard_act_rotate(void) {
             if (absi(o->oFaceAngleRoll) > 0x3000) {
                 o->oAction = MR_BLIZZARD_ACT_DEATH;
                 o->prevObj = o->oMrBlizzardHeldObj = NULL;
-                cur_obj_become_intangible();
+                network_send_object(o);
             }
             // If Mario gets too far away, move to burrow action and delete the snowball.
-        } else if (o->oDistanceToMario > 1500.0f) {
+        } else if (distanceToPlayer > 1500.0f) {
             o->oAction = MR_BLIZZARD_ACT_BURROW;
             o->oMrBlizzardChangeInDizziness = 300.0f;
             o->prevObj = o->oMrBlizzardHeldObj = NULL;
             // After 60 frames, if Mario is within 11.25 degrees of Mr. Blizzard, throw snowball action.
-        } else if (o->oTimer > 60 && abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw) < 0x800) {
-            o->oAction = MR_BLIZZARD_ACT_THROW_SNOWBALL;
+        } else if (o->oTimer > 60 && abs_angle_diff(angleToPlayer, o->oMoveAngleYaw) < 0x800) {
+            if (network_owns_object(o)) {
+                o->oAction = MR_BLIZZARD_ACT_THROW_SNOWBALL;
+                network_send_object(o);
+            } else {
+                o->oTimer = 61;
+            }
         }
     }
 }
@@ -205,7 +232,11 @@ static void mr_blizzard_act_rotate(void) {
  */
 
 static void mr_blizzard_act_death(void) {
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    int angleToPlayer = obj_angle_to_object(o, player);
 
+    cur_obj_become_intangible();
     struct Object *cap;
 
     if (clamp_f32(&o->oMrBlizzardDizziness, -0x4000, 0x4000)) {
@@ -254,7 +285,7 @@ static void mr_blizzard_act_death(void) {
                 }
             }
             // Reset Mr. Blizzard if Mario leaves its radius.
-        } else if (o->oDistanceToMario > 1000.0f) {
+        } else if (distanceToPlayer > 1000.0f) {
             cur_obj_init_animation_with_sound(1);
 
             o->oAction = MR_BLIZZARD_ACT_SPAWN_SNOWBALL;
@@ -309,6 +340,8 @@ static void mr_blizzard_act_burrow(void) {
  */
 
 static void mr_blizzard_act_jump(void) {
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
 
     if (o->oMrBlizzardTimer != 0) {
         cur_obj_rotate_yaw_toward(o->oMrBlizzardTargetMoveYaw, 3400);
@@ -323,11 +356,13 @@ static void mr_blizzard_act_jump(void) {
                 o->oVelY = 25.0f;
                 o->oMrBlizzardTimer = 30;
                 o->oMrBlizzardDistFromHome = 0;
+                if (network_owns_object(o) && distanceToPlayer < 2000) { network_send_object(o); }
                 // Jump forward.
             } else {
                 o->oForwardVel = 10.0f;
                 o->oVelY = 50.0f;
                 o->oMoveFlags = 0;
+                if (network_owns_object(o) && distanceToPlayer < 2000) { network_send_object(o); }
             }
         }
     } else if (o->oMoveFlags & OBJ_MOVE_MASK_ON_GROUND) {
@@ -344,6 +379,7 @@ static void mr_blizzard_act_jump(void) {
 
         o->oForwardVel = 0.0f;
         o->oMrBlizzardTimer = 15;
+        if (network_owns_object(o) && distanceToPlayer < 2000) { network_send_object(o); }
     }
 }
 
@@ -412,11 +448,14 @@ static void mr_blizzard_snowball_act_0(void) {
  */
 
 static void mr_blizzard_snowball_act_1(void) {
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+
     f32 marioDist;
 
     if (o->parentObj->prevObj == NULL) {
         if (o->parentObj->oAction == MR_BLIZZARD_ACT_THROW_SNOWBALL) {
-            marioDist = o->oDistanceToMario;
+            marioDist = distanceToPlayer;
             if (marioDist > 800.0f) {
                 marioDist = 800.0f;
             }
