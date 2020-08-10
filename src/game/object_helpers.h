@@ -153,7 +153,7 @@ s32 cur_obj_check_if_at_animation_end(void);
 s32 cur_obj_check_anim_frame(s32 frame);
 s32 cur_obj_check_anim_frame_in_range(s32 startFrame, s32 rangeLength);
 s32 cur_obj_check_frame_prior_current_frame(s16 *a0);
-s32 mario_is_in_air_action(void);
+s32 mario_is_in_air_action(struct MarioState* m);
 s32 mario_is_dive_sliding(struct MarioState* m);
 void cur_obj_set_y_vel_and_animation(f32 sp18, s32 sp1C);
 void cur_obj_unrender_and_reset_state(s32 sp18, s32 sp1C);

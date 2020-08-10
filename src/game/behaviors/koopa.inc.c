@@ -65,8 +65,8 @@ static struct KoopaTheQuickProperties sKoopaTheQuickProperties[] = {
     { DIALOG_009, DIALOG_031, thi_seg7_trajectory_koopa, { 7100, -1300, -6000 } }
 };
 
-static u32 forceStartRace = FALSE;
-static u32 forceEndRace = FALSE;
+static u32 koopaForceStartRace = FALSE;
+static u32 koopaForceEndRace = FALSE;
 
 /**
  * Initialization function.
@@ -84,6 +84,9 @@ void bhv_koopa_init(void) {
         o->oKoopaTheQuickRaceIndex = o->oKoopaMovementType - KOOPA_BP_KOOPA_THE_QUICK_BASE;
         o->oKoopaAgility = 4.0f;
         cur_obj_scale(3.0f);
+
+        koopaForceStartRace = FALSE;
+        koopaForceEndRace = FALSE;
     } else {
         o->oKoopaAgility = 1.0f;
     }
@@ -91,7 +94,7 @@ void bhv_koopa_init(void) {
     if (o->oKoopaMovementType >= KOOPA_BP_KOOPA_THE_QUICK_BASE) {
         // koopa the quick
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
-        network_init_object_field(o, &forceStartRace);
+        network_init_object_field(o, &koopaForceStartRace);
 
     } else {
         // normal koopa
@@ -556,7 +559,7 @@ static void koopa_the_quick_act_wait_before_race(void) {
 }
 
 static void koopa_the_quick_force_start_race(void) {
-    forceStartRace = FALSE;
+    koopaForceStartRace = FALSE;
     gMarioShotFromCannon = FALSE;
     o->oAction = KOOPA_THE_QUICK_ACT_RACE;
     o->oForwardVel = 0.0f;
@@ -591,9 +594,9 @@ static void koopa_the_quick_act_show_init_text(void) {
         o->oKoopaTurningAwayFromWall = FALSE;
         o->oFlags |= OBJ_FLAG_ACTIVE_FROM_AFAR;
 
-        forceStartRace = TRUE;
+        koopaForceStartRace = TRUE;
         network_send_object(o);
-        forceStartRace = FALSE;
+        koopaForceStartRace = FALSE;
         ;
     } else if (response == 2) {
         o->oAction = KOOPA_THE_QUICK_ACT_WAIT_BEFORE_RACE;
@@ -822,7 +825,7 @@ static void koopa_the_quick_update(void) {
     cur_obj_update_floor_and_walls();
     obj_update_blinking(&o->oKoopaBlinkTimer, 10, 15, 3);
 
-    if (forceStartRace) { koopa_the_quick_force_start_race(); }
+    if (koopaForceStartRace) { koopa_the_quick_force_start_race(); }
 
     switch (o->oAction) {
         case KOOPA_THE_QUICK_ACT_WAIT_BEFORE_RACE:
@@ -907,7 +910,7 @@ void koopa_the_quick_force_end_race(void) {
             o->oKoopaRaceEndpointRaceStatus = 1;
         }
     }
-    forceEndRace = FALSE;
+    koopaForceEndRace = FALSE;
 }
 
 /**
@@ -916,10 +919,10 @@ void koopa_the_quick_force_end_race(void) {
 void bhv_koopa_race_endpoint_update(void) {
     if (o->oSyncID == 0) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
-        network_init_object_field(o, &forceEndRace);
+        network_init_object_field(o, &koopaForceEndRace);
     }
 
-    if (forceEndRace) { koopa_the_quick_force_end_race(); }
+    if (koopaForceEndRace) { koopa_the_quick_force_end_race(); }
 
     if (o->oKoopaRaceEndpointRaceBegun && !o->oKoopaRaceEndpointRaceEnded) {
         struct Object* player = nearest_player_to_object(o);
@@ -929,9 +932,9 @@ void bhv_koopa_race_endpoint_update(void) {
             level_control_timer(TIMER_CONTROL_STOP);
 
             if (!o->oKoopaRaceEndpointKoopaFinished) {
-                forceEndRace = TRUE;
+                koopaForceEndRace = TRUE;
                 network_send_object(o);
-                forceEndRace = FALSE;
+                koopaForceEndRace = FALSE;
 
                 play_race_fanfare();
                 if (gMarioShotFromCannon) {

@@ -1062,8 +1062,8 @@ s32 cur_obj_check_frame_prior_current_frame(s16 *a0) {
     return FALSE;
 }
 
-s32 mario_is_in_air_action(void) {
-    if (gMarioStates[0].action & ACT_FLAG_AIR) {
+s32 mario_is_in_air_action(struct MarioState* m) {
+    if (m->action & ACT_FLAG_AIR) {
         return TRUE;
     } else {
         return FALSE;

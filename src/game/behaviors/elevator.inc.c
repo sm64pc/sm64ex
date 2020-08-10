@@ -68,7 +68,7 @@ void elevator_act_4(void) {
         cur_obj_shake_screen(SHAKE_POS_SMALL);
         cur_obj_play_sound_2(SOUND_GENERAL_METAL_POUND);
     }
-    if (!mario_is_in_air_action() && !cur_obj_is_mario_on_platform())
+    if (!mario_is_in_air_action(&gMarioStates[0]) && !cur_obj_is_mario_on_platform())
         o->oAction = 1;
 }
 
@@ -79,7 +79,7 @@ void elevator_act_3(void) // nearly identical to action 2
         cur_obj_shake_screen(SHAKE_POS_SMALL);
         cur_obj_play_sound_2(SOUND_GENERAL_METAL_POUND);
     }
-    if (!mario_is_in_air_action() && !cur_obj_is_mario_on_platform())
+    if (!mario_is_in_air_action(&gMarioStates[0]) && !cur_obj_is_mario_on_platform())
         o->oAction = 0;
 }
 
