@@ -65,6 +65,9 @@ AUDIO_API ?= SDL2
 # Controller backends (can have multiple, space separated): SDL2
 CONTROLLER_API ?= SDL2
 
+# Modern rendering system (will eventually replace other backends)
+RMODERN ?= 0
+
 # Misc settings for EXTERNAL_DATA
 
 BASEDIR ?= res
@@ -255,6 +258,14 @@ else
   BUILD_DIR := $(BUILD_DIR_BASE)/$(VERSION)_pc
 endif
 
+ifeq ($(DEBUG),1)
+  BUILD_DIR := $(BUILD_DIR)_debug
+endif
+
+ifeq ($(RMODERN),1)
+  BUILD_DIR := $(BUILD_DIR)_rmodern
+endif
+
 LIBULTRA := $(BUILD_DIR)/libultra.a
 
 ifeq ($(TARGET_WEB),1)
@@ -285,6 +296,10 @@ LEVEL_DIRS := $(patsubst levels/%,%,$(dir $(wildcard levels/*/header.h)))
 # Hi, I'm a PC
 SRC_DIRS := src src/engine src/game src/audio src/menu src/buffers actors levels bin data assets src/pc src/pc/gfx src/pc/audio src/pc/controller src/pc/fs src/pc/fs/packtypes
 ASM_DIRS :=
+
+ifeq ($(RMODERN),1)
+  SRC_DIRS += src/pc/rmodern
+endif
 
 ifeq ($(DISCORDRPC),1)
   SRC_DIRS += src/pc/discord
@@ -478,6 +493,12 @@ SDLCONFIG := $(CROSS)sdl2-config
 # configure backend flags
 
 BACKEND_CFLAGS := -DRAPI_$(RENDER_API)=1 -DWAPI_$(WINDOW_API)=1 -DAAPI_$(AUDIO_API)=1
+
+# rmodern
+ifeq ($(RMODERN),1)
+  BACKEND_CFLAGS += -DRMODERN
+endif
+
 # can have multiple controller APIs
 BACKEND_CFLAGS += $(foreach capi,$(CONTROLLER_API),-DCAPI_$(capi)=1)
 BACKEND_LDFLAGS :=

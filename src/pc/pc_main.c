@@ -171,6 +171,14 @@ static void on_anim_frame(double time) {
 }
 #endif
 
+
+#ifdef RMODERN
+#include "rmodern/rmodern.h"
+void main_func(void)
+{
+    rmodern_init();
+}
+#else
 void main_func(void) {
     static u64 pool[0x165000/8 / 4 * sizeof(void *)];
     main_pool_init(pool, pool + sizeof(pool) / sizeof(pool[0]));
@@ -261,6 +269,7 @@ void main_func(void) {
     }
 #endif
 }
+#endif
 
 int main(int argc, char *argv[]) {
     parse_cli_opts(argc, argv);
