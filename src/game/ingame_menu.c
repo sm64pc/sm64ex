@@ -3167,9 +3167,6 @@ s16 render_menus_and_dialogs() {
             case 3:
                 mode = render_course_complete_screen();
                 break;
-            case 4:
-                mode = render_sync_level_screen();
-                break;
         }
 
         gDialogColorFadeTimer = (s16) gDialogColorFadeTimer + 0x1000;

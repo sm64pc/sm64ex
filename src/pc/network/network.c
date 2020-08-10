@@ -47,12 +47,9 @@ void network_send(struct Packet* p) {
 void network_update(void) {
     if (networkType == NT_NONE) { return; }
 
-    // TODO: refactor the way we do these update functions, it will get messy quick
     if (gInsidePainting && sCurrPlayMode == PLAY_MODE_CHANGE_LEVEL) {
         network_update_inside_painting();
-    } else if (sCurrPlayMode == PLAY_MODE_SYNC_LEVEL) {
-        network_update_level_warp();
-    } else {
+    } else if (sCurrPlayMode == PLAY_MODE_NORMAL) {
         network_update_player();
         network_update_objects();
     }

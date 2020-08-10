@@ -425,6 +425,18 @@ void render_game(void) {
         }
     }
 
+    // only render 'synchronizing' text if we've been waiting for a while
+    static u8 syncLevelTime = 0;
+    if (sCurrPlayMode == PLAY_MODE_SYNC_LEVEL) {
+        if (syncLevelTime < 30) {
+            syncLevelTime++;
+        } else {
+            render_sync_level_screen();
+        }
+    } else {
+        syncLevelTime = 0;
+    }
+
     D_8032CE74 = NULL;
     D_8032CE78 = 0;
 }

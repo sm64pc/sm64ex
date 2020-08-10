@@ -5,61 +5,51 @@
 
 int matchCount = 0;
 
+extern s16 gMenuMode;
+
 void network_send_level_warp(void) {
     struct Packet p;
-    packet_init(&p, PACKET_LEVEL_WARP, false);
+    packet_init(&p, PACKET_LEVEL_WARP, true);
     packet_write(&p, &sCurrPlayMode, sizeof(s16));
-    packet_write(&p, &gCurrLevelNum, sizeof(s16));
-    packet_write(&p, &sDelayedWarpArg, sizeof(s32));
-    packet_write(&p, &sSourceWarpNodeId, sizeof(s16));
+    packet_write(&p, &sWarpDest, sizeof(struct WarpDest));
 
     network_send(&p);
 }
 
 void network_receive_level_warp(struct Packet* p) {
     s16 remotePlayMode;
-    s16 remoteLevelNum;
-    s32 remoteWarpArg;
-    s16 remoteWarpNodeId;
+    struct WarpDest remoteWarpDest;
 
     packet_read(p, &remotePlayMode, sizeof(s16));
-    packet_read(p, &remoteLevelNum, sizeof(s16));
-    packet_read(p, &remoteWarpArg, sizeof(s32));
-    packet_read(p, &remoteWarpNodeId, sizeof(s16));
+    packet_read(p, &remoteWarpDest, sizeof(struct WarpDest));
 
-    bool matching = (remoteLevelNum == gCurrLevelNum)
-                 && (remoteWarpArg == sDelayedWarpArg)
-                 && (remoteWarpNodeId == sSourceWarpNodeId);
+    bool matchingDest = memcmp(&remoteWarpDest, &sWarpDest, sizeof(struct WarpDest)) == 0;
 
-    if (matching) {
-        if (sCurrPlayMode == PLAY_MODE_SYNC_LEVEL) {
-            // our levels match now, lets play!
-            set_play_mode(PLAY_MODE_NORMAL);
-            set_menu_mode((s16)-1);
-        }
-        // our levels match, make sure the other player knows that
-        if (matchCount++ < 3) {
-            network_send_level_warp();
-        } else {
-            matchCount = 0;
-        }
+    if (remotePlayMode == PLAY_MODE_SYNC_LEVEL && (sCurrPlayMode == PLAY_MODE_NORMAL || sCurrPlayMode == PLAY_MODE_PAUSED)) {
+        sCurrPlayMode = PLAY_MODE_SYNC_LEVEL;
+        sWarpDest = remoteWarpDest;
+        gMenuMode = -1;
+        gPauseScreenMode = 1;
+        if (sTransitionTimer < 1) { sTransitionTimer = 1; }
+        gCameraMovementFlags &= ~CAM_MOVE_PAUSE_SCREEN;
+        network_send_level_warp();
         return;
     }
-    matchCount = 0;
 
-    // remote isn't trying to sync, don't warp
-    if (remotePlayMode != PLAY_MODE_SYNC_LEVEL) { return; }
+    if (remotePlayMode == PLAY_MODE_SYNC_LEVEL && sCurrPlayMode == PLAY_MODE_SYNC_LEVEL) {
+        if (matchingDest) {
+            sCurrPlayMode = PLAY_MODE_CHANGE_LEVEL;
+        } else {
+            if (networkType == NT_CLIENT) {
+                // two-player hack: would need to use player index as priority
+                sWarpDest = remoteWarpDest;
+            }
+        }
+        network_send_level_warp();
+        return;
+    }
 
-    // we're trying to sync, don't warp
-    if (sCurrPlayMode == PLAY_MODE_SYNC_LEVEL) { return; }
-
-    // warp to the level
-    sDelayedWarpTimer = 1;
-    sDelayedWarpArg = remoteWarpArg;
-    sSourceWarpNodeId = remoteWarpNodeId;
-    sDelayedWarpOp = WARP_OP_FORCE_SYNC;
-}
-
-void network_update_level_warp(void) {
-    network_send_level_warp();
+    if (remotePlayMode == PLAY_MODE_CHANGE_LEVEL && sCurrPlayMode == PLAY_MODE_SYNC_LEVEL) {
+        sCurrPlayMode = PLAY_MODE_CHANGE_LEVEL;
+    }
 }

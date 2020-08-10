@@ -94,6 +94,7 @@ static void keyboard_read(OSContPad *pad) {
     if (keyboard_buttons_down & L_TRIG) {
         debug_breakpoint_here();
     }
+
     pad->button |= keyboard_buttons_down;
     const u32 xstick = keyboard_buttons_down & STICK_XMASK;
     const u32 ystick = keyboard_buttons_down & STICK_YMASK;

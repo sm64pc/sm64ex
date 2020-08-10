@@ -670,7 +670,7 @@ void initiate_painting_warp(void) {
             } else if (pWarpNode->id != 0) {
                 initiate_painting_warp_node(pWarpNode, false);
                 gControlPainting = true;
-                gWaitingForRemotePainting = true;
+                gWaitingForRemotePainting = (networkType != NT_NONE);
                 set_mario_action(gMarioState, ACT_DISAPPEARED, 0);
                 gMarioState->marioObj->header.gfx.node.flags &= ~GRAPH_RENDER_ACTIVE;
             }
@@ -710,6 +710,9 @@ void initiate_painting_warp_node(struct WarpNode *pWarpNode, u8 instant) {
  * Return the time left until the delayed warp is initiated.
  */
 s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
+    // only allow for local player
+    if (m != &gMarioStates[0]) { return 0; }
+
     gControlPainting = FALSE;
     s32 val04 = TRUE;
 
@@ -1008,8 +1011,12 @@ s32 play_mode_normal(void) {
     // warp, change play mode accordingly.
     if (sCurrPlayMode == PLAY_MODE_NORMAL) {
         if (sWarpDest.type == WARP_TYPE_CHANGE_LEVEL) {
-            set_play_mode(PLAY_MODE_CHANGE_LEVEL);
+            set_play_mode((networkType != NT_NONE) ? PLAY_MODE_SYNC_LEVEL : PLAY_MODE_CHANGE_LEVEL);
+            network_send_level_warp();
         } else if (sTransitionTimer != 0) {
+            ////////////////////////////////////
+            // todo: synchronize change_area. //
+            ////////////////////////////////////
             set_play_mode(PLAY_MODE_CHANGE_AREA);
         } else if (pressed_pause()) {
             lower_background_noise(1);
@@ -1038,6 +1045,8 @@ s32 play_mode_paused(void) {
             fade_into_special_warp(0, 0);
             gSavedCourseNum = COURSE_NONE;
         }
+        set_play_mode((networkType != NT_NONE) ? PLAY_MODE_SYNC_LEVEL : PLAY_MODE_CHANGE_LEVEL);
+        network_send_level_warp();
     } else if (gPauseScreenMode == 3) {
         // We should only be getting "int 3" to here
         initiate_warp(LEVEL_CASTLE, 1, 0x1F, 0);
@@ -1051,7 +1060,6 @@ s32 play_mode_paused(void) {
 }
 
 s32 play_mode_sync_level(void) {
-    set_menu_mode(RENDER_SYNC_LEVEL_SCREEN);
     return 0;
 }
 
@@ -1249,10 +1257,6 @@ s32 init_level(void) {
 
     if (gMarioState->action == ACT_INTRO_CUTSCENE) {
         sound_banks_disable(2, 0x0330);
-    }
-
-    if (networkType != NT_NONE) {
-        set_play_mode(PLAY_MODE_SYNC_LEVEL);
     }
 
     // set mario/luigi model
