@@ -13,6 +13,15 @@ struct ObjectHitbox sSpindriftHitbox = {
 };
 
 void bhv_spindrift_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, 4000.0f);
+        network_init_object_field(o, &o->oFlags);
+    }
+
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    int angleToPlayer = obj_angle_to_object(o, player);
+
     o->activeFlags |= ACTIVE_FLAG_UNK10;
     if (cur_obj_set_hitbox_and_die_if_attacked(&sSpindriftHitbox, SOUND_OBJ_DYING_ENEMY1, 0))
         cur_obj_change_action(1);
@@ -22,9 +31,9 @@ void bhv_spindrift_loop(void) {
             approach_forward_vel(&o->oForwardVel, 4.0f, 1.0f);
             if (cur_obj_lateral_dist_from_mario_to_home() > 1000.0f)
                 o->oAngleToMario = cur_obj_angle_to_home();
-            else if (o->oDistanceToMario > 300.0f)
-                o->oAngleToMario = obj_angle_to_object(o, gMarioObject);
-            cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x400);
+            else if (distanceToPlayer > 300.0f)
+                o->oAngleToMario = angleToPlayer;
+            cur_obj_rotate_yaw_toward(angleToPlayer, 0x400);
             break;
         case 1:
             o->oFlags &= ~8;
