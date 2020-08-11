@@ -78,6 +78,7 @@ void network_update(void) {
             case PACKET_INSIDE_PAINTING: network_receive_inside_painting(&p); break;
             case PACKET_COLLECT_STAR: network_receive_collect_star(&p); break;
             case PACKET_COLLECT_COIN: network_receive_collect_coin(&p); break;
+            case PACKET_COLLECT_ITEM: network_receive_collect_item(&p); break;
             default: printf("%s received unknown packet: %d\n", NETWORKTYPESTR, p.buffer[0]);
         }
 

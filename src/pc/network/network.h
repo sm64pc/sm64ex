@@ -24,6 +24,7 @@ enum PacketType {
     PACKET_INSIDE_PAINTING,
     PACKET_COLLECT_STAR,
     PACKET_COLLECT_COIN,
+    PACKET_COLLECT_ITEM,
 };
 
 struct Packet {
@@ -102,4 +103,7 @@ void network_receive_collect_star(struct Packet* p);
 
 void network_send_collect_coin(struct Object* o);
 void network_receive_collect_coin(struct Packet* p);
+
+void network_send_collect_item(struct Object* o);
+void network_receive_collect_item(struct Packet* p);
 #endif

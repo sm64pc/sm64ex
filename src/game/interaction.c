@@ -1586,6 +1586,9 @@ u32 interact_hoot(struct MarioState *m, UNUSED u32 interactType, struct Object *
 }
 
 u32 interact_cap(struct MarioState *m, UNUSED u32 interactType, struct Object *o) {
+    // only allow for local
+    if (m != &gMarioStates[0]) { return; }
+
     u32 capFlag = get_mario_cap_flag(o);
     u16 capMusic = 0;
     u16 capTime = 0;
@@ -1631,7 +1634,7 @@ u32 interact_cap(struct MarioState *m, UNUSED u32 interactType, struct Object *o
         if (capMusic != 0) {
             play_cap_music(capMusic);
         }
-
+        network_send_collect_item(o);
         return TRUE;
     }
 
