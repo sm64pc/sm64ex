@@ -32,6 +32,10 @@ void bhv_snowmans_bottom_init(void) {
         o->parentObj = sp34;
     }
     spawn_object_abs_with_rot(o, 0, MODEL_NONE, bhvSnowmansBodyCheckpoint, -402, 461, -2898, 0, 0, 0);
+
+    network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+    network_init_object_field(o, &o->oAction);
+    network_init_object_field(o, &o->oForwardVel);
 }
 
 void set_rolling_sphere_hitbox(void) {
@@ -51,6 +55,9 @@ void adjust_rolling_face_pitch(f32 f12) {
 }
 
 void snowmans_bottom_act_1(void) {
+    struct Object* player = nearest_player_to_object(o);
+    int angleToPlayer = obj_angle_to_object(o, player);
+
     UNUSED s16 sp26;
     s32 sp20;
     UNUSED s16 sp1E;
@@ -65,9 +72,9 @@ void snowmans_bottom_act_1(void) {
         o->oForwardVel = 70.0f;
 
     if (sp20 == -1) {
-        sp1E = (u16) o->oAngleToMario - (u16) o->oMoveAngleYaw;
-        if (obj_check_if_facing_toward_angle(o->oMoveAngleYaw, o->oAngleToMario, 0x2000) == 1 && o->oSnowmansBottomUnk1AC == 1) {
-            o->oSnowmansBottomUnkF8 = o->oAngleToMario;
+        sp1E = (u16)angleToPlayer - (u16) o->oMoveAngleYaw;
+        if (obj_check_if_facing_toward_angle(o->oMoveAngleYaw, angleToPlayer, 0x2000) == 1 && o->oSnowmansBottomUnk1AC == 1) {
+            o->oSnowmansBottomUnkF8 = angleToPlayer;
         } else {
             o->oSnowmansBottomUnkF8 = o->oMoveAngleYaw;
         }
@@ -121,15 +128,18 @@ void snowmans_bottom_act_3(void) {
 void bhv_snowmans_bottom_loop(void) {
     s16 sp1E;
 
+    int distanceToLocal = dist_between_objects(o, gMarioState[0].marioObj);
+
     switch (o->oAction) {
         case 0:
-            if (is_point_within_radius_of_mario(o->oPosX, o->oPosY, o->oPosZ, 400) == 1
+            if (distanceToLocal < 400
                 && set_mario_npc_dialog(&gMarioState[0], 1) == 2) {
                 sp1E = cutscene_object_with_dialog(CUTSCENE_DIALOG, o, DIALOG_110);
                 if (sp1E) {
                     o->oForwardVel = 10.0f;
                     o->oAction = 1;
                     set_mario_npc_dialog(&gMarioState[0], 0);
+                    network_send_object(o);
                 }
             }
             break;
@@ -182,6 +192,9 @@ void bhv_snowmans_head_init(void) {
         o->oPosZ = 1813.0f;
         o->oAction = 1;
     }
+
+    network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+    network_init_object_field(o, &o->oAction);
 }
 
 void bhv_snowmans_head_loop(void) {
@@ -218,6 +231,7 @@ void bhv_snowmans_head_loop(void) {
                 spawn_mist_particles();
                 spawn_default_star(-4700.0f, -1024.0f, 1890.0f);
                 o->oAction = 1;
+                network_send_object(o);
             }
             break;
     }
