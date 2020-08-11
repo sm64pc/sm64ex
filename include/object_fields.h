@@ -458,6 +458,7 @@
 #define /*0x0F4*/ oExclamationBoxUnkF4 OBJECT_FIELD_F32(0x1B) // scale?
 #define /*0x0F8*/ oExclamationBoxUnkF8 OBJECT_FIELD_F32(0x1C) // scale?
 #define /*0x0FC*/ oExclamationBoxUnkFC OBJECT_FIELD_S32(0x1D) // angle?
+#define /*0x100*/ oExclamationBoxForce OBJECT_FIELD_S32(0x1E) // angle?
 
 /* Eyerok Boss */
 #define /*0x0F8*/ oEyerokBossNumHands   OBJECT_FIELD_S32(0x1C)

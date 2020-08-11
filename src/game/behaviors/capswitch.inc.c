@@ -1,5 +1,7 @@
 // capswitch.c.inc
 
+static u8 capSwitchForcePress = FALSE;
+
 void cap_switch_act_0(void) {
     o->oAnimState = o->oBehParams2ndByte;
     cur_obj_scale(0.5f);
@@ -16,14 +18,20 @@ void cap_switch_act_0(void) {
 }
 
 void cap_switch_act_1(void) {
-    if (cur_obj_is_mario_on_platform()) {
+    if (capSwitchForcePress || cur_obj_is_mario_on_platform()) {
         save_file_set_flags(D_8032F0C0[o->oBehParams2ndByte]);
         o->oAction = 2;
         cur_obj_play_sound_2(SOUND_GENERAL_ACTIVATE_CAP_SWITCH);
+        if (!capSwitchForcePress) {
+            capSwitchForcePress = TRUE;
+            network_send_object(o);
+        }
+        capSwitchForcePress = FALSE;
     }
 }
 
 void cap_switch_act_2(void) {
+    capSwitchForcePress = FALSE;
     s32 sp1C;
     if (o->oTimer < 5) {
         cur_obj_scale_over_time(2, 4, 0.5f, 0.1f);
@@ -34,18 +42,28 @@ void cap_switch_act_2(void) {
             queue_rumble_data(5, 80);
         }
     } else {
-        sp1C = cur_obj_update_dialog_with_cutscene(&gMarioState[0], 1, 0x0C, CUTSCENE_CAP_SWITCH_PRESS, 0);
-        if (sp1C)
+        struct MarioState* marioState = nearest_mario_state_to_object(o);
+        if (marioState == &gMarioState[0]) {
+            sp1C = cur_obj_update_dialog_with_cutscene(&gMarioState[0], 1, 0x0C, CUTSCENE_CAP_SWITCH_PRESS, 0);
+            if (sp1C) { o->oAction = 3; }
+        } else {
             o->oAction = 3;
+        }
     }
 }
 
 void cap_switch_act_3(void) {
+    capSwitchForcePress = FALSE;
 } // dead function
 
 void (*sCapSwitchActions[])(void) = { cap_switch_act_0, cap_switch_act_1,
                                       cap_switch_act_2, cap_switch_act_3 };
 
 void bhv_cap_switch_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &capSwitchForcePress);
+    }
+
     cur_obj_call_action_function(sCapSwitchActions);
 }

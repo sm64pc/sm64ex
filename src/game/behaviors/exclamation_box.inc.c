@@ -71,10 +71,9 @@ void exclamation_box_act_2(void) {
         o->oPosY = o->oHomeY;
         o->oGraphYOffset = 0.0f;
     }
-    if (o->oExclamationBoxUnkFC == 0x4000 || cur_obj_was_attacked_or_ground_pounded()) {
+    if (o->oExclamationBoxForce || o->oExclamationBoxUnkFC == 0x4000 || cur_obj_was_attacked_or_ground_pounded()) {
         cur_obj_become_intangible();
         o->oExclamationBoxUnkFC = 0x4000;
-        network_send_object(o);
         o->oVelY = 30.0f;
         o->oGravity = -8.0f;
         o->oFloorHeight = o->oPosY;
@@ -105,6 +104,15 @@ void exclamation_box_act_3(void) {
 void exclamation_box_spawn_contents(struct Struct802C0DF0 *a0, u8 a1) {
     struct Object *sp1C = NULL;
 
+    if (o->oExclamationBoxForce) {
+        o->oExclamationBoxForce = FALSE;
+        return;
+    }
+
+    o->oExclamationBoxForce = TRUE;
+    network_send_object(o);
+    o->oExclamationBoxForce = FALSE;
+
     while (a0->unk0 != 99) {
         if (a1 == a0->unk0) {
             sp1C = spawn_object(o, a0->model, a0->behavior);
@@ -114,6 +122,10 @@ void exclamation_box_spawn_contents(struct Struct802C0DF0 *a0, u8 a1) {
             o->oBehParams |= a0->unk2 << 24;
             if (a0->model == 122)
                 o->oFlags |= 0x4000;
+
+            struct Object* spawn_objects[] = { sp1C };
+            u32 models[] = { a0->model };
+            network_send_spawn_objects(spawn_objects, models, 1);
             break;
         }
         a0++;
@@ -144,7 +156,7 @@ void (*sExclamationBoxActions[])(void) = { exclamation_box_act_0, exclamation_bo
 void bhv_exclamation_box_loop(void) {
     if (o->oSyncID == 0) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
-        network_init_object_field(o, &o->oExclamationBoxUnkFC);
+        network_init_object_field(o, &o->oExclamationBoxForce);
     }
     cur_obj_scale(2.0f);
     cur_obj_call_action_function(sExclamationBoxActions);
