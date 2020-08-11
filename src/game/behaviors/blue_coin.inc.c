@@ -60,6 +60,15 @@ void bhv_hidden_blue_coin_loop(void) {
  * Update function for bhvBlueCoinSwitch.
  */
 void bhv_blue_coin_switch_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->oAction);
+        network_init_object_field(o, &o->oVelY);
+        network_init_object_field(o, &o->oGravity);
+        network_init_object_field(o, &o->oTimer);
+        network_init_object_field(o, &o->oPosY);
+    }
+
     // The switch's model is 1/3 size.
     cur_obj_scale(3.0f);
 
@@ -78,6 +87,7 @@ void bhv_blue_coin_switch_loop(void) {
                     o->oGravity = 0.0f;
 
                     cur_obj_play_sound_2(SOUND_GENERAL_SWITCH_DOOR_OPEN);
+                    network_send_object(o);
                 }
             }
 
