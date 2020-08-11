@@ -94,19 +94,19 @@ static struct SyncObject* packet_read_object_header(struct Packet* p) {
         return NULL;
     }
 
-    // retrieve SyncObject, check if we should update using callback
-    struct SyncObject* so = &syncObjects[syncId];
-    if (so->ignore_if_true != NULL && (*so->ignore_if_true)(so->o)) {
-        return NULL;
-    }
-    so->clockSinceUpdate = clock();
-
     // extract object, sanity check
     struct Object* o = syncObjects[syncId].o;
     if (o == NULL) {
         printf("%s invalid SyncObject!\n", NETWORKTYPESTR);
         return NULL;
     }
+
+    // retrieve SyncObject, check if we should update using callback
+    struct SyncObject* so = &syncObjects[syncId];
+    if (so->ignore_if_true != NULL && (*so->ignore_if_true)(so->o)) {
+        return NULL;
+    }
+    so->clockSinceUpdate = clock();
 
     // make sure it's active
     if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) {

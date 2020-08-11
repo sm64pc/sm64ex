@@ -43,6 +43,7 @@ static void platform_on_track_mario_not_on_platform(void) {
         if (cur_obj_wait_then_blink(150, 40)) {
             platform_on_track_reset();
             o->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
+            if (network_owns_object(o)) { network_send_object(o); }
         }
     }
 }
@@ -51,6 +52,12 @@ static void platform_on_track_mario_not_on_platform(void) {
  * Init function for bhvPlatformOnTrack.
  */
 void bhv_platform_on_track_init(void) {
+
+    if (o->oSyncID == 0) {
+        network_init_object(o, 1000.0f);
+        network_object_settings(o, TRUE, 5.0f, TRUE, NULL);
+    }
+
     if (!(o->activeFlags & ACTIVE_FLAG_IN_DIFFERENT_ROOM)) {
         s16 pathIndex = (u16)(o->oBehParams >> 16) & PLATFORM_ON_TRACK_BP_MASK_PATH;
         o->oPlatformOnTrackType = ((u16)(o->oBehParams >> 16) & PLATFORM_ON_TRACK_BP_MASK_TYPE) >> 4;
@@ -111,10 +118,12 @@ static void platform_on_track_act_wait_for_mario(void) {
     if (gMarioObject->platform == o) {
         if (o->oTimer > 20) {
             o->oAction = PLATFORM_ON_TRACK_ACT_MOVE_ALONG_TRACK;
+            if (network_owns_object(o)) { network_send_object(o); }
         }
     } else {
         if (o->activeFlags & ACTIVE_FLAG_IN_DIFFERENT_ROOM) {
             platform_on_track_reset();
+            if (network_owns_object(o)) { network_send_object(o); }
         }
 
         o->oTimer = 0;
@@ -206,7 +215,12 @@ static void platform_on_track_act_move_along_track(void) {
         }
     }
 
-    if (gMarioObject->platform != o) {
+    u8 anyMarioOnPlatform = FALSE;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (gMarioStates[i].marioObj->platform == o) { anyMarioOnPlatform = TRUE; }
+    }
+
+    if (!anyMarioOnPlatform) {
         platform_on_track_mario_not_on_platform();
     } else {
         o->oTimer = 0;
@@ -230,7 +244,12 @@ static void platform_on_track_act_pause_briefly(void) {
 static void platform_on_track_act_fall(void) {
     cur_obj_move_using_vel_and_gravity();
 
-    if (gMarioObject->platform != o) {
+    u8 anyMarioOnPlatform = FALSE;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (gMarioStates[i].marioObj->platform == o) { anyMarioOnPlatform = TRUE; }
+    }
+
+    if (!anyMarioOnPlatform) {
         platform_on_track_mario_not_on_platform();
     } else {
         o->oTimer = 0;
@@ -247,10 +266,19 @@ static void platform_on_track_rock_ski_lift(void) {
 
     o->oFaceAngleRoll += (s32) o->oPlatformOnTrackSkiLiftRollVel;
 
+    struct Object* player = NULL;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (gMarioStates[i].marioObj->platform != o) { continue; }
+        player = gMarioStates[i].marioObj;
+        break;
+    }
+
     // Tilt away from the moving direction and toward mario
-    if (gMarioObject->platform == o) {
+    if (player != NULL) {
+        int distanceToPlayer = dist_between_objects(o, player);
+        int angleToPlayer = obj_angle_to_object(o, player);
         targetRoll = o->oForwardVel * sins(o->oMoveAngleYaw) * -50.0f
-                     + (s32)(o->oDistanceToMario * sins(o->oAngleToMario - o->oFaceAngleYaw) * -4.0f);
+                     + (s32)(distanceToPlayer * sins(angleToPlayer - o->oFaceAngleYaw) * -4.0f);
     }
 
     oscillate_toward(
@@ -285,10 +313,15 @@ void bhv_platform_on_track_update(void) {
             break;
     }
 
+    u8 anyMarioOnPlatform = FALSE;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (gMarioStates[i].marioObj->platform == o) { anyMarioOnPlatform = TRUE; }
+    }
+
     if (!o->oPlatformOnTrackIsNotSkiLift) {
         platform_on_track_rock_ski_lift();
     } else if (o->oPlatformOnTrackType == PLATFORM_ON_TRACK_TYPE_CARPET) {
-        if (!o->oPlatformOnTrackWasStoodOn && gMarioObject->platform == o) {
+        if (!o->oPlatformOnTrackWasStoodOn && anyMarioOnPlatform) {
             o->oPlatformOnTrackOffsetY = -8.0f;
             o->oPlatformOnTrackWasStoodOn = TRUE;
         }
