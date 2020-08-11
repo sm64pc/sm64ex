@@ -76,7 +76,7 @@ void yoshi_talk_loop(void) {
     if ((s16) o->oMoveAngleYaw == (s16) o->oAngleToMario) {
         cur_obj_init_animation(0);
         if (set_mario_npc_dialog(&gMarioState[0], 1) == 2) {
-            o->activeFlags |= ACTIVE_FLAG_INITIATED_TIME_STOP;
+            //o->activeFlags |= ACTIVE_FLAG_INITIATED_TIME_STOP;
             if (cutscene_object_with_dialog(CUTSCENE_DIALOG, o, DIALOG_161)) {
                 o->activeFlags &= ~ACTIVE_FLAG_INITIATED_TIME_STOP;
                 o->oInteractStatus = 0;

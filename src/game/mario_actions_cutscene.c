@@ -487,7 +487,7 @@ s32 act_reading_automatic_dialog(struct MarioState *m) {
         }
         // finished action
         else if (m->actionState == 25) {
-            //disable_time_stop();
+            disable_time_stop();
             if (gShouldNotPlayCastleMusic) {
                 gShouldNotPlayCastleMusic = FALSE;
                 play_cutscene_music(SEQUENCE_ARGS(0, SEQ_LEVEL_INSIDE_CASTLE));
@@ -540,7 +540,7 @@ s32 act_reading_sign(struct MarioState *m) {
         case 2:
             // dialog finished
             if (gCamera->cutscene == 0) {
-                //disable_time_stop();
+                disable_time_stop();
                 set_mario_action(m, ACT_IDLE, 0);
             }
             break;
@@ -633,7 +633,7 @@ void general_star_dance_handler(struct MarioState *m, s32 isInWater) {
                 if ((m->actionArg & 1) == 0) {
                     level_trigger_warp(m, WARP_OP_STAR_EXIT);
                 } else {
-                    enable_time_stop();
+                    //enable_time_stop();
                     create_dialog_box_with_response(gLastCompletedStarNum == 7 ? DIALOG_013 : DIALOG_014);
                     m->actionState = 1;
                 }
@@ -1118,7 +1118,7 @@ s32 act_exit_land_save_dialog(struct MarioState *m) {
             if (m == &gMarioStates[0] && is_anim_past_end(m)) {
                 if (gLastCompletedCourseNum != COURSE_BITDW
                     && gLastCompletedCourseNum != COURSE_BITFS) {
-                    enable_time_stop();
+                    //enable_time_stop();
                 }
 
                 set_menu_mode(RENDER_COURSE_DONE_SCREEN);
@@ -1628,7 +1628,7 @@ s32 act_putting_on_cap(struct MarioState *m) {
     s32 animFrame = set_mario_animation(m, MARIO_ANIM_PUT_CAP_ON);
 
     if (animFrame == 0) {
-        enable_time_stop();
+        //enable_time_stop();
     }
 
     if (animFrame == 28) {

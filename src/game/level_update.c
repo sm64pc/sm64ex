@@ -1112,7 +1112,8 @@ s32 play_mode_change_area(void) {
         sTransitionTimer -= 1;
     }
 
-    //! If sTransitionTimer is -1, this will miss.
+    if (sTransitionTimer < 0) { sTransitionTimer = 0; }
+
     if (sTransitionTimer == 0) {
         sTransitionUpdate = NULL;
         set_play_mode(PLAY_MODE_NORMAL);

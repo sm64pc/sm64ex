@@ -2,6 +2,7 @@
 #include "../network.h"
 #include "src/game/level_update.h"
 #include "src/game/area.h"
+#include "sm64.h"
 
 int matchCount = 0;
 
@@ -14,6 +15,22 @@ void network_send_level_warp(void) {
     packet_write(&p, &sWarpDest, sizeof(struct WarpDest));
 
     network_send(&p);
+}
+
+static void force_well_behaved_state(void) {
+    /*
+    gDialogBoxState = DIALOG_STATE_OPENING;
+    gCourseDoneMenuTimer = 0;
+    gCourseCompleteCoins = 0;
+    gCourseCompleteCoinsEqual = 0;
+    gHudFlash = 0;
+    */
+    level_set_transition(0, 0);
+    gMenuMode = -1;
+    gPauseScreenMode = 1;
+    gSaveOptSelectIndex = 0;
+    gMarioStates[0].action = (gMarioStates[0].pos[1] <= (gMarioStates[0].waterLevel - 100)) ? ACT_WATER_IDLE : ACT_IDLE;
+    gCameraMovementFlags &= ~CAM_MOVE_PAUSE_SCREEN;
 }
 
 void network_receive_level_warp(struct Packet* p) {
@@ -29,10 +46,7 @@ void network_receive_level_warp(struct Packet* p) {
         if (remoteWarpDest.type == WARP_TYPE_NOT_WARPING) { return; }
         sCurrPlayMode = PLAY_MODE_SYNC_LEVEL;
         sWarpDest = remoteWarpDest;
-        gMenuMode = -1;
-        gPauseScreenMode = 1;
-        if (sTransitionTimer < 1) { sTransitionTimer = 1; }
-        gCameraMovementFlags &= ~CAM_MOVE_PAUSE_SCREEN;
+        force_well_behaved_state();
         network_send_level_warp();
         return;
     }

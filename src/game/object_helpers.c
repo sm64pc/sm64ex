@@ -2653,7 +2653,7 @@ s32 cur_obj_update_dialog(struct MarioState* m, s32 actionArg, s32 dialogFlags, 
             // Wait for Mario to be ready to speak, and then enable time stop
             if (mario_ready_to_speak(m) || m->action == ACT_READING_NPC_DIALOG) {
                 //gTimeStopState |= TIME_STOP_ENABLED;
-                o->activeFlags |= ACTIVE_FLAG_INITIATED_TIME_STOP;
+                //o->activeFlags |= ACTIVE_FLAG_INITIATED_TIME_STOP;
                 o->oDialogState++;
             } else {
                 break;
@@ -2719,8 +2719,8 @@ s32 cur_obj_update_dialog_with_cutscene(struct MarioState* m, s32 actionArg, s32
             //  allows us to move during time stop as long as Mario never enters
             //  an action that can be interrupted with text.
             if (m->health >= 0x0100) {
-                gTimeStopState |= TIME_STOP_ENABLED;
-                o->activeFlags |= ACTIVE_FLAG_INITIATED_TIME_STOP;
+                //gTimeStopState |= TIME_STOP_ENABLED;
+                //o->activeFlags |= ACTIVE_FLAG_INITIATED_TIME_STOP;
                 o->oDialogState++;
                 o->oDialogResponse = 0;
             }
@@ -2730,7 +2730,7 @@ s32 cur_obj_update_dialog_with_cutscene(struct MarioState* m, s32 actionArg, s32
             // Wait for Mario to be ready to speak, and then enable time stop
             if (mario_ready_to_speak(m) || m->action == ACT_READING_NPC_DIALOG) {
                 //gTimeStopState |= TIME_STOP_ENABLED;
-                o->activeFlags |= ACTIVE_FLAG_INITIATED_TIME_STOP;
+                //o->activeFlags |= ACTIVE_FLAG_INITIATED_TIME_STOP;
                 o->oDialogState++;
                 o->oDialogResponse = 0;
             } else {

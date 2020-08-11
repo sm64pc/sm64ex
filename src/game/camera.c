@@ -9092,7 +9092,7 @@ BAD_RETURN(s32) cutscene_dialog_set_flag(UNUSED struct Camera *c) {
 BAD_RETURN(s32) cutscene_dialog_end(struct Camera *c) {
     sStatusFlags |= CAM_FLAG_UNUSED_CUTSCENE_ACTIVE;
     c->cutscene = 0;
-    //clear_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_DIALOG);
+    clear_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_DIALOG);
 }
 
 /**
@@ -9150,7 +9150,7 @@ BAD_RETURN(s32) cutscene_read_message(struct Camera *c) {
                 retrieve_info_star(c);
                 transition_next_state(c, 15);
                 sStatusFlags |= CAM_FLAG_UNUSED_CUTSCENE_ACTIVE;
-                //clear_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_DIALOG);
+                clear_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_DIALOG);
                 // Retrieve previous state
                 sCUpCameraPitch = sCutsceneVars[1].angle[0];
                 sModeOffsetYaw = sCutsceneVars[1].angle[1];

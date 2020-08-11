@@ -189,7 +189,7 @@ void hoot_action_loop(void) {
                 //set_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_MARIO_AND_DOORS);
 
                 if (cutscene_object_with_dialog(CUTSCENE_DIALOG, o, DIALOG_045)) {
-                    //clear_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_MARIO_AND_DOORS);
+                    clear_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_MARIO_AND_DOORS);
 
                     o->oAction = HOOT_ACT_TIRED;
                 }

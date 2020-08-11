@@ -240,7 +240,7 @@ void bhv_mips_held(void) {
             dialogID = DIALOG_162;
 
         if (set_mario_npc_dialog(&gMarioState[0], 1) == 2) {
-            o->activeFlags |= ACTIVE_FLAG_INITIATED_TIME_STOP;
+            //o->activeFlags |= ACTIVE_FLAG_INITIATED_TIME_STOP;
             if (cutscene_object_with_dialog(CUTSCENE_DIALOG, o, dialogID)) {
                 o->oInteractionSubtype |= INT_SUBTYPE_DROP_IMMEDIATELY;
                 o->activeFlags &= ~ACTIVE_FLAG_INITIATED_TIME_STOP;
