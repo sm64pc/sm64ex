@@ -1162,4 +1162,7 @@
 #define /*0x0FC*/ oYoshiChosenHome OBJECT_FIELD_S32(0x1D)
 #define /*0x100*/ oYoshiTargetYaw  OBJECT_FIELD_S32(0x1E)
 
+/* Breakable Wall */
+#define /*0x104*/ oBreakableWallForce OBJECT_FIELD_S32(0x1F)
+
 #endif // OBJECT_FIELDS_H
