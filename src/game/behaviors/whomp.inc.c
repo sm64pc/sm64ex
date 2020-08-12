@@ -15,22 +15,28 @@ void whomp_play_sfx_from_pound_animation(void) {
 }
 
 void whomp_act_0(void) {
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+    struct Object* player = marioState->marioObj;
+    int distanceToPlayer = dist_between_objects(o, player);
+
     cur_obj_init_animation_with_accel_and_sound(0, 1.0f);
     cur_obj_set_pos_to_home();
     if (o->oBehParams2ndByte != 0) {
         gSecondCameraFocus = o;
         cur_obj_scale(2.0f);
         if (o->oSubAction == 0) {
-            if (o->oDistanceToMario < 600.0f) {
+            if (distanceToPlayer < 600.0f) {
                 o->oSubAction++;
                 func_8031FFB4(SEQ_PLAYER_LEVEL, 60, 40);
             } else {
                 cur_obj_set_pos_to_home();
                 o->oHealth = 3;
             }
-        } else if (cur_obj_update_dialog_with_cutscene(&gMarioState[0], 2, 1, CUTSCENE_DIALOG, DIALOG_114))
+        } else if (marioState == &gMarioState[0] && cur_obj_update_dialog_with_cutscene(&gMarioState[0], 2, 1, CUTSCENE_DIALOG, DIALOG_114)) {
             o->oAction = 2;
-    } else if (o->oDistanceToMario < 500.0f)
+            network_send_object(o);
+        }
+    } else if (distanceToPlayer < 500.0f)
         o->oAction = 1;
     whomp_play_sfx_from_pound_animation();
 }
@@ -52,10 +58,14 @@ void whomp_act_7(void) {
 }
 
 void whomp_act_1(void) {
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    int angleToPlayer = obj_angle_to_object(o, player);
+
     s16 sp26;
     f32 sp20;
     f32 sp1C;
-    sp26 = abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw);
+    sp26 = abs_angle_diff(angleToPlayer, o->oMoveAngleYaw);
     sp20 = cur_obj_lateral_dist_to_home();
     if (gCurrLevelNum == LEVEL_BITS)
         sp1C = 200.0f;
@@ -66,29 +76,33 @@ void whomp_act_1(void) {
     if (sp20 > sp1C)
         o->oAction = 7;
     else if (sp26 < 0x2000) {
-        if (o->oDistanceToMario < 1500.0f) {
+        if (distanceToPlayer < 1500.0f) {
             o->oForwardVel = 9.0f;
             cur_obj_init_animation_with_accel_and_sound(0, 3.0f);
         }
-        if (o->oDistanceToMario < 300.0f)
+        if (distanceToPlayer < 300.0f)
             o->oAction = 3;
     }
     whomp_play_sfx_from_pound_animation();
 }
 
 void whomp_act_2(void) {
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    int angleToPlayer = obj_angle_to_object(o, player);
+
     s16 sp1E;
     cur_obj_init_animation_with_accel_and_sound(0, 1.0f);
     o->oForwardVel = 3.0f;
-    cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x200);
+    cur_obj_rotate_yaw_toward(angleToPlayer, 0x200);
     if (o->oTimer > 30) {
-        sp1E = abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw);
+        sp1E = abs_angle_diff(angleToPlayer, o->oMoveAngleYaw);
         if (sp1E < 0x2000) {
-            if (o->oDistanceToMario < 1500.0f) {
+            if (distanceToPlayer < 1500.0f) {
                 o->oForwardVel = 9.0f;
                 cur_obj_init_animation_with_accel_and_sound(0, 3.0f);
             }
-            if (o->oDistanceToMario < 300.0f)
+            if (distanceToPlayer < 300.0f)
                 o->oAction = 3;
         }
     }
@@ -133,6 +147,8 @@ void whomp_act_5(void) {
 }
 
 void king_whomp_on_ground(void) {
+    struct Object* player = nearest_player_to_object(o);
+
     Vec3f pos;
     if (o->oSubAction == 0) {
         if (cur_obj_is_mario_ground_pounding_platform()) {
@@ -143,7 +159,7 @@ void king_whomp_on_ground(void) {
                 o->oAction = 8;
             else {
                 vec3f_copy_2(pos, &o->oPosX);
-                vec3f_copy_2(&o->oPosX, &gMarioObject->oPosX);
+                vec3f_copy_2(&o->oPosX, &player->oPosX);
                 spawn_mist_particles_variable(0, 0, 100.0f);
                 spawn_triangle_break_particles(20, 138, 3.0f, 4);
                 cur_obj_shake_screen(SHAKE_POS_SMALL);
@@ -165,14 +181,20 @@ void king_whomp_on_ground(void) {
 }
 
 void whomp_on_ground(void) {
+
     if (o->oSubAction == 0) {
-        if (gMarioObject->platform == o) {
+        u8 anyMarioOnPlatform = FALSE;
+        for (int i = 0; i < MAX_PLAYERS; i++) {
+            if (gMarioStates[i].marioObj->platform == o) { anyMarioOnPlatform = TRUE; }
+        }
+        if (anyMarioOnPlatform) {
             if (cur_obj_is_mario_ground_pounding_platform()) {
                 o->oNumLootCoins = 5;
                 obj_spawn_loot_yellow_coins(o, 5, 20.0f);
                 o->oAction = 8;
             } else {
-                cur_obj_spawn_loot_coin_at_mario_pos();
+                struct MarioState* marioState = nearest_mario_state_to_object(o);
+                cur_obj_spawn_loot_coin_at_mario_pos(marioState);
                 o->oSubAction++;
             }
         }
@@ -190,7 +212,8 @@ void whomp_act_6(void) {
             king_whomp_on_ground();
         else
             whomp_on_ground();
-        if (o->oTimer > 100 || (gMarioState->action == ACT_SQUISHED && o->oTimer > 30))
+        struct MarioState* marioState = nearest_mario_state_to_object(o);
+        if (o->oTimer > 100 || (marioState->action == ACT_SQUISHED && o->oTimer > 30))
             o->oSubAction = 10;
     } else {
         if (o->oFaceAnglePitch > 0) {
@@ -209,7 +232,8 @@ void whomp_act_6(void) {
 
 void whomp_act_8(void) {
     if (o->oBehParams2ndByte != 0) {
-        if (cur_obj_update_dialog_with_cutscene(&gMarioState[0], 2, 2, CUTSCENE_DIALOG, DIALOG_115)) {
+        struct MarioState* marioState = nearest_mario_state_to_object(o);
+        if (marioState == &gMarioState[0] && cur_obj_update_dialog_with_cutscene(&gMarioState[0], 2, 2, CUTSCENE_DIALOG, DIALOG_115)) {
             obj_set_angle(o, 0, 0, 0);
             cur_obj_hide();
             cur_obj_become_intangible();
@@ -220,6 +244,7 @@ void whomp_act_8(void) {
             spawn_default_star(180.0f, 3880.0f, 340.0f);
             cur_obj_play_sound_2(SOUND_OBJ_KING_WHOMP_DEATH);
             o->oAction = 9;
+            network_send_object(o);
         }
     } else {
         spawn_mist_particles_variable(0, 0, 100.0f);
@@ -242,6 +267,15 @@ void (*sWhompActions[])(void) = {
 
 // MM
 void bhv_whomp_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, 4000.0f);
+        network_init_object_field(o, &o->oAngleVelPitch);
+        network_init_object_field(o, &o->oFaceAnglePitch);
+        network_init_object_field(o, &o->oForwardVel);
+        network_init_object_field(o, &o->oHealth);
+        network_init_object_field(o, &o->oFaceAnglePitch);
+    }
+
     cur_obj_update_floor_and_walls();
     cur_obj_call_action_function(sWhompActions);
     cur_obj_move_standard(-20);
