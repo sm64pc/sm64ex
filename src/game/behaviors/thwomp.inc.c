@@ -1,10 +1,12 @@
 // thwomp.c.inc
 
 void grindel_thwomp_act_4(void) {
-    if (o->oTimer == 0)
+    if (o->oTimer == 0) {
         o->oThwompRandomTimer = random_float() * 10.0f + 20.0f;
-    if (o->oTimer > o->oThwompRandomTimer)
+    }
+    if (o->oTimer > o->oThwompRandomTimer) {
         o->oAction = 0;
+    }
 }
 
 void grindel_thwomp_act_2(void) {
@@ -18,20 +20,26 @@ void grindel_thwomp_act_2(void) {
 }
 
 void grindel_thwomp_act_3(void) {
-    if (o->oTimer == 0)
-        if (o->oDistanceToMario < 1500.0f) {
+    if (o->oTimer == 0) {
+        int distanceToPlayer = dist_between_objects(o, gMarioStates[0].marioObj);
+        if (distanceToPlayer < 1500.0f) {
             cur_obj_shake_screen(SHAKE_POS_SMALL);
             cur_obj_play_sound_2(SOUND_OBJ_THWOMP);
         }
-    if (o->oTimer > 9)
+    }
+    if (o->oTimer > 9) {
         o->oAction = 4;
+    }
 }
 
 void grindel_thwomp_act_1(void) {
-    if (o->oTimer == 0)
+    if (o->oTimer == 0) {
         o->oThwompRandomTimer = random_float() * 30.0f + 10.0f;
-    if (o->oTimer > o->oThwompRandomTimer)
+    }
+    if (network_owns_object(o) && o->oTimer > o->oThwompRandomTimer) {
         o->oAction = 2;
+        network_send_object(o);
+    }
 }
 
 void grindel_thwomp_act_0(void) {
@@ -47,5 +55,13 @@ void (*sGrindelThwompActions[])(void) = { grindel_thwomp_act_0, grindel_thwomp_a
                                           grindel_thwomp_act_4 };
 
 void bhv_grindel_thwomp_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->oAction);
+        network_init_object_field(o, &o->oPosY);
+        network_init_object_field(o, &o->oThwompRandomTimer);
+        network_init_object_field(o, &o->oTimer);
+        network_init_object_field(o, &o->oVelY);
+    }
     cur_obj_call_action_function(sGrindelThwompActions);
 }
