@@ -9,16 +9,25 @@ struct WFRotatingPlatformData sWFRotatingPlatformData[] = {
 };
 
 void bhv_wf_rotating_wooden_platform_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->oAction);
+        network_init_object_field(o, &o->oAngleVelYaw);
+        network_init_object_field(o, &o->oFaceAngleYaw);
+        network_init_object_field(o, &o->oTimer);
+    }
+
     if (o->oAction == 0) {
         o->oAngleVelYaw = 0;
-        if (o->oTimer > 60) {
+        if (o->oTimer > 60 && network_owns_object(o)) {
             o->oAction++;
-            ; // needed to match
+            network_send_object(o);
         }
     } else {
         o->oAngleVelYaw = 0x100;
-        if (o->oTimer > 126)
+        if (o->oTimer > 126) {
             o->oAction = 0;
+        }
         cur_obj_play_sound_1(SOUND_ENV_ELEVATOR2);
     }
     cur_obj_rotate_face_angle_using_vel();

@@ -15,9 +15,13 @@ struct Struct8032F34C sTumblingBridgeParams[] = {
 void bhv_tumbling_bridge_platform_loop(void) {
     switch (o->oAction) {
         case 0:
-            if (gMarioObject->platform == o) {
+            if ((o->oInteractStatus & INT_STATUS_INTERACTED) || gMarioState[0].marioObj->platform == o) {
                 o->oAction++;
                 o->oTumblingBridgeUnkF4 = random_sign() * 0x80;
+                if (!(o->oInteractStatus & INT_STATUS_INTERACTED)) {
+                    network_send_collect_item(o);
+                }
+                o->oInteractStatus &= ~INT_STATUS_INTERACTED;
             }
             break;
         case 1:
@@ -82,10 +86,13 @@ void tumbling_bridge_act_1(void) {
 }
 
 void tumbling_bridge_act_2(void) {
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+
     cur_obj_hide();
     if (cur_obj_has_behavior(bhvLllTumblingBridge))
         cur_obj_unhide();
-    else if (o->oDistanceToMario > 1200.0f) {
+    else if (distanceToPlayer > 1200.0f) {
         o->oAction = 3;
         cur_obj_unhide();
     }
@@ -97,7 +104,10 @@ void tumbling_bridge_act_3(void) {
 }
 
 void tumbling_bridge_act_0(void) {
-    if (cur_obj_has_behavior(bhvLllTumblingBridge) || o->oDistanceToMario < 1000.0f)
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+
+    if (cur_obj_has_behavior(bhvLllTumblingBridge) || distanceToPlayer < 1000.0f)
         o->oAction = 1;
 }
 

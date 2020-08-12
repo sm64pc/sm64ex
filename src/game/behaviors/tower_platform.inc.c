@@ -1,15 +1,29 @@
 // tower_platform.c.inc
 
 void bhv_wf_solid_tower_platform_loop(void) {
-    if (o->parentObj->oAction == 3)
-        obj_mark_for_deletion(o);
+    if (o->parentObj->oAction == 1) {
+        cur_obj_become_tangible();
+        o->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
+    } else if (o->parentObj->oAction > 1) {
+        cur_obj_become_intangible();
+        o->header.gfx.node.flags |= GRAPH_RENDER_INVISIBLE;
+    }
 }
 
 void bhv_wf_elevator_tower_platform_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->oAction);
+        network_init_object_field(o, &o->oPosY);
+        network_init_object_field(o, &o->oTimer);
+    }
+
     switch (o->oAction) {
         case 0:
-            if (gMarioObject->platform == o)
+            if (gMarioObject->platform == o) {
                 o->oAction++;
+                network_send_object(o);
+            }
             break;
         case 1:
             cur_obj_play_sound_1(SOUND_ENV_ELEVATOR1);
@@ -30,17 +44,35 @@ void bhv_wf_elevator_tower_platform_loop(void) {
                 o->oPosY -= 5.0f;
             break;
     }
-    if (o->parentObj->oAction == 3)
-        obj_mark_for_deletion(o);
+
+    if (o->parentObj->oAction == 1) {
+        cur_obj_become_tangible();
+        o->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
+    } else if (o->parentObj->oAction > 1) {
+        cur_obj_become_intangible();
+        o->header.gfx.node.flags |= GRAPH_RENDER_INVISIBLE;
+    }
 }
 
 void bhv_wf_sliding_tower_platform_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->oAction);
+        network_init_object_field(o, &o->oForwardVel);
+        network_init_object_field(o, &o->oPosX);
+        network_init_object_field(o, &o->oPosZ);
+        network_init_object_field(o, &o->oTimer);
+    }
+
     s32 sp24 = o->oPlatformUnk110 / o->oPlatformUnk10C;
     switch (o->oAction) {
         case 0:
-            if (o->oTimer > sp24)
-                o->oAction++;
             o->oForwardVel = -o->oPlatformUnk10C;
+            if (network_owns_object(o) && o->oTimer > sp24) {
+                o->oAction++;
+                network_send_object(o);
+            }
+            if (!network_owns_object(o) && o->oTimer > sp24) { o->oForwardVel = 0; }
             break;
         case 1:
             if (o->oTimer > sp24)
@@ -51,8 +83,14 @@ void bhv_wf_sliding_tower_platform_loop(void) {
     cur_obj_compute_vel_xz();
     o->oPosX += o->oVelX;
     o->oPosZ += o->oVelZ;
-    if (o->parentObj->oAction == 3)
-        obj_mark_for_deletion(o);
+
+    if (o->parentObj->oAction == 1) {
+        cur_obj_become_tangible();
+        o->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
+    } else if (o->parentObj->oAction > 1) {
+        cur_obj_become_intangible();
+        o->header.gfx.node.flags |= GRAPH_RENDER_INVISIBLE;
+    }
 }
 
 void spawn_and_init_wf_platforms(s16 a, const BehaviorScript *bhv) {
@@ -87,22 +125,27 @@ void spawn_wf_platform_group(void) {
 }
 
 void bhv_tower_platform_group_loop(void) {
-    f32 marioY = gMarioObject->oPosY;
-    o->oDistanceToMario = dist_between_objects(o, gMarioObject);
+    static u8 spawnedPlatforms = FALSE;
+    if (!spawnedPlatforms) { spawn_wf_platform_group(); spawnedPlatforms = TRUE; }
+
+    u8 anyPlayerInRange = FALSE;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (gMarioStates[i].marioObj->oPosY > o->oHomeY - 1000.0f) { anyPlayerInRange = TRUE; }
+    }
+
     switch (o->oAction) {
         case 0:
-            if (marioY > o->oHomeY - 1000.0f)
-                o->oAction++;
+            if (anyPlayerInRange) { o->oAction++; }
             break;
         case 1:
-            spawn_wf_platform_group();
-            o->oAction++;
+            if (!anyPlayerInRange) { o->oAction++; }
             break;
         case 2:
-            if (marioY < o->oHomeY - 1000.0f)
-                o->oAction++;
-            break;
         case 3:
+        case 4:
+            o->oAction++;
+            break;
+        case 5:
             o->oAction = 0;
             break;
     }

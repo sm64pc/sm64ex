@@ -20,6 +20,15 @@ void bhv_wf_sliding_platform_init(void) {
     }
 
     o->oTimer = random_float() * 100.0f;
+
+    if (o->oSyncID == 0) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->oAction);
+        network_init_object_field(o, &o->oMoveAngleYaw);
+        network_init_object_field(o, &o->oPosX);
+        network_init_object_field(o, &o->oForwardVel);
+        network_init_object_field(o, &o->oTimer);
+    }
 }
 
 void bhv_wf_sliding_platform_loop(void) {
@@ -50,10 +59,11 @@ void bhv_wf_sliding_platform_loop(void) {
                 o->oPosX = o->oHomeX;
             }
 
-            if (o->oTimer == 90) {
+            if (o->oTimer >= 90 && network_owns_object(o)) {
                 o->oAction = WF_SLID_BRICK_PTFM_ACT_EXTEND;
                 o->oForwardVel = o->oWFSlidBrickPtfmMovVel;
                 o->oMoveAngleYaw -= 0x8000;
+                network_send_object(o);
             }
             break;
     }
