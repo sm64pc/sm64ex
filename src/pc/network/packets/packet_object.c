@@ -6,7 +6,7 @@
 #include "behavior_data.h"
 #include "behavior_table.h"
 
-u8 nextSyncID = 1;
+static u8 nextSyncID = 1;
 struct SyncObject syncObjects[MAX_SYNC_OBJECTS] = { 0 };
 
 // todo: move this to somewhere more general
@@ -19,6 +19,13 @@ float player_distance(struct MarioState* marioState, struct Object* o) {
     my *= my;
     mz *= mz;
     return sqrt(mx + my + mz);
+}
+
+void network_clear_sync_objects(void) {
+    for (int i = 0; i < MAX_SYNC_OBJECTS; i++) {
+        forget_sync_object(&syncObjects[i]);
+    }
+    nextSyncID = 1;
 }
 
 void network_init_object(struct Object *o, float maxSyncDistance) {
@@ -47,6 +54,7 @@ void network_init_object(struct Object *o, float maxSyncDistance) {
     so->keepRandomSeed = false;
     so->maxUpdateRate = 0;
     so->ignore_if_true = NULL;
+    so->syncDeathEvent = true;
     memset(so->extraFields, 0, sizeof(void*) * MAX_SYNC_OBJECT_FIELDS);
 }
 
@@ -255,6 +263,11 @@ void network_send_object(struct Object* o) {
         forget_sync_object(so);
         return;
     }
+    if (o != so->o) {
+        printf("network_send_object() OBJECT MISMATCH!\n");
+        forget_sync_object(so);
+        return;
+    }
 
     // always send a new event ID
     so->onEventId++;
@@ -315,7 +328,7 @@ void forget_sync_object(struct SyncObject* so) {
 }
 
 void network_update_objects(void) {
-    for (int i = 0; i < MAX_SYNC_OBJECTS; i++) {
+    for (int i = 1; i < nextSyncID; i++) {
         struct SyncObject* so = &syncObjects[i];
         if (so->o == NULL) { continue; }
 

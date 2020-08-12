@@ -33,7 +33,7 @@ static struct Object* find_nearest_item(const BehaviorScript *behavior, f32* pos
     obj = (struct Object *) listHead->next;
 
     while (obj != (struct Object *) listHead) {
-        if (obj->behavior == behaviorAddr && obj->activeFlags != ACTIVE_FLAG_DEACTIVATED) {
+        if (obj->behavior == behaviorAddr && obj->activeFlags != ACTIVE_FLAG_DEACTIVATED && !(obj->oInteractStatus & INT_STATUS_INTERACTED)) {
             f32 objDist = dist_to_pos(obj, pos);
             if (objDist < minDist) {
                 closestObj = obj;

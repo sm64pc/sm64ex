@@ -14991,6 +14991,9 @@
     <ClCompile Include="..\data\behavior_table.c">
       <Filter>Source Files\data</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\pc\network\packets\packet_collect_item.c">
+      <Filter>Source Files\src\pc\network\packets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\actors\common0.h">

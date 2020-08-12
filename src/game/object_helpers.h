@@ -194,7 +194,7 @@ void cur_obj_set_hitbox_radius_and_height(f32 radius, f32 height);
 void cur_obj_set_hurtbox_radius_and_height(f32 radius, f32 height);
 void obj_spawn_loot_blue_coins(struct Object *obj, s32 numCoins, f32 sp28, s16 posJitter);
 void obj_spawn_loot_yellow_coins(struct Object *obj, s32 numCoins, f32 sp28);
-void cur_obj_spawn_loot_coin_at_mario_pos(void);
+void cur_obj_spawn_loot_coin_at_mario_pos(struct MarioState* m);
 s32 cur_obj_advance_looping_anim(void);
 s32 cur_obj_resolve_wall_collisions(void);
 void cur_obj_update_floor_and_walls(void);

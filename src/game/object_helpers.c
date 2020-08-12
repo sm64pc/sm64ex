@@ -1666,7 +1666,7 @@ void obj_spawn_loot_yellow_coins(struct Object *obj, s32 numCoins, f32 sp28) {
     obj_spawn_loot_coins(obj, numCoins, sp28, bhvSingleCoinGetsSpawned, 0, MODEL_YELLOW_COIN);
 }
 
-void cur_obj_spawn_loot_coin_at_mario_pos(void) {
+void cur_obj_spawn_loot_coin_at_mario_pos(struct MarioState* m) {
     force_replicable_seed(TRUE);
     struct Object *coin;
     if (o->oNumLootCoins <= 0) {
@@ -1678,7 +1678,7 @@ void cur_obj_spawn_loot_coin_at_mario_pos(void) {
     coin = spawn_object(o, MODEL_YELLOW_COIN, bhvSingleCoinGetsSpawned);
     coin->oVelY = 30.0f;
 
-    obj_copy_pos(coin, gMarioObject);
+    obj_copy_pos(coin, m->marioObj);
 }
 
 f32 cur_obj_abs_y_dist_to_home(void) {
@@ -2223,9 +2223,11 @@ s32 cur_obj_wait_then_blink(s32 timeUntilBlinking, s32 numBlinks) {
 }
 
 s32 cur_obj_is_mario_ground_pounding_platform(void) {
-    if (gMarioObject->platform == o) {
-        if (gMarioStates[0].action == ACT_GROUND_POUND_LAND) {
-            return TRUE;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (gMarioStates[i].marioObj->platform == o) {
+            if (gMarioStates[i].action == ACT_GROUND_POUND_LAND) {
+                return TRUE;
+            }
         }
     }
 
@@ -2543,13 +2545,14 @@ void cur_obj_if_hit_wall_bounce_away(void) {
 }
 
 s32 cur_obj_hide_if_mario_far_away_y(f32 distY) {
-    if (absf(o->oPosY - gMarioObject->oPosY) < distY) {
-        cur_obj_unhide();
-        return FALSE;
-    } else {
-        cur_obj_hide();
-        return TRUE;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (absf(o->oPosY - gMarioStates[i].marioObj->oPosY) < distY) {
+            cur_obj_unhide();
+            return FALSE;
+        }
     }
+    cur_obj_hide();
+    return TRUE;
 }
 
 Gfx *geo_offset_klepto_held_object(s32 callContext, struct GraphNode *node, UNUSED Mat4 mtx) {

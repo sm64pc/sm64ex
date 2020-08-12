@@ -47,6 +47,7 @@ struct SyncObject {
     u8 extraFieldCount;
     bool fullObjectSync;
     bool keepRandomSeed;
+    bool syncDeathEvent;
     float maxUpdateRate;
     u8 (*ignore_if_true)(struct Object*);
     void* extraFields[MAX_SYNC_OBJECT_FIELDS];
@@ -59,6 +60,8 @@ extern enum NetworkType networkType;
 extern struct SyncObject syncObjects[];
 
 void network_init(enum NetworkType networkType);
+
+void network_clear_sync_objects(void);
 void network_init_object(struct Object *object, float maxSyncDistance);
 void network_object_settings(struct Object *object, bool fullObjectSync, float maxUpdateRate, bool keepRandomSeed, u8 ignore_if_true(struct Object*));
 void network_send(struct Packet* p);
