@@ -7,6 +7,12 @@ void bhv_white_puff_smoke_init(void) {
 
 void bhv_bullet_bill_init(void) {
     o->oBulletBillInitialMoveYaw = o->oMoveAngleYaw;
+    if (o->oSyncID == 0) {
+        network_init_object(o, 4000.0f);
+        network_init_object_field(o, &o->oFaceAnglePitch);
+        network_init_object_field(o, &o->oFaceAngleRoll);
+        network_init_object_field(o, &o->oForwardVel);
+    }
 }
 
 void bullet_bill_act_0(void) {
@@ -21,12 +27,20 @@ void bullet_bill_act_0(void) {
 }
 
 void bullet_bill_act_1(void) {
-    s16 sp1E = abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw);
-    if (sp1E < 0x2000 && 400.0f < o->oDistanceToMario && o->oDistanceToMario < 1500.0f)
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    int angleToPlayer = obj_angle_to_object(o, player);
+
+    s16 sp1E = abs_angle_diff(angleToPlayer, o->oMoveAngleYaw);
+    if (sp1E < 0x2000 && 400.0f < distanceToPlayer && distanceToPlayer < 1500.0f)
         o->oAction = 2;
 }
 
 void bullet_bill_act_2(void) {
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    int angleToPlayer = obj_angle_to_object(o, player);
+
     if (o->oTimer < 40)
         o->oForwardVel = 3.0f;
     else if (o->oTimer < 50) {
@@ -39,8 +53,8 @@ void bullet_bill_act_2(void) {
             cur_obj_update_floor_and_walls();
         spawn_object(o, MODEL_SMOKE, bhvWhitePuffSmoke);
         o->oForwardVel = 30.0f;
-        if (o->oDistanceToMario > 300.0f)
-            cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x100);
+        if (distanceToPlayer > 300.0f)
+            cur_obj_rotate_yaw_toward(angleToPlayer, 0x100);
         if (o->oTimer == 50) {
             cur_obj_play_sound_2(SOUND_OBJ_POUNDING_CANNON);
             cur_obj_shake_screen(SHAKE_POS_SMALL);
