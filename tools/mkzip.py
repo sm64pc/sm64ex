@@ -30,8 +30,7 @@ with open(sys.argv[1], 'r') as f:
     for (fname, aname) in lst:
         path = os.path.join(sys.argv[2], aname)
         old_md5 = md5(fname);
-        new_md5 = md5(path);
-        if not os.path.exists(path) or old_md5 != new_md5:
+        if not os.path.exists(path) or os.path.exists(path) and old_md5 != md5(path):
             os.makedirs(os.path.dirname(path), exist_ok=True)
             copyfile(fname, path)
             print("Copying: " + path)
