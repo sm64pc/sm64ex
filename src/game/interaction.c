@@ -1568,6 +1568,8 @@ u32 interact_pole(struct MarioState *m, UNUSED u32 interactType, struct Object *
 u32 interact_hoot(struct MarioState *m, UNUSED u32 interactType, struct Object *o) {
     s32 actionId = m->action & ACT_ID_MASK;
 
+    if (m != &gMarioStates[0]) { return; }
+
     //! Can pause to advance the global timer without falling too far, allowing
     // you to regrab after letting go.
     if (actionId >= 0x080 && actionId < 0x098
@@ -1576,6 +1578,7 @@ u32 interact_hoot(struct MarioState *m, UNUSED u32 interactType, struct Object *
         o->oInteractStatus = INT_STATUS_HOOT_GRABBED_BY_MARIO;
         m->interactObj = o;
         m->usedObj = o;
+        o->heldByPlayerIndex = 0;
 
         queue_rumble_data(5, 80);
         update_mario_sound_and_camera(m);

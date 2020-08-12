@@ -17,6 +17,7 @@
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif
+#include "behavior_table.h"
 
 void play_flip_sounds(struct MarioState *m, s16 frame1, s16 frame2, s16 frame3) {
     s32 animFrame = m->marioObj->header.gfx.unk38.animFrame;
@@ -1902,6 +1903,14 @@ s32 act_flying(struct MarioState *m) {
 }
 
 s32 act_riding_hoot(struct MarioState *m) {
+    if (m->usedObj == NULL || m->usedObj->behavior != bhvHoot) {
+        m->usedObj = cur_obj_nearest_object_with_behavior(bhvHoot);
+        for (int i = 0; i < MAX_PLAYERS; i++) {
+            if (m != &gMarioStates[i]) { continue; }
+            m->usedObj->heldByPlayerIndex = i;
+        }
+    }
+
     if (!(m->input & INPUT_A_DOWN) || (m->marioObj->oInteractStatus & INT_STATUS_MARIO_UNK7)) {
         m->usedObj->oInteractStatus = 0;
         m->usedObj->oHootMarioReleaseTime = gGlobalTimer;

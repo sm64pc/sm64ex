@@ -1,5 +1,7 @@
 // hoot.c.inc
 
+static u8 localTalkToHoot = 0;
+
 void bhv_hoot_init(void) {
     cur_obj_init_animation(0);
 
@@ -9,6 +11,11 @@ void bhv_hoot_init(void) {
     o->header.gfx.node.flags |= GRAPH_RENDER_INVISIBLE;
 
     cur_obj_become_intangible();
+    localTalkToHoot = 0;
+
+    network_init_object(o, 4000.0f);
+    network_init_object_field(o, &o->oHootAvailability);
+    network_init_object_field(o, &o->oMoveAnglePitch);
 }
 
 // sp28 = arg0
@@ -77,8 +84,9 @@ void hoot_free_step(s16 fastOscY, s32 speed) {
 }
 
 void hoot_player_set_yaw(void) {
-    s16 stickX = gPlayer3Controller->rawStickX;
-    s16 stickY = gPlayer3Controller->rawStickY;
+    struct MarioState* marioState = &gMarioStates[o->heldByPlayerIndex];
+    s16 stickX = marioState->controller->rawStickX;
+    s16 stickY = marioState->controller->rawStickY;
     UNUSED s16 pitch = o->oMoveAnglePitch;
     if (stickX < 10 && stickX >= -9)
         stickX = 0;
@@ -130,7 +138,8 @@ void hoot_surface_collision(f32 xPrev, UNUSED f32 yPrev, f32 zPrev) {
         o->oPosX = hitbox.x;
         o->oPosY = hitbox.y;
         o->oPosZ = hitbox.z;
-        gMarioObject->oInteractStatus |= INT_STATUS_MARIO_UNK7; /* bit 7 */
+
+        gMarioStates[o->heldByPlayerIndex].marioObj->oInteractStatus |= INT_STATUS_MARIO_UNK7; /* bit 7 */
     }
 
     floorY = find_floor_height_and_data(o->oPosX, o->oPosY, o->oPosZ, &sp44);
@@ -171,6 +180,7 @@ void hoot_act_ascent(f32 xPrev, f32 zPrev) {
 }
 
 void hoot_action_loop(void) {
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
     f32 xPrev = o->oPosX;
     f32 yPrev = o->oPosY;
     f32 zPrev = o->oPosZ;
@@ -188,7 +198,7 @@ void hoot_action_loop(void) {
             if (o->oPosY < 2700.0f) {
                 //set_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_MARIO_AND_DOORS);
 
-                if (cutscene_object_with_dialog(CUTSCENE_DIALOG, o, DIALOG_045)) {
+                if (marioState == &gMarioState[0] && cutscene_object_with_dialog(CUTSCENE_DIALOG, o, DIALOG_045)) {
                     clear_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_MARIO_AND_DOORS);
 
                     o->oAction = HOOT_ACT_TIRED;
@@ -206,7 +216,7 @@ void hoot_action_loop(void) {
             hoot_carry_step(20, xPrev, zPrev);
 
             if (o->oTimer >= 61)
-                gMarioObject->oInteractStatus |= INT_STATUS_MARIO_UNK7; /* bit 7 */
+                gMarioStates[o->heldByPlayerIndex].marioObj->oInteractStatus |= INT_STATUS_MARIO_UNK7; /* bit 7 */
             break;
     }
 
@@ -243,8 +253,12 @@ void hoot_awake_loop(void) {
 }
 
 void bhv_hoot_loop(void) {
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+    static u8 forceFlySanity = TRUE;
+
     switch (o->oHootAvailability) {
         case HOOT_AVAIL_ASLEEP_IN_TREE:
+            forceFlySanity = TRUE;
             if (is_point_within_radius_of_mario(o->oPosX, o->oPosY, o->oPosZ, 50)) {
                 o->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
                 o->oHootAvailability = HOOT_AVAIL_WANTS_TO_TALK;
@@ -254,16 +268,25 @@ void bhv_hoot_loop(void) {
         case HOOT_AVAIL_WANTS_TO_TALK:
             hoot_awake_loop();
 
-            if (set_mario_npc_dialog(&gMarioState[0], 2) == 2 && cutscene_object_with_dialog(CUTSCENE_DIALOG, o, DIALOG_044)) {
+            if (marioState == &gMarioState[0] && localTalkToHoot == 0) {
+                localTalkToHoot = 1;
+            }
+
+            if (localTalkToHoot == 1 && set_mario_npc_dialog(&gMarioState[0], 2) == 2 && cutscene_object_with_dialog(CUTSCENE_DIALOG, o, DIALOG_044)) {
+                localTalkToHoot = 2;
                 set_mario_npc_dialog(&gMarioState[0], 0);
-
                 cur_obj_become_tangible();
-
                 o->oHootAvailability = HOOT_AVAIL_READY_TO_FLY;
+                network_send_object(o);
             }
             break;
 
         case HOOT_AVAIL_READY_TO_FLY:
+            if (forceFlySanity) {
+                set_mario_npc_dialog(&gMarioState[0], 0);
+                cur_obj_become_tangible();
+                forceFlySanity = FALSE;
+            }
             hoot_awake_loop();
             break;
     }
