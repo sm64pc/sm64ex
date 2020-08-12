@@ -124,9 +124,11 @@ void spawn_wf_platform_group(void) {
     spawn_and_init_wf_platforms(MODEL_WF_TOWER_SQUARE_PLATORM_ELEVATOR, bhvWfElevatorTowerPlatform);
 }
 
+void bhv_tower_platform_group_init(void) {
+    spawn_wf_platform_group();
+}
+
 void bhv_tower_platform_group_loop(void) {
-    static u8 spawnedPlatforms = FALSE;
-    if (!spawnedPlatforms) { spawn_wf_platform_group(); spawnedPlatforms = TRUE; }
 
     u8 anyPlayerInRange = FALSE;
     for (int i = 0; i < MAX_PLAYERS; i++) {

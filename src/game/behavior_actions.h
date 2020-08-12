@@ -113,6 +113,7 @@ void bhv_black_smoke_bowser_loop(void);
 void bhv_black_smoke_upward_loop(void);
 void bhv_beta_fish_splash_spawner_loop(void);
 void bhv_spindrift_loop(void);
+void bhv_tower_platform_group_init(void);
 void bhv_tower_platform_group_loop(void);
 void bhv_wf_sliding_tower_platform_loop(void);
 void bhv_wf_elevator_tower_platform_loop(void);

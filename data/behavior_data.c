@@ -1724,6 +1724,7 @@ const BehaviorScript bhvTowerPlatformGroup[] = {
     DISABLE_RENDERING(),
     ADD_FLOAT(oPosY, 300),
     SET_HOME(),
+    CALL_NATIVE(bhv_tower_platform_group_init),
     BEGIN_LOOP(),
         CALL_NATIVE(bhv_tower_platform_group_loop),
     END_LOOP(),
