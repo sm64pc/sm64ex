@@ -289,6 +289,7 @@ void mario_grab_used_object(struct MarioState *m) {
     if (m->usedObj == NULL || m->usedObj->oHeldState == HELD_HELD) { return; }
     if (m->heldObj == NULL) {
         m->heldObj = m->usedObj;
+        // two-player hack
         m->heldObj->heldByPlayerIndex = (m == &gMarioStates[0]) ? 0 : 1;
         obj_set_held_state(m->heldObj, bhvCarrySomething3);
     }
@@ -709,6 +710,7 @@ u32 take_damage_from_interact_object(struct MarioState *m) {
 }
 
 int get_invincibility_flag(struct MarioState *m) {
+    // two-player hack
     return (m == &gMarioStates[0])
                 ? INT_SUBTYPE_DELAY_INVINCIBILITY
                 : INT_SUBTYPE_DELAY_INVINCIBILITY_MARIO2;

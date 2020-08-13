@@ -493,6 +493,9 @@
     <ClCompile Include="..\actors\lakitu_enemy\model.inc.c" />
     <ClCompile Include="..\actors\leaves\geo.inc.c" />
     <ClCompile Include="..\actors\leaves\model.inc.c" />
+    <ClCompile Include="..\actors\luigi\geo.inc.c" />
+    <ClCompile Include="..\actors\luigi\geo2.inc.c" />
+    <ClCompile Include="..\actors\luigi\model.inc.c" />
     <ClCompile Include="..\actors\mad_piano\anims\anim_05009A04.inc.c" />
     <ClCompile Include="..\actors\mad_piano\anims\anim_05009AFC.inc.c" />
     <ClCompile Include="..\actors\mad_piano\anims\data.inc.c" />

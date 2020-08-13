@@ -30,6 +30,7 @@ void network_receive_player(struct Packet* p) {
     u32 heldSyncID = NULL;
     u32 heldBySyncID = NULL;
 
+    u16 playerIndex = gMarioStates[1].playerIndex;
     packet_read(p, &gMarioStates[1], sizeof(u32) * 24);
     packet_read(p, gMarioStates[1].controller, 20);
     packet_read(p, &gMarioStates[1].marioObj->rawData.asU32, sizeof(u32) * 80);
@@ -37,6 +38,7 @@ void network_receive_player(struct Packet* p) {
     packet_read(p, &gMarioStates[1].marioObj->header.gfx.node.flags, sizeof(s16));
     packet_read(p, &heldSyncID, sizeof(u32));
     packet_read(p, &heldBySyncID, sizeof(u32));
+    gMarioStates[1].playerIndex = playerIndex;
 
     if (heldSyncID != NULL && syncObjects[heldSyncID].o != NULL) {
         // TODO: do we have to move graphics nodes around to make this visible?

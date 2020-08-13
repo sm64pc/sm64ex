@@ -89,8 +89,8 @@ void play_step_sound(struct MarioState *m, s16 frame1, s16 frame2) {
 
 void align_with_floor(struct MarioState *m) {
     m->pos[1] = m->floorHeight;
-    mtxf_align_terrain_triangle(sFloorAlignMatrix[m->unk00], m->pos, m->faceAngle[1], 40.0f);
-    m->marioObj->header.gfx.throwMatrix = &sFloorAlignMatrix[m->unk00];
+    mtxf_align_terrain_triangle(sFloorAlignMatrix[m->playerIndex], m->pos, m->faceAngle[1], 40.0f);
+    m->marioObj->header.gfx.throwMatrix = &sFloorAlignMatrix[m->playerIndex];
 }
 
 s32 begin_walking_action(struct MarioState *m, f32 forwardVel, u32 action, u32 actionArg) {

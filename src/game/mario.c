@@ -1862,6 +1862,9 @@ void init_mario(void) {
     if (isLocal && gMarioObject == NULL) { goto skippy; }
     if (!isLocal && gMario2Object == NULL) { goto skippy; }
 
+    // two-player hack
+    gMarioState->playerIndex = isLocal ? 0 : 1;
+
     Vec3s capPos;
     struct Object *capObject;
 
@@ -1898,6 +1901,7 @@ void init_mario(void) {
         find_water_level(gMarioSpawnInfo->startPos[0], gMarioSpawnInfo->startPos[2]);
 
     gMarioState->area = gCurrentArea;
+    // two-player hack
     gMarioState->marioObj = isLocal ? gMarioObject : gMario2Object;
     gMarioState->marioObj->header.gfx.unk38.animID = -1;
     vec3s_copy(gMarioState->faceAngle, gMarioSpawnInfo->startAngle);
@@ -1961,7 +1965,8 @@ skippy:
 
 void init_mario_from_save_file(void) {
     bool isLocal = (gMarioState == &gMarioStates[0]);
-    gMarioState->unk00 = isLocal ? 0 : 1;
+    // two-player hack
+    gMarioState->playerIndex = isLocal ? 0 : 1;
     gMarioState->flags = 0;
     gMarioState->action = 0;
     int i = isLocal ? 0 : 1;

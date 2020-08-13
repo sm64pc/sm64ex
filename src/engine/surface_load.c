@@ -773,6 +773,7 @@ void load_object_collision_model(void) {
     if (gCurrentObject->oDistanceToMario == 19000.0f) {
         marioDist = dist_between_objects(gCurrentObject, gMarioObject);
     }
+    // two-player hack
     mario2Dist = dist_between_objects(gCurrentObject, gMario2Object);
 
     // If the object collision is supposed to be loaded more than the
