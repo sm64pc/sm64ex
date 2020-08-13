@@ -30,6 +30,7 @@
 #define BHV_CMD_GET_ADDR_OF_CMD(index) (uintptr_t)(&gCurBhvCommand[index])
 
 static u16 gRandomSeed16;
+static u16 gSavedSeed16;
 
 // Unused function that directly jumps to a behavior command and resets the object's stack index.
 static void goto_behavior_unused(const BehaviorScript *bhvAddr) {
@@ -39,7 +40,6 @@ static void goto_behavior_unused(const BehaviorScript *bhvAddr) {
 
 void force_replicable_seed(u8 always) {
     // force the seed to consistent values
-    extern u16 gRandomSeed16;
     extern u32 gGlobalTimer;
     static u32 lastTimer = 0;
     static f32 lastPos[3] = { 0 };
@@ -48,6 +48,7 @@ void force_replicable_seed(u8 always) {
         && lastPos[1] == gCurrentObject->oPosY / 10
         && lastPos[2] == gCurrentObject->oPosZ / 10
         && !always) {
+        gSavedSeed16 = 0;
         return;
     }
     gRandomSeed16 = (u16)(gCurrentObject->oPosX / 1000.0f)
@@ -63,10 +64,17 @@ void force_replicable_seed(u8 always) {
 
 // Generate a pseudorandom integer from 0 to 65535 from the random seed, and update the seed.
 u16 random_u16(void) {
+    // restore random seed when applicable
+    if (gSavedSeed16 != 0) {
+        gRandomSeed16 = gSavedSeed16;
+        gSavedSeed16 = 0;
+    }
+
     // override this function for synchronized entities
     if (gCurrentObject->oSyncID != 0) {
         struct SyncObject* so = &syncObjects[gCurrentObject->oSyncID];
         if (so->o != NULL && !so->keepRandomSeed) {
+            gSavedSeed16 = gRandomSeed16;
             force_replicable_seed(FALSE);
         }
     }

@@ -865,6 +865,31 @@ f32 cur_obj_dist_to_nearest_object_with_behavior(const BehaviorScript *behavior)
     return dist;
 }
 
+struct Object* cur_obj_find_nearest_pole(void) {
+    struct Object* closestObj = NULL;
+    struct Object* obj;
+    struct ObjectNode* listHead;
+    f32 minDist = 0x20000;
+
+    listHead = &gObjectLists[OBJ_LIST_POLELIKE];
+    obj = (struct Object*) listHead->next;
+
+    while (obj != (struct Object*) listHead) {
+        if (obj->oInteractType & INTERACT_POLE) {
+            if (obj->activeFlags != ACTIVE_FLAG_DEACTIVATED && obj != o) {
+                f32 objDist = dist_between_objects(o, obj);
+                if (objDist < minDist) {
+                    closestObj = obj;
+                    minDist = objDist;
+                }
+            }
+        }
+        obj = (struct Object*) obj->header.next;
+    }
+
+    return closestObj;
+}
+
 struct Object *cur_obj_find_nearest_object_with_behavior(const BehaviorScript *behavior, f32 *dist) {
     uintptr_t *behaviorAddr = segmented_to_virtual(behavior);
     struct Object *closestObj = NULL;

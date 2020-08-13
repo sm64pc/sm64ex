@@ -139,6 +139,7 @@ void obj_set_face_angle_to_move_angle(struct Object *obj);
 u32 get_object_list_from_behavior(const BehaviorScript *behavior);
 struct Object *cur_obj_nearest_object_with_behavior(const BehaviorScript *behavior);
 f32 cur_obj_dist_to_nearest_object_with_behavior(const BehaviorScript* behavior);
+struct Object* cur_obj_find_nearest_pole(void);
 struct Object *cur_obj_find_nearest_object_with_behavior(const BehaviorScript * behavior, f32 *dist);
 struct Object *find_unimportant_object(void);
 s32 count_unimportant_objects(void);

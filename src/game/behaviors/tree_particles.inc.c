@@ -37,7 +37,8 @@ void bhv_snow_leaf_particle_spawn_init(void) {
     s32 isSnow;
     f32 scale;
     UNUSED s32 unused2;
-    gMarioObject->oActiveParticleFlags &= ~0x2000;
+    struct Object* player = nearest_player_to_object(o);
+    player->oActiveParticleFlags &= ~0x2000;
     if (gCurrLevelNum == LEVEL_CCM || gCurrLevelNum == LEVEL_SL)
         isSnow = 1;
     else

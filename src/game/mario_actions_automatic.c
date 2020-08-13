@@ -56,6 +56,8 @@ void play_climbing_sounds(struct MarioState *m, s32 b) {
 }
 
 s32 set_pole_position(struct MarioState *m, f32 offsetY) {
+    if (m->usedObj == NULL) { m->usedObj = cur_obj_find_nearest_pole(); }
+
     UNUSED s32 unused1;
     UNUSED s32 unused2;
     UNUSED s32 unused3;
@@ -114,6 +116,7 @@ s32 set_pole_position(struct MarioState *m, f32 offsetY) {
 
 s32 act_holding_pole(struct MarioState *m) {
     struct Object *marioObj = m->marioObj;
+    if (m->usedObj == NULL) { m->usedObj = cur_obj_find_nearest_pole(); }
 
 #ifdef VERSION_JP
     if (m->input & INPUT_A_PRESSED) {
@@ -186,6 +189,7 @@ s32 act_holding_pole(struct MarioState *m) {
 }
 
 s32 act_climbing_pole(struct MarioState *m) {
+    if (m->usedObj == NULL) { m->usedObj = cur_obj_find_nearest_pole(); }
     s32 sp24;
     struct Object *marioObj = m->marioObj;
     s16 cameraAngle = m->area->camera->yaw;
@@ -223,6 +227,7 @@ s32 act_climbing_pole(struct MarioState *m) {
 }
 
 s32 act_grab_pole_slow(struct MarioState *m) {
+    if (m->usedObj == NULL) { m->usedObj = cur_obj_find_nearest_pole(); }
     play_sound_if_no_flag(m, SOUND_MARIO_WHOA, MARIO_MARIO_SOUND_PLAYED);
 
     if (set_pole_position(m, 0.0f) == POLE_NONE) {
@@ -238,6 +243,7 @@ s32 act_grab_pole_slow(struct MarioState *m) {
 
 s32 act_grab_pole_fast(struct MarioState *m) {
     struct Object *marioObj = m->marioObj;
+    if (m->usedObj == NULL) { m->usedObj = cur_obj_find_nearest_pole(); }
 
     play_sound_if_no_flag(m, SOUND_MARIO_WHOA, MARIO_MARIO_SOUND_PLAYED);
     m->faceAngle[1] += marioObj->oMarioPoleYawVel;
@@ -261,6 +267,7 @@ s32 act_grab_pole_fast(struct MarioState *m) {
 
 s32 act_top_of_pole_transition(struct MarioState *m) {
     struct Object *marioObj = m->marioObj;
+    if (m->usedObj == NULL) { m->usedObj = cur_obj_find_nearest_pole(); }
 
     marioObj->oMarioPoleYawVel = 0;
     if (m->actionArg == 0) {
@@ -281,6 +288,7 @@ s32 act_top_of_pole_transition(struct MarioState *m) {
 
 s32 act_top_of_pole(struct MarioState *m) {
     UNUSED struct Object *marioObj = m->marioObj;
+    if (m->usedObj == NULL) { m->usedObj = cur_obj_find_nearest_pole(); }
 
     if (m->input & INPUT_A_PRESSED) {
         return set_mario_action(m, ACT_TOP_OF_POLE_JUMP, 0);
@@ -761,6 +769,8 @@ s32 act_in_cannon(struct MarioState *m) {
 }
 
 s32 act_tornado_twirling(struct MarioState *m) {
+    if (m->usedObj = NULL) { return; }
+
     struct Surface *floor;
     Vec3f nextPos;
     f32 sinAngleVel;
