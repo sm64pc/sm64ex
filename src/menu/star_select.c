@@ -154,6 +154,7 @@ void bhv_act_selector_init(void) {
     }
 
     render_100_coin_star(stars);
+    gInsidePainting = TRUE;
 }
 
 /**
@@ -459,4 +460,9 @@ void star_select_finish_selection(void) {
         sLoadedActNum = sInitSelectedActNum;
     }
     gDialogCourseActNum = sSelectedActIndex + 1;
+
+    gInsidePainting = FALSE;
+    if (gControlPainting) {
+        network_send_inside_painting();
+    }
 }

@@ -12,11 +12,10 @@ struct PacketDataInsidePainting {
     u8 controlPainting;
     u8 starIndex;
     u8 actIndex;
-    struct WarpNode warpNode;
 };
 
 static clock_t lastSentTime = 0;
-static float minUpdateRate = 0.5f;
+static float minUpdateRate = 5.0f;
 static struct PacketDataInsidePainting lastSentData = { 0 };
 
 static void populate_packet_data(struct PacketDataInsidePainting* data) {
@@ -24,7 +23,6 @@ static void populate_packet_data(struct PacketDataInsidePainting* data) {
     data->controlPainting = gControlPainting;
     data->starIndex = sSelectableStarIndex;
     data->actIndex = sSelectedActIndex;
-    data->warpNode = gPaintingWarpNode;
 }
 
 void network_send_inside_painting(void) {
@@ -55,22 +53,9 @@ void network_receive_inside_painting(struct Packet* p) {
         sSelectedActIndex = remote.actIndex;
     }
 
-    // see if the warp nodes are the same
-    int compareNodes = memcmp(&gPaintingWarpNode, &remote.warpNode, sizeof(struct WarpNode));
-
-    if (gControlPainting && !remote.controlPainting && (compareNodes == 0)) {
+    if (gControlPainting && !remote.controlPainting) {
         // remote is well behaved now, we can control the painting
         gWaitingForRemotePainting = false;
-    }
-
-    bool shouldJumpInside = !gControlPainting && (!gInsidePainting && remote.insidePainting);
-
-    // ERROR: THE DESTINATION MISMATCH DOESN'T MOVE THE CLIENT TO THE CORRECT SCREEN!
-    bool destinationMismatch = !gControlPainting && (compareNodes != 0);
-
-    if (shouldJumpInside || destinationMismatch) {
-        initiate_painting_warp_node(&remote.warpNode, true);
-        set_play_mode(PLAY_MODE_CHANGE_LEVEL);
     }
 
     if (gControlPainting && !remote.controlPainting && !gInsidePainting && remote.insidePainting) {
