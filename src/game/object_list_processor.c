@@ -20,7 +20,6 @@
 #include "profiler.h"
 #include "spawn_object.h"
 
-
 /**
  * Flags controlling what debug info is displayed.
  */

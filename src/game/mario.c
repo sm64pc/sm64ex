@@ -40,6 +40,8 @@
 #include "bettercamera.h"
 #endif
 
+u16 gFreezeMario = 0;
+
 u32 unused80339F10;
 s8 filler80339F1C[20];
 
@@ -1783,10 +1785,21 @@ s32 execute_mario_action(UNUSED struct Object *o) {
             return 0;
         }
 
+        // don't update mario when in a cutscene
+        if (gMarioState->playerIndex == 0) {
+            extern s16 gDialogID;
+            if (gFreezeMario > 0) { gFreezeMario--; }
+            if (gFreezeMario < 1 && gDialogID != -1) { gFreezeMario = 1; }
+        }
+
         // The function can loop through many action shifts in one frame,
         // which can lead to unexpected sub-frame behavior. Could potentially hang
         // if a loop of actions were found, but there has not been a situation found.
         while (inLoop) {
+            // don't update mario when in a cutscene
+            if (gMarioState->playerIndex == 0 && gFreezeMario > 0 && (gMarioState->action & ACT_GROUP_MASK) != ACT_GROUP_CUTSCENE) {
+                break;
+            }
             switch (gMarioState->action & ACT_GROUP_MASK) {
                 case ACT_GROUP_STATIONARY:
                     inLoop = mario_execute_stationary_action(gMarioState);
@@ -1856,6 +1869,7 @@ s32 execute_mario_action(UNUSED struct Object *o) {
  **************************************************/
 
 void init_mario(void) {
+    gFreezeMario = 0;
     gInsidePainting = false;
 
     bool isLocal = (gMarioState == &gMarioStates[0]);

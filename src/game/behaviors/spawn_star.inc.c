@@ -42,10 +42,13 @@ void bhv_star_spawn_init(void) {
     o->oVelY = (o->oHomeY - o->oPosY) / 30.0f;
     o->oForwardVel = o->oStarSpawnDisFromHome / 30.0f;
     o->oStarSpawnUnkFC = o->oPosY;
-    if (o->oBehParams2ndByte == 0 || gCurrCourseNum == COURSE_BBH)
-        cutscene_object(CUTSCENE_STAR_SPAWN, o);
-    else
-        cutscene_object(CUTSCENE_RED_COIN_STAR_SPAWN, o);
+    if (nearest_mario_state_to_object(o) == &gMarioStates[0]) {
+        if (o->oBehParams2ndByte == 0 || gCurrCourseNum == COURSE_BBH)
+            cutscene_object(CUTSCENE_STAR_SPAWN, o);
+        else
+            cutscene_object(CUTSCENE_RED_COIN_STAR_SPAWN, o);
+        gFreezeMario = 1000;
+    }
 
     //set_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_MARIO_AND_DOORS);
     //o->activeFlags |= ACTIVE_FLAG_INITIATED_TIME_STOP;
@@ -96,6 +99,7 @@ void bhv_star_spawn_loop(void) {
         case 3:
             o->oFaceAngleYaw += 0x800;
             if (o->oTimer == 20) {
+                gFreezeMario = 0;
                 gObjCutsceneDone = TRUE;
                 clear_time_stop_flags(TIME_STOP_ENABLED | TIME_STOP_MARIO_AND_DOORS);
                 o->activeFlags &= ~ACTIVE_FLAG_INITIATED_TIME_STOP;

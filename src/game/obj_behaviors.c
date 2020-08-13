@@ -47,6 +47,8 @@
 #define OBJ_COL_FLAG_NO_Y_VEL   (1 << 3)
 #define OBJ_COL_FLAGS_LANDED    (OBJ_COL_FLAG_GROUNDED | OBJ_COL_FLAG_NO_Y_VEL)
 
+extern u16 gFreezeMario;
+
 /**
  * Current object floor as defined in object_step.
  */
