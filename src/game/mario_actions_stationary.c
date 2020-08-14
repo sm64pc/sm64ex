@@ -799,12 +799,12 @@ s32 act_shockwave_bounce(struct MarioState *m) {
     f32 sp18;
 
     if (m->marioObj->oInteractStatus & 0x10) {
-        queue_rumble_data(70, 40);
+        queue_rumble_data_mario(m, 70, 40);
         return hurt_and_set_mario_action(m, ACT_SHOCKED, 0, 4);
     }
 
     if (m->actionTimer == 0) {
-        queue_rumble_data(70, 40);
+        queue_rumble_data_mario(m, 70, 40);
         if (m->marioObj->oInteractStatus & INT_STATUS_MARIO_UNK1) {
             return hurt_and_set_mario_action(m, ACT_BACKWARD_GROUND_KB, 0, 0xc);
         }

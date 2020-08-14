@@ -39,7 +39,7 @@ void cap_switch_act_2(void) {
             cur_obj_shake_screen(SHAKE_POS_SMALL);
             spawn_mist_particles();
             spawn_triangle_break_particles(60, 139, 0.3f, o->oBehParams2ndByte);
-            queue_rumble_data(5, 80);
+            queue_rumble_data_object(o, 5, 80);
         }
     } else {
         struct MarioState* marioState = nearest_mario_state_to_object(o);

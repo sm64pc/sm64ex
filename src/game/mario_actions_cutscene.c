@@ -1200,7 +1200,7 @@ s32 act_death_exit(struct MarioState *m) {
 #else
         play_sound(SOUND_MARIO_OOOF2, m->marioObj->header.gfx.cameraToObject);
 #endif
-        queue_rumble_data(5, 80);
+        queue_rumble_data_mario(m, 5, 80);
         m->numLives--;
         // restore 7.75 units of health
         m->healCounter = 31;
@@ -1233,7 +1233,7 @@ s32 act_falling_death_exit(struct MarioState *m) {
 #else
         play_sound(SOUND_MARIO_OOOF2, m->marioObj->header.gfx.cameraToObject);
 #endif
-        queue_rumble_data(5, 80);
+        queue_rumble_data_mario(m, 5, 80);
         m->numLives--;
         // restore 7.75 units of health
         m->healCounter = 31;
@@ -1278,7 +1278,7 @@ s32 act_special_death_exit(struct MarioState *m) {
     }
 
     if (launch_mario_until_land(m, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_BACKWARD_AIR_KB, -24.0f)) {
-        queue_rumble_data(5, 80);
+        queue_rumble_data_mario(m, 5, 80);
         m->numLives--;
         m->healCounter = 31;
     }
@@ -1362,7 +1362,7 @@ s32 act_bbh_enter_spin(struct MarioState *m) {
             m->flags &= ~MARIO_UNKNOWN_08;
             if (perform_air_step(m, 0) == AIR_STEP_LANDED) {
                 level_trigger_warp(m, WARP_OP_UNKNOWN_02);
-                queue_rumble_data(15, 80);
+                queue_rumble_data_mario(m, 15, 80);
                 m->actionState = 4;
             }
             if (m->actionState == 2) {
@@ -1429,7 +1429,7 @@ s32 act_teleport_fade_out(struct MarioState *m) {
                                                           : MARIO_ANIM_FIRST_PERSON);
 
     if (m->actionTimer == 0) {
-        queue_rumble_data(30, 70);
+        queue_rumble_data_mario(m, 30, 70);
         func_sh_8024C89C(2);
     }
 
@@ -1456,7 +1456,7 @@ s32 act_teleport_fade_in(struct MarioState *m) {
     set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
 
     if (m->actionTimer == 0) {
-        queue_rumble_data(30, 70);
+        queue_rumble_data_mario(m, 30, 70);
         func_sh_8024C89C(2);
     }
 
@@ -1553,7 +1553,7 @@ s32 act_squished(struct MarioState *m) {
                 // Both of the 1.8's are really floats, but one of them has to
                 // be written as a double for this to match on EU.
                 vec3f_set(m->marioObj->header.gfx.scale, 1.8, 0.05f, 1.8f);
-                queue_rumble_data(10, 80);
+                queue_rumble_data_mario(m, 10, 80);
                 m->actionState = 1;
             }
             break;
@@ -1661,7 +1661,7 @@ void stuck_in_ground_handler(struct MarioState *m, s32 animation, s32 unstuckFra
     if (animFrame == -1) {
         play_sound_and_spawn_particles(m, SOUND_ACTION_TERRAIN_STUCK_IN_GROUND, 1);
     } else if (animFrame == unstuckFrame) {
-        queue_rumble_data(5, 80);
+        queue_rumble_data_mario(m, 5, 80);
         play_sound_and_spawn_particles(m, SOUND_ACTION_UNSTUCK_FROM_GROUND, 1);
     } else if (animFrame == target2 || animFrame == target3) {
         play_mario_landing_sound(m, SOUND_ACTION_TERRAIN_LANDING);

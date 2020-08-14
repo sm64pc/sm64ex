@@ -1556,7 +1556,7 @@ void update_mario_health(struct MarioState *m) {
             if (!gRumblePakTimer) {
                 gRumblePakTimer = 36;
                 if (is_rumble_finished_and_queue_empty()) {
-                    queue_rumble_data(3, 30);
+                    queue_rumble_data_mario(m, 3, 30);
                 }
             }
         } else {
@@ -1739,14 +1739,14 @@ static void debug_update_mario_cap(u16 button, s32 flags, u16 capTimer, u16 capM
 
 void func_sh_8025574C(void) {
     if (gMarioState->particleFlags & PARTICLE_HORIZONTAL_STAR) {
-        queue_rumble_data(5, 80);
+        queue_rumble_data_mario(gMarioState, 5, 80);
     } else if (gMarioState->particleFlags & PARTICLE_VERTICAL_STAR) {
-        queue_rumble_data(5, 80);
+        queue_rumble_data_mario(gMarioState, 5, 80);
     } else if (gMarioState->particleFlags & PARTICLE_TRIANGLE) {
-        queue_rumble_data(5, 80);
+        queue_rumble_data_mario(gMarioState, 5, 80);
     }
     if(gMarioState->heldObj && gMarioState->heldObj->behavior == segmented_to_virtual(bhvBobomb)) {
-        reset_rumble_timers();
+        reset_rumble_timers(gMarioState);
     }
 }
 

@@ -141,6 +141,20 @@ void queue_rumble_data(s16 a0, s16 a1) {
     gRumbleDataQueue[2].unk04 = 0;
 }
 
+void queue_rumble_data_object(struct Object* object, s16 a0, s16 a1) {
+    extern struct MarioState gMarioStates[];
+    f32 dist = dist_between_objects(object, gMarioStates[0].marioObj);
+    if (dist > 5000) { return; }
+    a0 = a0 * (1.0f - (dist / 5000.0f));
+    a1 = a1 * (1.0f - (dist / 5000.0f));
+    queue_rumble_data(a0, a1);
+}
+
+void queue_rumble_data_mario(struct MarioState* m, s16 a0, s16 a1) {
+    if (m->playerIndex != 0) { return; }
+    queue_rumble_data(a0, a1);
+}
+
 void func_sh_8024C89C(s16 a0) {
     gRumbleDataQueue[2].unk04 = a0;
 }
@@ -165,7 +179,9 @@ u8 is_rumble_finished_and_queue_empty(void) {
     return TRUE;
 }
 
-void reset_rumble_timers(void) {
+void reset_rumble_timers(struct MarioState* m) {
+    if (m->playerIndex != 0) { return; }
+
     if (sUnusedDisableRumble) {
         return;
     }
@@ -181,7 +197,9 @@ void reset_rumble_timers(void) {
     gCurrRumbleSettings.unk0C = 7;
 }
 
-void reset_rumble_timers_2(s32 a0) {
+void reset_rumble_timers_2(struct MarioState* m, s32 a0) {
+    if (m->playerIndex != 0) { return; }
+
     if (sUnusedDisableRumble) {
         return;
     }

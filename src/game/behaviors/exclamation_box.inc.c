@@ -79,7 +79,7 @@ void exclamation_box_act_2(void) {
             o->oGravity = -8.0f;
             o->oFloorHeight = o->oPosY;
             o->oAction = 3;
-            queue_rumble_data(5, 80);
+            queue_rumble_data_object(o, 5, 80);
         }
     }
     load_object_collision_model();
