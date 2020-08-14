@@ -50,7 +50,7 @@ ConfigWindow configWindow       = {
     .settings_changed = false,
 };
 unsigned int configFiltering    = 1;          // 0=force nearest, 1=linear, (TODO) 2=three-point
-unsigned int configMasterVolume = MAX_VOLUME; // 0 - MAX_VOLUME
+unsigned int configMasterVolume = 30; // 0 - MAX_VOLUME
 unsigned int configMusicVolume = MAX_VOLUME;
 unsigned int configSfxVolume = MAX_VOLUME;
 unsigned int configEnvVolume = MAX_VOLUME;
@@ -77,14 +77,14 @@ bool configPrecacheRes = true;
 #endif
 #ifdef BETTERCAMERA
 // BetterCamera settings
-unsigned int configCameraXSens   = 50;
-unsigned int configCameraYSens   = 50;
+unsigned int configCameraXSens   = 10;
+unsigned int configCameraYSens   = 10;
 unsigned int configCameraAggr    = 0;
 unsigned int configCameraPan     = 0;
-unsigned int configCameraDegrade = 10; // 0 - 100%
-bool         configCameraInvertX = true;
+unsigned int configCameraDegrade = 50; // 0 - 100%
+bool         configCameraInvertX = false;
 bool         configCameraInvertY = false;
-bool         configEnableCamera  = false;
+bool         configEnableCamera  = true;
 bool         configCameraAnalog  = true;
 bool         configCameraMouse   = false;
 #endif
@@ -140,7 +140,7 @@ static const struct ConfigOption options[] = {
     {.name = "skip_intro",           .type = CONFIG_TYPE_BOOL, .boolValue = &configSkipIntro},
     #ifdef DISCORDRPC
     {.name = "discordrpc_enable",    .type = CONFIG_TYPE_BOOL, .boolValue = &configDiscordRPC},
-    #endif 
+    #endif
 };
 
 // Reads an entire line from a file (excluding the newline character) and returns an allocated string
