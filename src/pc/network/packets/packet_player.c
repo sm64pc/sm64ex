@@ -2,6 +2,7 @@
 #include "../network.h"
 #include "object_fields.h"
 #include "object_constants.h"
+#include "sm64.h"
 
 void network_send_player(void) {
     if (gMarioStates[0].marioObj == NULL) { return; }
@@ -19,6 +20,10 @@ void network_send_player(void) {
     packet_write(&p, gMarioStates[0].marioObj->rawData.asU32, sizeof(u32) * 80);
     packet_write(&p, &gMarioStates[0].health, sizeof(s16));
     packet_write(&p, &gMarioStates[0].marioObj->header.gfx.node.flags, sizeof(s16));
+    packet_write(&p, &gMarioStates[0].actionState, sizeof(u16));
+    packet_write(&p, &gMarioStates[0].actionTimer, sizeof(u16));
+    packet_write(&p, &gMarioStates[0].actionArg, sizeof(u32));
+
     packet_write(&p, &heldSyncID, sizeof(u32));
     packet_write(&p, &heldBySyncID, sizeof(u32));
     network_send(&p);
@@ -31,14 +36,22 @@ void network_receive_player(struct Packet* p) {
     u32 heldBySyncID = NULL;
 
     u16 playerIndex = gMarioStates[1].playerIndex;
+    u32 oldAction = gMarioStates[1].action;
     packet_read(p, &gMarioStates[1], sizeof(u32) * 24);
     packet_read(p, gMarioStates[1].controller, 20);
     packet_read(p, &gMarioStates[1].marioObj->rawData.asU32, sizeof(u32) * 80);
     packet_read(p, &gMarioStates[1].health, sizeof(s16));
     packet_read(p, &gMarioStates[1].marioObj->header.gfx.node.flags, sizeof(s16));
+    packet_read(p, &gMarioStates[1].actionState, sizeof(u16));
+    packet_read(p, &gMarioStates[1].actionTimer, sizeof(u16));
+    packet_read(p, &gMarioStates[1].actionArg, sizeof(u32));
+
     packet_read(p, &heldSyncID, sizeof(u32));
     packet_read(p, &heldBySyncID, sizeof(u32));
     gMarioStates[1].playerIndex = playerIndex;
+    if (gMarioStates[1].action != oldAction) {
+        gMarioStates[1].flags &= ~(MARIO_ACTION_SOUND_PLAYED | MARIO_MARIO_SOUND_PLAYED);
+    }
 
     if (heldSyncID != NULL && syncObjects[heldSyncID].o != NULL) {
         // TODO: do we have to move graphics nodes around to make this visible?

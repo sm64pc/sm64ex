@@ -39,12 +39,20 @@ s32 mario_update_punch_sequence(struct MarioState *m) {
         case 0:
             play_sound(SOUND_MARIO_PUNCH_YAH, m->marioObj->header.gfx.cameraToObject);
             // Fall-through:
+        case 99:
+            // Fall-through:
         case 1:
             set_mario_animation(m, MARIO_ANIM_FIRST_PUNCH);
             if (is_anim_past_end(m)) {
                 m->actionArg = 2;
             } else {
-                m->actionArg = 1;
+                if (m->actionArg == 1 && m->playerIndex != 0) {
+                    // hack: play remote YAH punch sound, gets skipped without this
+                    play_sound(SOUND_MARIO_PUNCH_YAH, m->marioObj->header.gfx.cameraToObject);
+                    m->actionArg = 99;
+                } else {
+                    m->actionArg = 1;
+                }
             }
 
             if (m->marioObj->header.gfx.unk38.animFrame >= 2) {
