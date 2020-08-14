@@ -23,9 +23,9 @@ static void print_help(void) {
     printf("%-20s\tStarts the game in windowed mode.\n", "--windowed");
 }
 
-static inline int arg_string(const char *name, const char *value, char *target) {
+static inline int arg_string(const char *name, const char *value, char *target, int maxLength) {
     const unsigned int arglen = strlen(value);
-    if (arglen >= SYS_MAX_PATH) {
+    if (arglen >= maxLength) {
         fprintf(stderr, "Supplied value for `%s` is too long.\n", name);
         return 0;
     }
@@ -48,23 +48,26 @@ void parse_cli_opts(int argc, char* argv[]) {
         else if (strcmp(argv[i], "--windowed") == 0) // Open game in windowed mode
             gCLIOpts.FullScreen = 2;
 
-        else if (strcmp(argv[i], "--server") == 0) // Host server
+        else if (strcmp(argv[i], "--server") == 0 && (i + 1) < argc) { // Host server
             gCLIOpts.Network = NT_SERVER;
+            arg_string("--server <port>", argv[++i], gCLIOpts.NetworkPort, PORT_MAX_LEN);
 
-        else if (strcmp(argv[i], "--client") == 0) // Join server
+        } else if (strcmp(argv[i], "--client") == 0 && (i + 2) < argc) { // Join server
             gCLIOpts.Network = NT_CLIENT;
+            arg_string("--client <ip>", argv[++i], gCLIOpts.JoinIp, IP_MAX_LEN);
+            arg_string("--client <port>", argv[++i], gCLIOpts.NetworkPort, PORT_MAX_LEN);
 
-        else if (strcmp(argv[i], "--cheats") == 0) // Enable cheats menu
+        } else if (strcmp(argv[i], "--cheats") == 0) // Enable cheats menu
             Cheats.EnableCheats = true;
 
         else if (strcmp(argv[i], "--configfile") == 0 && (i + 1) < argc)
-            arg_string("--configfile", argv[++i], gCLIOpts.ConfigFile);
+            arg_string("--configfile", argv[++i], gCLIOpts.ConfigFile, SYS_MAX_PATH);
 
         else if (strcmp(argv[i], "--gamedir") == 0 && (i + 1) < argc)
-            arg_string("--gamedir", argv[++i], gCLIOpts.GameDir);
+            arg_string("--gamedir", argv[++i], gCLIOpts.GameDir, SYS_MAX_PATH);
 
         else if (strcmp(argv[i], "--savepath") == 0 && (i + 1) < argc)
-            arg_string("--savepath", argv[++i], gCLIOpts.SavePath);
+            arg_string("--savepath", argv[++i], gCLIOpts.SavePath, SYS_MAX_PATH);
 
         // Print help
         else if (strcmp(argv[i], "--help") == 0) {

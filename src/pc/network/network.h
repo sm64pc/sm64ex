@@ -59,7 +59,7 @@ extern s16 sCurrPlayMode;
 extern enum NetworkType networkType;
 extern struct SyncObject syncObjects[];
 
-void network_init(enum NetworkType networkType);
+void network_init(enum NetworkType inNetworkType, char* ip, char* port);
 
 void network_clear_sync_objects(void);
 void network_init_object(struct Object *object, float maxSyncDistance);

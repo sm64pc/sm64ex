@@ -6,11 +6,11 @@
 
 enum NetworkType networkType;
 static SOCKET gSocket;
-static char* txIp = "127.0.0.1";
-static unsigned short txPort;
+struct sockaddr_in txAddr;
 
-void network_init(enum NetworkType inNetworkType) {
+void network_init(enum NetworkType inNetworkType, char* ip, char* port) {
     networkType = inNetworkType;
+
     if (networkType == NT_NONE) { return; }
 
     // Create a receiver socket to receive datagrams
@@ -18,12 +18,15 @@ void network_init(enum NetworkType inNetworkType) {
     if (gSocket == INVALID_SOCKET) { return; }
 
     // Bind the socket to any address and the specified port.
-    unsigned int port = (networkType == NT_SERVER) ? 27015 : 27016;
-    int rc = socket_bind(gSocket, port);
-    if (rc != NO_ERROR) { return; }
-
-    // Save the port to send to
-    txPort = (networkType == NT_SERVER) ? 27016 : 27015;
+    if (networkType == NT_SERVER) {
+        int rc = socket_bind(gSocket, atoi(port));
+        if (rc != NO_ERROR) { return; }
+    } else {
+        // Save the port to send to
+        txAddr.sin_family = AF_INET;
+        txAddr.sin_port = htons(atoi(port));
+        txAddr.sin_addr.s_addr = inet_addr(ip);
+    }
 }
 
 void network_send(struct Packet* p) {
@@ -39,7 +42,7 @@ void network_send(struct Packet* p) {
     memcpy(&p->buffer[p->dataLength], &hash, sizeof(u32));
 
     // send
-    int rc = socket_send(gSocket, txIp, txPort, p->buffer, p->cursor + sizeof(u32));
+    int rc = socket_send(gSocket, &txAddr, p->buffer, p->cursor + sizeof(u32));
     if (rc != NO_ERROR) { return; }
     p->sent = true;
 }
@@ -57,7 +60,7 @@ void network_update(void) {
     do {
         // receive packet
         struct Packet p = { .cursor = 3 };
-        int rc = socket_receive(gSocket, p.buffer, PACKET_LENGTH, &p.dataLength);
+        int rc = socket_receive(gSocket, &txAddr, p.buffer, PACKET_LENGTH, &p.dataLength);
         if (rc != NO_ERROR) { break; }
 
         // subtract and check hash

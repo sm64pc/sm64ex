@@ -7,11 +7,11 @@ if [ ! -f "$FILE" ]; then
     FILE=./build/us_pc/sm64.us.f3dex2e
 fi
 
-$FILE --server --configfile sm64config_server.txt  &
+$FILE --server 27015 --configfile sm64config_server.txt  &
 
 # debug if cgdb exists
 if ! [ -x "$(command -v cgdb)" ]; then
-    $FILE --client --configfile sm64config_client.txt  &
+    $FILE --client 127.0.0.1 27015 --configfile sm64config_client.txt  &
 else
-    winpty cgdb $FILE -ex 'break debug_breakpoint_here' -ex 'run --client --configfile sm64config_client.txt' -ex 'quit'
+    winpty cgdb $FILE -ex 'break debug_breakpoint_here' -ex 'run --client 127.0.0.1 27015 --configfile sm64config_client.txt' -ex 'quit'
 fi

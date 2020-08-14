@@ -15,13 +15,9 @@ int socket_bind(SOCKET sock, unsigned int port) {
     return rc;
 }
 
-int socket_send(SOCKET sock, char* ip, unsigned int port, char* buffer, int bufferLength) {
-    struct sockaddr_in txAddr;
-    txAddr.sin_family = AF_INET;
-    txAddr.sin_port = htons(port);
-    txAddr.sin_addr.s_addr = inet_addr(ip);
-
-    int rc = sendto(sock, buffer, bufferLength, 0, (SOCKADDR*)&txAddr, sizeof(txAddr));
+int socket_send(SOCKET sock, struct sockaddr_in* txAddr, char* buffer, int bufferLength) {
+    int txAddrSize = sizeof(struct sockaddr_in);
+    int rc = sendto(sock, buffer, bufferLength, 0, txAddr, txAddrSize);
     if (rc == SOCKET_ERROR) {
         printf("%s sendto failed with error: %d\n", NETWORKTYPESTR, SOCKET_LAST_ERROR);
     }
@@ -29,13 +25,11 @@ int socket_send(SOCKET sock, char* ip, unsigned int port, char* buffer, int buff
     return rc;
 }
 
-int socket_receive(SOCKET sock, char* buffer, int bufferLength, int* receiveLength) {
+int socket_receive(SOCKET sock, struct sockaddr_in* rxAddr, char* buffer, int bufferLength, int* receiveLength) {
     *receiveLength = 0;
 
-    struct sockaddr_in rxAddr;
-    int rxAddrSize = sizeof(rxAddr);
-
-    int rc = recvfrom(sock, buffer, bufferLength, 0, (SOCKADDR*)&rxAddr, &rxAddrSize);
+    int rxAddrSize = sizeof(struct sockaddr_in);
+    int rc = recvfrom(sock, buffer, bufferLength, 0, rxAddr, &rxAddrSize);
     if (rc == SOCKET_ERROR) {
         int error = SOCKET_LAST_ERROR;
         if (error != EWOULDBLOCK && error != ECONNRESET) {

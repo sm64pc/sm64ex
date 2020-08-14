@@ -257,7 +257,7 @@ void main_func(void) {
         audio_api = &audio_null;
     }
 
-    network_init(gCLIOpts.Network);
+    network_init(gCLIOpts.Network, gCLIOpts.JoinIp, gCLIOpts.NetworkPort);
     audio_init();
     sound_init();
 
