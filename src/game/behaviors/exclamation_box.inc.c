@@ -71,14 +71,16 @@ void exclamation_box_act_2(void) {
         o->oPosY = o->oHomeY;
         o->oGraphYOffset = 0.0f;
     }
-    if (o->oExclamationBoxForce || o->oExclamationBoxUnkFC == 0x4000 || cur_obj_was_attacked_or_ground_pounded()) {
-        cur_obj_become_intangible();
-        o->oExclamationBoxUnkFC = 0x4000;
-        o->oVelY = 30.0f;
-        o->oGravity = -8.0f;
-        o->oFloorHeight = o->oPosY;
-        o->oAction = 3;
-        queue_rumble_data(5, 80);
+    if (o->oExclamationBoxForce || nearest_mario_state_to_object(o) == &gMarioStates[0]) {
+        if (o->oExclamationBoxForce || o->oExclamationBoxUnkFC == 0x4000 || cur_obj_was_attacked_or_ground_pounded()) {
+            cur_obj_become_intangible();
+            o->oExclamationBoxUnkFC = 0x4000;
+            o->oVelY = 30.0f;
+            o->oGravity = -8.0f;
+            o->oFloorHeight = o->oPosY;
+            o->oAction = 3;
+            queue_rumble_data(5, 80);
+        }
     }
     load_object_collision_model();
 }
@@ -145,6 +147,7 @@ void exclamation_box_act_4(void) {
 }
 
 void exclamation_box_act_5(void) {
+    o->oExclamationBoxForce = FALSE;
     if (o->oTimer > 300)
         o->oAction = 2;
 }
