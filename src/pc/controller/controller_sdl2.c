@@ -13,7 +13,7 @@
 #include <ultra64.h>
 
 #include "controller_api.h"
-#include "controller_sdl2.h"
+#include "controller_sdl.h"
 #include "../configfile.h"
 #include "../platform.h"
 #include "../fs/fs.h"
