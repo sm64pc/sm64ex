@@ -15,15 +15,22 @@
 # define FOR_WINDOWS 0
 #endif
 
-#include <SDL2/SDL.h>
-
 #if FOR_WINDOWS || defined(OSX_BUILD)
 # define GLEW_STATIC
 # include <GL/glew.h>
 #endif
 
 #define GL_GLEXT_PROTOTYPES 1
-#include <SDL2/SDL_opengl.h>
+
+#ifdef WAPI_SDL2
+# include <SDL2/SDL.h>
+# include <SDL2/SDL_opengl.h>
+#elif defined(WAPI_SDL1)
+# include <SDL/SDL.h>
+# ifndef GLEW_STATIC
+#  include <SDL/SDL_opengl.h>
+# endif
+#endif
 
 // redefine this if using a different GL loader
 #define mglGetProcAddress(name) SDL_GL_GetProcAddress(name)

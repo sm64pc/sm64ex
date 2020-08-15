@@ -19,13 +19,20 @@
 # include <GL/glew.h>
 #endif
 
-#include <SDL2/SDL.h>
-
 #define GL_GLEXT_PROTOTYPES 1
-#ifdef USE_GLES
-# include <SDL2/SDL_opengles2.h>
-#else
-# include <SDL2/SDL_opengl.h>
+
+#ifdef WAPI_SDL2
+# include <SDL2/SDL.h>
+# ifdef USE_GLES
+#  include <SDL2/SDL_opengles2.h>
+# else
+#  include <SDL2/SDL_opengl.h>
+# endif
+#elif defined(WAPI_SDL1)
+# include <SDL/SDL.h>
+# ifndef GLEW_STATIC
+#  include <SDL/SDL_opengl.h>
+# endif
 #endif
 
 #include "../platform.h"

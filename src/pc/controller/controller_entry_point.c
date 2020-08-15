@@ -13,7 +13,9 @@
 
 static struct ControllerAPI *controller_implementations[] = {
     &controller_recorded_tas,
+    #ifdef CAPI_SDL2
     &controller_sdl,
+    #endif
     &controller_keyboard,
 };
 

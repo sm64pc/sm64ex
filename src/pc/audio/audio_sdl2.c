@@ -11,10 +11,11 @@ static bool audio_sdl_init(void) {
         fprintf(stderr, "SDL init error: %s\n", SDL_GetError());
         return false;
     }
+
     SDL_AudioSpec want, have;
     SDL_zero(want);
     want.freq = 32000;
-    want.format = AUDIO_S16;
+    want.format = AUDIO_S16SYS;
     want.channels = 2;
     want.samples = 512;
     want.callback = NULL;

@@ -269,18 +269,18 @@ static void newcam_rotate_button(void) {
             play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
             #endif
             if (newcam_modeflags & NC_FLAG_8D)
-                newcam_yaw_target = newcam_yaw_target+(ivrt(newcam_invertX)*0x2000);
+                newcam_yaw_target = newcam_yaw_target+(ivrt(0)*0x2000);
             else
-                newcam_yaw_target = newcam_yaw_target+(ivrt(newcam_invertX)*0x4000);
+                newcam_yaw_target = newcam_yaw_target+(ivrt(0)*0x4000);
             newcam_centering = 1;
         } else if ((gPlayer1Controller->buttonPressed & R_CBUTTONS) && newcam_analogue == 0) {
             #ifndef nosound
             play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
             #endif
             if (newcam_modeflags & NC_FLAG_8D)
-                newcam_yaw_target = newcam_yaw_target-(ivrt(newcam_invertX)*0x2000);
+                newcam_yaw_target = newcam_yaw_target-(ivrt(0)*0x2000);
             else
-                newcam_yaw_target = newcam_yaw_target-(ivrt(newcam_invertX)*0x4000);
+                newcam_yaw_target = newcam_yaw_target-(ivrt(0)*0x4000);
             newcam_centering = 1;
         }
     } else  if (newcam_modeflags & NC_FLAG_XTURN) {
@@ -314,7 +314,7 @@ static void newcam_rotate_button(void) {
     newcam_framessincec[1] ++;
     if ((gPlayer1Controller->buttonPressed & L_CBUTTONS) && newcam_modeflags & NC_FLAG_XTURN && !(newcam_modeflags & NC_FLAG_8D) && newcam_analogue == 0) {
         if (newcam_framessincec[0] < 6) {
-            newcam_yaw_target = newcam_yaw+(ivrt(newcam_invertX)*0x3000);
+            newcam_yaw_target = newcam_yaw+(ivrt(0)*0x3000);
             newcam_centering = 1;
             #ifndef nosound
             play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
@@ -324,7 +324,7 @@ static void newcam_rotate_button(void) {
     }
     if ((gPlayer1Controller->buttonPressed & R_CBUTTONS) && newcam_modeflags & NC_FLAG_XTURN && !(newcam_modeflags & NC_FLAG_8D) && newcam_analogue == 0) {
         if (newcam_framessincec[1] < 6) {
-            newcam_yaw_target = newcam_yaw-(ivrt(newcam_invertX)*0x3000);
+            newcam_yaw_target = newcam_yaw-(ivrt(0)*0x3000);
             newcam_centering = 1;
             #ifndef nosound
             play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
@@ -350,14 +350,14 @@ static void newcam_rotate_button(void) {
                     #endif
                     if (newcam_stick2[0] > 20) {
                         if (newcam_modeflags & NC_FLAG_8D)
-                            newcam_yaw_target = newcam_yaw_target+(ivrt(newcam_invertX)*0x2000);
+                            newcam_yaw_target = newcam_yaw_target+(ivrt(0)*0x2000);
                         else
-                            newcam_yaw_target = newcam_yaw_target+(ivrt(newcam_invertX)*0x4000);
+                            newcam_yaw_target = newcam_yaw_target+(ivrt(0)*0x4000);
                     } else {
                         if (newcam_modeflags & NC_FLAG_8D)
-                            newcam_yaw_target = newcam_yaw_target-(ivrt(newcam_invertX)*0x2000);
+                            newcam_yaw_target = newcam_yaw_target-(ivrt(0)*0x2000);
                         else
-                            newcam_yaw_target = newcam_yaw_target-(ivrt(newcam_invertX)*0x4000);
+                            newcam_yaw_target = newcam_yaw_target-(ivrt(0)*0x4000);
                     }
                 }
             } else {
@@ -425,9 +425,9 @@ static void newcam_update_values(void) {
     u8 waterflag = 0;
 
     if (newcam_modeflags & NC_FLAG_XTURN)
-        newcam_yaw -= ((newcam_yaw_acc*(newcam_sensitivityX/10))*ivrt(newcam_invertX));
+        newcam_yaw -= ((newcam_yaw_acc*(newcam_sensitivityX/10))*ivrt(0));
     if (((newcam_tilt <= 12000) && (newcam_tilt >= -12000)) && newcam_modeflags & NC_FLAG_YTURN)
-        newcam_tilt += ((newcam_tilt_acc*ivrt(newcam_invertY))*(newcam_sensitivityY/10));
+        newcam_tilt += ((newcam_tilt_acc*ivrt(1))*(newcam_sensitivityY/10));
 
     if (newcam_tilt > 12000)
         newcam_tilt = 12000;
