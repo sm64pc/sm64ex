@@ -70,6 +70,7 @@ static const u8 optsCameraStr[][32] = {
     { TEXT_OPT_MOUSE },
     { TEXT_OPT_CAMD },
     { TEXT_OPT_CAMON },
+     {TEXT_OPT_BOWSERCAM},
 };
 
 static const u8 optsVideoStr[][32] = {
@@ -229,6 +230,7 @@ static struct Option optsCamera[] = {
     DEF_OPT_SCROLL( optsCameraStr[4], &configCameraAggr, 0, 100, 1 ),
     DEF_OPT_SCROLL( optsCameraStr[5], &configCameraPan, 0, 100, 1 ),
     DEF_OPT_SCROLL( optsCameraStr[8], &configCameraDegrade, 0, 100, 1 ),
+    DEF_OPT_TOGGLE( optsCameraStr[10], &configBowserCam ),
 };
 #endif
 
