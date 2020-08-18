@@ -9,7 +9,7 @@ from pathlib import Path
 
 prefixes = ["ALIGNED8 static const u8", "static const u8", "ALIGNED8 static u8", "ALIGNED8 u8", "ALIGNED8 const u8", "u8"]
 
-def parse_model(file, lines):
+def parse_model(file, lines, overwrite):
     searchInclude = False
     searchLineIndex = 0
     searchLineOriginal = ""
@@ -37,7 +37,7 @@ def parse_model(file, lines):
                 includePath = ""
             else:
                 searchInclude = False
-    nfile = os.path.abspath(file.replace("\\", "/").replace("Render96ex/", "Render96ex/overwriten/"))
+    nfile = os.path.abspath(file) if overwrite else os.path.abspath(file.replace("\\", "/").replace("Render96ex/", "Render96ex/overwriten/"))
     npath = os.path.dirname(nfile)
 
     if needsReplace:
@@ -47,7 +47,7 @@ def parse_model(file, lines):
         f.writelines(lines)
         f.close()
 
-if not len(sys.argv) > 0:
+if not len(sys.argv) > 1:
     path = f"{str(Path(__file__).resolve().parents[1])}/**/*.c"
 
     print(f"Converting repo textures this may take a long time")
@@ -55,15 +55,18 @@ if not len(sys.argv) > 0:
     for file in glob.iglob(path, recursive=True):
         try:
             if not "\\build" in file:
-                parse_model(file, open(file, 'r').readlines())
+                parse_model(file, open(file, 'r').readlines(), False)
         except Exception as err:
             print(f"Error on {file}")
             print(err)
 else:
-    file = sys.argv[1]
+    file = os.path.abspath(sys.argv[1])
     try:
-        print(f"Converting {file} textures")
-        parse_model(file, open(file, 'r').readlines())
+        if os.path.isfile(file):
+            print(f"Converting {file} textures")
+            parse_model(file, open(file, 'r').readlines(), True)
+        else:
+            print(f"Invalid Path")
     except Exception as err:
         print(f"Error on {file}")
         print(err)
