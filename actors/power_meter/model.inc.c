@@ -3,54 +3,34 @@
 UNUSED static const u64 power_meter_unused_1 = 0;
 
 // 0x030233E0
-ALIGNED8 static const u8 texture_power_meter_left_side[] = {
-#include "actors/power_meter/power_meter_left_side.rgba16.inc.c"
-};
+ALIGNED8 static const u8 texture_power_meter_left_side[] = "actors/power_meter/power_meter_left_side.rgba16";
 
 // 0x030243E0
-ALIGNED8 static const u8 texture_power_meter_right_side[] = {
-#include "actors/power_meter/power_meter_right_side.rgba16.inc.c"
-};
+ALIGNED8 static const u8 texture_power_meter_right_side[] = "actors/power_meter/power_meter_right_side.rgba16";
 
 // 0x030253E0
-ALIGNED8 static const u8 texture_power_meter_full[] = {
-#include "actors/power_meter/power_meter_full.rgba16.inc.c"
-};
+ALIGNED8 static const u8 texture_power_meter_full[] = "actors/power_meter/power_meter_full.rgba16";
 
 // 0x03025BE0
-ALIGNED8 static const u8 texture_power_meter_seven_segments[] = {
-#include "actors/power_meter/power_meter_seven_segments.rgba16.inc.c"
-};
+ALIGNED8 static const u8 texture_power_meter_seven_segments[] = "actors/power_meter/power_meter_seven_segments.rgba16";
 
 // 0x030263E0
-ALIGNED8 static const u8 texture_power_meter_six_segments[] = {
-#include "actors/power_meter/power_meter_six_segments.rgba16.inc.c"
-};
+ALIGNED8 static const u8 texture_power_meter_six_segments[] = "actors/power_meter/power_meter_six_segments.rgba16";
 
 // 0x03026BE0
-ALIGNED8 static const u8 texture_power_meter_five_segments[] = {
-#include "actors/power_meter/power_meter_five_segments.rgba16.inc.c"
-};
+ALIGNED8 static const u8 texture_power_meter_five_segments[] = "actors/power_meter/power_meter_five_segments.rgba16";
 
 // 0x030273E0
-ALIGNED8 static const u8 texture_power_meter_four_segments[] = {
-#include "actors/power_meter/power_meter_four_segments.rgba16.inc.c"
-};
+ALIGNED8 static const u8 texture_power_meter_four_segments[] = "actors/power_meter/power_meter_four_segments.rgba16";
 
 // 0x03027BE0
-ALIGNED8 static const u8 texture_power_meter_three_segments[] = {
-#include "actors/power_meter/power_meter_three_segments.rgba16.inc.c"
-};
+ALIGNED8 static const u8 texture_power_meter_three_segments[] = "actors/power_meter/power_meter_three_segments.rgba16";
 
 // 0x030283E0
-ALIGNED8 static const u8 texture_power_meter_two_segments[] = {
-#include "actors/power_meter/power_meter_two_segments.rgba16.inc.c"
-};
+ALIGNED8 static const u8 texture_power_meter_two_segments[] = "actors/power_meter/power_meter_two_segments.rgba16";
 
 // 0x03028BE0
-ALIGNED8 static const u8 texture_power_meter_one_segments[] = {
-#include "actors/power_meter/power_meter_one_segment.rgba16.inc.c"
-};
+ALIGNED8 static const u8 texture_power_meter_one_segments[] = "actors/power_meter/power_meter_one_segment.rgba16";
 
 // 0x030293E0
 const u8 *const power_meter_health_segments_lut[] = {

@@ -7,9 +7,7 @@ static const Lights1 blue_fish_seg3_lights_0301B5C8 = gdSPDefLights1(
 );
 
 // 0x0301B5E0
-ALIGNED8 static const u8 blue_fish_seg3_texture_0301B5E0[] = {
-#include "actors/blue_fish/blue_fish.rgba16.inc.c"
-};
+ALIGNED8 static const u8 blue_fish_seg3_texture_0301B5E0[] = "actors/blue_fish/blue_fish.rgba16";
 
 // 0x0301BDE0
 static const Vtx blue_fish_seg3_vertex_0301BDE0[] = {

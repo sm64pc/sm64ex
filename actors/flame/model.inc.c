@@ -9,44 +9,28 @@ static const Vtx flame_seg3_vertex_030172E0[] = {
 };
 
 // 0x03017320
-ALIGNED8 static const u8 flame_seg3_texture_03017320[] = {
-#include "actors/flame/flame_0.ia16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg3_texture_03017320[] = "actors/flame/flame_0.ia16";
 
 // 0x03017B20
-ALIGNED8 static const u8 flame_seg3_texture_03017B20[] = {
-#include "actors/flame/flame_1.ia16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg3_texture_03017B20[] = "actors/flame/flame_1.ia16";
 
 // 0x03018320
-ALIGNED8 static const u8 flame_seg3_texture_03018320[] = {
-#include "actors/flame/flame_2.ia16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg3_texture_03018320[] = "actors/flame/flame_2.ia16";
 
 // 0x03018B20
-ALIGNED8 static const u8 flame_seg3_texture_03018B20[] = {
-#include "actors/flame/flame_3.ia16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg3_texture_03018B20[] = "actors/flame/flame_3.ia16";
 
 // 0x03019320
-ALIGNED8 static const u8 flame_seg3_texture_03019320[] = {
-#include "actors/flame/flame_4.ia16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg3_texture_03019320[] = "actors/flame/flame_4.ia16";
 
 // 0x03019B20
-ALIGNED8 static const u8 flame_seg3_texture_03019B20[] = {
-#include "actors/flame/flame_5.ia16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg3_texture_03019B20[] = "actors/flame/flame_5.ia16";
 
 // 0x0301A320
-ALIGNED8 static const u8 flame_seg3_texture_0301A320[] = {
-#include "actors/flame/flame_6.ia16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg3_texture_0301A320[] = "actors/flame/flame_6.ia16";
 
 // 0x0301AB20
-ALIGNED8 static const u8 flame_seg3_texture_0301AB20[] = {
-#include "actors/flame/flame_7.ia16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg3_texture_0301AB20[] = "actors/flame/flame_7.ia16";
 
 // 0x0301B320 - 0x0301B3B0
 const Gfx flame_seg3_dl_0301B320[] = {

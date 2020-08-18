@@ -9,9 +9,7 @@ static const Vtx fwoosh_seg5_vertex_050157C8[] = {
 };
 
 // 0x05015808
-ALIGNED8 static const u8 fwoosh_seg5_texture_05015808[] = {
-#include "actors/fwoosh/fwoosh_face.ia16.inc.c"
-};
+ALIGNED8 static const u8 fwoosh_seg5_texture_05015808[] = "actors/fwoosh/fwoosh_face.ia16";
 
 // 0x05016008 - 0x05016040
 const Gfx fwoosh_seg5_dl_05016008[] = {

@@ -7,9 +7,7 @@ static const Lights1 cannon_lid_seg8_lights_08004040 = gdSPDefLights1(
 );
 
 // 0x08004058
-ALIGNED8 static const u8 cannon_lid_seg8_texture_08004058[] = {
-#include "actors/cannon_lid/cannon_lid.rgba16.inc.c"
-};
+ALIGNED8 static const u8 cannon_lid_seg8_texture_08004058[] = "actors/cannon_lid/cannon_lid.rgba16";
 
 // 0x08004858
 static const Vtx cannon_lid_seg8_vertex_08004858[] = {

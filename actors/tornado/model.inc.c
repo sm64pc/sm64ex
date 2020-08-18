@@ -1,9 +1,7 @@
 // Tornado
 
 // 0x05013128
-ALIGNED8 static const u8 tornado_seg5_texture_05013128[] = {
-#include "actors/tornado/tornado.ia16.inc.c"
-};
+ALIGNED8 static const u8 tornado_seg5_texture_05013128[] = "actors/tornado/tornado.ia16";
 
 // 0x05014128
 static const Lights1 tornado_seg5_lights_05014128 = gdSPDefLights1(

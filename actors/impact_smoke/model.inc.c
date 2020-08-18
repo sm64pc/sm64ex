@@ -3,24 +3,16 @@
 // TODO: Are these seperate textures or unified 64x64 ones?
 
 // 0x0605AA28
-ALIGNED8 static const u8 impact_smoke_seg6_texture_0605AA28[] = {
-#include "actors/impact_smoke/impact_smoke_0.ia16.inc.c"
-};
+ALIGNED8 static const u8 impact_smoke_seg6_texture_0605AA28[] = "actors/impact_smoke/impact_smoke_0.ia16";
 
 // 0x0605CA28
-ALIGNED8 static const u8 impact_smoke_seg6_texture_0605CA28[] = {
-#include "actors/impact_smoke/impact_smoke_1.ia16.inc.c"
-};
+ALIGNED8 static const u8 impact_smoke_seg6_texture_0605CA28[] = "actors/impact_smoke/impact_smoke_1.ia16";
 
 // 0x0605EA28
-ALIGNED8 static const u8 impact_smoke_seg6_texture_0605EA28[] = {
-#include "actors/impact_smoke/impact_smoke_2.ia16.inc.c"
-};
+ALIGNED8 static const u8 impact_smoke_seg6_texture_0605EA28[] = "actors/impact_smoke/impact_smoke_2.ia16";
 
 // 0x06060A28
-ALIGNED8 static const u8 impact_smoke_seg6_texture_06060A28[] = {
-#include "actors/impact_smoke/impact_smoke_3.ia16.inc.c"
-};
+ALIGNED8 static const u8 impact_smoke_seg6_texture_06060A28[] = "actors/impact_smoke/impact_smoke_3.ia16";
 
 // 0x06062A28
 static const Vtx impact_smoke_seg6_vertex_06062A28[] = {

@@ -154,9 +154,7 @@ static const Vtx exclamation_box_outline_seg8_vertex_080250E8[] = {
 };
 
 // 0x08025168
-ALIGNED8 static const u8 exclamation_box_outline_seg8_texture_08025168[] = {
-#include "actors/exclamation_box_outline/exclamation_box_outline.rgba16.inc.c"
-};
+ALIGNED8 static const u8 exclamation_box_outline_seg8_texture_08025168[] = "actors/exclamation_box_outline/exclamation_box_outline.rgba16";
 
 // 0x08025968 - 0x080259F8
 const Gfx exclamation_box_outline_seg8_dl_08025968[] = {
@@ -199,9 +197,7 @@ static const Lights1 exclamation_box_outline_seg8_lights_08025A68 = gdSPDefLight
 );
 
 // 0x08025A80
-ALIGNED8 static const u8 exclamation_box_outline_seg8_texture_08025A80[] = {
-#include "actors/exclamation_box_outline/exclamation_point.rgba16.inc.c"
-};
+ALIGNED8 static const u8 exclamation_box_outline_seg8_texture_08025A80[] = "actors/exclamation_box_outline/exclamation_point.rgba16";
 
 // 0x08025E80
 static const Vtx exclamation_box_outline_seg8_vertex_08025E80[] = {

@@ -7,9 +7,7 @@ static const Lights1 metal_box_seg8_lights_08023980 = gdSPDefLights1(
 );
 
 // 0x08023998
-ALIGNED8 static const u8 metal_box_seg8_texture_08023998[] = {
-#include "actors/metal_box/metal_box_side.rgba16.inc.c"
-};
+ALIGNED8 static const u8 metal_box_seg8_texture_08023998[] = "actors/metal_box/metal_box_side.rgba16";
 
 // 0x08024998
 static const Vtx metal_box_seg8_vertex_08024998[] = {

@@ -17,34 +17,22 @@ static const Vtx stomp_smoke_seg4_vertex_04022108[] = {
 };
 
 // 0x04022148
-ALIGNED8 static const u8 stomp_smoke_seg4_texture_04022148[] = {
-#include "actors/stomp_smoke/stomp_smoke_0.ia16.inc.c"
-};
+ALIGNED8 static const u8 stomp_smoke_seg4_texture_04022148[] = "actors/stomp_smoke/stomp_smoke_0.ia16";
 
 // 0x04022948
-ALIGNED8 static const u8 stomp_smoke_seg4_texture_04022948[] = {
-#include "actors/stomp_smoke/stomp_smoke_1.ia16.inc.c"
-};
+ALIGNED8 static const u8 stomp_smoke_seg4_texture_04022948[] = "actors/stomp_smoke/stomp_smoke_1.ia16";
 
 // 0x04023148
-ALIGNED8 static const u8 stomp_smoke_seg4_texture_04023148[] = {
-#include "actors/stomp_smoke/stomp_smoke_2.ia16.inc.c"
-};
+ALIGNED8 static const u8 stomp_smoke_seg4_texture_04023148[] = "actors/stomp_smoke/stomp_smoke_2.ia16";
 
 // 0x04023948
-ALIGNED8 static const u8 stomp_smoke_seg4_texture_04023948[] = {
-#include "actors/stomp_smoke/stomp_smoke_3.ia16.inc.c"
-};
+ALIGNED8 static const u8 stomp_smoke_seg4_texture_04023948[] = "actors/stomp_smoke/stomp_smoke_3.ia16";
 
 // 0x04024148
-ALIGNED8 static const u8 stomp_smoke_seg4_texture_04024148[] = {
-#include "actors/stomp_smoke/stomp_smoke_4.ia16.inc.c"
-};
+ALIGNED8 static const u8 stomp_smoke_seg4_texture_04024148[] = "actors/stomp_smoke/stomp_smoke_4.ia16";
 
 // 0x04024948
-ALIGNED8 static const u8 stomp_smoke_seg4_texture_04024948[] = {
-#include "actors/stomp_smoke/stomp_smoke_5.ia16.inc.c"
-};
+ALIGNED8 static const u8 stomp_smoke_seg4_texture_04024948[] = "actors/stomp_smoke/stomp_smoke_5.ia16";
 
 // 0x04025148 - 0x04025190
 const Gfx stomp_smoke_seg4_dl_04025148[] = {

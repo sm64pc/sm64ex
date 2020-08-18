@@ -227,81 +227,45 @@ static Gfx gd_texture1_dummy_aligner1[] = { // @ 801A8728
     gsSPEndDisplayList(),
 };
 
-ALIGNED8 static u8 gd_texture_hand_open[] = {
-#include "textures/intro_raw/hand_open.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_hand_open[] = "textures/intro_raw/hand_open.rgba16";
 
 static Gfx gd_texture2_dummy_aligner1[] = {
     gsSPEndDisplayList()
 };
 
-ALIGNED8 static u8 gd_texture_hand_closed[] = {
-#include "textures/intro_raw/hand_closed.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_hand_closed[] = "textures/intro_raw/hand_closed.rgba16";
 
-ALIGNED8 static u8 gd_texture_red_star_0[] = {
-#include "textures/intro_raw/red_star_0.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_red_star_0[] = "textures/intro_raw/red_star_0.rgba16";
 
-ALIGNED8 static u8 gd_texture_red_star_1[] = {
-#include "textures/intro_raw/red_star_1.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_red_star_1[] = "textures/intro_raw/red_star_1.rgba16";
 
-ALIGNED8 static u8 gd_texture_red_star_2[] = {
-#include "textures/intro_raw/red_star_2.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_red_star_2[] = "textures/intro_raw/red_star_2.rgba16";
 
-ALIGNED8 static u8 gd_texture_red_star_3[] = {
-#include "textures/intro_raw/red_star_3.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_red_star_3[] = "textures/intro_raw/red_star_3.rgba16";
 
-ALIGNED8 static u8 gd_texture_red_star_4[] = {
-#include "textures/intro_raw/red_star_4.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_red_star_4[] = "textures/intro_raw/red_star_4.rgba16";
 
-ALIGNED8 static u8 gd_texture_red_star_5[] = {
-#include "textures/intro_raw/red_star_5.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_red_star_5[] = "textures/intro_raw/red_star_5.rgba16";
 
-ALIGNED8 static u8 gd_texture_red_star_6[] = {
-#include "textures/intro_raw/red_star_6.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_red_star_6[] = "textures/intro_raw/red_star_6.rgba16";
 
-ALIGNED8 static u8 gd_texture_red_star_7[] = {
-#include "textures/intro_raw/red_star_7.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_red_star_7[] = "textures/intro_raw/red_star_7.rgba16";
 
-ALIGNED8 static u8 gd_texture_white_star_0[] = {
-#include "textures/intro_raw/white_star_0.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_white_star_0[] = "textures/intro_raw/white_star_0.rgba16";
 
-ALIGNED8 static u8 gd_texture_white_star_1[] = {
-#include "textures/intro_raw/white_star_1.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_white_star_1[] = "textures/intro_raw/white_star_1.rgba16";
 
-ALIGNED8 static u8 gd_texture_white_star_2[] = {
-#include "textures/intro_raw/white_star_2.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_white_star_2[] = "textures/intro_raw/white_star_2.rgba16";
 
-ALIGNED8 static u8 gd_texture_white_star_3[] = {
-#include "textures/intro_raw/white_star_3.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_white_star_3[] = "textures/intro_raw/white_star_3.rgba16";
 
-ALIGNED8 static u8 gd_texture_white_star_4[] = {
-#include "textures/intro_raw/white_star_4.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_white_star_4[] = "textures/intro_raw/white_star_4.rgba16";
 
-ALIGNED8 static u8 gd_texture_white_star_5[] = {
-#include "textures/intro_raw/white_star_5.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_white_star_5[] = "textures/intro_raw/white_star_5.rgba16";
 
-ALIGNED8 static u8 gd_texture_white_star_6[] = {
-#include "textures/intro_raw/white_star_6.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_white_star_6[] = "textures/intro_raw/white_star_6.rgba16";
 
-ALIGNED8 static u8 gd_texture_white_star_7[] = {
-#include "textures/intro_raw/white_star_7.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_white_star_7[] = "textures/intro_raw/white_star_7.rgba16";
 
 static Vtx_t gd_vertex_star[] = {
     {{-64,   0, 0}, 0, {  0, 992}, {0x00, 0x00, 0x7F}},
@@ -470,32 +434,20 @@ static Gfx *gd_silver_star_dl_array[] = {
     gd_dl_silver_star_7,
 };
 
-ALIGNED8 static u8 gd_texture_sparkle_0[] = {
-#include "textures/intro_raw/sparkle_0.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_sparkle_0[] = "textures/intro_raw/sparkle_0.rgba16";
 
-ALIGNED8 static u8 gd_texture_sparkle_1[] = {
-#include "textures/intro_raw/sparkle_1.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_sparkle_1[] = "textures/intro_raw/sparkle_1.rgba16";
 
-ALIGNED8 static u8 gd_texture_sparkle_2[] = {
-#include "textures/intro_raw/sparkle_2.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_sparkle_2[] = "textures/intro_raw/sparkle_2.rgba16";
 
-ALIGNED8 static u8 gd_texture_sparkle_3[] = {
-#include "textures/intro_raw/sparkle_3.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_sparkle_3[] = "textures/intro_raw/sparkle_3.rgba16";
 
-ALIGNED8 static u8 gd_texture_sparkle_4[] = {
-#include "textures/intro_raw/sparkle_4.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_sparkle_4[] = "textures/intro_raw/sparkle_4.rgba16";
 
 //! No reference to this texture. Two DL's uses the same previous texture
 //  instead of using this texture.
 // Fixed via setting TEXTURE_FIX to 1.
-ALIGNED8 static u8 gd_texture_sparkle_5[] = {
-#include "textures/intro_raw/sparkle_5.rgba16.inc.c"
-};
+ALIGNED8 static u8 gd_texture_sparkle_5[] = "textures/intro_raw/sparkle_5.rgba16";
 
 static Vtx_t gd_vertex_sparkle[] = {
     {{   -32,      0,      0}, 0, {      0,   1984}, {  0x00, 0x00, 0x7F, 0x00}},
@@ -682,9 +634,7 @@ static Gfx gd_texture3_dummy_aligner1[] = {
     gsSPEndDisplayList(),
 };
 
-ALIGNED8 static u8 gd_texture_mario_face_shine[] = {
-#include "textures/intro_raw/mario_face_shine.ia8.inc.c"
-};
+ALIGNED8 static u8 gd_texture_mario_face_shine[] = "textures/intro_raw/mario_face_shine.ia8";
 
 static Gfx gd_dl_mario_face_shine[] = {
     gsSPSetGeometryMode(G_TEXTURE_GEN),

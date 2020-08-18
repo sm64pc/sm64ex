@@ -1,9 +1,7 @@
 // Whirlpool
 
 // 0x05012848
-ALIGNED8 static const u8 whirlpool_seg5_texture_05012848[] = {
-#include "actors/whirlpool/whirlpool.ia16.inc.c"
-};
+ALIGNED8 static const u8 whirlpool_seg5_texture_05012848[] = "actors/whirlpool/whirlpool.ia16";
 
 // 0x05013848
 static const Vtx whirlpool_seg5_vertex_05013848[] = {

@@ -7,24 +7,16 @@ UNUSED static const u64 effect_unused_0 = 0;
 
 // Flower (Unused)
 // 0x0B000008
-ALIGNED8 static const u8 effect_0B000008[] = {
-#include "textures/effect/flower.00008.rgba16.inc.c"
-};
+ALIGNED8 static const u8 effect_0B000008[] = "textures/effect/flower.00008.rgba16";
 
 // 0x0B000808
-ALIGNED8 static const u8 effect_0B000808[] = {
-#include "textures/effect/flower.00808.rgba16.inc.c"
-};
+ALIGNED8 static const u8 effect_0B000808[] = "textures/effect/flower.00808.rgba16";
 
 // 0x0B001008
-ALIGNED8 static const u8 effect_0B001008[] = {
-#include "textures/effect/flower.01008.rgba16.inc.c"
-};
+ALIGNED8 static const u8 effect_0B001008[] = "textures/effect/flower.01008.rgba16";
 
 // 0x0B001808
-ALIGNED8 static const u8 effect_0B001808[] = {
-#include "textures/effect/flower.01808.rgba16.inc.c"
-};
+ALIGNED8 static const u8 effect_0B001808[] = "textures/effect/flower.01808.rgba16";
 
 // 0x0B002008
 const u8 *const flower_bubbles_textures_ptr_0B002008[] = {
@@ -38,44 +30,28 @@ const u8 *const flower_bubbles_textures_ptr_0B002008[] = {
 
 // Lava Bubble
 // 0x0B002020
-ALIGNED8 static const u8 effect_0B002020[] = {
-#include "textures/effect/lava_bubble.02020.rgba16.inc.c"
-};
+ALIGNED8 static const u8 effect_0B002020[] = "textures/effect/lava_bubble.02020.rgba16";
 
 // 0x0B002820
-ALIGNED8 static const u8 effect_0B002820[] = {
-#include "textures/effect/lava_bubble.02820.rgba16.inc.c"
-};
+ALIGNED8 static const u8 effect_0B002820[] = "textures/effect/lava_bubble.02820.rgba16";
 
 // 0x0B003020
-ALIGNED8 static const u8 effect_0B003020[] = {
-#include "textures/effect/lava_bubble.03020.rgba16.inc.c"
-};
+ALIGNED8 static const u8 effect_0B003020[] = "textures/effect/lava_bubble.03020.rgba16";
 
 // 0x0B003820
-ALIGNED8 static const u8 effect_0B003820[] = {
-#include "textures/effect/lava_bubble.03820.rgba16.inc.c"
-};
+ALIGNED8 static const u8 effect_0B003820[] = "textures/effect/lava_bubble.03820.rgba16";
 
 // 0x0B004020
-ALIGNED8 static const u8 effect_0B004020[] = {
-#include "textures/effect/lava_bubble.04020.rgba16.inc.c"
-};
+ALIGNED8 static const u8 effect_0B004020[] = "textures/effect/lava_bubble.04020.rgba16";
 
 // 0x0B004820
-ALIGNED8 static const u8 effect_0B004820[] = {
-#include "textures/effect/lava_bubble.04820.rgba16.inc.c"
-};
+ALIGNED8 static const u8 effect_0B004820[] = "textures/effect/lava_bubble.04820.rgba16";
 
 // 0x0B005020
-ALIGNED8 static const u8 effect_0B005020[] = {
-#include "textures/effect/lava_bubble.05020.rgba16.inc.c"
-};
+ALIGNED8 static const u8 effect_0B005020[] = "textures/effect/lava_bubble.05020.rgba16";
 
 // 0x0B005820
-ALIGNED8 static const u8 effect_0B005820[] = {
-#include "textures/effect/lava_bubble.05820.rgba16.inc.c"
-};
+ALIGNED8 static const u8 effect_0B005820[] = "textures/effect/lava_bubble.05820.rgba16";
 
 // 0x0B006020
 const u8 *const lava_bubble_ptr_0B006020[] = {
@@ -93,9 +69,7 @@ const u8 *const lava_bubble_ptr_0B006020[] = {
 
 // Bubble
 // 0x0B006048
-ALIGNED8 static const u8 effect_0B006048[] = {
-#include "textures/effect/bubble.06048.rgba16.inc.c"
-};
+ALIGNED8 static const u8 effect_0B006048[] = "textures/effect/bubble.06048.rgba16";
 
 // 0x0B006848
 const u8 *const bubble_ptr_0B006848[] = {
@@ -104,9 +78,7 @@ const u8 *const bubble_ptr_0B006848[] = {
 
 // Tiny Bubble
 // 0x0B00684C
-ALIGNED8 static const u8 effect_0B00684C[] = {
-#include "textures/effect/tiny_bubble.0684C.rgba16.inc.c"
-};
+ALIGNED8 static const u8 effect_0B00684C[] = "textures/effect/tiny_bubble.0684C.rgba16";
 
 // 0x0B006A50 - 0x0B006AB0
 const Gfx tiny_bubble_dl_0B006A50[] = {
@@ -134,9 +106,7 @@ const Gfx tiny_bubble_dl_0B006AB0[] = {
 };
 
 // 0x0B006AD8
-ALIGNED8 static const u8 effect_0B006AD8[] = {
-#include "textures/effect/tiny_bubble.06AD8.rgba16.inc.c"
-};
+ALIGNED8 static const u8 effect_0B006AD8[] = "textures/effect/tiny_bubble.06AD8.rgba16";
 
 // 0x0B006CD8 - 0x0B006D38
 const Gfx tiny_bubble_dl_0B006CD8[] = {

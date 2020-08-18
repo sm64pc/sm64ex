@@ -7,14 +7,10 @@ static const Lights1 blue_coin_switch_seg8_lights_08000000 = gdSPDefLights1(
 );
 
 // 0x08000018
-ALIGNED8 static const u8 blue_coin_switch_seg8_texture_08000018[] = {
-#include "actors/blue_coin_switch/blue_coin_switch_side.rgba16.inc.c"
-};
+ALIGNED8 static const u8 blue_coin_switch_seg8_texture_08000018[] = "actors/blue_coin_switch/blue_coin_switch_side.rgba16";
 
 // 0x08000418
-ALIGNED8 static const u8 blue_coin_switch_seg8_texture_08000418[] = {
-#include "actors/blue_coin_switch/blue_coin_switch_top.rgba16.inc.c"
-};
+ALIGNED8 static const u8 blue_coin_switch_seg8_texture_08000418[] = "actors/blue_coin_switch/blue_coin_switch_top.rgba16";
 
 // 0x08000C18
 static const Vtx blue_coin_switch_seg8_vertex_08000C18[] = {

@@ -1,14 +1,10 @@
 // Moneybag
 
 // 0x060039B0
-ALIGNED8 static const u8 moneybag_seg6_texture_060039B0[] = {
-#include "actors/moneybag/moneybag_mouth.rgba16.inc.c"
-};
+ALIGNED8 static const u8 moneybag_seg6_texture_060039B0[] = "actors/moneybag/moneybag_mouth.rgba16";
 
 // 0x060049B0
-ALIGNED8 static const u8 moneybag_seg6_texture_060049B0[] = {
-#include "actors/moneybag/moneybag_eyes.rgba16.inc.c"
-};
+ALIGNED8 static const u8 moneybag_seg6_texture_060049B0[] = "actors/moneybag/moneybag_eyes.rgba16";
 
 // 0x060051B0
 static const Lights1 moneybag_seg6_lights_060051B0 = gdSPDefLights1(

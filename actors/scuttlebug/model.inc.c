@@ -13,29 +13,19 @@ UNUSED static const Lights1 scuttlebug_lights_unused2 = gdSPDefLights1(
 );
 
 // 0x06010108
-ALIGNED8 static const u8 scuttlebug_seg6_texture_06010108[] = {
-#include "actors/scuttlebug/scuttlebug_eye.rgba16.inc.c"
-};
+ALIGNED8 static const u8 scuttlebug_seg6_texture_06010108[] = "actors/scuttlebug/scuttlebug_eye.rgba16";
 
 // 0x06010908
-ALIGNED8 static const u8 scuttlebug_seg6_texture_06010908[] = {
-#include "actors/scuttlebug/scuttlebug_left_side.rgba16.inc.c"
-};
+ALIGNED8 static const u8 scuttlebug_seg6_texture_06010908[] = "actors/scuttlebug/scuttlebug_left_side.rgba16";
 
 // 0x06011908
-ALIGNED8 static const u8 scuttlebug_seg6_texture_06011908[] = {
-#include "actors/scuttlebug/scuttlebug_right_side.rgba16.inc.c"
-};
+ALIGNED8 static const u8 scuttlebug_seg6_texture_06011908[] = "actors/scuttlebug/scuttlebug_right_side.rgba16";
 
 // 0x06012908
-ALIGNED8 static const u8 scuttlebug_seg6_texture_06012908[] = {
-#include "actors/scuttlebug/scuttlebug_iris.rgba16.inc.c"
-};
+ALIGNED8 static const u8 scuttlebug_seg6_texture_06012908[] = "actors/scuttlebug/scuttlebug_iris.rgba16";
 
 // 0x06013108
-ALIGNED8 static const u8 scuttlebug_seg6_texture_06013108[] = {
-#include "actors/scuttlebug/scuttlebug_leg.rgba16.inc.c"
-};
+ALIGNED8 static const u8 scuttlebug_seg6_texture_06013108[] = "actors/scuttlebug/scuttlebug_leg.rgba16";
 
 // 0x06013908
 static const Vtx scuttlebug_seg6_vertex_06013908[] = {

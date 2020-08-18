@@ -3,74 +3,46 @@
 // TODO: Are these seperate textures or unified 64x64 ones?
 
 // 0x06000000
-ALIGNED8 static const u8 flame_seg6_texture_06000000[] = {
-#include "actors/bowser_flame/bowser_flame_0.rgba16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg6_texture_06000000[] = "actors/bowser_flame/bowser_flame_0.rgba16";
 
 // 0x06002000
-ALIGNED8 static const u8 flame_seg6_texture_06002000[] = {
-#include "actors/bowser_flame/bowser_flame_1.rgba16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg6_texture_06002000[] = "actors/bowser_flame/bowser_flame_1.rgba16";
 
 // 0x06004000
-ALIGNED8 static const u8 flame_seg6_texture_06004000[] = {
-#include "actors/bowser_flame/bowser_flame_2.rgba16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg6_texture_06004000[] = "actors/bowser_flame/bowser_flame_2.rgba16";
 
 // 0x06006000
-ALIGNED8 static const u8 flame_seg6_texture_06006000[] = {
-#include "actors/bowser_flame/bowser_flame_3.rgba16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg6_texture_06006000[] = "actors/bowser_flame/bowser_flame_3.rgba16";
 
 // 0x06008000
-ALIGNED8 static const u8 flame_seg6_texture_06008000[] = {
-#include "actors/bowser_flame/bowser_flame_4.rgba16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg6_texture_06008000[] = "actors/bowser_flame/bowser_flame_4.rgba16";
 
 // 0x0600A000
-ALIGNED8 static const u8 flame_seg6_texture_0600A000[] = {
-#include "actors/bowser_flame/bowser_flame_5.rgba16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg6_texture_0600A000[] = "actors/bowser_flame/bowser_flame_5.rgba16";
 
 // 0x0600C000
-ALIGNED8 static const u8 flame_seg6_texture_0600C000[] = {
-#include "actors/bowser_flame/bowser_flame_6.rgba16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg6_texture_0600C000[] = "actors/bowser_flame/bowser_flame_6.rgba16";
 
 // 0x0600E000
-ALIGNED8 static const u8 flame_seg6_texture_0600E000[] = {
-#include "actors/bowser_flame/bowser_flame_7.rgba16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg6_texture_0600E000[] = "actors/bowser_flame/bowser_flame_7.rgba16";
 
 // 0x06010000
-ALIGNED8 static const u8 flame_seg6_texture_06010000[] = {
-#include "actors/bowser_flame/bowser_flame_8.rgba16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg6_texture_06010000[] = "actors/bowser_flame/bowser_flame_8.rgba16";
 
 // 0x06012000
-ALIGNED8 static const u8 flame_seg6_texture_06012000[] = {
-#include "actors/bowser_flame/bowser_flame_9.rgba16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg6_texture_06012000[] = "actors/bowser_flame/bowser_flame_9.rgba16";
 
 // 0x06014000
-ALIGNED8 static const u8 flame_seg6_texture_06014000[] = {
-#include "actors/bowser_flame/bowser_flame_10.rgba16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg6_texture_06014000[] = "actors/bowser_flame/bowser_flame_10.rgba16";
 
 // 0x06016000
-ALIGNED8 static const u8 flame_seg6_texture_06016000[] = {
-#include "actors/bowser_flame/bowser_flame_11.rgba16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg6_texture_06016000[] = "actors/bowser_flame/bowser_flame_11.rgba16";
 
 // 0x06018000
-ALIGNED8 static const u8 flame_seg6_texture_06018000[] = {
-#include "actors/bowser_flame/bowser_flame_12.rgba16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg6_texture_06018000[] = "actors/bowser_flame/bowser_flame_12.rgba16";
 
 // 0x0601A000
-ALIGNED8 static const u8 flame_seg6_texture_0601A000[] = {
-#include "actors/bowser_flame/bowser_flame_13.rgba16.inc.c"
-};
+ALIGNED8 static const u8 flame_seg6_texture_0601A000[] = "actors/bowser_flame/bowser_flame_13.rgba16";
 
 // 0x0601C000
 static const Vtx flame_seg6_vertex_0601C000[] = {

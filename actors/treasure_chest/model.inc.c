@@ -7,24 +7,16 @@ static const Lights1 treasure_chest_seg6_lights_06013F90 = gdSPDefLights1(
 );
 
 // 0x06013FA8
-ALIGNED8 static const u8 treasure_chest_seg6_texture_06013FA8[] = {
-#include "actors/treasure_chest/treasure_chest_lock.rgba16.inc.c"
-};
+ALIGNED8 static const u8 treasure_chest_seg6_texture_06013FA8[] = "actors/treasure_chest/treasure_chest_lock.rgba16";
 
 // 0x060147A8
-ALIGNED8 static const u8 treasure_chest_seg6_texture_060147A8[] = {
-#include "actors/treasure_chest/treasure_chest_side.rgba16.inc.c"
-};
+ALIGNED8 static const u8 treasure_chest_seg6_texture_060147A8[] = "actors/treasure_chest/treasure_chest_side.rgba16";
 
 // 0x06014FA8
-ALIGNED8 static const u8 treasure_chest_seg6_texture_06014FA8[] = {
-#include "actors/treasure_chest/treasure_chest_lock_top.rgba16.inc.c"
-};
+ALIGNED8 static const u8 treasure_chest_seg6_texture_06014FA8[] = "actors/treasure_chest/treasure_chest_lock_top.rgba16";
 
 // 0x060157A8
-ALIGNED8 static const u8 treasure_chest_seg6_texture_060157A8[] = {
-#include "actors/treasure_chest/treasure_chest_front.rgba16.inc.c"
-};
+ALIGNED8 static const u8 treasure_chest_seg6_texture_060157A8[] = "actors/treasure_chest/treasure_chest_front.rgba16";
 
 // 0x060167A8
 static const Vtx treasure_chest_seg6_vertex_060167A8[] = {

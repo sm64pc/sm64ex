@@ -37,101 +37,63 @@ static const Lights1 mario_brown2_lights_group = gdSPDefLights1(
 );
 
 // 0x04000090
-ALIGNED8 static const u8 mario_texture_metal[] = {
-#include "actors/mario/mario_metal.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_metal[] = "actors/mario/mario_metal.rgba16";
 
 // 0x04001090
-ALIGNED8 static const u8 mario_texture_yellow_button[] = {
-#include "actors/mario/mario_overalls_button.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_yellow_button[] = "actors/mario/mario_overalls_button.rgba16";
 
 // 0x04001890
-ALIGNED8 static const u8 mario_texture_m_logo[] = {
-#include "actors/mario/mario_logo.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_m_logo[] = "actors/mario/mario_logo.rgba16";
 
 // 0x04002090
-ALIGNED8 static const u8 mario_texture_hair_sideburn[] = {
-#include "actors/mario/mario_sideburn.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_hair_sideburn[] = "actors/mario/mario_sideburn.rgba16";
 
 // 0x04002890
-ALIGNED8 static const u8 mario_texture_mustache[] = {
-#include "actors/mario/mario_mustache.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_mustache[] = "actors/mario/mario_mustache.rgba16";
 
 // 0x04003090
-ALIGNED8 static const u8 mario_texture_eyes_front[] = {
-#include "actors/mario/mario_eyes_center.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_eyes_front[] = "actors/mario/mario_eyes_center.rgba16";
 
 // 0x04003890
-ALIGNED8 static const u8 mario_texture_eyes_half_closed[] = {
-#include "actors/mario/mario_eyes_half_closed.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_eyes_half_closed[] = "actors/mario/mario_eyes_half_closed.rgba16";
 
 // 0x04004090
-ALIGNED8 static const u8 mario_texture_eyes_closed[] = {
-#include "actors/mario/mario_eyes_closed.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_eyes_closed[] = "actors/mario/mario_eyes_closed.rgba16";
 
 // Unreferenced
 // 0x04004890
-ALIGNED8 static const u8 mario_texture_eyes_closed_unused1[] = {
-#include "actors/mario/mario_eyes_closed_unused_0.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_eyes_closed_unused1[] = "actors/mario/mario_eyes_closed_unused_0.rgba16";
 
 // Unreferenced
 // 0x04005090
-ALIGNED8 static const u8 mario_texture_eyes_closed_unused2[] = {
-#include "actors/mario/mario_eyes_closed_unused_1.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_eyes_closed_unused2[] = "actors/mario/mario_eyes_closed_unused_1.rgba16";
 
 // 0x04005890
-ALIGNED8 static const u8 mario_texture_eyes_right[] = {
-#include "actors/mario/mario_eyes_left_unused.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_eyes_right[] = "actors/mario/mario_eyes_left_unused.rgba16";
 
 // 0x04006090
-ALIGNED8 static const u8 mario_texture_eyes_left[] = {
-#include "actors/mario/mario_eyes_right_unused.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_eyes_left[] = "actors/mario/mario_eyes_right_unused.rgba16";
 
 // 0x04006890
-ALIGNED8 static const u8 mario_texture_eyes_up[] = {
-#include "actors/mario/mario_eyes_up_unused.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_eyes_up[] = "actors/mario/mario_eyes_up_unused.rgba16";
 
 // 0x04007090
-ALIGNED8 static const u8 mario_texture_eyes_down[] = {
-#include "actors/mario/mario_eyes_down_unused.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_eyes_down[] = "actors/mario/mario_eyes_down_unused.rgba16";
 
 // 0x04007890
-ALIGNED8 static const u8 mario_texture_eyes_dead[] = {
-#include "actors/mario/mario_eyes_dead.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_eyes_dead[] = "actors/mario/mario_eyes_dead.rgba16";
 
 // 0x04008090
-ALIGNED8 static const u8 mario_texture_wings_half_1[] = {
-#include "actors/mario/mario_wing.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_wings_half_1[] = "actors/mario/mario_wing.rgba16";
 
 // 0x04009090
-ALIGNED8 static const u8 mario_texture_wings_half_2[] = {
-#include "actors/mario/mario_wing_tip.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_wings_half_2[] = "actors/mario/mario_wing_tip.rgba16";
 
 // 0x0400A090
-ALIGNED8 static const u8 mario_texture_metal_wings_half_1[] = {
-#include "actors/mario/mario_metal_wing_unused.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_metal_wings_half_1[] = "actors/mario/mario_metal_wing_unused.rgba16";
 
 // 0x0400B090
-ALIGNED8 static const u8 mario_texture_metal_wings_half_2[] = {
-#include "actors/mario/mario_metal_wing_tip_unused.rgba16.inc.c"
-};
+ALIGNED8 static const u8 mario_texture_metal_wings_half_2[] = "actors/mario/mario_metal_wing_tip_unused.rgba16";
 
 // 0x0400C090
 static const Vtx mario_butt_dl_vertex_group1[] = {

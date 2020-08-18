@@ -7,14 +7,10 @@ static const Lights1 tree_seg3_lights_0302DE10 = gdSPDefLights1(
 );
 
 // 0x0302DE28
-ALIGNED8 static const u8 tree_seg3_texture_0302DE28[] = {
-#include "actors/tree/tree_left_side.rgba16.inc.c"
-};
+ALIGNED8 static const u8 tree_seg3_texture_0302DE28[] = "actors/tree/tree_left_side.rgba16";
 
 // 0x0302EE28
-ALIGNED8 static const u8 tree_seg3_texture_0302EE28[] = {
-#include "actors/tree/tree_right_side.rgba16.inc.c"
-};
+ALIGNED8 static const u8 tree_seg3_texture_0302EE28[] = "actors/tree/tree_right_side.rgba16";
 
 // 0x0302FE28
 static const Vtx tree_seg3_vertex_0302FE28[] = {
@@ -70,9 +66,7 @@ const Gfx tree_seg3_dl_0302FEE8[] = {
 };
 
 // 0x0302FF60
-ALIGNED8 static const u8 tree_seg3_texture_0302FF60[] = {
-#include "actors/tree/pine_tree.rgba16.inc.c"
-};
+ALIGNED8 static const u8 tree_seg3_texture_0302FF60[] = "actors/tree/pine_tree.rgba16";
 
 // 0x03030F60
 static const Vtx tree_seg3_vertex_03030F60[] = {
@@ -107,9 +101,7 @@ const Gfx tree_seg3_dl_03030FA0[] = {
 };
 
 // 0x03031048
-ALIGNED8 static const u8 tree_seg3_texture_03031048[] = {
-#include "actors/tree/snowy_pine_tree.rgba16.inc.c"
-};
+ALIGNED8 static const u8 tree_seg3_texture_03031048[] = "actors/tree/snowy_pine_tree.rgba16";
 
 // 0x03032048
 static const Vtx tree_seg3_vertex_03032048[] = {
@@ -176,9 +168,7 @@ const Gfx tree_seg3_dl_03032170[] = {
 };
 
 // 0x03032218
-ALIGNED8 static const u8 tree_seg3_texture_03032218[] = {
-#include "actors/tree/palm_tree.rgba16.inc.c"
-};
+ALIGNED8 static const u8 tree_seg3_texture_03032218[] = "actors/tree/palm_tree.rgba16";
 
 // 0x03033218
 static const Vtx tree_seg3_vertex_03033218[] = {

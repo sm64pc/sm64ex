@@ -2580,14 +2580,10 @@ static const Vtx intro_seg7_vertex_07007DF0[] = {
 };
 
 // 0x07007EA0 - 0x07007EA2
-ALIGNED8 static const u8 intro_seg7_texture_07007EA0[] = {
-#include "levels/intro/0.rgba16.inc.c"
-};
+ALIGNED8 static const u8 intro_seg7_texture_07007EA0[] = "levels/intro/0.rgba16";
 
 // 0x070086A0 - 0x070086A2
-ALIGNED8 static const u8 intro_seg7_texture_070086A0[] = {
-#include "levels/intro/1.rgba16.inc.c"
-};
+ALIGNED8 static const u8 intro_seg7_texture_070086A0[] = "levels/intro/1.rgba16";
 
 // 0x07008EA0 - 0x07009E38
 static const Gfx intro_seg7_dl_07008EA0[] = {
@@ -3317,18 +3313,10 @@ Lights1 titletest_sm64_material_003_lights = gdSPDefLights1(
 	0x7F, 0x7F, 0x7F,
 	0xFE, 0xFE, 0xFE, 0x28, 0x28, 0x28);
 
-u8 titletest_blue_rgba16[] = {
-	#include "levels/intro/blue.rgba16.inc.c"
-};
-u8 titletest_darkerblue_rgba16[] = {
-	#include "levels/intro/darkerblue.rgba16.inc.c"
-};
-u8 titletest_white_rgba16[] = {
-	#include "levels/intro/white.rgba16.inc.c"
-};
-u8 titletest_grey_rgba16[] = {
-	#include "levels/intro/grey.rgba16.inc.c"
-};
+u8 titletest_blue_rgba16[] = "levels/intro/blue.rgba16";
+u8 titletest_darkerblue_rgba16[] = "levels/intro/darkerblue.rgba16";
+u8 titletest_white_rgba16[] = "levels/intro/white.rgba16";
+u8 titletest_grey_rgba16[] = "levels/intro/grey.rgba16";
 Vtx titletest_test_mesh_vtx_0[133] = {
 	{{{1221, 451, -274},0, {-16, 496},{0x0, 0x42, 0x6D, 0xFF}}},
 	{{{1434, 440, -267},0, {38, 496},{0x0, 0x42, 0x6D, 0xFF}}},
@@ -5845,25 +5833,17 @@ static const Vtx intro_seg7_vertex_0700B460[] = {
 
 #ifdef VERSION_EU
 // 0x0700B4A0 - 0x0700B4A2
-ALIGNED8 static const u8 intro_seg7_texture_0700B4A0[] = {
-#include "levels/intro/2_eu_copyright.rgba16.inc.c"
-};
+ALIGNED8 static const u8 intro_seg7_texture_0700B4A0[] = "levels/intro/2_eu_copyright.rgba16";
 
 // 0x0700C4A0 - 0x0700D4A0
-ALIGNED8 static const u8 intro_seg7_texture_0700C4A0[] = {
-#include "levels/intro/3_eu_tm.rgba16.inc.c"
-};
+ALIGNED8 static const u8 intro_seg7_texture_0700C4A0[] = "levels/intro/3_eu_tm.rgba16";
 
 #else
 // 0x0700B4A0 - 0x0700B4A2
-ALIGNED8 static const u8 intro_seg7_texture_0700B4A0[] = {
-#include "levels/intro/2_copyright.rgba16.inc.c"
-};
+ALIGNED8 static const u8 intro_seg7_texture_0700B4A0[] = "levels/intro/2_copyright.rgba16";
 
 // 0x0700C4A0 - 0x0700D4A0
-ALIGNED8 static const u8 intro_seg7_texture_0700C4A0[] = {
-#include "levels/intro/3_tm.rgba16.inc.c"
-};
+ALIGNED8 static const u8 intro_seg7_texture_0700C4A0[] = "levels/intro/3_tm.rgba16";
 #endif
 
 // 0x0700C6A0 - 0x0700C790

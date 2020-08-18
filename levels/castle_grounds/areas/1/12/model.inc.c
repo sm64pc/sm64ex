@@ -18,14 +18,10 @@ static const Vtx castle_grounds_seg7_vertex_0700C9A8[] = {
 };
 
 // 0x0700C9E8 - 0x0700D9E8
-ALIGNED8 static const u8 castle_grounds_seg7_texture_0700C9E8[] = {
-#include "levels/castle_grounds/3.rgba16.inc.c"
-};
+ALIGNED8 static const u8 castle_grounds_seg7_texture_0700C9E8[] = "levels/castle_grounds/3.rgba16";
 
 // 0x0700D9E8 - 0x0700E9E8
-ALIGNED8 static const u8 castle_grounds_seg7_texture_0700D9E8[] = {
-#include "levels/castle_grounds/4.rgba16.inc.c"
-};
+ALIGNED8 static const u8 castle_grounds_seg7_texture_0700D9E8[] = "levels/castle_grounds/4.rgba16";
 
 // 0x0700E9E8 - 0x0700EA20
 static const Gfx castle_grounds_seg7_dl_0700E9E8[] = {

@@ -13,9 +13,7 @@ static const Vtx chain_ball_seg6_vertex_06020AA0[] = {
 UNUSED static const u64 chain_ball_unused_1 = 0;
 
 // 0x06020AE8
-ALIGNED8 static const u8 chain_ball_seg6_texture_06020AE8[] = {
-#include "actors/chain_ball/chain_ball.rgba16.inc.c"
-};
+ALIGNED8 static const u8 chain_ball_seg6_texture_06020AE8[] = "actors/chain_ball/chain_ball.rgba16";
 
 // 0x060212E8 - 0x06021380
 const Gfx chain_ball_seg6_dl_060212E8[] = {

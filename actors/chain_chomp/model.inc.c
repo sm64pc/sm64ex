@@ -19,29 +19,19 @@ UNUSED static const Lights1 chain_chomp_lights_unused3 = gdSPDefLights1(
 );
 
 // 0x060213D0
-ALIGNED8 static const u8 chain_chomp_seg6_texture_060213D0[] = {
-#include "actors/chain_chomp/chain_chomp_bright_shine.rgba16.inc.c"
-};
+ALIGNED8 static const u8 chain_chomp_seg6_texture_060213D0[] = "actors/chain_chomp/chain_chomp_bright_shine.rgba16";
 
 // 0x06021BD0
-ALIGNED8 static const u8 chain_chomp_seg6_texture_06021BD0[] = {
-#include "actors/chain_chomp/chain_chomp_dull_shine.rgba16.inc.c"
-};
+ALIGNED8 static const u8 chain_chomp_seg6_texture_06021BD0[] = "actors/chain_chomp/chain_chomp_dull_shine.rgba16";
 
 // 0x060223D0
-ALIGNED8 static const u8 chain_chomp_seg6_texture_060223D0[] = {
-#include "actors/chain_chomp/chain_chomp_tongue.rgba16.inc.c"
-};
+ALIGNED8 static const u8 chain_chomp_seg6_texture_060223D0[] = "actors/chain_chomp/chain_chomp_tongue.rgba16";
 
 // 0x06022BD0
-ALIGNED8 static const u8 chain_chomp_seg6_texture_06022BD0[] = {
-#include "actors/chain_chomp/chain_chomp_tooth.rgba16.inc.c"
-};
+ALIGNED8 static const u8 chain_chomp_seg6_texture_06022BD0[] = "actors/chain_chomp/chain_chomp_tooth.rgba16";
 
 // 0x060233D0
-ALIGNED8 static const u8 chain_chomp_seg6_texture_060233D0[] = {
-#include "actors/chain_chomp/chain_chomp_eye.rgba16.inc.c"
-};
+ALIGNED8 static const u8 chain_chomp_seg6_texture_060233D0[] = "actors/chain_chomp/chain_chomp_eye.rgba16";
 
 // 0x06023BD0
 static const Vtx chain_chomp_seg6_vertex_06023BD0[] = {

@@ -49,34 +49,22 @@ UNUSED static const Lights1 unagi_lights_unused8 = gdSPDefLights1(
 );
 
 // 0x0500AF20
-ALIGNED8 static const u8 unagi_seg5_texture_0500AF20[] = {
-#include "actors/unagi/unagi_body.rgba16.inc.c"
-};
+ALIGNED8 static const u8 unagi_seg5_texture_0500AF20[] = "actors/unagi/unagi_body.rgba16";
 
 // 0x0500B720
-ALIGNED8 static const u8 unagi_seg5_texture_0500B720[] = {
-#include "actors/unagi/unagi_eye.rgba16.inc.c"
-};
+ALIGNED8 static const u8 unagi_seg5_texture_0500B720[] = "actors/unagi/unagi_eye.rgba16";
 
 // 0x0500B920
-ALIGNED8 static const u8 unagi_seg5_texture_0500B920[] = {
-#include "actors/unagi/unagi_head_base.rgba16.inc.c"
-};
+ALIGNED8 static const u8 unagi_seg5_texture_0500B920[] = "actors/unagi/unagi_head_base.rgba16";
 
 // 0x0500C120
-ALIGNED8 static const u8 unagi_seg5_texture_0500C120[] = {
-#include "actors/unagi/unagi_tooth.rgba16.inc.c"
-};
+ALIGNED8 static const u8 unagi_seg5_texture_0500C120[] = "actors/unagi/unagi_tooth.rgba16";
 
 // 0x0500C320
-ALIGNED8 static const u8 unagi_seg5_texture_0500C320[] = {
-#include "actors/unagi/unagi_mouth.rgba16.inc.c"
-};
+ALIGNED8 static const u8 unagi_seg5_texture_0500C320[] = "actors/unagi/unagi_mouth.rgba16";
 
 // 0x0500C3A0
-ALIGNED8 static const u8 unagi_seg5_texture_0500C3A0[] = {
-#include "actors/unagi/unagi_tail.rgba16.inc.c"
-};
+ALIGNED8 static const u8 unagi_seg5_texture_0500C3A0[] = "actors/unagi/unagi_tail.rgba16";
 
 // 0x0500CBA0
 static const Vtx unagi_seg5_vertex_0500CBA0[] = {

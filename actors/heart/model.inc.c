@@ -9,9 +9,7 @@ static const Vtx heart_seg8_vertex_0800D7A0[] = {
 };
 
 // 0x0800D7E0
-ALIGNED8 static const u8 heart_seg8_texture_0800D7E0[] = {
-#include "actors/heart/spinning_heart.rgba16.inc.c"
-};
+ALIGNED8 static const u8 heart_seg8_texture_0800D7E0[] = "actors/heart/spinning_heart.rgba16";
 
 // 0x0800DFE0 - 0x0800E078
 const Gfx heart_seg8_dl_0800DFE0[] = {

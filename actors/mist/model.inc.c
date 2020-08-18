@@ -17,9 +17,7 @@ static const Vtx mist_seg3_vertex_03000040[] = {
 };
 
 // 0x03000080
-ALIGNED8 static const u8 mist_seg3_texture_03000080[] = {
-#include "actors/mist/mist.ia16.inc.c"
-};
+ALIGNED8 static const u8 mist_seg3_texture_03000080[] = "actors/mist/mist.ia16";
 
 // 0x03000880 - 0x03000920
 const Gfx mist_seg3_dl_03000880[] = {

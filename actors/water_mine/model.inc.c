@@ -7,19 +7,13 @@ static const Lights1 water_mine_seg6_lights_0600A4E0 = gdSPDefLights1(
 );
 
 // 0x0600A4F8
-ALIGNED8 static const u8 water_mine_seg6_texture_0600A4F8[] = {
-#include "actors/water_mine/water_mine_left_side_unused.rgba16.inc.c"
-};
+ALIGNED8 static const u8 water_mine_seg6_texture_0600A4F8[] = "actors/water_mine/water_mine_left_side_unused.rgba16";
 
 // 0x0600B4F8
-ALIGNED8 static const u8 water_mine_seg6_texture_0600B4F8[] = {
-#include "actors/water_mine/water_mine_right_side_unused.rgba16.inc.c"
-};
+ALIGNED8 static const u8 water_mine_seg6_texture_0600B4F8[] = "actors/water_mine/water_mine_right_side_unused.rgba16";
 
 // 0x0600C4F8
-ALIGNED8 static const u8 water_mine_seg6_texture_0600C4F8[] = {
-#include "actors/water_mine/water_mine_spike_unused.rgba16.inc.c"
-};
+ALIGNED8 static const u8 water_mine_seg6_texture_0600C4F8[] = "actors/water_mine/water_mine_spike_unused.rgba16";
 
 // 0x0600CCF8
 static const Vtx water_mine_seg6_vertex_0600CCF8[] = {

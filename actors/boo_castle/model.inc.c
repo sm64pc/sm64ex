@@ -7,14 +7,10 @@ static const Lights1 boo_castle_seg6_lights_06015658 = gdSPDefLights1(
 );
 
 // 0x06015670
-ALIGNED8 static const u8 boo_castle_seg6_texture_06015670[] = {
-#include "actors/boo_castle/bbh_boo_eyes.rgba16.inc.c"
-};
+ALIGNED8 static const u8 boo_castle_seg6_texture_06015670[] = "actors/boo_castle/bbh_boo_eyes.rgba16";
 
 // 0x06016670
-ALIGNED8 static const u8 boo_castle_seg6_texture_06016670[] = {
-#include "actors/boo_castle/bbh_boo_mouth.rgba16.inc.c"
-};
+ALIGNED8 static const u8 boo_castle_seg6_texture_06016670[] = "actors/boo_castle/bbh_boo_mouth.rgba16";
 
 // 0x06016E70
 static const Vtx boo_castle_seg6_vertex_06016E70[] = {

@@ -72,24 +72,16 @@ static const struct Animation spindrift_seg5_anim_050006AC = {
 UNUSED static const u64 spindrift_unused_1 = 1;
 
 // 0x050006D0
-ALIGNED8 static const u8 spindrift_seg5_texture_050006D0[] = {
-#include "actors/spindrift/spindrift_face.rgba16.inc.c"
-};
+ALIGNED8 static const u8 spindrift_seg5_texture_050006D0[] = "actors/spindrift/spindrift_face.rgba16";
 
 // 0x05000ED0
-ALIGNED8 static const u8 spindrift_seg5_texture_05000ED0[] = {
-#include "actors/spindrift/spindrift_petal.rgba16.inc.c"
-};
+ALIGNED8 static const u8 spindrift_seg5_texture_05000ED0[] = "actors/spindrift/spindrift_petal.rgba16";
 
 // 0x050016D0
-ALIGNED8 static const u8 spindrift_seg5_texture_050016D0[] = {
-#include "actors/spindrift/spindrift_leaf.rgba16.inc.c"
-};
+ALIGNED8 static const u8 spindrift_seg5_texture_050016D0[] = "actors/spindrift/spindrift_leaf.rgba16";
 
 // 0x05001ED0
-ALIGNED8 static const u8 spindrift_seg5_texture_05001ED0[] = {
-#include "actors/spindrift/spindrift_head.rgba16.inc.c"
-};
+ALIGNED8 static const u8 spindrift_seg5_texture_05001ED0[] = "actors/spindrift/spindrift_head.rgba16";
 
 // 0x050026D0
 static const Vtx spindrift_seg5_vertex_050026D0[] = {

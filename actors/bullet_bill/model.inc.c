@@ -7,14 +7,10 @@ static const Lights1 bullet_bill_seg5_lights_0500BA90 = gdSPDefLights1(
 );
 
 // 0x0500BAA8
-ALIGNED8 static const u8 bullet_bill_seg5_texture_0500BAA8[] = {
-#include "actors/bullet_bill/bullet_bill_eye.rgba16.inc.c"
-};
+ALIGNED8 static const u8 bullet_bill_seg5_texture_0500BAA8[] = "actors/bullet_bill/bullet_bill_eye.rgba16";
 
 // 0x0500CAA8
-ALIGNED8 static const u8 bullet_bill_seg5_texture_0500CAA8[] = {
-#include "actors/bullet_bill/bullet_bill_mouth.rgba16.inc.c"
-};
+ALIGNED8 static const u8 bullet_bill_seg5_texture_0500CAA8[] = "actors/bullet_bill/bullet_bill_mouth.rgba16";
 
 // 0x0500DAA8
 static const Vtx bullet_bill_seg5_vertex_0500DAA8[] = {

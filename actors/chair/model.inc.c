@@ -7,25 +7,17 @@ UNUSED static const Lights1 chair_lights_unused = gdSPDefLights1(
 );
 
 // 0x05003060
-ALIGNED8 static const u8 chair_seg5_texture_05003060[] = {
-#include "actors/chair/chair_front.rgba16.inc.c"
-};
+ALIGNED8 static const u8 chair_seg5_texture_05003060[] = "actors/chair/chair_front.rgba16";
 
 // 0x05003860
-ALIGNED8 static const u8 chair_seg5_texture_05003860[] = {
-#include "actors/chair/chair_leg.rgba16.inc.c"
-};
+ALIGNED8 static const u8 chair_seg5_texture_05003860[] = "actors/chair/chair_leg.rgba16";
 
 // 0x05004060
-ALIGNED8 static const u8 chair_seg5_texture_05004060[] = {
-#include "actors/chair/chair_bottom.rgba16.inc.c"
-};
+ALIGNED8 static const u8 chair_seg5_texture_05004060[] = "actors/chair/chair_bottom.rgba16";
 
 // unreferenced
 // 0x05004460
-ALIGNED8 static const u8 chair_seg5_texture_05004460[] = {
-#include "actors/chair/chair_surface_unused.rgba16.inc.c"
-};
+ALIGNED8 static const u8 chair_seg5_texture_05004460[] = "actors/chair/chair_surface_unused.rgba16";
 
 // 0x05004C60
 static const Lights1 chair_seg5_lights_05004C60 = gdSPDefLights1(

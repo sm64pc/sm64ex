@@ -7,24 +7,16 @@ static const Lights1 seaweed_seg6_lights_06007DF8 = gdSPDefLights1(
 );
 
 // 0x06007E10
-ALIGNED8 static const u8 seaweed_seg6_texture_06007E10[] = {
-#include "actors/seaweed/seaweed_tip.rgba16.inc.c"
-};
+ALIGNED8 static const u8 seaweed_seg6_texture_06007E10[] = "actors/seaweed/seaweed_tip.rgba16";
 
 // 0x06008610
-ALIGNED8 static const u8 seaweed_seg6_texture_06008610[] = {
-#include "actors/seaweed/seaweed_upper_center.rgba16.inc.c"
-};
+ALIGNED8 static const u8 seaweed_seg6_texture_06008610[] = "actors/seaweed/seaweed_upper_center.rgba16";
 
 // 0x06008E10
-ALIGNED8 static const u8 seaweed_seg6_texture_06008E10[] = {
-#include "actors/seaweed/seaweed_lower_center.rgba16.inc.c"
-};
+ALIGNED8 static const u8 seaweed_seg6_texture_06008E10[] = "actors/seaweed/seaweed_lower_center.rgba16";
 
 // 0x06009610
-ALIGNED8 static const u8 seaweed_seg6_texture_06009610[] = {
-#include "actors/seaweed/seaweed_base.rgba16.inc.c"
-};
+ALIGNED8 static const u8 seaweed_seg6_texture_06009610[] = "actors/seaweed/seaweed_base.rgba16";
 
 // 0x06009E10
 static const Vtx seaweed_seg6_vertex_06009E10[] = {

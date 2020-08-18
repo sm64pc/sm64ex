@@ -7,9 +7,7 @@ static const Lights1 water_ring_seg6_lights_06012368 = gdSPDefLights1(
 );
 
 // 0x06012380
-ALIGNED8 static const u8 water_ring_seg6_texture_06012380[] = {
-#include "actors/water_ring/water_ring.rgba16.inc.c"
-};
+ALIGNED8 static const u8 water_ring_seg6_texture_06012380[] = "actors/water_ring/water_ring.rgba16";
 
 // 0x06013380
 static const Vtx water_ring_seg6_vertex_06013380[] = {

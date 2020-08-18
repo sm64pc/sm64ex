@@ -6,29 +6,19 @@ UNUSED static const u64 klepto_unused_1 = 0;
 // Klepto
 
 // 0x05000008
-ALIGNED8 static const u8 klepto_seg5_texture_05000008[] = {
-#include "actors/klepto/klepto_chest_tuft.rgba16.inc.c"
-};
+ALIGNED8 static const u8 klepto_seg5_texture_05000008[] = "actors/klepto/klepto_chest_tuft.rgba16";
 
 // 0x05000808
-ALIGNED8 static const u8 klepto_seg5_texture_05000808[] = {
-#include "actors/klepto/klepto_eye.rgba16.inc.c"
-};
+ALIGNED8 static const u8 klepto_seg5_texture_05000808[] = "actors/klepto/klepto_eye.rgba16";
 
 // 0x05001008
-ALIGNED8 static const u8 klepto_seg5_texture_05001008[] = {
-#include "actors/klepto/klepto_beak.rgba16.inc.c"
-};
+ALIGNED8 static const u8 klepto_seg5_texture_05001008[] = "actors/klepto/klepto_beak.rgba16";
 
 // 0x05002008
-ALIGNED8 static const u8 klepto_seg5_texture_05002008[] = {
-#include "actors/klepto/klepto_wing.rgba16.inc.c"
-};
+ALIGNED8 static const u8 klepto_seg5_texture_05002008[] = "actors/klepto/klepto_wing.rgba16";
 
 // 0x05003008
-ALIGNED8 static const u8 klepto_seg5_texture_05003008[] = {
-#include "actors/klepto/klepto_wing_flap.rgba16.inc.c"
-};
+ALIGNED8 static const u8 klepto_seg5_texture_05003008[] = "actors/klepto/klepto_wing_flap.rgba16";
 
 // 0x05003808
 static const Lights1 klepto_seg5_lights_05003808 = gdSPDefLights1(

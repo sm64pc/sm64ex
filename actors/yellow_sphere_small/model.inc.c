@@ -9,9 +9,7 @@ static const Vtx yellow_sphere_seg5_vertex_05000000[] = {
 };
 
 // 0x05000040
-ALIGNED8 static const u8 yellow_sphere_seg5_texture_05000040[] = {
-#include "actors/yellow_sphere_small/small_yellow_sphere.rgba16.inc.c"
-};
+ALIGNED8 static const u8 yellow_sphere_seg5_texture_05000040[] = "actors/yellow_sphere_small/small_yellow_sphere.rgba16";
 
 // 0x05000840 - 0x05000888
 const Gfx yellow_sphere_seg5_dl_05000840[] = {

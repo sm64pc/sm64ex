@@ -7,14 +7,10 @@ static const Lights1 star_seg3_lights_0302A6D8 = gdSPDefLights1(
 );
 
 // 0x0302A6F0
-ALIGNED8 static const u8 star_seg3_texture_0302A6F0[] = {
-#include "actors/star/star_surface.rgba16.inc.c"
-};
+ALIGNED8 static const u8 star_seg3_texture_0302A6F0[] = "actors/star/star_surface.rgba16";
 
 // 0x0302AEF0
-ALIGNED8 static const u8 star_seg3_texture_0302AEF0[] = {
-#include "actors/star/star_eye.rgba16.inc.c"
-};
+ALIGNED8 static const u8 star_seg3_texture_0302AEF0[] = "actors/star/star_eye.rgba16";
 
 // 0x0302B6F0
 static const Vtx star_seg3_vertex_0302B6F0[] = {

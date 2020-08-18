@@ -25,24 +25,16 @@ static const Vtx coin_seg3_vertex_03005740[] = {
 };
 
 // 0x03005780
-ALIGNED8 static const u8 coin_seg3_texture_03005780[] = {
-#include "actors/coin/coin_front.ia16.inc.c"
-};
+ALIGNED8 static const u8 coin_seg3_texture_03005780[] = "actors/coin/coin_front.ia16";
 
 // 0x03005F80
-ALIGNED8 static const u8 coin_seg3_texture_03005F80[] = {
-#include "actors/coin/coin_tilt_right.ia16.inc.c"
-};
+ALIGNED8 static const u8 coin_seg3_texture_03005F80[] = "actors/coin/coin_tilt_right.ia16";
 
 // 0x03006780
-ALIGNED8 static const u8 coin_seg3_texture_03006780[] = {
-#include "actors/coin/coin_side.ia16.inc.c"
-};
+ALIGNED8 static const u8 coin_seg3_texture_03006780[] = "actors/coin/coin_side.ia16";
 
 // 0x03006F80
-ALIGNED8 static const u8 coin_seg3_texture_03006F80[] = {
-#include "actors/coin/coin_tilt_left.ia16.inc.c"
-};
+ALIGNED8 static const u8 coin_seg3_texture_03006F80[] = "actors/coin/coin_tilt_left.ia16";
 
 // 0x03007780 - 0x030077D0
 const Gfx coin_seg3_dl_03007780[] = {

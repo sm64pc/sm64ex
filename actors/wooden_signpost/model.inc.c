@@ -18,14 +18,10 @@ static const Vtx wooden_signpost_seg3_vertex_0302C958[] = {
 };
 
 // 0x0302C9C8
-ALIGNED8 static const u8 wooden_signpost_seg3_texture_0302C9C8[] = {
-#include "actors/wooden_signpost/wooden_signpost_back.rgba16.inc.c"
-};
+ALIGNED8 static const u8 wooden_signpost_seg3_texture_0302C9C8[] = "actors/wooden_signpost/wooden_signpost_back.rgba16";
 
 // 0x0302D1C8
-ALIGNED8 static const u8 wooden_signpost_seg3_texture_0302D1C8[] = {
-#include "actors/wooden_signpost/wooden_signpost_front.rgba16.inc.c"
-};
+ALIGNED8 static const u8 wooden_signpost_seg3_texture_0302D1C8[] = "actors/wooden_signpost/wooden_signpost_front.rgba16";
 
 // 0x0302D9C8 - 0x0302DA48
 const Gfx wooden_signpost_seg3_dl_0302D9C8[] = {
