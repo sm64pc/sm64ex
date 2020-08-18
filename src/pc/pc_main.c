@@ -12,9 +12,12 @@
 #include "audio/external.h"
 
 #include "gfx/gfx_pc.h"
+
 #include "gfx/gfx_opengl.h"
 #include "gfx/gfx_direct3d11.h"
 #include "gfx/gfx_direct3d12.h"
+
+#include "gfx/gfx_dxgi.h"
 #include "gfx/gfx_sdl.h"
 
 #include "audio/audio_api.h"
@@ -193,10 +196,10 @@ void main_func(void) {
     #endif
 
     #if defined(RAPI_D3D11)
-    rendering_api = &gfx_d3d11_api;
+    rendering_api = &gfx_direct3d11_api;
     # define RAPI_NAME "DirectX 11"
     #elif defined(RAPI_D3D12)
-    rendering_api = &gfx_d3d12_api;
+    rendering_api = &gfx_direct3d12_api;
     # define RAPI_NAME "DirectX 12"
     #elif defined(RAPI_GL) || defined(RAPI_GL_LEGACY)
     rendering_api = &gfx_opengl_api;
@@ -219,8 +222,10 @@ void main_func(void) {
     gfx_init(wm_api, rendering_api, window_title);
     wm_api->set_keyboard_callbacks(keyboard_on_key_down, keyboard_on_key_up, keyboard_on_all_keys_up);
 
+    #if defined(AAPI_SDL1) || defined(AAPI_SDL2)
     if (audio_api == NULL && audio_sdl.init()) 
         audio_api = &audio_sdl;
+    #endif
 
     if (audio_api == NULL) {
         audio_api = &audio_null;

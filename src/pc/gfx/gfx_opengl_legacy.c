@@ -15,15 +15,22 @@
 # define FOR_WINDOWS 0
 #endif
 
-#include <SDL2/SDL.h>
-
 #if FOR_WINDOWS || defined(OSX_BUILD)
 # define GLEW_STATIC
 # include <GL/glew.h>
 #endif
 
 #define GL_GLEXT_PROTOTYPES 1
-#include <SDL2/SDL_opengl.h>
+
+#ifdef WAPI_SDL2
+# include <SDL2/SDL.h>
+# include <SDL2/SDL_opengl.h>
+#elif defined(WAPI_SDL1)
+# include <SDL/SDL.h>
+# ifndef GLEW_STATIC
+#  include <SDL/SDL_opengl.h>
+# endif
+#endif
 
 // redefine this if using a different GL loader
 #define mglGetProcAddress(name) SDL_GL_GetProcAddress(name)
@@ -569,12 +576,21 @@ static void gfx_opengl_init(void) {
     TEXENV_COMBINE_OP(1, GL_SRC_COLOR, GL_SRC_ALPHA);
 }
 
+static void gfx_opengl_on_resize(void) {
+}
+
 static void gfx_opengl_start_frame(void) {
     glDisable(GL_SCISSOR_TEST);
     glDepthMask(GL_TRUE); // Must be set to clear Z-buffer
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_SCISSOR_TEST);
+}
+
+static void gfx_opengl_end_frame(void) {
+}
+
+static void gfx_opengl_finish_render(void) {
 }
 
 static void gfx_opengl_shutdown(void) {
@@ -599,7 +615,10 @@ struct GfxRenderingAPI gfx_opengl_api = {
     gfx_opengl_set_use_alpha,
     gfx_opengl_draw_triangles,
     gfx_opengl_init,
+    gfx_opengl_on_resize,
     gfx_opengl_start_frame,
+    gfx_opengl_end_frame,
+    gfx_opengl_finish_render,
     gfx_opengl_shutdown
 };
 

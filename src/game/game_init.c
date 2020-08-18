@@ -582,32 +582,25 @@ void thread5_game_loop(UNUSED void *arg) {
 }
 
 void game_loop_one_iteration(void) {
-        // if the reset timer is active, run the process to reset the game.
-        //if (gResetTimer) {
-//	            draw_reset_bars(); (N64 target only?)
-//}
+    profiler_log_thread5_time(THREAD5_START);
 
-        profiler_log_thread5_time(THREAD5_START);
+    // if any controllers are plugged in, start read the data for when
+    // read_controller_inputs is called later.
+    if (gControllerBits) {
+        // block_until_rumble_pak_free();
+        osContStartReadData(&gSIEventMesgQueue);
+    }
 
-        // if any controllers are plugged in, start read the data for when
-        // read_controller_inputs is called later.
-        if (gControllerBits) {
+    audio_game_loop_tick();
+    config_gfx_pool();
+    read_controller_inputs();
+    levelCommandAddr = level_script_execute(levelCommandAddr);
+    display_and_vsync();
 
-            // block_until_rumble_pak_free();
-            osContStartReadData(&gSIEventMesgQueue);
-        }
-
-        audio_game_loop_tick();
-        config_gfx_pool();
-        read_controller_inputs();
-        levelCommandAddr = level_script_execute(levelCommandAddr);
-        display_and_vsync();
-
-        // when debug info is enabled, print the "BUF %d" information.
-        if (gShowDebugText) {
-            // subtract the end of the gfx pool with the display list to obtain the
-            // amount of free space remaining.
-            print_text_fmt_int(180, 20, "BUF %d", gGfxPoolEnd - (u8 *) gDisplayListHead);
-        }
-// } was here for  ifdef targ 64
+    // when debug info is enabled, print the "BUF %d" information.
+    if (gShowDebugText) {
+        // subtract the end of the gfx pool with the display list to obtain the
+        // amount of free space remaining.
+        print_text_fmt_int(180, 20, "BUF %d", gGfxPoolEnd - (u8 *) gDisplayListHead);
+    }
 }

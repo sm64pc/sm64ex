@@ -59,9 +59,9 @@ unsigned int configEnvVolume = MAX_VOLUME;
 unsigned int configKeyA[MAX_BINDS]          = { 0x0026,   0x1000,     0x1103     };
 unsigned int configKeyB[MAX_BINDS]          = { 0x0033,   0x1002,     0x1101     };
 unsigned int configKeyStart[MAX_BINDS]      = { 0x0039,   0x1006,     VK_INVALID };
-unsigned int configKeyL[MAX_BINDS]          = { 0x0034,   0x1007,     0x1104     };
-unsigned int configKeyR[MAX_BINDS]          = { 0x0036,   0x100A,     0x1105     };
-unsigned int configKeyZ[MAX_BINDS]          = { 0x0025,   0x1009,     0x1102     };
+unsigned int configKeyL[MAX_BINDS]          = { 0x002A,   0x1009,     0x1104     };
+unsigned int configKeyR[MAX_BINDS]          = { 0x0036,   0x100A,     0x101B     };
+unsigned int configKeyZ[MAX_BINDS]          = { 0x0025,   0x1007,     0x101A     };
 unsigned int configKeyCUp[MAX_BINDS]        = { 0x0148,   VK_INVALID, VK_INVALID };
 unsigned int configKeyCDown[MAX_BINDS]      = { 0x0150,   VK_INVALID, VK_INVALID };
 unsigned int configKeyCLeft[MAX_BINDS]      = { 0x014B,   VK_INVALID, VK_INVALID };
@@ -100,7 +100,7 @@ static const struct ConfigOption options[] = {
     {.name = "window_y",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.y},
     {.name = "window_w",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.w},
     {.name = "window_h",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.h},
-    {.name = "vsync",                .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.vsync},
+    {.name = "vsync",                .type = CONFIG_TYPE_BOOL, .boolValue = &configWindow.vsync},
     {.name = "texture_filtering",    .type = CONFIG_TYPE_UINT, .uintValue = &configFiltering},
     {.name = "master_volume",        .type = CONFIG_TYPE_UINT, .uintValue = &configMasterVolume},
     {.name = "music_volume",         .type = CONFIG_TYPE_UINT, .uintValue = &configMusicVolume},
@@ -137,7 +137,7 @@ static const struct ConfigOption options[] = {
     {.name = "bettercam_pan_level",  .type = CONFIG_TYPE_UINT, .uintValue = &configCameraPan},
     {.name = "bettercam_degrade",    .type = CONFIG_TYPE_UINT, .uintValue = &configCameraDegrade},
     #endif
-    {.name = "skip_intro",           .type = CONFIG_TYPE_BOOL, .uintValue = &configSkipIntro},
+    {.name = "skip_intro",           .type = CONFIG_TYPE_BOOL, .boolValue = &configSkipIntro},
     #ifdef DISCORDRPC
     {.name = "discordrpc_enable",    .type = CONFIG_TYPE_BOOL, .boolValue = &configDiscordRPC},
     #endif 
@@ -268,7 +268,7 @@ void configfile_load(const char *filename) {
                         case CONFIG_TYPE_BOOL:
                             if (strcmp(tokens[1], "true") == 0)
                                 *option->boolValue = true;
-                            else if (strcmp(tokens[1], "false") == 0)
+                            else
                                 *option->boolValue = false;
                             break;
                         case CONFIG_TYPE_UINT:

@@ -13,6 +13,9 @@
 #include "shadow.h"
 #include "sm64.h"
 
+// Avoid Z-fighting
+#define find_floor_height_and_data 0.4 + find_floor_height_and_data
+
 /**
  * @file shadow.c
  * This file implements a self-contained subsystem used to draw shadows.
