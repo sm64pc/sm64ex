@@ -195,30 +195,31 @@ Gfx *geo_exec_cake_end_screen(s32 callContext, struct GraphNode *node, UNUSED f3
     Gfx *displayListHead = NULL;
 
     if (callContext == GEO_CONTEXT_RENDER) {
-        displayList = alloc_display_list(3 * sizeof(*displayList));
+        displayList = alloc_display_list(13 * sizeof(*displayList));
         displayListHead = displayList;
 
         generatedNode->fnNode.node.flags = (generatedNode->fnNode.node.flags & 0xFF) | 0x100;
-#ifdef VERSION_EU
-        gSPDisplayList(displayListHead++, dl_cake_end_screen);
-#else
+
+        s32 x = 0;
+        s32 y = 0;
+        u32 w = SCREEN_HEIGHT * 2560 / 1920;
+        u32 h = SCREEN_HEIGHT;
+        u8 *texture = "levels/ending/cake";
+
         gSPDisplayList(displayListHead++, dl_proj_mtx_fullscreen);
-#endif
-#ifdef VERSION_EU
-        switch (eu_get_language()) {
-            case LANGUAGE_ENGLISH:
-                gSPDisplayList(displayListHead++, dl_cake_end_screen_eu_070296F8);
-                break;
-            case LANGUAGE_FRENCH:
-                gSPDisplayList(displayListHead++, dl_cake_end_screen_eu_07029768);
-                break;
-            case LANGUAGE_GERMAN:
-                gSPDisplayList(displayListHead++, dl_cake_end_screen_eu_070297D8);
-                break;
-        }
-#else
-        gSPDisplayList(displayListHead++, dl_cake_end_screen);
-#endif
+
+        gSPDisplayList(displayListHead++, dl_hud_img_begin);
+        gDPSetTile(displayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 0, 0, G_TX_LOADTILE, 0, G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD);
+        gDPTileSync(displayListHead++);
+        gDPSetTile(displayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 2, 0, G_TX_RENDERTILE, 0, G_TX_NOMIRROR, 3, G_TX_NOLOD, G_TX_NOMIRROR, 3, G_TX_NOLOD);
+        gDPSetTileSize(displayListHead++, G_TX_RENDERTILE, 0, 0, w << G_TEXTURE_IMAGE_FRAC, h << G_TEXTURE_IMAGE_FRAC);
+        gDPPipeSync(displayListHead++);
+        gDPSetTextureImage(displayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 1, texture);
+        gDPLoadSync(displayListHead++);
+        gDPLoadBlock(displayListHead++, G_TX_LOADTILE, 0, 0, w * h - 1, CALC_DXT(w, G_IM_SIZ_32b_BYTES));
+        gSPTextureRectangle(displayListHead++, x << 2, y << 2, (x + w) << 2, (y + h) << 2, G_TX_RENDERTILE, 0, 0, 4 << 10, 1 << 10);
+        gSPDisplayList(displayListHead++, dl_hud_img_end);
+
         gSPEndDisplayList(displayListHead);
     }
 
