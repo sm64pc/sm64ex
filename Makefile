@@ -43,7 +43,9 @@ TEXTURE_FIX ?= 0
 # Enable extended options menu by default
 EXT_OPTIONS_MENU ?= 1
 # Disable text-based save-files by default
-TEXTSAVES ?= 1
+TEXTSAVES ?= 0
+# Load resources from external files
+EXTERNAL_DATA ?= 0
 # Enable Discord Rich Presence
 DISCORDRPC ?= 0
 
@@ -62,6 +64,8 @@ WINDOW_API ?= SDL2
 AUDIO_API ?= SDL2
 # Controller backends (can have multiple, space separated): SDL2
 CONTROLLER_API ?= SDL2
+
+# Misc settings for EXTERNAL_DATA
 
 LEGACY_RES ?= 0
 BASEDIR ?= res
@@ -409,7 +413,7 @@ RPC_LIBS :=
 ifeq ($(DISCORDRPC),1)
   ifeq ($(WINDOWS_BUILD),1)
     RPC_LIBS := lib/discord/libdiscord-rpc.dll
-  else ifeq ($(OSX_BUILD),1)
+  else ifeq ($(OSX_BUILD),1) 
     # needs testing
     RPC_LIBS := lib/discord/libdiscord-rpc.dylib
   else
@@ -592,14 +596,14 @@ ifeq ($(LEGACY_GL),1)
   CFLAGS += -DLEGACY_GL
 endif
 
-# TODO: Remove -DEXTERNAL_DATA
-
 # Load external textures
-CC_CHECK += -DEXTERNAL_DATA -DFS_BASEDIR="\"$(BASEDIR)\""
-CFLAGS += -DEXTERNAL_DATA -DFS_BASEDIR="\"$(BASEDIR)\""
-# tell skyconv to write names instead of actual texture data and save the split tiles so we can use them later
-SKYTILE_DIR := $(BUILD_DIR)/textures/skybox_tiles
-SKYCONV_ARGS := --store-names --write-tiles "$(SKYTILE_DIR)"
+ifeq ($(EXTERNAL_DATA),1)
+  CC_CHECK += -DEXTERNAL_DATA -DFS_BASEDIR="\"$(BASEDIR)\""
+  CFLAGS += -DEXTERNAL_DATA -DFS_BASEDIR="\"$(BASEDIR)\""
+  # tell skyconv to write names instead of actual texture data and save the split tiles so we can use them later
+  SKYTILE_DIR := $(BUILD_DIR)/textures/skybox_tiles
+  SKYCONV_ARGS := --store-names --write-tiles "$(SKYTILE_DIR)"
+endif
 
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
 
@@ -667,6 +671,8 @@ else
   CP := cp
 endif
 
+ifeq ($(EXTERNAL_DATA),1)
+
 BASEPACK_PATH := $(BUILD_DIR)/$(BASEDIR)/
 BASEPACK_LST := $(BUILD_DIR)/basepack.lst
 
@@ -692,6 +698,8 @@ $(BASEPACK_LST): $(EXE)
 # prepares the resource ZIP with base data
 $(BASEPACK_PATH): $(BASEPACK_LST)
 	@$(PYTHON) $(TOOLS_DIR)/mkzip.py $(BASEPACK_LST) $(BASEPACK_PATH) $(LEGACY_RES)
+
+endif
 
 clean:
 	$(RM) -r $(BUILD_DIR_BASE)
@@ -790,6 +798,42 @@ ifeq ($(DISCORDRPC),1)
 endif
 endif
 
+################################################################
+# TEXTURE GENERATION                                           #
+################################################################
+
+# RGBA32, RGBA16, IA16, IA8, IA4, IA1, I8, I4
+
+ifeq ($(EXTERNAL_DATA),1)
+
+$(BUILD_DIR)/%: %.png
+	$(ZEROTERM) "$(patsubst %.png,%,$^)" > $@
+
+else
+
+$(BUILD_DIR)/%: %.png
+	$(N64GRAPHICS) -i $@ -g $< -f $(lastword $(subst ., ,$@))
+
+endif
+
+$(BUILD_DIR)/%.inc.c: $(BUILD_DIR)/% %.png
+	hexdump -v -e '1/1 "0x%X,"' $< > $@
+	echo >> $@
+
+ifeq ($(EXTERNAL_DATA),0)
+
+# Color Index CI8
+$(BUILD_DIR)/%.ci8: %.ci8.png
+	$(N64GRAPHICS_CI) -i $@ -g $< -f ci8
+
+# Color Index CI4
+$(BUILD_DIR)/%.ci4: %.ci4.png
+	$(N64GRAPHICS_CI) -i $@ -g $< -f ci4
+
+endif
+
+################################################################
+
 # compressed segment generation
 
 # PC Area
@@ -832,8 +876,18 @@ $(SOUND_BIN_DIR)/%.m64: $(SOUND_BIN_DIR)/%.o
 $(SOUND_BIN_DIR)/%.o: $(SOUND_BIN_DIR)/%.s
 	$(AS) $(ASFLAGS) -o $@ $<
 
+ifeq ($(EXTERNAL_DATA),1)
+
 $(SOUND_BIN_DIR)/%.inc.c: $(SOUND_BIN_DIR)/%
 	$(ZEROTERM) "$(patsubst $(BUILD_DIR)/%,%,$^)" | hexdump -v -e '1/1 "0x%X,"' > $@
+
+else
+
+$(SOUND_BIN_DIR)/%.inc.c: $(SOUND_BIN_DIR)/%
+	hexdump -v -e '1/1 "0x%X,"' $< > $@
+	echo >> $@
+
+endif
 
 $(SOUND_BIN_DIR)/sound_data.o: $(SOUND_BIN_DIR)/sound_data.ctl.inc.c $(SOUND_BIN_DIR)/sound_data.tbl.inc.c $(SOUND_BIN_DIR)/sequences.bin.inc.c $(SOUND_BIN_DIR)/bank_sets.inc.c
 
