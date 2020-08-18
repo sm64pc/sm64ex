@@ -116,4 +116,7 @@
 #define TEXT_OPT_SFXVOLUME _("Sfx Volume")
 #define TEXT_OPT_ENVVOLUME _("Env Volume")
 #define TEXT_OPT_VSYNC     _("Vertical Sync")
+
+#endif // VERSION
+
 #endif // TEXT_OPTIONS_STRINGS_H
