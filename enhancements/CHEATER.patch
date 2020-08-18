@@ -1,0 +1,634 @@
+diff --git a/include/text_options_strings.h.in b/include/text_options_strings.h.in
+index a1ce481..4f5e5b9 100644
+--- a/include/text_options_strings.h.in
++++ b/include/text_options_strings.h.in
+@@ -10,6 +10,7 @@
+ #define TEXT_OPT_CONTROLS  _("CONTROLS")
+ #define TEXT_OPT_VIDEO     _("DISPLAY")
+ #define TEXT_OPT_AUDIO     _("SOUND")
++#define TEXT_LEAVE_GAME    _("GO BACK TO MAIN MENU")
+ #define TEXT_OPT_CHEATS    _("CHEATS")
+ 
+ // Markers
+@@ -84,6 +85,45 @@
+ #define TEXT_OPT_CHEAT7    _("EXIT COURSE AT ANY TIME")
+ #define TEXT_OPT_CHEAT8    _("HUGE MARIO")
+ #define TEXT_OPT_CHEAT9    _("TINY MARIO")
++#define TEXT_OPT_SHELL     _("GET SHELL")
++#define TEXT_OPT_BOB       _("GET BOBOMB")
++#define TEXT_OPT_SPAMBA    _("SPAMBA")
++#define TEXT_OPT_SWIM       _("QUICK SWIM")
++#define TEXT_OPT_WING_CAP    _("GET WING CAP")
++#define TEXT_OPT_METAL_CAP    _("GET METAL CAP")
++#define TEXT_OPT_VANISH_CAP    _("GET VANISH CAP")
++#define TEXT_OPT_REMOVE_CAP    _("REMOVE CAP")
++#define TEXT_OPT_NORMAL_CAP    _("RESET CAP")
++#define TEXT_OPT_BLJ   _("BLJ ANYWHERE")
++
++#define TEXT_OPT_SPAMCHT1  _("DISABLED")
++#define TEXT_OPT_SPAMCHT2  _("AMP")
++#define TEXT_OPT_SPAMCHT3  _("BLUE COIN SWITCH")
++#define TEXT_OPT_SPAMCHT4  _("BOWLING BALL")
++#define TEXT_OPT_SPAMCHT5  _("BREAKABLE BOX")
++#define TEXT_OPT_SPAMCHT6  _("BREAKABLE BOX SMALL")
++#define TEXT_OPT_SPAMCHT7  _("JUMPING BOX")
++#define TEXT_OPT_SPAMCHT8  _("CHECKERBOARD PLATFORM")
++#define TEXT_OPT_SPAMCHT9  _("CHUCKYA")
++#define TEXT_OPT_SPAMCHT10 _("FLYGUY")
++#define TEXT_OPT_SPAMCHT11 _("GOOMBAS")
++#define TEXT_OPT_SPAMCHT12 _("HEART")
++#define TEXT_OPT_SPAMCHT13 _("METAL BOX")
++#define TEXT_OPT_SPAMCHT14 _("PURPLE SWITCH")
++
++#define TEXT_OPT_BLJCHT1  _("DISABLED")
++#define TEXT_OPT_BLJCHT2  _("ENABLED")
++#define TEXT_OPT_BLJCHT3  _("ENABLED - BOOST: 1")
++#define TEXT_OPT_BLJCHT4  _("ENABLED - BOOST: 2")
++#define TEXT_OPT_BLJCHT5  _("ENABLED - BOOST: 3")
++#define TEXT_OPT_BLJCHT6  _("ENABLED - BOOST: 4")
++#define TEXT_OPT_BLJCHT7  _("ENABLED - BOOST: 5")
++#define TEXT_OPT_BLJCHT8  _("RAPID FIRE")
++#define TEXT_OPT_BLJCHT9  _("RAPID FIRE - BOOST: 1")
++#define TEXT_OPT_BLJCHT10 _("RAPID FIRE - BOOST: 2")
++#define TEXT_OPT_BLJCHT11 _("RAPID FIRE - BOOST: 3")
++#define TEXT_OPT_BLJCHT12 _("RAPID FIRE - BOOST: 4")
++#define TEXT_OPT_BLJCHT13 _("RAPID FIRE - BOOST: 5")
+ 
+ #else // VERSION
+ 
+@@ -148,6 +188,45 @@
+ #define TEXT_OPT_CHEAT7    _("Exit course at any time")
+ #define TEXT_OPT_CHEAT8    _("Huge Mario")
+ #define TEXT_OPT_CHEAT9    _("Tiny Mario")
++#define TEXT_OPT_SHELL     _("Get Shell L+R")
++#define TEXT_OPT_BOB       _("Get Bobomb L+B")
++#define TEXT_OPT_SPAMBA    _("Spamba L+Z")
++#define TEXT_OPT_SWIM      _("Swift Swim")
++#define TEXT_OPT_WING_CAP  _("Get WING Cap")
++#define TEXT_OPT_METAL_CAP _("Get METAL Cap")
++#define TEXT_OPT_VANISH_CAP _("Get VANISH Cap")
++#define TEXT_OPT_REMOVE_CAP _("REMOVE Cap")
++#define TEXT_OPT_NORMAL_CAP _("RESET Cap")
++#define TEXT_OPT_BLJ       _("BLJ Anywhere")
++
++#define TEXT_OPT_SPAMCHT1  _("Disabled")
++#define TEXT_OPT_SPAMCHT2  _("Amp")
++#define TEXT_OPT_SPAMCHT3  _("Blue Coin Switch")
++#define TEXT_OPT_SPAMCHT4  _("Bowling Ball")
++#define TEXT_OPT_SPAMCHT5  _("Breakable box, large")
++#define TEXT_OPT_SPAMCHT6  _("Breakable box, small")
++#define TEXT_OPT_SPAMCHT7  _("Jumping Box")
++#define TEXT_OPT_SPAMCHT8  _("Checkerboard Platform")
++#define TEXT_OPT_SPAMCHT9  _("Chuckya")
++#define TEXT_OPT_SPAMCHT10 _("FlyGuy")
++#define TEXT_OPT_SPAMCHT11 _("Goombas")
++#define TEXT_OPT_SPAMCHT12 _("Heart")
++#define TEXT_OPT_SPAMCHT13 _("Metal Box")
++#define TEXT_OPT_SPAMCHT14 _("Purple Switch")
++
++#define TEXT_OPT_BLJCHT1  _("Disabled")
++#define TEXT_OPT_BLJCHT2  _("Enabled")
++#define TEXT_OPT_BLJCHT3  _("Enabled - Boost: 1")
++#define TEXT_OPT_BLJCHT4  _("Enabled - Boost: 2")
++#define TEXT_OPT_BLJCHT5  _("Enabled - Boost: 3")
++#define TEXT_OPT_BLJCHT6  _("Enabled - Boost: 4")
++#define TEXT_OPT_BLJCHT7  _("Enabled - Boost: 5")
++#define TEXT_OPT_BLJCHT8  _("Rapid Fire")
++#define TEXT_OPT_BLJCHT9  _("Rapid Fire - Boost: 1")
++#define TEXT_OPT_BLJCHT10 _("Rapid Fire - Boost: 2")
++#define TEXT_OPT_BLJCHT11 _("Rapid Fire - Boost: 3")
++#define TEXT_OPT_BLJCHT12 _("Rapid Fire - Boost: 4")
++#define TEXT_OPT_BLJCHT13 _("Rapid Fire - Boost: 5")
+ 
+ #endif // VERSION
+ 
+diff --git a/levels/bowser_1/script.c b/levels/bowser_1/script.c
+index e70de99..10da148 100644
+--- a/levels/bowser_1/script.c
++++ b/levels/bowser_1/script.c
+@@ -22,8 +22,11 @@ const LevelScript level_bowser_1_entry[] = {
+     LOAD_MIO0(/*seg*/ 0x0A, _bidw_skybox_mio0SegmentRomStart, _bidw_skybox_mio0SegmentRomEnd),
+     LOAD_MIO0(/*seg*/ 0x06, _group12_mio0SegmentRomStart, _group12_mio0SegmentRomEnd),
+     LOAD_RAW( /*seg*/ 0x0D, _group12_geoSegmentRomStart, _group12_geoSegmentRomEnd),
++    LOAD_MIO0(/*seg*/ 0x08, _common0_mio0SegmentRomStart, _common0_mio0SegmentRomEnd),
++    LOAD_RAW(/*seg*/ 0x0F, _common0_geoSegmentRomStart, _common0_geoSegmentRomEnd),
+     ALLOC_LEVEL_POOL(),
+     MARIO(/*model*/ MODEL_MARIO, /*behParam*/ 0x00000001, /*beh*/ bhvMario),
++    JUMP_LINK(script_func_global_1),
+     JUMP_LINK(script_func_global_13),
+     LOAD_MODEL_FROM_GEO(MODEL_LEVEL_GEOMETRY_03, bowser_1_yellow_sphere_geo),
+ 
+diff --git a/levels/bowser_2/script.c b/levels/bowser_2/script.c
+index b848c00..984dfde 100644
+--- a/levels/bowser_2/script.c
++++ b/levels/bowser_2/script.c
+@@ -32,8 +32,11 @@ const LevelScript level_bowser_2_entry[] = {
+     LOAD_MIO0(        /*seg*/ 0x07, _bowser_2_segment_7SegmentRomStart, _bowser_2_segment_7SegmentRomEnd),
+     LOAD_MIO0(        /*seg*/ 0x06, _group12_mio0SegmentRomStart, _group12_mio0SegmentRomEnd),
+     LOAD_RAW(         /*seg*/ 0x0D, _group12_geoSegmentRomStart, _group12_geoSegmentRomEnd),
++    LOAD_MIO0(        /*seg*/ 0x08, _common0_mio0SegmentRomStart, _common0_mio0SegmentRomEnd),
++    LOAD_RAW(         /*seg*/ 0x0F, _common0_geoSegmentRomStart, _common0_geoSegmentRomEnd),
+     ALLOC_LEVEL_POOL(),
+     MARIO(/*model*/ MODEL_MARIO, /*behParam*/ 0x00000001, /*beh*/ bhvMario),
++    JUMP_LINK(script_func_global_1),
+     JUMP_LINK(script_func_global_13),
+     LOAD_MODEL_FROM_GEO(MODEL_BOWSER_2_TILTING_ARENA, bowser_2_geo_000170),
+ 
+diff --git a/levels/bowser_3/script.c b/levels/bowser_3/script.c
+index 756ef81..c87e6a5 100644
+--- a/levels/bowser_3/script.c
++++ b/levels/bowser_3/script.c
+@@ -40,8 +40,11 @@ const LevelScript level_bowser_3_entry[] = {
+     LOAD_MIO0(/*seg*/ 0x06, _group12_mio0SegmentRomStart, _group12_mio0SegmentRomEnd),
+     LOAD_RAW( /*seg*/ 0x0D, _group12_geoSegmentRomStart,  _group12_geoSegmentRomEnd),
+     LOAD_MIO0(/*seg*/ 0x0A, _bits_skybox_mio0SegmentRomStart, _bits_skybox_mio0SegmentRomEnd),
++    LOAD_MIO0(/*seg*/ 0x08, _common0_mio0SegmentRomStart, _common0_mio0SegmentRomEnd),
++    LOAD_RAW(/*seg*/ 0x0F, _common0_geoSegmentRomStart, _common0_geoSegmentRomEnd),
+     ALLOC_LEVEL_POOL(),
+     MARIO(/*model*/ MODEL_MARIO, /*behParam*/ 0x00000001, /*beh*/ bhvMario),
++    JUMP_LINK(script_func_global_1),
+     JUMP_LINK(script_func_global_13),
+     LOAD_MODEL_FROM_GEO(MODEL_BOWSER_3_FALLING_PLATFORM_1,  bowser_3_geo_000290),
+     LOAD_MODEL_FROM_GEO(MODEL_BOWSER_3_FALLING_PLATFORM_2,  bowser_3_geo_0002A8),
+diff --git a/levels/castle_inside/script.c b/levels/castle_inside/script.c
+index 5d9ae4f..1792886 100644
+--- a/levels/castle_inside/script.c
++++ b/levels/castle_inside/script.c
+@@ -225,8 +225,11 @@ const LevelScript level_castle_inside_entry[] = {
+     LOAD_MIO0_TEXTURE(/*seg*/ 0x09, _inside_mio0SegmentRomStart, _inside_mio0SegmentRomEnd),
+     LOAD_MIO0(        /*seg*/ 0x06, _group15_mio0SegmentRomStart, _group15_mio0SegmentRomEnd),
+     LOAD_RAW(         /*seg*/ 0x0D, _group15_geoSegmentRomStart,  _group15_geoSegmentRomEnd),
++    LOAD_MIO0(        /*seg*/ 0x08, _common0_mio0SegmentRomStart, _common0_mio0SegmentRomEnd),
++    LOAD_RAW(         /*seg*/ 0x0F, _common0_geoSegmentRomStart, _common0_geoSegmentRomEnd),
+     ALLOC_LEVEL_POOL(),
+     MARIO(/*model*/ MODEL_MARIO, /*behParam*/ 0x00000001, /*beh*/ bhvMario),
++    JUMP_LINK(script_func_global_1),
+     JUMP_LINK(script_func_global_16),
+     LOAD_MODEL_FROM_GEO(MODEL_CASTLE_BOWSER_TRAP,        castle_geo_000F18),
+     LOAD_MODEL_FROM_GEO(MODEL_CASTLE_WATER_LEVEL_PILLAR, castle_geo_001940),
+diff --git a/src/game/mario.c b/src/game/mario.c
+index 5f8e511..a6dc141 100644
+--- a/src/game/mario.c
++++ b/src/game/mario.c
+@@ -7,6 +7,7 @@
+ #include "behavior_actions.h"
+ #include "behavior_data.h"
+ #include "camera.h"
++#include "engine/behavior_script.h"
+ #include "engine/graph_node.h"
+ #include "engine/math_util.h"
+ #include "engine/surface_collision.h"
+@@ -31,7 +32,10 @@
+ #include "object_list_processor.h"
+ #include "print.h"
+ #include "save_file.h"
++#include "seq_ids.h"
+ #include "sound_init.h"
++#include "object_list_processor.h"
++#include "debug.h"
+ #include "thread6.h"
+ #include "pc/configfile.h"
+ #include "pc/cheats.h"
+@@ -1408,6 +1412,60 @@ void update_mario_inputs(struct MarioState *m) {
+     m->collidedObjInteractTypes = m->marioObj->collidedObjInteractTypes;
+     m->flags &= 0xFFFFFF;
+ 
++    /*CAP Cheats*/
++    if (Cheats.EnableCheats) {
++        if (Cheats.WingCap) {
++            m->flags |= MARIO_WING_CAP;
++            if ((m->action & ACT_GROUP_MASK) == (!(ACT_GROUP_AIRBORNE) && !(ACT_GROUP_SUBMERGED))) {
++                set_mario_action(m, ACT_PUTTING_ON_CAP, 0);
++            }
++            Cheats.WingCap = false;
++        }
++
++        if (Cheats.MetalCap) {
++            m->flags |= MARIO_METAL_CAP;
++            if ((m->action & ACT_GROUP_MASK) == (!(ACT_GROUP_AIRBORNE) && !(ACT_GROUP_SUBMERGED))) {
++                set_mario_action(m, ACT_PUTTING_ON_CAP, 0);
++            }
++            Cheats.MetalCap = false;
++        }
++
++        Cheats.WingCap = false;
++        if (Cheats.VanishCap) {
++            m->flags |= MARIO_VANISH_CAP;
++            if ((m->action & ACT_GROUP_MASK) == (!(ACT_GROUP_AIRBORNE) && !(ACT_GROUP_SUBMERGED))) {
++                set_mario_action(m, ACT_PUTTING_ON_CAP, 0);
++            }
++            Cheats.VanishCap = false;
++        }
++
++        if (Cheats.RemoveCap) {
++            m->flags &= ~MARIO_CAP_ON_HEAD;
++            m->flags |= MARIO_CAP_IN_HAND;
++            if ((m->action & ACT_GROUP_MASK) == (!(ACT_GROUP_AIRBORNE) && !(ACT_GROUP_SUBMERGED))) {
++                set_mario_action(m, ACT_SHIVERING, 0);
++            }
++            Cheats.RemoveCap = false;
++        }
++
++        if (Cheats.NormalCap) {
++            m->flags &= ~MARIO_CAP_ON_HEAD;
++            m->flags &= ~(MARIO_WING_CAP | MARIO_METAL_CAP | MARIO_VANISH_CAP);
++            if ((m->action & ACT_GROUP_MASK) == (!(ACT_GROUP_AIRBORNE) && !(ACT_GROUP_SUBMERGED))) {
++                m->flags |= MARIO_CAP_IN_HAND;
++                set_mario_action(m, ACT_PUTTING_ON_CAP, 0);
++            }
++            else {
++                m->flags &= ~MARIO_CAP_IN_HAND;
++                m->flags |= MARIO_CAP_ON_HEAD;
++            }
++            Cheats.NormalCap = false;
++        }
++
++    }
++
++    /*End of CAP Cheats*/
++
+     update_mario_button_inputs(m);
+     update_mario_joystick_inputs(m);
+     update_mario_geometry_inputs(m);
+@@ -1420,6 +1478,113 @@ void update_mario_inputs(struct MarioState *m) {
+         break;   // TODO: Unneeded break?
+     }
+     /*End of moonjump cheat */
++
++    /* GetShell cheat */
++    while (Cheats.GetShell == true && Cheats.EnableCheats == true && m->controller->buttonDown & L_TRIG && m->controller->buttonPressed & R_TRIG) {
++        if (m->action & ACT_FLAG_RIDING_SHELL) {
++            break;
++        }
++
++        struct Object* obj = (struct Object*)gObjectLists[OBJ_LIST_LEVEL].next;
++        struct Object* first = (struct Object*)&gObjectLists[OBJ_LIST_LEVEL];
++        while (obj != NULL && obj != first) {
++            if (obj->behavior == bhvKoopaShell) {
++                obj_mark_for_deletion(obj);
++                break;
++            }
++
++            obj = (struct Object*)obj->header.next;
++        }
++
++        if ((m->action & ACT_GROUP_MASK) == ACT_GROUP_SUBMERGED) {
++
++            spawn_object_relative(0, 0, 100, 100, gCurrentObject, MODEL_KOOPA_SHELL, bhvKoopaShellUnderwater);
++            break;
++
++        } else {
++
++            spawn_object_relative(0, 0, 100, 100, gCurrentObject, MODEL_KOOPA_SHELL, bhvKoopaShell);
++            break;
++        }
++    }
++    /*End of GetShell cheat */
++
++    /* GetBobomb cheat */
++    while (Cheats.GetBob == true && Cheats.EnableCheats == true && m->controller->buttonDown & L_TRIG && m->controller->buttonPressed & B_BUTTON) {
++
++        spawn_object_relative(0, 0, 100, 100, gCurrentObject, MODEL_BLACK_BOBOMB, bhvBobomb);
++        break;
++    }
++    /*End of GetBobomb cheat */
++
++    /* SpawnCommon cheat */
++    while (Cheats.Spamba > 0 && Cheats.EnableCheats == true && m->controller->buttonDown & L_TRIG && m->controller->buttonPressed & Z_TRIG) {
++        if (Cheats.Spamba == 1) {
++            spawn_object_relative(0, 0, 100, 100, gCurrentObject, MODEL_AMP, bhvHomingAmp);
++            break;
++        }
++
++        if (Cheats.Spamba == 2) {
++            spawn_object_relative(0, 0, 0, 150, gCurrentObject, MODEL_BLUE_COIN_SWITCH, bhvBlueCoinSwitch);
++            break;
++        }
++
++        if (Cheats.Spamba == 3) {
++            spawn_object_relative(0, 0, 300, 300, gCurrentObject, MODEL_BOWLING_BALL, bhvPitBowlingBall);
++            break;
++        }
++
++        if (Cheats.Spamba == 4) {
++            spawn_object_relative(0, 0, 0, 200, gCurrentObject, MODEL_BREAKABLE_BOX, bhvBreakableBox);
++            break;
++        }
++
++        if (Cheats.Spamba == 5) {
++            spawn_object_relative(0, 0, 50, 100, gCurrentObject, MODEL_BREAKABLE_BOX_SMALL, bhvBreakableBoxSmall);
++            break;
++        }
++
++        if (Cheats.Spamba == 6) {
++            spawn_object_relative(0, 0, 10, 300, gCurrentObject, MODEL_BREAKABLE_BOX_SMALL, bhvJumpingBox);
++            break;
++        }
++
++        if (Cheats.Spamba == 7) {
++            spawn_object_relative(0, 0, -10, 100, gCurrentObject, MODEL_CHECKERBOARD_PLATFORM, bhvCheckerboardPlatformSub);
++            break;
++        }
++
++        if (Cheats.Spamba == 8) {
++            spawn_object_relative(0, 0, 100, 100, gCurrentObject, MODEL_CHUCKYA, bhvChuckya);
++            break;
++        }
++
++        if (Cheats.Spamba == 9) {
++            spawn_object_relative(0, 0, 100, 100, gCurrentObject, MODEL_FLYGUY, bhvFlyGuy);
++            break;
++        }
++
++        if (Cheats.Spamba == 10) {
++            spawn_object_relative(0, 0, 100, 100, gCurrentObject, MODEL_NONE, bhvGoombaTripletSpawner);
++            break;
++        }
++
++        if (Cheats.Spamba == 11) {
++            spawn_object_relative(0, 0, 100, 100, gCurrentObject, MODEL_HEART, bhvRecoveryHeart);
++            break;
++        }
++
++        if (Cheats.Spamba == 12) {
++            spawn_object_relative(0, 0, 0, 200, gCurrentObject, MODEL_METAL_BOX, bhvPushableMetalBox);
++            break;
++        }
++
++        if (Cheats.Spamba == 13) {
++            spawn_object_relative(0, 0, 50, 50, gCurrentObject, MODEL_PURPLE_SWITCH, bhvPurpleSwitchHiddenBoxes);
++            break;
++        }
++    }
++    /*End of SpawnCommon cheat */
+ 
+     if (gCameraMovementFlags & CAM_MOVE_C_UP_MODE) {
+         if (m->action & ACT_FLAG_ALLOW_FIRST_PERSON) {
+diff --git a/src/game/mario_actions_airborne.c b/src/game/mario_actions_airborne.c
+index 17e45ae..09af9cd 100644
+--- a/src/game/mario_actions_airborne.c
++++ b/src/game/mario_actions_airborne.c
+@@ -14,6 +14,7 @@
+ #include "mario_step.h"
+ #include "save_file.h"
+ #include "thread6.h"
++#include "pc/cheats.h"
+ #ifdef BETTERCAMERA
+ #include "bettercamera.h"
+ #endif
+@@ -372,6 +373,19 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation,
+     stepResult = perform_air_step(m, stepArg);
+     switch (stepResult) {
+         case AIR_STEP_NONE:
++            // BLJ anywhere cheat
++            if (Cheats.BLJAnywhere > 0 && Cheats.EnableCheats == TRUE && m->action == ACT_LONG_JUMP && m->forwardVel < 1.0f && m->pos[1] - 50.0f < m->floorHeight) {
++                if (Cheats.BLJAnywhere < 7) {
++                    if (m->controller->buttonPressed & A_BUTTON) {
++                        m->forwardVel -= (Cheats.BLJAnywhere - 1) * 2.5f;
++                        m->vel[1] = -50.0f;
++                    }
++                }
++                else if (m->controller->buttonDown & A_BUTTON) {
++                    m->forwardVel -= (Cheats.BLJAnywhere - 7) * 2.5f;
++                    m->vel[1] = -50.0f;
++                }
++            }
+             set_mario_animation(m, animation);
+             break;
+ 
+diff --git a/src/game/mario_actions_moving.c b/src/game/mario_actions_moving.c
+index 0ccbccf..f3d3979 100644
+--- a/src/game/mario_actions_moving.c
++++ b/src/game/mario_actions_moving.c
+@@ -6,6 +6,7 @@
+ #include "engine/math_util.h"
+ #include "engine/surface_collision.h"
+ #include "mario_step.h"
++#include "game_init.h"
+ #include "area.h"
+ #include "interaction.h"
+ #include "mario_actions_object.h"
+@@ -1854,6 +1855,12 @@ s32 act_long_jump_land(struct MarioState *m) {
+     }
+ #endif
+     
++    // BLJ anywhere cheat
++    if (Cheats.BLJAnywhere >= 7 && Cheats.EnableCheats == TRUE && m->forwardVel < 1.0f && (m->controller->buttonDown & A_BUTTON)) {
++        set_jumping_action(m, ACT_LONG_JUMP, 0);
++        return FALSE;
++    }
++
+     if (!(m->input & INPUT_Z_DOWN)) {
+         m->input &= ~INPUT_A_PRESSED;
+     }
+diff --git a/src/game/mario_actions_submerged.c b/src/game/mario_actions_submerged.c
+index f03e4a9..b81c4c5 100644
+--- a/src/game/mario_actions_submerged.c
++++ b/src/game/mario_actions_submerged.c
+@@ -8,6 +8,7 @@
+ #include "save_file.h"
+ #include "sound_init.h"
+ #include "engine/surface_collision.h"
++#include "pc/cheats.h"
+ #include "interaction.h"
+ #include "mario.h"
+ #include "mario_step.h"
+@@ -19,6 +20,7 @@
+ 
+ #define MIN_SWIM_STRENGTH 160
+ #define MIN_SWIM_SPEED 16.0f
++#define SwiftSwim 42.0f
+ 
+ static s16 sWasAtSurface = FALSE;
+ static s16 sSwimStrength = MIN_SWIM_STRENGTH;
+@@ -243,10 +245,21 @@ static void update_swimming_speed(struct MarioState *m, f32 decelThreshold) {
+         m->forwardVel = maxSpeed;
+     }
+ 
+-    if (m->forwardVel > decelThreshold) {
++    if (m->forwardVel < SwiftSwim && Cheats.Swim == true && Cheats.EnableCheats == true) {
++        while (m->controller->buttonDown & A_BUTTON) {
++            m->forwardVel += 5.0f;
++            break;
++        }
++    }
++
++    if (m->forwardVel > decelThreshold && Cheats.Swim == false) {
+         m->forwardVel -= 0.5f;
+     }
+ 
++    if (m->forwardVel > SwiftSwim && Cheats.Swim == true) {
++        m->forwardVel -= 1.5f;
++    }
++
+     m->vel[0] = m->forwardVel * coss(m->faceAngle[0]) * sins(m->faceAngle[1]);
+     m->vel[1] = m->forwardVel * sins(m->faceAngle[0]) + buoyancy;
+     m->vel[2] = m->forwardVel * coss(m->faceAngle[0]) * coss(m->faceAngle[1]);
+diff --git a/src/game/options_menu.c b/src/game/options_menu.c
+index 56dba61..ce6624b 100644
+--- a/src/game/options_menu.c
++++ b/src/game/options_menu.c
+@@ -102,6 +102,16 @@ static const u8 optsCheatsStr[][64] = {
+     { TEXT_OPT_CHEAT7 },
+     { TEXT_OPT_CHEAT8 },
+     { TEXT_OPT_CHEAT9 },
++    { TEXT_OPT_SHELL },
++    { TEXT_OPT_BOB },
++    { TEXT_OPT_SPAMBA },
++    { TEXT_OPT_SWIM },
++    { TEXT_OPT_WING_CAP },
++    { TEXT_OPT_METAL_CAP },
++    { TEXT_OPT_VANISH_CAP },
++    { TEXT_OPT_REMOVE_CAP },
++    { TEXT_OPT_NORMAL_CAP },
++    { TEXT_OPT_BLJ },
+ };
+ 
+ static const u8 bindStr[][32] = {
+@@ -125,12 +135,80 @@ static const u8 bindStr[][32] = {
+     { TEXT_OPT_RUMBLE }
+ };
+ 
++static const u8 optsSpamCheatStr[][32] = {
++    { TEXT_OPT_SPAMCHT1 },
++    { TEXT_OPT_SPAMCHT2 },
++    { TEXT_OPT_SPAMCHT3 },
++    { TEXT_OPT_SPAMCHT4 },
++    { TEXT_OPT_SPAMCHT5 },
++    { TEXT_OPT_SPAMCHT6 },
++    { TEXT_OPT_SPAMCHT7 },
++    { TEXT_OPT_SPAMCHT8 },
++    { TEXT_OPT_SPAMCHT9 },
++    { TEXT_OPT_SPAMCHT10 },
++    { TEXT_OPT_SPAMCHT11 },
++    { TEXT_OPT_SPAMCHT12 },
++    { TEXT_OPT_SPAMCHT13 },
++    { TEXT_OPT_SPAMCHT14 },
++};
++
++static const u8 optsBLJCheatStr[][32] = {
++    { TEXT_OPT_BLJCHT1 },
++    { TEXT_OPT_BLJCHT2 },
++    { TEXT_OPT_BLJCHT3 },
++    { TEXT_OPT_BLJCHT4 },
++    { TEXT_OPT_BLJCHT5 },
++    { TEXT_OPT_BLJCHT6 },
++    { TEXT_OPT_BLJCHT7 },
++    { TEXT_OPT_BLJCHT8 },
++    { TEXT_OPT_BLJCHT9 },
++    { TEXT_OPT_BLJCHT10 },
++    { TEXT_OPT_BLJCHT11 },
++    { TEXT_OPT_BLJCHT12 },
++    { TEXT_OPT_BLJCHT13 },
++};
++
++
+ static const u8 *filterChoices[] = {
+     optsVideoStr[2],
+     optsVideoStr[3],
+     optsVideoStr[8],
+ };
+ 
++static const u8* SpamCheatChoices[] = {
++    optsSpamCheatStr[0],
++    optsSpamCheatStr[1],
++    optsSpamCheatStr[2],
++    optsSpamCheatStr[3],
++    optsSpamCheatStr[4],
++    optsSpamCheatStr[5],
++    optsSpamCheatStr[6],
++    optsSpamCheatStr[7],
++    optsSpamCheatStr[8],
++    optsSpamCheatStr[9],
++    optsSpamCheatStr[10],
++    optsSpamCheatStr[11],
++    optsSpamCheatStr[12],
++    optsSpamCheatStr[13],
++};
++
++static const u8* bljCheatChoices[] = {
++    optsBLJCheatStr[0],
++    optsBLJCheatStr[1],
++    optsBLJCheatStr[2],
++    optsBLJCheatStr[3],
++    optsBLJCheatStr[4],
++    optsBLJCheatStr[5],
++    optsBLJCheatStr[6],
++    optsBLJCheatStr[7],
++    optsBLJCheatStr[8],
++    optsBLJCheatStr[9],
++    optsBLJCheatStr[10],
++    optsBLJCheatStr[11],
++    optsBLJCheatStr[12],
++};
++
++
+ static const u8 *vsyncChoices[] = {
+     toggleStr[0],
+     toggleStr[1],
+@@ -215,6 +293,27 @@ static void optvideo_apply(UNUSED struct Option *self, s32 arg) {
+     if (!arg) configWindow.settings_changed = true;
+ }
+ 
++static void setCap_Wing(UNUSED struct Option *self, s32 arg) {
++    Cheats.WingCap = true;
++}
++static void setCap_Metal(UNUSED struct Option *self, s32 arg) {
++    Cheats.MetalCap = true;
++}
++static void setCap_Vanish(UNUSED struct Option *self, s32 arg) {
++    Cheats.VanishCap = true;
++}
++static void setCap_Remove(UNUSED struct Option *self, s32 arg) {
++    Cheats.RemoveCap = true;
++}
++static void setCap_Normal(UNUSED struct Option *self, s32 arg) {
++    Cheats.WingCap = false;
++    Cheats.MetalCap = false;
++    Cheats.VanishCap = false;
++    Cheats.RemoveCap = false;
++    Cheats.NormalCap = true;
++}
++
++
+ /* submenu option lists */
+ 
+ #ifdef BETTERCAMERA
+@@ -279,6 +378,16 @@ static struct Option optsCheats[] = {
+     DEF_OPT_TOGGLE( optsCheatsStr[6], &Cheats.ExitAnywhere ),
+     DEF_OPT_TOGGLE( optsCheatsStr[7], &Cheats.HugeMario ),
+     DEF_OPT_TOGGLE( optsCheatsStr[8], &Cheats.TinyMario ),
++    DEF_OPT_TOGGLE( optsCheatsStr[9], &Cheats.GetShell),
++    DEF_OPT_TOGGLE( optsCheatsStr[10], &Cheats.GetBob),
++    DEF_OPT_CHOICE( optsCheatsStr[11], &Cheats.Spamba, SpamCheatChoices),
++    DEF_OPT_TOGGLE( optsCheatsStr[12], &Cheats.Swim),
++    DEF_OPT_BUTTON( optsCheatsStr[13], setCap_Wing),
++    DEF_OPT_BUTTON( optsCheatsStr[14], setCap_Metal),
++    DEF_OPT_BUTTON( optsCheatsStr[15], setCap_Vanish),
++    DEF_OPT_BUTTON( optsCheatsStr[16], setCap_Remove),
++    DEF_OPT_BUTTON( optsCheatsStr[17], setCap_Normal),
++    DEF_OPT_CHOICE( optsCheatsStr[18], &Cheats.BLJAnywhere, bljCheatChoices),
+ 
+ };
+ 
+diff --git a/src/pc/cheats.h b/src/pc/cheats.h
+index eaf71ab..9bbe381 100644
+--- a/src/pc/cheats.h
++++ b/src/pc/cheats.h
+@@ -13,6 +13,16 @@ struct CheatList {
+     bool         ExitAnywhere;
+     bool         HugeMario;
+     bool         TinyMario;
++    bool         GetShell;
++    bool         GetBob;
++    unsigned int Spamba;
++    bool         Swim;
++    bool         WingCap;
++    bool         MetalCap;
++    bool         VanishCap;
++    bool         RemoveCap;
++    bool         NormalCap;
++    unsigned int BLJAnywhere;
+ };
+ 
+ extern struct CheatList Cheats;
