@@ -102,6 +102,16 @@ static const u8 optsCheatsStr[][64] = {
     { TEXT_OPT_CHEAT7 },
     { TEXT_OPT_CHEAT8 },
     { TEXT_OPT_CHEAT9 },
+    { TEXT_OPT_SHELL },
+    { TEXT_OPT_BOB },
+    { TEXT_OPT_SPAMBA },
+    { TEXT_OPT_SWIM },
+    { TEXT_OPT_WING_CAP },
+    { TEXT_OPT_METAL_CAP },
+    { TEXT_OPT_VANISH_CAP },
+    { TEXT_OPT_REMOVE_CAP },
+    { TEXT_OPT_NORMAL_CAP },
+    { TEXT_OPT_BLJ },
 };
 
 static const u8 bindStr[][32] = {
@@ -125,11 +135,79 @@ static const u8 bindStr[][32] = {
     { TEXT_OPT_RUMBLE }
 };
 
+static const u8 optsSpamCheatStr[][32] = {
+    { TEXT_OPT_SPAMCHT1 },
+    { TEXT_OPT_SPAMCHT2 },
+    { TEXT_OPT_SPAMCHT3 },
+    { TEXT_OPT_SPAMCHT4 },
+    { TEXT_OPT_SPAMCHT5 },
+    { TEXT_OPT_SPAMCHT6 },
+    { TEXT_OPT_SPAMCHT7 },
+    { TEXT_OPT_SPAMCHT8 },
+    { TEXT_OPT_SPAMCHT9 },
+    { TEXT_OPT_SPAMCHT10 },
+    { TEXT_OPT_SPAMCHT11 },
+    { TEXT_OPT_SPAMCHT12 },
+    { TEXT_OPT_SPAMCHT13 },
+    { TEXT_OPT_SPAMCHT14 },
+};
+
+static const u8 optsBLJCheatStr[][32] = {
+    { TEXT_OPT_BLJCHT1 },
+    { TEXT_OPT_BLJCHT2 },
+    { TEXT_OPT_BLJCHT3 },
+    { TEXT_OPT_BLJCHT4 },
+    { TEXT_OPT_BLJCHT5 },
+    { TEXT_OPT_BLJCHT6 },
+    { TEXT_OPT_BLJCHT7 },
+    { TEXT_OPT_BLJCHT8 },
+    { TEXT_OPT_BLJCHT9 },
+    { TEXT_OPT_BLJCHT10 },
+    { TEXT_OPT_BLJCHT11 },
+    { TEXT_OPT_BLJCHT12 },
+    { TEXT_OPT_BLJCHT13 },
+};
+
+
 static const u8 *filterChoices[] = {
     optsVideoStr[2],
     optsVideoStr[3],
     optsVideoStr[8],
 };
+
+static const u8* SpamCheatChoices[] = {
+    optsSpamCheatStr[0],
+    optsSpamCheatStr[1],
+    optsSpamCheatStr[2],
+    optsSpamCheatStr[3],
+    optsSpamCheatStr[4],
+    optsSpamCheatStr[5],
+    optsSpamCheatStr[6],
+    optsSpamCheatStr[7],
+    optsSpamCheatStr[8],
+    optsSpamCheatStr[9],
+    optsSpamCheatStr[10],
+    optsSpamCheatStr[11],
+    optsSpamCheatStr[12],
+    optsSpamCheatStr[13],
+};
+
+static const u8* bljCheatChoices[] = {
+    optsBLJCheatStr[0],
+    optsBLJCheatStr[1],
+    optsBLJCheatStr[2],
+    optsBLJCheatStr[3],
+    optsBLJCheatStr[4],
+    optsBLJCheatStr[5],
+    optsBLJCheatStr[6],
+    optsBLJCheatStr[7],
+    optsBLJCheatStr[8],
+    optsBLJCheatStr[9],
+    optsBLJCheatStr[10],
+    optsBLJCheatStr[11],
+    optsBLJCheatStr[12],
+};
+
 
 static const u8 *vsyncChoices[] = {
     toggleStr[0],
@@ -215,6 +293,27 @@ static void optvideo_apply(UNUSED struct Option *self, s32 arg) {
     if (!arg) configWindow.settings_changed = true;
 }
 
+static void setCap_Wing(UNUSED struct Option *self, s32 arg) {
+    Cheats.WingCap = true;
+}
+static void setCap_Metal(UNUSED struct Option *self, s32 arg) {
+    Cheats.MetalCap = true;
+}
+static void setCap_Vanish(UNUSED struct Option *self, s32 arg) {
+    Cheats.VanishCap = true;
+}
+static void setCap_Remove(UNUSED struct Option *self, s32 arg) {
+    Cheats.RemoveCap = true;
+}
+static void setCap_Normal(UNUSED struct Option *self, s32 arg) {
+    Cheats.WingCap = false;
+    Cheats.MetalCap = false;
+    Cheats.VanishCap = false;
+    Cheats.RemoveCap = false;
+    Cheats.NormalCap = true;
+}
+
+
 /* submenu option lists */
 
 #ifdef BETTERCAMERA
@@ -279,6 +378,16 @@ static struct Option optsCheats[] = {
     DEF_OPT_TOGGLE( optsCheatsStr[6], &Cheats.ExitAnywhere ),
     DEF_OPT_TOGGLE( optsCheatsStr[7], &Cheats.HugeMario ),
     DEF_OPT_TOGGLE( optsCheatsStr[8], &Cheats.TinyMario ),
+    DEF_OPT_TOGGLE( optsCheatsStr[9], &Cheats.GetShell),
+    DEF_OPT_TOGGLE( optsCheatsStr[10], &Cheats.GetBob),
+    DEF_OPT_CHOICE( optsCheatsStr[11], &Cheats.Spamba, SpamCheatChoices),
+    DEF_OPT_TOGGLE( optsCheatsStr[12], &Cheats.Swim),
+    DEF_OPT_BUTTON( optsCheatsStr[13], setCap_Wing),
+    DEF_OPT_BUTTON( optsCheatsStr[14], setCap_Metal),
+    DEF_OPT_BUTTON( optsCheatsStr[15], setCap_Vanish),
+    DEF_OPT_BUTTON( optsCheatsStr[16], setCap_Remove),
+    DEF_OPT_BUTTON( optsCheatsStr[17], setCap_Normal),
+    DEF_OPT_CHOICE( optsCheatsStr[18], &Cheats.BLJAnywhere, bljCheatChoices),
 
 };
 

@@ -8,6 +8,7 @@
 #include "save_file.h"
 #include "sound_init.h"
 #include "engine/surface_collision.h"
+#include "pc/cheats.h"
 #include "interaction.h"
 #include "mario.h"
 #include "mario_step.h"
@@ -19,6 +20,7 @@
 
 #define MIN_SWIM_STRENGTH 160
 #define MIN_SWIM_SPEED 16.0f
+#define SwiftSwim 42.0f
 
 static s16 sWasAtSurface = FALSE;
 static s16 sSwimStrength = MIN_SWIM_STRENGTH;
@@ -243,8 +245,19 @@ static void update_swimming_speed(struct MarioState *m, f32 decelThreshold) {
         m->forwardVel = maxSpeed;
     }
 
-    if (m->forwardVel > decelThreshold) {
+    if (m->forwardVel < SwiftSwim && Cheats.Swim == true && Cheats.EnableCheats == true) {
+        while (m->controller->buttonDown & A_BUTTON) {
+            m->forwardVel += 5.0f;
+            break;
+        }
+    }
+
+    if (m->forwardVel > decelThreshold && Cheats.Swim == false) {
         m->forwardVel -= 0.5f;
+    }
+
+    if (m->forwardVel > SwiftSwim && Cheats.Swim == true) {
+        m->forwardVel -= 1.5f;
     }
 
     m->vel[0] = m->forwardVel * coss(m->faceAngle[0]) * sins(m->faceAngle[1]);
