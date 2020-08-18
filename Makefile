@@ -63,6 +63,7 @@ AUDIO_API ?= SDL2
 # Controller backends (can have multiple, space separated): SDL2
 CONTROLLER_API ?= SDL2
 
+LEGACY_RES ?= 0
 BASEDIR ?= res
 
 # Automatic settings for PC port(s)
@@ -690,7 +691,7 @@ $(BASEPACK_LST): $(EXE)
 
 # prepares the resource ZIP with base data
 $(BASEPACK_PATH): $(BASEPACK_LST)
-	@$(PYTHON) $(TOOLS_DIR)/mkzip.py $(BASEPACK_LST) $(BASEPACK_PATH)
+	@$(PYTHON) $(TOOLS_DIR)/mkzip.py $(BASEPACK_LST) $(BASEPACK_PATH) $(LEGACY_RES)
 
 clean:
 	$(RM) -r $(BUILD_DIR_BASE)

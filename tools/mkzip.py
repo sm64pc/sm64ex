@@ -37,22 +37,9 @@ with open(sys.argv[1], 'r') as f:
             else:
                 print("Skipping: " + path + " - MD5: "+md5(fname))
     else:
-        regenZip = False
-        zipPath = os.path.join(sys.argv[2],"legacy.zip")
+        zipPath = os.path.join(sys.argv[2], "awesome-legacy.zip")
         print("Using Legacy System")
-        if os.path.exists(zipPath):
-            with zipfile.ZipFile(zipPath, 'w', allowZip64=False) as zipf:
-                for(zinfo) in zipf.infolist():
-                    with zipf.open(zinfo) as tmp:
-                        print("Pre Loaded: "+md5(tmp.read()))
-                        if md5(fname) != md5(tmp.read()):
-                            print("Found a change on the zip, regenerating")
-                            regenZip = True
-                            break
-        else:
-            regenZip = True
-        if regenZip:
-            with zipfile.ZipFile(zipPath, 'w', allowZip64=False) as zipf:
-                for (fname, aname) in lst:
-                    zipf.write(fname, arcname=aname)
-                    print("Copying: " + aname)
+        with zipfile.ZipFile(zipPath, 'w', allowZip64=False) as zipf:
+            for (fname, aname) in lst:
+                zipf.write(fname, arcname=aname)
+                print("Legacy - Copying: " + aname)
