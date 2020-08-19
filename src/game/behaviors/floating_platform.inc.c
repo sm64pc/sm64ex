@@ -17,12 +17,27 @@ f32 floating_platform_find_home_y(void) {
 }
 
 void floating_platform_act_0(void) {
-    s16 sp6 = (gMarioObject->header.gfx.pos[0] - o->oPosX) * coss(-1*o->oMoveAngleYaw)
-              + (gMarioObject->header.gfx.pos[2] - o->oPosZ) * sins(-1*o->oMoveAngleYaw);
-    s16 sp4 = (gMarioObject->header.gfx.pos[2] - o->oPosZ) * coss(-1*o->oMoveAngleYaw)
-              - (gMarioObject->header.gfx.pos[0] - o->oPosX) * sins(-1*o->oMoveAngleYaw);
 
-    if (gMarioObject->platform == o) {
+    f32 x = 0;
+    f32 z = 0;
+    u8 playersTouched = 0;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (gMarioStates[i].marioObj->platform == o) {
+            x += gMarioStates[i].marioObj->oPosX;
+            z += gMarioStates[i].marioObj->oPosZ;
+            playersTouched++;
+        }
+    }
+
+    if (playersTouched > 0) {
+        x /= (f32)playersTouched;
+        z /= (f32)playersTouched;
+
+        s16 sp6 = (x - o->oPosX) * coss(-1*o->oMoveAngleYaw)
+                  + (z - o->oPosZ) * sins(-1*o->oMoveAngleYaw);
+        s16 sp4 = (z - o->oPosZ) * coss(-1*o->oMoveAngleYaw)
+                  - (x - o->oPosX) * sins(-1*o->oMoveAngleYaw);
+
         o->oFaceAnglePitch = sp4 * 2;
         o->oFaceAngleRoll = -sp6 * 2;
         o->oVelY -= 1.0f;
