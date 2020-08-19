@@ -29,10 +29,30 @@ void bhv_unagi_init(void) {
     }
 
     o->oPathedPrevWaypoint = o->oPathedStartWaypoint;
+
+    network_init_object(o, 4000.0f);
+    network_init_object_field(o, &o->oFaceAnglePitch);
+    network_init_object_field(o, &o->oFaceAngleRoll);
+    network_init_object_field(o, &o->oFaceAngleYaw);
+    network_init_object_field(o, &o->oForwardVel);
+    network_init_object_field(o, &o->oMoveAnglePitch);
+    network_init_object_field(o, &o->oPathedPrevWaypoint);
+    network_init_object_field(o, &o->oPathedPrevWaypointFlags);
+    network_init_object_field(o, &o->oPathedTargetPitch);
+    network_init_object_field(o, &o->oPathedTargetYaw);
+    network_init_object_field(o, &o->oSoundStateID);
+    network_init_object_field(o, &o->oUnagiUnk110);
+    network_init_object_field(o, &o->oUnagiUnk1AC);
+    network_init_object_field(o, &o->oUnagiUnkF4);
+    network_init_object_field(o, &o->oUnagiUnkF8);
+    network_init_object_field(o, &o->oVelX);
+    network_init_object_field(o, &o->oVelZ);
 }
 
 void unagi_act_0(void) {
-    if (o->oDistanceToMario > 4500.0f && o->oSubAction != 0) {
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    if (distanceToPlayer > 4500.0f && o->oSubAction != 0) {
         o->oAction = 1;
         o->oPosX = o->oPathedStartWaypoint->pos[0];
         o->oPosY = o->oPathedStartWaypoint->pos[1];
@@ -142,15 +162,18 @@ void unagi_act_3(void) {
 void bhv_unagi_loop(void) {
     s32 val04;
 
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+
     if (o->oUnagiUnk1B2 == 0) {
         o->oUnagiUnk1AC = 99999.0f;
-        if (o->oDistanceToMario < 3000.0f) {
+        if (distanceToPlayer < 3000.0f) {
             for (val04 = -4; val04 < 4; val04++) {
                 spawn_object_relative(val04, 0, 0, 0, o, MODEL_NONE, bhvUnagiSubobject);
             }
             o->oUnagiUnk1B2 = 1;
         }
-    } else if (o->oDistanceToMario > 4000.0f) {
+    } else if (distanceToPlayer > 4000.0f) {
         o->oUnagiUnk1B2 = 0;
     }
 
@@ -175,6 +198,9 @@ void bhv_unagi_loop(void) {
 void bhv_unagi_subobject_loop(void) {
     f32 val04;
 
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+
     if (o->parentObj->oUnagiUnk1B2 == 0) {
         obj_mark_for_deletion(o);
     } else {
@@ -188,7 +214,7 @@ void bhv_unagi_subobject_loop(void) {
         o->oPosZ = o->parentObj->oPosZ + val04 * coss(o->parentObj->oFaceAngleYaw);
 
         if (o->oBehParams2ndByte == -4) {
-            if (o->parentObj->oAnimState != 0 && o->oDistanceToMario < 150.0f) {
+            if (o->parentObj->oAnimState != 0 && distanceToPlayer < 150.0f) {
                 o->oBehParams = o->parentObj->oBehParams;
                 spawn_default_star(6833.0f, -3654.0f, 2230.0f);
                 o->parentObj->oAnimState = 0;
@@ -196,7 +222,7 @@ void bhv_unagi_subobject_loop(void) {
         } else {
             obj_check_attacks(&sUnagiHitbox, o->oAction);
             if (o->oBehParams2ndByte == 3) {
-                o->parentObj->oUnagiUnk1AC = o->oDistanceToMario;
+                o->parentObj->oUnagiUnk1AC = distanceToPlayer;
             }
         }
     }
