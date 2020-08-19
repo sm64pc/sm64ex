@@ -21,6 +21,14 @@ void bhv_sunken_ship_part_loop(void) {
 }
 
 void bhv_ship_part_3_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, 4000.0f);
+        network_object_settings(o, FALSE, 5.0f, TRUE, NULL);
+        network_init_object_field(o, &o->oFaceAnglePitch);
+        network_init_object_field(o, &o->oFaceAngleRoll);
+        network_init_object_field(o, &o->oShipPart3UnkF4);
+    }
+
     s16 sp1E = o->oFaceAnglePitch;
     s16 sp1C = o->oFaceAngleRoll;
     cur_obj_set_pos_to_home_with_debug();
@@ -34,6 +42,18 @@ void bhv_ship_part_3_loop(void) {
 }
 
 void bhv_jrb_sliding_box_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, 4000.0f);
+        network_object_settings(o, FALSE, 5.0f, TRUE, NULL);
+        network_init_object_field(o, &o->oFaceAnglePitch);
+        network_init_object_field(o, &o->oFaceAngleRoll);
+        network_init_object_field(o, &o->oJrbSlidingBoxUnkF8);
+        network_init_object_field(o, &o->oJrbSlidingBoxUnkFC);
+        network_init_object_field(o, &o->oParentRelativePosX);
+        network_init_object_field(o, &o->oParentRelativePosY);
+        network_init_object_field(o, &o->oParentRelativePosZ);
+    }
+
     Mat4 sp60;
     Vec3f sp54;
     Vec3f sp48;
