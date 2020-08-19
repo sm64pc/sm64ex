@@ -60,19 +60,54 @@ void bhv_treasure_chest_top_loop(void) {
 void bhv_treasure_chest_bottom_init(void) {
     spawn_object_relative(0, 0, 102, -77, o, MODEL_TREASURE_CHEST_LID, bhvTreasureChestTop);
     obj_set_hitbox(o, &sTreasureChestBottomHitbox);
+
+    network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+    network_init_object_field(o, &o->oTreasureChestOpen);
+    network_init_object_field(o, &o->oAction);
+}
+
+void bhv_treasure_chest_force_open(void) {
+    if (o->oTreasureChestOpen == 1 && o->oAction != 1) {
+        play_sound(SOUND_GENERAL2_RIGHT_ANSWER, gDefaultSoundArgs);
+        o->parentObj->oTreasureChestUnkF4++;
+        o->oAction = 1;
+    }
+
+    if (o->oTreasureChestOpen == 2 && o->oAction != 2) {
+        o->parentObj->oTreasureChestUnkF4 = 1;
+        o->parentObj->oTreasureChestUnkF8 = 1;
+        o->oAction = 2;
+        cur_obj_become_tangible();
+        play_sound(SOUND_MENU_CAMERA_BUZZ, gDefaultSoundArgs);
+    }
+    o->oTreasureChestOpen = 0;
 }
 
 void bhv_treasure_chest_bottom_loop(void) {
+    if (o->oTreasureChestOpen != 0) {
+        bhv_treasure_chest_force_open();
+    }
+
     switch (o->oAction) {
         case 0:
-            if (obj_check_if_facing_toward_angle(o->oMoveAngleYaw, gMarioObject->header.gfx.angle[1] + 0x8000, 0x3000)) {
+            if (obj_check_if_facing_toward_angle(o->oMoveAngleYaw, gMarioStates[0].marioObj->header.gfx.angle[1] + 0x8000, 0x3000)) {
                 if (is_point_within_radius_of_mario(o->oPosX, o->oPosY, o->oPosZ, 150)) {
                     if (!o->parentObj->oTreasureChestUnkF8) {
                         if (o->parentObj->oTreasureChestUnkF4 == o->oBehParams2ndByte) {
+                            if (o->oTreasureChestOpen != 1 && network_owns_object(o)) {
+                                o->oTreasureChestOpen = 1;
+                                network_send_object(o);
+                            }
+                            o->oTreasureChestOpen = 0;
                             play_sound(SOUND_GENERAL2_RIGHT_ANSWER, gDefaultSoundArgs);
                             o->parentObj->oTreasureChestUnkF4++;
                             o->oAction = 1;
                         } else {
+                            if (o->oTreasureChestOpen != 2 && network_owns_object(o)) {
+                                o->oTreasureChestOpen = 2;
+                                network_send_object(o);
+                            }
+                            o->oTreasureChestOpen = 0;
                             o->parentObj->oTreasureChestUnkF4 = 1;
                             o->parentObj->oTreasureChestUnkF8 = 1;
                             o->oAction = 2;
@@ -85,11 +120,13 @@ void bhv_treasure_chest_bottom_loop(void) {
             break;
 
         case 1:
+            o->oTreasureChestOpen = 0;
             if (o->parentObj->oTreasureChestUnkF8 == 1)
                 o->oAction = 0;
             break;
 
         case 2:
+            o->oTreasureChestOpen = 0;
             cur_obj_become_intangible();
             if (!is_point_within_radius_of_mario(o->oPosX, o->oPosY, o->oPosZ, 500)) {
                 o->parentObj->oTreasureChestUnkF8 = 0;

@@ -1033,6 +1033,7 @@
 #define /*0x0F4*/ oTreasureChestUnkF4 OBJECT_FIELD_S32(0x1B)
 #define /*0x0F8*/ oTreasureChestUnkF8 OBJECT_FIELD_S32(0x1C)
 #define /*0x0FC*/ oTreasureChestUnkFC OBJECT_FIELD_S32(0x1D)
+#define /*0x100*/ oTreasureChestOpen  OBJECT_FIELD_S32(0x1E)
 
 /* Tree Snow Or Leaf */
 #define /*0x0F4*/ oTreeSnowOrLeafUnkF4 OBJECT_FIELD_S32(0x1B)
