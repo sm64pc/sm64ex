@@ -56,7 +56,10 @@ void network_receive_player(struct Packet* p) {
     if (heldSyncID != NULL && syncObjects[heldSyncID].o != NULL) {
         // TODO: do we have to move graphics nodes around to make this visible?
         gMarioStates[1].heldObj = syncObjects[heldSyncID].o;
-        gMarioStates[1].heldObj->heldByPlayerIndex = 1;
+        if (gMarioStates[1].heldObj != NULL) {
+            gMarioStates[1].heldObj->oHeldState = HELD_HELD;
+            gMarioStates[1].heldObj->heldByPlayerIndex = 1;
+        }
     } else {
         gMarioStates[1].heldObj = NULL;
     }

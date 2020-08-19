@@ -88,6 +88,7 @@ void bhv_koopa_shell_loop(void) {
                 koopa_shell_spawn_sparkles(10.0f);
             o->oFaceAngleYaw = player->oMoveAngleYaw;
             if (o->oInteractStatus & INT_STATUS_STOP_RIDING) {
+                o->heldByPlayerIndex = 0;
                 obj_mark_for_deletion(o);
                 spawn_mist_particles();
                 o->oAction = 0;

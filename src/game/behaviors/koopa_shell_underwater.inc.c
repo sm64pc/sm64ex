@@ -17,6 +17,9 @@ void set_koopa_shell_underwater_hitbox(void) {
 }
 
 void bhv_koopa_shell_underwater_loop(void) {
+    if (o->oSyncID == 0) {
+        network_init_object(o, 500.0f);
+    }
     switch (o->oHeldState) {
         case HELD_FREE:
             set_koopa_shell_underwater_hitbox();
@@ -26,6 +29,7 @@ void bhv_koopa_shell_underwater_loop(void) {
             break;
         case HELD_THROWN:
         case HELD_DROPPED:
+            o->heldByPlayerIndex = 0;
             obj_mark_for_deletion(o);
             spawn_mist_particles();
             break;
