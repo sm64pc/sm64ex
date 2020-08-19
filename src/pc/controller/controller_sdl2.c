@@ -20,6 +20,7 @@
 
 #include "game/level_update.h"
 
+
 // mouse buttons are also in the controller namespace (why), just offset 0x100
 #define VK_OFS_SDL_MOUSE 0x0100
 #define VK_BASE_SDL_MOUSE (VK_BASE_SDL_GAMEPAD + VK_OFS_SDL_MOUSE)
@@ -33,6 +34,7 @@ int mouse_y;
 
 #ifdef BETTERCAMERA
 extern u8 newcam_mouse;
+extern s8 sSelectedFileNum;
 #endif
 
 static bool init_ok;
@@ -152,13 +154,16 @@ static void controller_sdl_read(OSContPad *pad) {
     }
 
 #ifdef BETTERCAMERA
-    if (newcam_mouse == 1 && sCurrPlayMode != 2)
+    u32 mouse;
+    if (newcam_mouse == 1 && sCurrPlayMode != 2 && sSelectedFileNum !=0){
         SDL_SetRelativeMouseMode(SDL_TRUE);
-    else
+         mouse = SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
+    }    
+    else{
         SDL_SetRelativeMouseMode(SDL_FALSE);
-    
-    u32 mouse = SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
-
+        mouse = SDL_GetMouseState(&mouse_x, &mouse_y);
+    }
+   
     for (u32 i = 0; i < num_mouse_binds; ++i)
         if (mouse & SDL_BUTTON(mouse_binds[i][0]))
             pad->button |= mouse_binds[i][1];
