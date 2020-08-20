@@ -30,7 +30,6 @@
 #include "course_table.h"
 #include "thread6.h"
 #include "../../include/libc/stdlib.h"
-#include "print.h"
 
 #include "pc/pc_main.h"
 #include "pc/cliopts.h"
