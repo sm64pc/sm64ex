@@ -45,11 +45,7 @@ s8 gLevelToCourseNumTable[] = {
 STATIC_ASSERT(ARRAY_COUNT(gLevelToCourseNumTable) == LEVEL_COUNT - 1,
               "change this array if you are adding levels");
 
-#ifdef TEXTSAVES
-
 #include "text_save.inc.h"
-
-#endif
 
 // This was probably used to set progress to 100% for debugging, but
 // it was removed from the release ROM.
@@ -345,31 +341,12 @@ void save_file_do_save(s32 fileIndex) {
     if (fileIndex < 0 || fileIndex >= NUM_SAVE_FILES)
         return;
 
-    if (gSaveFileModified)
-#ifdef TEXTSAVES
-    {
+    if (gSaveFileModified) {
         // Write to text file
         write_text_save(fileIndex);
         gSaveFileModified = FALSE;
         gMainMenuDataModified = FALSE;
     }
-#else 
-    {
-        // Compute checksum
-        add_save_block_signature(&gSaveBuffer.files[fileIndex][0],
-                                 sizeof(gSaveBuffer.files[fileIndex][0]), SAVE_FILE_MAGIC);
-
-        // Copy to backup slot
-        bcopy(&gSaveBuffer.files[fileIndex][0], &gSaveBuffer.files[fileIndex][1],
-              sizeof(gSaveBuffer.files[fileIndex][1]));
-
-        // Write to EEPROM
-        write_eeprom_savefile(fileIndex, 0, 2);
-        
-        gSaveFileModified = FALSE;
-    }
-    save_main_menu_data();
-#endif
 }
 
 void save_file_erase(s32 fileIndex) {
@@ -404,51 +381,11 @@ void save_file_load_all(void) {
 
     bzero(&gSaveBuffer, sizeof(gSaveBuffer));
 
-#ifdef TEXTSAVES
     for (file = 0; file < NUM_SAVE_FILES; file++) {
         read_text_save(file);
     }
     gSaveFileModified = TRUE;
     gMainMenuDataModified = TRUE;
-#else
-    s32 validSlots;
-    read_eeprom_data(&gSaveBuffer, sizeof(gSaveBuffer));
-
-    if (save_file_need_bswap(&gSaveBuffer))
-        save_file_bswap(&gSaveBuffer);
-
-    // Verify the main menu data and create a backup copy if only one of the slots is valid.
-    validSlots = verify_save_block_signature(&gSaveBuffer.menuData[0], sizeof(gSaveBuffer.menuData[0]), MENU_DATA_MAGIC);
-    validSlots |= verify_save_block_signature(&gSaveBuffer.menuData[1], sizeof(gSaveBuffer.menuData[1]),MENU_DATA_MAGIC) << 1;
-    switch (validSlots) {
-        case 0: // Neither copy is correct
-            wipe_main_menu_data();
-            break;
-        case 1: // Slot 0 is correct and slot 1 is incorrect
-            restore_main_menu_data(0);
-            break;
-        case 2: // Slot 1 is correct and slot 0 is incorrect
-            restore_main_menu_data(1);
-            break;
-    }
-
-    for (file = 0; file < NUM_SAVE_FILES; file++) {
-        // Verify the save file and create a backup copy if only one of the slots is valid.
-        validSlots = verify_save_block_signature(&gSaveBuffer.files[file][0], sizeof(gSaveBuffer.files[file][0]), SAVE_FILE_MAGIC);
-        validSlots |= verify_save_block_signature(&gSaveBuffer.files[file][1], sizeof(gSaveBuffer.files[file][1]), SAVE_FILE_MAGIC) << 1;
-        switch (validSlots) {
-            case 0: // Neither copy is correct
-                save_file_erase(file);
-                break;
-            case 1: // Slot 0 is correct and slot 1 is incorrect
-                restore_save_file_data(file, 0);
-                break;
-            case 2: // Slot 1 is correct and slot 0 is incorrect
-                restore_save_file_data(file, 1);
-                break;
-        }
-    }
-#endif // TEXTSAVES
     stub_save_file_1();
 }
 
