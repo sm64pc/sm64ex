@@ -604,6 +604,46 @@ void optmenu_check_buttons(void) {
             #endif
             optmenu_opt_change(&currentMenu->opts[currentMenu->select], 0);
         }
+     } else if (gPlayer1Controller->buttonPressed & D_CBUTTONS) {
+        if (allowInput) {
+            #ifndef nosound
+            play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
+            #endif
+	    currentMenu->select++;
+            if (currentMenu->select >= currentMenu->numOpts) 
+                currentMenu->select = 0;
+            if (currentMenu->select < currentMenu->scroll)
+                currentMenu->scroll = currentMenu->select;
+            else if (currentMenu->select > currentMenu->scroll + 3)
+                currentMenu->scroll = currentMenu->select - 3;
+        }
+   } else if (gPlayer1Controller->buttonPressed & U_CBUTTONS) {
+        if (allowInput) {
+            #ifndef nosound
+            play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
+            #endif
+	    currentMenu->select--;
+            if (currentMenu->select < 0)
+                currentMenu->select = currentMenu->numOpts-1;
+            if (currentMenu->select < currentMenu->scroll)
+                currentMenu->scroll = currentMenu->select;
+            else if (currentMenu->select > currentMenu->scroll + 3)
+                currentMenu->scroll = currentMenu->select - 3;
+        }
+    } else if (gPlayer1Controller->buttonPressed & R_CBUTTONS) {
+        if (allowInput) {
+            #ifndef nosound
+            play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
+            #endif
+	    optmenu_opt_change(&currentMenu->opts[currentMenu->select], 1);
+        }
+    } else if (gPlayer1Controller->buttonPressed & L_CBUTTONS) {
+        if (allowInput) {
+            #ifndef nosound
+            play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
+            #endif
+	    optmenu_opt_change(&currentMenu->opts[currentMenu->select], -1);
+	}
     } else if (gPlayer1Controller->buttonPressed & B_BUTTON) {
         if (allowInput) {
             if (currentMenu->prev) {
