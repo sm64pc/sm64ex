@@ -26,7 +26,7 @@
 #else
 # define FRAMERATE 30
 #endif
-
+bool focus_Lost = FALSE;
 static int inverted_scancode_table[512];
 
 static kb_callback_t kb_key_down = NULL;
@@ -202,6 +202,11 @@ static void gfx_sdl_onkeyup(int scancode) {
 static void gfx_sdl_handle_events(void) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
+        if (event.type.event = SDL_WINDOWEVENT_FOCUS_LOST)
+        {
+            focus_Lost = TRUE;
+        }
+        
         switch (event.type) {
 #ifndef TARGET_WEB
             // Scancodes are broken in Emscripten SDL2: https://bugzilla.libsdl.org/show_bug.cgi?id=3259
@@ -222,6 +227,7 @@ static void gfx_sdl_handle_events(void) {
             case SDL_QUIT:
                 game_exit();
                 break;
+            
         }
     }
 }

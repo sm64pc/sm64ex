@@ -30,6 +30,7 @@
 #include "course_table.h"
 #include "thread6.h"
 #include "../../include/libc/stdlib.h"
+#include "print.h"
 
 #include "pc/pc_main.h"
 #include "pc/cliopts.h"
@@ -154,7 +155,7 @@ struct CreditsEntry sCreditsSequence[] = {
     { LEVEL_CASTLE_GROUNDS, 1, 1, -128, { 0, 906, -1200 }, NULL },
     { LEVEL_NONE, 0, 1, 0, { 0, 0, 0 }, NULL },
 };
-
+extern bool focus_Lost;
 struct MarioState gMarioStates[1];
 struct HudDisplay gHudDisplay;
 s16 sCurrPlayMode;
@@ -961,6 +962,7 @@ void basic_update(UNUSED s16 *arg) {
 int gPressedStart = 0;
 
 s32 play_mode_normal(void) {
+    
     if (gCurrDemoInput != NULL) {
         print_intro_text();
         if (gPlayer1Controller->buttonPressed & END_DEMO) {
@@ -997,11 +999,12 @@ s32 play_mode_normal(void) {
             set_play_mode(PLAY_MODE_CHANGE_LEVEL);
         } else if (sTransitionTimer != 0) {
             set_play_mode(PLAY_MODE_CHANGE_AREA);
-        } else if (pressed_pause()) {
+        } else if (pressed_pause() || focus_Lost) {
             lower_background_noise(1);
             cancel_rumble();
             gCameraMovementFlags |= CAM_MOVE_PAUSE_SCREEN;
             set_play_mode(PLAY_MODE_PAUSED);
+            focus_Lost = FALSE;
         }
     }
 
