@@ -481,6 +481,8 @@ void warp_level(void) {
 
     load_area(sWarpDest.areaIdx);
     init_mario_after_warp();
+    level_control_timer(TIMER_CONTROL_SHOW);
+    level_control_timer(TIMER_CONTROL_START);
 }
 
 void warp_credits(void) {
@@ -1315,9 +1317,18 @@ s32 lvl_set_current_level(UNUSED s16 arg0, s32 levelNum) {
         return 0;
     }
 
+    if(levelResetActNum){
+        return 0;
+    }
+
     return 1;
 }
 
+s32 resetLevelAct(UNUSED s16 arg0){
+    s32 returnVal = levelResetActNum;
+levelResetActNum = 0;
+    return returnVal;
+}
 /**
  * Play the "thank you so much for to playing my game" sound.
  */

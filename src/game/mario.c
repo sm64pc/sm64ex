@@ -38,6 +38,7 @@
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif
+int levelResetActNum = 0;
 
 u32 unused80339F10;
 s8 filler80339F1C[20];
@@ -1414,6 +1415,12 @@ void update_mario_inputs(struct MarioState *m) {
 
     debug_print_speed_action_normal(m);
     
+    if(m->controller->buttonDown& L_TRIG && m->controller->buttonPressed & R_TRIG){
+        sWarpDest.levelNum = gCurrLevelNum;
+        sWarpDest.areaIdx =  m->area->index;
+        levelResetActNum = gCurrActNum;
+        sWarpDest.type = 1;
+    }
     /* Moonjump cheat */
     while (Cheats.MoonJump == true && Cheats.EnableCheats == true && m->controller->buttonDown & L_TRIG ){
         m->vel[1] = 25;

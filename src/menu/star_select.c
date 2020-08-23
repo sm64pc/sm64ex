@@ -52,6 +52,8 @@ static s8 sSelectableStarIndex = 0;
 // Act Selector menu timer that keeps counting until you choose an act.
 static s32 sActSelectorMenuTimer = 0;
 
+extern int levelResetActNum;
+
 /**
  * Act Selector Star Type Loop Action
  * Defines a select type for a star in the act selector.
@@ -389,20 +391,20 @@ Gfx *geo_act_selector_strings(s16 callContext, UNUSED struct GraphNode *node) {
  */
 s32 lvl_init_act_selector_values_and_stars(UNUSED s32 arg, UNUSED s32 unused) {
     u8 stars = save_file_get_star_flags(gCurrSaveFileNum - 1, gCurrCourseNum - 1);
+                sLoadedActNum = 0;
 
-    sLoadedActNum = 0;
     sInitSelectedActNum = 0;
     sVisibleStars = 0;
     sActSelectorMenuTimer = 0;
     sSelectedActIndex = 0;
     sSelectableStarIndex = 0;
     sObtainedStars = save_file_get_course_star_count(gCurrSaveFileNum - 1, gCurrCourseNum - 1);
-
+    
     // Don't count 100 coin star
     if (stars & (1 << 6)) {
         sObtainedStars--;
     }
-
+  
     //! no return value
 #ifdef AVOID_UB
     return 0;
