@@ -17,6 +17,11 @@
 #include "level_table.h"
 #include "thread6.h"
 
+#ifdef BETTERCAMERA
+    #include "pc\controller\controller_mouse.h"
+    extern u8 newcam_mouse;
+#endif
+
 #define POLE_NONE 0
 #define POLE_TOUCHED_FLOOR 1
 #define POLE_FELL_OFF 2
@@ -24,6 +29,8 @@
 #define HANG_NONE 0
 #define HANG_HIT_CEIL_OR_OOB 1
 #define HANG_LEFT_CEIL 2
+
+
 
 void add_tree_leaf_particles(struct MarioState *m) {
     f32 leafHeight;
@@ -703,6 +710,12 @@ s32 act_in_cannon(struct MarioState *m) {
         case 2:
             m->faceAngle[0] -= (s16)(m->controller->stickY * 10.0f);
             marioObj->oMarioCannonInputYaw -= (s16)(m->controller->stickX * 10.0f);
+#ifdef BETTERCAMERA
+            if (newcam_mouse) {
+                m->faceAngle[0] -= (s16)(mouse_y * 10.0f);
+                marioObj->oMarioCannonInputYaw -= (s16)(mouse_x * 10.0f);
+            }
+#endif
 
             if (m->faceAngle[0] > 0x38E3) {
                 m->faceAngle[0] = 0x38E3;
