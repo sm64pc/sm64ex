@@ -4,7 +4,7 @@
 #include "types.h"
 
 struct Character{
-    char * txt;
+    char txt[3];
     s32 value;
 };
 
