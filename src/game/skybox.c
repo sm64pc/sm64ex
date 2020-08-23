@@ -60,30 +60,17 @@ struct Skybox {
 
 struct Skybox sSkyBoxInfo[2];
 
-typedef const u8 *const SkyboxTexture[80];
-
-extern SkyboxTexture bbh_skybox_ptrlist;
-extern SkyboxTexture bidw_skybox_ptrlist;
-extern SkyboxTexture bitfs_skybox_ptrlist;
-extern SkyboxTexture bits_skybox_ptrlist;
-extern SkyboxTexture ccm_skybox_ptrlist;
-extern SkyboxTexture cloud_floor_skybox_ptrlist;
-extern SkyboxTexture clouds_skybox_ptrlist;
-extern SkyboxTexture ssl_skybox_ptrlist;
-extern SkyboxTexture water_skybox_ptrlist;
-extern SkyboxTexture wdw_skybox_ptrlist;
-
-SkyboxTexture *sSkyboxTextures[10] = {
-    &water_skybox_ptrlist,
-    &bitfs_skybox_ptrlist,
-    &wdw_skybox_ptrlist,
-    &cloud_floor_skybox_ptrlist,
-    &ccm_skybox_ptrlist,
-    &ssl_skybox_ptrlist,
-    &bbh_skybox_ptrlist,
-    &bidw_skybox_ptrlist,
-    &clouds_skybox_ptrlist,
-    &bits_skybox_ptrlist,
+char * sSkyboxTextures[10] = {
+    "textures/skyboxes/water",
+    "textures/skyboxes/bitfs",
+    "textures/skyboxes/wdw",
+    "textures/skyboxes/cloud_floor",
+    "textures/skyboxes/ccm",
+    "textures/skyboxes/ssl",
+    "textures/skyboxes/bbh",
+    "textures/skyboxes/bidw",
+    "textures/skyboxes/clouds",
+    "textures/skyboxes/bits",
 };
 
 /**
@@ -98,31 +85,31 @@ u8 sSkyboxColors[][3] = {
 /**
  * Constant used to scale the skybox horizontally to a multiple of the screen's width
  */
-#define SKYBOX_WIDTH (4 * SCREEN_WIDTH)
+#define SKYBOX_WIDTH (2 * SCREEN_WIDTH)
 /**
  * Constant used to scale the skybox vertically to a multiple of the screen's height
  */
-#define SKYBOX_HEIGHT (4 * SCREEN_HEIGHT)
+#define SKYBOX_HEIGHT (2 * SCREEN_HEIGHT)
 
 /**
  * The tile's width in world space.
  * By default, two full tiles can fit in the screen.
  */
-#define SKYBOX_TILE_WIDTH (SCREEN_WIDTH / 2)
+#define SKYBOX_TILE_WIDTH SKYBOX_WIDTH
 /**
  * The tile's height in world space.
  * By default, two full tiles can fit in the screen.
  */
-#define SKYBOX_TILE_HEIGHT (SCREEN_HEIGHT / 2)
+#define SKYBOX_TILE_HEIGHT SKYBOX_HEIGHT
 
 /**
  * The horizontal length of the skybox tilemap in tiles.
  */
-#define SKYBOX_COLS (10)
+#define SKYBOX_COLS 1
 /**
  * The vertical length of the skybox tilemap in tiles.
  */
-#define SKYBOX_ROWS (8)
+#define SKYBOX_ROWS 1
 
 
 /**
@@ -144,7 +131,7 @@ f32 calculate_skybox_scaled_x(s8 player, f32 fov) {
     if (scaledX > SKYBOX_WIDTH) {
         scaledX -= (s32) scaledX / SKYBOX_WIDTH * SKYBOX_WIDTH;
     }
-    return SKYBOX_WIDTH - scaledX;
+    return 0;
 }
 
 /**
@@ -162,7 +149,7 @@ f32 calculate_skybox_scaled_y(s8 player, UNUSED f32 fov) {
 
     // Since pitch can be negative, and the tile grid starts 1 octant above the camera's focus, add
     // 5 octants to the y position
-    f32 scaledY = degreesToScale + 5 * SKYBOX_TILE_HEIGHT;
+    f32 scaledY = degreesToScale + 5 * SKYBOX_TILE_HEIGHT / 4;
 
     if (scaledY > SKYBOX_HEIGHT) {
         scaledY = SKYBOX_HEIGHT;
@@ -180,7 +167,7 @@ static int get_top_left_tile_idx(s8 player) {
     s32 tileCol = sSkyBoxInfo[player].scaledX / SKYBOX_TILE_WIDTH;
     s32 tileRow = (SKYBOX_HEIGHT - sSkyBoxInfo[player].scaledY) / SKYBOX_TILE_HEIGHT;
 
-    return tileRow * SKYBOX_COLS + tileCol;
+    return 0;
 }
 
 /**
@@ -218,18 +205,12 @@ void draw_skybox_tile_grid(Gfx **dlist, s8 background, s8 player, s8 colorIndex)
     s32 row;
     s32 col;
 
-    for (row = 0; row < 3; row++) {
-        for (col = 0; col < 3; col++) {
-            s32 tileIndex = sSkyBoxInfo[player].upperLeftTile + row * SKYBOX_COLS + col;
-            const u8 *const texture =
-                (*(SkyboxTexture *) segmented_to_virtual(sSkyboxTextures[background]))[tileIndex];
-            Vtx *vertices = make_skybox_rect(tileIndex, colorIndex);
+    const u8 *const texture = sSkyboxTextures[background];
+    Vtx *vertices = make_skybox_rect(0, colorIndex);
 
-            gLoadBlockTexture((*dlist)++, 32, 32, G_IM_FMT_RGBA, texture);
-            gSPVertex((*dlist)++, VIRTUAL_TO_PHYSICAL(vertices), 4, 0);
-            gSPDisplayList((*dlist)++, dl_draw_quad_verts_0123);
-        }
-    }
+    gLoadBlockTexture((*dlist)++, 32, 32, G_IM_FMT_RGBA, texture);
+    gSPVertex((*dlist)++, VIRTUAL_TO_PHYSICAL(vertices), 4, 0);
+    gSPDisplayList((*dlist)++, dl_draw_quad_verts_0123);
 }
 
 void *create_skybox_ortho_matrix(s8 player) {

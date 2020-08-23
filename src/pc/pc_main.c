@@ -39,6 +39,8 @@
 #include "pc/discord/discordrpc.h"
 #endif
 
+#include "text/text-loader.h"
+
 OSMesg D_80339BEC;
 OSMesgQueue gSIEventMesgQueue;
 
@@ -179,7 +181,7 @@ void main_func(void) {
     const char *gamedir = gCLIOpts.GameDir[0] ? gCLIOpts.GameDir : FS_BASEDIR;
     const char *userpath = gCLIOpts.SavePath[0] ? gCLIOpts.SavePath : sys_user_path();
     fs_init(sys_ropaths, gamedir, userpath);
-
+    alloc_dialog_pool();
     configfile_load(configfile_name());
 
     if (gCLIOpts.FullScreen == 1)
