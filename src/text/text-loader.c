@@ -5,13 +5,16 @@
 #include <string.h>
 #include "dialog_ids.h"
 #include "game/ingame_menu.h"
+#include <unistd.h>
+#include <limits.h>
+#include "libs/dir_utils.h"
 
 struct DialogEntry* * dialogPool;
 
 char* load_file(char const* path) {
     char* buffer = 0;
     long length = 0;
-    FILE * f = fopen (path, "rb");
+    FILE * f = fopen (path, "rb");        
 
     if (f) {
       fseek (f, 0, SEEK_END);
@@ -22,22 +25,38 @@ char* load_file(char const* path) {
         fread(buffer, sizeof(char), length, f);
       }
       fclose(f);
+      buffer[length] = '\0';
+      return buffer;
     }
-    buffer[length] = '\0';
-
-    return buffer;
+    return NULL;
 }
 
 void preloadTexts(){
-    char * jsonTxt = load_file("res/texts/es.json");
+
+    char * cwd = "/home/alex/Documents/Projects/Render96/Render96ex - FastBuild/build/us_pc";
+    //getcwd(cwd, sizeof(cwd));    
+    #ifndef WIN32
+    char * file = "/res/texts/es.json";
+    #else
+    char * file = "\\res\\texts\\es.json";
+    #endif
+
+    char * language_file = malloc((strlen(cwd) + strlen(file)) * sizeof(char));
+    strcpy(language_file, "");
+    strcat(language_file, cwd);
+    strcat(language_file, file);
+
+    printf("Loading File: %s\n", language_file);
+
+    char * jsonTxt = load_file( language_file );
+    if(jsonTxt == NULL) return;
 
     cJSON *json = cJSON_Parse(jsonTxt);
     if (json == NULL) {
         const char *error_ptr = cJSON_GetErrorPtr();
-        if (error_ptr != NULL)
-        {
+        if (error_ptr != NULL) {
             fprintf(stderr, "Error before: %s\n", error_ptr);
-        }        
+        }
         exit(1);
     }
     const cJSON *dialog = NULL;
@@ -65,16 +84,17 @@ void preloadTexts(){
         strcpy(dialogTxt, "");
         int currLine = 0;
         cJSON_ArrayForEach(line, lines) {
-            char * str = line->valuestring;            
+            char * str = line->valuestring;
             strcat(dialogTxt, str);
             if(currLine < lineAmount - 1) {
                 strcat(dialogTxt, "\n");
                 currLine++;
             }
         }
-        entry->str = getTranslatedText(dialogTxt);
-        free(dialogTxt);
+
+        entry->str = getTranslatedText(dialogTxt);        
         dialogPool[id] = entry;
+        free(dialogTxt);
     }
     free(jsonTxt);
 }
