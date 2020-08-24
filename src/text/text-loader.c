@@ -8,8 +8,6 @@
 #include <limits.h>
 #include "libs/dir_utils.h"
 #include <stdlib.h>
-#include <windows.h>
-
 struct DialogEntry* * dialogPool;
 #define _READFILE_GUESS 256
 

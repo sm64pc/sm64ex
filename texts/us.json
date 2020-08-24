@@ -117,14 +117,39 @@
             ]
         },
         {
+            "ID": 5,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Hey, Mario! Is it true",
+                "that you beat the Big",
+                "Bob-omb? Cool!",
+                "You must be strong. And",
+                "pretty fast. So, how fast",
+                "are you, anyway?",
+                "Fast enough to beat me...",
+                "Koopa the Quick? I don't",
+                "think so. Just try me.",
+                "How about a race to the",
+                "mountaintop, where the",
+                "Big Bob-omb was?",
+                "Whaddya say? When I say",
+                "『Go,』 let the race begin!",
+                "",
+                "Ready....",
+                "",
+                "//Go!////Don't Go"
+            ]
+        },
+        {
             "ID": 6,
             "linesPerBox": 3,
             "leftOffset": 30,
             "width": 200,
             "lines": [
                 "Hey!!! Don't try to scam",
-                "ME.",
-                "You've gotta run",
+                "ME.You've gotta run",
                 "the whole course.",
                 "Later. Look me up when",
                 "you want to race for",
@@ -184,7 +209,7 @@
                 "Windswept Valley.",
                 "Ready?",
                 "",
-                "//Go// Don't Go"
+                "//Go//// Don't Go"
             ]
         },
         {
@@ -203,7 +228,7 @@
                 "",
                 "Would you like to Save?",
                 "",
-                "//Yes//No"
+                "//Yes////No"
             ]
         },
         {
@@ -222,7 +247,7 @@
                 "",
                 "Would you like to Save?",
                 "",
-                "//Yes//No"
+                "//Yes////No"
             ]
         },
         {
@@ -241,7 +266,7 @@
                 "",
                 "Would you like to Save?",
                 "",
-                "//Yes//No"
+                "//Yes////No"
             ]
         },
         {
@@ -254,7 +279,7 @@
                 "coins! Mario gains more",
                 "power from the castle.",
                 "Do you want to Save?",
-                "//Yes//No"
+                "//Yes////No"
             ]
         },
         {
@@ -988,7 +1013,7 @@
                 "How about a race?",
                 "Ready...",
                 "",
-                "//Go// Don't Go"
+                "//Go//// Don't Go"
             ]
         },
         {
@@ -1646,7 +1671,7 @@
                 "///Underground Lake",
                 "",
                 "Red Circle: Elevator 2",
-                "// Underground Lake",
+                "//// Underground Lake",
                 "Arrow: You are here"
             ]
         },
@@ -2741,7 +2766,7 @@
             "width": 200,
             "lines": [
                 "Owwch! Uncle! Uncle!",
-                "Okay, I give. Take this",
+                "Okay, I give up. Take this",
                 "Star!",
                 "Whew! I feel better now.",
                 "I don't really need it",
@@ -2918,7 +2943,11 @@
                 "『Thanks for playing Super",
                 "Mario 64! This is the",
                 "end of the game, but not",
-                "the end of the fun.』",
+                "the end of the fun. We want you to keep on",
+                "playing, so we have a",
+                "little something for you.",
+                "We hope that you like it!",
+                "Enjoy!!! 』",
                 "",
                 "The Super Mario 64 Team"
             ]
@@ -2993,7 +3022,7 @@
                 "Whaddya say?",
                 "Ready...set...",
                 "",
-                "//Go// Don't Go"
+                "//Go//// Don't Go"
             ]
         },
         {
@@ -3067,8 +3096,5 @@
                 "meet certain disaster."
             ]
         }
-    ],
-    "courses": {
-        
-    }
+    ]
 }
