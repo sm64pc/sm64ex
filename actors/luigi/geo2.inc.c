@@ -786,7 +786,7 @@ const GeoLayout luigi2_geo[] = {
     GEO_OPEN_NODE(),
         GEO_SHADOW(0, 180, 100),
         GEO_OPEN_NODE(),
-            GEO_SCALE(0, 16384),
+            GEO_SCALE(0, 17202),
             GEO_OPEN_NODE(),
                 GEO_ASM(0, geo_mirror_mario_backface_culling),
                 GEO_ASM(0, geo_mirror_mario_set_alpha),
