@@ -4,7 +4,7 @@ void bhv_small_bomp_init(void) {
     o->oFaceAngleYaw -= 0x4000;
     o->oSmallBompInitX = o->oPosX;
     o->oTimer = random_float() * 100.0f;
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &o->oAction);
         network_init_object_field(o, &o->oForwardVel);
@@ -70,7 +70,7 @@ void bhv_small_bomp_loop(void) {
 void bhv_large_bomp_init(void) {
     o->oMoveAngleYaw += 0x4000;
     o->oTimer = random_float() * 100.0f;
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &o->oAction);
         network_init_object_field(o, &o->oForwardVel);

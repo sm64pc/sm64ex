@@ -90,9 +90,9 @@ static const LevelScript script_func_local_4[] = {
     OBJECT(/*model*/ MODEL_BUTTERFLY, /*pos*/ -1204,  326,  3296, /*angle*/ 0, 0, 0, /*behParam*/ 0x00000000, /*beh*/ bhvButterfly),
     OBJECT(/*model*/ MODEL_YOSHI,     /*pos*/     0, 3174, -5625, /*angle*/ 0, 0, 0, /*behParam*/ 0x00000000, /*beh*/ bhvYoshi),
     // TESTING BELOW
-    OBJECT(/*model*/ MODEL_BLACK_BOBOMB, /*pos*/ -528, 260, 4664, /*angle*/ 0, 0, 0, /*behParam*/ 0x00000000, /*beh*/ bhvBobomb),
+    OBJECT(/*model*/ MODEL_KOOPA_WITH_SHELL, /*pos*/ -528, 260, 3264, /*angle*/ 0, 0, 0, /*behParam*/ 0x00010000, /*beh*/ bhvKoopa),
     //OBJECT(/*model*/ MODEL_BLACK_BOBOMB, /*pos*/ -1028, 260, 3664, /*angle*/ 0, 0, 0, /*behParam*/ 0x00000000, /*beh*/ bhvBobomb),
-    OBJECT(/*model*/ MODEL_NONE, /*pos*/ -528, 260, 3264, /*angle*/ 0, 0, 0, /*behParam*/ 0x00000000, /*beh*/ bhvGoombaTripletSpawner),
+    //OBJECT(/*model*/ MODEL_NONE, /*pos*/ -528, 260, 3264, /*angle*/ 0, 0, 0, /*behParam*/ 0x00000000, /*beh*/ bhvGoombaTripletSpawner),
     RETURN(),
 };
 
@@ -113,6 +113,7 @@ const LevelScript level_castle_grounds_entry[] = {
     JUMP_LINK(script_func_global_1),
     JUMP_LINK(script_func_global_11),
     JUMP_LINK(script_func_global_16),
+    JUMP_LINK(script_func_global_15), // <--- TESTING
     LOAD_MODEL_FROM_GEO(MODEL_LEVEL_GEOMETRY_03,           castle_grounds_geo_0006F4),
     LOAD_MODEL_FROM_GEO(MODEL_CASTLE_GROUNDS_BUBBLY_TREE,  bubbly_tree_geo),
     LOAD_MODEL_FROM_GEO(MODEL_CASTLE_GROUNDS_WARP_PIPE,    warp_pipe_geo),

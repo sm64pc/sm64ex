@@ -300,7 +300,16 @@ void shelled_koopa_attack_handler(s32 attackType) {
         }
 
         cur_obj_set_model(MODEL_KOOPA_WITHOUT_SHELL);
-        spawn_object(o, MODEL_KOOPA_SHELL, bhvKoopaShell);
+
+        struct MarioState* marioState = nearest_mario_state_to_object(o);
+        if (marioState->playerIndex == 0) {
+            struct Object* shell = spawn_object(o, MODEL_KOOPA_SHELL, bhvKoopaShell);
+            network_set_sync_id(shell);
+
+            struct Object* spawn_objects[] = { shell };
+            u32 models[] = { MODEL_KOOPA_SHELL };
+            network_send_spawn_objects(spawn_objects, models, 1);
+        }
 
         //! Because bob-ombs/corkboxes come after koopa in processing order,
         //  they can interact with the koopa on the same frame that this
@@ -917,7 +926,7 @@ void koopa_the_quick_force_end_race(void) {
  * Update function for bhvKoopaRaceEndpoint.
  */
 void bhv_koopa_race_endpoint_update(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &koopaForceEndRace);
     }

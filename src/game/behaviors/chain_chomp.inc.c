@@ -491,7 +491,7 @@ static void chain_chomp_act_unload_chain(void) {
  * Update function for chain chomp.
  */
 void bhv_chain_chomp_update(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, 1000.0f);
         network_init_object_field(o, &o->oChainChompUnk104);
         network_init_object_field(o, &o->header.gfx.unk38.animFrame);
@@ -514,7 +514,7 @@ void bhv_chain_chomp_update(void) {
  * Update function for wooden post.
  */
 void bhv_wooden_post_update(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &o->oWoodenPostMarioPounding);
         network_init_object_field(o, &o->oWoodenPostOffsetY);

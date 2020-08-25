@@ -17,7 +17,7 @@ void set_koopa_shell_underwater_hitbox(void) {
 }
 
 void bhv_koopa_shell_underwater_loop(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, 500.0f);
     }
     switch (o->oHeldState) {

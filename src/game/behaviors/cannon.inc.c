@@ -147,9 +147,9 @@ u8 unused0EA1FC[] = { 2,  0,   0, 0, 0,  0,   0, 0, 63, 128, 0, 0, 2,  0,   0, 0
 u8 cannon_ignore_remote_updates(struct Object* object) { return object->oCannonIsLocal; }
 
 void bhv_cannon_base_loop(void) {
-    if (o->oSyncID == 0) {
-        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
-        network_object_settings(o, FALSE, 0, FALSE, &cannon_ignore_remote_updates);
+    if (!network_sync_object_initialized(o)) {
+        struct SyncObject* so = network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        so->ignore_if_true = &cannon_ignore_remote_updates;
         network_init_object_field(o, &o->oAction);
         network_init_object_field(o, &o->oTimer);
         network_init_object_field(o, &o->oCannonUnk10C);

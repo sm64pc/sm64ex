@@ -1196,6 +1196,8 @@ s32 update_level(void) {
 }
 
 s32 init_level(void) {
+    network_on_init_level();
+
     s32 val4 = 0;
 
     set_play_mode(PLAY_MODE_NORMAL);

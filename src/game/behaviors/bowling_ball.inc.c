@@ -180,9 +180,9 @@ void bhv_generic_bowling_ball_spawner_init(void) {
 }
 
 void bhv_generic_bowling_ball_spawner_loop(void) {
-    if (o->oSyncID == 0) {
-        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
-        network_object_settings(o, FALSE, 0, TRUE, NULL);
+    if (!network_sync_object_initialized(o)) {
+        struct SyncObject* so = network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        so->keepRandomSeed = TRUE;
     }
 
     struct Object *bowlingBall;
@@ -217,9 +217,9 @@ void bhv_generic_bowling_ball_spawner_loop(void) {
 }
 
 void bhv_thi_bowling_ball_spawner_loop(void) {
-    if (o->oSyncID == 0) {
-        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
-        network_object_settings(o, FALSE, 0, TRUE, NULL);
+    if (!network_sync_object_initialized(o)) {
+        struct SyncObject* so = network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        so->keepRandomSeed = TRUE;
     }
 
     struct Object *bowlingBall;
@@ -253,8 +253,9 @@ void bhv_bob_pit_bowling_ball_init(void) {
     o->oFriction = 1.0f;
     o->oBuoyancy = 2.0f;
 
-    network_init_object(o, 5000.0f);
-    network_object_settings(o, FALSE, 5.0f, TRUE, NULL);
+    struct SyncObject* so = network_init_object(o, 5000.0f);
+    so->maxUpdateRate = 5.0f;
+    so->keepRandomSeed = TRUE;
 }
 
 void bhv_bob_pit_bowling_ball_loop(void) {

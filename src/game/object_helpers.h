@@ -146,7 +146,7 @@ s32 count_unimportant_objects(void);
 s32 count_objects_with_behavior(const BehaviorScript *behavior);
 struct Object *cur_obj_find_nearby_held_actor(const BehaviorScript *behavior, f32 maxDist);
 void cur_obj_change_action(s32 action);
-void cur_obj_set_vel_from_mario_vel(f32 f12,f32 f14);
+void cur_obj_set_vel_from_mario_vel(struct MarioState* m, f32 f12,f32 f14);
 BAD_RETURN(s16) cur_obj_reverse_animation(void);
 BAD_RETURN(s32) cur_obj_extend_animation_if_at_end(void);
 s32 cur_obj_check_if_near_animation_end(void);

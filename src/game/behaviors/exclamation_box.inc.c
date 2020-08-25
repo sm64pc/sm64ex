@@ -156,7 +156,7 @@ void (*sExclamationBoxActions[])(void) = { exclamation_box_act_0, exclamation_bo
                                            exclamation_box_act_4, exclamation_box_act_5 };
 
 void bhv_exclamation_box_loop(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &o->oExclamationBoxForce);
     }

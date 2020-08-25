@@ -53,9 +53,11 @@ static void platform_on_track_mario_not_on_platform(void) {
  */
 void bhv_platform_on_track_init(void) {
 
-    if (o->oSyncID == 0) {
-        network_init_object(o, 1000.0f);
-        network_object_settings(o, TRUE, 5.0f, TRUE, NULL);
+    if (!network_sync_object_initialized(o)) {
+        struct SyncObject* so = network_init_object(o, 1000.0f);
+        so->fullObjectSync = TRUE;
+        so->maxUpdateRate = 5.0f;
+        so->keepRandomSeed = TRUE;
     }
 
     if (!(o->activeFlags & ACTIVE_FLAG_IN_DIFFERENT_ROOM)) {

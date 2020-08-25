@@ -1,7 +1,7 @@
 // breakable_wall.c.inc
 
 void bhv_wf_breakable_wall_loop(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &o->oBreakableWallForce);
     }

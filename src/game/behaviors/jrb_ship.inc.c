@@ -21,9 +21,10 @@ void bhv_sunken_ship_part_loop(void) {
 }
 
 void bhv_ship_part_3_loop(void) {
-    if (o->oSyncID == 0) {
-        network_init_object(o, 4000.0f);
-        network_object_settings(o, FALSE, 5.0f, TRUE, NULL);
+    if (!network_sync_object_initialized(o)) {
+        struct SyncObject* so = network_init_object(o, 4000.0f);
+        so->maxUpdateRate = 5.0f;
+        so->keepRandomSeed = TRUE;
         network_init_object_field(o, &o->oFaceAnglePitch);
         network_init_object_field(o, &o->oFaceAngleRoll);
         network_init_object_field(o, &o->oShipPart3UnkF4);
@@ -42,9 +43,10 @@ void bhv_ship_part_3_loop(void) {
 }
 
 void bhv_jrb_sliding_box_loop(void) {
-    if (o->oSyncID == 0) {
-        network_init_object(o, 4000.0f);
-        network_object_settings(o, FALSE, 5.0f, TRUE, NULL);
+    if (!network_sync_object_initialized(o)) {
+        struct SyncObject* so = network_init_object(o, 4000.0f);
+        so->maxUpdateRate = 5.0f;
+        so->keepRandomSeed = TRUE;
         network_init_object_field(o, &o->oFaceAnglePitch);
         network_init_object_field(o, &o->oFaceAngleRoll);
         network_init_object_field(o, &o->oJrbSlidingBoxUnkF8);

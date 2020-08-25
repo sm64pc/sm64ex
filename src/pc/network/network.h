@@ -25,6 +25,8 @@ enum PacketType {
     PACKET_COLLECT_STAR,
     PACKET_COLLECT_COIN,
     PACKET_COLLECT_ITEM,
+    PACKET_RESERVATION_REQUEST,
+    PACKET_RESERVATION,
 };
 
 struct Packet {
@@ -39,6 +41,7 @@ struct Packet {
 
 struct SyncObject {
     struct Object* o;
+    u16 reserved;
     float maxSyncDistance;
     bool owned;
     clock_t clockSinceUpdate;
@@ -58,12 +61,14 @@ extern u8 gInsidePainting;
 extern s16 sCurrPlayMode;
 extern enum NetworkType networkType;
 extern struct SyncObject syncObjects[];
+extern bool networkLevelLoaded;
 
 void network_init(enum NetworkType inNetworkType, char* ip, char* port);
+void network_on_init_level(void);
+void network_on_loaded_level(void);
 
 void network_clear_sync_objects(void);
-void network_init_object(struct Object *object, float maxSyncDistance);
-void network_object_settings(struct Object *object, bool fullObjectSync, float maxUpdateRate, bool keepRandomSeed, u8 ignore_if_true(struct Object*));
+struct SyncObject* network_init_object(struct Object *object, float maxSyncDistance);
 void network_send(struct Packet* p);
 void network_update(void);
 void network_shutdown(void);
@@ -85,6 +90,8 @@ void network_update_player(void);
 void network_receive_player(struct Packet* p);
 
 bool network_owns_object(struct Object* o);
+void network_set_sync_id(struct Object* o);
+bool network_sync_object_initialized(struct Object* o);
 void network_update_objects(void);
 void network_send_object(struct Object* o);
 void network_receive_object(struct Packet* p);
@@ -109,4 +116,10 @@ void network_receive_collect_coin(struct Packet* p);
 
 void network_send_collect_item(struct Object* o);
 void network_receive_collect_item(struct Packet* p);
+
+void network_send_reservation_request(void);
+void network_receive_reservation_request(struct Packet* p);
+void network_send_reservation(void);
+void network_receive_reservation(struct Packet* p);
+
 #endif

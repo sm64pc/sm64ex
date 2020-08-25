@@ -8,6 +8,10 @@ enum NetworkType networkType;
 static SOCKET gSocket;
 struct sockaddr_in txAddr;
 
+#define LOADING_LEVEL_THRESHOLD 10
+u8 networkLoadingLevel = 0;
+bool networkLevelLoaded = false;
+
 void network_init(enum NetworkType inNetworkType, char* ip, char* port) {
     networkType = inNetworkType;
 
@@ -26,6 +30,17 @@ void network_init(enum NetworkType inNetworkType, char* ip, char* port) {
         txAddr.sin_family = AF_INET;
         txAddr.sin_port = htons(atoi(port));
         txAddr.sin_addr.s_addr = inet_addr(ip);
+    }
+}
+
+void network_on_init_level(void) {
+    networkLoadingLevel = 0;
+    networkLevelLoaded = false;
+}
+
+void network_on_loaded_level(void) {
+    if (networkType == NT_CLIENT) {
+        network_send_reservation_request();
     }
 }
 
@@ -49,6 +64,12 @@ void network_send(struct Packet* p) {
 
 void network_update(void) {
     if (networkType == NT_NONE) { return; }
+    if (!networkLevelLoaded) {
+        if (networkLoadingLevel++ >= LOADING_LEVEL_THRESHOLD) {
+            networkLevelLoaded = true;
+            network_on_loaded_level();
+        }
+    }
 
     if (gInsidePainting && sCurrPlayMode == PLAY_MODE_CHANGE_LEVEL) {
         network_update_inside_painting();
@@ -82,6 +103,8 @@ void network_update(void) {
             case PACKET_COLLECT_STAR: network_receive_collect_star(&p); break;
             case PACKET_COLLECT_COIN: network_receive_collect_coin(&p); break;
             case PACKET_COLLECT_ITEM: network_receive_collect_item(&p); break;
+            case PACKET_RESERVATION_REQUEST: network_receive_reservation_request(&p); break;
+            case PACKET_RESERVATION: network_receive_reservation(&p); break;
             default: printf("%s received unknown packet: %d\n", NETWORKTYPESTR, p.buffer[0]);
         }
 

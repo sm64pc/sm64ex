@@ -45,8 +45,10 @@ void checkerboard_plat_act_rotate(s32 a0, s16 a1) {
 
 void bhv_checkerboard_platform_init(void) {
     o->oCheckerBoardPlatformUnkFC = o->parentObj->oBehParams2ndByte;
-    network_init_object(o, 1000.0f);
-    network_object_settings(o, TRUE, 5.0f, TRUE, NULL);
+    struct SyncObject* so = network_init_object(o, 1000.0f);
+    so->fullObjectSync = TRUE;
+    so->maxUpdateRate = 5.0f;
+    so->keepRandomSeed = TRUE;
 }
 
 void bhv_checkerboard_platform_loop(void) {

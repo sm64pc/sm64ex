@@ -147,7 +147,7 @@ void (*sTuxiesMotherActions[])(void) = { tuxies_mother_act_0, tuxies_mother_act_
                                          tuxies_mother_act_2 };
 
 void bhv_tuxies_mother_loop(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &o->oAction);
         network_init_object_field(o, &o->oSubAction);
@@ -288,7 +288,7 @@ void small_penguin_free_actions(void) {
 }
 
 void bhv_small_penguin_loop(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, 4000.0f);
     }
     switch (o->oHeldState) {

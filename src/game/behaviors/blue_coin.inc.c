@@ -60,7 +60,7 @@ void bhv_hidden_blue_coin_loop(void) {
  * Update function for bhvBlueCoinSwitch.
  */
 void bhv_blue_coin_switch_loop(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &o->oAction);
         network_init_object_field(o, &o->oVelY);

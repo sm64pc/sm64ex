@@ -55,7 +55,7 @@ void (*sGrindelThwompActions[])(void) = { grindel_thwomp_act_0, grindel_thwomp_a
                                           grindel_thwomp_act_4 };
 
 void bhv_grindel_thwomp_loop(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &o->oAction);
         network_init_object_field(o, &o->oPosY);

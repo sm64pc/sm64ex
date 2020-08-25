@@ -999,8 +999,8 @@ void cur_obj_change_action(s32 action) {
     cur_obj_reset_timer_and_subaction();
 }
 
-void cur_obj_set_vel_from_mario_vel(f32 f12, f32 f14) {
-    f32 sp4 = gMarioStates[0].forwardVel;
+void cur_obj_set_vel_from_mario_vel(struct MarioState* m, f32 f12, f32 f14) {
+    f32 sp4 = m->forwardVel;
     f32 sp0 = f12 * f14;
 
     if (sp4 < sp0) {

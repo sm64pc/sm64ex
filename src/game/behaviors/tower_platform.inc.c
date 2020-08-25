@@ -11,7 +11,7 @@ void bhv_wf_solid_tower_platform_loop(void) {
 }
 
 void bhv_wf_elevator_tower_platform_loop(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &o->oAction);
         network_init_object_field(o, &o->oPosY);
@@ -55,7 +55,7 @@ void bhv_wf_elevator_tower_platform_loop(void) {
 }
 
 void bhv_wf_sliding_tower_platform_loop(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &o->oAction);
         network_init_object_field(o, &o->oForwardVel);

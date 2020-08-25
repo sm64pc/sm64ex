@@ -13,7 +13,7 @@ struct ObjectHitbox sSpindriftHitbox = {
 };
 
 void bhv_spindrift_loop(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, 4000.0f);
         network_init_object_field(o, &o->oFlags);
     }

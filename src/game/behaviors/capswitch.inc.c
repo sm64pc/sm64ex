@@ -60,7 +60,7 @@ void (*sCapSwitchActions[])(void) = { cap_switch_act_0, cap_switch_act_1,
                                       cap_switch_act_2, cap_switch_act_3 };
 
 void bhv_cap_switch_loop(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &capSwitchForcePress);
     }

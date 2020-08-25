@@ -262,7 +262,7 @@ void ukiki_act_run(void) {
 
     //! @bug (Ukikispeedia) This function sets forward speed to 0.9 * Mario's
     //! forward speed, which means ukiki can move at hyperspeed rates.
-    cur_obj_set_vel_from_mario_vel(20.0f, 0.9f);
+    cur_obj_set_vel_from_mario_vel(&gMarioStates[0], 20.0f, 0.9f);
 
     if (fleeMario) {
         if (o->oDistanceToMario > o->oUkikiChaseFleeRange) {

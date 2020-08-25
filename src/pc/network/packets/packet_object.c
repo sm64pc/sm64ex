@@ -28,22 +28,32 @@ void network_clear_sync_objects(void) {
     nextSyncID = 1;
 }
 
-void network_init_object(struct Object *o, float maxSyncDistance) {
-    // generate new sync ID
-    if (o->oSyncID == 0) {
-        for (int i = 0; i < MAX_SYNC_OBJECTS; i++) {
-            if (syncObjects[nextSyncID].o == NULL) { break; }
-            nextSyncID = (nextSyncID + 1) % MAX_SYNC_OBJECTS;
-        }
-        assert(syncObjects[nextSyncID].o == NULL);
-        o->oSyncID = nextSyncID;
+void network_set_sync_id(struct Object* o) {
+    if (o->oSyncID != 0) { return; }
+
+    // two-player hack
+    u8 reserveId = (networkLevelLoaded && networkType == NT_CLIENT) ? 1 : 0;
+
+    for (int i = 0; i < MAX_SYNC_OBJECTS; i++) {
+        if (syncObjects[nextSyncID].reserved == reserveId && syncObjects[nextSyncID].o == NULL) { break; }
         nextSyncID = (nextSyncID + 1) % MAX_SYNC_OBJECTS;
     }
+    assert(syncObjects[nextSyncID].o == NULL);
+    assert(syncObjects[nextSyncID].reserved == reserveId);
+    o->oSyncID = nextSyncID;
+    nextSyncID = (nextSyncID + 1) % MAX_SYNC_OBJECTS;
+
     assert(o->oSyncID < MAX_SYNC_OBJECTS);
+}
+
+struct SyncObject* network_init_object(struct Object *o, float maxSyncDistance) {
+    // generate new sync ID
+    network_set_sync_id(o);
 
     // set default values for sync object
     struct SyncObject* so = &syncObjects[o->oSyncID];
     so->o = o;
+    so->reserved = 0;
     so->maxSyncDistance = maxSyncDistance;
     so->owned = false;
     so->clockSinceUpdate = clock();
@@ -56,16 +66,8 @@ void network_init_object(struct Object *o, float maxSyncDistance) {
     so->ignore_if_true = NULL;
     so->syncDeathEvent = true;
     memset(so->extraFields, 0, sizeof(void*) * MAX_SYNC_OBJECT_FIELDS);
-}
 
-void network_object_settings(struct Object *o, bool fullObjectSync, float maxUpdateRate, bool keepRandomSeed, u8 ignore_if_true(struct Object*)) {
-    assert(o->oSyncID != 0);
-    // override default settings for sync object
-    struct SyncObject* so = &syncObjects[o->oSyncID];
-    so->fullObjectSync = fullObjectSync;
-    so->maxUpdateRate = maxUpdateRate;
-    so->keepRandomSeed = keepRandomSeed;
-    so->ignore_if_true = ignore_if_true;
+    return so;
 }
 
 void network_init_object_field(struct Object *o, void* field) {
@@ -80,6 +82,12 @@ bool network_owns_object(struct Object* o) {
     struct SyncObject* so = &syncObjects[o->oSyncID];
     if (so == NULL) { return false; }
     return so->owned;
+}
+
+bool network_sync_object_initialized(struct Object* o) {
+    if (o->oSyncID == 0) { return false; }
+    if (syncObjects[o->oSyncID].behavior == NULL) { return false; }
+    return true;
 }
 
 // ----- header ----- //
@@ -256,6 +264,7 @@ static void packet_read_object_only_death(struct Packet* p, struct Object* o) {
 
 void network_send_object(struct Object* o) {
     // sanity check SyncObject
+    if (!network_sync_object_initialized(o)) { return; }
     struct SyncObject* so = &syncObjects[o->oSyncID];
     if (so == NULL) { return; }
     if (o->behavior != so->behavior) {
@@ -299,6 +308,7 @@ void network_receive_object(struct Packet* p) {
     struct SyncObject* so = packet_read_object_header(p);
     if (so == NULL) { return; }
     struct Object* o = so->o;
+    if (!network_sync_object_initialized(o)) { return; }
 
     // make sure no one can update an object we're holding
     if (gMarioStates[0].heldObj == o) { return; }
@@ -324,6 +334,8 @@ bool should_own_object(struct SyncObject* so) {
 
 void forget_sync_object(struct SyncObject* so) {
     so->o = NULL;
+    so->behavior = NULL;
+    so->reserved = 0;
     so->owned = false;
 }
 

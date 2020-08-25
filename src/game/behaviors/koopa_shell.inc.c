@@ -52,7 +52,7 @@ void koopa_shell_spawn_sparkles(f32 a) {
 }
 
 void bhv_koopa_shell_loop(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, 500.0f);
     }
 

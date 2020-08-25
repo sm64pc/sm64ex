@@ -56,7 +56,6 @@ void network_send_spawn_objects(struct Object* objects[], u32 models[], u8 objec
         packet_write(&p, &behaviorId, sizeof(enum BehaviorId));
         packet_write(&p, &o->activeFlags, sizeof(s16));
         packet_write(&p, o->rawData.asU32, sizeof(s32) * 80);
-        assert(o->oSyncID == 0);
     }
 
     network_send(&p);
@@ -83,6 +82,10 @@ void network_receive_spawn_objects(struct Packet* p) {
     remoteSpawnIds[onRemoteSpawnId] = remoteSpawnId;
     onRemoteSpawnId = (onRemoteSpawnId + 1) % MAX_REMOTE_SPAWN_IDS;
 
+    // two-player hack
+    u8 reserveId = (networkLevelLoaded && networkType == NT_SERVER) ? 1 : 0;
+    bool receivedReservedSyncObject = false;
+
     struct Object* spawned[MAX_SPAWN_OBJECTS_PER_PACKET] = { 0 };
     for (u8 i = 0; i < objectCount; i++) {
         struct SpawnObjectData data = { 0 };
@@ -101,6 +104,18 @@ void network_receive_spawn_objects(struct Packet* p) {
         struct Object* o = spawn_object(parentObj, data.model, behavior);
         memcpy(o->rawData.asU32, data.rawData, sizeof(u32) * 80);
 
+        // they've allocated one of their reserved sync objects
+        if (o->oSyncID != 0 && syncObjects[o->oSyncID].reserved == reserveId) {
+            syncObjects[o->oSyncID].o = o;
+            syncObjects[o->oSyncID].reserved = 0;
+            receivedReservedSyncObject = true;
+        }
+
         spawned[i] = o;
+    }
+
+    // update their block of reserved ids
+    if (networkType == NT_SERVER && receivedReservedSyncObject) {
+        network_send_reservation();
     }
 }

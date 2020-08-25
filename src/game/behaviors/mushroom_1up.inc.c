@@ -212,7 +212,7 @@ void bhv_1up_jump_on_approach_loop(void) {
 }
 
 void bhv_1up_hidden_loop(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &o->oVelY);
         network_init_object_field(o, &o->oAction);
@@ -260,7 +260,7 @@ void bhv_1up_hidden_loop(void) {
 }
 
 void bhv_1up_hidden_trigger_loop(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &o->o1UpForceSpawn);
     }
@@ -277,7 +277,7 @@ void bhv_1up_hidden_trigger_loop(void) {
 }
 
 void bhv_1up_hidden_in_pole_loop(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &o->oVelY);
         network_init_object_field(o, &o->oAction);
@@ -318,7 +318,7 @@ void bhv_1up_hidden_in_pole_loop(void) {
 }
 
 void bhv_1up_hidden_in_pole_trigger_loop(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &o->o1UpForceSpawn);
     }
@@ -337,7 +337,7 @@ void bhv_1up_hidden_in_pole_trigger_loop(void) {
 }
 
 void bhv_1up_hidden_in_pole_spawner_loop(void) {
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &o->o1UpForceSpawn);
     }

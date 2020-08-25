@@ -21,7 +21,7 @@ void bhv_wf_sliding_platform_init(void) {
 
     o->oTimer = random_float() * 100.0f;
 
-    if (o->oSyncID == 0) {
+    if (!network_sync_object_initialized(o)) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &o->oAction);
         network_init_object_field(o, &o->oMoveAngleYaw);
