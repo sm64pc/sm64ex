@@ -298,7 +298,7 @@ SRC_DIRS := src src/engine src/game src/audio src/menu src/buffers actors levels
 ASM_DIRS :=
 
 ifeq ($(RMODERN),1)
-  SRC_DIRS += src/pc/rmodern
+  SRC_DIRS += src/pc/rmodern src/pc/rmodern/render src/pc/rmodern/window
 endif
 
 ifeq ($(DISCORDRPC),1)

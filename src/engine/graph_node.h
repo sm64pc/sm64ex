@@ -45,6 +45,10 @@
 #define GRAPH_NODE_TYPE_HELD_OBJ             (0x02E | GRAPH_NODE_TYPE_FUNCTIONAL)
 #define GRAPH_NODE_TYPE_CULLING_RADIUS        0x02F
 
+// Mesh node type used by the modern renderer
+#define GRAPH_NODE_TYPE_RMODERN_MESH      0x030
+
+
 // The number of master lists. A master list determines the order and render
 // mode with which display lists are drawn.
 #define GFX_NUM_MASTER_LISTS 8

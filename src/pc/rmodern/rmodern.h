@@ -10,7 +10,13 @@
     {
 #endif
 
+#include "types.h"
+
 void rmodern_init();
+
+void rm_geo_process_mesh(struct GraphNode* node, Mat4* matrix, s32 animFrame, u16 **animAttributes);
+
+struct GraphNode* rm_load_mesh_from_dl(struct AllocOnlyPool *pool, s32 drawingLayer, void *displayList);
 
 #ifdef __cplusplus
     }
