@@ -278,12 +278,29 @@ void network_send_object(struct Object* o) {
         return;
     }
 
+    bool reliable = (o->activeFlags == ACTIVE_FLAG_DEACTIVATED || so->maxSyncDistance == SYNC_DISTANCE_ONLY_EVENTS);
+    network_send_object_reliability(o, reliable);
+}
+
+void network_send_object_reliability(struct Object* o, bool reliable) {
+    // sanity check SyncObject
+    if (!network_sync_object_initialized(o)) { return; }
+    struct SyncObject* so = &syncObjects[o->oSyncID];
+    if (so == NULL) { return; }
+    if (o->behavior != so->behavior) {
+        printf("network_send_object() BEHAVIOR MISMATCH!\n");
+        forget_sync_object(so);
+        return;
+    }
+    if (o != so->o) {
+        printf("network_send_object() OBJECT MISMATCH!\n");
+        forget_sync_object(so);
+        return;
+    }
+
     // always send a new event ID
     so->onEventId++;
     so->clockSinceUpdate = clock();
-
-    // reliable packets when sending a dead object or event
-    bool reliable = (o->activeFlags == ACTIVE_FLAG_DEACTIVATED || so->maxSyncDistance == SYNC_DISTANCE_ONLY_EVENTS);
 
     // write the packet data
     struct Packet p;

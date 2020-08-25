@@ -492,7 +492,8 @@ static void chain_chomp_act_unload_chain(void) {
  */
 void bhv_chain_chomp_update(void) {
     if (!network_sync_object_initialized(o)) {
-        network_init_object(o, 1000.0f);
+        struct SyncObject* so = network_init_object(o, 1000.0f);
+        so->syncDeathEvent = FALSE;
         network_init_object_field(o, &o->oChainChompUnk104);
         network_init_object_field(o, &o->header.gfx.unk38.animFrame);
     }

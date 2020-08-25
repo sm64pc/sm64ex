@@ -25,6 +25,15 @@ static struct ObjectHitbox sBooCageHitbox = {
  * Update function for bhvBooCage.
  */
 void bhv_boo_cage_loop(void) {
+    if (!network_sync_object_initialized(o)) {
+        struct SyncObject* so = network_init_object(o, 4000.0f);
+        network_init_object_field(o, &o->oVelY);
+        network_init_object_field(o, &o->oFaceAnglePitch);
+        network_init_object_field(o, &o->oFaceAngleRoll);
+        network_init_object_field(o, &o->oMoveFlags);
+        so->maxUpdateRate = 5.0f;
+    }
+
     UNUSED s32 unused;
 
     obj_set_hitbox(o, &sBooCageHitbox);
@@ -86,7 +95,7 @@ void bhv_boo_cage_loop(void) {
             cur_obj_scale(1.0f);
 
             // Set the action to BOO_CAGE_ACT_MARIO_JUMPING_IN when Mario jumps in.
-            if (obj_check_if_collided_with_object(o, gMarioObject)) {
+            if (obj_check_if_collided_with_object(o, gMarioStates[0].marioObj)) {
                 o->oAction++;
             }
 

@@ -711,7 +711,7 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
     // only allow for local player
     if (m != &gMarioStates[0]) { return 0; }
 
-    gControlPainting = FALSE;
+    gControlPainting = TRUE;
     s32 val04 = TRUE;
 
     if (sDelayedWarpOp == WARP_OP_NONE) {

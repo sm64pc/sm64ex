@@ -94,6 +94,7 @@ void network_set_sync_id(struct Object* o);
 bool network_sync_object_initialized(struct Object* o);
 void network_update_objects(void);
 void network_send_object(struct Object* o);
+void network_send_object_reliability(struct Object* o, bool reliable);
 void network_receive_object(struct Packet* p);
 
 void network_send_spawn_objects(struct Object* objects[], u32 models[], u8 objectCount);
