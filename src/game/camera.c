@@ -3085,9 +3085,9 @@ void update_camera(struct Camera *c) {
 #ifdef BETTERCAMERA
     }
 
-    if (gMarioState->action == ACT_SHOT_FROM_CANNON && newcam_active)
+    if (gMarioStates[0].action == ACT_SHOT_FROM_CANNON && newcam_active)
     {
-        gMarioState->area->camera->mode = CAMERA_MODE_NEWCAM;
+        gMarioStates[0].area->camera->mode = CAMERA_MODE_NEWCAM;
         gLakituState.mode = CAMERA_MODE_NEWCAM;
     }
 #endif
@@ -7062,7 +7062,7 @@ void copy_spline_segment(struct CutsceneSplinePoint dst[], struct CutsceneSpline
 s16 cutscene_common_set_dialog_state(s32 state) {
     s16 timer = gCutsceneTimer;
     // If the dialog ended, return CUTSCENE_LOOP, which would end the cutscene shot
-    if (set_mario_npc_dialog(&gMarioState[0], state) == 2) {
+    if (set_mario_npc_dialog(&gMarioStates[0], state) == 2) {
         timer = CUTSCENE_LOOP;
     }
     return timer;

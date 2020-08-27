@@ -519,9 +519,9 @@ struct MarioState* nearest_mario_state_to_object(struct Object *obj) {
     struct MarioState* nearest = NULL;
     f32 nearestDist = 0;
     for (int i = 0; i < MAX_PLAYERS; i++) {
-        float dist = dist_between_objects(obj, gMarioState[i].marioObj);
+        float dist = dist_between_objects(obj, gMarioStates[i].marioObj);
         if (nearest == NULL || dist < nearestDist) {
-            nearest = &gMarioState[i];
+            nearest = &gMarioStates[i];
             nearestDist = dist;
         }
     }

@@ -51,6 +51,7 @@ void bhv_big_boulder_generator_loop(void) {
         o->oTimer = 0;
     }
 
+    // TODO: current_mario_room_check() isn't remote-aware!!!!
     if (!current_mario_room_check(4) || is_point_within_radius_of_mario(o->oPosX, o->oPosY, o->oPosZ, 1500))
         return;
 

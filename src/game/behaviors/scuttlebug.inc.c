@@ -24,6 +24,20 @@ s32 update_angle_from_move_flags(s32 *angle) {
 }
 
 void bhv_scuttlebug_loop(void) {
+    if (!network_sync_object_initialized(o)) {
+        network_init_object(o, 4000.0f);
+        network_init_object_field(o, &o->oFlags);
+        network_init_object_field(o, &o->oForwardVel);
+        network_init_object_field(o, &o->oHomeX);
+        network_init_object_field(o, &o->oHomeY);
+        network_init_object_field(o, &o->oHomeZ);
+        network_init_object_field(o, &o->oInteractStatus);
+        network_init_object_field(o, &o->oScuttlebugUnkF4);
+    }
+
+    struct Object* player = nearest_player_to_object(o);
+    int angleToPlayer = obj_angle_to_object(o, player);
+
     UNUSED s32 unused;
     f32 sp18;
     cur_obj_update_floor_and_walls();
@@ -46,13 +60,13 @@ void bhv_scuttlebug_loop(void) {
             break;
         case 1:
             o->oForwardVel = 5.0f;
-            if (cur_obj_lateral_dist_from_mario_to_home() > 1000.0f)
-                o->oAngleToMario = cur_obj_angle_to_home();
+            if (cur_obj_lateral_dist_from_obj_to_home(player) > 1000.0f)
+                o->oAngleToMario = angleToPlayer;
             else {
                 if (o->oScuttlebugUnkF8 == 0) {
                     o->oScuttlebugUnkFC = 0;
-                    o->oAngleToMario = obj_angle_to_object(o, gMarioObject);
-                    if (abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw) < 0x800) {
+                    o->oAngleToMario = obj_angle_to_object(o, player);
+                    if (abs_angle_diff(angleToPlayer, o->oMoveAngleYaw) < 0x800) {
                         o->oScuttlebugUnkF8 = 1;
                         o->oVelY = 20.0f;
                         cur_obj_play_sound_2(SOUND_OBJ2_SCUTTLEBUG_ALERT);
@@ -64,9 +78,9 @@ void bhv_scuttlebug_loop(void) {
                         o->oScuttlebugUnkF8 = 0;
                 }
             }
-            if (update_angle_from_move_flags(&o->oAngleToMario))
+            if (update_angle_from_move_flags(&angleToPlayer))
                 o->oSubAction = 2;
-            cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x200);
+            cur_obj_rotate_yaw_toward(angleToPlayer, 0x200);
             break;
         case 2:
             o->oForwardVel = 5.0f;
@@ -110,26 +124,50 @@ void bhv_scuttlebug_loop(void) {
     if (o->parentObj != o) {
         if (obj_is_hidden(o))
             obj_mark_for_deletion(o);
-        if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED)
+        if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) {
             o->parentObj->oScuttlebugSpawnerUnk88 = 1;
+            network_send_object(o->parentObj);
+        }
     }
     cur_obj_move_standard(-50);
 }
 
 void bhv_scuttlebug_spawn_loop(void) {
+    if (!network_sync_object_initialized(o)) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->oAction);
+        network_init_object_field(o, &o->oTimer);
+        network_init_object_field(o, &o->oScuttlebugSpawnerUnkF4);
+        network_init_object_field(o, &o->oScuttlebugSpawnerUnk88);
+    }
+
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+    if (marioState->playerIndex != 0) { return; }
+
+    struct Object* player = marioState->marioObj;
+    int distanceToPlayer = dist_between_objects(o, player);
+
     struct Object *scuttlebug;
     if (o->oAction == 0) {
-        if (o->oTimer > 30 && 500.0f < o->oDistanceToMario && o->oDistanceToMario < 1500.0f) {
+        if (o->oTimer > 30 && 500.0f < distanceToPlayer && distanceToPlayer < 1500.0f) {
             cur_obj_play_sound_2(SOUND_OBJ2_SCUTTLEBUG_ALERT);
             scuttlebug = spawn_object(o, MODEL_SCUTTLEBUG, bhvScuttlebug);
             scuttlebug->oScuttlebugUnkF4 = o->oScuttlebugSpawnerUnkF4;
             scuttlebug->oForwardVel = 30.0f;
             scuttlebug->oVelY = 80.0f;
+
+            network_set_sync_id(scuttlebug);
+            struct Object* spawn_objects[] = { scuttlebug };
+            u32 models[] = { MODEL_SCUTTLEBUG };
+            network_send_spawn_objects(spawn_objects, models, 1);
+
             o->oAction++;
             o->oScuttlebugUnkF4 = 1;
+            network_send_object(o);
         }
     } else if (o->oScuttlebugSpawnerUnk88 != 0) {
         o->oScuttlebugSpawnerUnk88 = 0;
         o->oAction = 0;
+        network_send_object(o);
     }
 }

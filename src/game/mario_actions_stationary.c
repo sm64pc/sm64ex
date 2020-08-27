@@ -1065,14 +1065,18 @@ s32 act_first_person(struct MarioState *m) {
 
     sp1C = 0 != (m->input & (INPUT_UNKNOWN_10 | 0xC));
     if (m->actionState == 0) {
-        lower_background_noise(2);
-        set_camera_mode(m->area->camera, CAMERA_MODE_C_UP, 0x10);
+        if (m->playerIndex == 0) {
+            lower_background_noise(2);
+            set_camera_mode(m->area->camera, CAMERA_MODE_C_UP, 0x10);
+        }
         m->actionState = 1;
     } else {
         if (!(m->input & INPUT_FIRST_PERSON) || sp1C) {
-            raise_background_noise(2);
-            // Go back to the last camera mode
-            set_camera_mode(m->area->camera, -1, 1);
+            if (m->playerIndex == 0) {
+                raise_background_noise(2);
+                // Go back to the last camera mode
+                set_camera_mode(m->area->camera, -1, 1);
+            }
             return set_mario_action(m, ACT_IDLE, 0);
         }
     }

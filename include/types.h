@@ -363,7 +363,8 @@ struct MarioState
     /*0xBC*/ f32 peakHeight;
     /*0xC0*/ f32 quicksandDepth;
     /*0xC4*/ f32 unkC4;
-    /*0xC8*/ struct Object *heldByObj;
+    /*0xC8*/ s16 currentRoom;
+    /*0xCA*/ struct Object* heldByObj;
 };
 
 #define PLAY_MODE_NORMAL 0
@@ -384,8 +385,8 @@ struct MarioState
 // read all of the code surrounding a search through the entire codebase of the following:
 // gMarioObject
 // gMario2Object
-// gMarioState[0]
-// gMarioState[1]
+// gMarioStates[0]
+// gMarioStates[1]
 // two-player hack
 
 #endif // _SM64_TYPES_H_

@@ -2859,7 +2859,7 @@ void print_hud_course_complete_coins(s16 x, s16 y) {
 
             if (gCourseCompleteCoins == 50 || gCourseCompleteCoins == 100 || gCourseCompleteCoins == 150) {
                 play_sound(SOUND_GENERAL_COLLECT_1UP, gDefaultSoundArgs);
-                gMarioState[0].numLives++;
+                gMarioStates[0].numLives++;
             }
         }
 

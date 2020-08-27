@@ -34,15 +34,28 @@ void bhv_flamethrower_flame_loop(void) {
 }
 
 void bhv_flamethrower_loop(void) {
+    if (!network_sync_object_initialized(o)) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+        network_init_object_field(o, &o->oAction);
+        network_init_object_field(o, &o->oTimer);
+        network_init_object_field(o, &o->oFlameThowerUnk110);
+    }
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+    struct Object* player = marioState->marioObj;
+    int distanceToPlayer = dist_between_objects(o, player);
+
     struct Object *flame;
     f32 flameVel;
     s32 sp34;
     s32 model;
     UNUSED u8 pad[8];
     if (o->oAction == 0) {
-        if (gCurrLevelNum != LEVEL_BBH || gMarioOnMerryGoRound == 1)
-            if (o->oDistanceToMario < 2000.0f)
+        if (gCurrLevelNum != LEVEL_BBH || gMarioOnMerryGoRound == 1) {
+            if (marioState->playerIndex == 0 && distanceToPlayer < 2000.0f) {
                 o->oAction++;
+                network_send_object(o);
+            }
+        }
     } else if (o->oAction == 1) {
         model = MODEL_RED_FLAME;
         flameVel = 95.0f;

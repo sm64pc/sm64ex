@@ -36,15 +36,14 @@ static void handle_merry_go_round_music(void) {
         // The cur_obj_is_mario_on_platform check is redundant since the merry-go-round
         // has surface type 0x1A, so Mario cannot be on the merry-go-round
         // without being on a floor with surface type 0x1A (SURFACE_MGR_MUSIC).
+        gMarioOnMerryGoRound = cur_obj_is_any_player_on_platform();
         if (cur_obj_is_mario_on_platform() || marioFloorType == SURFACE_MGR_MUSIC) {
             // If Mario is in the merry-go-round's enclosure, play only the merry-go-round music.
             play_secondary_music(SEQ_EVENT_MERRY_GO_ROUND, 0, 78, 50);
-            gMarioOnMerryGoRound = TRUE;
         } else {
             // If Mario is not in the merry-go-round's enclosure,
             // i.e. he's around it, play both the merry-go-round music and the BBH music.
             play_secondary_music(SEQ_EVENT_MERRY_GO_ROUND, 45, 20, 200);
-            gMarioOnMerryGoRound = FALSE;
         }
 
         // If Mario is not in the merry-go-round's area of the basement anymore,

@@ -40,7 +40,7 @@ void bhv_recovery_heart_loop(void) {
 
         struct MarioState* nearestState = nearest_mario_state_to_object(o);
         for (int i = 0; i < MAX_PLAYERS; i++) {
-            if (&gMarioState[i] == nearestState || dist_between_objects(o, gMarioState[i].marioObj) < 1000) {
+            if (&gMarioStates[i] == nearestState || dist_between_objects(o, gMarioStates[i].marioObj) < 1000) {
                 gMarioStates[i].healCounter += 4;
             }
         }

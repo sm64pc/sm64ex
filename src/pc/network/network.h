@@ -46,7 +46,8 @@ struct SyncObject {
     bool owned;
     clock_t clockSinceUpdate;
     void* behavior;
-    u16 onEventId;
+    u16 txEventId;
+    u16 rxEventId;
     u8 extraFieldCount;
     bool fullObjectSync;
     bool keepRandomSeed;
@@ -89,6 +90,7 @@ void network_update_reliable(void);
 void network_update_player(void);
 void network_receive_player(struct Packet* p);
 
+void network_forget_sync_object(struct SyncObject* so);
 bool network_owns_object(struct Object* o);
 void network_set_sync_id(struct Object* o);
 bool network_sync_object_initialized(struct Object* o);

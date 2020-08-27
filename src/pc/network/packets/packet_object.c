@@ -23,7 +23,7 @@ float player_distance(struct MarioState* marioState, struct Object* o) {
 
 void network_clear_sync_objects(void) {
     for (int i = 0; i < MAX_SYNC_OBJECTS; i++) {
-        forget_sync_object(&syncObjects[i]);
+        network_forget_sync_object(&syncObjects[i]);
     }
     nextSyncID = 1;
 }
@@ -59,7 +59,8 @@ struct SyncObject* network_init_object(struct Object *o, float maxSyncDistance) 
     so->clockSinceUpdate = clock();
     so->extraFieldCount = 0;
     so->behavior = o->behavior;
-    so->onEventId = 0;
+    so->rxEventId = 0;
+    so->txEventId = 0;
     so->fullObjectSync = false;
     so->keepRandomSeed = false;
     so->maxUpdateRate = 0;
@@ -97,7 +98,7 @@ static void packet_write_object_header(struct Packet* p, struct Object* o) {
     enum BehaviorId behaviorId = get_id_from_behavior(o->behavior);
 
     packet_write(p, &o->oSyncID, sizeof(u32));
-    packet_write(p, &so->onEventId, sizeof(u16));
+    packet_write(p, &so->txEventId, sizeof(u16));
     packet_write(p, &behaviorId, sizeof(enum BehaviorId));
 }
 
@@ -124,18 +125,13 @@ static struct SyncObject* packet_read_object_header(struct Packet* p) {
     }
     so->clockSinceUpdate = clock();
 
-    // make sure it's active
-    if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) {
-        return NULL;
-    }
-
     // make sure this is the newest event possible
     u16 eventId = 0;
     packet_read(p, &eventId, sizeof(u16));
-    if (so->onEventId > eventId && (u16)abs(eventId - so->onEventId) < USHRT_MAX / 2) {
+    if (so->rxEventId > eventId && (u16)abs(eventId - so->rxEventId) < USHRT_MAX / 2) {
         return NULL;
     }
-    so->onEventId = eventId;
+    so->rxEventId = eventId;
 
     // make sure the behaviors match
     enum BehaviorId behaviorId;
@@ -143,7 +139,7 @@ static struct SyncObject* packet_read_object_header(struct Packet* p) {
     so->behavior = get_behavior_from_id(behaviorId);
     if (o->behavior != so->behavior) {
         printf("network_receive_object() behavior mismatch!\n");
-        forget_sync_object(so);
+        network_forget_sync_object(so);
         return NULL;
     }
 
@@ -231,7 +227,9 @@ static void packet_read_object_extra_fields(struct Packet* p, struct Object* o) 
     // read the count and sanity check
     u8 extraFieldsCount = 0;
     packet_read(p, &extraFieldsCount, sizeof(u8));
-    assert(extraFieldsCount == so->extraFieldCount);
+    if (extraFieldsCount != so->extraFieldCount) {
+        return;
+    }
 
     // read the extra fields
     for (int i = 0; i < extraFieldsCount; i++) {
@@ -256,7 +254,7 @@ static void packet_read_object_only_death(struct Packet* p, struct Object* o) {
     if (activeFlags == ACTIVE_FLAG_DEACTIVATED) {
         // flag the object as dead, the behavior is responsible for clean up
         so->o->oSyncDeath = 1;
-        forget_sync_object(so);
+        network_forget_sync_object(so);
     }
 }
 
@@ -269,12 +267,12 @@ void network_send_object(struct Object* o) {
     if (so == NULL) { return; }
     if (o->behavior != so->behavior) {
         printf("network_send_object() BEHAVIOR MISMATCH!\n");
-        forget_sync_object(so);
+        network_forget_sync_object(so);
         return;
     }
     if (o != so->o) {
         printf("network_send_object() OBJECT MISMATCH!\n");
-        forget_sync_object(so);
+        network_forget_sync_object(so);
         return;
     }
 
@@ -289,17 +287,17 @@ void network_send_object_reliability(struct Object* o, bool reliable) {
     if (so == NULL) { return; }
     if (o->behavior != so->behavior) {
         printf("network_send_object() BEHAVIOR MISMATCH!\n");
-        forget_sync_object(so);
+        network_forget_sync_object(so);
         return;
     }
     if (o != so->o) {
         printf("network_send_object() OBJECT MISMATCH!\n");
-        forget_sync_object(so);
+        network_forget_sync_object(so);
         return;
     }
 
     // always send a new event ID
-    so->onEventId++;
+    so->txEventId++;
     so->clockSinceUpdate = clock();
 
     // write the packet data
@@ -313,7 +311,7 @@ void network_send_object_reliability(struct Object* o, bool reliable) {
 
     // check for object death
     if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) {
-        forget_sync_object(so);
+        network_forget_sync_object(so);
     }
 
     // send the packet out
@@ -338,7 +336,7 @@ void network_receive_object(struct Packet* p) {
 
     // deactivated
     if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) {
-        forget_sync_object(so);
+        network_forget_sync_object(so);
     }
 }
 
@@ -349,7 +347,7 @@ bool should_own_object(struct SyncObject* so) {
     return true;
 }
 
-void forget_sync_object(struct SyncObject* so) {
+void network_forget_sync_object(struct SyncObject* so) {
     so->o = NULL;
     so->behavior = NULL;
     so->reserved = 0;
@@ -364,7 +362,7 @@ void network_update_objects(void) {
         // check for stale sync object
         if (so->o->oSyncID != i) {
             printf("ERROR! Sync ID mismatch!\n");
-            forget_sync_object(so);
+            network_forget_sync_object(so);
             continue;
         }
 

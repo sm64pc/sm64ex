@@ -545,6 +545,10 @@ void clear_objects(void) {
     gMario2Object = NULL;
     gMarioCurrentRoom = 0;
 
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        gMarioStates[i].currentRoom = 0;
+    }
+
     for (i = 0; i < 60; i++) {
         gDoorAdjacentRooms[i][0] = 0;
         gDoorAdjacentRooms[i][1] = 0;

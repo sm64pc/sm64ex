@@ -537,7 +537,7 @@ s32 obj_begin_race(s32 noTimer) {
         }
 
         // Unfreeze mario and disable time stop to begin the race
-        set_mario_npc_dialog(&gMarioState[0], 0);
+        set_mario_npc_dialog(&gMarioStates[0], 0);
         disable_time_stop_including_mario();
     } else if (o->oTimer > 50) {
         return TRUE;
@@ -556,7 +556,7 @@ static void koopa_the_quick_act_wait_before_race(void) {
 
     if (o->oKoopaTheQuickInitTextboxCooldown != 0) {
         o->oKoopaTheQuickInitTextboxCooldown -= 1;
-    } else if (marioState == &gMarioState[0] && cur_obj_can_mario_activate_textbox_2(gMarioState, 400.0f, 400.0f)) {
+    } else if (marioState == &gMarioStates[0] && cur_obj_can_mario_activate_textbox_2(&gMarioStates[0], 400.0f, 400.0f)) {
         //! The next action doesn't execute until next frame, giving mario one
         //  frame where he can jump, and thus no longer be ready to speak.
         //  (On J, he has two frames and doing this enables time stop - see
@@ -789,7 +789,7 @@ static void koopa_the_quick_act_after_race(void) {
     struct MarioState* marioState = nearest_mario_state_to_object(o);
 
     if (o->parentObj->oKoopaRaceEndpointUnk100 == 0) {
-        if (marioState == &gMarioState[0] && cur_obj_can_mario_activate_textbox_2(&gMarioState[0], 400.0f, 400.0f)) {
+        if (marioState == &gMarioStates[0] && cur_obj_can_mario_activate_textbox_2(&gMarioStates[0], 400.0f, 400.0f)) {
             stop_background_music(SEQUENCE_ARGS(4, SEQ_LEVEL_SLIDE));
 
             // Determine which text to display
@@ -811,8 +811,8 @@ static void koopa_the_quick_act_after_race(void) {
             o->oFlags &= ~OBJ_FLAG_ACTIVE_FROM_AFAR;
         }
     } else if (o->parentObj->oKoopaRaceEndpointUnk100 > 0) {
-        if (marioState == &gMarioState[0]) {
-            s32 dialogResponse = cur_obj_update_dialog_with_cutscene(&gMarioState[0], 2, 1, CUTSCENE_DIALOG, o->parentObj->oKoopaRaceEndpointUnk100);
+        if (marioState == &gMarioStates[0]) {
+            s32 dialogResponse = cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 2, 1, CUTSCENE_DIALOG, o->parentObj->oKoopaRaceEndpointUnk100);
             if (dialogResponse != 0) {
                 o->parentObj->oKoopaRaceEndpointUnk100 = -1;
                 o->oTimer = 0;

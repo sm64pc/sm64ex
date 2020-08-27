@@ -226,7 +226,7 @@ static void monty_mole_act_spawn_rock(void) {
  * into hole action.
  */
 static void monty_mole_act_begin_jump_into_hole(void) {
-    if (cur_obj_init_anim_and_check_if_end(3) || obj_is_near_to_and_facing_mario(1000.0f, 0x4000)) {
+    if (cur_obj_init_anim_and_check_if_end(3) || obj_is_near_to_and_facing_mario(&gMarioStates[0], 1000.0f, 0x4000)) {
         o->oAction = MONTY_MOLE_ACT_JUMP_INTO_HOLE;
         o->oVelY = 40.0f;
         o->oGravity = -6.0f;

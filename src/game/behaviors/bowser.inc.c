@@ -833,7 +833,7 @@ s32 bowser_dead_not_bits_end(void) {
             func_8031FFB4(SEQ_PLAYER_LEVEL, 60, 40);
             o->oBowserUnkF8++;
         }
-        if (cur_obj_update_dialog(&gMarioState[0], 2, 18, sBowserDefeatedDialogText[o->oBehParams2ndByte], 0)) {
+        if (cur_obj_update_dialog(&gMarioStates[0], 2, 18, sBowserDefeatedDialogText[o->oBehParams2ndByte], 0)) {
             o->oBowserUnkF8++;
             cur_obj_play_sound_2(SOUND_GENERAL2_BOWSER_EXPLODE);
             sequence_player_unlower(SEQ_PLAYER_LEVEL, 60);
@@ -843,7 +843,7 @@ s32 bowser_dead_not_bits_end(void) {
         bowser_dead_hide();
         spawn_triangle_break_particles(20, 116, 1.0f, 0);
         bowser_spawn_grand_star_key();
-        set_mario_npc_dialog(&gMarioState[0], 0);
+        set_mario_npc_dialog(&gMarioStates[0], 0);
         ret = 1;
     }
     return ret;
@@ -862,7 +862,7 @@ s32 bowser_dead_bits_end(void) {
             func_8031FFB4(SEQ_PLAYER_LEVEL, 60, 40);
             o->oBowserUnkF8++;
         }
-        if (cur_obj_update_dialog(&gMarioState[0], 2, 18, dialogID, 0)) {
+        if (cur_obj_update_dialog(&gMarioStates[0], 2, 18, dialogID, 0)) {
             cur_obj_set_model(MODEL_BOWSER2);
             sequence_player_unlower(SEQ_PLAYER_LEVEL, 60);
             sequence_player_fade_out(0, 1);

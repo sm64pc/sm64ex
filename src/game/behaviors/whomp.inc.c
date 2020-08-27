@@ -32,7 +32,7 @@ void whomp_act_0(void) {
                 cur_obj_set_pos_to_home();
                 o->oHealth = 3;
             }
-        } else if (marioState == &gMarioState[0] && cur_obj_update_dialog_with_cutscene(&gMarioState[0], 2, 1, CUTSCENE_DIALOG, DIALOG_114)) {
+        } else if (marioState == &gMarioStates[0] && cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 2, 1, CUTSCENE_DIALOG, DIALOG_114)) {
             o->oAction = 2;
             network_send_object(o);
         }
@@ -233,7 +233,7 @@ void whomp_act_6(void) {
 void whomp_act_8(void) {
     if (o->oBehParams2ndByte != 0) {
         struct MarioState* marioState = nearest_mario_state_to_object(o);
-        if (marioState == &gMarioState[0] && cur_obj_update_dialog_with_cutscene(&gMarioState[0], 2, 2, CUTSCENE_DIALOG, DIALOG_115)) {
+        if (marioState == &gMarioStates[0] && cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 2, 2, CUTSCENE_DIALOG, DIALOG_115)) {
             obj_set_angle(o, 0, 0, 0);
             cur_obj_hide();
             cur_obj_become_intangible();

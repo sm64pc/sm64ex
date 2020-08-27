@@ -3958,6 +3958,7 @@
     <ClCompile Include="..\src\pc\network\packets\packet_player.c" />
     <ClCompile Include="..\src\pc\network\packets\packet_read_write.c" />
     <ClCompile Include="..\src\pc\network\packets\packet_reliable.c" />
+    <ClCompile Include="..\src\pc\network\packets\packet_reservation.c" />
     <ClCompile Include="..\src\pc\network\packets\packet_spawn_objects.c" />
     <ClCompile Include="..\src\pc\network\packets\packet_spawn_star.c" />
     <ClCompile Include="..\src\pc\network\socket\socket.c" />

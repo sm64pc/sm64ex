@@ -26,7 +26,7 @@ void opened_cannon_act_0(void) {
     if (distanceToPlayer < 500.0f) {
         //cur_obj_become_tangible();
         //cur_obj_enable_rendering();
-        if (player == gMarioState[0].marioObj) {
+        if (player == gMarioStates[0].marioObj) {
             if (o->oInteractStatus & INT_STATUS_INTERACTED && (!(o->oInteractStatus & INT_STATUS_TOUCHED_BOB_OMB))) { // bob-omb explodes when it gets into a cannon
                 o->oAction = 4;
                 o->oCannonUnk10C = 1;

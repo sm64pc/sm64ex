@@ -187,6 +187,7 @@ Gfx *geo_switch_area(s32 callContext, struct GraphNode *node) {
 
             if (sp20) {
                 gMarioCurrentRoom = sp20->room;
+                gMarioStates[0].currentRoom = gMarioCurrentRoom;
                 sp26 = sp20->room - 1;
                 print_debug_top_down_objectinfo("areainfo %d", sp20->room);
 
@@ -2382,6 +2383,15 @@ s32 cur_obj_is_mario_on_platform(void) {
     } else {
         return FALSE;
     }
+}
+
+s32 cur_obj_is_any_player_on_platform(void) {
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (gMarioStates[i].marioObj->platform == o) {
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 s32 cur_obj_shake_y_until(s32 cycles, s32 amount) {

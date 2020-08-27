@@ -19,8 +19,8 @@ static s16 sCourtyardBooTripletPositions[][3] = {
     {-210, 70, -210}
 };
 
-void boo_network_init_object(void) {
-    network_init_object(o, 4000.0f);
+struct SyncObject* boo_network_init_object(void) {
+    struct SyncObject* so = network_init_object(o, 4000.0f);
     network_init_object_field(o, &o->oBooBaseScale);
     network_init_object_field(o, &o->oBooNegatedAggressiveness);
     network_init_object_field(o, &o->oBooOscillationTimer);
@@ -35,7 +35,7 @@ void boo_network_init_object(void) {
     network_init_object_field(o, &o->oInteractType);
     network_init_object_field(o, &o->oOpacity);
     network_init_object_field(o, &o->oRoom);
-    network_init_object_field(o, &o->oBigBooNumMinionBoosKilled);
+    return so;
 }
 
 static void boo_stop(void) {
@@ -50,11 +50,15 @@ void bhv_boo_init(void) {
 
 static s32 boo_should_be_stopped(void) {
     if (cur_obj_has_behavior(bhvMerryGoRoundBigBoo) || cur_obj_has_behavior(bhvMerryGoRoundBoo)) {
-        if (gMarioOnMerryGoRound == FALSE) {
+        for (int i = 0; i < MAX_PLAYERS; i++) {
+            if (gMarioStates[i].currentRoom == BBH_DYNAMIC_SURFACE_ROOM || gMarioStates[i].currentRoom == BBH_NEAR_MERRY_GO_ROUND_ROOM) { return FALSE; }
+        }
+        return TRUE;
+        /*if (gMarioOnMerryGoRound == FALSE) {
             return TRUE;
         } else {
             return FALSE;
-        }
+        }*/
     } else {
         if (o->activeFlags & ACTIVE_FLAG_IN_DIFFERENT_ROOM) {
             return TRUE;
@@ -76,8 +80,7 @@ static s32 boo_should_be_active(void) {
 
     u8 inRoom = FALSE;
     for (int i = 0; i < MAX_PLAYERS; i++) {
-        if (marioState->floor == NULL) { continue; }
-        inRoom = inRoom || (marioState->floor->room == o->oRoom);
+        if (gMarioStates[i].currentRoom == o->oRoom || gMarioStates[i].currentRoom == 0) { inRoom = TRUE; }
     }
 
     f32 activationRadius;
@@ -99,7 +102,7 @@ static s32 boo_should_be_active(void) {
             return TRUE;
         }
     } else if (!boo_should_be_stopped()) {
-        if (distanceToPlayer < activationRadius && (inRoom || gMarioCurrentRoom == 0)) {
+        if (distanceToPlayer < activationRadius && inRoom) {
             return TRUE;
         }
     }
@@ -310,17 +313,13 @@ static s32 boo_update_during_death(void) {
             if (o->oBooParentBigBoo != NULL) {
                 parentBigBoo = o->oBooParentBigBoo;
 
-                struct MarioState* marioState = nearest_mario_state_to_object(o);
-                if (marioState->playerIndex == 0) {
 #ifndef VERSION_JP
-                    if (!cur_obj_has_behavior(bhvBoo)) {
-                        parentBigBoo->oBigBooNumMinionBoosKilled++;
-                    }
-#else
+                if (!cur_obj_has_behavior(bhvBoo)) {
                     parentBigBoo->oBigBooNumMinionBoosKilled++;
-#endif
-                    network_send_object_reliability(parentBigBoo, TRUE);
                 }
+#else
+                parentBigBoo->oBigBooNumMinionBoosKilled++;
+#endif
             }
 
             return TRUE;
@@ -378,7 +377,9 @@ static void boo_chase_mario(f32 a0, s16 a1, f32 a2) {
     if (boo_vanish_or_appear()) {
         o->oInteractType = 0x8000;
 
-        if (cur_obj_lateral_dist_from_obj_to_home(player) > 1500.0f) {
+
+        u8 isMerryGoRoundBoo = (cur_obj_has_behavior(bhvMerryGoRoundBigBoo) || cur_obj_has_behavior(bhvMerryGoRoundBoo));
+        if (!isMerryGoRoundBoo && cur_obj_lateral_dist_from_obj_to_home(player) > 1500.0f) {
             sp1A = cur_obj_angle_to_home();
         } else {
             sp1A = angleToPlayer;
@@ -503,7 +504,7 @@ static void boo_act_4(void) {
     }
 
     struct MarioState* marioState = nearest_mario_state_to_object(o);
-    if (marioState->playerIndex == 0 && cur_obj_update_dialog(&gMarioState[0], 2, 2, dialogID, 0)) {
+    if (marioState->playerIndex != 0 || cur_obj_update_dialog(&gMarioStates[0], 2, 2, dialogID, 0)) {
         create_sound_spawner(SOUND_OBJ_DYING_ENEMY1);
         obj_mark_for_deletion(o);
 
@@ -523,7 +524,19 @@ static void (*sBooActions[])(void) = {
 };
 
 void bhv_boo_loop(void) {
-    if (!network_sync_object_initialized(o)) { boo_network_init_object(); }
+    if (o->oAction < 3) {
+        if (!network_sync_object_initialized(o)) {
+            struct SyncObject* so = boo_network_init_object();
+            so->syncDeathEvent = FALSE;
+        }
+    }
+    else {
+        if (network_sync_object_initialized(o)) {
+            network_send_object_reliability(o, TRUE);
+            network_forget_sync_object(&syncObjects[o->oSyncID]);
+        }
+    }
+
     //PARTIAL_UPDATE
 
     cur_obj_update_floor_and_walls();
@@ -534,12 +547,13 @@ void bhv_boo_loop(void) {
     if (obj_has_behavior(o->parentObj, bhvMerryGoRoundBooManager)) {
         if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) {
             o->parentObj->oMerryGoRoundBooManagerNumBoosKilled++;
-            network_send_object(o->parentObj);
         }
     }
 
     o->oInteractStatus = 0;
 }
+
+static u8 bigBooActivated = FALSE;
 
 static void big_boo_act_0(void) {
     if (cur_obj_has_behavior(bhvBalconyBigBoo)) {
@@ -557,6 +571,7 @@ static void big_boo_act_0(void) {
     if (boo_should_be_active() && o->oBigBooNumMinionBoosKilled >= 5) {
 #endif
         o->oAction = 1;
+        bigBooActivated = TRUE;
 
         cur_obj_set_pos_to_home();
         o->oMoveAngleYaw = o->oBooInitialMoveYaw;
@@ -595,7 +610,13 @@ static void big_boo_act_1(void) {
 
     // redundant; this check is in boo_should_be_stopped
     if (cur_obj_has_behavior(bhvMerryGoRoundBigBoo)) {
-        if (gMarioOnMerryGoRound == FALSE) {
+        u8 inRoom = FALSE;
+        for (int i = 0; i < MAX_PLAYERS; i++) {
+            if (gMarioStates[i].currentRoom == BBH_DYNAMIC_SURFACE_ROOM || gMarioStates[i].currentRoom == BBH_NEAR_MERRY_GO_ROUND_ROOM) { inRoom = TRUE; }
+        }
+
+        //if (gMarioOnMerryGoRound == FALSE) {
+        if (!inRoom) {
             o->oAction = 0;
         }
     } else if (boo_should_be_stopped()) {
@@ -646,7 +667,7 @@ static void big_boo_act_3(void) {
         o->oHealth--;
     }
 
-    if (o->oHealth == 0) {
+    if (o->oHealth <= 0) {
         if (boo_update_during_death()) {
             cur_obj_disable();
 
@@ -707,8 +728,25 @@ static void (*sBooGivingStarActions[])(void) = {
     big_boo_act_4
 };
 
+u8 big_boo_ignore_update(void) {
+    return cur_obj_has_behavior(bhvGhostHuntBigBoo) && !bigBooActivated;
+}
+
 void bhv_big_boo_loop(void) {
-    if (!network_sync_object_initialized(o)) { boo_network_init_object(); }
+    if (o->oAction == 0) {
+        if (!network_sync_object_initialized(o)) {
+            bigBooActivated = FALSE;
+            struct SyncObject* so = boo_network_init_object();
+            so->syncDeathEvent = FALSE;
+            so->ignore_if_true = big_boo_ignore_update;
+        }
+    } else if (o->oHealth <= 0) {
+        if (network_sync_object_initialized(o)) {
+            network_send_object_reliability(o, TRUE);
+            network_forget_sync_object(&syncObjects[o->oSyncID]);
+        }
+    }
+
     //PARTIAL_UPDATE
 
     obj_set_hitbox(o, &sBooGivingStarHitbox);
@@ -803,7 +841,6 @@ void bhv_merry_go_round_boo_manager_loop(void) {
         network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
         network_init_object_field(o, &o->oAction);
         network_init_object_field(o, &o->oMerryGoRoundBooManagerNumBoosSpawned);
-        network_init_object_field(o, &o->oMerryGoRoundBooManagerNumBoosKilled);
     }
 
     struct Object* player = nearest_player_to_object(o);

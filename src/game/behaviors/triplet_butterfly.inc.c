@@ -143,7 +143,7 @@ static void triplet_butterfly_act_explode(void) {
 
         approach_f32_ptr(&o->oTripletButterflySpeed, 20.0f, 1.0f);
         cur_obj_rotate_yaw_toward(o->oAngleToMario, 800);
-        obj_turn_pitch_toward_mario(-100.0f, 800);
+        obj_turn_pitch_toward_mario(&gMarioStates[0], -100.0f, 800);
     }
 }
 

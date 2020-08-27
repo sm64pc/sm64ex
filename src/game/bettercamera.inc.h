@@ -204,9 +204,9 @@ static s16 lengthdir_y(f32 length, s16 dir) {
 void newcam_diagnostics(void) {
     print_text_fmt_int(32,192,"Lv %d",gCurrLevelNum);
     print_text_fmt_int(32,176,"Area %d",gCurrAreaIndex);
-    print_text_fmt_int(32,160,"X %d",gMarioState->pos[0]);
-    print_text_fmt_int(32,144,"Y %d",gMarioState->pos[1]);
-    print_text_fmt_int(32,128,"Z %d",gMarioState->pos[2]);
+    print_text_fmt_int(32,160,"X %d", gMarioStates[0].pos[0]);
+    print_text_fmt_int(32,144,"Y %d", gMarioStates[0].pos[1]);
+    print_text_fmt_int(32,128,"Z %d", gMarioStates[0].pos[2]);
     print_text_fmt_int(32,112,"FLAGS %d",newcam_modeflags);
     print_text_fmt_int(180,112,"INTM %d",newcam_intendedmode);
     print_text_fmt_int(32,96,"TILT UP %d",newcam_tilt_acc);
@@ -395,7 +395,7 @@ static void newcam_zoom_button(void) {
 
     if ((gPlayer1Controller->buttonDown & L_TRIG) && (newcam_modeflags & NC_FLAG_ZOOM)) {
         //When you press L, set the flag for centering the camera. Afterwards, start setting the yaw to the Player's yaw at the time.
-        newcam_yaw_target = -gMarioState->faceAngle[1]-0x4000;
+        newcam_yaw_target = -gMarioStates[0].faceAngle[1]-0x4000;
         newcam_centering = 1;
     } else if (gPlayer1Controller->buttonPressed & R_TRIG && newcam_modeflags & NC_FLAG_XTURN) {
         //Each time the player presses R, but NOT L the camera zooms out more, until it hits the limit and resets back to close view.
@@ -434,40 +434,40 @@ static void newcam_update_values(void) {
     if (newcam_tilt < -12000)
         newcam_tilt = -12000;
 
-    if (newcam_turnwait > 0 && gMarioState->vel[1] == 0) {
+    if (newcam_turnwait > 0 && gMarioStates[0].vel[1] == 0) {
         newcam_turnwait -= 1;
         if (newcam_turnwait < 0)
             newcam_turnwait = 0;
     } else {
-        if (gMarioState->intendedMag > 0 && gMarioState->vel[1] == 0 && newcam_modeflags & NC_FLAG_XTURN && !(newcam_modeflags & NC_FLAG_8D) && !(newcam_modeflags & NC_FLAG_4D))
-            newcam_yaw = (approach_s16_symmetric(newcam_yaw,-gMarioState->faceAngle[1]-0x4000,((newcam_aggression*(ABS(gPlayer1Controller->rawStickX/10)))*(gMarioState->forwardVel/32))));
+        if (gMarioStates[0].intendedMag > 0 && gMarioStates[0].vel[1] == 0 && newcam_modeflags & NC_FLAG_XTURN && !(newcam_modeflags & NC_FLAG_8D) && !(newcam_modeflags & NC_FLAG_4D))
+            newcam_yaw = (approach_s16_symmetric(newcam_yaw,-gMarioStates[0].faceAngle[1]-0x4000,((newcam_aggression*(ABS(gPlayer1Controller->rawStickX/10)))*(gMarioStates[0].forwardVel/32))));
         else
             newcam_turnwait = 10;
     }
 
     if (newcam_modeflags & NC_FLAG_SLIDECORRECT) {
-        switch (gMarioState->action) {
-            case ACT_BUTT_SLIDE: if (gMarioState->forwardVel > 8) waterflag = 1; break;
-            case ACT_STOMACH_SLIDE: if (gMarioState->forwardVel > 8) waterflag = 1; break;
-            case ACT_HOLD_BUTT_SLIDE: if (gMarioState->forwardVel > 8) waterflag = 1; break;
-            case ACT_HOLD_STOMACH_SLIDE: if (gMarioState->forwardVel > 8) waterflag = 1; break;
+        switch (gMarioStates[0].action) {
+            case ACT_BUTT_SLIDE: if (gMarioStates[0].forwardVel > 8) waterflag = 1; break;
+            case ACT_STOMACH_SLIDE: if (gMarioStates[0].forwardVel > 8) waterflag = 1; break;
+            case ACT_HOLD_BUTT_SLIDE: if (gMarioStates[0].forwardVel > 8) waterflag = 1; break;
+            case ACT_HOLD_STOMACH_SLIDE: if (gMarioStates[0].forwardVel > 8) waterflag = 1; break;
         }
     }
 
-    switch (gMarioState->action) {
+    switch (gMarioStates[0].action) {
         case ACT_SHOT_FROM_CANNON: waterflag = 1; break;
         case ACT_FLYING: waterflag = 1; break;
     }
 
-    if (gMarioState->action & ACT_FLAG_SWIMMING) {
-        if (gMarioState->forwardVel > 2)
+    if (gMarioStates[0].action & ACT_FLAG_SWIMMING) {
+        if (gMarioStates[0].forwardVel > 2)
         waterflag = 1;
     }
 
     if (waterflag && newcam_modeflags & NC_FLAG_XTURN) {
-        newcam_yaw = (approach_s16_symmetric(newcam_yaw,-gMarioState->faceAngle[1]-0x4000,(gMarioState->forwardVel*128)));
-        if ((signed)gMarioState->forwardVel > 1)
-            newcam_tilt = (approach_s16_symmetric(newcam_tilt,(-gMarioState->faceAngle[0]*0.8)+3000,(gMarioState->forwardVel*32)));
+        newcam_yaw = (approach_s16_symmetric(newcam_yaw,-gMarioStates[0].faceAngle[1]-0x4000,(gMarioStates[0].forwardVel*128)));
+        if ((signed)gMarioStates[0].forwardVel > 1)
+            newcam_tilt = (approach_s16_symmetric(newcam_tilt,(-gMarioStates[0].faceAngle[0]*0.8)+3000,(gMarioStates[0].forwardVel*32)));
         else
             newcam_tilt = (approach_s16_symmetric(newcam_tilt,3000,32));
     }
@@ -496,9 +496,9 @@ static void newcam_collision(void) {
 
 static void newcam_set_pan(void) {
     //Apply panning values based on Mario's direction.
-    if (gMarioState->action != ACT_HOLDING_BOWSER && gMarioState->action != ACT_SLEEPING && gMarioState->action != ACT_START_SLEEPING) {
-        approach_f32_asymptotic_bool(&newcam_pan_x, lengthdir_x((160*newcam_panlevel)/100, -gMarioState->faceAngle[1]-0x4000), 0.05);
-        approach_f32_asymptotic_bool(&newcam_pan_z, lengthdir_y((160*newcam_panlevel)/100, -gMarioState->faceAngle[1]-0x4000), 0.05);
+    if (gMarioStates[0].action != ACT_HOLDING_BOWSER && gMarioStates[0].action != ACT_SLEEPING && gMarioStates[0].action != ACT_START_SLEEPING) {
+        approach_f32_asymptotic_bool(&newcam_pan_x, lengthdir_x((160*newcam_panlevel)/100, -gMarioStates[0].faceAngle[1]-0x4000), 0.05);
+        approach_f32_asymptotic_bool(&newcam_pan_z, lengthdir_y((160*newcam_panlevel)/100, -gMarioStates[0].faceAngle[1]-0x4000), 0.05);
     } else {
         approach_f32_asymptotic_bool(&newcam_pan_x, 0, 0.05);
         approach_f32_asymptotic_bool(&newcam_pan_z, 0, 0.05);
@@ -514,16 +514,16 @@ static void newcam_position_cam(void) {
     s16 shakeX;
     s16 shakeY;
 
-    if (!(gMarioState->action & ACT_FLAG_SWIMMING) && newcam_modeflags & NC_FLAG_FOCUSY && newcam_modeflags & NC_FLAG_POSY)
+    if (!(gMarioStates[0].action & ACT_FLAG_SWIMMING) && newcam_modeflags & NC_FLAG_FOCUSY && newcam_modeflags & NC_FLAG_POSY)
         calc_y_to_curr_floor(&floorY, 1.f, 200.f, &floorY2, 0.9f, 200.f);
 
     newcam_update_values();
     shakeX = gLakituState.shakeMagnitude[1];
     shakeY = gLakituState.shakeMagnitude[0];
     //Fetch Mario's current position. Not hardcoded just for the sake of flexibility, though this specific bit is temp, because it won't always want to be focusing on Mario.
-    newcam_pos_target[0] = gMarioState->pos[0];
-    newcam_pos_target[1] = gMarioState->pos[1]+newcam_extheight;
-    newcam_pos_target[2] = gMarioState->pos[2];
+    newcam_pos_target[0] = gMarioStates[0].pos[0];
+    newcam_pos_target[1] = gMarioStates[0].pos[1]+newcam_extheight;
+    newcam_pos_target[2] = gMarioStates[0].pos[2];
     //These will set the position of the camera to where Mario is supposed to be, minus adjustments for where the camera should be, on top of.
     if (newcam_modeflags & NC_FLAG_POSX)
         newcam_pos[0] = newcam_pos_target[0]+lengthdir_x(lengthdir_x(newcam_distance,newcam_tilt+shakeX),newcam_yaw+shakeY);
@@ -605,10 +605,10 @@ static void newcam_apply_values(struct Camera *c) {
     gLakituState.yaw = -newcam_yaw+0x4000;
 
     //Adds support for wing mario tower
-    if (gMarioState->floor != NULL) {
-        if (gMarioState->floor->type == SURFACE_LOOK_UP_WARP) {
+    if (gMarioStates[0].floor != NULL) {
+        if (gMarioStates[0].floor->type == SURFACE_LOOK_UP_WARP) {
             if (save_file_get_total_star_count(gCurrSaveFileNum - 1, 0, 0x18) >= 10) {
-                if (newcam_tilt < -8000 && gMarioState->forwardVel == 0) {
+                if (newcam_tilt < -8000 && gMarioStates[0].forwardVel == 0) {
                     level_trigger_warp(gMarioState, 1);
                 }
             }
@@ -631,7 +631,7 @@ void newcam_fade_target_closeup(void) {
 //The ingame cutscene system is such a spaghetti mess I actually have to resort to something as stupid as this to cover every base.
 void newcam_apply_outside_values(struct Camera *c, u8 bit) {
     if (bit)
-        newcam_yaw = -gMarioState->faceAngle[1]-0x4000;
+        newcam_yaw = -gMarioStates[0].faceAngle[1]-0x4000;
     else
         newcam_yaw = -c->yaw+0x4000;
 }

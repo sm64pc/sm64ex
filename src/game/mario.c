@@ -54,7 +54,7 @@ s8 filler80339F1C[20];
  */
 s32 is_anim_at_end(struct MarioState *m) {
     struct Object *o = m->marioObj;
-
+    if (o->header.gfx.unk38.curAnim == NULL) { return TRUE; }
     return (o->header.gfx.unk38.animFrame + 1) == o->header.gfx.unk38.curAnim->unk08;
 }
 
@@ -736,17 +736,23 @@ void update_mario_sound_and_camera(struct MarioState *m) {
     s32 camPreset = m->area->camera->mode;
 
     if (action == ACT_FIRST_PERSON) {
-        raise_background_noise(2);
-        gCameraMovementFlags &= ~CAM_MOVE_C_UP_MODE;
-        // Go back to the last camera mode
-        set_camera_mode(m->area->camera, -1, 1);
+        if (m->playerIndex == 0) {
+            raise_background_noise(2);
+            gCameraMovementFlags &= ~CAM_MOVE_C_UP_MODE;
+            // Go back to the last camera mode
+            set_camera_mode(m->area->camera, -1, 1);
+        }
     } else if (action == ACT_SLEEPING) {
-        raise_background_noise(2);
+        if (m->playerIndex == 0) {
+            raise_background_noise(2);
+        }
     }
 
-    if (!(action & (ACT_FLAG_SWIMMING | ACT_FLAG_METAL_WATER))) {
-        if (camPreset == CAMERA_MODE_BEHIND_MARIO || camPreset == CAMERA_MODE_WATER_SURFACE) {
-            set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
+    if (m->playerIndex == 0) {
+        if (!(action & (ACT_FLAG_SWIMMING | ACT_FLAG_METAL_WATER))) {
+            if (camPreset == CAMERA_MODE_BEHIND_MARIO || camPreset == CAMERA_MODE_WATER_SURFACE) {
+                set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
+            }
         }
     }
 }
@@ -1173,7 +1179,9 @@ s32 check_common_hold_action_exits(struct MarioState *m) {
  * Transitions Mario from a submerged action to a walking action.
  */
 s32 transition_submerged_to_walking(struct MarioState *m) {
-    set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
+    if (m->playerIndex == 0) {
+        set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
+    }
 
     vec3s_set(m->angleVel, 0, 0, 0);
 
@@ -1202,7 +1210,7 @@ s32 set_water_plunge_action(struct MarioState *m) {
         m->faceAngle[0] = 0;
     }
 
-    if (m->area->camera->mode != CAMERA_MODE_WATER_SURFACE) {
+    if (m->playerIndex == 0 && m->area->camera->mode != CAMERA_MODE_WATER_SURFACE) {
         set_camera_mode(m->area->camera, CAMERA_MODE_WATER_SURFACE, 1);
     }
 
@@ -1417,7 +1425,7 @@ void update_mario_geometry_inputs(struct MarioState *m) {
  */
 void update_mario_inputs(struct MarioState *m) {
     m->particleFlags = 0;
-    if (m == &gMarioStates[0]) { m->input = 0; }
+    if (m->playerIndex == 0) { m->input = 0; }
 
     m->collidedObjInteractTypes = m->marioObj->collidedObjInteractTypes;
     m->flags &= 0xFFFFFF;
@@ -1435,21 +1443,23 @@ void update_mario_inputs(struct MarioState *m) {
     }
     /*End of moonjump cheat */
 
-    if (gCameraMovementFlags & CAM_MOVE_C_UP_MODE) {
-        if (m->action & ACT_FLAG_ALLOW_FIRST_PERSON) {
-            m->input |= INPUT_FIRST_PERSON;
-        } else {
-            gCameraMovementFlags &= ~CAM_MOVE_C_UP_MODE;
+    if (m->playerIndex == 0) {
+        if (gCameraMovementFlags & CAM_MOVE_C_UP_MODE) {
+            if (m->action & ACT_FLAG_ALLOW_FIRST_PERSON) {
+                m->input |= INPUT_FIRST_PERSON;
+            } else {
+                gCameraMovementFlags &= ~CAM_MOVE_C_UP_MODE;
+            }
         }
-    }
 
-    if (!(m->input & (INPUT_NONZERO_ANALOG | INPUT_A_PRESSED))) {
-        m->input |= INPUT_UNKNOWN_5;
-    }
+        if (!(m->input & (INPUT_NONZERO_ANALOG | INPUT_A_PRESSED))) {
+            m->input |= INPUT_UNKNOWN_5;
+        }
 
-    if (m->marioObj->oInteractStatus
-        & (INT_STATUS_HOOT_GRABBED_BY_MARIO | INT_STATUS_MARIO_UNK1 | INT_STATUS_MARIO_UNK4)) {
-        m->input |= INPUT_UNKNOWN_10;
+        if (m->marioObj->oInteractStatus
+            & (INT_STATUS_HOOT_GRABBED_BY_MARIO | INT_STATUS_MARIO_UNK1 | INT_STATUS_MARIO_UNK4)) {
+            m->input |= INPUT_UNKNOWN_10;
+        }
     }
 
     // This function is located near other unused trampoline functions,
@@ -1477,15 +1487,15 @@ void set_submerged_cam_preset_and_spawn_bubbles(struct MarioState *m) {
         camPreset = m->area->camera->mode;
 
         if ((m->action & ACT_FLAG_METAL_WATER)) {
-            if (camPreset != CAMERA_MODE_CLOSE) {
+            if (m->playerIndex == 0 && camPreset != CAMERA_MODE_CLOSE) {
                 set_camera_mode(m->area->camera, CAMERA_MODE_CLOSE, 1);
             }
         } else {
-            if ((heightBelowWater > 800.0f) && (camPreset != CAMERA_MODE_BEHIND_MARIO)) {
+            if (m->playerIndex == 0 && (heightBelowWater > 800.0f) && (camPreset != CAMERA_MODE_BEHIND_MARIO)) {
                 set_camera_mode(m->area->camera, CAMERA_MODE_BEHIND_MARIO, 1);
             }
 
-            if ((heightBelowWater < 400.0f) && (camPreset != CAMERA_MODE_WATER_SURFACE)) {
+            if (m->playerIndex == 0 && (heightBelowWater < 400.0f) && (camPreset != CAMERA_MODE_WATER_SURFACE)) {
                 set_camera_mode(m->area->camera, CAMERA_MODE_WATER_SURFACE, 1);
             }
 

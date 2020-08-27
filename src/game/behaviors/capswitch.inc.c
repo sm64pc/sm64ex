@@ -43,8 +43,8 @@ void cap_switch_act_2(void) {
         }
     } else {
         struct MarioState* marioState = nearest_mario_state_to_object(o);
-        if (marioState == &gMarioState[0]) {
-            sp1C = cur_obj_update_dialog_with_cutscene(&gMarioState[0], 1, 0x0C, CUTSCENE_CAP_SWITCH_PRESS, 0);
+        if (marioState == &gMarioStates[0]) {
+            sp1C = cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 1, 0x0C, CUTSCENE_CAP_SWITCH_PRESS, 0);
             if (sp1C) { o->oAction = 3; }
         } else {
             o->oAction = 3;

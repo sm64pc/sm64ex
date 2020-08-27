@@ -7,9 +7,9 @@ struct MarioState* king_bobomb_nearest_mario_state() {
         float ydiff = (o->oPosY - gMarioStates[i].marioObj->oPosY);
         if (ydiff >= 1200) { continue; }
 
-        float dist = dist_between_objects(o, gMarioState[i].marioObj);
+        float dist = dist_between_objects(o, gMarioStates[i].marioObj);
         if (nearest == NULL || dist < nearestDist) {
-            nearest = &gMarioState[i];
+            nearest = &gMarioStates[i];
             nearestDist = dist;
         }
     }
@@ -41,7 +41,7 @@ u8 cur_obj_update_dialog_with_cutscene_hack(s32 actionArg, s32 dialogFlags, s32 
     // disable dialogs, too weird to sync
     return TRUE;
     /*if (nearest_mario_state_to_object(o) == &gMarioStates[0]) {
-        cur_obj_update_dialog_with_cutscene(&gMarioState[0], actionArg, dialogFlags, cutsceneTable, dialogID);
+        cur_obj_update_dialog_with_cutscene(&gMarioStates[0], actionArg, dialogFlags, cutsceneTable, dialogID);
     } else {
         return FALSE;
     }*/

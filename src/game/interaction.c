@@ -744,7 +744,9 @@ u32 take_damage_and_knock_back(struct MarioState *m, struct Object *o) {
 
 void reset_mario_pitch(struct MarioState *m) {
     if (m->action == ACT_WATER_JUMP || m->action == ACT_SHOT_FROM_CANNON || m->action == ACT_FLYING) {
-        set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
+        if (m->playerIndex == 0) {
+            set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
+        }
         m->faceAngle[0] = 0;
     }
 }

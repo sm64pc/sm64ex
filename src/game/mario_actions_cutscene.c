@@ -53,6 +53,8 @@ static s8 D_8032CBEC[7] = { 2, 3, 2, 1, 2, 3, 2 };
 
 static u8 sStarsNeededForDialog[6] = { 1, 3, 8, 30, 50, 70 };
 
+static BehaviorScript* localDialogNPCBehavior = NULL;
+
 /**
  * Data for the jumbo star cutscene. It specifies the flight path after triple
  * jumping. Each entry is one keyframe.
@@ -354,6 +356,10 @@ s32 mario_ready_to_speak(struct MarioState* m) {
 s32 set_mario_npc_dialog(struct MarioState* m, s32 actionArg) {
     s32 dialogState = 0;
 
+    if (m->playerIndex == 0 && actionArg == 0) {
+        localDialogNPCBehavior = NULL;
+    }
+
     // in dialog
     if (m->action == ACT_READING_NPC_DIALOG) {
         if (m->actionState < 8) {
@@ -369,6 +375,7 @@ s32 set_mario_npc_dialog(struct MarioState* m, s32 actionArg) {
     } else if (actionArg != 0 && mario_ready_to_speak(m)) {
         m->usedObj = gCurrentObject;
         set_mario_action(m, ACT_READING_NPC_DIALOG, actionArg);
+        if (m->playerIndex == 0) { localDialogNPCBehavior = m->usedObj->behavior; }
         dialogState = 1; // starting dialog
     }
 
@@ -387,6 +394,12 @@ s32 set_mario_npc_dialog(struct MarioState* m, s32 actionArg) {
 s32 act_reading_npc_dialog(struct MarioState *m) {
     s32 headTurnAmount = 0;
     s16 angleToNPC;
+
+    if (m->playerIndex == 0) {
+        if (m->usedObj == NULL || m->usedObj->activeFlags != ACTIVE_FLAG_DEACTIVATED || m->usedObj->behavior != localDialogNPCBehavior) {
+            set_mario_npc_dialog(m, 0);
+        }
+    }
 
     if (m->actionArg == 2) {
         headTurnAmount = -1024;
@@ -1312,13 +1325,19 @@ s32 act_spawn_no_spin_landing(struct MarioState *m) {
 s32 act_bbh_enter_spin(struct MarioState *m) {
     f32 floorDist;
     f32 scale;
-    f32 cageDX;
-    f32 cageDZ;
+    f32 cageDX = 0;
+    f32 cageDZ = 0;
     f32 cageDist;
     f32 forwardVel;
 
-    cageDX = m->usedObj->oPosX - m->pos[0];
-    cageDZ = m->usedObj->oPosZ - m->pos[2];
+    if (m->usedObj == NULL) {
+        m->usedObj = cur_obj_nearest_object_with_behavior(bhvBooCage);
+    }
+
+    if (m->usedObj != NULL) {
+        cageDX = m->usedObj->oPosX - m->pos[0];
+        cageDZ = m->usedObj->oPosZ - m->pos[2];
+    }
     cageDist = sqrtf(cageDX * cageDX + cageDZ * cageDZ);
 
     if (cageDist > 20.0f) {
@@ -1400,7 +1419,11 @@ s32 act_bbh_enter_jump(struct MarioState *m) {
         m, m->flags & MARIO_METAL_CAP ? SOUND_ACTION_METAL_JUMP : SOUND_ACTION_TERRAIN_JUMP, 1);
     play_mario_jump_sound(m);
 
-    if (m->actionState == 0) {
+    if (m->usedObj == NULL) {
+        m->usedObj = cur_obj_nearest_object_with_behavior(bhvBooCage);
+    }
+
+    if (m->actionState == 0 && m->usedObj != NULL) {
         cageDX = m->usedObj->oPosX - m->pos[0];
         cageDZ = m->usedObj->oPosZ - m->pos[2];
         cageDist = sqrtf(cageDX * cageDX + cageDZ * cageDZ);
@@ -1470,7 +1493,7 @@ s32 act_teleport_fade_in(struct MarioState *m) {
     if (m->actionTimer++ == 32) {
         if (m->pos[1] < m->waterLevel - 100) {
             // Check if the camera is not underwater.
-            if (m->area->camera->mode != CAMERA_MODE_WATER_SURFACE) {
+            if (m->playerIndex == 0 && m->area->camera->mode != CAMERA_MODE_WATER_SURFACE) {
                 set_camera_mode(m->area->camera, CAMERA_MODE_WATER_SURFACE, 1);
             }
             set_mario_action(m, ACT_WATER_IDLE, 0);
@@ -1802,7 +1825,9 @@ static void intro_cutscene_lower_pipe(struct MarioState *m) {
 
 static void intro_cutscene_set_mario_to_idle(struct MarioState *m) {
     if (gCamera->cutscene == 0) {
-        gCameraMovementFlags &= ~CAM_MOVE_C_UP_MODE;
+        if (m->playerIndex == 0) {
+            gCameraMovementFlags &= ~CAM_MOVE_C_UP_MODE;
+        }
         set_mario_action(m, ACT_IDLE, 0);
     }
 
@@ -2571,7 +2596,7 @@ static s32 act_credits_cutscene(struct MarioState *m) {
     m->statusForCamera->cameraEvent = CAM_EVENT_START_CREDITS;
     // checks if Mario is underwater (JRB, DDD, SA, etc.)
     if (m->pos[1] < m->waterLevel - 100) {
-        if (m->area->camera->mode != CAMERA_MODE_BEHIND_MARIO) {
+        if (m->playerIndex == 0 && m->area->camera->mode != CAMERA_MODE_BEHIND_MARIO) {
             set_camera_mode(m->area->camera, CAMERA_MODE_BEHIND_MARIO, 1);
         }
         set_mario_animation(m, MARIO_ANIM_WATER_IDLE);

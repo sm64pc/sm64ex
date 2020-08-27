@@ -89,7 +89,7 @@ void bubba_act_1(void) {
 
         o->oBubbaUnk1AC = o->oBubbaUnk104;
 
-        if (obj_is_near_to_and_facing_mario(500.0f, 3000)
+        if (obj_is_near_to_and_facing_mario(&gMarioStates[0], 500.0f, 3000)
             && abs_angle_diff(o->oBubbaUnk1AC, o->oMoveAnglePitch) < 3000) {
             o->oBubbaUnk100 = 30;
             o->oBubbaUnkF4 = 0;
@@ -106,7 +106,7 @@ void bhv_bubba_loop(void) {
     s16 sp36;
 
     o->oInteractionSubtype &= ~INT_SUBTYPE_EATS_MARIO;
-    o->oBubbaUnk104 = obj_turn_pitch_toward_mario(120.0f, 0);
+    o->oBubbaUnk104 = obj_turn_pitch_toward_mario(&gMarioStates[0], 120.0f, 0);
 
     if (abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw) < 0x1000
         && abs_angle_diff(o->oBubbaUnk104 + 0x800, o->oMoveAnglePitch) < 0x2000) {

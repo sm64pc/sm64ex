@@ -14,9 +14,13 @@ static struct ObjectHitbox sMadPianoHitbox = {
 static void mad_piano_act_wait(void) {
     cur_obj_init_animation_with_sound(0);
 
-    if (o->oDistanceToMario < 500.0f) {
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+    struct Object* player = marioState->marioObj;
+    int distanceToPlayer = dist_between_objects(o, player);
+
+    if (distanceToPlayer < 500.0f) {
         if (o->oTimer > 20) {
-            if (gMarioStates[0].forwardVel > 10.0f) {
+            if (marioState->forwardVel > 10.0f) {
                 o->oAction = MAD_PIANO_ACT_ATTACK;
                 cur_obj_become_tangible();
             }
@@ -33,7 +37,12 @@ static void mad_piano_act_attack(void) {
     cur_obj_init_animation_with_sound(1);
     cur_obj_play_sound_at_anim_range(0, 0, SOUND_OBJ_MAD_PIANO_CHOMPING);
 
-    if (o->oDistanceToMario < 500.0f) {
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+    struct Object* player = marioState->marioObj;
+    int distanceToPlayer = dist_between_objects(o, player);
+    int angleToPlayer = obj_angle_to_object(o, player);
+
+    if (distanceToPlayer < 500.0f) {
         o->oTimer = 0;
     }
 
@@ -52,7 +61,7 @@ static void mad_piano_act_attack(void) {
             o->oPosZ = o->oHomeZ + dz * distToHome;
         }
 
-        cur_obj_rotate_yaw_toward(o->oAngleToMario, 400);
+        cur_obj_rotate_yaw_toward(angleToPlayer, 400);
         o->oForwardVel = 5.0f;
     }
 
@@ -61,6 +70,10 @@ static void mad_piano_act_attack(void) {
 }
 
 void bhv_mad_piano_update(void) {
+    if (!network_sync_object_initialized(o)) {
+        network_init_object(o, 4000.0f);
+    }
+
     if (!(o->activeFlags & ACTIVE_FLAG_IN_DIFFERENT_ROOM)) {
         o->oFaceAngleYaw = o->oMoveAngleYaw - 0x4000;
 

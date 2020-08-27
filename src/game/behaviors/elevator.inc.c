@@ -6,81 +6,120 @@ void elevator_starting_shake(void) {
 }
 
 void elevator_act_0(void) {
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+    struct Object* player = marioState->marioObj;
+
+    u8 onPlatform = FALSE;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        onPlatform = onPlatform || gMarioStates[i].marioObj->platform == o;
+    }
+
     o->oVelY = 0;
     if (o->oElevatorUnk100 == 2) {
-        if (gMarioObject->platform == o) {
-            if (o->oPosY > o->oElevatorUnkFC)
+        if (onPlatform) {
+            if (o->oPosY > o->oElevatorUnkFC) {
                 o->oAction = 2;
-            else
+            } else {
                 o->oAction = 1;
+            }
         }
-    } else if (gMarioObject->oPosY > o->oElevatorUnkFC || o->oElevatorUnk100 == 1) {
+    } else if (player->oPosY > o->oElevatorUnkFC || o->oElevatorUnk100 == 1) {
         o->oPosY = o->oElevatorUnkF8;
-        if (gMarioObject->platform == o)
+        if (onPlatform) {
             o->oAction = 2;
+        }
     } else {
         o->oPosY = o->oElevatorUnkF4;
-        if (gMarioObject->platform == o)
+        if (onPlatform) {
             o->oAction = 1;
+        }
     }
+
+    if (marioState->playerIndex == 0 && o->oAction != 0) { network_send_object(o); }
 }
 
 void elevator_act_1(void) {
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+    struct Object* player = marioState->marioObj;
+
     cur_obj_play_sound_1(SOUND_ENV_ELEVATOR1);
-    if (o->oTimer == 0 && cur_obj_is_mario_on_platform())
+    if (o->oTimer == 0 && cur_obj_is_any_player_on_platform()) {
         elevator_starting_shake();
+    }
     approach_f32_signed(&o->oVelY, 10.0f, 2.0f);
     o->oPosY += o->oVelY;
     if (o->oPosY > o->oElevatorUnkF8) {
         o->oPosY = o->oElevatorUnkF8;
-        if (o->oElevatorUnk100 == 2 || o->oElevatorUnk100 == 1)
+        if (o->oElevatorUnk100 == 2 || o->oElevatorUnk100 == 1) {
             o->oAction = 3;
-        else if (gMarioObject->oPosY < o->oElevatorUnkFC)
+        } else if (player->oPosY < o->oElevatorUnkFC) {
             o->oAction = 2;
-        else
+        } else {
             o->oAction = 3;
+        }
     }
+
+    if (marioState->playerIndex == 0 && o->oAction != 1) { network_send_object(o); }
 }
 
-void elevator_act_2(void) // Pretty similar code to action 1
-{
+void elevator_act_2(void) { // Pretty similar code to action 1
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+    struct Object* player = marioState->marioObj;
+
     cur_obj_play_sound_1(SOUND_ENV_ELEVATOR1);
-    if (o->oTimer == 0 && cur_obj_is_mario_on_platform())
+    if (o->oTimer == 0 && cur_obj_is_any_player_on_platform()) {
         elevator_starting_shake();
+    }
+
     approach_f32_signed(&o->oVelY, -10.0f, -2.0f);
     o->oPosY += o->oVelY;
     if (o->oPosY < o->oElevatorUnkF4) {
         o->oPosY = o->oElevatorUnkF4;
-        if (o->oElevatorUnk100 == 1)
+        if (o->oElevatorUnk100 == 1) {
             o->oAction = 4;
-        else if (o->oElevatorUnk100 == 2)
+        } else if (o->oElevatorUnk100 == 2) {
             o->oAction = 3;
-        else if (gMarioObject->oPosY > o->oElevatorUnkFC)
+        } else if (player->oPosY > o->oElevatorUnkFC) {
             o->oAction = 1;
-        else
+        } else {
             o->oAction = 3;
+        }
     }
+
+    if (marioState->playerIndex == 0 && o->oAction != 2) { network_send_object(o); }
 }
 
 void elevator_act_4(void) {
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+    struct Object* player = marioState->marioObj;
+
     o->oVelY = 0;
     if (o->oTimer == 0) {
         cur_obj_shake_screen(SHAKE_POS_SMALL);
         cur_obj_play_sound_2(SOUND_GENERAL_METAL_POUND);
     }
-    if (!mario_is_in_air_action(&gMarioStates[0]) && !cur_obj_is_mario_on_platform())
+    if (!mario_is_in_air_action(marioState) && !cur_obj_is_any_player_on_platform()) {
         o->oAction = 1;
+    }
+
+    if (marioState->playerIndex == 0 && o->oAction != 4) { network_send_object(o); }
 }
 
 void elevator_act_3(void) // nearly identical to action 2
 {
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+    struct Object* player = marioState->marioObj;
+
     o->oVelY = 0;
     if (o->oTimer == 0) {
         cur_obj_shake_screen(SHAKE_POS_SMALL);
         cur_obj_play_sound_2(SOUND_GENERAL_METAL_POUND);
     }
-    if (!mario_is_in_air_action(&gMarioStates[0]) && !cur_obj_is_mario_on_platform())
+    if (!mario_is_in_air_action(marioState) && !cur_obj_is_any_player_on_platform()) {
         o->oAction = 0;
+    }
+
+    if (marioState->playerIndex == 0 && o->oAction != 3) { network_send_object(o); }
 }
 
 void bhv_elevator_init(void) {
@@ -96,6 +135,11 @@ void bhv_elevator_init(void) {
         o->oElevatorUnkFC = (o->oElevatorUnkF4 + o->oElevatorUnkF8) / 2;
         o->oElevatorUnk100 = 2;
     }
+
+    struct SyncObject* so = network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+    network_init_object_field(o, &o->oAction);
+    network_init_object_field(o, &o->oPosY);
+    network_init_object_field(o, &o->oVelY);
 }
 
 void (*sElevatorActions[])(void) = { elevator_act_0, elevator_act_1, elevator_act_2, elevator_act_3,

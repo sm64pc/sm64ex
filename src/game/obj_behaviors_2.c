@@ -114,9 +114,12 @@ static void obj_set_dist_from_home(f32 distFromHome) {
     o->oPosZ = o->oHomeZ + distFromHome * sins(o->oMoveAngleYaw);
 }
 
-static s32 obj_is_near_to_and_facing_mario(f32 maxDist, s16 maxAngleDiff) {
-    if (o->oDistanceToMario < maxDist
-        && abs_angle_diff(o->oMoveAngleYaw, o->oAngleToMario) < maxAngleDiff) {
+static s32 obj_is_near_to_and_facing_mario(struct MarioState* m, f32 maxDist, s16 maxAngleDiff) {
+    struct Object* player = m->marioObj;
+    int distanceToPlayer = dist_between_objects(o, player);
+    int angleToPlayer = obj_angle_to_object(o, player);
+    if (distanceToPlayer < maxDist
+        && abs_angle_diff(o->oMoveAngleYaw, angleToPlayer) < maxAngleDiff) {
         return TRUE;
     }
     return FALSE;
@@ -375,11 +378,11 @@ static s32 cur_obj_play_sound_at_anim_range(s8 arg0, s8 arg1, u32 sound) {
     return FALSE;
 }
 
-static s16 obj_turn_pitch_toward_mario(f32 targetOffsetY, s16 turnAmount) {
+static s16 obj_turn_pitch_toward_mario(struct MarioState* m, f32 targetOffsetY, s16 turnAmount) {
     s16 targetPitch;
 
     o->oPosY -= targetOffsetY;
-    targetPitch = obj_turn_toward_object(o, gMarioObject, O_MOVE_ANGLE_PITCH_INDEX, turnAmount);
+    targetPitch = obj_turn_toward_object(o, m->marioObj, O_MOVE_ANGLE_PITCH_INDEX, turnAmount);
     o->oPosY += targetOffsetY;
 
     return targetPitch;

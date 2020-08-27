@@ -48,7 +48,15 @@ void bhv_door_loop(void) {
     
     while (D_8032F300[sp1C].flag != (u32)~0) {
         if (cur_obj_clear_interact_status_flag(D_8032F300[sp1C].flag)) {
-            set_door_camera_event();
+            if (gMarioStates[0].usedObj == o) {
+                u32 marioAction = gMarioStates[0].marioBodyState->action;
+                u8 inActDoor = marioAction == ACT_PULLING_DOOR
+                            || marioAction == ACT_PUSHING_DOOR
+                            || marioAction == ACT_WARP_DOOR_SPAWN;
+                if (inActDoor) {
+                    set_door_camera_event();
+                }
+            }
             cur_obj_change_action(D_8032F300[sp1C].action);
         }
         sp1C++;

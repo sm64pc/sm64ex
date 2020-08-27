@@ -20,7 +20,7 @@ static u8 sKleptoAttackHandlers[] = { 2, 2, 5, 5, 2, 2 };
 
 static void klepto_target_mario(void) {
     o->oKleptoDistanceToTarget = lateral_dist_between_objects(gMarioObject, o);
-    o->oKleptoUnk1B0 = obj_turn_pitch_toward_mario(250.0f, 0);
+    o->oKleptoUnk1B0 = obj_turn_pitch_toward_mario(&gMarioStates[0], 250.0f, 0);
     o->oKleptoYawToTarget = o->oAngleToMario;
     o->oKleptoUnk1AE = -60;
 }
@@ -230,7 +230,7 @@ static void klepto_act_dive_at_mario(void) {
         o->oKleptoUnk1B0 = -0x3000;
         if (o->oAnimState == KLEPTO_ANIM_STATE_HOLDING_NOTHING) {
             if (o->oSubAction == 0) {
-                o->oKleptoUnk1B0 = obj_turn_pitch_toward_mario(0.0f, 0);
+                o->oKleptoUnk1B0 = obj_turn_pitch_toward_mario(&gMarioStates[0], 0.0f, 0);
                 o->oKleptoYawToTarget = o->oAngleToMario;
 
                 if (dy < 160.0f) {

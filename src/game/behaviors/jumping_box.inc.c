@@ -45,12 +45,17 @@ void jumping_box_free_update(void) {
 }
 
 void bhv_jumping_box_loop(void) {
+    if (!network_sync_object_initialized(o)) {
+        network_init_object(o, 500.0f);
+        network_init_object_field(o, &o->oJumpingBoxUnkF4);
+    }
+
     switch (o->oHeldState) {
         case HELD_FREE:
             jumping_box_free_update();
             break;
         case HELD_HELD:
-            obj_copy_pos(o, gMarioObject);
+            obj_copy_pos(o, gMarioStates[o->heldByPlayerIndex].marioObj);
             cur_obj_set_model(MODEL_BREAKABLE_BOX_SMALL);
             cur_obj_unrender_and_reset_state(-1, 0);
             break;

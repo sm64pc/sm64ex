@@ -23,6 +23,7 @@ void network_send_player(void) {
     packet_write(&p, &gMarioStates[0].actionState, sizeof(u16));
     packet_write(&p, &gMarioStates[0].actionTimer, sizeof(u16));
     packet_write(&p, &gMarioStates[0].actionArg, sizeof(u32));
+    packet_write(&p, &gMarioStates[0].currentRoom, sizeof(s16));
 
     packet_write(&p, &heldSyncID, sizeof(u32));
     packet_write(&p, &heldBySyncID, sizeof(u32));
@@ -45,6 +46,7 @@ void network_receive_player(struct Packet* p) {
     packet_read(p, &gMarioStates[1].actionState, sizeof(u16));
     packet_read(p, &gMarioStates[1].actionTimer, sizeof(u16));
     packet_read(p, &gMarioStates[1].actionArg, sizeof(u32));
+    packet_read(p, &gMarioStates[1].currentRoom, sizeof(s16));
 
     packet_read(p, &heldSyncID, sizeof(u32));
     packet_read(p, &heldBySyncID, sizeof(u32));
