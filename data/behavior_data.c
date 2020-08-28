@@ -2307,7 +2307,9 @@ const BehaviorScript bhvCheckerboardElevatorGroup[] = {
     ID(id_bhvCheckerboardElevatorGroup),
     OR_INT(oFlags, OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE),
     CALL_NATIVE(bhv_checkerboard_elevator_group_init),
-    DELAY(1),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_checkerboard_elevator_group_loop),
+    END_LOOP(),
     DEACTIVATE(),
 };
 

@@ -4,6 +4,11 @@ struct Struct8032F754 D_8032F754[] = { { 145, { 0.7f, 1.5f, 0.7f }, 7.0f },
                                        { 235, { 1.2f, 2.0f, 1.2f }, 11.6f } };
 
 void bhv_checkerboard_elevator_group_init(void) {
+    o->header.gfx.node.flags |= GRAPH_RENDER_INVISIBLE;
+    struct SyncObject* so = network_init_object(o, 1000.0f);
+    so->hasStandardFields = FALSE;
+    so->maxUpdateRate = 5.0f;
+    so->keepRandomSeed = TRUE;
     s32 sp3C;
     s32 sp38;
     s32 sp34;
@@ -23,8 +28,29 @@ void bhv_checkerboard_elevator_group_init(void) {
                                      bhvCheckerboardPlatformSub);
         sp2C->oCheckerBoardPlatformUnk1AC = D_8032F754[sp34].unk2;
         vec3f_copy_2(sp2C->header.gfx.scale, D_8032F754[sp34].unk1);
+
+        network_init_object_field(o, &sp2C->oMoveAnglePitch);
+        network_init_object_field(o, &sp2C->oMoveAngleYaw);
+        network_init_object_field(o, &sp2C->oFaceAnglePitch);
+        network_init_object_field(o, &sp2C->oFaceAngleYaw);
+        network_init_object_field(o, &sp2C->oAngleVelPitch);
+        network_init_object_field(o, &sp2C->oAngleVelYaw);
+        network_init_object_field(o, &sp2C->oForwardVel);
+        network_init_object_field(o, &sp2C->oPosX);
+        network_init_object_field(o, &sp2C->oPosY);
+        network_init_object_field(o, &sp2C->oPosZ);
+        network_init_object_field(o, &sp2C->oVelX);
+        network_init_object_field(o, &sp2C->oVelY);
+        network_init_object_field(o, &sp2C->oVelZ);
+        network_init_object_field(o, &sp2C->oAction);
+        network_init_object_field(o, &sp2C->oPrevAction);
+        network_init_object_field(o, &sp2C->oTimer);
+        network_init_object_field(o, &sp2C->oCheckerBoardPlatformUnkF8);
+        network_init_object_field(o, &sp2C->oCheckerBoardPlatformUnkFC);
     }
 }
+
+void bhv_checkerboard_elevator_group_loop(void) { }
 
 void checkerboard_plat_act_move_y(UNUSED s32 unused, f32 vel, s32 a2) {
     o->oMoveAnglePitch = 0;
@@ -45,10 +71,6 @@ void checkerboard_plat_act_rotate(s32 a0, s16 a1) {
 
 void bhv_checkerboard_platform_init(void) {
     o->oCheckerBoardPlatformUnkFC = o->parentObj->oBehParams2ndByte;
-    struct SyncObject* so = network_init_object(o, 1000.0f);
-    so->fullObjectSync = TRUE;
-    so->maxUpdateRate = 5.0f;
-    so->keepRandomSeed = TRUE;
 }
 
 void bhv_checkerboard_platform_loop(void) {

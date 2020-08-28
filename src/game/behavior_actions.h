@@ -167,6 +167,7 @@ void bhv_flame_large_burning_out_init(void);
 void bhv_blue_fish_movement_loop(void);
 void bhv_tank_fish_group_loop(void);
 void bhv_checkerboard_elevator_group_init(void);
+void bhv_checkerboard_elevator_group_loop(void);
 void bhv_checkerboard_platform_init(void);
 void bhv_checkerboard_platform_loop(void);
 void bhv_bowser_key_unlock_door_loop(void);

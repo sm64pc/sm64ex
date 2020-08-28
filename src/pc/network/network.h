@@ -10,7 +10,7 @@
 #define SYNC_DISTANCE_ONLY_EVENTS -2.0f
 #define SYNC_DISTANCE_INFINITE 0
 #define MAX_SYNC_OBJECTS 256
-#define MAX_SYNC_OBJECT_FIELDS 16
+#define MAX_SYNC_OBJECT_FIELDS 64
 #define PACKET_LENGTH 1024
 #define NETWORKTYPESTR (networkType == NT_CLIENT ? "Client" : "Server")
 
@@ -52,6 +52,7 @@ struct SyncObject {
     bool fullObjectSync;
     bool keepRandomSeed;
     bool syncDeathEvent;
+    bool hasStandardFields;
     float maxUpdateRate;
     u8 (*ignore_if_true)(struct Object*);
     void* extraFields[MAX_SYNC_OBJECT_FIELDS];

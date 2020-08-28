@@ -63,6 +63,7 @@ struct SyncObject* network_init_object(struct Object *o, float maxSyncDistance) 
     so->txEventId = 0;
     so->fullObjectSync = false;
     so->keepRandomSeed = false;
+    so->hasStandardFields = (maxSyncDistance >= 0);
     so->maxUpdateRate = 0;
     so->ignore_if_true = NULL;
     so->syncDeathEvent = true;
@@ -171,10 +172,12 @@ static void packet_write_object_standard_fields(struct Packet* p, struct Object*
     if (so->fullObjectSync) { return; }
     if (so->maxSyncDistance == SYNC_DISTANCE_ONLY_DEATH) { return; }
     if (so->maxSyncDistance == SYNC_DISTANCE_ONLY_EVENTS) { return; }
+    if (!so->hasStandardFields) { return; }
 
     // write the standard fields
     packet_write(p, &o->oPosX, sizeof(u32) * 7);
     packet_write(p, &o->oAction, sizeof(u32));
+    packet_write(p, &o->oPrevAction, sizeof(u32));
     packet_write(p, &o->oSubAction, sizeof(u32));
     packet_write(p, &o->oInteractStatus, sizeof(u32));
     packet_write(p, &o->oHeldState, sizeof(u32));
@@ -189,10 +192,12 @@ static void packet_read_object_standard_fields(struct Packet* p, struct Object* 
     if (so->fullObjectSync) { return; }
     if (so->maxSyncDistance == SYNC_DISTANCE_ONLY_DEATH) { return; }
     if (so->maxSyncDistance == SYNC_DISTANCE_ONLY_EVENTS) { return; }
+    if (!so->hasStandardFields) { return; }
 
     // read the standard fields
     packet_read(p, &o->oPosX, sizeof(u32) * 7);
     packet_read(p, &o->oAction, sizeof(u32));
+    packet_read(p, &o->oPrevAction, sizeof(u32));
     packet_read(p, &o->oSubAction, sizeof(u32));
     packet_read(p, &o->oInteractStatus, sizeof(u32));
     packet_read(p, &o->oHeldState, sizeof(u32));
