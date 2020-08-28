@@ -6,6 +6,7 @@
 struct PCCLIOptions  {
     unsigned int SkipIntro;
     unsigned int FullScreen;
+    unsigned int PoolSize;
     char ConfigFile[SYS_MAX_PATH];
     char SavePath[SYS_MAX_PATH];
     char GameDir[SYS_MAX_PATH];
