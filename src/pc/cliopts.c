@@ -34,6 +34,12 @@ static inline int arg_string(const char *name, const char *value, char *target) 
     return 1;
 }
 
+static inline int arg_uint(const char *name, const char *value, unsigned int *target) {
+    const unsigned long int v = strtoul(value, NULL, 0);
+    *target = v;
+    return 1;
+}
+
 void parse_cli_opts(int argc, char* argv[]) {
     // Initialize options with false values.
     memset(&gCLIOpts, 0, sizeof(gCLIOpts));
@@ -50,6 +56,9 @@ void parse_cli_opts(int argc, char* argv[]) {
 
         else if (strcmp(argv[i], "--cheats") == 0) // Enable cheats menu
             Cheats.EnableCheats = true;
+
+        else if (strcmp(argv[i], "--poolsize") == 0) // Main pool size
+            arg_uint("--poolsize", argv[++i], &gCLIOpts.PoolSize);
 
         else if (strcmp(argv[i], "--configfile") == 0 && (i + 1) < argc)
             arg_string("--configfile", argv[++i], gCLIOpts.ConfigFile);
