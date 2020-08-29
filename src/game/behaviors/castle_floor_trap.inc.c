@@ -1,7 +1,11 @@
 // castle_floor_trap.c.inc
 
 void bhv_floor_trap_in_castle_loop(void) {
-    if (gMarioObject->platform == o)
+    u8 onPlatform = FALSE;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        onPlatform = onPlatform || (gMarioStates[i].marioObj->platform == o);
+    }
+    if (onPlatform)
         o->parentObj->oInteractStatus |= INT_STATUS_TRAP_TURN;
     o->oFaceAngleRoll = o->parentObj->oFaceAngleRoll;
 }
@@ -36,7 +40,9 @@ void bhv_castle_floor_trap_open(void) {
 }
 
 void bhv_castle_floor_trap_close_detect(void) {
-    if (o->oDistanceToMario > 1000.0f)
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    if (distanceToPlayer > 1000.0f)
         o->oAction = 3; // close trapdoor
 }
 
