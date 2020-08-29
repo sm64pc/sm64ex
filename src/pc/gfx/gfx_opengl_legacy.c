@@ -132,11 +132,11 @@ static bool gfx_opengl_z_is_from_0_to_1(void) {
 }
 
 static inline GLenum texenv_set_color(UNUSED struct ShaderProgram *prg) {
-    return GL_MODULATE;
+    return GL_REPLACE;
 }
 
 static inline GLenum texenv_set_texture(UNUSED struct ShaderProgram *prg) {
-    return GL_MODULATE;
+    return GL_REPLACE;
 }
 
 static inline GLenum texenv_set_texture_color(struct ShaderProgram *prg) {
