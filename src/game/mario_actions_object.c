@@ -10,6 +10,7 @@
 #include "audio_defines.h"
 #include "engine/math_util.h"
 #include "thread6.h"
+#include "behavior_data.h"
 
 /**
  * Used by act_punching() to determine Mario's forward velocity during each
@@ -320,6 +321,9 @@ s32 act_stomach_slide_stop(struct MarioState *m) {
 }
 
 s32 act_picking_up_bowser(struct MarioState *m) {
+    if (m->playerIndex != 0) {
+        m->usedObj = cur_obj_nearest_object_with_behavior(bhvBowser);
+    }
     if (m->actionState == 0) {
         m->actionState = 1;
         m->angleVel[1] = 0;
@@ -328,6 +332,9 @@ s32 act_picking_up_bowser(struct MarioState *m) {
         if (m->heldObj != NULL) {
             queue_rumble_data_mario(m, 5, 80);
             play_sound(SOUND_MARIO_HRMM, m->marioObj->header.gfx.cameraToObject);
+            if (m->playerIndex == 0) {
+                network_send_object(m->heldObj);
+            }
         }
     }
 
@@ -341,9 +348,23 @@ s32 act_picking_up_bowser(struct MarioState *m) {
 }
 
 s32 act_holding_bowser(struct MarioState *m) {
+    if (m->playerIndex != 0) {
+        if (m->marioBodyState->grabPos != GRAB_POS_BOWSER) {
+            m->usedObj = cur_obj_nearest_object_with_behavior(bhvBowser);
+            m->actionState = 1;
+            m->angleVel[1] = 0;
+            m->marioBodyState->grabPos = GRAB_POS_BOWSER;
+            mario_grab_used_object(m);
+            if (m->heldObj != NULL) {
+                queue_rumble_data_mario(m, 5, 80);
+                play_sound(SOUND_MARIO_HRMM, m->marioObj->header.gfx.cameraToObject);
+            }
+        }
+    }
+
     s16 spin;
 
-    if (m->input & INPUT_B_PRESSED) {
+    if (m->playerIndex == 0 && m->input & INPUT_B_PRESSED) {
 #ifndef VERSION_JP
         if (m->angleVel[1] <= -0xE00 || m->angleVel[1] >= 0xE00) {
             play_sound(SOUND_MARIO_SO_LONGA_BOWSER, m->marioObj->header.gfx.cameraToObject);
@@ -356,7 +377,7 @@ s32 act_holding_bowser(struct MarioState *m) {
         return set_mario_action(m, ACT_RELEASING_BOWSER, 0);
     }
 
-    if (m->angleVel[1] == 0) {
+    if (m->playerIndex == 0 && m->angleVel[1] == 0) {
         if (m->actionTimer++ > 120) {
             return set_mario_action(m, ACT_RELEASING_BOWSER, 1);
         }
@@ -422,7 +443,7 @@ s32 act_holding_bowser(struct MarioState *m) {
 }
 
 s32 act_releasing_bowser(struct MarioState *m) {
-    if (++m->actionTimer == 1) {
+    if (++m->actionTimer == 1 && m->playerIndex == 0) {
         if (m->actionArg == 0) {
             queue_rumble_data_mario(m, 4, 50);
             mario_throw_held_object(m);

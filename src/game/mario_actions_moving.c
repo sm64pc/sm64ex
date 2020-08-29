@@ -1541,6 +1541,9 @@ s32 stomach_slide_action(struct MarioState *m, u32 stopAction, u32 airAction, s3
     }
 
     if (update_sliding(m, 4.0f)) {
+        if (m->playerIndex != 0) {
+            m->input &= ~INPUT_ABOVE_SLIDE;
+        }
         return set_mario_action(m, stopAction, 0);
     }
 

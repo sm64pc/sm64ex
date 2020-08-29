@@ -276,10 +276,12 @@ void obj_set_held_state(struct Object *obj, const BehaviorScript *heldBehavior) 
 
         if (heldBehavior == bhvCarrySomething5) {
             obj->oHeldState = HELD_THROWN;
+            obj->heldByPlayerIndex = 0;
         }
 
         if (heldBehavior == bhvCarrySomething4) {
             obj->oHeldState = HELD_DROPPED;
+            obj->heldByPlayerIndex = 0;
         }
     } else {
         obj->curBhvCommand = segmented_to_virtual(heldBehavior);

@@ -211,7 +211,6 @@ static void packet_read_object_standard_fields(struct Packet* p, struct Object* 
 
 static void packet_write_object_extra_fields(struct Packet* p, struct Object* o) {
     struct SyncObject* so = &syncObjects[o->oSyncID];
-    if (so->fullObjectSync) { return; }
     if (so->maxSyncDistance == SYNC_DISTANCE_ONLY_DEATH) { return; }
 
     // write the count
@@ -226,7 +225,6 @@ static void packet_write_object_extra_fields(struct Packet* p, struct Object* o)
 
 static void packet_read_object_extra_fields(struct Packet* p, struct Object* o) {
     struct SyncObject* so = &syncObjects[o->oSyncID];
-    if (so->fullObjectSync) { return; }
     if (so->maxSyncDistance == SYNC_DISTANCE_ONLY_DEATH) { return; }
 
     // read the count and sanity check

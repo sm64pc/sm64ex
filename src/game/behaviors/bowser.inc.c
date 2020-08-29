@@ -1,12 +1,14 @@
 // bowser.c.inc
+static u32 networkBowserAnimationIndex = 0;
 
 void bowser_tail_anchor_act_0(void) {
-    struct Object *bowser = o->parentObj;
+    struct Object* bowser = o->parentObj;
+    struct Object* player = nearest_player_to_object(o);
     cur_obj_become_tangible();
     cur_obj_scale(1.0f);
     if (bowser->oAction == 19)
         bowser->oIntangibleTimer = -1;
-    else if (obj_check_if_collided_with_object(o, gMarioObject)) {
+    else if (obj_check_if_collided_with_object(o, player)) {
         bowser->oIntangibleTimer = 0;
         o->oAction = 2;
     } else
@@ -37,6 +39,17 @@ s16 D_8032F520[][3] = { { 1, 10, 40 },   { 0, 0, 74 },    { -1, -10, 114 },  { 1
                         { -1, 20, 154 }, { 1, 40, 164 },  { -1, -40, 174 },  { 1, -80, 179 },
                         { -1, 80, 184 }, { 1, 160, 186 }, { -1, -160, 186 }, { 1, 0, 0 }, };
 
+void bhv_bowser_tail_anchor_init(void) {
+    network_init_object_field(o->parentObj, &o->oAction);
+    network_init_object_field(o->parentObj, &o->oPrevAction);
+    network_init_object_field(o->parentObj, &o->oTimer);
+    network_init_object_field(o->parentObj, &o->oIntangibleTimer);
+    network_init_object_field(o->parentObj, &o->oInteractStatus);
+    network_init_object_field(o->parentObj, &o->header.gfx.scale[0]);
+    network_init_object_field(o->parentObj, &o->header.gfx.scale[1]);
+    network_init_object_field(o->parentObj, &o->header.gfx.scale[2]);
+}
+
 void bhv_bowser_tail_anchor_loop(void) {
     cur_obj_call_action_function(sBowserTailAnchorActions);
     o->oParentRelativePosX = 90.0f;
@@ -46,6 +59,9 @@ void bhv_bowser_tail_anchor_loop(void) {
 }
 
 void bhv_bowser_flame_spawn_loop(void) {
+    if (!network_sync_object_initialized(o)) {
+        network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+    }
     struct Object *bowser = o->parentObj;
     s32 sp30;
     f32 sp2C;
@@ -66,10 +82,25 @@ void bhv_bowser_flame_spawn_loop(void) {
             o->oPosZ = bowser->oPosZ + (sp28 * sp24 - sp2C * sp20);
             o->oMoveAnglePitch = sp1C[5 * sp30 + 4] + 0xC00;
             o->oMoveAngleYaw = sp1C[5 * sp30 + 3] + (s16) bowser->oMoveAngleYaw;
-            if (!(sp30 & 1))
-                spawn_object(o, MODEL_RED_FLAME, bhvFlameMovingForwardGrowing);
+            if (!(sp30 & 1)) {
+                struct MarioState* marioState = nearest_mario_state_to_object(o);
+                if (marioState->playerIndex == 0) {
+                    struct Object* flame = spawn_object(o, MODEL_RED_FLAME, bhvFlameMovingForwardGrowing);
+
+                    struct Object* spawn_objects[] = { flame };
+                    u32 models[] = { MODEL_RED_FLAME };
+                    network_send_spawn_objects(spawn_objects, models, 1);
+                }
+            }
         }
     }
+}
+
+void bhv_bowser_body_anchor_init(void) {
+    network_init_object_field(o->parentObj, &o->oInteractType);
+    network_init_object_field(o->parentObj, &o->oInteractStatus);
+    network_init_object_field(o->parentObj, &o->oIntangibleTimer);
+    network_init_object_field(o->parentObj, &o->oDamageOrCoinValue);
 }
 
 void bhv_bowser_body_anchor_loop(void) {
@@ -98,8 +129,15 @@ void bhv_bowser_body_anchor_loop(void) {
 s32 bowser_spawn_shockwave(void) {
     struct Object *wave;
     if (o->oBehParams2ndByte == 2) {
-        wave = spawn_object(o, MODEL_BOWSER_WAVE, bhvBowserShockWave);
-        wave->oPosY = o->oFloorHeight;
+        struct MarioState* marioState = nearest_mario_state_to_object(o);
+        if (marioState->playerIndex == 0) {
+            wave = spawn_object(o, MODEL_BOWSER_WAVE, bhvBowserShockWave);
+            wave->oPosY = o->oFloorHeight;
+
+            struct Object* spawn_objects[] = { wave };
+            u32 models[] = { MODEL_BOWSER_WAVE };
+            network_send_spawn_objects(spawn_objects, models, 1);
+        }
         return 1;
     }
     return 0;
@@ -190,10 +228,15 @@ static void bowser_debug_actions(void) // unused
 }
 
 void bowser_bitdw_act_controller(void) {
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+    struct Object* player = marioState->marioObj;
+    int distanceToPlayer = dist_between_objects(o, player);
+    if (marioState->playerIndex != 0) { return; }
+
     f32 rand = random_float();
     if (o->oBowserUnk110 == 0) {
         if (o->oBowserUnkF4 & 2) {
-            if (o->oDistanceToMario < 1500.0f)
+            if (distanceToPlayer < 1500.0f)
                 o->oAction = 15; // nearby
             else
                 o->oAction = 17; // far away
@@ -203,7 +246,7 @@ void bowser_bitdw_act_controller(void) {
     } else {
         o->oBowserUnk110 = 0;
 #ifndef VERSION_JP
-        if (!gCurrDemoInput) {
+        if (!gCurrDemoInput && marioState->playerIndex == 0) {
             if (rand < 0.1)
                 o->oAction = 3; // rare 1/10 chance
             else
@@ -218,13 +261,19 @@ void bowser_bitdw_act_controller(void) {
             o->oAction = 14; // common
 #endif
     }
+    network_send_object(o);
 }
 
 void bowser_bitfs_act_controller(void) {
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+    struct Object* player = marioState->marioObj;
+    int distanceToPlayer = dist_between_objects(o, player);
+    if (marioState->playerIndex != 0) { return; }
+
     f32 rand = random_float();
     if (o->oBowserUnk110 == 0) {
         if (o->oBowserUnkF4 & 2) {
-            if (o->oDistanceToMario < 1300.0f) // nearby
+            if (distanceToPlayer < 1300.0f) // nearby
             {
                 if (rand < 0.5) // 50/50
                     o->oAction = 16;
@@ -244,12 +293,18 @@ void bowser_bitfs_act_controller(void) {
         o->oBowserUnk110 = 0;
         o->oAction = 14;
     }
+    network_send_object(o);
 }
 
 void bowser_general_bits_act_controller(void) {
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+    struct Object* player = marioState->marioObj;
+    int distanceToPlayer = dist_between_objects(o, player);
+    if (marioState->playerIndex != 0) { return; }
+
     f32 rand = random_float();
     if (o->oBowserUnkF4 & 2) {
-        if (o->oDistanceToMario < 1000.0f) {
+        if (distanceToPlayer < 1000.0f) {
             if (rand < 0.4)
                 o->oAction = 9;
             else if (rand < 0.8)
@@ -262,6 +317,7 @@ void bowser_general_bits_act_controller(void) {
             o->oAction = 7;
     } else
         o->oAction = 14;
+    network_send_object(o);
 }
 
 void bowser_set_act_jump(void) {
@@ -269,6 +325,8 @@ void bowser_set_act_jump(void) {
 }
 
 void bowser_bits_act_controller(void) {
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+    if (marioState->playerIndex != 0) { return; }
     switch (o->oBowserUnk110) {
         case 0:
             if (o->oBowserUnk106 == 0)
@@ -282,6 +340,7 @@ void bowser_bits_act_controller(void) {
             o->oAction = 14;
             break;
     }
+    network_send_object(o);
 }
 
 #ifndef VERSION_JP
@@ -328,9 +387,12 @@ void bowser_act_breath_fire(void) {
 
 void bowser_act_walk_to_mario(void) // turn towards Mario
 {
+    struct Object* player = nearest_player_to_object(o);
+    int angleToPlayer = obj_angle_to_object(o, player);
+
     UNUSED s32 facing; // is Bowser facing Mario?
     s16 turnSpeed;
-    s16 angleFromMario = abs_angle_diff(o->oMoveAngleYaw, o->oAngleToMario);
+    s16 angleFromMario = abs_angle_diff(o->oMoveAngleYaw, angleToPlayer);
     if (BITFS)
         turnSpeed = 0x400;
     else if (o->oHealth > 2)
@@ -339,7 +401,7 @@ void bowser_act_walk_to_mario(void) // turn towards Mario
         turnSpeed = 0x300;
     else
         turnSpeed = 0x200;
-    facing = cur_obj_rotate_yaw_toward(o->oAngleToMario, turnSpeed);
+    facing = cur_obj_rotate_yaw_toward(angleToPlayer, turnSpeed);
     if (o->oSubAction == 0) {
         o->oBowserUnkF8 = 0;
         if (bowser_set_anim_look_up_and_walk())
@@ -358,6 +420,10 @@ void bowser_act_walk_to_mario(void) // turn towards Mario
 }
 
 void bowser_act_teleport(void) {
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    int angleToPlayer = obj_angle_to_object(o, player);
+
     switch (o->oSubAction) {
         case 0:
             cur_obj_become_intangible();
@@ -367,7 +433,7 @@ void bowser_act_teleport(void) {
                 cur_obj_play_sound_2(SOUND_OBJ2_BOWSER_TELEPORT);
             if (o->oOpacity == 0) {
                 o->oSubAction++;
-                o->oMoveAngleYaw = o->oAngleToMario;
+                o->oMoveAngleYaw = angleToPlayer;
             }
             break;
         case 1:
@@ -375,12 +441,12 @@ void bowser_act_teleport(void) {
                 o->oForwardVel = 100.0f;
             else {
                 o->oSubAction = 2;
-                o->oMoveAngleYaw = o->oAngleToMario;
+                o->oMoveAngleYaw = angleToPlayer;
             }
-            if (abs_angle_diff(o->oMoveAngleYaw, o->oAngleToMario) > 0x4000)
-                if (o->oDistanceToMario > 500.0f) {
+            if (abs_angle_diff(o->oMoveAngleYaw, angleToPlayer) > 0x4000)
+                if (distanceToPlayer > 500.0f) {
                     o->oSubAction = 2;
-                    o->oMoveAngleYaw = o->oAngleToMario; // large change in angle?
+                    o->oMoveAngleYaw = angleToPlayer; // large change in angle?
                     cur_obj_play_sound_2(SOUND_OBJ2_BOWSER_TELEPORT);
                 }
             break;
@@ -401,10 +467,20 @@ void bowser_act_spit_fire_into_sky(void) // only in sky
     frame = o->header.gfx.unk38.animFrame;
     if (frame > 24 && frame < 36) {
         cur_obj_play_sound_1(SOUND_AIR_BOWSER_SPIT_FIRE);
-        if (frame == 35)
-            spawn_object_relative(1, 0, 0x190, 0x64, o, MODEL_RED_FLAME, bhvBlueBowserFlame);
-        else
-            spawn_object_relative(0, 0, 0x190, 0x64, o, MODEL_RED_FLAME, bhvBlueBowserFlame);
+        struct MarioState* marioState = nearest_mario_state_to_object(o);
+        if (marioState->playerIndex == 0) {
+            struct Object* flame = NULL;
+            if (frame == 35) {
+                flame = spawn_object_relative(1, 0, 0x190, 0x64, o, MODEL_RED_FLAME, bhvBlueBowserFlame);
+            } else {
+                flame = spawn_object_relative(0, 0, 0x190, 0x64, o, MODEL_RED_FLAME, bhvBlueBowserFlame);
+            }
+            if (flame != NULL) {
+                struct Object* spawn_objects[] = { flame };
+                u32 models[] = { MODEL_RED_FLAME };
+                network_send_spawn_objects(spawn_objects, models, 1);
+            }
+        }
     }
     if (cur_obj_check_if_near_animation_end())
         o->oAction = 0;
@@ -453,6 +529,9 @@ s32 bowser_set_anim_in_air(void) {
 }
 
 s32 bowser_land(void) {
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+
     if (o->oMoveFlags & OBJ_MOVE_LANDED) {
         o->oForwardVel = 0;
         o->oVelY = 0;
@@ -461,10 +540,10 @@ s32 bowser_land(void) {
         o->header.gfx.unk38.animFrame = 0;
         cur_obj_start_cam_event(o, CAM_EVENT_BOWSER_JUMP);
         if (BITDW) {
-            if (o->oDistanceToMario < 850.0f)
-                gMarioObject->oInteractStatus |= INT_STATUS_MARIO_UNK1;
+            if (distanceToPlayer < 850.0f)
+                player->oInteractStatus |= INT_STATUS_MARIO_UNK1;
             else
-                gMarioObject->oInteractStatus |= INT_STATUS_HOOT_GRABBED_BY_MARIO; // hmm...
+                player->oInteractStatus |= INT_STATUS_HOOT_GRABBED_BY_MARIO; // hmm...
         }
         return 1;
     } else
@@ -581,6 +660,9 @@ void bowser_act_turn_from_edge(void) {
 }
 
 void bowser_act_charge_mario(void) {
+    struct Object* player = nearest_player_to_object(o);
+    int angleToPlayer = obj_angle_to_object(o, player);
+
     s32 sp34;
     if (o->oTimer == 0)
         o->oForwardVel = 0.0f;
@@ -597,10 +679,10 @@ void bowser_act_charge_mario(void) {
                 if (o->oBowserUnkF8 >= 6)
                     o->oSubAction = 3;
                 if (o->oBowserUnkF8 >= 2)
-                    if (abs_angle_diff(o->oAngleToMario, o->oMoveAngleYaw) > 0x2000)
+                    if (abs_angle_diff(angleToPlayer, o->oMoveAngleYaw) > 0x2000)
                         o->oSubAction = 3;
             }
-            cur_obj_rotate_yaw_toward(o->oAngleToMario, 0x200);
+            cur_obj_rotate_yaw_toward(angleToPlayer, 0x200);
             break;
         case 3:
             o->oBowserUnkF8 = 0;
@@ -756,11 +838,24 @@ void bowser_act_dance(void) {
 }
 
 void bowser_spawn_grand_star_key(void) {
-    if (BITS)
-        gSecondCameraFocus = spawn_object(o, MODEL_STAR, bhvGrandStar);
-    else {
-        gSecondCameraFocus = spawn_object(o, MODEL_BOWSER_KEY, bhvBowserKey);
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+    if (marioState->playerIndex != 0) { return; }
+    struct Object* reward = NULL;
+    if (BITS) {
+        reward = spawn_object(o, MODEL_STAR, bhvGrandStar);
+        gSecondCameraFocus = reward;
+
+        struct Object* spawn_objects[] = { reward };
+        u32 models[] = { MODEL_STAR };
+        network_send_spawn_objects(spawn_objects, models, 1);
+    } else {
+        reward = spawn_object(o, MODEL_BOWSER_KEY, bhvBowserKey);
+        gSecondCameraFocus = reward;
         cur_obj_play_sound_2(SOUND_GENERAL2_BOWSER_KEY);
+
+        struct Object* spawn_objects[] = { reward };
+        u32 models[] = { MODEL_BOWSER_KEY };
+        network_send_spawn_objects(spawn_objects, models, 1);
     }
     gSecondCameraFocus->oAngleVelYaw = o->oAngleVelYaw;
 }
@@ -789,10 +884,14 @@ void bowser_dead_bounce(void) {
 }
 
 s32 bowser_dead_wait_for_mario(void) {
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    int angleToPlayer = obj_angle_to_object(o, player);
+
     s32 ret = 0;
     cur_obj_become_intangible();
-    if (cur_obj_init_animation_and_check_if_near_end(17) && o->oDistanceToMario < 700.0f
-        && abs_angle_diff(gMarioObject->oMoveAngleYaw, o->oAngleToMario) > 0x6000)
+    if (cur_obj_init_animation_and_check_if_near_end(17) && distanceToPlayer < 700.0f
+        && abs_angle_diff(player->oMoveAngleYaw, angleToPlayer) > 0x6000)
         ret = 1;
     cur_obj_extend_animation_if_at_end();
     o->oBowserUnkF8 = 0;
@@ -827,13 +926,15 @@ void bowser_dead_hide(void) {
 }
 
 s32 bowser_dead_not_bits_end(void) {
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+
     s32 ret = 0;
     if (o->oBowserUnkF8 < 2) {
         if (o->oBowserUnkF8 == 0) {
             func_8031FFB4(SEQ_PLAYER_LEVEL, 60, 40);
             o->oBowserUnkF8++;
         }
-        if (cur_obj_update_dialog(&gMarioStates[0], 2, 18, sBowserDefeatedDialogText[o->oBehParams2ndByte], 0)) {
+        if (marioState->playerIndex == 0 && cur_obj_update_dialog(marioState, 2, 18, sBowserDefeatedDialogText[o->oBehParams2ndByte], 0)) {
             o->oBowserUnkF8++;
             cur_obj_play_sound_2(SOUND_GENERAL2_BOWSER_EXPLODE);
             sequence_player_unlower(SEQ_PLAYER_LEVEL, 60);
@@ -843,13 +944,14 @@ s32 bowser_dead_not_bits_end(void) {
         bowser_dead_hide();
         spawn_triangle_break_particles(20, 116, 1.0f, 0);
         bowser_spawn_grand_star_key();
-        set_mario_npc_dialog(&gMarioStates[0], 0);
+        if (marioState->playerIndex) { set_mario_npc_dialog(marioState, 0); }
         ret = 1;
     }
     return ret;
 }
 
 s32 bowser_dead_bits_end(void) {
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
     UNUSED s32 unused;
     s32 ret = 0;
     s32 dialogID;
@@ -862,7 +964,7 @@ s32 bowser_dead_bits_end(void) {
             func_8031FFB4(SEQ_PLAYER_LEVEL, 60, 40);
             o->oBowserUnkF8++;
         }
-        if (cur_obj_update_dialog(&gMarioStates[0], 2, 18, dialogID, 0)) {
+        if (marioState->playerIndex == 0 && cur_obj_update_dialog(marioState, 2, 18, dialogID, 0)) {
             cur_obj_set_model(MODEL_BOWSER2);
             sequence_player_unlower(SEQ_PLAYER_LEVEL, 60);
             sequence_player_fade_out(0, 1);
@@ -1035,6 +1137,7 @@ void bowser_free_update(void) {
     if ((platform = o->platform) != NULL)
         apply_platform_displacement((u32)-1, platform);
     o->oBowserUnk10E = 0;
+
     cur_obj_update_floor_and_walls();
     cur_obj_call_action_function(sBowserActions);
     cur_obj_move_standard(-78);
@@ -1049,8 +1152,17 @@ void bowser_free_update(void) {
 }
 
 void bowser_held_update(void) {
+    struct MarioState* marioState = &gMarioStates[o->heldByPlayerIndex];
+    struct Object* player = marioState->marioObj;
+
+    if (marioState->heldObj != o) {
+        o->oHeldState = HELD_FREE;
+        return;
+    }
+
     o->oBowserUnkF4 &= ~0x20000;
     cur_obj_become_intangible();
+
     switch (o->oBowserUnk10E) {
         case 0:
             cur_obj_play_sound_2(SOUND_OBJ_BOWSER_TAIL_PICKUP);
@@ -1067,12 +1179,13 @@ void bowser_held_update(void) {
             break;
     }
     o->oMoveFlags = 0;
-    o->oBowserHeldAnglePitch = gMarioObject->oMoveAnglePitch;
-    o->oBowserHeldAngleVelYaw = gMarioObject->oAngleVelYaw;
-    o->oMoveAngleYaw = gMarioObject->oMoveAngleYaw;
+    o->oBowserHeldAnglePitch = player->oMoveAnglePitch;
+    o->oBowserHeldAngleVelYaw = player->oAngleVelYaw;
+    o->oMoveAngleYaw = player->oMoveAngleYaw;
 }
 
 void bowser_thrown_dropped_update(void) {
+    u8 needsSync = (o->oSubAction != 0 || o->oBowserUnk10E != 0);
     f32 sp1C;
     o->oBowserUnk10E = 0;
     cur_obj_get_thrown_or_placed(1.0f, 1.0f, 1);
@@ -1089,15 +1202,29 @@ void bowser_thrown_dropped_update(void) {
     o->prevObj->oSubAction = 0;
     o->oTimer = 0;
     o->oSubAction = 0;
+
+    if (needsSync) {
+        network_send_object(o);
+    }
 }
 
 void bhv_bowser_loop(void) {
+    struct Object* player = nearest_player_to_object(o);
+    int distanceToPlayer = dist_between_objects(o, player);
+    int angleToPlayer = obj_angle_to_object(o, player);
+
+    // look for animation difference and override
+    struct Animation* anim = o->oAnimations[networkBowserAnimationIndex];
+    if (anim != NULL &&o->header.gfx.unk38.curAnim != anim) {
+        geo_obj_init_animation(&o->header.gfx, &anim);
+    }
+
     s16 angleToMario;  // AngleToMario    from Bowser's perspective
     s16 angleToCentre; // AngleToCentre from Bowser's perspective
 
     o->oBowserDistToCentre = sqrtf(o->oPosX * o->oPosX + o->oPosZ * o->oPosZ);
     o->oBowserAngleToCentre = atan2s(0.0f - o->oPosZ, 0.0f - o->oPosX);
-    angleToMario = abs_angle_diff(o->oMoveAngleYaw, o->oAngleToMario);
+    angleToMario = abs_angle_diff(o->oMoveAngleYaw, angleToPlayer);
     angleToCentre = abs_angle_diff(o->oMoveAngleYaw, o->oBowserAngleToCentre);
     o->oBowserUnkF4 &= ~0xFF;
     if (angleToMario < 0x2000)
@@ -1106,7 +1233,7 @@ void bhv_bowser_loop(void) {
         o->oBowserUnkF4 |= 4;
     if (o->oBowserDistToCentre < 1000.0f)
         o->oBowserUnkF4 |= 0x10;
-    if (o->oDistanceToMario < 850.0f)
+    if (distanceToPlayer < 850.0f)
         o->oBowserUnkF4 |= 8;
     switch (o->oHeldState) {
         case HELD_FREE:
@@ -1135,6 +1262,16 @@ void bhv_bowser_loop(void) {
                     o->oOpacity = 0;
             }
         }
+
+    // update animation index
+    anim = o->oAnimations[networkBowserAnimationIndex];
+    if (o->header.gfx.unk38.curAnim != anim) {
+        for (int i = 0; i < 32; i++) {
+            if (o->header.gfx.unk38.curAnim == o->oAnimations[i]) {
+                networkBowserAnimationIndex = i;
+            }
+        }
+    }
 }
 
 void bhv_bowser_init(void) {
@@ -1155,6 +1292,12 @@ void bhv_bowser_init(void) {
     o->oAction = 5;
     o->oBowserUnk1AE = 0;
     o->oBowserEyesShut = 0;
+
+    struct SyncObject* so = network_init_object(o, 8000.0f);
+    so->fullObjectSync = TRUE;
+    network_init_object_field(o, &o->header.gfx.node.flags);
+    network_init_object_field(o, &networkBowserAnimationIndex);
+    network_init_object_field(o, &o->header.gfx.unk38.animFrame);
 }
 
 #undef BITDW
@@ -1177,9 +1320,12 @@ Gfx *geo_update_body_rot_from_parent(s32 run, UNUSED struct GraphNode *node, Mat
 }
 
 void bowser_open_eye_switch(struct Object *a0, struct GraphNodeSwitchCase *switchCase) {
+    struct Object* player = nearest_player_to_object(o);
+    int angleToPlayer = obj_angle_to_object(o, player);
+
     s32 sp1C;
     s16 sp1A;
-    sp1A = abs_angle_diff(a0->oMoveAngleYaw, a0->oAngleToMario);
+    sp1A = abs_angle_diff(a0->oMoveAngleYaw, angleToPlayer);
     sp1C = switchCase->selectedCase;
     switch (sp1C) {
         case 0:
@@ -1375,8 +1521,9 @@ void bhv_falling_bowser_platform_loop(void) {
 void bowser_flame_despawn(void) {
     obj_mark_for_deletion(o);
     spawn_object_with_scale(o, MODEL_NONE, bhvBlackSmokeUpward, 1.0f);
-    if (random_float() < 0.1)
+    if (random_float() < 0.1) {
         spawn_object(o, MODEL_YELLOW_COIN, bhvTemporaryYellowCoin);
+    }
 }
 
 s32 bowser_flame_should_despawn(s32 maxTime) {
@@ -1566,10 +1713,11 @@ void bhv_flame_bouncing_loop(void) {
 }
 
 void bhv_blue_flames_group_loop(void) {
+    struct Object* player = nearest_player_to_object(o);
     struct Object *flame;
     s32 i;
     if (o->oTimer == 0) {
-        o->oMoveAngleYaw = obj_angle_to_object(o, gMarioObject);
+        o->oMoveAngleYaw = obj_angle_to_object(o, player);
         o->oBlueFlameUnkF8 = 5.0f;
     }
     if (o->oTimer < 16) {
