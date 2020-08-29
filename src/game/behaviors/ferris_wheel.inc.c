@@ -43,6 +43,11 @@ void bhv_ferris_wheel_axle_init(void) {
                 segmented_to_virtual(sFerrisWheelProperties[o->oBehParams2ndByte].platformCollision);
         }
     }
+
+    struct SyncObject* so = network_init_object(o, 2000.0f);
+    so->hasStandardFields = FALSE;
+    so->maxUpdateRate = 5.0f;
+    network_init_object_field(o, &o->oFaceAngleRoll);
 }
 
 /**
