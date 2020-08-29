@@ -1803,6 +1803,15 @@ const BehaviorScript bhvAnotherTiltingPlatform[] = {
     END_LOOP(),
 };
 
+const BehaviorScript bhvSquarishPathParent[] = {
+    BEGIN(OBJ_LIST_SURFACE),
+    ID(id_bhvSquarishPathParent),
+    CALL_NATIVE(bhv_squarish_path_parent_init),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_squarish_path_parent_loop),
+    END_LOOP(),
+};
+
 const BehaviorScript bhvSquarishPathMoving[] = {
     BEGIN(OBJ_LIST_SURFACE),
     ID(id_bhvSquarishPathMoving),

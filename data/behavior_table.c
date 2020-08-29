@@ -124,6 +124,7 @@ const BehaviorScript* gBehaviorTable[id_bhv_max_count] = {
     [id_bhvTreeLeaf] = bhvTreeLeaf,
     [id_bhvAnotherTiltingPlatform] = bhvAnotherTiltingPlatform,
     [id_bhvSquarishPathMoving] = bhvSquarishPathMoving,
+    [id_bhvSquarishPathParent] = bhvSquarishPathParent,
     [id_bhvPiranhaPlantBubble] = bhvPiranhaPlantBubble,
     [id_bhvPiranhaPlantWakingBubbles] = bhvPiranhaPlantWakingBubbles,
     [id_bhvFloorSwitchAnimatesObject] = bhvFloorSwitchAnimatesObject,

@@ -128,6 +128,7 @@ extern const BehaviorScript bhvTreeSnow[];
 extern const BehaviorScript bhvTreeLeaf[];
 extern const BehaviorScript bhvAnotherTiltingPlatform[];
 extern const BehaviorScript bhvSquarishPathMoving[];
+extern const BehaviorScript bhvSquarishPathParent[];
 extern const BehaviorScript bhvPiranhaPlantBubble[];
 extern const BehaviorScript bhvPiranhaPlantWakingBubbles[];
 extern const BehaviorScript bhvFloorSwitchAnimatesObject[];

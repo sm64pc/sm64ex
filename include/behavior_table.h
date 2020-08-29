@@ -128,6 +128,7 @@ enum BehaviorId {
     id_bhvTreeLeaf,
     id_bhvAnotherTiltingPlatform,
     id_bhvSquarishPathMoving,
+    id_bhvSquarishPathParent,
     id_bhvPiranhaPlantBubble,
     id_bhvPiranhaPlantWakingBubbles,
     id_bhvFloorSwitchAnimatesObject,

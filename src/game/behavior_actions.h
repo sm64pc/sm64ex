@@ -131,6 +131,8 @@ void bhv_small_water_wave_loop(void);
 void bhv_yellow_coin_init(void);
 void bhv_yellow_coin_loop(void);
 void bhv_squarish_path_moving_loop(void);
+void bhv_squarish_path_parent_init(void);
+void bhv_squarish_path_parent_loop(void);
 void bhv_heave_ho_loop(void);
 void bhv_heave_ho_throw_mario_loop(void);
 void bhv_ccm_touched_star_spawn_loop(void);
