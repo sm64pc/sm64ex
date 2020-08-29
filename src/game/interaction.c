@@ -289,8 +289,7 @@ void mario_grab_used_object(struct MarioState *m) {
     if (m->usedObj == NULL || m->usedObj->oHeldState == HELD_HELD) { return; }
     if (m->heldObj == NULL) {
         m->heldObj = m->usedObj;
-        // two-player hack
-        m->heldObj->heldByPlayerIndex = (m == &gMarioStates[0]) ? 0 : 1;
+        m->heldObj->heldByPlayerIndex = m->playerIndex;
         obj_set_held_state(m->heldObj, bhvCarrySomething3);
     }
 }
@@ -422,6 +421,7 @@ u32 mario_check_object_grab(struct MarioState *m) {
     u32 result = FALSE;
     void *script;
 
+    if (m->playerIndex != 0) { return FALSE; }
     if (m->interactObj == NULL || m->interactObj->oHeldState == HELD_HELD) { return FALSE; }
 
     if (m->input & INPUT_INTERACT_OBJ_GRABBABLE) {
