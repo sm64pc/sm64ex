@@ -13,6 +13,23 @@ struct CheatList {
     bool         ExitAnywhere;
     bool         HugeMario;
     bool         TinyMario;
+    unsigned int JB;
+    bool         JBC;
+    bool         QuikEnd;
+    unsigned int Hurt;
+    bool         Cann;
+    bool         AutoWK;
+    bool         GetShell;
+    bool         GetBob;
+    unsigned int Spamba;
+    bool         Swim;
+    bool         WingCap;
+    bool         MetalCap;
+    bool         VanishCap;
+    bool         RemoveCap;
+    bool         DCM;
+    bool         NormalCap;
+    unsigned int BLJAnywhere;
 };
 
 extern struct CheatList Cheats;

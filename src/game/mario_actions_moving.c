@@ -9,6 +9,7 @@
 #include "area.h"
 #include "interaction.h"
 #include "mario_actions_object.h"
+#include "mario_cheats.h"
 #include "memory.h"
 #include "behavior_data.h"
 #include "thread6.h"
@@ -1853,7 +1854,8 @@ s32 act_long_jump_land(struct MarioState *m) {
         m->forwardVel = 0.0f;
     }
 #endif
-    
+    cheats_long_jump(m);
+
     if (!(m->input & INPUT_Z_DOWN)) {
         m->input &= ~INPUT_A_PRESSED;
     }

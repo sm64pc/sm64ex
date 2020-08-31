@@ -1,5 +1,6 @@
 #include <PR/ultratypes.h>
 
+#include"mario_cheats.h"
 #include "sm64.h"
 #include "area.h"
 #include "audio/data.h"
@@ -1413,7 +1414,9 @@ void update_mario_inputs(struct MarioState *m) {
     update_mario_geometry_inputs(m);
 
     debug_print_speed_action_normal(m);
-    
+
+    cheats_mario_inputs(m);
+
     /* Moonjump cheat */
     while (Cheats.MoonJump == true && Cheats.EnableCheats == true && m->controller->buttonDown & L_TRIG ){
         m->vel[1] = 25;

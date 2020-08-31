@@ -1,5 +1,6 @@
 #include <PR/ultratypes.h>
 
+#include "mario_cheats.h"
 #include "sm64.h"
 #include "area.h"
 #include "audio/data.h"
@@ -372,6 +373,8 @@ u32 common_air_action_step(struct MarioState *m, u32 landAction, s32 animation, 
     stepResult = perform_air_step(m, stepArg);
     switch (stepResult) {
         case AIR_STEP_NONE:
+            // BLJ anywhere cheat
+            cheats_air_step(m);
             set_mario_animation(m, animation);
             break;
 
