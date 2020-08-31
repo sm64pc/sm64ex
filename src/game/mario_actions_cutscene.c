@@ -396,7 +396,7 @@ s32 act_reading_npc_dialog(struct MarioState *m) {
     s16 angleToNPC;
 
     if (m->playerIndex == 0) {
-        if (m->usedObj == NULL || m->usedObj->activeFlags != ACTIVE_FLAG_DEACTIVATED || m->usedObj->behavior != localDialogNPCBehavior) {
+        if (m->usedObj == NULL || m->usedObj->activeFlags == ACTIVE_FLAG_DEACTIVATED || m->usedObj->behavior != localDialogNPCBehavior) {
             set_mario_npc_dialog(m, 0);
         }
     }
