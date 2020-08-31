@@ -55,7 +55,7 @@ struct RumbleData gRumbleDataQueue[3];
 struct StructSH8031D9B0 gCurrRumbleSettings;
 
 static struct AudioAPI *audio_api;
-static struct GfxWindowManagerAPI *wm_api;
+struct GfxWindowManagerAPI *wm_api;
 static struct GfxRenderingAPI *rendering_api;
 
 extern void gfx_run(Gfx *commands);
@@ -241,14 +241,14 @@ void main_func(void) {
     #endif
 
     char window_title[96] =
-    "Super Mario 64 EX (" RAPI_NAME ")"
+    "Super Mario 64 coop EX (" RAPI_NAME ")"
     #ifdef NIGHTLY
     " nightly " GIT_HASH
     #endif
     ;
 
     gfx_init(wm_api, rendering_api, window_title);
-    wm_api->set_keyboard_callbacks(keyboard_on_key_down, keyboard_on_key_up, keyboard_on_all_keys_up);
+    wm_api->set_keyboard_callbacks(keyboard_on_key_down, keyboard_on_key_up, keyboard_on_all_keys_up, keyboard_on_text_input);
 
     if (audio_api == NULL && audio_sdl.init())
         audio_api = &audio_sdl;

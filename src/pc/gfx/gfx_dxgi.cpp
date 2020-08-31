@@ -44,6 +44,8 @@
 
 using namespace Microsoft::WRL; // For ComPtr
 
+static bool inTextInput = false;
+
 static struct {
     HWND h_wnd;
     bool showing_error;
@@ -74,6 +76,7 @@ static struct {
     bool (*on_key_down)(int scancode);
     bool (*on_key_up)(int scancode);
     void (*on_all_keys_up)(void);
+    void (*on_text_input)(char*);
 } dxgi;
 
 static void load_dxgi_library(void) {
@@ -225,6 +228,19 @@ static void gfx_dxgi_on_resize(void) {
 
 static void onkeydown(WPARAM w_param, LPARAM l_param) {
     int key = ((l_param >> 16) & 0x1ff);
+    if (inTextInput) {
+        const int keyboardScanCode = (l_param >> 16) & 0x00ff;
+        const int virtualKey = w_param;
+
+        BYTE keyboardState[256];
+        GetKeyboardState(keyboardState);
+
+        WORD ascii = 0;
+        const int len = ToAscii(virtualKey, keyboardScanCode, keyboardState, &ascii, 0);
+        if (len > 0) {
+            dxgi.on_text_input((char*)&ascii);
+        }
+    }
     if (dxgi.on_key_down != nullptr) {
         dxgi.on_key_down(key);
     }
@@ -345,10 +361,11 @@ static void gfx_dxgi_init(const char *window_title) {
     update_screen_settings();
 }
 
-static void gfx_dxgi_set_keyboard_callbacks(bool (*on_key_down)(int scancode), bool (*on_key_up)(int scancode), void (*on_all_keys_up)(void)) {
+static void gfx_dxgi_set_keyboard_callbacks(bool (*on_key_down)(int scancode), bool (*on_key_up)(int scancode), void (*on_all_keys_up)(void), void (*on_text_input)(char*)) {
     dxgi.on_key_down = on_key_down;
     dxgi.on_key_up = on_key_up;
     dxgi.on_all_keys_up = on_all_keys_up;
+    dxgi.on_text_input = on_text_input;
 }
 
 static void gfx_dxgi_main_loop(void (*run_one_game_iter)(void)) {
@@ -608,6 +625,18 @@ HWND gfx_dxgi_get_h_wnd(void) {
 void gfx_dxgi_shutdown(void) {
 }
 
+void gfx_dxgi_start_text_input(void) { inTextInput = TRUE; }
+void gfx_dxgi_stop_text_input(void) { inTextInput = FALSE; }
+
+static char* gfx_dxgi_get_clipboard_text(void) {
+    if (OpenClipboard(NULL)) {
+        HANDLE clip = GetClipboardData(CF_TEXT);
+        CloseClipboard();
+        return (char*)clip;
+    }
+    return NULL;
+}
+
 void ThrowIfFailed(HRESULT res) {
     if (FAILED(res)) {
         fprintf(stderr, "Error: 0x%08X\n", res);
@@ -636,6 +665,9 @@ struct GfxWindowManagerAPI gfx_dxgi = {
     gfx_dxgi_swap_buffers_end,
     gfx_dxgi_get_time,
     gfx_dxgi_shutdown,
+    gfx_dxgi_start_text_input,
+    gfx_dxgi_stop_text_input,
+    gfx_dxgi_get_clipboard_text,
 };
 
 #endif

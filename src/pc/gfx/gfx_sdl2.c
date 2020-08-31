@@ -49,6 +49,7 @@ static int inverted_scancode_table[512];
 static kb_callback_t kb_key_down = NULL;
 static kb_callback_t kb_key_up = NULL;
 static void (*kb_all_keys_up)(void) = NULL;
+static void (*kb_text_input)(char*) = NULL;
 
 // whether to use timer for frame control
 static bool use_timer = true;
@@ -279,11 +280,15 @@ static void gfx_sdl_onkeyup(int scancode) {
 }
 
 static void gfx_sdl_handle_events(void) {
+    SDL_StartTextInput();
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
 #ifndef TARGET_WEB
             // Scancodes are broken in Emscripten SDL2: https://bugzilla.libsdl.org/show_bug.cgi?id=3259
+            case SDL_TEXTINPUT:
+                kb_text_input(event.text.text);
+                break;
             case SDL_KEYDOWN:
                 gfx_sdl_onkeydown(event.key.keysym.scancode);
                 break;
@@ -320,10 +325,11 @@ static void gfx_sdl_handle_events(void) {
     }
 }
 
-static void gfx_sdl_set_keyboard_callbacks(kb_callback_t on_key_down, kb_callback_t on_key_up, void (*on_all_keys_up)(void)) {
+static void gfx_sdl_set_keyboard_callbacks(kb_callback_t on_key_down, kb_callback_t on_key_up, void (*on_all_keys_up)(void), void (*on_text_input)(char*)) {
     kb_key_down = on_key_down;
     kb_key_up = on_key_up;
     kb_all_keys_up = on_all_keys_up;
+    kb_text_input = on_text_input;
 }
 
 static bool gfx_sdl_start_frame(void) {
@@ -361,6 +367,10 @@ static void gfx_sdl_shutdown(void) {
     }
 }
 
+static void gfx_sdl_start_text_input(void) { SDL_StartTextInput(); }
+static void gfx_sdl_stop_text_input(void) { SDL_StopTextInput(); }
+static char* gfx_sdl_get_clipboard_text(void) { SDL_GetClipboardText(); }
+
 struct GfxWindowManagerAPI gfx_sdl = {
     gfx_sdl_init,
     gfx_sdl_set_keyboard_callbacks,
@@ -371,7 +381,10 @@ struct GfxWindowManagerAPI gfx_sdl = {
     gfx_sdl_swap_buffers_begin,
     gfx_sdl_swap_buffers_end,
     gfx_sdl_get_time,
-    gfx_sdl_shutdown
+    gfx_sdl_shutdown,
+    gfx_sdl_start_text_input,
+    gfx_sdl_stop_text_input,
+    gfx_sdl_get_clipboard_text,
 };
 
 #endif // BACKEND_WM

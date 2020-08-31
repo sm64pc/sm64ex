@@ -10,6 +10,16 @@
 #include "../configfile.h"
 #include "controller_keyboard.h"
 
+#include "pc/gfx/gfx_window_manager_api.h"
+#include "pc/pc_main.h""
+#include "engine/math_util.h"
+
+#define SCANCODE_BACKSPACE 0x0E
+#define SCANCODE_ESCAPE 0x01
+#define SCANCODE_ENTER 0x1C
+#define SCANCODE_V 0x2F
+#define SCANCODE_INSERT 0x152
+
 static int keyboard_buttons_down;
 
 #define MAX_KEYBINDS 64
@@ -17,6 +27,14 @@ static int keyboard_mapping[MAX_KEYBINDS][2];
 static int num_keybinds = 0;
 
 static u32 keyboard_lastkey = VK_INVALID;
+
+char textInput[MAX_TEXT_INPUT];
+static bool inTextInput = false;
+
+u8 held_ctrl, held_shift, held_alt;
+static enum TextInputMode textInputMode;
+void (*textInputOnEscape)(void) = NULL;
+void (*textInputOnEnter)(void) = NULL;
 
 static int keyboard_map_scancode(int scancode) {
     int ret = 0;
@@ -28,7 +46,56 @@ static int keyboard_map_scancode(int scancode) {
     return ret;
 }
 
+static void keyboard_alter_text_input_modifier(int scancode, bool down) {
+    if (down) {
+        switch (scancode) {
+            case 0x1D:  held_ctrl  |= (1 << 0); break;
+            case 0x11D: held_ctrl  |= (1 << 1); break;
+            case 0x2A:  held_shift |= (1 << 0); break;
+            case 0x36:  held_shift |= (1 << 1); break;
+            case 0x38:  held_alt   |= (1 << 0); break;
+            case 0x138: held_alt   |= (1 << 1); break;
+        }
+    } else {
+        switch (scancode) {
+            case 0x1D:  held_ctrl  &= ~(1 << 0); break;
+            case 0x11D: held_ctrl  &= ~(1 << 1); break;
+            case 0x2A:  held_shift &= ~(1 << 0); break;
+            case 0x36:  held_shift &= ~(1 << 1); break;
+            case 0x38:  held_alt   &= ~(1 << 0); break;
+            case 0x138: held_alt   &= ~(1 << 1); break;
+        }
+    }
+}
+
 bool keyboard_on_key_down(int scancode) {
+    if (inTextInput) {
+        // alter the held value of modifier keys
+        keyboard_alter_text_input_modifier(scancode, true);
+
+        // perform text-input-specific actions
+        switch (scancode) {
+            case SCANCODE_BACKSPACE:
+                textInput[max(strlen(textInput) - 1, 0)] = '\0';
+                break;
+            case SCANCODE_ESCAPE:
+                if (textInputOnEscape != NULL) { textInputOnEscape(); }
+                break;
+            case SCANCODE_ENTER:
+                if (textInputOnEnter != NULL) { textInputOnEnter(); }
+                break;
+            case SCANCODE_V:
+                if (held_ctrl) { keyboard_on_text_input(wm_api->get_clipboard_text()); }
+                break;
+            case SCANCODE_INSERT:
+                if (held_shift) { keyboard_on_text_input(wm_api->get_clipboard_text()); }
+                break;
+        }
+
+        // ignore any normal key down event if we're in text-input mode
+        return FALSE;
+    }
+
     int mapped = keyboard_map_scancode(scancode);
     keyboard_buttons_down |= mapped;
     keyboard_lastkey = scancode;
@@ -36,6 +103,14 @@ bool keyboard_on_key_down(int scancode) {
 }
 
 bool keyboard_on_key_up(int scancode) {
+    if (inTextInput) {
+        // alter the held value of modifier keys
+        keyboard_alter_text_input_modifier(scancode, false);
+
+        // ignore any key up event if we're in text-input mode
+        return FALSE;
+    }
+
     int mapped = keyboard_map_scancode(scancode);
     keyboard_buttons_down &= ~mapped;
     if (keyboard_lastkey == (u32) scancode)
@@ -45,6 +120,79 @@ bool keyboard_on_key_up(int scancode) {
 
 void keyboard_on_all_keys_up(void) {
     keyboard_buttons_down = 0;
+}
+
+char* keyboard_start_text_input(enum TextInputMode inInputMode, void (*onEscape)(void), void (*onEnter)(void)) {
+    // set text-input events
+    textInputOnEscape = onEscape;
+    textInputOnEnter = onEnter;
+
+    // clear buffer
+    for (int i = 0; i < MAX_TEXT_INPUT; i++) { textInput[i] = '\0'; }
+
+    // clear held-value for modifiers
+    held_ctrl = 0;
+    held_shift = 0;
+    held_alt = 0;
+
+    // start allowing text input
+    wm_api->start_text_input();
+    textInputMode = inInputMode;
+    inTextInput = true;
+}
+
+void keyboard_stop_text_input(void) {
+    // stop allowing text input
+    wm_api->stop_text_input();
+    inTextInput = false;
+}
+
+static bool keyboard_allow_character_input(char c) {
+    switch (textInputMode) {
+        case TIM_IP:
+            // IP only allows numbers, periods, and spaces
+            return (c >= '0' && c <= '9')
+                || (c == '.')
+                || (c == ' ');
+
+        case TIM_MULTI_LINE:
+            // multi-line allows new-line character
+            if (c == '\n') { return true; }
+            // intentional fall-through
+
+        case TIM_SINGLE_LINE:
+            // allow all characters that we can display in-game
+            return (c >= '0' && c <= '9')
+                || (c >= 'a' && c <= 'z')
+                || (c >= 'A' && c <= 'Z')
+                || (c == '\'') || (c == '.')
+                || (c == ',') || (c == '-')
+                || (c == '(') || (c == ')')
+                || (c == '&') || (c == '!')
+                || (c == '%') || (c == '?')
+                || (c == '"') || (c == '~')
+                || (c == '*') || (c == ' ');
+    }
+
+    return false;
+}
+
+void keyboard_on_text_input(char* text) {
+    // sanity check input
+    if (text == NULL) { return; }
+
+    int i = strlen(textInput);
+    while (*text != NULL) {
+        // make sure we don't overrun the buffer
+        if (i >= MAX_TEXT_INPUT) { break; }
+
+        // copy over character if we're allowed to input it
+        if (keyboard_allow_character_input(*text)) {
+            textInput[i++] = *text;
+        }
+
+        text++;
+    }
 }
 
 static void keyboard_add_binds(int mask, unsigned int *scancode) {
