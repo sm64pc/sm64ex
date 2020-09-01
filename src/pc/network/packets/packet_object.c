@@ -327,6 +327,7 @@ void network_receive_object(struct Packet* p) {
     if (so == NULL) { return; }
     struct Object* o = so->o;
     if (!network_sync_object_initialized(o)) { return; }
+    if (gMarioStates[0].heldByObj == o) { return; }
 
     // make sure no one can update an object we're holding
     if (gMarioStates[0].heldObj == o) { return; }
@@ -344,6 +345,11 @@ void network_receive_object(struct Packet* p) {
 }
 
 bool should_own_object(struct SyncObject* so) {
+    if (gMarioStates[0].heldByObj == so->o) { return true; }
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (gMarioStates[i].heldByObj == so->o) { return false; }
+    }
+
     if (so->o->oHeldState == HELD_HELD && so->o->heldByPlayerIndex == 0) { return true; }
     if (player_distance(&gMarioStates[0], so->o) > player_distance(&gMarioStates[1], so->o)) { return false; }
     if (so->o->oHeldState == HELD_HELD && so->o->heldByPlayerIndex != 0) { return false; }
