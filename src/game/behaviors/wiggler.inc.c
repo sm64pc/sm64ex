@@ -209,6 +209,8 @@ void wiggler_init_segments(void) {
     }
 }
 
+ u8 wiggler_act_walk_continue_dialog(void) { return o->oAction == WIGGLER_ACT_WALK && o->oWigglerTextStatus < WIGGLER_TEXT_STATUS_COMPLETED_DIALOG; }
+
 /**
  * Show text if necessary. Then walk toward mario if not at full health, and
  * otherwise wander in random directions.
@@ -228,7 +230,7 @@ static void wiggler_act_walk(void) {
 
         // If Mario is positioned below the wiggler, assume he entered through the
         // lower cave entrance, so don't display text.
-        if (gMarioObject->oPosY < o->oPosY || cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 2, 0, CUTSCENE_DIALOG, DIALOG_150) != 0) {
+        if (gMarioObject->oPosY < o->oPosY || cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 2, 0, CUTSCENE_DIALOG, DIALOG_150, wiggler_act_walk_continue_dialog) != 0) {
             o->oWigglerTextStatus = WIGGLER_TEXT_STATUS_COMPLETED_DIALOG;
         }
     } else {
@@ -284,6 +286,9 @@ static void wiggler_act_walk(void) {
         }
     }
 }
+
+u8 wiggler_act_jumped_on_continue_dialog(void) { return o->oAction == WIGGLER_ACT_JUMPED_ON && o->header.gfx.scale[1] >= 4.0f && o->oTimer > 30; }
+
 /**
  * Squish and unsquish, then show text and enter either the walking or shrinking
  * action.
@@ -304,7 +309,7 @@ static void wiggler_act_jumped_on(void) {
     // defeated) or go back to walking
     if (o->header.gfx.scale[1] >= 4.0f) {
         if (o->oTimer > 30) {
-            if (cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 2, 0, CUTSCENE_DIALOG, attackText[o->oHealth - 2]) != 0) {
+            if (cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 2, 0, CUTSCENE_DIALOG, attackText[o->oHealth - 2], wiggler_act_jumped_on_continue_dialog) != 0) {
                 // Because we don't want the wiggler to disappear after being
                 // defeated, we leave its health at 1
                 if (--o->oHealth == 1) {

@@ -333,6 +333,8 @@ static Trajectory sCageUkikiPath[] = {
     TRAJECTORY_END(),
 };
 
+u8 ukiki_act_go_to_cage_continue_dialog(void) { return o->oAction == UKIKI_ACT_GO_TO_CAGE && o->oSubAction == UKIKI_SUB_ACT_CAGE_TALK_TO_MARIO; }
+
 /**
  * Travel to the cage, wait for Mario, jump to it, and ride it to
  * our death. Ukiki is a tad suicidal.
@@ -383,7 +385,7 @@ void ukiki_act_go_to_cage(void) {
         case UKIKI_SUB_ACT_CAGE_TALK_TO_MARIO:
             cur_obj_init_animation_with_sound(UKIKI_ANIM_HANDSTAND);
 
-            if (cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 3, 1, CUTSCENE_DIALOG, DIALOG_080)) {
+            if (cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 3, 1, CUTSCENE_DIALOG, DIALOG_080, ukiki_act_go_to_cage_continue_dialog)) {
                 o->oSubAction++;
             }
             break;
@@ -554,6 +556,9 @@ void cage_ukiki_held_loop(void) {
     }
 }
 
+u8 hat_ukiki_held_loop_1(void) { return o->oHeldState == HELD_HELD && o->oUkikiTextState == UKIKI_TEXT_STEAL_HAT; }
+u8 hat_ukiki_held_loop_2(void) { return o->oHeldState == HELD_HELD && o->oUkikiTextState == UKIKI_TEXT_HAS_HAT; }
+
 /**
  * Called by the main behavior function for the hat ukiki whenever it is held.
  */
@@ -567,7 +572,7 @@ void hat_ukiki_held_loop(void) {
             break;
 
         case UKIKI_TEXT_STEAL_HAT:
-            if (cur_obj_update_dialog(&gMarioStates[0], 2, 2, DIALOG_100, 0)) {
+            if (cur_obj_update_dialog(&gMarioStates[0], 2, 2, DIALOG_100, 0, hat_ukiki_held_loop_1)) {
                 o->oInteractionSubtype |= INT_SUBTYPE_DROP_IMMEDIATELY;
                 o->oUkikiTextState = UKIKI_TEXT_STOLE_HAT;
             }
@@ -577,7 +582,7 @@ void hat_ukiki_held_loop(void) {
             break;
 
         case UKIKI_TEXT_HAS_HAT:
-            if (cur_obj_update_dialog(&gMarioStates[0], 2, 18, DIALOG_101, 0)) {
+            if (cur_obj_update_dialog(&gMarioStates[0], 2, 18, DIALOG_101, 0, hat_ukiki_held_loop_2)) {
                 mario_retrieve_cap();
                 set_mario_npc_dialog(&gMarioStates[0], 0);
                 o->oUkikiHasHat &= ~UKIKI_HAT_ON;

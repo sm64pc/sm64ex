@@ -925,6 +925,8 @@ void bowser_dead_hide(void) {
     o->oGravity = 0;
 }
 
+u8 bowser_dead_not_bits_end_continue_dialog(void) { return o->oAction == 4 && o->oSubAction == 3; }
+
 s32 bowser_dead_not_bits_end(void) {
     struct MarioState* marioState = nearest_mario_state_to_object(o);
 
@@ -934,7 +936,7 @@ s32 bowser_dead_not_bits_end(void) {
             func_8031FFB4(SEQ_PLAYER_LEVEL, 60, 40);
             o->oBowserUnkF8++;
         }
-        if (marioState->playerIndex == 0 && cur_obj_update_dialog(marioState, 2, 18, sBowserDefeatedDialogText[o->oBehParams2ndByte], 0)) {
+        if (marioState->playerIndex == 0 && cur_obj_update_dialog(marioState, 2, 18, sBowserDefeatedDialogText[o->oBehParams2ndByte], 0, bowser_dead_not_bits_end_continue_dialog)) {
             o->oBowserUnkF8++;
             cur_obj_play_sound_2(SOUND_GENERAL2_BOWSER_EXPLODE);
             sequence_player_unlower(SEQ_PLAYER_LEVEL, 60);
@@ -950,6 +952,8 @@ s32 bowser_dead_not_bits_end(void) {
     return ret;
 }
 
+u8 bowser_dead_bits_end_continue_dialog(void) { return o->oAction == 4 && o->oBowserUnkF8 < 2; }
+
 s32 bowser_dead_bits_end(void) {
     struct MarioState* marioState = nearest_mario_state_to_object(o);
     UNUSED s32 unused;
@@ -964,7 +968,7 @@ s32 bowser_dead_bits_end(void) {
             func_8031FFB4(SEQ_PLAYER_LEVEL, 60, 40);
             o->oBowserUnkF8++;
         }
-        if (marioState->playerIndex == 0 && cur_obj_update_dialog(marioState, 2, 18, dialogID, 0)) {
+        if (marioState->playerIndex == 0 && cur_obj_update_dialog(marioState, 2, 18, dialogID, 0, bowser_dead_bits_end_continue_dialog)) {
             cur_obj_set_model(MODEL_BOWSER2);
             sequence_player_unlower(SEQ_PLAYER_LEVEL, 60);
             sequence_player_fade_out(0, 1);

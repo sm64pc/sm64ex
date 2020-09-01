@@ -51,11 +51,13 @@ static void racing_penguin_force_start_race(void) {
     penguinForceStartRace = FALSE;
 }
 
+u8 racing_penguin_act_show_init_text_continue_dialog(void) { return o->oAction == RACING_PENGUIN_ACT_SHOW_INIT_TEXT; }
+
 static void racing_penguin_act_show_init_text(void) {
     s32 response;
     struct Object *child;
 
-    response = obj_update_race_proposition_dialog(&gMarioStates[0], sRacingPenguinData[o->oBehParams2ndByte].text);
+    response = obj_update_race_proposition_dialog(&gMarioStates[0], sRacingPenguinData[o->oBehParams2ndByte].text, racing_penguin_act_show_init_text_continue_dialog);
     if (response == 1) {
         child = cur_obj_nearest_object_with_behavior(bhvPenguinRaceFinishLine);
         child->parentObj = o;
@@ -151,6 +153,8 @@ static void racing_penguin_act_finish_race(void) {
     }
 }
 
+u8 racing_penguin_act_show_final_text_continue_dialog(void) { return o->oAction == RACING_PENGUIN_ACT_SHOW_FINAL_TEXT && o->oRacingPenguinFinalTextbox > 0; }
+
 static void racing_penguin_act_show_final_text(void) {
     s32 textResult;
 
@@ -181,7 +185,7 @@ static void racing_penguin_act_show_final_text(void) {
             o->oForwardVel = 4.0f;
         }
     } else if (o->oRacingPenguinFinalTextbox > 0) {
-        if ((textResult = cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 2, 1, CUTSCENE_DIALOG, o->oRacingPenguinFinalTextbox)) != 0) {
+        if ((textResult = cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 2, 1, CUTSCENE_DIALOG, o->oRacingPenguinFinalTextbox, racing_penguin_act_show_final_text_continue_dialog)) != 0) {
             o->oRacingPenguinFinalTextbox = -1;
             o->oTimer = 0;
         }

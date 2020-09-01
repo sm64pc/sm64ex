@@ -62,8 +62,10 @@ static void eyerok_boss_act_wake_up(void) {
     }
 }
 
+u8 eyerok_boss_act_show_intro_text_continue_dialog(void) { return o->oAction == EYEROK_BOSS_ACT_SHOW_INTRO_TEXT; }
+
 static void eyerok_boss_act_show_intro_text(void) {
-    if (cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 2, 0, CUTSCENE_DIALOG, DIALOG_117)) {
+    if (cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 2, 0, CUTSCENE_DIALOG, DIALOG_117, eyerok_boss_act_show_intro_text_continue_dialog)) {
         o->oAction = EYEROK_BOSS_ACT_FIGHT;
     }
 }
@@ -115,9 +117,11 @@ static void eyerok_boss_act_fight(void) {
     }
 }
 
+u8 eyerok_boss_act_die_continue_dialog(void) { return o->oAction == EYEROK_BOSS_ACT_DIE; }
+
 static void eyerok_boss_act_die(void) {
     if (o->oTimer == 60) {
-        if (cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 2, 0, CUTSCENE_DIALOG, DIALOG_118)) {
+        if (cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 2, 0, CUTSCENE_DIALOG, DIALOG_118, eyerok_boss_act_die_continue_dialog)) {
             spawn_default_star(0.0f, -900.0f, -3700.0f);
         } else {
             o->oTimer -= 1;

@@ -1,5 +1,7 @@
 // sl_snowman_wind.c.inc
 
+u8 bhv_sl_snowman_wind_loop_continue_dialog(void) { return o->oSubAction == SL_SNOWMAN_WIND_ACT_TALKING; }
+
 void bhv_sl_snowman_wind_loop(void) {
     UNUSED s32 unusedVar = 0;
     s16 marioAngleFromWindSource;
@@ -21,7 +23,7 @@ void bhv_sl_snowman_wind_loop(void) {
         
     // Mario has come close, begin dialog.
     } else if (o->oSubAction == SL_SNOWMAN_WIND_ACT_TALKING) {
-        if (cur_obj_update_dialog(&gMarioStates[0], 2, 2, DIALOG_153, 0))
+        if (cur_obj_update_dialog(&gMarioStates[0], 2, 2, DIALOG_153, 0, bhv_sl_snowman_wind_loop_continue_dialog))
             o->oSubAction++;
         
     // Blowing, spawn wind particles (SL_SNOWMAN_WIND_ACT_BLOWING)

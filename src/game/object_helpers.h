@@ -67,6 +67,9 @@ struct SpawnParticlesInfo
     /*0x10*/ f32 sizeRange;
 };
 
+extern u8 (*continueDialogFunction)(void);
+extern struct Object* continueDialogFunctionObject;
+
 Gfx *geo_update_projectile_pos_from_parent(s32 callContext, UNUSED struct GraphNode *node, Mat4 mtx);
 Gfx *geo_update_layer_transparency(s32 callContext, struct GraphNode *node, UNUSED void *context);
 #ifdef AVOID_UB
@@ -277,8 +280,8 @@ void set_time_stop_flags(s32 flags);
 void clear_time_stop_flags(s32 flags);
 s32 cur_obj_can_mario_activate_textbox(struct MarioState* m, f32 radius, f32 height, UNUSED s32 unused);
 s32 cur_obj_can_mario_activate_textbox_2(struct MarioState* m, f32 radius, f32 height);
-s32 cur_obj_update_dialog(struct MarioState* m, s32 actionArg, s32 dialogFlags, s32 dialogID, UNUSED s32 unused);
-s32 cur_obj_update_dialog_with_cutscene(struct MarioState* m, s32 actionArg, s32 dialogFlags, s32 cutsceneTable, s32 dialogID);
+s32 cur_obj_update_dialog(struct MarioState* m, s32 actionArg, s32 dialogFlags, s32 dialogID, UNUSED s32 unused, u8 (*inContinueDialogFunction)(void));
+s32 cur_obj_update_dialog_with_cutscene(struct MarioState* m, s32 actionArg, s32 dialogFlags, s32 cutsceneTable, s32 dialogID, u8 (*inContinueDialogFunction)(void));
 s32 cur_obj_has_model(u16 modelID);
 void cur_obj_align_gfx_with_floor(void);
 s32 mario_is_within_rectangle(s16 minX, s16 maxX, s16 minZ, s16 maxZ);

@@ -43,6 +43,8 @@ void tuxies_mother_act_2(void) {
     }
 }
 
+u8 tuxies_mother_act_1_continue_dialog(void) { return (o->oAction == 1 && o->oSubAction == 0); }
+
 void tuxies_mother_act_1(void) {
     // only local can interact with mother
     struct MarioState* marioState = &gMarioStates[0];
@@ -60,7 +62,7 @@ void tuxies_mother_act_1(void) {
                     dialogID = DIALOG_058;
                 else
                     dialogID = DIALOG_059;
-                if (cur_obj_update_dialog_with_cutscene(marioState, 2, 1, CUTSCENE_DIALOG, dialogID)) {
+                if (cur_obj_update_dialog_with_cutscene(marioState, 2, 1, CUTSCENE_DIALOG, dialogID, tuxies_mother_act_1_continue_dialog)) {
                     if (dialogID == DIALOG_058)
                         o->oSubAction = 1;
                     else
@@ -102,6 +104,8 @@ void tuxies_mother_act_1(void) {
     }
 }
 
+u8 tuxies_mother_act_0_continue_dialog(void) { return (o->oAction == 0 && o->oSubAction == 1); }
+
 void tuxies_mother_act_0(void) {
     // only local can interact with mother
     struct MarioState* marioState = &gMarioStates[0];
@@ -116,11 +120,9 @@ void tuxies_mother_act_0(void) {
     cur_obj_init_animation_with_sound(3);
     if (sp28 < 500.0f)
         sp2C = 1;
-    if (sp24 != NULL && sp28 < 300.0f && sp24->oHeldState != HELD_FREE) {
-        if (sp24->heldByPlayerIndex == 0) {
-            o->oAction = 1;
-            sp24->oSmallPenguinUnk88 = 1;
-        }
+    if (sp24->heldByPlayerIndex == 0 && sp24 != NULL && sp28 < 300.0f && sp24->oHeldState != HELD_FREE) {
+        o->oAction = 1;
+        sp24->oSmallPenguinUnk88 = 1;
         o->prevObj = sp24;
     } else {
         switch (o->oSubAction) {
@@ -130,7 +132,7 @@ void tuxies_mother_act_0(void) {
                         o->oSubAction++;
                 break;
             case 1:
-                if (cur_obj_update_dialog_with_cutscene(marioState, 2, 1, CUTSCENE_DIALOG, DIALOG_057))
+                if (cur_obj_update_dialog_with_cutscene(marioState, 2, 1, CUTSCENE_DIALOG, DIALOG_057, tuxies_mother_act_0_continue_dialog))
                     o->oSubAction++;
                 break;
             case 2:

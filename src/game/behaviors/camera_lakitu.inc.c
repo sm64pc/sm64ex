@@ -57,6 +57,8 @@ static void camera_lakitu_intro_act_spawn_cloud(void) {
     }
 }
 
+u8 camera_lakitu_intro_act_show_dialog_continue_dialog(void) { return o->oCameraLakituFinishedDialog != TRUE; }
+
 /**
  * Circle down to mario, show the dialog, then fly away.
  */
@@ -115,7 +117,7 @@ static void camera_lakitu_intro_act_show_dialog(void) {
                     }
                 }
             }
-        } else if (cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 2, DIALOG_UNK2_FLAG_0, CUTSCENE_DIALOG, DIALOG_034) != 0) {
+        } else if (cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 2, DIALOG_UNK2_FLAG_0, CUTSCENE_DIALOG, DIALOG_034, camera_lakitu_intro_act_show_dialog_continue_dialog) != 0) {
             o->oCameraLakituFinishedDialog = TRUE;
         }
     }

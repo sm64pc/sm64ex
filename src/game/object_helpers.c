@@ -27,6 +27,9 @@
 #include "spawn_object.h"
 #include "spawn_sound.h"
 
+u8 (*continueDialogFunction)(void) = NULL;
+struct Object* continueDialogFunctionObject = NULL;
+
 s8 D_8032F0A0[] = { 0xF8, 0x08, 0xFC, 0x04 };
 s16 D_8032F0A4[] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
 static s8 sLevelsWithRooms[] = { LEVEL_BBH, LEVEL_CASTLE, LEVEL_HMC, -1 };
@@ -2663,6 +2666,8 @@ s32 cur_obj_can_mario_activate_textbox_2(struct MarioState* m, f32 radius, f32 h
 }
 
 static void cur_obj_end_dialog(struct MarioState* m, s32 dialogFlags, s32 dialogResult) {
+    if (m->playerIndex != 0) { return 0; }
+
     o->oDialogResponse = dialogResult;
     o->oDialogState++;
 
@@ -2671,9 +2676,13 @@ static void cur_obj_end_dialog(struct MarioState* m, s32 dialogFlags, s32 dialog
     }
 }
 
-s32 cur_obj_update_dialog(struct MarioState* m, s32 actionArg, s32 dialogFlags, s32 dialogID, UNUSED s32 unused) {
+s32 cur_obj_update_dialog(struct MarioState* m, s32 actionArg, s32 dialogFlags, s32 dialogID, UNUSED s32 unused, u8 (*inContinueDialogFunction)(void)) {
     s32 dialogResponse = 0;
     UNUSED s32 doneTurning = TRUE;
+
+    if (m->playerIndex != 0) { return 0; }
+    continueDialogFunctionObject = gCurrentObject;
+    continueDialogFunction = inContinueDialogFunction;
 
     switch (o->oDialogState) {
 #ifdef VERSION_JP
@@ -2748,9 +2757,13 @@ s32 cur_obj_update_dialog(struct MarioState* m, s32 actionArg, s32 dialogFlags, 
     return dialogResponse;
 }
 
-s32 cur_obj_update_dialog_with_cutscene(struct MarioState* m, s32 actionArg, s32 dialogFlags, s32 cutsceneTable, s32 dialogID) {
+s32 cur_obj_update_dialog_with_cutscene(struct MarioState* m, s32 actionArg, s32 dialogFlags, s32 cutsceneTable, s32 dialogID, u8 (*inContinueDialogFunction)(void)) {
     s32 dialogResponse = 0;
     s32 doneTurning = TRUE;
+
+    if (m->playerIndex != 0) { return 0; }
+    continueDialogFunctionObject = gCurrentObject;
+    continueDialogFunction = inContinueDialogFunction;
 
     switch (o->oDialogState) {
 #ifdef VERSION_JP

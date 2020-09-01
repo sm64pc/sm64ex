@@ -580,6 +580,8 @@ static void koopa_the_quick_force_start_race(void) {
     o->oFlags |= OBJ_FLAG_ACTIVE_FROM_AFAR;
 }
 
+u8 koopa_the_quick_act_show_init_text_continue_dialog(void) { return o->oAction == KOOPA_THE_QUICK_ACT_SHOW_INIT_TEXT; }
+
 /**
  * Display the dialog asking mario if he wants to race. Begin the race or
  * return to the waiting action.
@@ -588,7 +590,7 @@ static void koopa_the_quick_act_show_init_text(void) {
     struct MarioState* marioState = nearest_mario_state_to_object(o);
     s32 response = 0;
     if (marioState == &gMarioStates[0]) {
-        response = obj_update_race_proposition_dialog(&gMarioStates[0], sKoopaTheQuickProperties[o->oKoopaTheQuickRaceIndex].initText);
+        response = obj_update_race_proposition_dialog(&gMarioStates[0], sKoopaTheQuickProperties[o->oKoopaTheQuickRaceIndex].initText, koopa_the_quick_act_show_init_text_continue_dialog);
     }
 
     if (response == 1) {
@@ -778,6 +780,8 @@ static void koopa_the_quick_act_stop(void) {
     }
 }
 
+u8 koopa_the_quick_act_after_race_continue_dialog(void) { return o->oAction == KOOPA_THE_QUICK_ACT_AFTER_RACE && o->parentObj->oKoopaRaceEndpointUnk100 > 0; }
+
 /**
  * Wait for mario to approach, then show text indicating the status of the race.
  * If mario got to the finish line first and didn't use the cannon, then spawn
@@ -812,7 +816,7 @@ static void koopa_the_quick_act_after_race(void) {
         }
     } else if (o->parentObj->oKoopaRaceEndpointUnk100 > 0) {
         if (marioState == &gMarioStates[0]) {
-            s32 dialogResponse = cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 2, 1, CUTSCENE_DIALOG, o->parentObj->oKoopaRaceEndpointUnk100);
+            s32 dialogResponse = cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 2, 1, CUTSCENE_DIALOG, o->parentObj->oKoopaRaceEndpointUnk100, koopa_the_quick_act_after_race_continue_dialog);
             if (dialogResponse != 0) {
                 o->parentObj->oKoopaRaceEndpointUnk100 = -1;
                 o->oTimer = 0;

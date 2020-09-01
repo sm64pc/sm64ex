@@ -30,6 +30,8 @@ void cap_switch_act_1(void) {
     }
 }
 
+u8 cap_switch_act_2_continue_dialog(void) { return o->oAction == 2 && o->oTimer >= 5; }
+
 void cap_switch_act_2(void) {
     capSwitchForcePress = FALSE;
     s32 sp1C;
@@ -44,10 +46,8 @@ void cap_switch_act_2(void) {
     } else {
         struct MarioState* marioState = nearest_mario_state_to_object(o);
         if (marioState == &gMarioStates[0]) {
-            sp1C = cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 1, 0x0C, CUTSCENE_CAP_SWITCH_PRESS, 0);
+            sp1C = cur_obj_update_dialog_with_cutscene(&gMarioStates[0], 1, 0x0C, CUTSCENE_CAP_SWITCH_PRESS, 0, cap_switch_act_2_continue_dialog);
             if (sp1C) { o->oAction = 3; }
-        } else {
-            o->oAction = 3;
         }
     }
 }

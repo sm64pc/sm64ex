@@ -358,6 +358,8 @@ s32 set_mario_npc_dialog(struct MarioState* m, s32 actionArg) {
 
     if (m->playerIndex == 0 && actionArg == 0) {
         localDialogNPCBehavior = NULL;
+        continueDialogFunction = NULL;
+        continueDialogFunctionObject = NULL;
     }
 
     // in dialog
@@ -395,8 +397,17 @@ s32 act_reading_npc_dialog(struct MarioState *m) {
     s32 headTurnAmount = 0;
     s16 angleToNPC;
 
+    if (m->playerIndex != 0) { return FALSE; }
+
     if (m->playerIndex == 0) {
-        if (m->usedObj == NULL || m->usedObj->activeFlags == ACTIVE_FLAG_DEACTIVATED || m->usedObj->behavior != localDialogNPCBehavior) {
+        u8 continueDialogCallback = TRUE;
+        if (continueDialogFunction != NULL && continueDialogFunctionObject != NULL) {
+            struct Object* tmp = gCurrentObject;
+            gCurrentObject = continueDialogFunctionObject;
+            continueDialogCallback = continueDialogFunction();
+            gCurrentObject = tmp;
+        }
+        if (!continueDialogCallback || m->usedObj == NULL || m->usedObj->activeFlags == ACTIVE_FLAG_DEACTIVATED || m->usedObj->behavior != localDialogNPCBehavior) {
             set_mario_npc_dialog(m, 0);
         }
     }
