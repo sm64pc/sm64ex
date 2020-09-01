@@ -4,13 +4,21 @@ void bhv_cannon_closed_init(void) {
     struct Object *cannon;
 
     if (save_file_is_cannon_unlocked() == 1) {
-        // If the cannon is open, spawn a cannon and despawn the object.
-        cannon = spawn_object(o, MODEL_CANNON_BASE, bhvCannon);
-        cannon->oBehParams2ndByte = o->oBehParams2ndByte;
-        cannon->oPosX = o->oHomeX;
-        cannon->oPosY = o->oHomeY;
-        cannon->oPosZ = o->oHomeZ;
-
+        if (!networkLevelLoaded || networkType == NT_SERVER) {
+            // If the cannon is open, spawn a cannon and despawn the object.
+            cannon = spawn_object(o, MODEL_CANNON_BASE, bhvCannon);
+            cannon->parentObj = cannon;
+            cannon->oBehParams2ndByte = o->oBehParams2ndByte;
+            cannon->oPosX = o->oHomeX;
+            cannon->oPosY = o->oHomeY;
+            cannon->oPosZ = o->oHomeZ;
+            if (networkLevelLoaded) {
+                network_set_sync_id(cannon);
+                struct Object* spawn_objects[] = { cannon };
+                u32 models[] = { MODEL_CANNON_BASE };
+                network_send_spawn_objects(spawn_objects, models, 1);
+            }
+        }
         o->oAction = CANNON_TRAP_DOOR_ACT_OPEN;
         o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
     }

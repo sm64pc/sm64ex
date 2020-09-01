@@ -26,12 +26,15 @@ struct SpawnObjectData {
 static u8 generate_parent_id(struct Object* objects[], u8 onIndex) {
     struct Object* o = objects[onIndex];
 
+    // special case if the parent is itself
+    if (o->parentObj == o) { return (u8)-1; }
+
     if (onIndex == 0) {
         assert(o->parentObj->oSyncID != 0);
         return (u8)o->parentObj->oSyncID;
     }
 
-    for (u8 i = (onIndex - 1); i >= 0; i--) {
+    for (u8 i = onIndex; i >= 0; i--) {
         if (o->parentObj == objects[i]) { return i; }
     }
 
@@ -95,14 +98,24 @@ void network_receive_spawn_objects(struct Packet* p) {
         packet_read(p, &data.activeFlags, sizeof(s16));
         packet_read(p, &data.rawData, sizeof(s32) * 80);
 
-        struct Object* parentObj = (i == 0)
-                                 ? syncObjects[data.parentId].o
-                                 : spawned[data.parentId];
-        if (parentObj == NULL) { continue; }
+        struct Object* parentObj = NULL;
+        if (data.parentId == (u8)-1) {
+            // this object is it's own parent, set it to a known object temporarily
+            parentObj = gMarioStates[0].marioObj;
+        } else {
+            // this object has a known parent
+            parentObj = (i == 0)
+                      ? syncObjects[data.parentId].o
+                      : spawned[data.parentId];
+            if (parentObj == NULL) { continue; }
+        }
 
         void* behavior = get_behavior_from_id(data.behaviorId);
         struct Object* o = spawn_object(parentObj, data.model, behavior);
         memcpy(o->rawData.asU32, data.rawData, sizeof(u32) * 80);
+
+        // correct the temporary parent with the object itself
+        if (data.parentId == (u8)-1) { o->parentObj = o; }
 
         // they've allocated one of their reserved sync objects
         if (o->oSyncID != 0 && syncObjects[o->oSyncID].reserved == reserveId) {
