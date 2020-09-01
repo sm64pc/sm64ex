@@ -34,12 +34,12 @@ OSX_BUILD ?= 0
 TARGET_ARCH ?= native
 TARGET_BITS ?= 0
 
-# Disable immediate load by default
-IMMEDIATELOAD ?= 0
-# Disable better camera by default
-BETTERCAMERA ?= 0
-# Disable no drawing distance by default
-NODRAWINGDISTANCE ?= 0
+# Enable immediate load by default
+IMMEDIATELOAD ?= 1
+# Enable better camera by default
+BETTERCAMERA ?= 1
+# Enable no drawing distance by default
+NODRAWINGDISTANCE ?= 1
 # Disable texture fixes by default (helps with them purists)
 TEXTURE_FIX ?= 0
 # Enable extended options menu by default
