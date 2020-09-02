@@ -33,12 +33,16 @@ void network_send_player(void) {
 
 void network_receive_player(struct Packet* p) {
     if (gMarioStates[1].marioObj == NULL) { return; }
-    int oldActionState = gMarioStates[1].actionState;
+
+    // save previous state
     u32 heldSyncID = NULL;
     u32 heldBySyncID = NULL;
-
-    u16 playerIndex = gMarioStates[1].playerIndex;
     u32 oldAction = gMarioStates[1].action;
+    u16 oldActionState = gMarioStates[1].actionState;
+    u16 oldActionArg = gMarioStates[1].actionArg;
+    u16 playerIndex = gMarioStates[1].playerIndex;
+
+    // load mario information from packet
     packet_read(p, &gMarioStates[1], sizeof(u32) * 24);
     packet_read(p, gMarioStates[1].controller, 20);
     packet_read(p, &gMarioStates[1].marioObj->rawData.asU32, sizeof(u32) * 80);
@@ -49,14 +53,18 @@ void network_receive_player(struct Packet* p) {
     packet_read(p, &gMarioStates[1].actionArg, sizeof(u32));
     packet_read(p, &gMarioStates[1].currentRoom, sizeof(s16));
     packet_read(p, &gMarioStates[1].squishTimer, sizeof(u8));
-
     packet_read(p, &heldSyncID, sizeof(u32));
     packet_read(p, &heldBySyncID, sizeof(u32));
+
+    // reset player index
     gMarioStates[1].playerIndex = playerIndex;
+
+    // reset mario sound play flag so that their jump sounds work
     if (gMarioStates[1].action != oldAction) {
         gMarioStates[1].flags &= ~(MARIO_ACTION_SOUND_PLAYED | MARIO_MARIO_SOUND_PLAYED);
     }
 
+    // find and set their held object
     if (heldSyncID != NULL && syncObjects[heldSyncID].o != NULL) {
         // TODO: do we have to move graphics nodes around to make this visible?
         struct Object* heldObj = syncObjects[heldSyncID].o;
@@ -67,6 +75,7 @@ void network_receive_player(struct Packet* p) {
         gMarioStates[1].heldObj = NULL;
     }
 
+    // find and set their held-by object
     if (heldBySyncID != NULL && syncObjects[heldBySyncID].o != NULL) {
         // TODO: do we have to move graphics nodes around to make this visible?
         gMarioStates[1].heldByObj = syncObjects[heldBySyncID].o;
@@ -74,9 +83,21 @@ void network_receive_player(struct Packet* p) {
         gMarioStates[1].heldByObj = NULL;
     }
 
-    // restore action state, needed for jump kicking
+    // jump kicking: restore action state, otherwise it won't play
     if (gMarioStates[1].action == ACT_JUMP_KICK) {
         gMarioStates[1].actionState = oldActionState;
+    }
+
+    // punching:
+    if ((gMarioStates[1].action == ACT_PUNCHING || gMarioStates[1].action == ACT_MOVE_PUNCHING)) {
+        // play first punching sound, otherwise it will be missed
+        if (gMarioStates[1].action != oldAction) {
+            play_sound(SOUND_MARIO_PUNCH_YAH, gMarioStates[1].marioObj->header.gfx.cameraToObject);
+        }
+        // make the first punch large, otherwise it will be missed
+        if (gMarioStates[1].actionArg == 2 && oldActionArg == 1) {
+            gMarioStates[1].marioBodyState->punchState = (0 << 6) | 4;
+        }
     }
 
     // mute snoring
