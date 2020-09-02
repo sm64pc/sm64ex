@@ -555,6 +555,12 @@ endif
 
 # Check for enhancement options
 
+# Check for debug option
+ifeq ($(DEBUG),1)
+  CC_CHECK += -DDEBUG
+  CFLAGS += -DDEBUG
+endif
+
 # Check for immediate load option
 ifeq ($(IMMEDIATELOAD),1)
   CC_CHECK += -DIMMEDIATELOAD

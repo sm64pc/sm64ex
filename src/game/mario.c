@@ -1,5 +1,9 @@
 #include <PR/ultratypes.h>
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
 #include "sm64.h"
 #include "area.h"
 #include "audio/data.h"
@@ -39,6 +43,8 @@
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif
+
+#define MAX_HANG_PREVENTION 64
 
 u16 gFreezeMario = 0;
 
@@ -1760,6 +1766,44 @@ void func_sh_8025574C(void) {
     }
 }
 
+static u8 prevent_hang(u32 hangPreventionActions[], u8* hangPreventionIndex) {
+    // save the action sequence
+    hangPreventionActions[*hangPreventionIndex] = gMarioState->action;
+    *hangPreventionIndex = *hangPreventionIndex + 1;
+    if (*hangPreventionIndex < MAX_HANG_PREVENTION) { return FALSE; }
+
+    // only dump the log once
+    static u8 dumped = FALSE;
+    if (dumped) { return TRUE; }
+    dumped = TRUE;
+
+    // open the log
+    FILE* f = NULL;
+    if (!logfile_open(&f)) { return TRUE; }
+
+    // complain to console
+    printf("#######################################\n");
+    printf("# HANG PREVENTED                      #\n");
+    printf("# Send the error log to the developer #\n");
+    printf("#######################################\n");
+
+    // save to log
+    fprintf(f, "(gMarioState->action: hang prevention begin)\n");
+    for (int i = 0; i < MAX_HANG_PREVENTION; i++) {
+        fprintf(f, "%08X\n", hangPreventionActions[i]);
+    }
+    fprintf(f, "(gMarioState->action: hang prevention end)\n");
+
+    logfile_close();
+
+    // force the crash in debug mode
+#ifdef DEBUG
+    assert(hangPreventionIndex == 0);
+#endif
+
+    return TRUE;
+}
+
 /**
  * Main function for executing Mario's behavior.
  */
@@ -1768,7 +1812,6 @@ s32 execute_mario_action(UNUSED struct Object *o) {
     /**
     * Cheat stuff
     */
-
     if (Cheats.EnableCheats)
     {
         if (Cheats.GodMode)
@@ -1802,6 +1845,9 @@ s32 execute_mario_action(UNUSED struct Object *o) {
             if (gFreezeMario < 1 && gDialogID != -1) { gFreezeMario = 1; }
         }
 
+        u32 hangPreventionActions[MAX_HANG_PREVENTION];
+        u8 hangPreventionIndex = 0;
+
         // The function can loop through many action shifts in one frame,
         // which can lead to unexpected sub-frame behavior. Could potentially hang
         // if a loop of actions were found, but there has not been a situation found.
@@ -1810,6 +1856,12 @@ s32 execute_mario_action(UNUSED struct Object *o) {
             if (gMarioState->playerIndex == 0 && gFreezeMario > 0 && (gMarioState->action & ACT_GROUP_MASK) != ACT_GROUP_CUTSCENE) {
                 break;
             }
+
+            // this block can get stuck in an infinite loop due to unexpected circumstances arising from networked players
+            if (prevent_hang(hangPreventionActions, &hangPreventionIndex)) {
+                break;
+            }
+
             switch (gMarioState->action & ACT_GROUP_MASK) {
                 case ACT_GROUP_STATIONARY:
                     inLoop = mario_execute_stationary_action(gMarioState);
