@@ -200,10 +200,6 @@ static void on_anim_frame(double time) {
 #endif
 
 void main_func(void) {
-    static u64 pool[0x165000/8 / 4 * sizeof(void *)];
-    main_pool_init(pool, pool + sizeof(pool) / sizeof(pool[0]));
-    gEffectsMemoryPool = mem_pool_init(0x4000, MEMORY_POOL_LEFT);
-
     const char *gamedir = gCLIOpts.GameDir[0] ? gCLIOpts.GameDir : FS_BASEDIR;
     const char *userpath = gCLIOpts.SavePath[0] ? gCLIOpts.SavePath : sys_user_path();
     fs_init(sys_ropaths, gamedir, userpath);
@@ -214,6 +210,12 @@ void main_func(void) {
         configWindow.fullscreen = true;
     else if (gCLIOpts.FullScreen == 2)
         configWindow.fullscreen = false;
+
+    const size_t poolsize = gCLIOpts.PoolSize ? gCLIOpts.PoolSize : DEFAULT_POOL_SIZE;
+    u64 *pool = malloc(poolsize);
+    if (!pool) sys_fatal("Could not alloc %u bytes for main pool.\n", poolsize);
+    main_pool_init(pool, pool + poolsize / sizeof(pool[0]));
+    gEffectsMemoryPool = mem_pool_init(0x4000, MEMORY_POOL_LEFT);
 
     #if defined(WAPI_SDL1) || defined(WAPI_SDL2)
     wm_api = &gfx_sdl;
@@ -250,8 +252,10 @@ void main_func(void) {
     gfx_init(wm_api, rendering_api, window_title);
     wm_api->set_keyboard_callbacks(keyboard_on_key_down, keyboard_on_key_up, keyboard_on_all_keys_up, keyboard_on_text_input);
 
-    if (audio_api == NULL && audio_sdl.init())
+    #if defined(AAPI_SDL1) || defined(AAPI_SDL2)
+    if (audio_api == NULL && audio_sdl.init()) 
         audio_api = &audio_sdl;
+    #endif
 
     if (audio_api == NULL) {
         audio_api = &audio_null;
