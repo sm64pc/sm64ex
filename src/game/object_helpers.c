@@ -2447,16 +2447,14 @@ s32 bit_shift_left(s32 a0) {
 }
 
 s32 cur_obj_mario_far_away(void) {
-    f32 dx = o->oHomeX - gMarioObject->oPosX;
-    f32 dy = o->oHomeY - gMarioObject->oPosY;
-    f32 dz = o->oHomeZ - gMarioObject->oPosZ;
-    f32 marioDistToHome = sqrtf(dx * dx + dy * dy + dz * dz);
-
-    if (o->oDistanceToMario > 2000.0f && marioDistToHome > 2000.0f) {
-        return TRUE;
-    } else {
-        return FALSE;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        f32 dx = o->oHomeX - gMarioObject->oPosX;
+        f32 dy = o->oHomeY - gMarioObject->oPosY;
+        f32 dz = o->oHomeZ - gMarioObject->oPosZ;
+        f32 marioDistToHome = sqrtf(dx * dx + dy * dy + dz * dz);
+        if (marioDistToHome <= 2000.0f) { return FALSE; }
     }
+    return (o->oDistanceToMario > 2000.0f);
 }
 
 s32 is_mario_moving_fast_or_in_air(s32 speedThreshold) {

@@ -62,7 +62,7 @@ void tuxies_mother_act_1(void) {
                     dialogID = DIALOG_058;
                 else
                     dialogID = DIALOG_059;
-                if (cur_obj_update_dialog_with_cutscene(marioState, 2, 1, CUTSCENE_DIALOG, dialogID, tuxies_mother_act_1_continue_dialog)) {
+                if (nearest_mario_state_to_object(o) == &gMarioStates[0] && cur_obj_update_dialog_with_cutscene(marioState, 2, 1, CUTSCENE_DIALOG, dialogID, tuxies_mother_act_1_continue_dialog)) {
                     if (dialogID == DIALOG_058)
                         o->oSubAction = 1;
                     else
@@ -132,7 +132,7 @@ void tuxies_mother_act_0(void) {
                         o->oSubAction++;
                 break;
             case 1:
-                if (cur_obj_update_dialog_with_cutscene(marioState, 2, 1, CUTSCENE_DIALOG, DIALOG_057, tuxies_mother_act_0_continue_dialog))
+                if (nearest_mario_state_to_object(o) == &gMarioStates[0] && cur_obj_update_dialog_with_cutscene(marioState, 2, 1, CUTSCENE_DIALOG, DIALOG_057, tuxies_mother_act_0_continue_dialog))
                     o->oSubAction++;
                 break;
             case 2:

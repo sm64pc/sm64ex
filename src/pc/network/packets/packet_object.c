@@ -103,6 +103,20 @@ static void packet_write_object_header(struct Packet* p, struct Object* o) {
     packet_write(p, &behaviorId, sizeof(enum BehaviorId));
 }
 
+static bool allowable_behavior_change(struct SyncObject* so, struct BehaviorScript* behavior) {
+    struct Object* o = so->o;
+    bool allow = false;
+
+    // bhvPenguinBaby can be set to bhvSmallPenguin
+    allow = allow || ((o->behavior == bhvPenguinBaby || o->behavior == bhvSmallPenguin) && (behavior == bhvPenguinBaby || behavior == bhvSmallPenguin));
+
+    if (!allow) { return false; }
+
+    so->behavior = behavior;
+    so->o->behavior = behavior;
+    return true;
+}
+
 static struct SyncObject* packet_read_object_header(struct Packet* p) {
     // get sync ID, sanity check
     u32 syncId = 0;
@@ -137,8 +151,8 @@ static struct SyncObject* packet_read_object_header(struct Packet* p) {
     // make sure the behaviors match
     enum BehaviorId behaviorId;
     packet_read(p, &behaviorId, sizeof(enum BehaviorId));
-    so->behavior = get_behavior_from_id(behaviorId);
-    if (o->behavior != so->behavior) {
+    struct BehaviorScript* behavior = get_behavior_from_id(behaviorId);
+    if (o->behavior != behavior && !allowable_behavior_change(so, behavior)) {
         printf("network_receive_object() behavior mismatch!\n");
         network_forget_sync_object(so);
         return NULL;
@@ -268,7 +282,7 @@ void network_send_object(struct Object* o) {
     if (!network_sync_object_initialized(o)) { return; }
     struct SyncObject* so = &syncObjects[o->oSyncID];
     if (so == NULL) { return; }
-    if (o->behavior != so->behavior) {
+    if (o->behavior != so->behavior && !allowable_behavior_change(so, so->behavior)) {
         printf("network_send_object() BEHAVIOR MISMATCH!\n");
         network_forget_sync_object(so);
         return;
@@ -288,7 +302,8 @@ void network_send_object_reliability(struct Object* o, bool reliable) {
     if (!network_sync_object_initialized(o)) { return; }
     struct SyncObject* so = &syncObjects[o->oSyncID];
     if (so == NULL) { return; }
-    if (o->behavior != so->behavior) {
+
+    if (o->behavior != so->behavior && !allowable_behavior_change(so, so->behavior)) {
         printf("network_send_object() BEHAVIOR MISMATCH!\n");
         network_forget_sync_object(so);
         return;
