@@ -280,7 +280,7 @@ u32 attack_object(struct Object *o, s32 interaction) {
 void mario_stop_riding_object(struct MarioState *m) {
     if (m->riddenObj != NULL) {
         m->riddenObj->oInteractStatus = INT_STATUS_STOP_RIDING;
-        stop_shell_music();
+        if (m->playerIndex == 0) { stop_shell_music(); }
         m->riddenObj = NULL;
     }
 }
@@ -297,7 +297,7 @@ void mario_grab_used_object(struct MarioState *m) {
 void mario_drop_held_object(struct MarioState *m) {
     if (m->heldObj != NULL) {
         if (m->heldObj->behavior == segmented_to_virtual(bhvKoopaShellUnderwater)) {
-            stop_shell_music();
+            if (m->playerIndex == 0) { stop_shell_music(); }
         }
 
         obj_set_held_state(m->heldObj, bhvCarrySomething4);
@@ -318,7 +318,7 @@ void mario_drop_held_object(struct MarioState *m) {
 void mario_throw_held_object(struct MarioState *m) {
     if (m->heldObj != NULL) {
         if (m->heldObj->behavior == segmented_to_virtual(bhvKoopaShellUnderwater)) {
-            stop_shell_music();
+            if (m->playerIndex == 0) { stop_shell_music(); }
         }
 
         obj_set_held_state(m->heldObj, bhvCarrySomething5);
@@ -1485,7 +1485,7 @@ u32 interact_koopa_shell(struct MarioState *m, UNUSED u32 interactType, struct O
 
             attack_object(o, interaction);
             update_mario_sound_and_camera(m);
-            play_shell_music();
+            if (m->playerIndex == 0) { play_shell_music(); }
             mario_drop_held_object(m);
 
             //! Puts Mario in ground action even when in air, making it easy to

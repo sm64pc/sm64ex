@@ -754,7 +754,7 @@ static s32 act_water_shell_swimming(struct MarioState *m) {
             m->heldObj->oInteractStatus = INT_STATUS_STOP_RIDING;
             m->heldObj = NULL;
         }
-        stop_shell_music();
+        if (m->playerIndex == 0) { stop_shell_music(); }
         set_mario_action(m, ACT_FLUTTER_KICK, 0);
     }
 
@@ -849,7 +849,7 @@ static s32 act_water_punch(struct MarioState *m) {
             set_mario_animation(m, MARIO_ANIM_WATER_PICK_UP_OBJ);
             if (is_anim_at_end(m)) {
                 if (m->heldObj != NULL && m->heldObj->behavior == segmented_to_virtual(bhvKoopaShellUnderwater)) {
-                    play_shell_music();
+                    if (m->playerIndex == 0) { play_shell_music(); }
                     set_mario_action(m, ACT_WATER_SHELL_SWIMMING, 0);
                 } else {
                     set_mario_action(m, ACT_HOLD_WATER_ACTION_END, 1);
@@ -1503,7 +1503,7 @@ static s32 check_common_submerged_cancels(struct MarioState *m) {
             if (m->action == ACT_WATER_SHELL_SWIMMING && m->heldObj != NULL) {
                 m->heldObj->oInteractStatus = INT_STATUS_STOP_RIDING;
                 m->heldObj = NULL;
-                stop_shell_music();
+                if (m->playerIndex == 0) { stop_shell_music(); }
             }
 
             return transition_submerged_to_walking(m);
