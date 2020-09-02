@@ -397,8 +397,6 @@ s32 act_reading_npc_dialog(struct MarioState *m) {
     s32 headTurnAmount = 0;
     s16 angleToNPC;
 
-    if (m->playerIndex != 0) { return FALSE; }
-
     if (m->playerIndex == 0) {
         u8 continueDialogCallback = TRUE;
         if (continueDialogFunction != NULL && continueDialogFunctionObject != NULL) {
@@ -419,20 +417,22 @@ s32 act_reading_npc_dialog(struct MarioState *m) {
         headTurnAmount = 384;
     }
 
-    if (m->actionState < 8 && m->usedObj != NULL) {
-        // turn to NPC
-        angleToNPC = mario_obj_angle_to_object(m, m->usedObj);
-        m->faceAngle[1] =
-            angleToNPC - approach_s32((angleToNPC - m->faceAngle[1]) << 16 >> 16, 0, 2048, 2048);
-        // turn head to npc
-        m->actionTimer += headTurnAmount;
+    if (m->actionState < 8) {
+        if (m->usedObj != NULL) {
+            // turn to NPC
+            angleToNPC = mario_obj_angle_to_object(m, m->usedObj);
+            m->faceAngle[1] =
+                angleToNPC - approach_s32((angleToNPC - m->faceAngle[1]) << 16 >> 16, 0, 2048, 2048);
+            // turn head to npc
+            m->actionTimer += headTurnAmount;
+        }
         // set animation
         set_mario_animation(m, m->heldObj == NULL ? MARIO_ANIM_FIRST_PERSON
                                                   : MARIO_ANIM_IDLE_WITH_LIGHT_OBJ);
     } else if (m->actionState >= 9 && m->actionState < 17) {
         // look back from facing NPC
         m->actionTimer -= headTurnAmount;
-    } else if (m->actionState == 23) {
+    } else if (m->playerIndex == 0 && m->actionState == 23) {
         if (m->flags & MARIO_CAP_IN_HAND) {
             set_mario_action(m, ACT_PUTTING_ON_CAP, 0);
         } else {
@@ -443,7 +443,7 @@ s32 act_reading_npc_dialog(struct MarioState *m) {
     vec3s_set(m->marioObj->header.gfx.angle, 0, m->faceAngle[1], 0);
     vec3s_set(m->marioBodyState->headAngle, m->actionTimer, 0, 0);
 
-    if (m->actionState != 8) {
+    if (m->playerIndex == 0 && m->actionState != 8) {
         m->actionState++;
     }
 
