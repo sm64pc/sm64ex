@@ -75,7 +75,18 @@ void network_receive_player(struct Packet* p) {
     }
 
     // restore action state, needed for jump kicking
-    gMarioStates[1].actionState = oldActionState;
+    if (gMarioStates[1].action == ACT_JUMP_KICK) {
+        gMarioStates[1].actionState = oldActionState;
+    }
+
+    // mute snoring
+    if (oldAction == ACT_SLEEPING && gMarioStates[1].action != ACT_SLEEPING) {
+        func_803205E8(SOUND_MARIO_SNORING1, gMarioStates[1].marioObj->header.gfx.cameraToObject);
+        func_803205E8(SOUND_MARIO_SNORING2, gMarioStates[1].marioObj->header.gfx.cameraToObject);
+#ifndef VERSION_JP
+        func_803205E8(SOUND_MARIO_SNORING3, gMarioStates[1].marioObj->header.gfx.cameraToObject);
+#endif
+    }
 }
 
 void network_update_player(void) {

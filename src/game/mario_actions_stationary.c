@@ -264,16 +264,18 @@ s32 act_start_sleeping(struct MarioState *m) {
 
 s32 act_sleeping(struct MarioState *m) {
     s32 sp24;
-    if (m->input & INPUT_UNKNOWN_A41F /* ? */) {
-        return set_mario_action(m, ACT_WAKING_UP, m->actionState);
-    }
+    if (m->playerIndex == 0) {
+        if (m->input & INPUT_UNKNOWN_A41F /* ? */) {
+            return set_mario_action(m, ACT_WAKING_UP, m->actionState);
+        }
 
-    if (m->quicksandDepth > 30.0f) {
-        return set_mario_action(m, ACT_WAKING_UP, m->actionState);
-    }
+        if (m->quicksandDepth > 30.0f) {
+            return set_mario_action(m, ACT_WAKING_UP, m->actionState);
+        }
 
-    if (m->pos[1] - find_floor_height_relative_polar(m, -0x8000, 60.0f) > 24.0f) {
-        return set_mario_action(m, ACT_WAKING_UP, m->actionState);
+        if (m->pos[1] - find_floor_height_relative_polar(m, -0x8000, 60.0f) > 24.0f) {
+            return set_mario_action(m, ACT_WAKING_UP, m->actionState);
+        }
     }
 
     m->marioBodyState->eyeState = MARIO_EYES_CLOSED;
@@ -282,7 +284,7 @@ s32 act_sleeping(struct MarioState *m) {
         case 0: {
             sp24 = set_mario_animation(m, MARIO_ANIM_SLEEP_IDLE);
 
-            if (sp24 == -1 && !m->actionTimer) {
+            if (m->playerIndex == 0 && sp24 == -1 && !m->actionTimer) {
                 lower_background_noise(2);
             }
 
@@ -294,7 +296,7 @@ s32 act_sleeping(struct MarioState *m) {
                 play_sound(SOUND_MARIO_SNORING2, m->marioObj->header.gfx.cameraToObject);
             }
 
-            if (is_anim_at_end(m)) {
+            if (m->playerIndex == 0 && is_anim_at_end(m)) {
                 m->actionTimer++;
                 if (m->actionTimer > 45) {
                     m->actionState++;
@@ -307,7 +309,7 @@ s32 act_sleeping(struct MarioState *m) {
                 play_mario_heavy_landing_sound(m, SOUND_ACTION_TERRAIN_BODY_HIT_GROUND);
             }
 
-            if (is_anim_at_end(m)) {
+            if (m->playerIndex == 0 && is_anim_at_end(m)) {
                 m->actionState++;
             }
             break;
@@ -338,7 +340,9 @@ s32 act_waking_up(struct MarioState *m) {
 #ifndef VERSION_JP
         func_803205E8(SOUND_MARIO_SNORING3, m->marioObj->header.gfx.cameraToObject);
 #endif
-        raise_background_noise(2);
+        if (m->playerIndex == 0) {
+            raise_background_noise(2);
+        }
     }
 
     if (m->input & INPUT_UNKNOWN_10) {
