@@ -750,8 +750,10 @@ static s32 act_water_shell_swimming(struct MarioState *m) {
     }
 
     if (m->actionTimer++ == 240) {
-        m->heldObj->oInteractStatus = INT_STATUS_STOP_RIDING;
-        m->heldObj = NULL;
+        if (m->heldObj != NULL) {
+            m->heldObj->oInteractStatus = INT_STATUS_STOP_RIDING;
+            m->heldObj = NULL;
+        }
         stop_shell_music();
         set_mario_action(m, ACT_FLUTTER_KICK, 0);
     }
@@ -769,6 +771,7 @@ static s32 check_water_grab(struct MarioState *m) {
     //! Heave hos have the grabbable interaction type but are not normally
     // grabbable. Since water grabbing doesn't check the appropriate input flag,
     // you can use water grab to pick up heave ho.
+    if (m->playerIndex != 0) { return FALSE; }
     if (m->marioObj->collidedObjInteractTypes & INTERACT_GRABBABLE) {
         struct Object *object = mario_get_collided_object(m, INTERACT_GRABBABLE);
         f32 dx = object->oPosX - m->pos[0];
@@ -845,7 +848,7 @@ static s32 act_water_punch(struct MarioState *m) {
         case 2:
             set_mario_animation(m, MARIO_ANIM_WATER_PICK_UP_OBJ);
             if (is_anim_at_end(m)) {
-                if (m->heldObj->behavior == segmented_to_virtual(bhvKoopaShellUnderwater)) {
+                if (m->heldObj != NULL && m->heldObj->behavior == segmented_to_virtual(bhvKoopaShellUnderwater)) {
                     play_shell_music();
                     set_mario_action(m, ACT_WATER_SHELL_SWIMMING, 0);
                 } else {
