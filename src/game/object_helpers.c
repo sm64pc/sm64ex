@@ -26,6 +26,7 @@
 #include "rendering_graph_node.h"
 #include "spawn_object.h"
 #include "spawn_sound.h"
+#include "pc/network/network.h"
 
 u8 (*continueDialogFunction)(void) = NULL;
 struct Object* continueDialogFunctionObject = NULL;
@@ -1164,6 +1165,10 @@ void cur_obj_get_thrown_or_placed(f32 forwardVel, f32 velY, s32 thrownAction) {
         o->oAction = thrownAction;
         cur_obj_move_after_thrown_or_dropped(forwardVel, velY);
     }
+
+    if (o->oSyncID != NULL && syncObjects[o->oSyncID].owned) {
+        network_send_object(o);
+    }
 }
 
 void cur_obj_get_dropped(void) {
@@ -1172,6 +1177,10 @@ void cur_obj_get_dropped(void) {
 
     o->oHeldState = HELD_FREE;
     cur_obj_move_after_thrown_or_dropped(0.0f, 0.0f);
+
+    if (o->oSyncID != NULL && syncObjects[o->oSyncID].owned) {
+        network_send_object(o);
+    }
 }
 
 void cur_obj_set_model(s32 modelID) {
@@ -2448,9 +2457,10 @@ s32 bit_shift_left(s32 a0) {
 
 s32 cur_obj_mario_far_away(void) {
     for (int i = 0; i < MAX_PLAYERS; i++) {
-        f32 dx = o->oHomeX - gMarioObject->oPosX;
-        f32 dy = o->oHomeY - gMarioObject->oPosY;
-        f32 dz = o->oHomeZ - gMarioObject->oPosZ;
+        struct Object* player = gMarioStates[i].marioObj;
+        f32 dx = o->oHomeX - player->oPosX;
+        f32 dy = o->oHomeY - player->oPosY;
+        f32 dz = o->oHomeZ - player->oPosZ;
         f32 marioDistToHome = sqrtf(dx * dx + dy * dy + dz * dz);
         if (marioDistToHome <= 2000.0f) { return FALSE; }
     }

@@ -283,6 +283,8 @@ void small_penguin_free_actions(void) {
         o->oAction = 5;
         o->oSmallPenguinUnk88 = 0;
     }
+    cur_obj_become_tangible();
+    cur_obj_enable_rendering();
     cur_obj_update_floor_and_walls();
     cur_obj_call_action_function(sSmallPenguinActions);
     cur_obj_move_standard(-78);
@@ -301,10 +303,10 @@ void bhv_small_penguin_loop(void) {
             cur_obj_unrender_and_reset_state(0, 0);
             if (cur_obj_has_behavior(bhvPenguinBaby))
                 obj_set_behavior(o, bhvSmallPenguin);
-            obj_copy_pos(o, gMarioObject);
+            obj_copy_pos(o, gMarioStates[o->heldByPlayerIndex].marioObj);
             if (gGlobalTimer % 30 == 0)
 #ifndef VERSION_JP
-                play_sound(SOUND_OBJ2_BABY_PENGUIN_YELL, gMarioObject->header.gfx.cameraToObject);
+                play_sound(SOUND_OBJ2_BABY_PENGUIN_YELL, gMarioStates[o->heldByPlayerIndex].marioObj->header.gfx.cameraToObject);
 #else
                 play_sound(SOUND_OBJ2_BABY_PENGUIN_YELL, o->header.gfx.cameraToObject);
 #endif
