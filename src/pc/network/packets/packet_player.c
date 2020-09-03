@@ -99,15 +99,6 @@ void network_receive_player(struct Packet* p) {
             gMarioStates[1].marioBodyState->punchState = (0 << 6) | 4;
         }
     }
-
-    // mute snoring
-    if (oldAction == ACT_SLEEPING && gMarioStates[1].action != ACT_SLEEPING) {
-        func_803205E8(SOUND_MARIO_SNORING1, gMarioStates[1].marioObj->header.gfx.cameraToObject);
-        func_803205E8(SOUND_MARIO_SNORING2, gMarioStates[1].marioObj->header.gfx.cameraToObject);
-#ifndef VERSION_JP
-        func_803205E8(SOUND_MARIO_SNORING3, gMarioStates[1].marioObj->header.gfx.cameraToObject);
-#endif
-    }
 }
 
 void network_update_player(void) {

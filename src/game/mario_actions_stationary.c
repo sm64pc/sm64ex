@@ -290,10 +290,12 @@ s32 act_sleeping(struct MarioState *m) {
 
             if (sp24 == 2) {
                 play_sound(SOUND_MARIO_SNORING1, m->marioObj->header.gfx.cameraToObject);
+                m->isSnoring = TRUE;
             }
 
             if (sp24 == 20) {
                 play_sound(SOUND_MARIO_SNORING2, m->marioObj->header.gfx.cameraToObject);
+                m->isSnoring = TRUE;
             }
 
             if (m->playerIndex == 0 && is_anim_at_end(m)) {
@@ -318,13 +320,16 @@ s32 act_sleeping(struct MarioState *m) {
             sp24 = set_mario_animation(m, MARIO_ANIM_SLEEP_LYING);
 #ifndef VERSION_JP
             play_sound_if_no_flag(m, SOUND_MARIO_SNORING3, MARIO_ACTION_SOUND_PLAYED);
+            m->isSnoring = TRUE;
 #else
             if (sp24 == 2) {
                 play_sound(SOUND_MARIO_SNORING2, m->marioObj->header.gfx.cameraToObject);
+                m->isSnoring = TRUE;
             }
 
             if (sp24 == 25) {
                 play_sound(SOUND_MARIO_SNORING1, m->marioObj->header.gfx.cameraToObject);
+                m->isSnoring = TRUE;
             }
 #endif
             break;

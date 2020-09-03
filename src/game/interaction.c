@@ -55,6 +55,7 @@ u32 interact_warp(struct MarioState *, u32, struct Object *);
 u32 interact_warp_door(struct MarioState *, u32, struct Object *);
 u32 interact_door(struct MarioState *, u32, struct Object *);
 u32 interact_cannon_base(struct MarioState *, u32, struct Object *);
+u32 interact_player(struct MarioState*, u32, struct Object*);
 u32 interact_igloo_barrier(struct MarioState *, u32, struct Object *);
 u32 interact_tornado(struct MarioState *, u32, struct Object *);
 u32 interact_whirlpool(struct MarioState *, u32, struct Object *);
@@ -114,6 +115,7 @@ static struct InteractionHandler sInteractionHandlers[] = {
     { INTERACT_CAP,            interact_cap },
     { INTERACT_GRABBABLE,      interact_grabbable },
     { INTERACT_TEXT,           interact_text },
+    { INTERACT_PLAYER,         interact_player },
 };
 
 static u32 sForwardKnockbackActions[][3] = {
@@ -1109,6 +1111,75 @@ u32 interact_cannon_base(struct MarioState *m, UNUSED u32 interactType, struct O
     return FALSE;
 }
 
+static void resolve_player_collision(struct MarioState* m, struct MarioState* m2) {
+    // move player outside of other player
+    f32 extentY = m->marioObj->hitboxHeight;
+    f32 radius = m->marioObj->hitboxRadius * 2.0f;
+
+    f32* localTorso = m->marioBodyState->torsoPos;
+    f32* remoteTorso = m2->marioBodyState->torsoPos;
+
+    f32 marioRelY = localTorso[1] - remoteTorso[1];
+    if (marioRelY < 0) { marioRelY = -marioRelY; }
+    if (marioRelY >= extentY) { return FALSE; }
+
+
+    f32 marioRelX = localTorso[0] - remoteTorso[0];
+    f32 marioRelZ = localTorso[2] - remoteTorso[2];
+    f32 marioDist = sqrtf(sqr(marioRelX) + sqr(marioRelZ));
+
+    if (marioDist < radius) {
+        //! If this function pushes Mario out of bounds, it will trigger Mario's
+        //  oob failsafe
+        m->pos[0] += (radius - marioDist) / radius * marioRelX;
+        m->pos[2] += (radius - marioDist) / radius * marioRelZ;
+        m->marioBodyState->torsoPos[0] += (radius - marioDist) / radius * marioRelX;
+        m->marioBodyState->torsoPos[2] += (radius - marioDist) / radius * marioRelZ;
+    }
+}
+
+u32 interact_player(struct MarioState* m, UNUSED u32 interactType, struct Object* o) {
+    struct MarioState* m2 = NULL;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (o == gMarioStates[i].marioObj) {
+            m2 = &gMarioStates[i];
+            break;
+        }
+    }
+    if (m2 == NULL) { return FALSE; }
+    u8 inCutscene = ((m->action & ACT_GROUP_MASK) == ACT_GROUP_CUTSCENE) || ((m2->action & ACT_GROUP_MASK) == ACT_GROUP_CUTSCENE);
+
+    u32 interaction = determine_interaction(m, o);
+
+    // bounce
+    if (interaction & INT_HIT_FROM_ABOVE) {
+        if (m2->playerIndex == 0) {
+            m2->squishTimer = max(m2->squishTimer, 4);
+        }
+        bounce_off_object(m, o, 30.0f);
+        queue_rumble_data_mario(m, 5, 80);
+        return FALSE;
+    }
+
+    // attacked
+    if (!inCutscene && m2->invincTimer <= 0 && (interaction & INT_ANY_ATTACK)) {
+        if (m->action == ACT_GROUND_POUND) {
+            m2->squishTimer = max(m2->squishTimer, 20);
+        }
+        if (m2->playerIndex == 0) {
+            m2->interactObj = m->marioObj;
+        }
+        m2->invincTimer = max(m2->invincTimer, 3);
+        take_damage_and_knock_back(m2, m->marioObj);
+        bounce_back_from_attack(m, interaction);
+        return FALSE;
+    }
+
+    resolve_player_collision(m, m2);
+
+    return FALSE;
+}
+
 u32 interact_igloo_barrier(struct MarioState *m, UNUSED u32 interactType, struct Object *o) {
     //! Sets used object without changing action (LOTS of interesting glitches,
     // but unfortunately the igloo barrier is the only object with this interaction
@@ -1797,7 +1868,7 @@ void mario_process_interactions(struct MarioState *m) {
 
     if (!(m->action & ACT_FLAG_INTANGIBLE) && m->collidedObjInteractTypes != 0) {
         s32 i;
-        for (i = 0; i < 31; i++) {
+        for (i = 0; i < 32; i++) {
             u32 interactType = sInteractionHandlers[i].interactType;
             if (m->collidedObjInteractTypes & interactType) {
                 struct Object *object = mario_get_collided_object(m, interactType);

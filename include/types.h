@@ -277,7 +277,9 @@ struct MarioBodyState
     /*0x0C*/ Vec3s torsoAngle;
     /*0x12*/ Vec3s headAngle;
     /*0x18*/ Vec3f heldObjLastPosition; /// also known as HOLP
-    u8 padding[4];
+    /*????*/ Vec3f torsoPos;
+    /*????*/ Vec3f handFootPos[4];
+    //u8 padding[4];
 };
 
 struct OffsetSizePair
@@ -365,6 +367,7 @@ struct MarioState
     /*0xC4*/ f32 unkC4;
     /*0xC8*/ s16 currentRoom;
     /*0xCA*/ struct Object* heldByObj;
+    /*????*/ u8 isSnoring;
 };
 
 #define PLAY_MODE_NORMAL 0

@@ -19,6 +19,7 @@
 #include "platform_displacement.h"
 #include "profiler.h"
 #include "spawn_object.h"
+#include "engine/math_util.h"
 
 /**
  * Flags controlling what debug info is displayed.

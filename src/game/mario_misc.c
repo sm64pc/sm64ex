@@ -378,7 +378,8 @@ Gfx *geo_switch_mario_eyes(s32 callContext, struct GraphNode *node, UNUSED Mat4 
 /**
  * Makes Mario's upper body tilt depending on the rotation stored in his bodyState
  */
-Gfx *geo_mario_tilt_torso(s32 callContext, struct GraphNode *node, UNUSED Mat4 *c) {
+Gfx *geo_mario_tilt_torso(s32 callContext, struct GraphNode *node, Mat4 *mtx) {
+    Mat4* curTransform = mtx;
     struct GraphNodeGenerated *asGenerated = (struct GraphNodeGenerated *) node;
     struct MarioBodyState *bodyState = &gBodyStates[asGenerated->parameter];
     s32 action = bodyState->action;
@@ -393,6 +394,9 @@ Gfx *geo_mario_tilt_torso(s32 callContext, struct GraphNode *node, UNUSED Mat4 *
         rotNode->rotation[0] = bodyState->torsoAngle[1];
         rotNode->rotation[1] = bodyState->torsoAngle[2];
         rotNode->rotation[2] = bodyState->torsoAngle[0];
+
+        // update torso position in bodyState
+        get_pos_from_transform_mtx(bodyState->torsoPos, *curTransform, *gCurGraphNodeCamera->matrixPtr);
     }
     return NULL;
 }
@@ -457,7 +461,8 @@ Gfx *geo_switch_mario_hand(s32 callContext, struct GraphNode *node, UNUSED Mat4 
  * ! Since the animation gets updated in GEO_CONTEXT_RENDER, drawing Mario multiple times
  * (such as in the mirror room) results in a faster and desynced punch / kick animation.
  */
-Gfx *geo_mario_hand_foot_scaler(s32 callContext, struct GraphNode *node, UNUSED Mat4 *c) {
+Gfx *geo_mario_hand_foot_scaler(s32 callContext, struct GraphNode *node, Mat4 *mtx) {
+    Mat4* curTransform = mtx;
     static s16 sMarioAttackAnimCounter = 0;
     struct GraphNodeGenerated *asGenerated = (struct GraphNodeGenerated *) node;
     struct GraphNodeScale *scaleNode = (struct GraphNodeScale *) node->next;
@@ -474,6 +479,10 @@ Gfx *geo_mario_hand_foot_scaler(s32 callContext, struct GraphNode *node, UNUSED 
                 gMarioAttackScaleAnimation[(asGenerated->parameter & 0x03) * 6 + (bodyState->punchState & 0x3F)]
                 / 10.0f;
         }
+        // update hand/foot position in bodyState
+        get_pos_from_transform_mtx(bodyState->handFootPos[(asGenerated->parameter & 0x03)],
+                                   *curTransform,
+                                   *gCurGraphNodeCamera->matrixPtr);
     }
     return NULL;
 }

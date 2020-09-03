@@ -22,6 +22,52 @@ struct Object *debug_print_obj_collision(struct Object *a) {
     return NULL;
 }
 
+int detect_player_hitbox_overlap(struct MarioState* local, struct MarioState* remote) {
+    if (local->marioObj == NULL || local->marioObj->oIntangibleTimer != 0) { return; }
+    if (remote->marioObj == NULL || remote->marioObj->oIntangibleTimer != 0) { return; }
+
+    struct Object* a = local->marioObj;
+    f32* aTorso = local->marioBodyState->torsoPos;
+
+    struct Object* b = remote->marioObj;
+    f32* bTorso = remote->marioBodyState->torsoPos;
+
+    f32 sp3C = aTorso[1] - a->hitboxDownOffset;
+    f32 sp38 = bTorso[1] - b->hitboxDownOffset;
+    f32 dx = aTorso[0] - bTorso[0];
+    UNUSED f32 sp30 = sp3C - sp38;
+    f32 dz = aTorso[2] - bTorso[2];
+    f32 collisionRadius = (a->hitboxRadius + b->hitboxRadius) * 1.25f;
+    f32 distance = sqrtf(dx * dx + dz * dz);
+
+    if (collisionRadius > distance) {
+        f32 sp20 = a->hitboxHeight + sp3C;
+        f32 sp1C = b->hitboxHeight + sp38;
+
+        if (sp3C > sp1C) {
+            return 0;
+        }
+        if (sp20 < sp38) {
+            return 0;
+        }
+        if (a->numCollidedObjs >= 4) {
+            return 0;
+        }
+        if (b->numCollidedObjs >= 4) {
+            return 0;
+        }
+        a->collidedObjs[a->numCollidedObjs] = b;
+        b->collidedObjs[b->numCollidedObjs] = a;
+        a->collidedObjInteractTypes |= b->oInteractType;
+        b->collidedObjInteractTypes |= a->oInteractType;
+        a->numCollidedObjs++;
+        b->numCollidedObjs++;
+        return 1;
+    }
+
+    //! no return value
+}
+
 int detect_object_hitbox_overlap(struct Object *a, struct Object *b) {
     f32 sp3C = a->oPosY - a->hitboxDownOffset;
     f32 sp38 = b->oPosY - b->hitboxDownOffset;
@@ -134,6 +180,12 @@ void check_player_object_collision(void) {
         check_collision_in_list(sp18, (struct Object *) gObjectLists[OBJ_LIST_DESTRUCTIVE].next,
                       (struct Object *) &gObjectLists[OBJ_LIST_DESTRUCTIVE]);
         sp18 = (struct Object *) sp18->header.next;
+    }
+
+    // two-player hack ?
+    extern struct MarioState gMarioStates[];
+    for (int i = 1; i < MAX_PLAYERS; i++) {
+        detect_player_hitbox_overlap(&gMarioStates[0], &gMarioStates[i]);
     }
 }
 

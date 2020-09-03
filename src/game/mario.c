@@ -1833,6 +1833,15 @@ s32 execute_mario_action(UNUSED struct Object *o) {
         mario_handle_special_floors(gMarioState);
         mario_process_interactions(gMarioState);
 
+        // HACK: mute snoring even when we skip the waking up action
+        if (gMarioState->isSnoring && gMarioState->action != ACT_SLEEPING) {
+                func_803205E8(SOUND_MARIO_SNORING1, gMarioState->marioObj->header.gfx.cameraToObject);
+                func_803205E8(SOUND_MARIO_SNORING2, gMarioState->marioObj->header.gfx.cameraToObject);
+#ifndef VERSION_JP
+                func_803205E8(SOUND_MARIO_SNORING3, gMarioState->marioObj->header.gfx.cameraToObject);
+#endif
+        }
+
         // If Mario is OOB, stop executing actions.
         if (gMarioState->floor == NULL) {
             return 0;
@@ -1984,7 +1993,16 @@ void init_mario(void) {
     vec3s_set(gMarioState->angleVel, 0, 0, 0);
     vec3s_to_vec3f(gMarioState->pos, gMarioSpawnInfo->startPos);
     vec3f_set(gMarioState->vel, 0, 0, 0);
-    if (!isLocal) { gMarioState->pos[0] -= 150; }
+
+    // two-player hack
+    if ((networkType == NT_CLIENT && isLocal) || (networkType == NT_SERVER && !isLocal)) {
+        gMarioState->pos[0] += 50.0f * coss(gMarioState->faceAngle[1]);
+        gMarioState->pos[2] += 50.0f * sins(gMarioState->faceAngle[1]);
+    } else {
+        gMarioState->pos[0] -= 50.0f * coss(gMarioState->faceAngle[1]);
+        gMarioState->pos[2] -= 50.0f * sins(gMarioState->faceAngle[1]);
+    }
+
     gMarioState->floorHeight =
         find_floor(gMarioState->pos[0], gMarioState->pos[1], gMarioState->pos[2], &gMarioState->floor);
 
