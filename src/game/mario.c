@@ -1854,6 +1854,14 @@ s32 execute_mario_action(UNUSED struct Object *o) {
             if (gFreezeMario < 1 && gDialogID != -1) { gFreezeMario = 1; }
         }
 
+        // two-player hack: drop held object if server is holding it
+        if (networkType == NT_CLIENT && gMarioState->playerIndex == 0 && gMarioState->heldObj != NULL) {
+            u8 inCutscene = ((gMarioState->action & ACT_GROUP_MASK) != ACT_GROUP_CUTSCENE);
+            if (!inCutscene && gMarioState->heldObj == gMarioStates[0].heldObj) {
+                drop_and_set_mario_action(gMarioState, ACT_IDLE, 0);
+            }
+        }
+
         u32 hangPreventionActions[MAX_HANG_PREVENTION];
         u8 hangPreventionIndex = 0;
 

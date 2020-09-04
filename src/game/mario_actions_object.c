@@ -11,6 +11,7 @@
 #include "engine/math_util.h"
 #include "thread6.h"
 #include "behavior_data.h"
+#include "pc/network/network.h"
 
 /**
  * Used by act_punching() to determine Mario's forward velocity during each
@@ -191,6 +192,9 @@ s32 act_picking_up(struct MarioState *m) {
         if (m->heldObj != NULL) {
             play_sound_if_no_flag(m, SOUND_MARIO_HRMM, MARIO_MARIO_SOUND_PLAYED);
             m->actionState = 1;
+        } else {
+            set_mario_action(m, ACT_IDLE, 0);
+            return FALSE;
         }
     }
 
@@ -326,6 +330,9 @@ s32 act_picking_up_bowser(struct MarioState *m) {
             play_sound(SOUND_MARIO_HRMM, m->marioObj->header.gfx.cameraToObject);
             if (m->playerIndex == 0) {
                 network_send_object(m->heldObj);
+            } else {
+                set_mario_action(m, ACT_IDLE, 0);
+                return FALSE;
             }
         }
     }
@@ -350,6 +357,9 @@ s32 act_holding_bowser(struct MarioState *m) {
             if (m->heldObj != NULL) {
                 queue_rumble_data_mario(m, 5, 80);
                 play_sound(SOUND_MARIO_HRMM, m->marioObj->header.gfx.cameraToObject);
+            } else {
+                set_mario_action(m, ACT_IDLE, 0);
+                return FALSE;
             }
         }
     }
@@ -451,6 +461,8 @@ s32 act_releasing_bowser(struct MarioState *m) {
 }
 
 s32 check_common_object_cancels(struct MarioState *m) {
+    if (m->playerIndex != 0) { return FALSE; }
+
     f32 waterSurface = m->waterLevel - 100;
     if (m->pos[1] < waterSurface) {
         return set_water_plunge_action(m);
