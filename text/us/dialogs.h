@@ -1982,7 +1982,7 @@ Enjoy!!!"
 
 DEFINE_DIALOG(DIALOG_161, 1, 4, 30, 200, _("\
 Mario!!!\n\
-It that really you???\n\
+Is that really you???\n\
 It has been so long since\n\
 our last adventure!\n\
 They told me that I might\n\
