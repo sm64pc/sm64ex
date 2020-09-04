@@ -95,7 +95,7 @@ void network_update(void) {
         }
 
         // execute packet
-        switch (p.buffer[0]) {
+        switch ((u8)p.buffer[0]) {
             case PACKET_ACK: network_receive_ack(&p); break;
             case PACKET_PLAYER: network_receive_player(&p); break;
             case PACKET_OBJECT: network_receive_object(&p); break;
@@ -108,6 +108,7 @@ void network_update(void) {
             case PACKET_COLLECT_ITEM: network_receive_collect_item(&p); break;
             case PACKET_RESERVATION_REQUEST: network_receive_reservation_request(&p); break;
             case PACKET_RESERVATION: network_receive_reservation(&p); break;
+            case PACKET_CUSTOM: network_receive_custom(&p); break;
             default: printf("%s received unknown packet: %d\n", NETWORKTYPESTR, p.buffer[0]);
         }
 

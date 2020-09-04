@@ -28,6 +28,7 @@ enum PacketType {
     PACKET_COLLECT_ITEM,
     PACKET_RESERVATION_REQUEST,
     PACKET_RESERVATION,
+    PACKET_CUSTOM = 255,
 };
 
 struct Packet {
@@ -128,5 +129,9 @@ void network_send_reservation_request(void);
 void network_receive_reservation_request(struct Packet* p);
 void network_send_reservation(void);
 void network_receive_reservation(struct Packet* p);
+
+u8 network_register_custom_packet(void (*send_callback)(struct Packet* p, void* params), void (*receive_callback)(struct Packet* p));
+void network_send_custom(u8 customId, bool reliable, void* params);
+void network_receive_custom(struct Packet* p);
 
 #endif

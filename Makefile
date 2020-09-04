@@ -558,8 +558,8 @@ endif
 CC_CHECK += -DCOOP
 CFLAGS += -DCOOP
 
-# Enforce -Werror in debug mode
-ifeq ($(DEBUG),1)
+# Enforce -Werror in strict mode
+ifeq ($(STRICT),1)
   CC_CHECK += -Werror -Wno-error=unused-variable -Wno-error=unused-parameter
   CFLAGS += -Werror -Wno-error=unused-variable -Wno-error=unused-parameter
 endif
