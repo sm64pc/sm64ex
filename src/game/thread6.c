@@ -4,6 +4,7 @@
 #include "buffers/buffers.h"
 #include "main.h"
 #include "thread6.h"
+#include "object_helpers.h"
 
 static s8 D_SH_8030CCB4;
 static s32 sUnusedDisableRumble;

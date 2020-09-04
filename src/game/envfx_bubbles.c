@@ -10,6 +10,7 @@
 #include "engine/behavior_script.h"
 #include "audio/external.h"
 #include "textures.h"
+#include "game/rendering_graph_node.h"
 
 /**
  * This file implements environment effects that are not snow:

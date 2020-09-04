@@ -30,7 +30,7 @@ static struct ObjectHitbox sChainChompHitbox = {
 void bhv_chain_chomp_chain_part_update(void) {
     struct ChainSegment *segment;
 
-    if (o->parentObj->behavior != &bhvChainChomp || o->parentObj->oAction == CHAIN_CHOMP_ACT_UNLOAD_CHAIN) {
+    if (o->parentObj->behavior != (BehaviorScript*)&bhvChainChomp || o->parentObj->oAction == CHAIN_CHOMP_ACT_UNLOAD_CHAIN) {
         obj_mark_for_deletion(o);
     } else if (o->oBehParams2ndByte != CHAIN_CHOMP_CHAIN_PART_BP_PIVOT) {
         segment = &o->parentObj->oChainChompSegments[o->oBehParams2ndByte];
@@ -480,7 +480,7 @@ static void chain_chomp_act_unload_chain(void) {
 
     if (o->oChainChompReleaseStatus != CHAIN_CHOMP_NOT_RELEASED) {
         for (u8 i = 0; i < 5; i++) {
-            obj_mark_for_deletion(&o->oChainChompSegments[i]);
+            obj_mark_for_deletion((struct Object*)&o->oChainChompSegments[i]);
         }
         obj_mark_for_deletion(o);
         obj_mark_for_deletion(o->parentObj);

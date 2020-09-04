@@ -17,7 +17,7 @@ void network_send_reservation_request(void) {
     network_send(&p);
 }
 
-void network_receive_reservation_request(struct Packet* p) {
+void network_receive_reservation_request(UNUSED struct Packet* p) {
     assert(networkType == NT_SERVER);
     network_send_reservation();
 }

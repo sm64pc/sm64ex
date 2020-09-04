@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "socket.h"
 #include "../network.h"
 
@@ -17,7 +18,7 @@ int socket_bind(SOCKET sock, unsigned int port) {
 
 int socket_send(SOCKET sock, struct sockaddr_in* txAddr, char* buffer, int bufferLength) {
     int txAddrSize = sizeof(struct sockaddr_in);
-    int rc = sendto(sock, buffer, bufferLength, 0, txAddr, txAddrSize);
+    int rc = sendto(sock, buffer, bufferLength, 0, (struct sockaddr*)txAddr, txAddrSize);
     if (rc == SOCKET_ERROR) {
         printf("%s sendto failed with error: %d\n", NETWORKTYPESTR, SOCKET_LAST_ERROR);
     }
@@ -29,10 +30,10 @@ int socket_receive(SOCKET sock, struct sockaddr_in* rxAddr, char* buffer, int bu
     *receiveLength = 0;
 
     int rxAddrSize = sizeof(struct sockaddr_in);
-    int rc = recvfrom(sock, buffer, bufferLength, 0, rxAddr, &rxAddrSize);
+    int rc = recvfrom(sock, buffer, bufferLength, 0, (struct sockaddr*)rxAddr, &rxAddrSize);
     if (rc == SOCKET_ERROR) {
         int error = SOCKET_LAST_ERROR;
-        if (error != EWOULDBLOCK && error != ECONNRESET) {
+        if (error != SOCKET_EWOULDBLOCK && error != SOCKET_ECONNRESET) {
             printf("%s recvfrom failed with error %d\n", NETWORKTYPESTR, SOCKET_LAST_ERROR);
         }
         return rc;

@@ -25,6 +25,8 @@
 #include "sound_init.h"
 #include "thread6.h"
 
+#include "pc/network/network.h"
+
 #define INT_GROUND_POUND_OR_TWIRL (1 << 0) // 0x01
 #define INT_PUNCH                 (1 << 1) // 0x02
 #define INT_KICK                  (1 << 2) // 0x04
@@ -786,7 +788,7 @@ u32 interact_water_ring(struct MarioState *m, UNUSED u32 interactType, struct Ob
 
 u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct Object *o) {
     // only allow for local player
-    if (m != &gMarioStates[0]) { return; }
+    if (m != &gMarioStates[0]) { return FALSE; }
 
     u32 starIndex;
     u32 starGrabAction = ACT_STAR_DANCE_EXIT;
@@ -1098,7 +1100,7 @@ u32 interact_door(struct MarioState *m, UNUSED u32 interactType, struct Object *
 }
 
 u32 interact_cannon_base(struct MarioState *m, UNUSED u32 interactType, struct Object *o) {
-    if (o->oAction != 0) { return; }
+    if (o->oAction != 0) { return FALSE; }
 
     if (m->action != ACT_IN_CANNON) {
         mario_stop_riding_and_holding(m);
@@ -1121,7 +1123,7 @@ static void resolve_player_collision(struct MarioState* m, struct MarioState* m2
 
     f32 marioRelY = localTorso[1] - remoteTorso[1];
     if (marioRelY < 0) { marioRelY = -marioRelY; }
-    if (marioRelY >= extentY) { return FALSE; }
+    if (marioRelY >= extentY) { return; }
 
 
     f32 marioRelX = localTorso[0] - remoteTorso[0];
@@ -1643,7 +1645,7 @@ u32 interact_pole(struct MarioState *m, UNUSED u32 interactType, struct Object *
 u32 interact_hoot(struct MarioState *m, UNUSED u32 interactType, struct Object *o) {
     s32 actionId = m->action & ACT_ID_MASK;
 
-    if (m != &gMarioStates[0]) { return; }
+    if (m != &gMarioStates[0]) { return FALSE; }
 
     //! Can pause to advance the global timer without falling too far, allowing
     // you to regrab after letting go.
@@ -1665,7 +1667,7 @@ u32 interact_hoot(struct MarioState *m, UNUSED u32 interactType, struct Object *
 
 u32 interact_cap(struct MarioState *m, UNUSED u32 interactType, struct Object *o) {
     // only allow for local
-    if (m != &gMarioStates[0]) { return; }
+    if (m != &gMarioStates[0]) { return FALSE; }
 
     u32 capFlag = get_mario_cap_flag(o);
     u16 capMusic = 0;

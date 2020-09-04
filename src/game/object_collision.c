@@ -23,8 +23,8 @@ struct Object *debug_print_obj_collision(struct Object *a) {
 }
 
 int detect_player_hitbox_overlap(struct MarioState* local, struct MarioState* remote) {
-    if (local->marioObj == NULL || local->marioObj->oIntangibleTimer != 0) { return; }
-    if (remote->marioObj == NULL || remote->marioObj->oIntangibleTimer != 0) { return; }
+    if (local->marioObj == NULL || local->marioObj->oIntangibleTimer != 0) { return FALSE; }
+    if (remote->marioObj == NULL || remote->marioObj->oIntangibleTimer != 0) { return FALSE; }
 
     struct Object* a = local->marioObj;
     f32* aTorso = local->marioBodyState->torsoPos;
@@ -45,16 +45,16 @@ int detect_player_hitbox_overlap(struct MarioState* local, struct MarioState* re
         f32 sp1C = b->hitboxHeight + sp38;
 
         if (sp3C > sp1C) {
-            return 0;
+            return FALSE;
         }
         if (sp20 < sp38) {
-            return 0;
+            return FALSE;
         }
         if (a->numCollidedObjs >= 4) {
-            return 0;
+            return FALSE;
         }
         if (b->numCollidedObjs >= 4) {
-            return 0;
+            return FALSE;
         }
         a->collidedObjs[a->numCollidedObjs] = b;
         b->collidedObjs[b->numCollidedObjs] = a;
@@ -62,10 +62,11 @@ int detect_player_hitbox_overlap(struct MarioState* local, struct MarioState* re
         b->collidedObjInteractTypes |= a->oInteractType;
         a->numCollidedObjs++;
         b->numCollidedObjs++;
-        return 1;
+        return TRUE;
     }
 
     //! no return value
+    return FALSE;
 }
 
 int detect_object_hitbox_overlap(struct Object *a, struct Object *b) {

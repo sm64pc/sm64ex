@@ -46,6 +46,9 @@ void fish_act_spawn(void) {
     struct Object* player = nearest_player_to_object(o);
     int distanceToPlayer = dist_between_objects(o, player);
     if (distanceToPlayer < minDistToMario || gCurrLevelNum == LEVEL_SA) {
+#else
+    // get rid of warning
+    minDistToMario = minDistToMario;
 #endif
         for (i = 0; i < schoolQuantity; i++) {
             fishObject = spawn_object(o, model, bhvFish);

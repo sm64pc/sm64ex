@@ -21,6 +21,7 @@
 #include "sm64.h"
 #include "text_strings.h"
 
+#include "game/ingame_menu.h"
 #include "pc/controller/controller_keyboard.h"
 #include "pc/network/network.h"
 
@@ -370,6 +371,169 @@ static void bhv_menu_button_growing_from_main_menu(struct Object *button) {
         button->oMenuButtonTimer = 0;
     }
 }
+
+// ---------------------------------------- //
+// ------- custom network menu code ------- //
+// ---------------------------------------- //
+
+void exit_join_to_network_menu(void) {
+    // Begin exit
+    if (sMainMenuButtons[MENU_BUTTON_JOIN]->oMenuButtonState == MENU_BUTTON_STATE_FULLSCREEN
+        && sCursorClickingTimer == 2) {
+        play_sound(SOUND_MENU_CAMERA_ZOOM_OUT, gDefaultSoundArgs);
+        sMainMenuButtons[MENU_BUTTON_JOIN]->oMenuButtonState = MENU_BUTTON_STATE_SHRINKING;
+        keyboard_stop_text_input();
+    }
+    // End exit
+    if (sMainMenuButtons[MENU_BUTTON_JOIN]->oMenuButtonState == MENU_BUTTON_STATE_DEFAULT) {
+        sSelectedButtonID = MENU_BUTTON_NETWORK_MODE;
+        if (sCurrentMenuLevel == MENU_LAYER_SUBMENU) {
+            sCurrentMenuLevel = MENU_LAYER_MAIN;
+        }
+    }
+}
+
+void keyboard_exit_join_to_network_menu(void) {
+    sCursorClickingTimer = 2;
+    exit_join_to_network_menu();
+}
+
+void join_server_as_client(void) {
+    sCursorClickingTimer = 2;
+    char delims[] = { ' ' };
+
+    // trim whitespace
+    char* text = textInput;
+    while (*text == ' ') { text++; }
+
+    // grab IP
+    char* ip = strtok(text, delims);
+    if (ip == NULL) {
+        exit_join_to_network_menu();
+        return;
+    }
+
+    // grab port
+    char* port = strtok(NULL, delims);
+    if (port != NULL && atoi(port) == 0) {
+        exit_join_to_network_menu();
+        return;
+    }
+
+    network_init(NT_CLIENT, textInput, port);
+    sSelectedFileNum = 1;
+}
+
+void render_network_mode_menu_buttons(struct Object* soundModeButton) {
+#define NETWORK_BUTTON_Y 0
+    // Host option button
+    sMainMenuButtons[MENU_BUTTON_HOST] = spawn_object_rel_with_rot(
+        soundModeButton, MODEL_MAIN_MENU_MARIO_NEW_BUTTON, bhvMenuButton, 266, NETWORK_BUTTON_Y, -100, 0, -0x8000, 0);
+    sMainMenuButtons[MENU_BUTTON_HOST]->oMenuButtonScale = 0.11111111f;
+    sMainMenuButtons[MENU_BUTTON_HOST]->oFaceAngleRoll = 0;
+
+    // Join option button
+    sMainMenuButtons[MENU_BUTTON_JOIN] = spawn_object_rel_with_rot(
+        soundModeButton, MODEL_MAIN_MENU_MARIO_NEW_BUTTON, bhvMenuButton, -266, NETWORK_BUTTON_Y, -100, 0, -0x8000, 0);
+    sMainMenuButtons[MENU_BUTTON_JOIN]->oMenuButtonScale = 0.11111111f;
+    sMainMenuButtons[MENU_BUTTON_JOIN]->oFaceAngleRoll = 0;
+}
+
+void check_network_mode_menu_clicked_buttons(struct Object* networkModeButton) {
+    if (networkModeButton->oMenuButtonState == MENU_BUTTON_STATE_FULLSCREEN) {
+        s32 buttonID;
+        // Configure sound mode menu button group
+        for (buttonID = MENU_BUTTON_NETWORK_MIN; buttonID < MENU_BUTTON_NETWORK_MAX; buttonID++) {
+            s16 buttonX = sMainMenuButtons[buttonID]->oPosX;
+            s16 buttonY = sMainMenuButtons[buttonID]->oPosY;
+
+            if (check_clicked_button(buttonX, buttonY, 22.0f) == TRUE) {
+                if (buttonID == MENU_BUTTON_HOST) {
+                    if (networkModeButton->oMenuButtonActionPhase == SOUND_MODE_PHASE_MAIN) {
+                        play_sound(SOUND_MENU_CLICK_FILE_SELECT, gDefaultSoundArgs);
+                        sMainMenuButtons[buttonID]->oMenuButtonState = MENU_BUTTON_STATE_ZOOM_IN_OUT;
+                        sSelectedButtonID = buttonID;
+                        //sSoundMode = buttonID - MENU_BUTTON_OPTION_MIN;
+                    }
+                }
+                else if (buttonID == MENU_BUTTON_JOIN) {
+                    play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
+                    sMainMenuButtons[buttonID]->oMenuButtonState = MENU_BUTTON_STATE_GROWING;
+                    sSelectedButtonID = buttonID;
+                    keyboard_start_text_input(TIM_IP, keyboard_exit_join_to_network_menu, join_server_as_client);
+                }
+                sCurrentMenuLevel = MENU_LAYER_SUBMENU;
+
+                break;
+            }
+        }
+    }
+}
+
+void print_network_mode_menu_strings(void) {
+    s32 mode;
+    s16 textX;
+#define HEADER_HUD_X 106
+    unsigned char textHeader[10];
+    str_ascii_to_dialog("SM64 COOP", textHeader, 9);
+
+    // Print header text
+    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
+    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+
+    print_hud_lut_string(HUD_LUT_DIFF, HEADER_HUD_X, 35, textHeader);
+
+    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
+
+    gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
+
+#define TEXT_HOST 0x11,0x18,0x1C,0x1D,0xFF
+#define TEXT_JOIN 0x13,0x18,0x12,0x17,0xFF
+    static unsigned char textNetworkModes[][5] = { { TEXT_HOST }, { TEXT_JOIN } };
+
+    // Print network mode names
+    for (mode = 0; mode < 2; mode++) {
+        gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+
+        textX = get_str_x_pos_from_center(mode * 72 + 124, textNetworkModes[mode], 10.0f);
+        print_generic_string(textX, 87, textNetworkModes[mode]);
+    }
+
+    gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
+}
+
+void print_join_mode_menu_strings(void) {
+#define JOIN_MARIO_X 25
+#define JOIN_FILE_LETTER_X 95
+#define JOIN_LEVEL_NAME_X 25
+#define JOIN_SECRET_STARS_X 171
+#define JOIN_MYSCORE_X 238
+#define JOIN_HISCORE_X 231
+
+    unsigned char textMario[8];
+    str_ascii_to_dialog("CONNECT", textMario, 7);
+
+    // Print file name at top
+    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
+    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+    print_hud_lut_string(HUD_LUT_DIFF, JOIN_MARIO_X, 15, textMario);
+
+    // Print course scores
+    gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_begin);
+    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+
+    // Print level name
+    print_generic_ascii_string(JOIN_LEVEL_NAME_X, 191 - (12 * 0), "Type or paste the host's IP.");
+    print_generic_ascii_string(JOIN_LEVEL_NAME_X, 191 - (12 * 2), textInput);
+
+    if (strlen(textInput) > 0) {
+        print_generic_ascii_string(JOIN_LEVEL_NAME_X, 191 - (12 * 14), "Press (ENTER) to join.");
+    }
+
+    gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_end);
+}
+
+// ---------------------------------------- //
 
 /**
  * Shrink back to main menu, used to return back while inside menus.
@@ -2934,165 +3098,4 @@ s32 lvl_init_menu_values_and_cursor_pos(UNUSED s32 arg, UNUSED s32 unused) {
 s32 lvl_update_obj_and_load_file_selected(UNUSED s32 arg, UNUSED s32 unused) {
     area_update_objects();
     return sSelectedFileNum;
-}
-
-// --- custom network menu code --- //
-
-void exit_join_to_network_menu(void) {
-    // Begin exit
-    if (sMainMenuButtons[MENU_BUTTON_JOIN]->oMenuButtonState == MENU_BUTTON_STATE_FULLSCREEN
-        && sCursorClickingTimer == 2) {
-        play_sound(SOUND_MENU_CAMERA_ZOOM_OUT, gDefaultSoundArgs);
-        sMainMenuButtons[MENU_BUTTON_JOIN]->oMenuButtonState = MENU_BUTTON_STATE_SHRINKING;
-        keyboard_stop_text_input();
-    }
-    // End exit
-    if (sMainMenuButtons[MENU_BUTTON_JOIN]->oMenuButtonState == MENU_BUTTON_STATE_DEFAULT) {
-        sSelectedButtonID = MENU_BUTTON_NETWORK_MODE;
-        if (sCurrentMenuLevel == MENU_LAYER_SUBMENU) {
-            sCurrentMenuLevel = MENU_LAYER_MAIN;
-        }
-    }
-}
-
-void keyboard_exit_join_to_network_menu(void) {
-    sCursorClickingTimer = 2;
-    exit_join_to_network_menu();
-}
-
-void join_server_as_client(void) {
-    sCursorClickingTimer = 2;
-    char delims[] = { ' ' };
-
-    // trim whitespace
-    char* text = textInput;
-    while (*text == ' ') { text++; }
-
-    // grab IP
-    char* ip = strtok(text, delims);
-    if (ip == NULL) {
-        exit_join_to_network_menu();
-        return;
-    }
-
-    // grab port
-    char* port = strtok(NULL, delims);
-    if (port != NULL && atoi(port) == 0) {
-        exit_join_to_network_menu();
-        return;
-    }
-
-    network_init(NT_CLIENT, textInput, port);
-    sSelectedFileNum = 1;
-}
-
-void render_network_mode_menu_buttons(struct Object* soundModeButton) {
-    #define NETWORK_BUTTON_Y 0
-    // Host option button
-    sMainMenuButtons[MENU_BUTTON_HOST] = spawn_object_rel_with_rot(
-        soundModeButton, MODEL_MAIN_MENU_MARIO_NEW_BUTTON, bhvMenuButton, 266, NETWORK_BUTTON_Y, -100, 0, -0x8000, 0);
-    sMainMenuButtons[MENU_BUTTON_HOST]->oMenuButtonScale = 0.11111111f;
-    sMainMenuButtons[MENU_BUTTON_HOST]->oFaceAngleRoll = 0;
-
-    // Join option button
-    sMainMenuButtons[MENU_BUTTON_JOIN] = spawn_object_rel_with_rot(
-        soundModeButton, MODEL_MAIN_MENU_MARIO_NEW_BUTTON, bhvMenuButton, -266, NETWORK_BUTTON_Y, -100, 0, -0x8000, 0);
-    sMainMenuButtons[MENU_BUTTON_JOIN]->oMenuButtonScale = 0.11111111f;
-    sMainMenuButtons[MENU_BUTTON_JOIN]->oFaceAngleRoll = 0;
-}
-
-void check_network_mode_menu_clicked_buttons(struct Object* networkModeButton) {
-    if (networkModeButton->oMenuButtonState == MENU_BUTTON_STATE_FULLSCREEN) {
-        s32 buttonID;
-        // Configure sound mode menu button group
-        for (buttonID = MENU_BUTTON_NETWORK_MIN; buttonID < MENU_BUTTON_NETWORK_MAX; buttonID++) {
-            s16 buttonX = sMainMenuButtons[buttonID]->oPosX;
-            s16 buttonY = sMainMenuButtons[buttonID]->oPosY;
-
-            if (check_clicked_button(buttonX, buttonY, 22.0f) == TRUE) {
-                if (buttonID == MENU_BUTTON_HOST) {
-                    if (networkModeButton->oMenuButtonActionPhase == SOUND_MODE_PHASE_MAIN) {
-                        play_sound(SOUND_MENU_CLICK_FILE_SELECT, gDefaultSoundArgs);
-                        sMainMenuButtons[buttonID]->oMenuButtonState = MENU_BUTTON_STATE_ZOOM_IN_OUT;
-                        sSelectedButtonID = buttonID;
-                        //sSoundMode = buttonID - MENU_BUTTON_OPTION_MIN;
-                    }
-                }
-                else if (buttonID == MENU_BUTTON_JOIN) {
-                    play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
-                    sMainMenuButtons[buttonID]->oMenuButtonState = MENU_BUTTON_STATE_GROWING;
-                    sSelectedButtonID = buttonID;
-                    keyboard_start_text_input(TIM_IP, keyboard_exit_join_to_network_menu, join_server_as_client);
-                }
-                sCurrentMenuLevel = MENU_LAYER_SUBMENU;
-
-                break;
-            }
-        }
-    }
-}
-
-void print_network_mode_menu_strings(void) {
-    s32 mode;
-    s16 textX;
-    #define HEADER_HUD_X 106
-    unsigned char textHeader[10];
-    str_ascii_to_dialog("SM64 COOP", textHeader, 9);
-
-    // Print header text
-    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
-    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
-
-    print_hud_lut_string(HUD_LUT_DIFF, HEADER_HUD_X, 35, textHeader);
-
-    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
-
-    gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
-
-    #define TEXT_HOST 0x11,0x18,0x1C,0x1D,0xFF
-    #define TEXT_JOIN 0x13,0x18,0x12,0x17,0xFF
-    static unsigned char textNetworkModes[][5] = { { TEXT_HOST }, { TEXT_JOIN } };
-
-    // Print network mode names
-    for (mode = 0; mode < 2; mode++) {
-        gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
-
-        textX = get_str_x_pos_from_center(mode * 72 + 124, textNetworkModes[mode], 10.0f);
-        print_generic_string(textX, 87, textNetworkModes[mode]);
-    }
-
-    gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
-}
-
-void print_join_mode_menu_strings(void) {
-    #define JOIN_MARIO_X 25
-    #define JOIN_FILE_LETTER_X 95
-    #define JOIN_LEVEL_NAME_X 25
-    #define JOIN_SECRET_STARS_X 171
-    #define JOIN_MYSCORE_X 238
-    #define JOIN_HISCORE_X 231
-
-    unsigned char textMario[8];
-    str_ascii_to_dialog("CONNECT", textMario, 7);
-
-    void** levelNameTable = segmented_to_virtual(seg2_course_name_table);
-
-    // Print file name at top
-    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
-    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
-    print_hud_lut_string(HUD_LUT_DIFF, JOIN_MARIO_X, 15, textMario);
-
-    // Print course scores
-    gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_begin);
-    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
-
-    // Print level name
-    print_generic_ascii_string(JOIN_LEVEL_NAME_X, 191 - (12 * 0), "Type or paste the host's IP.");
-    print_generic_ascii_string(JOIN_LEVEL_NAME_X, 191 - (12 * 2), textInput);
-
-    if (strlen(textInput) > 0) {
-        print_generic_ascii_string(JOIN_LEVEL_NAME_X, 191 - (12 * 14), "Press (ENTER) to join.");
-    }
-
-    gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_end);
 }

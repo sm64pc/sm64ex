@@ -1,6 +1,6 @@
 // bowser_bomb.c.inc
 
-static s32 networkBowserBombHit = 0;
+static u32 networkBowserBombHit = 0;
 
 static void bhv_bowser_bomb_hit_player(void) {
     if (networkBowserBombHit == 0) {

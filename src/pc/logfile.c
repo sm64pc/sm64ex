@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include "pc/fs/fs.h"
 
 #define LOGFILE_NAME "errorlog.txt"
 

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "../network.h"
 #include "object_fields.h"
+#include "src/game/behavior_actions.h"
 
 extern struct Object* gCurrentObject;
 

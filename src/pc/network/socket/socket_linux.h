@@ -14,5 +14,7 @@
 #define SOCKADDR struct sockaddr
 #define SOCKET_ERROR (-1)
 #define closesocket(fd) close(fd)
+#define SOCKET_EWOULDBLOCK EWOULDBLOCK
+#define SOCKET_ECONNRESET ECONNRESET
 
 #endif

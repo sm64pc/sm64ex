@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <ultra64.h>
+#include <string.h>
 
 #include "controller_api.h"
 
@@ -11,7 +12,7 @@
 #include "controller_keyboard.h"
 
 #include "pc/gfx/gfx_window_manager_api.h"
-#include "pc/pc_main.h""
+#include "pc/pc_main.h"
 #include "engine/math_util.h"
 
 #define SCANCODE_BACKSPACE 0x0E
@@ -182,7 +183,7 @@ void keyboard_on_text_input(char* text) {
     if (text == NULL) { return; }
 
     int i = strlen(textInput);
-    while (*text != NULL) {
+    while (*text != '\0') {
         // make sure we don't overrun the buffer
         if (i >= MAX_TEXT_INPUT) { break; }
 

@@ -6,6 +6,8 @@
 #include "course_table.h"
 #include "src/game/interaction.h"
 #include "src/engine/math_util.h"
+#include "src/game/memory.h"
+#include "src/game/object_helpers.h"
 
 static u8 localItemId = 1;
 
@@ -62,14 +64,13 @@ void network_send_collect_item(struct Object* o) {
 void network_receive_collect_item(struct Packet* p) {
     u8 remoteItemId = 0;
     enum BehaviorId behaviorId;
-    void* behavior = NULL;
     f32 pos[3] = { 0 };
 
     packet_read(p, &remoteItemId, sizeof(u8));
     packet_read(p, &behaviorId, sizeof(enum BehaviorId));
     packet_read(p, &pos, sizeof(f32) * 3);
 
-    behavior = get_behavior_from_id(behaviorId);
+    const void* behavior = get_behavior_from_id(behaviorId);
 
     // check if remote item id has already been seen
     for (int i = 0; i < MAX_REMOTE_ITEM_IDS; i++) {

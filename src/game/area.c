@@ -21,8 +21,8 @@
 #include "engine/geo_layout.h"
 #include "save_file.h"
 #include "level_table.h"
-
 #include "gfx_dimensions.h"
+#include "game/ingame_menu.h"
 
 struct SpawnInfo gPlayerSpawnInfos[MAX_PLAYERS];
 struct GraphNode *D_8033A160[0x100];

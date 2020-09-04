@@ -226,7 +226,6 @@ void small_penguin_act_4(void) {
 void small_penguin_act_0(void) {
     struct Object* player = nearest_player_to_object(o);
     int distanceToPlayer = dist_between_objects(o, player);
-    int angleToPlayer = obj_angle_to_object(o, player);
 
     s32 sp1C;
 

@@ -2,6 +2,7 @@
 #include "../network.h"
 #include "object_fields.h"
 #include "object_constants.h"
+#include "src/game/object_helpers.h"
 #include "behavior_data.h"
 #include "behavior_table.h"
 
@@ -34,7 +35,7 @@ static u8 generate_parent_id(struct Object* objects[], u8 onIndex) {
         return (u8)o->parentObj->oSyncID;
     }
 
-    for (u8 i = onIndex; i >= 0; i--) {
+    for (u8 i = onIndex; i < onIndex; i--) {
         if (o->parentObj == objects[i]) { return i; }
     }
 
@@ -110,7 +111,7 @@ void network_receive_spawn_objects(struct Packet* p) {
             if (parentObj == NULL) { continue; }
         }
 
-        void* behavior = get_behavior_from_id(data.behaviorId);
+        void* behavior = (void*)get_behavior_from_id(data.behaviorId);
         struct Object* o = spawn_object(parentObj, data.model, behavior);
         memcpy(o->rawData.asU32, data.rawData, sizeof(u32) * 80);
 

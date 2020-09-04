@@ -234,7 +234,6 @@ static void mr_blizzard_act_rotate(void) {
 static void mr_blizzard_act_death(void) {
     struct Object* player = nearest_player_to_object(o);
     int distanceToPlayer = dist_between_objects(o, player);
-    int angleToPlayer = obj_angle_to_object(o, player);
 
     cur_obj_become_intangible();
     struct Object *cap;

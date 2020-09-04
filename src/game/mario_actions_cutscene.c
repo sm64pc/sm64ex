@@ -377,7 +377,7 @@ s32 set_mario_npc_dialog(struct MarioState* m, s32 actionArg) {
     } else if (actionArg != 0 && mario_ready_to_speak(m)) {
         m->usedObj = gCurrentObject;
         set_mario_action(m, ACT_READING_NPC_DIALOG, actionArg);
-        if (m->playerIndex == 0) { localDialogNPCBehavior = m->usedObj->behavior; }
+        if (m->playerIndex == 0) { localDialogNPCBehavior = (BehaviorScript*)m->usedObj->behavior; }
         dialogState = 1; // starting dialog
     }
 

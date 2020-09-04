@@ -74,7 +74,6 @@ void bhv_goomba_triplet_spawner_update(void) {
     s32 dAngle;
     s16 dx;
     s16 dz;
-    struct Object* player = nearest_player_to_object(o);
 
     // If mario is close enough and the goombas aren't currently loaded, then
     // spawn them

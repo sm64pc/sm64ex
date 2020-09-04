@@ -12,6 +12,7 @@
 #include "thread6.h"
 #include "behavior_data.h"
 #include "pc/network/network.h"
+#include "object_helpers.h"
 
 /**
  * Used by act_punching() to determine Mario's forward velocity during each

@@ -6,6 +6,11 @@
 #include "course_table.h"
 #include "src/game/interaction.h"
 #include "src/engine/math_util.h"
+#include "src/game/memory.h"
+#include "src/game/object_helpers.h"
+
+// defined in sparkle_spawn_star.inc.c
+void bhv_spawn_star_no_level_exit(struct Object* object, u32 sp20);
 
 static u8 localCoinId = 1;
 
@@ -64,7 +69,6 @@ void network_send_collect_coin(struct Object* o) {
 void network_receive_collect_coin(struct Packet* p) {
     u8 remoteCoinId = 0;
     enum BehaviorId behaviorId;
-    void* behavior = NULL;
     f32 pos[3] = { 0 };
     s16 numCoins = 0;
     s32 coinValue = 0;
@@ -75,7 +79,7 @@ void network_receive_collect_coin(struct Packet* p) {
     packet_read(p, &numCoins, sizeof(s16));
     packet_read(p, &coinValue, sizeof(s32));
 
-    behavior = get_behavior_from_id(behaviorId);
+    const void* behavior = get_behavior_from_id(behaviorId);
 
     // check if remote coin id has already been seen
     for (int i = 0; i < MAX_REMOTE_COIN_IDS; i++) {

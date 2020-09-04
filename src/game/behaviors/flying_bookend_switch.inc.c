@@ -163,7 +163,7 @@ void bookshelf_manager_act_0(void) {
 
     //if (!(o->activeFlags & ACTIVE_FLAG_IN_DIFFERENT_ROOM)) {
         for (val04 = 0; val04 < 3; val04++) {
-            struct Object* book = spawn_object_relative(val04, D_80331B30[val04].unk00, D_80331B30[val04].unk02, 0, o, MODEL_BOOKEND, bhvBookSwitch);
+            spawn_object_relative(val04, D_80331B30[val04].unk00, D_80331B30[val04].unk02, 0, o, MODEL_BOOKEND, bhvBookSwitch);
         }
 
         o->oAction = 1;
@@ -185,7 +185,6 @@ void bookshelf_manager_act_1(void) {
 }
 
 void bookshelf_manager_act_2(void) {
-    struct MarioState* marioState = nearest_mario_state_to_object(o);
     if (!(o->activeFlags & ACTIVE_FLAG_IN_DIFFERENT_ROOM)) {
         if (o->oBookSwitchManagerUnkF4 < 0) {
             if (o->oTimer > 30) {
@@ -224,7 +223,6 @@ void bookshelf_manager_act_2(void) {
 }
 
 void bookshelf_manager_act_3(void) {
-    struct MarioState* marioState = nearest_mario_state_to_object(o);
     if (o->oTimer > 85) {
         if (networkType == NT_SERVER) {
             o->oAction = 4;
@@ -237,7 +235,6 @@ void bookshelf_manager_act_3(void) {
 }
 
 void bookshelf_manager_act_4(void) {
-    struct MarioState* marioState = nearest_mario_state_to_object(o);
     if (o->oBookSwitchManagerUnkF4 >= 3) {
         obj_mark_for_deletion(o);
     } else if (networkType == NT_SERVER) {
@@ -296,7 +293,6 @@ void bhv_book_switch_loop(void) {
     struct MarioState* marioState = nearest_mario_state_to_object(o);
     struct Object* player = marioState->marioObj;
     int distanceToPlayer = dist_between_objects(o, player);
-    int angleToPlayer = obj_angle_to_object(o, player);
 
     o->header.gfx.scale[0] = 2.0f;
     o->header.gfx.scale[1] = 0.9f;

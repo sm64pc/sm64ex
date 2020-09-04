@@ -92,7 +92,7 @@ f32 approach_f32_symmetric(f32 value, f32 target, f32 increment);
 s16 approach_s16_symmetric(s16 value, s16 target, s16 increment);
 s32 cur_obj_rotate_yaw_toward(s16 target, s16 increment);
 s16 obj_angle_to_object(struct Object *obj1, struct Object *obj2);
-s16 obj_angle_to_point(struct Object *obj, f32 pointX, f32 pointY, f32 pointZ);
+s16 obj_angle_to_point(struct Object *obj, f32 pointX, f32 pointZ);
 s16 obj_turn_toward_object(struct Object *obj, struct Object *target, s16 angleIndex, s16 turnAmount);
 void obj_set_parent_relative_pos(struct Object *obj, s16 relX, s16 relY, s16 relZ);
 void obj_set_pos(struct Object *obj, s16 x, s16 y, s16 z);
@@ -299,6 +299,8 @@ void enable_time_stop_including_mario(void);
 void disable_time_stop_including_mario(void);
 s32 cur_obj_check_interacted(void);
 void cur_obj_spawn_loot_blue_coin(void);
+s32 cur_obj_is_any_player_on_platform(void);
+f32 cur_obj_lateral_dist_from_obj_to_home(struct Object* obj);
 
 #ifndef VERSION_JP
 void cur_obj_spawn_star_at_y_offset(f32 targetX, f32 targetY, f32 targetZ, f32 offsetY);

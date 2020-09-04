@@ -411,7 +411,7 @@ void fatal_printf(const char *fmt, ...) {
                         gd_printf("%s", va_arg(vl, char *));
                         break;
                     case 'c':
-                        gd_printf("%c", va_arg(vl, char));
+                        gd_printf("%c", va_arg(vl, int));
                         break;
                     case 'x':
                         gd_printf("%x", va_arg(vl, s32));

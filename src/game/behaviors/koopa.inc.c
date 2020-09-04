@@ -445,7 +445,6 @@ static void koopa_unshelled_act_dive(void) {
 
         struct Object* player = nearest_player_to_object(o);
         int distanceToPlayer = dist_between_objects(o, player);
-        int angleToPlayer = obj_angle_to_object(o, player);
 
         // If we got the shell and mario didn't, put on the shell
         //! The shell comes after koopa in processing order, and the shell is

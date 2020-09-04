@@ -730,8 +730,12 @@ static void (*sBooGivingStarActions[])(void) = {
     big_boo_act_4
 };
 
-u8 big_boo_ignore_update(void) {
-    return cur_obj_has_behavior(bhvGhostHuntBigBoo) && !bigBooActivated;
+u8 big_boo_ignore_update(struct Object* obj) {
+    struct Object* tmp = gCurrentObject;
+    gCurrentObject = obj;
+    u8 rc = cur_obj_has_behavior(bhvGhostHuntBigBoo) && !bigBooActivated;
+    gCurrentObject = tmp;
+    return rc;
 }
 
 void bhv_big_boo_loop(void) {
@@ -740,7 +744,7 @@ void bhv_big_boo_loop(void) {
             bigBooActivated = FALSE;
             struct SyncObject* so = boo_network_init_object();
             so->syncDeathEvent = FALSE;
-            so->ignore_if_true = big_boo_ignore_update;
+            so->ignore_if_true = &big_boo_ignore_update;
         }
     } else if (o->oHealth <= 0) {
         if (network_sync_object_initialized(o)) {

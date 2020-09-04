@@ -3,15 +3,16 @@
 #include "object_fields.h"
 #include "object_constants.h"
 #include "sm64.h"
+#include "src/audio/external.h"
 
 void network_send_player(void) {
     if (gMarioStates[0].marioObj == NULL) { return; }
     u32 heldSyncID = (gMarioStates[0].heldObj != NULL)
                    ? gMarioStates[0].heldObj->oSyncID
-                   : NULL;
+                   : 0;
     u32 heldBySyncID = (gMarioStates[0].heldByObj != NULL)
                      ? gMarioStates[0].heldByObj->oSyncID
-                      : NULL;
+                     : 0;
 
     struct Packet p;
     packet_init(&p, PACKET_PLAYER, false);
@@ -35,8 +36,8 @@ void network_receive_player(struct Packet* p) {
     if (gMarioStates[1].marioObj == NULL) { return; }
 
     // save previous state
-    u32 heldSyncID = NULL;
-    u32 heldBySyncID = NULL;
+    u32 heldSyncID = 0;
+    u32 heldBySyncID = 0;
     u32 oldAction = gMarioStates[1].action;
     u16 oldActionState = gMarioStates[1].actionState;
     u16 oldActionArg = gMarioStates[1].actionArg;
@@ -65,7 +66,7 @@ void network_receive_player(struct Packet* p) {
     }
 
     // find and set their held object
-    if (heldSyncID != NULL && syncObjects[heldSyncID].o != NULL) {
+    if (heldSyncID != 0 && syncObjects[heldSyncID].o != NULL) {
         // TODO: do we have to move graphics nodes around to make this visible?
         struct Object* heldObj = syncObjects[heldSyncID].o;
         gMarioStates[1].heldObj = heldObj;
@@ -76,7 +77,7 @@ void network_receive_player(struct Packet* p) {
     }
 
     // find and set their held-by object
-    if (heldBySyncID != NULL && syncObjects[heldBySyncID].o != NULL) {
+    if (heldBySyncID != 0 && syncObjects[heldBySyncID].o != NULL) {
         // TODO: do we have to move graphics nodes around to make this visible?
         gMarioStates[1].heldByObj = syncObjects[heldBySyncID].o;
     } else {

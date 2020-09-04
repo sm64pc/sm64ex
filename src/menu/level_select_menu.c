@@ -82,7 +82,7 @@ int start_demo(int timer)
     // if the next demo sequence ID is the count limit, reset it back to
     // the first sequence.
 
-    if((++gDemoInputListID_2) == gDemo.animDmaTable->count)
+    if((++gDemoInputListID_2) == (int)gDemo.animDmaTable->count)
         gDemoInputListID_2 = 0;
 
     gCurrDemoInput = ((struct DemoInput *) gDemo.targetAnim) + 1; // add 1 (+4) to the pointer to skip the demoID.

@@ -556,12 +556,12 @@ s32 is_point_close_to_object(struct Object *obj, f32 x, f32 y, f32 z, s32 dist) 
 /**
  * Sets an object as visible if within a certain distance of Mario's graphical position.
  */
-void set_object_visibility(struct Object *obj, s32 dist) {
+void set_object_visibility(struct Object *obj, UNUSED s32 dist) {
+#ifndef NODRAWINGDISTANCE
     f32 objX = obj->oPosX;
     f32 objY = obj->oPosY;
     f32 objZ = obj->oPosZ;
 
-#ifndef NODRAWINGDISTANCE
     if (is_point_within_radius_of_mario(objX, objY, objZ, dist) == TRUE) {
 #endif
         obj->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;

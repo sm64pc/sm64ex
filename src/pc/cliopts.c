@@ -3,6 +3,7 @@
 #include "cheats.h"
 #include "pc_main.h"
 #include "platform.h"
+#include "macros.h"
 
 #include <strings.h>
 #include <stdlib.h>
@@ -25,7 +26,7 @@ static void print_help(void) {
 
 static inline int arg_string(const char *name, const char *value, char *target, int maxLength) {
     const unsigned int arglen = strlen(value);
-    if (arglen >= maxLength) {
+    if (arglen >= (unsigned int) maxLength) {
         fprintf(stderr, "Supplied value for `%s` is too long.\n", name);
         return 0;
     }
@@ -34,7 +35,7 @@ static inline int arg_string(const char *name, const char *value, char *target, 
     return 1;
 }
 
-static inline int arg_uint(const char *name, const char *value, unsigned int *target) {
+static inline int arg_uint(UNUSED const char *name, const char *value, unsigned int *target) {
     const unsigned long int v = strtoul(value, NULL, 0);
     *target = v;
     return 1;

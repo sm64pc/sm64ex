@@ -36,7 +36,7 @@ void bhv_bbh_tilting_trap_platform_loop(void) {
         y /= (f32)playersTouched;
         z /= (f32)playersTouched;
         distanceToPlayer = dist_between_object_and_point(o, x, y, z);
-        angleToPlayer = obj_angle_to_point(o, x, y, z);
+        angleToPlayer = obj_angle_to_point(o, x, z);
     }
 
     // US (and probably later) versions use oAction for the

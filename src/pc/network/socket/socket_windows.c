@@ -1,4 +1,5 @@
 #ifdef WINSOCK
+#include <stdio.h>
 #include "socket_windows.h"
 #include "../network.h"
 

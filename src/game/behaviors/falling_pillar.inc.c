@@ -61,7 +61,6 @@ s16 bhv_falling_pillar_calculate_angle_in_front_of_mario(void) {
  */
 void bhv_falling_pillar_loop(void) {
     struct Object* player = nearest_player_to_object(o);
-    int distanceToPlayer = dist_between_objects(o, player);
     int angleToPlayer = obj_angle_to_object(o, player);
 
     s16 angleInFrontOfMario;

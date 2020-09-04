@@ -1,4 +1,5 @@
 #include <ultra64.h>
+#include <string.h>
 
 #include "actors/common1.h"
 #include "area.h"
@@ -411,7 +412,7 @@ void render_multi_text_string(s16 *xPos, s16 *yPos, s8 multiTextID)
 }
 #endif
 
-void str_ascii_to_dialog(char* string, char* dialog, int length) {
+void str_ascii_to_dialog(const char* string, u8* dialog, u16 length) {
     for (int i = 0; i < length; i++) {
         switch (string[i]) {
         case '\'': dialog[i] = 0x3E; break;
@@ -435,7 +436,7 @@ void str_ascii_to_dialog(char* string, char* dialog, int length) {
     dialog[length] = DIALOG_CHAR_TERMINATOR;
 }
 
-void print_generic_ascii_string(s16 x, s16 y, const u8* ascii) {
+void print_generic_ascii_string(s16 x, s16 y, const char* ascii) {
     u8 dialog[256] = { DIALOG_CHAR_TERMINATOR };
     str_ascii_to_dialog(ascii, dialog, strlen(ascii));
     print_generic_string(x, y, dialog);

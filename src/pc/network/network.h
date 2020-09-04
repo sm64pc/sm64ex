@@ -72,6 +72,7 @@ void network_on_loaded_level(void);
 
 void network_clear_sync_objects(void);
 struct SyncObject* network_init_object(struct Object *object, float maxSyncDistance);
+void network_init_object_field(struct Object* o, void* field);
 void network_send(struct Packet* p);
 void network_update(void);
 void network_shutdown(void);
@@ -111,6 +112,7 @@ void network_send_level_warp(void);
 void network_receive_level_warp(struct Packet* p);
 
 void network_update_inside_painting(void);
+void network_send_inside_painting(void);
 void network_receive_inside_painting(struct Packet* p);
 
 void network_send_collect_star(struct Object* o, s16 coinScore, s16 starIndex);

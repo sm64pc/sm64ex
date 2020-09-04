@@ -18,6 +18,7 @@
 #include "bettercamera.h"
 #endif
 #include "behavior_table.h"
+#include "object_helpers.h"
 
 void play_flip_sounds(struct MarioState *m, s16 frame1, s16 frame2, s16 frame3) {
     s32 animFrame = m->marioObj->header.gfx.unk38.animFrame;

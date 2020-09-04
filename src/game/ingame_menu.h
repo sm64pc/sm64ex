@@ -116,8 +116,8 @@ extern s8 gRedCoinsCollected;
 void create_dl_identity_matrix(void);
 void create_dl_translation_matrix(s8 pushOp, f32 x, f32 y, f32 z);
 void create_dl_ortho_matrix(void);
-void str_ascii_to_dialog(char* string, char* dialog, int length);
-void print_generic_ascii_string(s16 x, s16 y, const u8* ascii);
+void str_ascii_to_dialog(const char* string, u8* dialog, u16 length);
+void print_generic_ascii_string(s16 x, s16 y, const char* ascii);
 void print_generic_string(s16 x, s16 y, const u8 *str);
 void print_hud_lut_string(s8 hudLUT, s16 x, s16 y, const u8 *str);
 void print_menu_generic_string(s16 x, s16 y, const u8 *str);
@@ -149,5 +149,6 @@ void do_cutscene_handler(void);
 void render_hud_cannon_reticle(void);
 void reset_red_coins_collected(void);
 s16 render_menus_and_dialogs(void);
+s16 render_sync_level_screen(void);
 
 #endif // INGAME_MENU_H

@@ -91,7 +91,6 @@ void elevator_act_2(void) { // Pretty similar code to action 1
 
 void elevator_act_4(void) {
     struct MarioState* marioState = nearest_mario_state_to_object(o);
-    struct Object* player = marioState->marioObj;
 
     o->oVelY = 0;
     if (o->oTimer == 0) {
@@ -108,7 +107,6 @@ void elevator_act_4(void) {
 void elevator_act_3(void) // nearly identical to action 2
 {
     struct MarioState* marioState = nearest_mario_state_to_object(o);
-    struct Object* player = marioState->marioObj;
 
     o->oVelY = 0;
     if (o->oTimer == 0) {
@@ -136,7 +134,7 @@ void bhv_elevator_init(void) {
         o->oElevatorUnk100 = 2;
     }
 
-    struct SyncObject* so = network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
+    network_init_object(o, SYNC_DISTANCE_ONLY_EVENTS);
     network_init_object_field(o, &o->oAction);
     network_init_object_field(o, &o->oPosY);
     network_init_object_field(o, &o->oVelY);

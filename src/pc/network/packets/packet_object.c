@@ -5,6 +5,8 @@
 #include "object_constants.h"
 #include "behavior_data.h"
 #include "behavior_table.h"
+#include "src/game/memory.h"
+#include "src/game/object_helpers.h"
 
 static u8 nextSyncID = 1;
 struct SyncObject syncObjects[MAX_SYNC_OBJECTS] = { 0 };
@@ -58,7 +60,7 @@ struct SyncObject* network_init_object(struct Object *o, float maxSyncDistance) 
     so->owned = false;
     so->clockSinceUpdate = clock();
     so->extraFieldCount = 0;
-    so->behavior = o->behavior;
+    so->behavior = (BehaviorScript*)o->behavior;
     so->rxEventId = 0;
     so->txEventId = 0;
     so->fullObjectSync = false;
@@ -103,12 +105,13 @@ static void packet_write_object_header(struct Packet* p, struct Object* o) {
     packet_write(p, &behaviorId, sizeof(enum BehaviorId));
 }
 
-static bool allowable_behavior_change(struct SyncObject* so, struct BehaviorScript* behavior) {
+static bool allowable_behavior_change(struct SyncObject* so, BehaviorScript* behavior) {
     struct Object* o = so->o;
-    bool allow = false;
 
     // bhvPenguinBaby can be set to bhvSmallPenguin
-    allow = allow || ((o->behavior == bhvPenguinBaby || o->behavior == bhvSmallPenguin) && (behavior == bhvPenguinBaby || behavior == bhvSmallPenguin));
+    bool oBehaviorPenguin = (o->behavior == segmented_to_virtual(bhvPenguinBaby) || o->behavior == segmented_to_virtual(bhvSmallPenguin));
+    bool inBehaviorPenguin = (behavior == segmented_to_virtual(bhvPenguinBaby) || behavior == segmented_to_virtual(bhvSmallPenguin));
+    bool allow = (oBehaviorPenguin && inBehaviorPenguin);
 
     if (!allow) { return false; }
 
@@ -122,7 +125,7 @@ static struct SyncObject* packet_read_object_header(struct Packet* p) {
     u32 syncId = 0;
     packet_read(p, &syncId, sizeof(u32));
     if (syncId == 0 || syncId >= MAX_SYNC_OBJECTS) {
-        printf("%s invalid SyncID!\n", NETWORKTYPESTR, syncId);
+        printf("%s invalid SyncID %d!\n", NETWORKTYPESTR, syncId);
         return NULL;
     }
 
@@ -151,7 +154,7 @@ static struct SyncObject* packet_read_object_header(struct Packet* p) {
     // make sure the behaviors match
     enum BehaviorId behaviorId;
     packet_read(p, &behaviorId, sizeof(enum BehaviorId));
-    struct BehaviorScript* behavior = get_behavior_from_id(behaviorId);
+    BehaviorScript* behavior = (BehaviorScript*)get_behavior_from_id(behaviorId);
     if (o->behavior != behavior && !allowable_behavior_change(so, behavior)) {
         printf("network_receive_object() behavior mismatch!\n");
         network_forget_sync_object(so);
@@ -379,7 +382,7 @@ void network_forget_sync_object(struct SyncObject* so) {
 }
 
 void network_update_objects(void) {
-    for (int i = 1; i < nextSyncID; i++) {
+    for (u32 i = 1; i < nextSyncID; i++) {
         struct SyncObject* so = &syncObjects[i];
         if (so->o == NULL) { continue; }
 

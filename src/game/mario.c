@@ -40,6 +40,7 @@
 #include "pc/configfile.h"
 #include "pc/cheats.h"
 #include "pc/network/network.h"
+#include "pc/logfile.h"
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif

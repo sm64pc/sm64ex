@@ -59,7 +59,7 @@ void bhv_seesaw_platform_update(void) {
         z /= (f32)playersTouched;
 
         int distanceToPlayer = dist_between_object_and_point(o, x, y, z);
-        int angleToPlayer = obj_angle_to_point(o, x, y, z);
+        int angleToPlayer = obj_angle_to_point(o, x, z);
 
         // Rotate toward mario
         f32 rotation = distanceToPlayer * coss(angleToPlayer - o->oMoveAngleYaw);

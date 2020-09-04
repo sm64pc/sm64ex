@@ -1,5 +1,6 @@
 #include <PR/ultratypes.h>
 
+#include "src/pc/network/network.h"
 #include "types.h"
 #include "actors/common1.h"
 #include "actors/group12.h"
@@ -43,7 +44,6 @@
 #include "spawn_object.h"
 #include "spawn_sound.h"
 #include "thread6.h"
-#include "src/pc/network/network.h"
 
 #define o gCurrentObject
 

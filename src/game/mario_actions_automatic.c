@@ -16,6 +16,7 @@
 #include "camera.h"
 #include "level_table.h"
 #include "thread6.h"
+#include "object_helpers.h"
 
 #define POLE_NONE 0
 #define POLE_TOUCHED_FLOOR 1
@@ -769,7 +770,7 @@ s32 act_in_cannon(struct MarioState *m) {
 }
 
 s32 act_tornado_twirling(struct MarioState *m) {
-    if (m->usedObj = NULL) { return; }
+    if (m->usedObj == NULL) { return FALSE; }
 
     struct Surface *floor;
     Vec3f nextPos;

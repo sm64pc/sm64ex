@@ -408,7 +408,7 @@ s16 obj_angle_to_object(struct Object *obj1, struct Object *obj2) {
     return angle;
 }
 
-s16 obj_angle_to_point(struct Object *obj, f32 pointX, f32 pointY, f32 pointZ) {
+s16 obj_angle_to_point(struct Object *obj, f32 pointX, f32 pointZ) {
     f32 z1, x1, z2, x2;
     s16 angle;
 
@@ -1166,7 +1166,7 @@ void cur_obj_get_thrown_or_placed(f32 forwardVel, f32 velY, s32 thrownAction) {
         cur_obj_move_after_thrown_or_dropped(forwardVel, velY);
     }
 
-    if (o->oSyncID != NULL && syncObjects[o->oSyncID].owned) {
+    if (o->oSyncID != 0 && syncObjects[o->oSyncID].owned) {
         network_send_object(o);
     }
 }
@@ -1178,7 +1178,7 @@ void cur_obj_get_dropped(void) {
     o->oHeldState = HELD_FREE;
     cur_obj_move_after_thrown_or_dropped(0.0f, 0.0f);
 
-    if (o->oSyncID != NULL && syncObjects[o->oSyncID].owned) {
+    if (o->oSyncID != 0 && syncObjects[o->oSyncID].owned) {
         network_send_object(o);
     }
 }
@@ -2674,7 +2674,7 @@ s32 cur_obj_can_mario_activate_textbox_2(struct MarioState* m, f32 radius, f32 h
 }
 
 static void cur_obj_end_dialog(struct MarioState* m, s32 dialogFlags, s32 dialogResult) {
-    if (m->playerIndex != 0) { return 0; }
+    if (m->playerIndex != 0) { return; }
 
     o->oDialogResponse = dialogResult;
     o->oDialogState++;

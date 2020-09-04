@@ -558,13 +558,19 @@ endif
 CC_CHECK += -DCOOP
 CFLAGS += -DCOOP
 
-# Check for enhancement options
+# Enforce -Werror in debug mode
+ifeq ($(DEBUG),1)
+  CC_CHECK += -Werror -Wno-error=unused-variable -Wno-error=unused-parameter
+  CFLAGS += -Werror -Wno-error=unused-variable -Wno-error=unused-parameter
+endif
 
 # Check for debug option
 ifeq ($(DEBUG),1)
   CC_CHECK += -DDEBUG
   CFLAGS += -DDEBUG
 endif
+
+# Check for enhancement options
 
 # Check for immediate load option
 ifeq ($(IMMEDIATELOAD),1)
