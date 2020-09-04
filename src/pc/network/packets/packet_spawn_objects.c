@@ -35,7 +35,7 @@ static u8 generate_parent_id(struct Object* objects[], u8 onIndex) {
         return (u8)o->parentObj->oSyncID;
     }
 
-    for (u8 i = onIndex; i < onIndex; i--) {
+    for (u8 i = onIndex; i != (u8)-1; i--) {
         if (o->parentObj == objects[i]) { return i; }
     }
 
@@ -76,7 +76,7 @@ void network_receive_spawn_objects(struct Packet* p) {
     packet_read(p, &objectCount, sizeof(u8));
 
     // check if remote spawn id has already been seen
-    for (int i = 0; i < MAX_REMOTE_SPAWN_IDS; i++) {
+    for (u16 i = 0; i < MAX_REMOTE_SPAWN_IDS; i++) {
         if (remoteSpawnIds[i] == remoteSpawnId) {
             // we already saw this event!
             return;

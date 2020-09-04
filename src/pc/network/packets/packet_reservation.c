@@ -24,12 +24,12 @@ void network_receive_reservation_request(UNUSED struct Packet* p) {
 
 void network_send_reservation(void) {
     assert(networkType == NT_SERVER);
-    int clientPlayerIndex = 1; // two-player hack
+    u8 clientPlayerIndex = 1; // two-player hack
 
     // find all reserved objects
     u8 reservedObjs[RESERVATION_COUNT] = { 0 };
-    int reservedIndex = 0;
-    for (int i = 1; i < MAX_SYNC_OBJECTS; i++) {
+    u16 reservedIndex = 0;
+    for (u16 i = 1; i < MAX_SYNC_OBJECTS; i++) {
         if (syncObjects[i].reserved == clientPlayerIndex) {
             reservedObjs[reservedIndex++] = i;
             if (reservedIndex >= RESERVATION_COUNT) { break; }
@@ -38,7 +38,7 @@ void network_send_reservation(void) {
 
     if (reservedIndex < RESERVATION_COUNT) {
         // reserve the rest
-        for (int i = MAX_SYNC_OBJECTS - 1; i > 0; i--) {
+        for (u16 i = MAX_SYNC_OBJECTS - 1; i > 0; i--) {
             if (syncObjects[i].o != NULL) { continue; }
             if (syncObjects[i].reserved != 0) { continue; }
             syncObjects[i].reserved = clientPlayerIndex;
@@ -55,18 +55,16 @@ void network_send_reservation(void) {
 
 void network_receive_reservation(struct Packet* p) {
     assert(networkType == NT_CLIENT);
-    int clientPlayerIndex = 1; // two-player hack
+    u8 clientPlayerIndex = 1; // two-player hack
 
     // find all reserved objects
     u8 reservedObjs[RESERVATION_COUNT] = { 0 };
     packet_read(p, reservedObjs, sizeof(u8) * RESERVATION_COUNT);
 
-    for (int i = 0; i < RESERVATION_COUNT; i++) {
-        int index = reservedObjs[i];
-        printf(" %d", index);
+    for (u16 i = 0; i < RESERVATION_COUNT; i++) {
+        u16 index = reservedObjs[i];
         if (index == 0) { continue; }
         if (syncObjects[index].o != NULL) { continue; }
         syncObjects[index].reserved = clientPlayerIndex;
     }
-    printf("\n");
 }

@@ -73,7 +73,7 @@ void network_receive_collect_item(struct Packet* p) {
     const void* behavior = get_behavior_from_id(behaviorId);
 
     // check if remote item id has already been seen
-    for (int i = 0; i < MAX_REMOTE_ITEM_IDS; i++) {
+    for (u16 i = 0; i < MAX_REMOTE_ITEM_IDS; i++) {
         if (remoteItemIds[i] == remoteItemId) {
             // we already saw this item!
             return;

@@ -82,7 +82,7 @@ void network_receive_collect_coin(struct Packet* p) {
     const void* behavior = get_behavior_from_id(behaviorId);
 
     // check if remote coin id has already been seen
-    for (int i = 0; i < MAX_REMOTE_COIN_IDS; i++) {
+    for (u16 i = 0; i < MAX_REMOTE_COIN_IDS; i++) {
         if (remoteCoinIds[i] == remoteCoinId) {
             // we already saw this coin!
             goto SANITY_CHECK_COINS;

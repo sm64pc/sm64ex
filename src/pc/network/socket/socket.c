@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "socket.h"
 #include "../network.h"
+#include "socket.h"
 
 int socket_bind(SOCKET sock, unsigned int port) {
     struct sockaddr_in rxAddr;
@@ -16,9 +16,9 @@ int socket_bind(SOCKET sock, unsigned int port) {
     return rc;
 }
 
-int socket_send(SOCKET sock, struct sockaddr_in* txAddr, char* buffer, int bufferLength) {
+int socket_send(SOCKET sock, struct sockaddr_in* txAddr, u8* buffer, u16 bufferLength) {
     int txAddrSize = sizeof(struct sockaddr_in);
-    int rc = sendto(sock, buffer, bufferLength, 0, (struct sockaddr*)txAddr, txAddrSize);
+    int rc = sendto(sock, (char*)buffer, bufferLength, 0, (struct sockaddr*)txAddr, txAddrSize);
     if (rc == SOCKET_ERROR) {
         printf("%s sendto failed with error: %d\n", NETWORKTYPESTR, SOCKET_LAST_ERROR);
     }
@@ -26,11 +26,11 @@ int socket_send(SOCKET sock, struct sockaddr_in* txAddr, char* buffer, int buffe
     return rc;
 }
 
-int socket_receive(SOCKET sock, struct sockaddr_in* rxAddr, char* buffer, int bufferLength, int* receiveLength) {
+int socket_receive(SOCKET sock, struct sockaddr_in* rxAddr, u8* buffer, u16 bufferLength, u16* receiveLength) {
     *receiveLength = 0;
 
     int rxAddrSize = sizeof(struct sockaddr_in);
-    int rc = recvfrom(sock, buffer, bufferLength, 0, (struct sockaddr*)rxAddr, &rxAddrSize);
+    int rc = recvfrom(sock, (char*)buffer, bufferLength, 0, (struct sockaddr*)rxAddr, &rxAddrSize);
     if (rc == SOCKET_ERROR) {
         int error = SOCKET_LAST_ERROR;
         if (error != SOCKET_EWOULDBLOCK && error != SOCKET_ECONNRESET) {

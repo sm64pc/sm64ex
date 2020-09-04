@@ -1,6 +1,7 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
+#include "PR/ultratypes.h"
 #include <time.h>
 #include <types.h>
 #include <assert.h>
@@ -32,13 +33,13 @@ enum PacketType {
 };
 
 struct Packet {
-    int dataLength;
-    int cursor;
+    u16 dataLength;
+    u16 cursor;
     bool error;
     bool reliable;
     u16 seqId;
     bool sent;
-    char buffer[PACKET_LENGTH];
+    u8 buffer[PACKET_LENGTH];
 };
 
 struct SyncObject {
@@ -80,8 +81,8 @@ void network_shutdown(void);
 
 // packet read / write
 void packet_init(struct Packet* packet, enum PacketType packetType, bool reliable);
-void packet_write(struct Packet* packet, void* data, int length);
-void packet_read(struct Packet* packet, void* data, int length);
+void packet_write(struct Packet* packet, void* data, u16 length);
+void packet_read(struct Packet* packet, void* data, u16 length);
 u32 packet_hash(struct Packet* packet);
 bool packet_check_hash(struct Packet* packet);
 

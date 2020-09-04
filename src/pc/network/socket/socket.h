@@ -9,8 +9,8 @@
 
 SOCKET socket_initialize(void);
 int socket_bind(SOCKET sock, unsigned int port);
-int socket_send(SOCKET sock, struct sockaddr_in* txAddr, char* buffer, int bufferLength);
-int socket_receive(SOCKET sock, struct sockaddr_in* rxAddr, char* buffer, int bufferLength, int* receiveLength);
+int socket_send(SOCKET sock, struct sockaddr_in* txAddr, u8* buffer, u16 bufferLength);
+int socket_receive(SOCKET sock, struct sockaddr_in* rxAddr, u8* buffer, u16 bufferLength, u16* receiveLength);
 void socket_close(SOCKET sock);
 
 #endif

@@ -3952,6 +3952,7 @@
     <ClCompile Include="..\src\pc\network\packets\packet_collect_coin.c" />
     <ClCompile Include="..\src\pc\network\packets\packet_collect_item.c" />
     <ClCompile Include="..\src\pc\network\packets\packet_collect_star.c" />
+    <ClCompile Include="..\src\pc\network\packets\packet_custom.c" />
     <ClCompile Include="..\src\pc\network\packets\packet_inside_painting.c" />
     <ClCompile Include="..\src\pc\network\packets\packet_level_warp.c" />
     <ClCompile Include="..\src\pc\network\packets\packet_object.c" />

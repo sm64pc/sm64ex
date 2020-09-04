@@ -17,24 +17,24 @@ void packet_init(struct Packet* packet, enum PacketType packetType, bool reliabl
     packet->sent = false;
 }
 
-void packet_write(struct Packet* packet, void* data, int length) {
+void packet_write(struct Packet* packet, void* data, u16 length) {
     if (data == NULL) { packet->error = true; return; }
     memcpy(&packet->buffer[packet->cursor], data, length);
     packet->dataLength += length;
     packet->cursor += length;
 }
 
-void packet_read(struct Packet* packet, void* data, int length) {
+void packet_read(struct Packet* packet, void* data, u16 length) {
     if (data == NULL) { packet->error = true; return; }
-    int cursor = packet->cursor;
+    u16 cursor = packet->cursor;
     memcpy(data, &packet->buffer[cursor], length);
     packet->cursor = cursor + length;
 }
 
 u32 packet_hash(struct Packet* packet) {
     u32 hash = 0;
-    int byte = 0;
-    for (int i = 0; i < packet->dataLength; i++) {
+    u16 byte = 0;
+    for (u16 i = 0; i < packet->dataLength; i++) {
         hash ^= ((u32)packet->buffer[i]) << (8 * byte);
         byte = (byte + 1) % sizeof(u32);
     }

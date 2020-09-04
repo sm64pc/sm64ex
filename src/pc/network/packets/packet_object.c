@@ -24,7 +24,7 @@ float player_distance(struct MarioState* marioState, struct Object* o) {
 }
 
 void network_clear_sync_objects(void) {
-    for (int i = 0; i < MAX_SYNC_OBJECTS; i++) {
+    for (u16 i = 0; i < MAX_SYNC_OBJECTS; i++) {
         network_forget_sync_object(&syncObjects[i]);
     }
     nextSyncID = 1;
@@ -36,7 +36,7 @@ void network_set_sync_id(struct Object* o) {
     // two-player hack
     u8 reserveId = (networkLevelLoaded && networkType == NT_CLIENT) ? 1 : 0;
 
-    for (int i = 0; i < MAX_SYNC_OBJECTS; i++) {
+    for (u16 i = 0; i < MAX_SYNC_OBJECTS; i++) {
         if (syncObjects[nextSyncID].reserved == reserveId && syncObjects[nextSyncID].o == NULL) { break; }
         nextSyncID = (nextSyncID + 1) % MAX_SYNC_OBJECTS;
     }
@@ -78,7 +78,7 @@ void network_init_object_field(struct Object *o, void* field) {
     assert(o->oSyncID != 0);
     // remember to synchronize this extra field
     struct SyncObject* so = &syncObjects[o->oSyncID];
-    int index = so->extraFieldCount++;
+    u8 index = so->extraFieldCount++;
     so->extraFields[index] = field;
 }
 
@@ -234,7 +234,7 @@ static void packet_write_object_extra_fields(struct Packet* p, struct Object* o)
     packet_write(p, &so->extraFieldCount, sizeof(u8));
 
     // write the extra field
-    for (int i = 0; i < so->extraFieldCount; i++) {
+    for (u8 i = 0; i < so->extraFieldCount; i++) {
         assert(so->extraFields[i] != NULL);
         packet_write(p, so->extraFields[i], sizeof(u32));
     }
@@ -252,7 +252,7 @@ static void packet_read_object_extra_fields(struct Packet* p, struct Object* o) 
     }
 
     // read the extra fields
-    for (int i = 0; i < extraFieldsCount; i++) {
+    for (u8 i = 0; i < extraFieldsCount; i++) {
         assert(so->extraFields[i] != NULL);
         packet_read(p, so->extraFields[i], sizeof(u32));
     }
