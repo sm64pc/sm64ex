@@ -382,6 +382,7 @@ void exit_join_to_network_menu(void) {
         && sCursorClickingTimer == 2) {
         play_sound(SOUND_MENU_CAMERA_ZOOM_OUT, gDefaultSoundArgs);
         sMainMenuButtons[MENU_BUTTON_JOIN]->oMenuButtonState = MENU_BUTTON_STATE_SHRINKING;
+        network_shutdown();
         keyboard_stop_text_input();
     }
     // End exit
@@ -399,7 +400,8 @@ void keyboard_exit_join_to_network_menu(void) {
 }
 
 void join_server_as_client(void) {
-    sCursorClickingTimer = 2;
+    if (networkType != NT_NONE) { return; }
+
     char delims[] = { ' ' };
 
     // trim whitespace
@@ -420,8 +422,13 @@ void join_server_as_client(void) {
         return;
     }
 
+    keyboard_stop_text_input();
     network_init(NT_CLIENT, textInput, port);
-    sSelectedFileNum = 1;
+}
+
+void joined_server_as_client(s16 fileIndex) {
+    if (networkType != NT_CLIENT) { return; }
+    sSelectedFileNum = fileIndex;
 }
 
 void render_network_mode_menu_buttons(struct Object* soundModeButton) {
@@ -3054,7 +3061,7 @@ s32 lvl_init_menu_values_and_cursor_pos(UNUSED s32 arg, UNUSED s32 unused) {
     sClickPos[0] = -10000;
     sClickPos[1] = -10000;
     sCursorClickingTimer = 0;
-    sSelectedFileNum = 0;
+    if (networkType != NT_CLIENT) { sSelectedFileNum = 0; }
     sSelectedFileIndex = MENU_BUTTON_NONE;
     sFadeOutText = FALSE;
     sStatusMessageID = 0;
@@ -3080,7 +3087,7 @@ s32 lvl_init_menu_values_and_cursor_pos(UNUSED s32 arg, UNUSED s32 unused) {
     sCursorPos[1] = -24.0f;
 
     // immediately jump in
-    if (networkType != NT_NONE) {
+    if (networkType == NT_SERVER) {
         sSelectedFileNum = 1;
     }
 

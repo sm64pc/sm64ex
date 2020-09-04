@@ -12,6 +12,7 @@
 #include "thread6.h"
 #include "macros.h"
 #include "pc/ini.h"
+#include "pc/network/network.h"
 
 #define MENU_DATA_MAGIC 0x4849
 #define SAVE_FILE_MAGIC 0x4441
@@ -345,16 +346,17 @@ void save_file_do_save(s32 fileIndex) {
     if (fileIndex < 0 || fileIndex >= NUM_SAVE_FILES)
         return;
 
-    if (gSaveFileModified)
 #ifdef TEXTSAVES
-    {
+    if (gSaveFileModified && networkType != NT_CLIENT) {
         // Write to text file
         write_text_save(fileIndex);
         gSaveFileModified = FALSE;
         gMainMenuDataModified = FALSE;
+        return;
     }
-#else 
-    {
+#endif
+
+    if (gSaveFileModified) {
         // Compute checksum
         add_save_block_signature(&gSaveBuffer.files[fileIndex][0],
                                  sizeof(gSaveBuffer.files[fileIndex][0]), SAVE_FILE_MAGIC);
@@ -369,7 +371,6 @@ void save_file_do_save(s32 fileIndex) {
         gSaveFileModified = FALSE;
     }
     save_main_menu_data();
-#endif
 }
 
 void save_file_erase(s32 fileIndex) {
@@ -396,7 +397,18 @@ BAD_RETURN(s32) save_file_copy(s32 srcFileIndex, s32 destFileIndex) {
     save_file_do_save(destFileIndex);
 }
 
-void save_file_load_all(void) {
+#ifdef TEXTSAVES
+static void save_file_load_textsaves(void) {
+    for (file = 0; file < NUM_SAVE_FILES; file++) {
+        read_text_save(file);
+    }
+    gSaveFileModified = TRUE;
+    gMainMenuDataModified = TRUE;
+    stub_save_file_1();
+}
+#endif
+
+void save_file_load_all(u8 reload) {
     s32 file;
 
     gMainMenuDataModified = FALSE;
@@ -405,19 +417,19 @@ void save_file_load_all(void) {
     bzero(&gSaveBuffer, sizeof(gSaveBuffer));
 
 #ifdef TEXTSAVES
-    for (file = 0; file < NUM_SAVE_FILES; file++) {
-        read_text_save(file);
+    if (!reload) {
+        save_file_load_textsaves();
+        return;
     }
-    gSaveFileModified = TRUE;
-    gMainMenuDataModified = TRUE;
-#else
-    s32 validSlots;
+#endif
+
     read_eeprom_data(&gSaveBuffer, sizeof(gSaveBuffer));
 
     if (save_file_need_bswap(&gSaveBuffer))
         save_file_bswap(&gSaveBuffer);
 
     // Verify the main menu data and create a backup copy if only one of the slots is valid.
+    s32 validSlots;
     validSlots = verify_save_block_signature(&gSaveBuffer.menuData[0], sizeof(gSaveBuffer.menuData[0]), MENU_DATA_MAGIC);
     validSlots |= verify_save_block_signature(&gSaveBuffer.menuData[1], sizeof(gSaveBuffer.menuData[1]),MENU_DATA_MAGIC) << 1;
     switch (validSlots) {
@@ -448,7 +460,6 @@ void save_file_load_all(void) {
                 break;
         }
     }
-#endif // TEXTSAVES
     stub_save_file_1();
 }
 

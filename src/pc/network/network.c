@@ -34,6 +34,10 @@ void network_init(enum NetworkType inNetworkType, char* ip, char* port) {
         txAddr.sin_port = htons(atoi(port));
         txAddr.sin_addr.s_addr = inet_addr(ip);
     }
+
+    if (networkType == NT_CLIENT) {
+        network_send_save_file_request();
+    }
 }
 
 void network_on_init_level(void) {
@@ -108,6 +112,8 @@ void network_update(void) {
             case PACKET_COLLECT_ITEM: network_receive_collect_item(&p); break;
             case PACKET_RESERVATION_REQUEST: network_receive_reservation_request(&p); break;
             case PACKET_RESERVATION: network_receive_reservation(&p); break;
+            case PACKET_SAVE_FILE_REQUEST: network_receive_save_file_request(&p); break;
+            case PACKET_SAVE_FILE: network_receive_save_file(&p); break;
             case PACKET_CUSTOM: network_receive_custom(&p); break;
             default: printf("%s received unknown packet: %d\n", NETWORKTYPESTR, p.buffer[0]);
         }
@@ -123,4 +129,5 @@ void network_update(void) {
 void network_shutdown(void) {
     if (networkType == NT_NONE) { return; }
     socket_close(gSocket);
+    networkType = NT_NONE;
 }

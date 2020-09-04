@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "../network.h"
 
-#define MAX_CUSTOM_PACKETS 32
+#define MAX_CUSTOM_PACKETS 128
 
 struct NetworkCustomPacket {
     void (*send_callback)(struct Packet* p, void* params);
