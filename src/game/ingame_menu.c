@@ -411,6 +411,36 @@ void render_multi_text_string(s16 *xPos, s16 *yPos, s8 multiTextID)
 }
 #endif
 
+void str_ascii_to_dialog(char* string, char* dialog, int length) {
+    for (int i = 0; i < length; i++) {
+        switch (string[i]) {
+        case '\'': dialog[i] = 0x3E; break;
+        case '.': dialog[i] = 0x3F; break;
+        case ',': dialog[i] = DIALOG_CHAR_COMMA; break;
+        case '-': dialog[i] = 0x9F; break;
+        case '(': dialog[i] = 0xE1; break;
+        case ')': dialog[i] = 0xE3; break;
+        case '&': dialog[i] = 0xE5; break;
+        case '!': dialog[i] = 0xF2; break;
+        case '%': dialog[i] = 0xF3; break;
+        case '?': dialog[i] = 0xF4; break;
+        case '"': dialog[i] = 0xF6; break; // 0xF5 is opening quote
+        case '~': dialog[i] = 0xF7; break;
+        case '*': dialog[i] = 0xFB; break;
+        case ' ': dialog[i] = DIALOG_CHAR_SPACE; break;
+        case '\n': dialog[i] = DIALOG_CHAR_NEWLINE; break;
+        default: dialog[i] = ASCII_TO_DIALOG(string[i]);
+        }
+    }
+    dialog[length] = DIALOG_CHAR_TERMINATOR;
+}
+
+void print_generic_ascii_string(s16 x, s16 y, const u8* ascii) {
+    u8 dialog[256] = { DIALOG_CHAR_TERMINATOR };
+    str_ascii_to_dialog(ascii, dialog, strlen(ascii));
+    print_generic_string(x, y, dialog);
+}
+
 #if defined(VERSION_JP) || defined(VERSION_SH)
 #define MAX_STRING_WIDTH 18
 #else

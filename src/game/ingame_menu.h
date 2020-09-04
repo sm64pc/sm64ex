@@ -8,7 +8,6 @@
      ((asc) >= 'A' && (asc) <= 'Z') ? ((asc) - 'A' + 0x0A) :       \
      ((asc) >= 'a' && (asc) <= 'z') ? ((asc) - 'a' + 0x24) : 0x00)
 
-
 #define MENU_MTX_PUSH   1
 #define MENU_MTX_NOPUSH 2
 
@@ -117,6 +116,8 @@ extern s8 gRedCoinsCollected;
 void create_dl_identity_matrix(void);
 void create_dl_translation_matrix(s8 pushOp, f32 x, f32 y, f32 z);
 void create_dl_ortho_matrix(void);
+void str_ascii_to_dialog(char* string, char* dialog, int length);
+void print_generic_ascii_string(s16 x, s16 y, const u8* ascii);
 void print_generic_string(s16 x, s16 y, const u8 *str);
 void print_hud_lut_string(s8 hudLUT, s16 x, s16 y, const u8 *str);
 void print_menu_generic_string(s16 x, s16 y, const u8 *str);

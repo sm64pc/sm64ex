@@ -21,6 +21,9 @@
 #include "sm64.h"
 #include "text_strings.h"
 
+#include "pc/controller/controller_keyboard.h"
+#include "pc/network/network.h"
+
 #include "eu_translation.h"
 #ifdef VERSION_EU
 #undef LANGUAGE_FUNCTION
@@ -52,7 +55,7 @@ static s16 sSoundTextY;
         #define NUM_BUTTONS 34
     #endif
 #else
-#define NUM_BUTTONS 32
+#define NUM_BUTTONS 36
 #endif
 
 // Amount of main menu buttons defined in the code called by spawn_object_rel_with_rot.
@@ -372,6 +375,12 @@ static void bhv_menu_button_growing_from_main_menu(struct Object *button) {
  * Shrink back to main menu, used to return back while inside menus.
  */
 static void bhv_menu_button_shrinking_to_main_menu(struct Object *button) {
+    // hack, make sure network button goes off-screen
+    if (button == sMainMenuButtons[MENU_BUTTON_NETWORK_MODE]) {
+        button->oMenuButtonOrigPosX = 0;
+        button->oMenuButtonOrigPosY = -9999;
+    }
+
     if (button->oMenuButtonTimer < 16) {
         button->oFaceAngleYaw -= 0x800;
     }
@@ -1022,14 +1031,17 @@ void render_sound_mode_menu_buttons(struct Object *soundModeButton) {
     sMainMenuButtons[MENU_BUTTON_STEREO] = spawn_object_rel_with_rot(
         soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, 533, SOUND_BUTTON_Y, -100, 0, -0x8000, 0);
     sMainMenuButtons[MENU_BUTTON_STEREO]->oMenuButtonScale = 0.11111111f;
+    sMainMenuButtons[MENU_BUTTON_STEREO]->oFaceAngleRoll = 0;
     // Mono option button
     sMainMenuButtons[MENU_BUTTON_MONO] = spawn_object_rel_with_rot(
         soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, 0, SOUND_BUTTON_Y, -100, 0, -0x8000, 0);
     sMainMenuButtons[MENU_BUTTON_MONO]->oMenuButtonScale = 0.11111111f;
+    sMainMenuButtons[MENU_BUTTON_MONO]->oFaceAngleRoll = 0;
     // Headset option button
     sMainMenuButtons[MENU_BUTTON_HEADSET] = spawn_object_rel_with_rot(
         soundModeButton, MODEL_MAIN_MENU_GENERIC_BUTTON, bhvMenuButton, -533, SOUND_BUTTON_Y, -100, 0, -0x8000, 0);
     sMainMenuButtons[MENU_BUTTON_HEADSET]->oMenuButtonScale = 0.11111111f;
+    sMainMenuButtons[MENU_BUTTON_HEADSET]->oFaceAngleRoll = 0;
 
 #ifdef VERSION_EU
     // English option button
@@ -1115,13 +1127,10 @@ void check_sound_mode_menu_clicked_buttons(struct Object *soundModeButton) {
  * retuning sSelectedFileNum to a save value defined in fileNum.
  */
 void load_main_menu_save_file(struct Object *fileButton, s32 fileNum) {
-#ifdef IMMEDIATELOAD
-    sSelectedFileNum = fileNum;
-#else
     if (fileButton->oMenuButtonState == MENU_BUTTON_STATE_FULLSCREEN) {
         sSelectedFileNum = fileNum;
+        network_init(NT_SERVER, "", NETWORK_DEFAULT_PORT);
     }
-#endif
 }
 
 /**
@@ -1159,6 +1168,11 @@ void return_to_main_menu(s16 prevMenuButtonID, struct Object *sourceButton) {
         }
         if (prevMenuButtonID == MENU_BUTTON_SOUND_MODE) {
             for (buttonID = MENU_BUTTON_OPTION_MIN; buttonID < MENU_BUTTON_OPTION_MAX; buttonID++) {
+                mark_obj_for_deletion(sMainMenuButtons[buttonID]);
+            }
+        }
+        if (prevMenuButtonID == MENU_BUTTON_NETWORK_MODE) {
+            for (buttonID = MENU_BUTTON_NETWORK_MIN; buttonID < MENU_BUTTON_NETWORK_MAX; buttonID++) {
                 mark_obj_for_deletion(sMainMenuButtons[buttonID]);
             }
         }
@@ -1353,6 +1367,10 @@ void bhv_menu_button_manager_init(void) {
     sMainMenuButtons[MENU_BUTTON_SOUND_MODE] = spawn_object_rel_with_rot(
         gCurrentObject, MODEL_MAIN_MENU_PURPLE_SOUND_BUTTON, bhvMenuButton, 6400, -3500, 0, 0, 0, 0);
     sMainMenuButtons[MENU_BUTTON_SOUND_MODE]->oMenuButtonScale = 1.0f;
+    // Network menu button
+    sMainMenuButtons[MENU_BUTTON_NETWORK_MODE] = spawn_object_rel_with_rot(
+        gCurrentObject, MODEL_MAIN_MENU_GREEN_SCORE_BUTTON, bhvMenuButton, 6400, -5500, 0, 0, 0, 0);
+    sMainMenuButtons[MENU_BUTTON_NETWORK_MODE]->oMenuButtonScale = 1.0f;
 
     sTextBaseAlpha = 0;
 }
@@ -1368,6 +1386,30 @@ void bhv_menu_button_manager_init(void) {
  * Also play a sound and/or render buttons depending of the button ID selected.
  */
 void check_main_menu_clicked_buttons(void) {
+
+    // force the network screen to open automatically
+    static u8 networkInit = FALSE;
+    if (!networkInit) {
+        sMainMenuButtons[MENU_BUTTON_NETWORK_MODE]->oMenuButtonState = MENU_BUTTON_STATE_GROWING;
+
+        struct Object* button = sMainMenuButtons[MENU_BUTTON_NETWORK_MODE];
+        button->oFaceAnglePitch = 0;
+        button->oFaceAngleYaw = 32768;
+        button->oFaceAngleRoll = 0;
+        button->oParentRelativePosX = 0.0f;
+        button->oParentRelativePosY = 0.0f;
+        button->oParentRelativePosZ = 17800.0f;
+        button->oMenuButtonOrigPosX = 0;
+        button->oMenuButtonOrigPosY = 0;
+        button->oMenuButtonOrigPosZ = -17800.0f;
+        button->oMenuButtonScale = 1.0f;
+        button->oMenuButtonState = MENU_BUTTON_STATE_FULLSCREEN;
+        button->oMenuButtonTimer = 0;
+
+        sSelectedButtonID = MENU_BUTTON_NETWORK_MODE;
+        networkInit = TRUE;
+    }
+
 #ifdef VERSION_EU
     if (sMainMenuTimer >= 5) {
 #endif
@@ -1432,6 +1474,10 @@ void check_main_menu_clicked_buttons(void) {
             case MENU_BUTTON_SOUND_MODE:
                 play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
                 render_sound_mode_menu_buttons(sMainMenuButtons[MENU_BUTTON_SOUND_MODE]);
+                break;
+            case MENU_BUTTON_NETWORK_MODE:
+                play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
+                render_network_mode_menu_buttons(sMainMenuButtons[MENU_BUTTON_NETWORK_MODE]);
                 break;
         }
 #ifdef VERSION_EU
@@ -1541,6 +1587,17 @@ void bhv_menu_button_manager_loop(void) {
             check_sound_mode_menu_clicked_buttons(sMainMenuButtons[MENU_BUTTON_SOUND_MODE]);
             break;
 
+        case MENU_BUTTON_NETWORK_MODE:
+            check_network_mode_menu_clicked_buttons(sMainMenuButtons[MENU_BUTTON_NETWORK_MODE]);
+            break;
+
+        case MENU_BUTTON_HOST:
+            return_to_main_menu(MENU_BUTTON_NETWORK_MODE, sMainMenuButtons[MENU_BUTTON_HOST]);
+            break;
+        case MENU_BUTTON_JOIN:
+            exit_join_to_network_menu();
+            break;
+
         // STEREO, MONO and HEADSET buttons are undefined so they can be selected without
         // exiting the Options menu, as a result they added a return button
 #ifdef VERSION_EU
@@ -1597,11 +1654,16 @@ void handle_cursor_button_input(void) {
             sClickPos[1] = sCursorPos[1];
             sCursorClickingTimer = 1;
         }
-#ifdef IMMEDIATELOAD
+        if (networkType == NT_SERVER) {
+            sClickPos[0] = sCursorPos[0];
+            sClickPos[1] = sCursorPos[1];
+            sCursorClickingTimer = 1;
+        }
+/*#ifdef IMMEDIATELOAD
         sClickPos[0] = sCursorPos[0];
         sClickPos[1] = sCursorPos[1];
         sCursorClickingTimer = 1;
-#endif
+#endif*/
     }
 }
 
@@ -2758,6 +2820,12 @@ static void print_file_select_strings(void) {
         case MENU_BUTTON_SOUND_MODE:
             print_sound_mode_menu_strings();
             break;
+        case MENU_BUTTON_NETWORK_MODE:
+            print_network_mode_menu_strings();
+            break;
+        case MENU_BUTTON_JOIN:
+            print_join_mode_menu_strings();
+            break;
     }
     // If all 4 save file exists, define true to sAllFilesExist to prevent more copies in copy menu
     if (save_file_exists(SAVE_FILE_A) == TRUE && save_file_exists(SAVE_FILE_B) == TRUE &&
@@ -2842,6 +2910,16 @@ s32 lvl_init_menu_values_and_cursor_pos(UNUSED s32 arg, UNUSED s32 unused) {
         }
     }
 #endif
+
+    // center cursor
+    sCursorPos[0] = 0.0f;
+    sCursorPos[1] = -24.0f;
+
+    // immediately jump in
+    if (networkType != NT_NONE) {
+        sSelectedFileNum = 1;
+    }
+
     //! no return value
 #ifdef AVOID_UB
     return 0;
@@ -2856,4 +2934,165 @@ s32 lvl_init_menu_values_and_cursor_pos(UNUSED s32 arg, UNUSED s32 unused) {
 s32 lvl_update_obj_and_load_file_selected(UNUSED s32 arg, UNUSED s32 unused) {
     area_update_objects();
     return sSelectedFileNum;
+}
+
+// --- custom network menu code --- //
+
+void exit_join_to_network_menu(void) {
+    // Begin exit
+    if (sMainMenuButtons[MENU_BUTTON_JOIN]->oMenuButtonState == MENU_BUTTON_STATE_FULLSCREEN
+        && sCursorClickingTimer == 2) {
+        play_sound(SOUND_MENU_CAMERA_ZOOM_OUT, gDefaultSoundArgs);
+        sMainMenuButtons[MENU_BUTTON_JOIN]->oMenuButtonState = MENU_BUTTON_STATE_SHRINKING;
+        keyboard_stop_text_input();
+    }
+    // End exit
+    if (sMainMenuButtons[MENU_BUTTON_JOIN]->oMenuButtonState == MENU_BUTTON_STATE_DEFAULT) {
+        sSelectedButtonID = MENU_BUTTON_NETWORK_MODE;
+        if (sCurrentMenuLevel == MENU_LAYER_SUBMENU) {
+            sCurrentMenuLevel = MENU_LAYER_MAIN;
+        }
+    }
+}
+
+void keyboard_exit_join_to_network_menu(void) {
+    sCursorClickingTimer = 2;
+    exit_join_to_network_menu();
+}
+
+void join_server_as_client(void) {
+    sCursorClickingTimer = 2;
+    char delims[] = { ' ' };
+
+    // trim whitespace
+    char* text = textInput;
+    while (*text == ' ') { text++; }
+
+    // grab IP
+    char* ip = strtok(text, delims);
+    if (ip == NULL) {
+        exit_join_to_network_menu();
+        return;
+    }
+
+    // grab port
+    char* port = strtok(NULL, delims);
+    if (port != NULL && atoi(port) == 0) {
+        exit_join_to_network_menu();
+        return;
+    }
+
+    network_init(NT_CLIENT, textInput, port);
+    sSelectedFileNum = 1;
+}
+
+void render_network_mode_menu_buttons(struct Object* soundModeButton) {
+    #define NETWORK_BUTTON_Y 0
+    // Host option button
+    sMainMenuButtons[MENU_BUTTON_HOST] = spawn_object_rel_with_rot(
+        soundModeButton, MODEL_MAIN_MENU_MARIO_NEW_BUTTON, bhvMenuButton, 266, NETWORK_BUTTON_Y, -100, 0, -0x8000, 0);
+    sMainMenuButtons[MENU_BUTTON_HOST]->oMenuButtonScale = 0.11111111f;
+    sMainMenuButtons[MENU_BUTTON_HOST]->oFaceAngleRoll = 0;
+
+    // Join option button
+    sMainMenuButtons[MENU_BUTTON_JOIN] = spawn_object_rel_with_rot(
+        soundModeButton, MODEL_MAIN_MENU_MARIO_NEW_BUTTON, bhvMenuButton, -266, NETWORK_BUTTON_Y, -100, 0, -0x8000, 0);
+    sMainMenuButtons[MENU_BUTTON_JOIN]->oMenuButtonScale = 0.11111111f;
+    sMainMenuButtons[MENU_BUTTON_JOIN]->oFaceAngleRoll = 0;
+}
+
+void check_network_mode_menu_clicked_buttons(struct Object* networkModeButton) {
+    if (networkModeButton->oMenuButtonState == MENU_BUTTON_STATE_FULLSCREEN) {
+        s32 buttonID;
+        // Configure sound mode menu button group
+        for (buttonID = MENU_BUTTON_NETWORK_MIN; buttonID < MENU_BUTTON_NETWORK_MAX; buttonID++) {
+            s16 buttonX = sMainMenuButtons[buttonID]->oPosX;
+            s16 buttonY = sMainMenuButtons[buttonID]->oPosY;
+
+            if (check_clicked_button(buttonX, buttonY, 22.0f) == TRUE) {
+                if (buttonID == MENU_BUTTON_HOST) {
+                    if (networkModeButton->oMenuButtonActionPhase == SOUND_MODE_PHASE_MAIN) {
+                        play_sound(SOUND_MENU_CLICK_FILE_SELECT, gDefaultSoundArgs);
+                        sMainMenuButtons[buttonID]->oMenuButtonState = MENU_BUTTON_STATE_ZOOM_IN_OUT;
+                        sSelectedButtonID = buttonID;
+                        //sSoundMode = buttonID - MENU_BUTTON_OPTION_MIN;
+                    }
+                }
+                else if (buttonID == MENU_BUTTON_JOIN) {
+                    play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
+                    sMainMenuButtons[buttonID]->oMenuButtonState = MENU_BUTTON_STATE_GROWING;
+                    sSelectedButtonID = buttonID;
+                    keyboard_start_text_input(TIM_IP, keyboard_exit_join_to_network_menu, join_server_as_client);
+                }
+                sCurrentMenuLevel = MENU_LAYER_SUBMENU;
+
+                break;
+            }
+        }
+    }
+}
+
+void print_network_mode_menu_strings(void) {
+    s32 mode;
+    s16 textX;
+    #define HEADER_HUD_X 106
+    unsigned char textHeader[10];
+    str_ascii_to_dialog("SM64 COOP", textHeader, 9);
+
+    // Print header text
+    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
+    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+
+    print_hud_lut_string(HUD_LUT_DIFF, HEADER_HUD_X, 35, textHeader);
+
+    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
+
+    gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
+
+    #define TEXT_HOST 0x11,0x18,0x1C,0x1D,0xFF
+    #define TEXT_JOIN 0x13,0x18,0x12,0x17,0xFF
+    static unsigned char textNetworkModes[][5] = { { TEXT_HOST }, { TEXT_JOIN } };
+
+    // Print network mode names
+    for (mode = 0; mode < 2; mode++) {
+        gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+
+        textX = get_str_x_pos_from_center(mode * 72 + 124, textNetworkModes[mode], 10.0f);
+        print_generic_string(textX, 87, textNetworkModes[mode]);
+    }
+
+    gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
+}
+
+void print_join_mode_menu_strings(void) {
+    #define JOIN_MARIO_X 25
+    #define JOIN_FILE_LETTER_X 95
+    #define JOIN_LEVEL_NAME_X 25
+    #define JOIN_SECRET_STARS_X 171
+    #define JOIN_MYSCORE_X 238
+    #define JOIN_HISCORE_X 231
+
+    unsigned char textMario[8];
+    str_ascii_to_dialog("CONNECT", textMario, 7);
+
+    void** levelNameTable = segmented_to_virtual(seg2_course_name_table);
+
+    // Print file name at top
+    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
+    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+    print_hud_lut_string(HUD_LUT_DIFF, JOIN_MARIO_X, 15, textMario);
+
+    // Print course scores
+    gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_begin);
+    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+
+    // Print level name
+    print_generic_ascii_string(JOIN_LEVEL_NAME_X, 191 - (12 * 0), "Type or paste the host's IP.");
+    print_generic_ascii_string(JOIN_LEVEL_NAME_X, 191 - (12 * 2), textInput);
+
+    if (strlen(textInput) > 0) {
+        print_generic_ascii_string(JOIN_LEVEL_NAME_X, 191 - (12 * 14), "Press (ENTER) to join.");
+    }
+
+    gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_end);
 }

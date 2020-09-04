@@ -16,6 +16,9 @@ void network_init(enum NetworkType inNetworkType, char* ip, char* port) {
     networkType = inNetworkType;
 
     if (networkType == NT_NONE) { return; }
+    if (port == NULL) {
+        port = NETWORK_DEFAULT_PORT;
+    }
 
     // Create a receiver socket to receive datagrams
     gSocket = socket_initialize();

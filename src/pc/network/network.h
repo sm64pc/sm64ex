@@ -13,6 +13,7 @@
 #define MAX_SYNC_OBJECT_FIELDS 64
 #define PACKET_LENGTH 1024
 #define NETWORKTYPESTR (networkType == NT_CLIENT ? "Client" : "Server")
+#define NETWORK_DEFAULT_PORT "7777"
 
 enum PacketType {
     PACKET_ACK,
