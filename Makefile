@@ -553,6 +553,11 @@ else
 
 endif
 
+# Identify that this is a coop build so that one patch can be applied to EX
+# and/or COOP. They can choose to ifdef entity synchronization out.
+CC_CHECK += -DCOOP
+CFLAGS += -DCOOP
+
 # Check for enhancement options
 
 # Check for debug option
