@@ -1,5 +1,3 @@
-#include "actors/group2.h"
-
 // Bully
 
 // 0x05000000

@@ -1,5 +1,3 @@
-#include "actors/group6.h"
-
 // Monty Mole
 
 // Unreferenced light group

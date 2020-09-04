@@ -12,6 +12,7 @@
 #include "game/camera.h"
 #include "seq_ids.h"
 #include "dialog_ids.h"
+#include "level_table.h"
 
 #ifdef VERSION_EU
 #define EU_FLOAT(x) x ## f
@@ -253,25 +254,25 @@ u8 sDialogSpeaker[] = {
     /*16*/ _,     YOSHI, _,     _,     _,     _,     _,     _,     WIGLR, _
 };
 #undef _
-//STATIC_ASSERT(ARRAY_COUNT(sDialogSpeaker) == DIALOG_COUNT, "change this array if you are adding dialogs");
+STATIC_ASSERT(ARRAY_COUNT(sDialogSpeaker) == DIALOG_COUNT, "change this array if you are adding dialogs");
 
 s32 sDialogSpeakerVoice[] = {
-  (s32)SOUND_OBJ_UKIKI_CHATTER_LONG,
-  (s32)SOUND_OBJ_BIG_PENGUIN_YELL,
-  (s32)SOUND_OBJ_BOWSER_INTRO_LAUGH,
-  (s32)SOUND_OBJ_KOOPA_TALK,
-  (s32)SOUND_OBJ_KING_BOBOMB_TALK,
-  (s32)SOUND_OBJ_BOO_LAUGH_LONG,
-  (s32)SOUND_OBJ_BOBOMB_BUDDY_TALK,
-  (s32)SOUND_OBJ_BOWSER_LAUGH,
-  (s32)SOUND_OBJ2_BOSS_DIALOG_GRUNT,
-  (s32)SOUND_OBJ_WIGGLER_TALK,
-  (s32)SOUND_GENERAL_YOSHI_TALK,
+    SOUND_OBJ_UKIKI_CHATTER_LONG,
+    SOUND_OBJ_BIG_PENGUIN_YELL,
+    SOUND_OBJ_BOWSER_INTRO_LAUGH,
+    SOUND_OBJ_KOOPA_TALK,
+    SOUND_OBJ_KING_BOBOMB_TALK,
+    SOUND_OBJ_BOO_LAUGH_LONG,
+    SOUND_OBJ_BOBOMB_BUDDY_TALK,
+    SOUND_OBJ_BOWSER_LAUGH,
+    SOUND_OBJ2_BOSS_DIALOG_GRUNT,
+    SOUND_OBJ_WIGGLER_TALK,
+    SOUND_GENERAL_YOSHI_TALK,
 #ifndef VERSION_EU
-  (s32)NO_SOUND,
-  (s32)NO_SOUND,
-  (s32)NO_SOUND,
-  (s32)NO_SOUND,
+    NO_SOUND,
+    NO_SOUND,
+    NO_SOUND,
+    NO_SOUND,
 #endif
 };
 
@@ -377,7 +378,7 @@ struct MusicDynamic sMusicDynamics[8] = {
     { 0x03f7, 127, 100, 0x0008, 0, 100 }, // SEQ_LEVEL_UNDERGROUND
     { 0x0070, 127, 10, 0x0000, 0, 100 },  // SEQ_LEVEL_SPOOKY
     { 0x0000, 127, 100, 0x0070, 0, 10 },  // SEQ_LEVEL_SPOOKY
-    { (s16) 0xffff, 127, 100, 0x0000, 0, 100 }, // any (unused)
+    { 0xffff, 127, 100, 0x0000, 0, 100 }, // any (unused)
 };
 
 #define STUB_LEVEL(_0, _1, _2, _3, echo1, echo2, echo3, _7, _8) { echo1, echo2, echo3 },
@@ -442,8 +443,8 @@ u8 sBackgroundMusicDefaultVolume[] = {
     0,   // SEQ_EVENT_CUTSCENE_LAKITU (not in JP)
 };
 
-/*STATIC_ASSERT(ARRAY_COUNT(sBackgroundMusicDefaultVolume) == SEQ_COUNT,
-              "change this array if you are adding sequences");*/
+STATIC_ASSERT(ARRAY_COUNT(sBackgroundMusicDefaultVolume) == SEQ_COUNT,
+              "change this array if you are adding sequences");
 
 u8 sPlayer0CurSeqId = SEQUENCE_NONE;
 u8 sMusicDynamicDelay = 0;
@@ -735,6 +736,7 @@ void func_8031D838(s32 player, FadeT fadeInTime, u8 targetVolume) {
     }
     seqPlayer->fadeVelocity =
         (((f32)(FLOAT_CAST(targetVolume) / EU_FLOAT(127.0)) - seqPlayer->fadeVolume) / (f32) fadeInTime);
+
 #ifdef VERSION_EU
     seqPlayer->state = 0;
 #else
@@ -762,113 +764,10 @@ void func_eu_802e9bec(s32 player, s32 channel, s32 arg2) {
 
 #else
 
-#ifdef TARGET_N64
-struct SPTask *create_next_audio_frame_task(void) {
-    u32 samplesRemainingInAI;
-    s32 writtenCmds;
-    s32 index;
-    OSTask_t *task;
-    s32 oldDmaCount;
-    s32 flags;
-
-    gAudioFrameCount++;
-    if (gAudioLoadLock != AUDIO_LOCK_NOT_LOADING) {
-        stubbed_printf("DAC:Lost 1 Frame.\n");
-        return NULL;
-    }
-
-    gAudioTaskIndex ^= 1;
-    gCurrAiBufferIndex++;
-    gCurrAiBufferIndex %= NUMAIBUFFERS;
-    index = (gCurrAiBufferIndex - 2 + NUMAIBUFFERS) % NUMAIBUFFERS;
-    samplesRemainingInAI = osAiGetLength() / 4;
-
-    // Audio is triple buffered; the audio interface reads from two buffers
-    // while the third is being written by the RSP. More precisely, the
-    // lifecycle is:
-    // - this function computes an audio command list
-    // - wait for vblank
-    // - the command list is sent to the RSP (we could have sent it to the
-    //   RSP before the vblank, but that gives the RSP less time to finish)
-    // - wait for vblank
-    // - the RSP is now expected to be finished, and we can send its output
-    //   on to the AI
-    // Here we thus send to the AI the sound that was generated two frames ago.
-    if (gAiBufferLengths[index] != 0) {
-        osAiSetNextBuffer(gAiBuffers[index], gAiBufferLengths[index] * 4);
-    }
-
-    oldDmaCount = gCurrAudioFrameDmaCount;
-    // There has to be some sort of no-op if here, but it's not exactly clear
-    // how it should look... It's also very unclear why gCurrAudioFrameDmaQueue
-    // isn't read from here, despite gCurrAudioFrameDmaCount being reset.
-    if (oldDmaCount > AUDIO_FRAME_DMA_QUEUE_SIZE) {
-        stubbed_printf("DMA: Request queue over.( %d )\n", oldDmaCount);
-    }
-    gCurrAudioFrameDmaCount = 0;
-
-    gAudioTask = &gAudioTasks[gAudioTaskIndex];
-    gAudioCmd = gAudioCmdBuffers[gAudioTaskIndex];
-
-    index = gCurrAiBufferIndex;
-    gCurrAiBuffer = gAiBuffers[index];
-    gAiBufferLengths[index] = ((gSamplesPerFrameTarget - samplesRemainingInAI +
-         EXTRA_BUFFERED_AI_SAMPLES_TARGET) & ~0xf) + SAMPLES_TO_OVERPRODUCE;
-    if (gAiBufferLengths[index] < gMinAiBufferLength) {
-        gAiBufferLengths[index] = gMinAiBufferLength;
-    }
-    if (gAiBufferLengths[index] > gSamplesPerFrameTarget + SAMPLES_TO_OVERPRODUCE) {
-        gAiBufferLengths[index] = gSamplesPerFrameTarget + SAMPLES_TO_OVERPRODUCE;
-    }
-
-    if (sGameLoopTicked != 0) {
-        update_game_sound();
-        sGameLoopTicked = 0;
-    }
-
-    // For the function to match we have to preserve some arbitrary variable
-    // across this function call.
-    flags = 0;
-    gAudioCmd = synthesis_execute(gAudioCmd, &writtenCmds, gCurrAiBuffer, gAiBufferLengths[index]);
-    gAudioRandom = ((gAudioRandom + gAudioFrameCount) * gAudioFrameCount);
-
-    index = gAudioTaskIndex;
-    gAudioTask->msgqueue = NULL;
-    gAudioTask->msg = NULL;
-
-    task = &gAudioTask->task.t;
-    task->type = M_AUDTASK;
-    task->flags = flags;
-    task->ucode_boot = rspF3DBootStart;
-    task->ucode_boot_size = (u8 *) rspF3DBootEnd - (u8 *) rspF3DBootStart;
-    task->ucode = rspAspMainStart;
-    task->ucode_size = 0x800; // (this size is ignored)
-    task->ucode_data = rspAspMainDataStart;
-    task->ucode_data_size = (rspAspMainDataEnd - rspAspMainDataStart) * sizeof(u64);
-    task->dram_stack = NULL;
-    task->dram_stack_size = 0;
-    task->output_buff = NULL;
-    task->output_buff_size = NULL;
-    task->data_ptr = gAudioCmdBuffers[index];
-    task->data_size = writtenCmds * sizeof(u64);
-
-    // The audio task never yields, so having a yield buffer is pointless.
-    // This wastefulness was fixed in US.
-#ifdef VERSION_JP
-    task->yield_data_ptr = (u64 *) gAudioSPTaskYieldBuffer;
-    task->yield_data_size = OS_YIELD_AUDIO_SIZE;
-#else
-    task->yield_data_ptr = NULL;
-    task->yield_data_size = 0;
-#endif
-
-    decrease_sample_dma_ttls();
-    return gAudioTask;
-}
-#else
 struct SPTask *create_next_audio_frame_task(void) {
     return NULL;
 }
+
 void create_next_audio_buffer(s16 *samples, u32 num_samples) {
     gAudioFrameCount++;
     if (sGameLoopTicked != 0) {
@@ -880,7 +779,6 @@ void create_next_audio_buffer(s16 *samples, u32 num_samples) {
     gAudioRandom = ((gAudioRandom + gAudioFrameCount) * gAudioFrameCount);
     decrease_sample_dma_ttls();
 }
-#endif
 #endif
 
 void play_sound(s32 soundBits, f32 *pos) {
@@ -2158,6 +2056,10 @@ void play_dialog_sound(u8 dialogID) {
 #endif
 }
 
+void set_sequence_player_volume(s32 player, f32 volume) {
+    gSequencePlayers[player].volumeScale = volume;
+}
+
 void play_music(u8 player, u16 seqArgs, u16 fadeTimer) {
     u8 seqId = seqArgs & 0xff;
     u8 priority = seqArgs >> 8;
@@ -2166,11 +2068,12 @@ void play_music(u8 player, u16 seqArgs, u16 fadeTimer) {
 
     // Except for the background music player, we don't support queued
     // sequences. Just play them immediately, stopping any old sequence.
+
     if (player != 0) {
         play_sequence(player, seqId, fadeTimer);
         return;
     }
-
+    
     // Abort if the queue is already full.
     if (sBackgroundMusicQueueSize == MAX_BG_MUSIC_QUEUE_SIZE) {
         return;

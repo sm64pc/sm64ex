@@ -1,7 +1,6 @@
-#pragma once
+#ifndef CASTLE_COURTYARD_HEADER_H
+#define CASTLE_COURTYARD_HEADER_H
 
-#include <memory>
-#include "common/scripts/dynamic_level_script_builder.hpp"
 #include "types.h"
 #include "game/moving_texture.h"
 
@@ -19,4 +18,6 @@ extern const MacroObject castle_courtyard_seg7_macro_objs[];
 extern const struct MovtexQuadCollection castle_courtyard_movtex_star_statue_water[];
 
 // script
-extern std::shared_ptr<DynamicLevelScriptBuilder> get_level_castle_courtyard_entry();
+extern const LevelScript level_castle_courtyard_entry[];
+
+#endif

@@ -7,9 +7,7 @@
 #include "seqplayer.h"
 #include "external.h"
 
-#ifndef TARGET_N64
 #include "../pc/mixer.h"
-#endif
 
 #define DMEM_ADDR_TEMP 0x0
 #define DMEM_ADDR_UNCOMPRESSED_NOTE 0x180
@@ -853,7 +851,7 @@ u64 *synthesis_process_notes(s16 *aiBuf, s32 bufLen, u64 *cmd) {
                             }
 #else
                             temp = (note->samplePosInt - s2 + 0x10) / 16;
-                            v0_2 = (u8*) dma_sample_data(
+                            v0_2 = dma_sample_data(
                                 (uintptr_t) (sampleAddr + temp * 9),
                                 t0 * 9, flags, &note->sampleDmaIndex);
 #endif

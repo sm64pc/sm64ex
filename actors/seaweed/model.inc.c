@@ -1,5 +1,3 @@
-#include "actors/group13.h"
-
 // Seaweed
 
 // 0x06007DF8

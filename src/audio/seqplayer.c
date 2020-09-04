@@ -85,7 +85,7 @@ s32 seq_channel_set_layer(struct SequenceChannel *seqChannel, s32 layerIndex) {
 #ifdef VERSION_EU
         struct SequenceChannelLayer *layer;
 #endif
-        layer = (struct SequenceChannelLayer*) audio_list_pop_back(&gLayerFreeList);
+        layer = audio_list_pop_back(&gLayerFreeList);
         seqChannel->layers[layerIndex] = layer;
         if (layer == NULL) {
             seqChannel->layers[layerIndex] = NULL;
@@ -263,7 +263,7 @@ void sequence_channel_enable(struct SequencePlayer *seqPlayer, u8 channelIndex, 
         seqChannel->enabled = TRUE;
         seqChannel->finished = FALSE;
         seqChannel->scriptState.depth = 0;
-        seqChannel->scriptState.pc = (u8*) arg2;
+        seqChannel->scriptState.pc = arg2;
         seqChannel->delay = 0;
         for (i = 0; i < LAYERS_MAX; i++) {
             if (seqChannel->layers[i] != NULL) {
@@ -1165,14 +1165,14 @@ void sequence_channel_process_script(struct SequenceChannel *seqChannel) {
 
                     case 0xc2: // chan_setdyntable
                         sp5A = m64_read_s16(state);
-                        seqChannel->dynTable = (u8 (*)[][2]) (seqPlayer->seqData + sp5A);
+                        seqChannel->dynTable = (void *) (seqPlayer->seqData + sp5A);
                         break;
 
                     case 0xc5: // chan_dynsetdyntable
                         if (value != -1) {
                             sp5A = (*seqChannel->dynTable)[value][1]
                                    + ((*seqChannel->dynTable)[value][0] << 8);
-                            seqChannel->dynTable = (u8 (*)[][2]) (seqPlayer->seqData + sp5A);
+                            seqChannel->dynTable = (void *) (seqPlayer->seqData + sp5A);
                         }
                         break;
 
@@ -2081,6 +2081,10 @@ void init_sequence_players(void) {
 #endif
         gSequencePlayers[i].bankDmaInProgress = FALSE;
         gSequencePlayers[i].seqDmaInProgress = FALSE;
+
+        // only set this once at the start so it doesn't spike later
+        gSequencePlayers[i].volumeScale = 1.0f;
+
         init_note_lists(&gSequencePlayers[i].notePool);
         init_sequence_player(i);
     }

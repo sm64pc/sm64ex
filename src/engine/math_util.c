@@ -49,6 +49,15 @@ void *vec3f_sum(Vec3f dest, Vec3f a, Vec3f b) {
     return &dest; //! warning: function returns address of local variable
 }
 
+/// Multiply vector 'dest' by a
+void *vec3f_mul(Vec3f dest, f32 a)
+{
+    dest[0] *= a;
+    dest[1] *= a;
+    dest[2] *= a;
+    return &dest; //! warning: function returns address of local variable
+}
+
 /// Copy vector src to dest
 void *vec3s_copy(Vec3s dest, Vec3s src) {
     dest[0] = src[0];
@@ -81,11 +90,11 @@ void *vec3s_sum(Vec3s dest, Vec3s a, Vec3s b) {
     return &dest; //! warning: function returns address of local variable
 }
 
-/// Subtract vector a from 'dest'
-void *vec3s_sub(Vec3s dest, Vec3s a) {
-    dest[0] -= a[0];
-    dest[1] -= a[1];
-    dest[2] -= a[2];
+/// Make 'dest' the difference of vectors a and b.
+void *vec3f_dif(Vec3f dest, Vec3f a, Vec3f b) {
+    dest[0] = a[0] - b[0];
+    dest[1] = a[1] - b[1];
+    dest[2] = a[2] - b[2];
     return &dest; //! warning: function returns address of local variable
 }
 
@@ -138,6 +147,18 @@ void *vec3f_normalize(Vec3f dest) {
     dest[1] *= invsqrt;
     dest[2] *= invsqrt;
     return &dest; //! warning: function returns address of local variable
+}
+
+/// Get length of vector 'a'
+f32 vec3f_length(Vec3f a)
+{
+	return sqrtf(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
+}
+
+/// Get dot product of vectors 'a' and 'b'
+f32 vec3f_dot(Vec3f a, Vec3f b)
+{
+	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 
 #pragma GCC diagnostic pop
@@ -340,6 +361,32 @@ void mtxf_billboard(Mat4 dest, Mat4 mtx, Vec3f position, s16 angle) {
     dest[1][0] = -dest[0][1];
     dest[1][1] = dest[0][0];
     dest[1][2] = 0;
+    dest[1][3] = 0;
+
+    dest[2][0] = 0;
+    dest[2][1] = 0;
+    dest[2][2] = 1;
+    dest[2][3] = 0;
+
+    dest[3][0] =
+        mtx[0][0] * position[0] + mtx[1][0] * position[1] + mtx[2][0] * position[2] + mtx[3][0];
+    dest[3][1] =
+        mtx[0][1] * position[0] + mtx[1][1] * position[1] + mtx[2][1] * position[2] + mtx[3][1];
+    dest[3][2] =
+        mtx[0][2] * position[0] + mtx[1][2] * position[1] + mtx[2][2] * position[2] + mtx[3][2];
+    dest[3][3] = 1;
+}
+
+// straight up mtxf_billboard but minus the dest[1][n] lines. transform for cylindrical billboards
+void mtxf_cylboard(Mat4 dest, Mat4 mtx, Vec3f position, s16 angle) {
+    dest[0][0] = coss(angle);
+    dest[0][1] = sins(angle);
+    dest[0][2] = 0;
+    dest[0][3] = 0;
+
+    dest[1][0] = mtx[1][0];
+    dest[1][1] = mtx[1][1];
+    dest[1][2] = mtx[1][2];
     dest[1][3] = 0;
 
     dest[2][0] = 0;

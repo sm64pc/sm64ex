@@ -1,5 +1,3 @@
-#include "actors/common1.h"
-
 // Door
 
 // 0x03009CE0

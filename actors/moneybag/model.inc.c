@@ -1,5 +1,3 @@
-#include "actors/group16.h"
-
 // Moneybag
 
 // 0x060039B0

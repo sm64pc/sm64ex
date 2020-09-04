@@ -104,7 +104,7 @@ Gfx UNUSED *geo_obj_transparency_something(s32 callContext, struct GraphNode *no
             heldObject = gCurGraphNodeHeldObject->objNode;
         }
 
-        gfxHead = (Gfx*) alloc_display_list(3 * sizeof(Gfx));
+        gfxHead = alloc_display_list(3 * sizeof(Gfx));
         gfx = gfxHead;
         obj->header.gfx.node.flags =
             (obj->header.gfx.node.flags & 0xFF) | (GRAPH_NODE_TYPE_FUNCTIONAL | GRAPH_NODE_TYPE_400); // sets bits 8, 10 and zeros upper byte
@@ -221,7 +221,7 @@ void obj_orient_graph(struct Object *obj, f32 normalX, f32 normalY, f32 normalZ)
         return;
     }
 
-    throwMatrix = (Mat4*) alloc_display_list(sizeof(*throwMatrix));
+    throwMatrix = alloc_display_list(sizeof(*throwMatrix));
     // If out of memory, fail to try orienting the object.
     if (throwMatrix == NULL) {
         return;
@@ -530,11 +530,15 @@ void set_object_visibility(struct Object *obj, s32 dist) {
     f32 objY = obj->oPosY;
     f32 objZ = obj->oPosZ;
 
+#ifndef NODRAWINGDISTANCE
     if (is_point_within_radius_of_mario(objX, objY, objZ, dist) == TRUE) {
+#endif
         obj->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
+#ifndef NODRAWINGDISTANCE
     } else {
         obj->header.gfx.node.flags |= GRAPH_RENDER_INVISIBLE;
     }
+#endif
 }
 
 /**

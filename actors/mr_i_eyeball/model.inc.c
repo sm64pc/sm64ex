@@ -1,5 +1,3 @@
-#include "actors/group17.h"
-
 // Mr I (white eyeball)
 
 // 0x06000000

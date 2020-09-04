@@ -1,5 +1,3 @@
-#include "game/segment2.h"
-
 #include <ultra64.h>
 #include "sm64.h"
 #include "game/ingame_menu.h"
@@ -1803,7 +1801,7 @@ ALIGNED8 static const u8 texture_hud_char_arrow_down[] = {
 };
 
 // Main HUD print table 0x02008250-0x02008337
-const u8* const main_hud_lut[] = {
+const u8 *const main_hud_lut[] = {
 #ifdef VERSION_EU
     texture_hud_char_0, texture_hud_char_1, texture_hud_char_2, texture_hud_char_3,
     texture_hud_char_4, texture_hud_char_5, texture_hud_char_6, texture_hud_char_7,
@@ -2109,7 +2107,7 @@ const Gfx dl_hud_img_load_tex_block[] = {
     gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, 4, G_TX_NOLOD, G_TX_WRAP | G_TX_NOMIRROR, 4, G_TX_NOLOD),
     gsDPLoadSync(),
     gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 16 * 16 - 1, CALC_DXT(16, G_IM_SIZ_16b_BYTES)),
-    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 4, 0, G_TX_RENDERTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, 4, G_TX_NOLOD, G_TX_WRAP | G_TX_NOMIRROR, 4, G_TX_NOLOD),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 4, 0, G_TX_RENDERTILE, 0, G_TX_CLAMP, 4, G_TX_NOLOD, G_TX_CLAMP, 4, G_TX_NOLOD),
     gsDPSetTileSize(0, 0, 0, (16 - 1) << G_TEXTURE_IMAGE_FRAC, (16 - 1) << G_TEXTURE_IMAGE_FRAC),
     gsSPEndDisplayList(),
 };
@@ -2146,7 +2144,7 @@ const Gfx dl_rgba16_load_tex_block[] = {
     gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, 4, G_TX_NOLOD, G_TX_WRAP | G_TX_NOMIRROR, 4, G_TX_NOLOD),
     gsDPLoadSync(),
     gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 16 * 16 - 1, CALC_DXT(16, G_IM_SIZ_16b_BYTES)),
-    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 4, 0, G_TX_RENDERTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, 4, G_TX_NOLOD, G_TX_WRAP | G_TX_NOMIRROR, 4, G_TX_NOLOD),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 4, 0, G_TX_RENDERTILE, 0, G_TX_CLAMP, 4, G_TX_NOLOD, G_TX_CLAMP, 4, G_TX_NOLOD),
     gsDPSetTileSize(0, 0, 0, (16 - 1) << G_TEXTURE_IMAGE_FRAC, (16 - 1) << G_TEXTURE_IMAGE_FRAC),
     gsSPEndDisplayList(),
 };
@@ -2457,39 +2455,39 @@ ALIGNED8 static const u8 texture_shadow_quarter_square[] = {
 #include "textures/segment2/shadow_quarter_square.ia8.inc.c"
 };
 
-ALIGNED8 u8 texture_transition_star_half[] = {
+ALIGNED8 const u8 texture_transition_star_half[] = {
 #include "textures/segment2/segment2.0F458.ia8.inc.c"
 };
 
-ALIGNED8 u8 texture_transition_circle_half[] = {
+ALIGNED8 const u8 texture_transition_circle_half[] = {
 #include "textures/segment2/segment2.0FC58.ia8.inc.c"
 };
 
-ALIGNED8 u8 texture_transition_mario[] = {
+ALIGNED8 const u8 texture_transition_mario[] = {
 #include "textures/segment2/segment2.10458.ia8.inc.c"
 };
 
-ALIGNED8 u8 texture_transition_bowser_half[] = {
+ALIGNED8 const u8 texture_transition_bowser_half[] = {
 #include "textures/segment2/segment2.11458.ia8.inc.c"
 };
 
-ALIGNED8 u8 texture_waterbox_water[] = {
+ALIGNED8 const u8 texture_waterbox_water[] = {
 #include "textures/segment2/segment2.11C58.rgba16.inc.c"
 };
 
-ALIGNED8 u8 texture_waterbox_jrb_water[] = {
+ALIGNED8 const u8 texture_waterbox_jrb_water[] = {
 #include "textures/segment2/segment2.12458.rgba16.inc.c"
 };
 
-ALIGNED8 u8 texture_waterbox_unknown_water[] = {
+ALIGNED8 const u8 texture_waterbox_unknown_water[] = {
 #include "textures/segment2/segment2.12C58.rgba16.inc.c"
 };
 
-ALIGNED8 u8 texture_waterbox_mist[] = {
+ALIGNED8 const u8 texture_waterbox_mist[] = {
 #include "textures/segment2/segment2.13458.ia16.inc.c"
 };
 
-ALIGNED8 u8 texture_waterbox_lava[] = {
+ALIGNED8 const u8 texture_waterbox_lava[] = {
 #include "textures/segment2/segment2.13C58.rgba16.inc.c"
 };
 
@@ -2501,41 +2499,19 @@ static const Lights1 segment2_lights_unused = gdSPDefLights1(
 
 // 0x02014470 - 0x020144B0
 static const Mtx matrix_identity = {
-#ifndef GBI_FLOATS
-    {{0x00010000, 0x00000000,
-      0x00000001, 0x00000000},
-     {0x00000000, 0x00010000,
-      0x00000000, 0x00000001},
-     {0x00000000, 0x00000000,
-      0x00000000, 0x00000000},
-     {0x00000000, 0x00000000,
-      0x00000000, 0x00000000}}
-#else
     {{1.0f, 0.0f, 0.0f, 0.0f},
     {0.0f, 1.0f, 0.0f, 0.0f},
     {0.0f, 0.0f, 1.0f, 0.0f},
     {0.0f, 0.0f, 0.0f, 1.0f}}
-#endif
 };
 
 
 // 0x020144B0 - 0x020144F0
 static const Mtx matrix_fullscreen = {
-#ifndef GBI_FLOATS
-    {{0x00000000, 0x00000000,
-      0x00000000, 0x00000000},
-     {0x00000000, 0xffff0000,
-      0xffffffff, 0xffff0001},
-     {((65536 * 2 / SCREEN_WIDTH) << 16) | 0, 0x00000000,
-      (0 << 16) | (65536 * 2 / SCREEN_HEIGHT), 0x00000000},
-     {0x00000000, 0x00000000,
-      0x00000000, 0x00000000}}
-#else
     {{2.0f / SCREEN_WIDTH, 0.0f, 0.0f, 0.0f},
     {0.0f, 2.0f / SCREEN_HEIGHT, 0.0f, 0.0f},
     {0.0f, 0.0f, -1.0f, 0.0f},
     {-1.0f, -1.0f, -1.0f, 1.0f}}
-#endif
 };
 
 
@@ -2654,7 +2630,7 @@ const Gfx dl_skybox_end[] = {
 };
 
 // 0x02014790 - 0x020147D0
-Gfx dl_waterbox_rgba16_begin[] = {
+const Gfx dl_waterbox_rgba16_begin[] = {
     gsDPPipeSync(),
     gsDPSetCombineMode(G_CC_MODULATERGBA, G_CC_MODULATERGBA),
     gsSPClearGeometryMode(G_LIGHTING | G_CULL_BACK),
@@ -2678,7 +2654,7 @@ const Gfx dl_waterbox_ia16_begin[] = {
 };
 
 // 0x02014810 - 0x02014838
-Gfx dl_waterbox_end[] = {
+const Gfx dl_waterbox_end[] = {
     gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_OFF),
     gsDPPipeSync(),
     gsSPSetGeometryMode(G_LIGHTING | G_CULL_BACK),

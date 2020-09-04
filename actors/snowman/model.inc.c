@@ -1,5 +1,3 @@
-#include "actors/group7.h"
-
 // Snowman
 
 // ???

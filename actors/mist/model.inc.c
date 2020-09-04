@@ -1,5 +1,3 @@
-#include "actors/common1.h"
-
 // Mist
 
 // 0x03000000

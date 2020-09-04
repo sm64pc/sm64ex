@@ -1,8 +1,6 @@
 #ifndef BEHAVIOR_ACTIONS_H
 #define BEHAVIOR_ACTIONS_H
 
-#include "types.h"
-
 void spawn_mist_particles_variable(s32 count, s32 offsetY, f32 size);
 void bhv_spawn_star_no_level_exit(u32);
 void bhv_star_door_loop_2(void);
@@ -21,6 +19,7 @@ void cur_obj_spawn_strong_wind_particles(s32 windSpread, f32 scale, f32 relPosX,
 
 void bhv_cap_switch_loop(void);
 void bhv_tiny_star_particles_init(void);
+void bhv_grindel_thwomp_loop(void);
 void bhv_koopa_shell_underwater_loop(void);
 void bhv_door_init(void);
 void bhv_door_loop(void);

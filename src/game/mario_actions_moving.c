@@ -12,6 +12,8 @@
 #include "memory.h"
 #include "behavior_data.h"
 #include "thread6.h"
+#include "pc/configfile.h"
+#include "pc/cheats.h"
 
 struct LandingAction {
     s16 numFrames;
@@ -461,8 +463,14 @@ void update_walking_speed(struct MarioState *m) {
         m->forwardVel = 48.0f;
     }
 
-    m->faceAngle[1] =
-        m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800, 0x800);
+    /* Handles the "Super responsive controls" cheat. The content of the "else" is Mario's original code for turning around.*/
+
+    if (Cheats.Responsive == true && Cheats.EnableCheats == true ) {
+        m->faceAngle[1] = m->intendedYaw;
+    }
+    else {
+         m->faceAngle[1] = m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800, 0x800);
+    }        
     apply_slope_accel(m);
 }
 
@@ -1244,9 +1252,8 @@ s32 act_riding_shell_ground(struct MarioState *m) {
     }
 
     adjust_sound_for_speed(m);
-#ifdef VERSION_SH
+    
     reset_rumble_timers();
-#endif
     return FALSE;
 }
 
@@ -1350,9 +1357,8 @@ s32 act_burning_ground(struct MarioState *m) {
     }
 
     m->marioBodyState->eyeState = MARIO_EYES_DEAD;
-#ifdef VERSION_SH
+
     reset_rumble_timers();
-#endif
     return FALSE;
 }
 
@@ -1368,9 +1374,7 @@ void common_slide_action(struct MarioState *m, u32 endAction, u32 airAction, s32
     vec3f_copy(val14, m->pos);
     play_sound(SOUND_MOVING_TERRAIN_SLIDE + m->terrainSoundAddend, m->marioObj->header.gfx.cameraToObject);
 
-#ifdef VERSION_SH
     reset_rumble_timers();
-#endif
 
     adjust_sound_for_speed(m);
 
@@ -1494,9 +1498,7 @@ s32 act_crouch_slide(struct MarioState *m) {
 
 s32 act_slide_kick_slide(struct MarioState *m) {
     if (m->input & INPUT_A_PRESSED) {
-#ifdef VERSION_SH
         queue_rumble_data(5, 80);
-#endif
         return set_jumping_action(m, ACT_FORWARD_ROLLOUT, 0);
     }
 
@@ -1526,9 +1528,7 @@ s32 act_slide_kick_slide(struct MarioState *m) {
 s32 stomach_slide_action(struct MarioState *m, u32 stopAction, u32 airAction, s32 animation) {
     if (m->actionTimer == 5) {
         if (!(m->input & INPUT_ABOVE_SLIDE) && (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED))) {
-#ifdef VERSION_SH
             queue_rumble_data(5, 80);
-#endif
             return drop_and_set_mario_action(
                 m, m->forwardVel >= 0.0f ? ACT_FORWARD_ROLLOUT : ACT_BACKWARD_ROLLOUT, 0);
         }
@@ -1562,9 +1562,7 @@ s32 act_hold_stomach_slide(struct MarioState *m) {
 
 s32 act_dive_slide(struct MarioState *m) {
     if (!(m->input & INPUT_ABOVE_SLIDE) && (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED))) {
-#ifdef VERSION_SH
         queue_rumble_data(5, 80);
-#endif
         return set_mario_action(m, m->forwardVel > 0.0f ? ACT_FORWARD_ROLLOUT : ACT_BACKWARD_ROLLOUT,
                                 0);
     }
@@ -1855,7 +1853,7 @@ s32 act_long_jump_land(struct MarioState *m) {
         m->forwardVel = 0.0f;
     }
 #endif
-
+    
     if (!(m->input & INPUT_Z_DOWN)) {
         m->input &= ~INPUT_A_PRESSED;
     }

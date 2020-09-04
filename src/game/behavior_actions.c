@@ -118,7 +118,7 @@ s16 D_8032F0CC[] = { 6047, 5664, 5292, 4934, 4587, 4254, 3933, 3624, 3329, 3046,
 #include "behaviors/white_puff_explode.inc.c"
 
 // not in behavior file
-struct SpawnParticlesInfo D_8032F270 = { 2, 20, MODEL_MIST, 0, 40, 5, 30, 20, (s8) 252, 30, 330.0f, 10.0f };
+struct SpawnParticlesInfo D_8032F270 = { 2, 20, MODEL_MIST, 0, 40, 5, 30, 20, 252, 30, 330.0f, 10.0f };
 
 // generate_wind_puffs/dust (something like that)
 void spawn_mist_particles_variable(s32 count, s32 offsetY, f32 size) {
@@ -139,6 +139,7 @@ void spawn_mist_particles_variable(s32 count, s32 offsetY, f32 size) {
 #include "behaviors/coin.inc.c"
 #include "behaviors/collide_particles.inc.c"
 #include "behaviors/door.inc.c"
+#include "behaviors/thwomp.inc.c"
 #include "behaviors/tumbling_bridge.inc.c"
 #include "behaviors/elevator.inc.c"
 #include "behaviors/water_mist_particle.inc.c"

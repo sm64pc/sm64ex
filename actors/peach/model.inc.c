@@ -1,5 +1,3 @@
-#include "actors/group10.h"
-
 // Peach
 
 // 0x050009F8

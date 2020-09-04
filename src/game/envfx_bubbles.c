@@ -339,7 +339,7 @@ s32 envfx_init_bubble(s32 mode) {
             break;
     }
 
-    gEnvFxBuffer = (struct EnvFxParticle*) mem_pool_alloc(gEffectsMemoryPool, sBubbleParticleCount * sizeof(struct EnvFxParticle));
+    gEnvFxBuffer = mem_pool_alloc(gEffectsMemoryPool, sBubbleParticleCount * sizeof(struct EnvFxParticle));
     if (!gEnvFxBuffer) {
         return 0;
     }
@@ -408,9 +408,10 @@ void envfx_bubbles_update_switch(s32 mode, Vec3s camTo, Vec3s vertex1, Vec3s ver
  *
  * TODO: (Scrub C)
  */
-void append_bubble_vertex_buffer(Gfx *gfx, s32 index, Vec3s vertex1, Vec3s vertex2, Vec3s vertex3, Vtx* template_) {
+void append_bubble_vertex_buffer(Gfx *gfx, s32 index, Vec3s vertex1, Vec3s vertex2, Vec3s vertex3,
+                                 Vtx *template) {
     s32 i = 0;
-    Vtx *vertBuf = (Vtx*) alloc_display_list(15 * sizeof(Vtx));
+    Vtx *vertBuf = alloc_display_list(15 * sizeof(Vtx));
 #ifdef VERSION_EU
     Vtx *p;
 #endif
@@ -420,7 +421,7 @@ void append_bubble_vertex_buffer(Gfx *gfx, s32 index, Vec3s vertex1, Vec3s verte
     }
 
     for (i = 0; i < 15; i += 3) {
-        vertBuf[i] = template_[0];
+        vertBuf[i] = template[0];
 #ifdef VERSION_EU
         p = vertBuf;
         p += i;
@@ -433,7 +434,7 @@ void append_bubble_vertex_buffer(Gfx *gfx, s32 index, Vec3s vertex1, Vec3s verte
         vertBuf[i].v.ob[2] = gEnvFxBuffer[index + i / 3].zPos + vertex1[2];
 #endif
 
-        vertBuf[i + 1] = template_[1];
+        vertBuf[i + 1] = template[1];
 #ifdef VERSION_EU
         p = vertBuf;
         p += i;
@@ -446,7 +447,7 @@ void append_bubble_vertex_buffer(Gfx *gfx, s32 index, Vec3s vertex1, Vec3s verte
         vertBuf[i + 1].v.ob[2] = gEnvFxBuffer[index + i / 3].zPos + vertex2[2];
 #endif
 
-        vertBuf[i + 2] = template_[2];
+        vertBuf[i + 2] = template[2];
 #ifdef VERSION_EU
         p = vertBuf;
         p += i;
@@ -474,18 +475,18 @@ void envfx_set_bubble_texture(s32 mode, s16 index) {
 
     switch (mode) {
         case ENVFX_FLOWERS:
-            imageArr = (void**) segmented_to_virtual(&flower_bubbles_textures_ptr_0B002008);
+            imageArr = segmented_to_virtual(&flower_bubbles_textures_ptr_0B002008);
             frame = (gEnvFxBuffer + index)->animFrame;
             break;
 
         case ENVFX_LAVA_BUBBLES:
-            imageArr = (void**) segmented_to_virtual(&lava_bubble_ptr_0B006020);
+            imageArr = segmented_to_virtual(&lava_bubble_ptr_0B006020);
             frame = (gEnvFxBuffer + index)->animFrame;
             break;
 
         case ENVFX_WHIRLPOOL_BUBBLES:
         case ENVFX_JETSTREAM_BUBBLES:
-            imageArr = (void**) segmented_to_virtual(&bubble_ptr_0B006848);
+            imageArr = segmented_to_virtual(&bubble_ptr_0B006848);
             frame = 0;
             break;
     }
@@ -508,7 +509,7 @@ Gfx *envfx_update_bubble_particles(s32 mode, UNUSED Vec3s marioPos, Vec3s camFro
 
     Gfx *gfxStart;
 
-    gfxStart = (Gfx*) alloc_display_list(((sBubbleParticleMaxCount / 5) * 10 + sBubbleParticleMaxCount + 3)
+    gfxStart = alloc_display_list(((sBubbleParticleMaxCount / 5) * 10 + sBubbleParticleMaxCount + 3)
                                   * sizeof(Gfx));
     if (gfxStart == NULL) {
         return NULL;

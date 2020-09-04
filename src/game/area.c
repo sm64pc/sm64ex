@@ -6,8 +6,6 @@
 #include "gfx_dimensions.h"
 #include "behavior_data.h"
 #include "game_init.h"
-#include "common/ui/text_to_render.hpp"
-#include "common/service_locator.hpp"
 #include "object_list_processor.h"
 #include "engine/surface_load.h"
 #include "ingame_menu.h"
@@ -23,6 +21,8 @@
 #include "engine/geo_layout.h"
 #include "save_file.h"
 #include "level_table.h"
+
+#include "gfx_dimensions.h"
 
 struct SpawnInfo gPlayerSpawnInfos[1];
 struct GraphNode *D_8033A160[0x100];
@@ -108,6 +108,11 @@ void set_warp_transition_rgb(u8 red, u8 green, u8 blue) {
     gWarpTransBlue = blue;
 }
 
+static int scale_x_to_correct_aspect_center(int x) {
+    f32 aspect = GFX_DIMENSIONS_ASPECT_RATIO;
+    return x + (SCREEN_HEIGHT * aspect / 2) - (SCREEN_WIDTH / 2);
+}
+
 void print_intro_text(void) {
 #ifdef VERSION_EU
     int language = eu_get_language();
@@ -117,13 +122,12 @@ void print_intro_text(void) {
 #ifdef VERSION_EU
             print_text_centered(SCREEN_WIDTH / 2, 20, gNoControllerMsg[language]);
 #else
-            print_text_centered(SCREEN_WIDTH / 2, 20, "NO CONTROLLER");
+            print_text_centered(scale_x_to_correct_aspect_center(SCREEN_WIDTH / 2), 20, "NO CONTROLLER");
 #endif
         } else {
 #ifdef VERSION_EU
             print_text(20, 20, "START");
 #else
-            auto &text_renderer = ServiceLocator::get_text_renderer();
             print_text_centered(60, 38, "PRESS");
             print_text_centered(60, 20, "START");
 #endif
@@ -133,7 +137,7 @@ void print_intro_text(void) {
 
 u32 get_mario_spawn_type(struct Object *o) {
     s32 i;
-    const BehaviorScript *behavior = (const BehaviorScript*) virtual_to_segmented(0x13, o->behavior);
+    const BehaviorScript *behavior = virtual_to_segmented(0x13, o->behavior);
 
     for (i = 0; i < 20; i++) {
         if (sWarpBhvSpawnTable[i] == behavior) {

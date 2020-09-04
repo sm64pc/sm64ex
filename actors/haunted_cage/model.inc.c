@@ -1,5 +1,3 @@
-#include "actors/group9.h"
-
 // Haunted Cage
 
 // 0x0500C258

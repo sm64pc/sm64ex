@@ -9,8 +9,6 @@
 #include "types.h"
 #include "memory.h"
 
-#define GFX_POOL_SIZE 6400
-
 struct GfxPool {
     Gfx buffer[GFX_POOL_SIZE];
     struct SPTask spTask;
@@ -56,7 +54,7 @@ extern struct DemoInput gRecordedDemoInput;
 extern struct MarioAnimation D_80339D10;
 extern struct MarioAnimation gDemo;
 
-extern u8* gMarioAnims;
+extern u8 gMarioAnims[];
 extern u8 gDemoInputs[];
 
 extern u16 frameBufferIndex;

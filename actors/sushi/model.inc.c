@@ -1,5 +1,3 @@
-#include "actors/group4.h"
-
 // Sushi (Shark)
 
 // Could be a duplicate binid of the previous actor, but i'm putting it here for

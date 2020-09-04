@@ -27,7 +27,7 @@
 #include "spawn_object.h"
 #include "spawn_sound.h"
 
-s8 D_8032F0A0[] = { (s8) 0xF8, 0x08, (s8) 0xFC, 0x04 };
+s8 D_8032F0A0[] = { 0xF8, 0x08, 0xFC, 0x04 };
 s16 D_8032F0A4[] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
 static s8 sLevelsWithRooms[] = { LEVEL_BBH, LEVEL_CASTLE, LEVEL_HMC, -1 };
 
@@ -69,7 +69,7 @@ Gfx *geo_update_layer_transparency(s32 callContext, struct GraphNode *node, UNUS
         }
 
         objectOpacity = objectGraphNode->oOpacity;
-        dlStart = (Gfx*) alloc_display_list(sizeof(Gfx) * 3);
+        dlStart = alloc_display_list(sizeof(Gfx) * 3);
 
         dlHead = dlStart;
 
@@ -281,7 +281,7 @@ void obj_set_held_state(struct Object *obj, const BehaviorScript *heldBehavior) 
             obj->oHeldState = HELD_DROPPED;
         }
     } else {
-        obj->curBhvCommand = (const BehaviorScript*) segmented_to_virtual(heldBehavior);
+        obj->curBhvCommand = segmented_to_virtual(heldBehavior);
         obj->bhvStackIndex = 0;
     }
 }
@@ -528,7 +528,7 @@ struct Object *spawn_object_at_origin(struct Object *parent, UNUSED s32 unusedAr
     struct Object *obj;
     const BehaviorScript *behaviorAddr;
 
-    behaviorAddr = (const BehaviorScript*) segmented_to_virtual(behavior);
+    behaviorAddr = segmented_to_virtual(behavior);
     obj = create_object(behaviorAddr);
 
     obj->parentObj = parent;
@@ -847,7 +847,7 @@ f32 cur_obj_dist_to_nearest_object_with_behavior(const BehaviorScript *behavior)
 }
 
 struct Object *cur_obj_find_nearest_object_with_behavior(const BehaviorScript *behavior, f32 *dist) {
-    uintptr_t *behaviorAddr = (uintptr_t*) segmented_to_virtual(behavior);
+    uintptr_t *behaviorAddr = segmented_to_virtual(behavior);
     struct Object *closestObj = NULL;
     struct Object *obj;
     struct ObjectNode *listHead;
@@ -898,7 +898,7 @@ s32 count_unimportant_objects(void) {
 }
 
 s32 count_objects_with_behavior(const BehaviorScript *behavior) {
-    uintptr_t *behaviorAddr = (uintptr_t*) segmented_to_virtual(behavior);
+    uintptr_t *behaviorAddr = segmented_to_virtual(behavior);
     struct ObjectNode *listHead = &gObjectLists[get_object_list_from_behavior(behaviorAddr)];
     struct ObjectNode *obj = listHead->next;
     s32 count = 0;
@@ -915,7 +915,7 @@ s32 count_objects_with_behavior(const BehaviorScript *behavior) {
 }
 
 struct Object *cur_obj_find_nearby_held_actor(const BehaviorScript *behavior, f32 maxDist) {
-    const BehaviorScript *behaviorAddr = (const BehaviorScript*) segmented_to_virtual(behavior);
+    const BehaviorScript *behaviorAddr = segmented_to_virtual(behavior);
     struct ObjectNode *listHead;
     struct Object *obj;
     struct Object *foundObj;
@@ -1469,11 +1469,11 @@ s32 obj_check_if_collided_with_object(struct Object *obj1, struct Object *obj2) 
 }
 
 void cur_obj_set_behavior(const BehaviorScript *behavior) {
-    o->behavior = (const BehaviorScript*) segmented_to_virtual(behavior);
+    o->behavior = segmented_to_virtual(behavior);
 }
 
 void obj_set_behavior(struct Object *obj, const BehaviorScript *behavior) {
-    obj->behavior = (const BehaviorScript*) segmented_to_virtual(behavior);
+    obj->behavior = segmented_to_virtual(behavior);
 }
 
 s32 cur_obj_has_behavior(const BehaviorScript *behavior) {
@@ -1585,6 +1585,10 @@ void set_mario_interact_hoot_if_in_range(UNUSED s32 sp0, UNUSED s32 sp4, f32 sp8
 
 void obj_set_billboard(struct Object *obj) {
     obj->header.gfx.node.flags |= GRAPH_RENDER_BILLBOARD;
+}
+
+void obj_set_cylboard(struct Object *obj) {
+    obj->header.gfx.node.flags |= GRAPH_RENDER_CYLBOARD;
 }
 
 void cur_obj_set_hitbox_radius_and_height(f32 radius, f32 height) {
@@ -2255,7 +2259,7 @@ s32 cur_obj_set_direction_table(s8 *a0) {
 
 s32 cur_obj_progress_direction_table(void) {
     s8 spF;
-    s8 *sp8 = (s8*) o->oToxBoxMovementPattern;
+    s8 *sp8 = o->oToxBoxMovementPattern;
     s32 sp4 = o->oToxBoxMovementStep + 1;
 
     if (sp8[sp4] != -1) {

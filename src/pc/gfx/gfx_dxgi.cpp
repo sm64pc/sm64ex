@@ -1,4 +1,4 @@
-#if defined(ENABLE_DX11) || defined(ENABLE_DX12)
+#ifdef WAPI_DXGI
 
 #include <stdint.h>
 #include <math.h>
@@ -20,17 +20,19 @@
 #endif
 #include <PR/gbi.h>
 
+#include "../configfile.h"
+#include "../pc_main.h"
+
 #include "gfx_window_manager_api.h"
 #include "gfx_rendering_api.h"
 #include "gfx_direct3d_common.h"
 #include "gfx_screen_config.h"
 #include "gfx_pc.h"
 
+#define WINCLASS_NAME L"N64GAME"
+
 #define DECLARE_GFX_DXGI_FUNCTIONS
 #include "gfx_dxgi.h"
-
-#define WINCLASS_NAME L"N64GAME"
-#define GFX_API_NAME "DirectX"
 
 #ifdef VERSION_EU
 #define FRAME_INTERVAL_US_NUMERATOR 40000
@@ -46,7 +48,7 @@ static struct {
     HWND h_wnd;
     bool showing_error;
     uint32_t current_width, current_height;
-    std::string game_name;
+    std::string window_title;
 
     HMODULE dxgi_module;
     HRESULT (__stdcall *CreateDXGIFactory1)(REFIID riid, void **factory);
@@ -68,7 +70,6 @@ static struct {
     bool sync_interval_means_frames_to_wait;
     UINT length_in_vsync_frames;
 
-    void (*on_fullscreen_changed)(bool is_now_fullscreen);
     void (*run_one_game_iter)(void);
     bool (*on_key_down)(int scancode);
     bool (*on_key_up)(int scancode);
@@ -133,7 +134,7 @@ static void run_as_dpi_aware(Fun f) {
     }
 }
 
-static void toggle_borderless_window_full_screen(bool enable, bool call_callback) {
+static void toggle_borderless_window_full_screen(bool enable) {
     // Windows 7 + flip mode + waitable object can't go to exclusive fullscreen,
     // so do borderless instead. If DWM is enabled, this means we get one monitor
     // sync interval of latency extra. On Win 10 however (maybe Win 8 too), due to
@@ -169,6 +170,10 @@ static void toggle_borderless_window_full_screen(bool enable, bool call_callback
 
         // Save window position and size if the window is not maximized
         GetWindowRect(dxgi.h_wnd, &dxgi.last_window_rect);
+        configWindow.x = dxgi.last_window_rect.left;
+        configWindow.y = dxgi.last_window_rect.top;
+        configWindow.w = dxgi.last_window_rect.right - dxgi.last_window_rect.left;
+        configWindow.h = dxgi.last_window_rect.bottom - dxgi.last_window_rect.top;
 
         // Get in which monitor the window is
         HMONITOR h_monitor = MonitorFromWindow(dxgi.h_wnd, MONITOR_DEFAULTTONEAREST);
@@ -187,9 +192,19 @@ static void toggle_borderless_window_full_screen(bool enable, bool call_callback
 
         dxgi.is_full_screen = true;
     }
+}
 
-    if (dxgi.on_fullscreen_changed != nullptr && call_callback) {
-        dxgi.on_fullscreen_changed(enable);
+static void update_screen_settings(void) {
+    if (configWindow.fullscreen != dxgi.is_full_screen)
+        toggle_borderless_window_full_screen(configWindow.fullscreen);
+    if (!dxgi.is_full_screen) {
+        const int screen_width = GetSystemMetrics(SM_CXSCREEN);
+        const int screen_height = GetSystemMetrics(SM_CYSCREEN);
+        const int xpos = (configWindow.x == WAPI_WIN_CENTERPOS) ? (screen_width - configWindow.w) * 0.5 : configWindow.x;
+        const int ypos = (configWindow.y == WAPI_WIN_CENTERPOS) ? (screen_height - configWindow.h) * 0.5 : configWindow.y;
+        RECT wr = { xpos, ypos, xpos + (int)configWindow.w, ypos + (int)configWindow.h };
+        AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);
+        SetWindowPos(dxgi.h_wnd, NULL, wr.left, wr.top, wr.right - wr.left, wr.bottom - wr.top, SWP_NOACTIVATE | SWP_NOZORDER);
     }
 }
 
@@ -201,6 +216,10 @@ static void gfx_dxgi_on_resize(void) {
         ThrowIfFailed(dxgi.swap_chain->GetDesc1(&desc1));
         dxgi.current_width = desc1.Width;
         dxgi.current_height = desc1.Height;
+        if (!dxgi.is_full_screen) {
+            configWindow.w = dxgi.current_width;
+            configWindow.h = dxgi.current_height;
+        }
     }
 }
 
@@ -223,7 +242,8 @@ static LRESULT CALLBACK gfx_dxgi_wnd_proc(HWND h_wnd, UINT message, WPARAM w_par
             gfx_dxgi_on_resize();
             break;
         case WM_DESTROY:
-            exit(0);
+            game_exit();
+            break;
         case WM_PAINT:
             if (dxgi.showing_error) {
                 return DefWindowProcW(h_wnd, message, w_param, l_param);
@@ -246,7 +266,7 @@ static LRESULT CALLBACK gfx_dxgi_wnd_proc(HWND h_wnd, UINT message, WPARAM w_par
             break;
         case WM_SYSKEYDOWN:
             if ((w_param == VK_RETURN) && ((l_param & 1 << 30) == 0)) {
-                toggle_borderless_window_full_screen(!dxgi.is_full_screen, true);
+                toggle_borderless_window_full_screen(!dxgi.is_full_screen);
                 break;
             } else {
                 return DefWindowProcW(h_wnd, message, w_param, l_param);
@@ -254,10 +274,27 @@ static LRESULT CALLBACK gfx_dxgi_wnd_proc(HWND h_wnd, UINT message, WPARAM w_par
         default:
             return DefWindowProcW(h_wnd, message, w_param, l_param);
     }
+
+    if (configWindow.reset) {
+        dxgi.last_maximized_state = false;
+        configWindow.reset = false;
+        configWindow.x = WAPI_WIN_CENTERPOS;
+        configWindow.y = WAPI_WIN_CENTERPOS;
+        configWindow.w = DESIRED_SCREEN_WIDTH;
+        configWindow.h = DESIRED_SCREEN_HEIGHT;
+        configWindow.fullscreen = false;
+        configWindow.settings_changed = true;
+    }
+
+    if (configWindow.settings_changed) {
+        configWindow.settings_changed = false;
+        update_screen_settings();
+    }
+
     return 0;
 }
 
-static void gfx_dxgi_init(const char *game_name, bool start_in_fullscreen) {
+static void gfx_dxgi_init(const char *window_title) {
     LARGE_INTEGER qpc_init, qpc_freq;
     QueryPerformanceCounter(&qpc_init);
     QueryPerformanceFrequency(&qpc_freq);
@@ -266,11 +303,10 @@ static void gfx_dxgi_init(const char *game_name, bool start_in_fullscreen) {
 
     // Prepare window title
 
-    char title[512];
     wchar_t w_title[512];
-    int len = sprintf(title, "%s (%s)", game_name, GFX_API_NAME);
-    mbstowcs(w_title, title, len + 1);
-    dxgi.game_name = game_name;
+    int len = strlen(window_title);
+    mbstowcs(w_title, window_title, len + 1);
+    dxgi.window_title = window_title;
 
     // Create window
     WNDCLASSEXW wcex;
@@ -306,17 +342,7 @@ static void gfx_dxgi_init(const char *game_name, bool start_in_fullscreen) {
     ShowWindow(dxgi.h_wnd, SW_SHOW);
     UpdateWindow(dxgi.h_wnd);
 
-    if (start_in_fullscreen) {
-        toggle_borderless_window_full_screen(true, false);
-    }
-}
-
-static void gfx_dxgi_set_fullscreen_changed_callback(void (*on_fullscreen_changed)(bool is_now_fullscreen)) {
-    dxgi.on_fullscreen_changed = on_fullscreen_changed;
-}
-
-static void gfx_dxgi_set_fullscreen(bool enable) {
-    toggle_borderless_window_full_screen(enable, true);
+    update_screen_settings();
 }
 
 static void gfx_dxgi_set_keyboard_callbacks(bool (*on_key_down)(int scancode), bool (*on_key_up)(int scancode), void (*on_all_keys_up)(void)) {
@@ -528,10 +554,9 @@ void gfx_dxgi_create_factory_and_device(bool debug, int d3d_version, bool (*crea
     }
     create_device_fn(adapter.Get(), false);
 
-    char title[512];
     wchar_t w_title[512];
-    int len = sprintf(title, "%s (Direct3D %d)", dxgi.game_name.c_str(), d3d_version);
-    mbstowcs(w_title, title, len + 1);
+    int len = dxgi.window_title.length();
+    mbstowcs(w_title, dxgi.window_title.c_str(), len + 1);
     SetWindowTextW(dxgi.h_wnd, w_title);
 }
 
@@ -580,6 +605,9 @@ HWND gfx_dxgi_get_h_wnd(void) {
     return dxgi.h_wnd;
 }
 
+void gfx_dxgi_shutdown(void) {
+}
+
 void ThrowIfFailed(HRESULT res) {
     if (FAILED(res)) {
         fprintf(stderr, "Error: 0x%08X\n", res);
@@ -597,11 +625,9 @@ void ThrowIfFailed(HRESULT res, HWND h_wnd, const char *message) {
     }
 }
 
-struct GfxWindowManagerAPI gfx_dxgi_api = {
+struct GfxWindowManagerAPI gfx_dxgi = {
     gfx_dxgi_init,
     gfx_dxgi_set_keyboard_callbacks,
-    gfx_dxgi_set_fullscreen_changed_callback,
-    gfx_dxgi_set_fullscreen,
     gfx_dxgi_main_loop,
     gfx_dxgi_get_dimensions,
     gfx_dxgi_handle_events,
@@ -609,6 +635,7 @@ struct GfxWindowManagerAPI gfx_dxgi_api = {
     gfx_dxgi_swap_buffers_begin,
     gfx_dxgi_swap_buffers_end,
     gfx_dxgi_get_time,
+    gfx_dxgi_shutdown,
 };
 
 #endif

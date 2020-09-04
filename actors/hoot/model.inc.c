@@ -1,5 +1,3 @@
-#include "actors/group1.h"
-
 // Hoot
 
 // 0x05000900

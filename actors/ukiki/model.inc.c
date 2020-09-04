@@ -1,5 +1,3 @@
-#include "actors/group6.h"
-
 // Ukiki
 
 // Unreferenced light group

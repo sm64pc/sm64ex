@@ -1,4 +1,4 @@
-#ifdef ENABLE_DX12
+#ifdef RAPI_D3D12
 
 #include <stdint.h>
 #include <stdbool.h>

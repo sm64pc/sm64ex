@@ -32,10 +32,16 @@ extern f32 gCosineTable[];
 
 #define sqr(x) ((x) * (x))
 
+#define absx(x) ((x) < 0 ? -(x) : (x))
+
+#include "../../include/libc/stdlib.h"
+
 void *vec3f_copy(Vec3f dest, Vec3f src);
 void *vec3f_set(Vec3f dest, f32 x, f32 y, f32 z);
 void *vec3f_add(Vec3f dest, Vec3f a);
 void *vec3f_sum(Vec3f dest, Vec3f a, Vec3f b);
+void *vec3f_dif(Vec3f dest, Vec3f a, Vec3f b);
+void *vec3f_mul(Vec3f dest, f32 a);
 void *vec3s_copy(Vec3s dest, Vec3s src);
 void *vec3s_set(Vec3s dest, s16 x, s16 y, s16 z);
 void *vec3s_add(Vec3s dest, Vec3s a);
@@ -46,6 +52,8 @@ void *vec3f_to_vec3s(Vec3s dest, Vec3f a);
 void *find_vector_perpendicular_to_plane(Vec3f dest, Vec3f a, Vec3f b, Vec3f c);
 void *vec3f_cross(Vec3f dest, Vec3f a, Vec3f b);
 void *vec3f_normalize(Vec3f dest);
+f32 vec3f_length(Vec3f a);
+f32 vec3f_dot(Vec3f a, Vec3f b);
 void mtxf_copy(Mat4 dest, Mat4 src);
 void mtxf_identity(Mat4 mtx);
 void mtxf_translate(Mat4 dest, Vec3f b);
@@ -53,6 +61,7 @@ void mtxf_lookat(Mat4 mtx, Vec3f from, Vec3f to, s16 roll);
 void mtxf_rotate_zxy_and_translate(Mat4 dest, Vec3f translate, Vec3s rotate);
 void mtxf_rotate_xyz_and_translate(Mat4 dest, Vec3f b, Vec3s c);
 void mtxf_billboard(Mat4 dest, Mat4 mtx, Vec3f position, s16 angle);
+void mtxf_cylboard(Mat4 dest, Mat4 mtx, Vec3f position, s16 angle);
 void mtxf_align_terrain_normal(Mat4 dest, Vec3f upDir, Vec3f pos, s16 yaw);
 void mtxf_align_terrain_triangle(Mat4 mtx, Vec3f pos, s16 yaw, f32 radius);
 void mtxf_mul(Mat4 dest, Mat4 a, Mat4 b);

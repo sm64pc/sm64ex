@@ -1,5 +1,3 @@
-#include "actors/group14.h"
-
 // Koopa Flag
 
 // 0x06000000

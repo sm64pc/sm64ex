@@ -15,8 +15,13 @@ typedef int s32;
 typedef unsigned char u8;
 typedef unsigned int u32;
 
-#define BSWAP16(x) x = __builtin_bswap16(x)
-#define BSWAP32(x) x = __builtin_bswap32(x)
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+# define BSWAP16(x)
+# define BSWAP32(x)
+#else
+# define BSWAP16(x) x = __builtin_bswap16(x)
+# define BSWAP32(x) x = __builtin_bswap32(x)
+#endif
 
 #define NORETURN __attribute__((noreturn))
 #define UNUSED __attribute__((unused))

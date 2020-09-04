@@ -14,6 +14,8 @@
 #include "shape_helper.h"
 #include "draw_objects.h"
 
+#include "gfx_dimensions.h"
+
 /**
  * @file draw_objects.c
  * This file contains the functions and helpers for rendering the various
@@ -693,14 +695,19 @@ void func_80179B64(struct ObjGroup *group) {
                                 (applyproc_t) Unknown80179ACC, group);
 }
 
-/* 22836C -> 228498 */
-void func_80179B9C(struct GdVec3f *pos, struct ObjCamera *cam, struct ObjView *view) {
+// plc again
+void func_80179B9C(struct GdVec3f *pos, struct ObjCamera *cam, struct ObjView *view)
+{
+    f32 aspect = GFX_DIMENSIONS_ASPECT_RATIO;
+    aspect *= 0.75;
+    //func_80196430(pos, &cam->unkE8);
     gd_rotate_and_translate_vec3f(pos, &cam->unkE8);
+
     if (pos->z > -256.0f) {
         return;
     }
-
-    pos->x *= 256.0 / -pos->z;
+    
+    pos->x *= 256.0 / -pos->z / aspect;
     pos->y *= 256.0 / pos->z;
     pos->x += view->lowerRight.x / 2.0f;
     pos->y += view->lowerRight.y / 2.0f;
@@ -800,8 +807,7 @@ void drawscene(enum SceneType process, struct ObjGroup *interactables, struct Ob
     sSceneProcessType = process;
 
     if ((sNumActiveLights = sUpdateViewState.view->flags & VIEW_LIGHT)) {
-      sUpdateViewState.view->flags = (enum GdViewFlags)(
-        sUpdateViewState.view->flags & ~VIEW_LIGHT);
+        sUpdateViewState.view->flags &= ~VIEW_LIGHT;
     }
 
     sNumActiveLights = 1;
@@ -1400,7 +1406,7 @@ void update_view(struct ObjView *view) {
     sUpdateViewState.unused18 = 0;
 
     if (!(view->flags & VIEW_UPDATE)) {
-        view->flags = (enum GdViewFlags) (view->flags & ~VIEW_WAS_UPDATED);
+        view->flags &= ~VIEW_WAS_UPDATED;
         return;
     }
 
@@ -1410,7 +1416,7 @@ void update_view(struct ObjView *view) {
     }
 
     if (!(view->flags & VIEW_WAS_UPDATED)) {
-      view->flags = (enum GdViewFlags)(view->flags | VIEW_WAS_UPDATED);
+        view->flags |= VIEW_WAS_UPDATED;
     }
 
     gViewUpdateCamera = NULL;

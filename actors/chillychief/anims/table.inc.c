@@ -1,5 +1,3 @@
-#include "actors/group16.h"
-
 // 0x06003994
 const struct Animation *const chilly_chief_seg6_anims_06003994[] = {
     &chilly_chief_seg6_anim_060035E0,

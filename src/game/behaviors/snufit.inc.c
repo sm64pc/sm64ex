@@ -180,7 +180,10 @@ void bhv_snufit_loop(void) {
 void bhv_snufit_balls_loop(void) {
     // If far from Mario or in a different room, despawn.
     if ((o->activeFlags & ACTIVE_FLAG_IN_DIFFERENT_ROOM)
-        || (o->oTimer != 0 && o->oDistanceToMario > 1500.0f)) {
+#ifndef NODRAWINGDISTANCE
+        || (o->oTimer != 0 && o->oDistanceToMario > 1500.0f)
+#endif
+            ){
         obj_mark_for_deletion(o);
     }
 

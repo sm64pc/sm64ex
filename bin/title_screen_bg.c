@@ -1,8 +1,6 @@
 #include <ultra64.h>
 #include "sm64.h"
 
-#include "textures.h"
-
 #include "make_const_nonconst.h"
 
 // 0x0A000000 - 0x0A000100

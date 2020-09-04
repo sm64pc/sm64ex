@@ -1,5 +1,3 @@
-#include "actors/group11.h"
-
 // Lakitu Enemy
 
 // Unreferenced light group

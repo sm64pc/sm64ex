@@ -34,9 +34,9 @@ Gfx *geo_envfx_main(s32 callContext, struct GraphNode *node, Mat4 mtxf) {
             vec3f_to_vec3s(marioPos, gPlayerCameraState->pos);
             particleList = envfx_update_particles(snowMode, marioPos, camTo, camFrom);
             if (particleList != NULL) {
-                Mtx *mtx = (Mtx*) alloc_display_list(sizeof(*mtx));
+                Mtx *mtx = alloc_display_list(sizeof(*mtx));
 
-                gfx = (Gfx*) alloc_display_list(2 * sizeof(*gfx));
+                gfx = alloc_display_list(2 * sizeof(*gfx));
                 mtxf_to_mtx(mtx, mtxf);
                 gSPMatrix(&gfx[0], VIRTUAL_TO_PHYSICAL(mtx), G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
                 gSPBranchList(&gfx[1], VIRTUAL_TO_PHYSICAL(particleList));

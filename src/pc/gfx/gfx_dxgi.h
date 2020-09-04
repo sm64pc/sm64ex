@@ -11,6 +11,6 @@ void ThrowIfFailed(HRESULT res);
 void ThrowIfFailed(HRESULT res, HWND h_wnd, const char *message);
 #endif
 
-extern struct GfxWindowManagerAPI gfx_dxgi_api;
+extern struct GfxWindowManagerAPI gfx_dxgi;
 
 #endif

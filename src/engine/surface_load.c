@@ -525,14 +525,13 @@ static void load_environmental_regions(s16 **data) {
  */
 void alloc_surface_pools(void) {
     sSurfacePoolSize = 2300;
-    sSurfaceNodePool = (struct SurfaceNode*) main_pool_alloc(7000 * sizeof(struct SurfaceNode), MEMORY_POOL_LEFT);
-    sSurfacePool = (struct Surface*) main_pool_alloc(sSurfacePoolSize * sizeof(struct Surface), MEMORY_POOL_LEFT);
+    sSurfaceNodePool = main_pool_alloc(7000 * sizeof(struct SurfaceNode), MEMORY_POOL_LEFT);
+    sSurfacePool = main_pool_alloc(sSurfacePoolSize * sizeof(struct Surface), MEMORY_POOL_LEFT);
 
     gCCMEnteredSlide = 0;
     reset_red_coins_collected();
 }
 
-#ifdef NO_SEGMENTED_MEMORY
 /**
  * Get the size of the terrain data, to get the correct size when copying later.
  */
@@ -580,7 +579,6 @@ u32 get_area_terrain_size(s16 *data) {
 
     return data - startPos;
 }
-#endif
 
 
 /**
@@ -759,7 +757,7 @@ void load_object_collision_model(void) {
     UNUSED s32 unused;
     s16 vertexData[600];
 
-    s16 *collisionData = (s16*) gCurrentObject->collisionData;
+    s16 *collisionData = gCurrentObject->collisionData;
     f32 marioDist = gCurrentObject->oDistanceToMario;
     f32 tangibleDist = gCurrentObject->oCollisionDistance;
 
@@ -787,9 +785,13 @@ void load_object_collision_model(void) {
         }
     }
 
+#ifndef NODRAWINGDISTANCE
     if (marioDist < gCurrentObject->oDrawingDistance) {
+#endif
         gCurrentObject->header.gfx.node.flags |= GRAPH_RENDER_ACTIVE;
+#ifndef NODRAWINGDISTANCE
     } else {
         gCurrentObject->header.gfx.node.flags &= ~GRAPH_RENDER_ACTIVE;
     }
+#endif
 }

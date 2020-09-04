@@ -1,5 +1,3 @@
-#include "actors/group9.h"
-
 // Chair
 
 // Unreferenced light group
