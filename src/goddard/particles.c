@@ -65,7 +65,7 @@ void func_80181C00(struct ObjVertex *vtx1, struct ObjVertex *vtx2) {
     link = gGdSkinNet->unk1C0->link1C;
     while (link != NULL) {
         // FIXME: types
-        struct Connection *sp24 = (void *) link->obj;
+        struct Connection *sp24 = (struct Connection*) link->obj;
 
         if ((sp24->unk1C.vtx == vtx1 || sp24->unk1C.vtx == vtx2)
             && (sp24->unk20.vtx == vtx1 || sp24->unk20.vtx == vtx2)) {
@@ -75,7 +75,7 @@ void func_80181C00(struct ObjVertex *vtx1, struct ObjVertex *vtx2) {
     }
     if (link == NULL) {
         // FIXME: types
-        sp2C = (void *) func_801825FC(vtx1, vtx2);
+        sp2C = (struct GdObj*) func_801825FC(vtx1, vtx2);
         addto_group(gGdSkinNet->unk1C0, sp2C);
     }
 }
@@ -227,7 +227,7 @@ struct ObjParticle *make_particle(u32 a, s32 b, f32 x, f32 y, f32 z) {
 
 /* 230DCC -> 230F48 */
 struct Connection *func_801825FC(struct ObjVertex *vtx1, struct ObjVertex *vtx2) {
-    struct Connection *sp34 = gd_malloc_perm(44);
+    struct Connection *sp34 = (struct Connection*) gd_malloc_perm(44);
     struct GdVec3f sp28;
     struct GdVec3f sp1C;
 
@@ -393,7 +393,7 @@ void move_particle(struct ObjParticle *ptc) {
                     ptc->unk6C = make_group(0);
                     for (sp58 = 0; sp58 < 30; sp58++) {
                         sp60 = make_particle(1, -1, ptc->unk20.x, ptc->unk20.y, ptc->unk20.z);
-                        sp60->unk1C = (void *) ptc->unk1C;
+                        sp60->unk1C = (struct ObjShape*) ptc->unk1C;
                         addto_group(ptc->unk6C, &sp60->header);
                         sp60->unk54 &= ~8;
                     }

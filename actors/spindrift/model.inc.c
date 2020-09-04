@@ -1,3 +1,5 @@
+#include "actors/group7.h"
+
 // Spindrift
 
 // Unreferenced light group

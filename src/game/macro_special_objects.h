@@ -15,6 +15,8 @@ void spawn_macro_abs_special(u32 model, const BehaviorScript *behavior, s16 x, s
 void spawn_macro_objects(s16 areaIndex, s16 *macroObjList);
 void spawn_macro_objects_hardcoded(s16 areaIndex, s16 *macroObjList);
 void spawn_special_objects(s16 areaIndex, s16 **specialObjList);
+#ifdef NO_SEGMENTED_MEMORY
 u32 get_special_objects_size(s16 *data);
+#endif
 
 #endif // MACRO_SPECIAL_OBJECTS_H

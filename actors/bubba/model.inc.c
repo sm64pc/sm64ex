@@ -1,3 +1,5 @@
+#include "actors/group11.h"
+
 // Possible Removed Actor File
 // It's possible that bubba and bub used to be 2 "actors" in
 // one actor file.

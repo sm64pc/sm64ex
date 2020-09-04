@@ -1,3 +1,5 @@
+#include "actors/group12.h"
+
 // Bowser (King Koopa)
 
 // 0x0601F438

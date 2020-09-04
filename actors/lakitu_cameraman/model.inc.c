@@ -1,3 +1,5 @@
+#include "actors/group15.h"
+
 // Lakitu (Cameraman)
 
 // 0x06000000

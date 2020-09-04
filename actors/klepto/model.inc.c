@@ -1,3 +1,5 @@
+#include "actors/group5.h"
+
 // Possible Removed Actor File
 
 // Bin ID? What is this?

@@ -151,6 +151,11 @@ struct Drum *get_drum(s32 bankId, s32 drumId) {
         gAudioErrorFlags = ((bankId << 8) + drumId) + 0x4000000;
         return 0;
     }
+#ifndef NO_SEGMENTED_MEMORY
+    if ((uintptr_t) gCtlEntries[bankId].drums < 0x80000000U) {
+        return 0;
+    }
+#endif
     drum = gCtlEntries[bankId].drums[drumId];
     if (drum == NULL) {
         gAudioErrorFlags = ((bankId << 8) + drumId) + 0x5000000;
@@ -244,6 +249,11 @@ void process_notes(void) {
 #ifdef VERSION_EU
         playbackState = (struct NotePlaybackState *) &note->priority;
         if (note->parentLayer != NO_LAYER) {
+#ifndef NO_SEGMENTED_MEMORY
+            if ((uintptr_t) playbackState->parentLayer < 0x7fffffffU) {
+                continue;
+            }
+#endif
             if (!playbackState->parentLayer->enabled && playbackState->priority >= NOTE_PRIORITY_MIN) {
                 goto c;
             } else if (playbackState->parentLayer->seqChannel->seqPlayer == NULL) {
@@ -719,7 +729,7 @@ void note_pool_fill(struct NotePool *pool, s32 count) {
         }
 
         while (j < count) {
-            note = audio_list_pop_back(source);
+            note = (struct Note*) audio_list_pop_back(source);
             if (note == NULL) {
                 break;
             }
@@ -779,7 +789,7 @@ struct Note *pop_node_with_value_less_equal(struct AudioListItem *list, s32 limi
 #endif
 
     audio_list_remove(best);
-    return best->u.value;
+    return (struct Note*) best->u.value;
 }
 
 #if defined(VERSION_EU)
@@ -858,7 +868,7 @@ void note_release_and_take_ownership(struct Note *note, struct SequenceChannelLa
 }
 
 struct Note *alloc_note_from_disabled(struct NotePool *pool, struct SequenceChannelLayer *seqLayer) {
-    struct Note *note = audio_list_pop_back(&pool->disabled);
+    struct Note *note = (struct Note*) audio_list_pop_back(&pool->disabled);
     if (note != NULL) {
 #ifdef VERSION_EU
         note_init_for_layer(note, seqLayer);
@@ -874,7 +884,7 @@ struct Note *alloc_note_from_disabled(struct NotePool *pool, struct SequenceChan
 }
 
 struct Note *alloc_note_from_decaying(struct NotePool *pool, struct SequenceChannelLayer *seqLayer) {
-    struct Note *note = audio_list_pop_back(&pool->decaying);
+    struct Note *note = (struct Note*) audio_list_pop_back(&pool->decaying);
     if (note != NULL) {
         note_release_and_take_ownership(note, seqLayer);
         audio_list_push_back(&pool->releasing, &note->listItem);
@@ -1042,7 +1052,7 @@ void note_init_all(void) {
 #ifdef VERSION_EU
         note->synthesisState.synthesisBuffers = soundAlloc(&gNotesAndBuffersPool, sizeof(struct NoteSynthesisBuffers));
 #else
-        note->synthesisBuffers = soundAlloc(&gNotesAndBuffersPool, sizeof(struct NoteSynthesisBuffers));
+        note->synthesisBuffers = (struct NoteSynthesisBuffers*) soundAlloc(&gNotesAndBuffersPool, sizeof(struct NoteSynthesisBuffers));
 #endif
     }
 }

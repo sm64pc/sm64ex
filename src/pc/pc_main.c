@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <stdio.h>
 
 #ifdef TARGET_WEB
 #include <emscripten.h>
@@ -12,32 +11,25 @@
 #include "audio/external.h"
 
 #include "gfx/gfx_pc.h"
-
 #include "gfx/gfx_opengl.h"
 #include "gfx/gfx_direct3d11.h"
 #include "gfx/gfx_direct3d12.h"
-
 #include "gfx/gfx_dxgi.h"
+#include "gfx/gfx_glx.h"
 #include "gfx/gfx_sdl.h"
 
 #include "audio/audio_api.h"
+#include "audio/audio_wasapi.h"
+#include "audio/audio_pulse.h"
+#include "audio/audio_alsa.h"
 #include "audio/audio_sdl.h"
 #include "audio/audio_null.h"
 
-#include "pc_main.h"
-#include "cliopts.h"
-#include "configfile.h"
-#include "controller/controller_api.h"
 #include "controller/controller_keyboard.h"
-#include "fs/fs.h"
 
-#include "game/game_init.h"
-#include "game/main.h"
-#include "game/thread6.h"
+#include "configfile.h"
 
-#ifdef DISCORDRPC
-#include "pc/discord/discordrpc.h"
-#endif
+#define CONFIG_FILE "sm64config.txt"
 
 OSMesg D_80339BEC;
 OSMesgQueue gSIEventMesgQueue;
@@ -48,10 +40,6 @@ s8 gDebugLevelSelect;
 s8 gShowProfiler;
 s8 gShowDebugText;
 
-s32 gRumblePakPfs;
-struct RumbleData gRumbleDataQueue[3];
-struct StructSH8031D9B0 gCurrRumbleSettings;
-
 static struct AudioAPI *audio_api;
 static struct GfxWindowManagerAPI *wm_api;
 static struct GfxRenderingAPI *rendering_api;
@@ -61,19 +49,23 @@ extern void thread5_game_loop(void *arg);
 extern void create_next_audio_buffer(s16 *samples, u32 num_samples);
 void game_loop_one_iteration(void);
 
-void dispatch_audio_sptask(struct SPTask *spTask) {
+void dispatch_audio_sptask(UNUSED struct SPTask *spTask) {
 }
 
-void set_vblank_handler(s32 index, struct VblankHandler *handler, OSMesgQueue *queue, OSMesg *msg) {
+void set_vblank_handler(UNUSED s32 index, UNUSED struct VblankHandler *handler, UNUSED OSMesgQueue *queue, UNUSED OSMesg *msg) {
 }
 
-static bool inited = false;
+static uint8_t inited = 0;
 
-#include "game/display.h" // for gGlobalTimer
+#include "game/game_init.h" // for gGlobalTimer
 void send_display_list(struct SPTask *spTask) {
-    if (!inited) return;
+    if (!inited) {
+        return;
+    }
     gfx_run((Gfx *)spTask->task.t.data_ptr);
 }
+
+#define printf
 
 #ifdef VERSION_EU
 #define SAMPLES_HIGH 656
@@ -85,15 +77,8 @@ void send_display_list(struct SPTask *spTask) {
 
 void produce_one_frame(void) {
     gfx_start_frame();
-
-    const f32 master_mod = (f32)configMasterVolume / 127.0f;
-    set_sequence_player_volume(SEQ_PLAYER_LEVEL, (f32)configMusicVolume / 127.0f * master_mod);
-    set_sequence_player_volume(SEQ_PLAYER_SFX, (f32)configSfxVolume / 127.0f * master_mod);
-    set_sequence_player_volume(SEQ_PLAYER_ENV, (f32)configEnvVolume / 127.0f * master_mod);
-
     game_loop_one_iteration();
-    thread6_rumble_loop(NULL);
-
+    
     int samples_left = audio_api->buffered();
     u32 num_audio_samples = samples_left < audio_api->get_desired_buffered() ? SAMPLES_HIGH : SAMPLES_LOW;
     //printf("Audio samples: %d %u\n", samples_left, num_audio_samples);
@@ -106,35 +91,9 @@ void produce_one_frame(void) {
         create_next_audio_buffer(audio_buffer + i * (num_audio_samples * 2), num_audio_samples);
     }
     //printf("Audio samples before submitting: %d\n", audio_api->buffered());
-
     audio_api->play((u8 *)audio_buffer, 2 * num_audio_samples * 4);
-
+    
     gfx_end_frame();
-}
-
-void audio_shutdown(void) {
-    if (audio_api) {
-        if (audio_api->shutdown) audio_api->shutdown();
-        audio_api = NULL;
-    }
-}
-
-void game_deinit(void) {
-#ifdef DISCORDRPC
-    discord_shutdown();
-#endif
-    configfile_save(configfile_name());
-    controller_shutdown();
-    audio_shutdown();
-    gfx_shutdown();
-    inited = false;
-}
-
-void game_exit(void) {
-    game_deinit();
-#ifndef TARGET_WEB
-    exit(0);
-#endif
 }
 
 #ifdef TARGET_WEB
@@ -166,75 +125,71 @@ static void on_anim_frame(double time) {
         }
     }
 
-    if (inited) // only continue if the init flag is still set
-        request_anim_frame(on_anim_frame);
+    request_anim_frame(on_anim_frame);
 }
 #endif
 
-
-#ifdef RMODERN
-#include "rmodern/rmodern.h"
-void main_func(void)
-{
-    rmodern_init();
+static void save_config(void) {
+    configfile_save(CONFIG_FILE);
 }
-#else
+
+static void on_fullscreen_changed(bool is_now_fullscreen) {
+    configFullscreen = is_now_fullscreen;
+}
+
 void main_func(void) {
     static u64 pool[0x165000/8 / 4 * sizeof(void *)];
     main_pool_init(pool, pool + sizeof(pool) / sizeof(pool[0]));
     gEffectsMemoryPool = mem_pool_init(0x4000, MEMORY_POOL_LEFT);
 
-    const char *gamedir = gCLIOpts.GameDir[0] ? gCLIOpts.GameDir : FS_BASEDIR;
-    const char *userpath = gCLIOpts.SavePath[0] ? gCLIOpts.SavePath : sys_user_path();
-    fs_init(sys_ropaths, gamedir, userpath);
+    configfile_load(CONFIG_FILE);
+    atexit(save_config);
 
-    configfile_load(configfile_name());
+#ifdef TARGET_WEB
+    emscripten_set_main_loop(em_main_loop, 0, 0);
+    request_anim_frame(on_anim_frame);
+#endif
 
-    if (gCLIOpts.FullScreen == 1)
-        configWindow.fullscreen = true;
-    else if (gCLIOpts.FullScreen == 2)
-        configWindow.fullscreen = false;
-
-    #if defined(WAPI_SDL1) || defined(WAPI_SDL2)
-    wm_api = &gfx_sdl;
-    #elif defined(WAPI_DXGI)
-    wm_api = &gfx_dxgi;
-    #else
-    #error No window API!
-    #endif
-
-    #if defined(RAPI_D3D11)
-    rendering_api = &gfx_direct3d11_api;
-    # define RAPI_NAME "DirectX 11"
-    #elif defined(RAPI_D3D12)
+#if defined(ENABLE_DX12)
     rendering_api = &gfx_direct3d12_api;
-    # define RAPI_NAME "DirectX 12"
-    #elif defined(RAPI_GL) || defined(RAPI_GL_LEGACY)
+    wm_api = &gfx_dxgi_api;
+#elif defined(ENABLE_DX11)
+    rendering_api = &gfx_direct3d11_api;
+    wm_api = &gfx_dxgi_api;
+#elif defined(ENABLE_OPENGL)
     rendering_api = &gfx_opengl_api;
-    # ifdef USE_GLES
-    #  define RAPI_NAME "OpenGL ES"
-    # else
-    #  define RAPI_NAME "OpenGL"
-    # endif
+    #if defined(__linux__)
+        wm_api = &gfx_glx;
     #else
-    #error No rendering API!
+        wm_api = &gfx_sdl;
     #endif
+#endif
 
-    char window_title[96] =
-    "Super Mario 64 Render96ex (" RAPI_NAME ")"
-    #ifdef NIGHTLY
-    " nightly " GIT_HASH
-    #else
-    " " GIT_HASH
-    #endif
-    ;
-
-    gfx_init(wm_api, rendering_api, window_title);
+    gfx_init(wm_api, rendering_api, "Super Mario 64 PC-Port", configFullscreen);
+    
+    wm_api->set_fullscreen_changed_callback(on_fullscreen_changed);
     wm_api->set_keyboard_callbacks(keyboard_on_key_down, keyboard_on_key_up, keyboard_on_all_keys_up);
-
-    if (audio_api == NULL && audio_sdl.init()) 
+    
+#if HAVE_WASAPI
+    if (audio_api == NULL && audio_wasapi.init()) {
+        audio_api = &audio_wasapi;
+    }
+#endif
+#if HAVE_PULSE_AUDIO
+    if (audio_api == NULL && audio_pulse.init()) {
+        audio_api = &audio_pulse;
+    }
+#endif
+#if HAVE_ALSA
+    if (audio_api == NULL && audio_alsa.init()) {
+        audio_api = &audio_alsa;
+    }
+#endif
+#ifdef TARGET_WEB
+    if (audio_api == NULL && audio_sdl.init()) {
         audio_api = &audio_sdl;
-
+    }
+#endif
     if (audio_api == NULL) {
         audio_api = &audio_null;
     }
@@ -243,38 +198,28 @@ void main_func(void) {
     sound_init();
 
     thread5_game_loop(NULL);
-
-    inited = true;
-
-#ifdef EXTERNAL_DATA
-    // precache data if needed
-    if (configPrecacheRes) {
-        fprintf(stdout, "precaching data\n");
-        fflush(stdout);
-        gfx_precache_textures();
-    }
-#endif
-
-#ifdef DISCORDRPC
-    discord_init();
-#endif
-
 #ifdef TARGET_WEB
-    emscripten_set_main_loop(em_main_loop, 0, 0);
-    request_anim_frame(on_anim_frame);
+    /*for (int i = 0; i < atoi(argv[1]); i++) {
+        game_loop_one_iteration();
+    }*/
+    inited = 1;
 #else
-    while (true) {
+    inited = 1;
+    while (1) {
         wm_api->main_loop(produce_one_frame);
-#ifdef DISCORDRPC
-        discord_update_rich_presence();
-#endif
     }
 #endif
 }
-#endif
 
-int main(int argc, char *argv[]) {
-    parse_cli_opts(argc, argv);
+#if defined(_WIN32) || defined(_WIN64)
+#include <windows.h>
+int WINAPI WinMain(UNUSED HINSTANCE hInstance, UNUSED HINSTANCE hPrevInstance, UNUSED LPSTR pCmdLine, UNUSED int nCmdShow) {
     main_func();
     return 0;
 }
+#else
+int main(UNUSED int argc, UNUSED char *argv[]) {
+    main_func();
+    return 0;
+}
+#endif

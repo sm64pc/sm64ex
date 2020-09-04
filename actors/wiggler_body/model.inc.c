@@ -1,3 +1,5 @@
+#include "actors/group11.h"
+
 // Wiggler Body
 
 // 0x05005A30

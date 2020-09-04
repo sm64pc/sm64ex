@@ -151,9 +151,7 @@ static void pokey_act_uninitialized(void) {
     s32 i;
     s16 partModel;
 
-#ifndef NODRAWINGDISTANCE
     if (o->oDistanceToMario < 2000.0f) {
-#endif
         partModel = MODEL_POKEY_HEAD;
 
         for (i = 0; i < 5; i++) {
@@ -172,9 +170,7 @@ static void pokey_act_uninitialized(void) {
         o->oPokeyNumAliveBodyParts = 5;
         o->oPokeyBottomBodyPartSize = 1.0f;
         o->oAction = POKEY_ACT_WANDER;
-#ifndef NODRAWINGDISTANCE
     }
-#endif
 }
 
 /**
@@ -189,11 +185,9 @@ static void pokey_act_wander(void) {
 
     if (o->oPokeyNumAliveBodyParts == 0) {
         obj_mark_for_deletion(o);
-#ifndef NODRAWINGDISTANCE
     } else if (o->oDistanceToMario > 2500.0f) {
         o->oAction = POKEY_ACT_UNLOAD_PARTS;
         o->oForwardVel = 0.0f;
-#endif
     } else {
         treat_far_home_as_mario(1000.0f);
         cur_obj_update_floor_and_walls();

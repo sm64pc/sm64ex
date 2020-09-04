@@ -7,16 +7,11 @@
 *.ilk
 *.exp
 
-# Patch and wiggle related residdue
-*.rej
-*.porig
-
 # Precompiled Headers
 *.gch
 *.pch
 
 # Libraries
-*.lib
 *.a
 *.la
 *.lo
@@ -45,16 +40,15 @@
 # Text editor remnants
 *.swp
 .vscode/*
-.idea/*
 
 # General project-specific ignores
+__pycache__/*
 doxygen/doxygen/*
 build/*
 *.dump
 *.mio0
 *.z64
 *.map
-*.sav
 .assets-local.txt
 sm64_save_file.bin
 sm64config.txt
@@ -78,3 +72,12 @@ sm64config.txt
 !/sound/**/*custom*/**/*.aiff
 !/assets/**/*custom*.bin
 !/assets/**/*custom*/**/*.bin
+
+# Visual Studio.
+/.vs/**/*
+/x64/**/*
+/tst/x64/**/*
+/packages/**/*
+*.cache
+*.log
+*.tlog

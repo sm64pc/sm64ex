@@ -1,5 +1,7 @@
 #include <ultra64.h>
+#ifdef NO_SEGMENTED_MEMORY
 #include <string.h>
+#endif
 
 #include "sm64.h"
 #include "audio/external.h"
@@ -22,7 +24,6 @@
 #include "math_util.h"
 #include "surface_collision.h"
 #include "surface_load.h"
-#include "level_table.h"
 
 #define CMD_GET(type, offset) (*(type *) (CMD_PROCESS_OFFSET(offset) + (u8 *) sCurrentCmd))
 
@@ -95,7 +96,7 @@ static void level_cmd_load_and_execute(void) {
     *sStackTop++ = (uintptr_t) sStackBase;
     sStackBase = sStackTop;
 
-    sCurrentCmd = segmented_to_virtual(CMD_GET(void *, 12));
+    sCurrentCmd = (struct LevelCommand*) segmented_to_virtual(CMD_GET(void *, 12));
 }
 
 static void level_cmd_exit_and_execute(void) {
@@ -108,7 +109,7 @@ static void level_cmd_exit_and_execute(void) {
             MEMORY_POOL_LEFT);
 
     sStackTop = sStackBase;
-    sCurrentCmd = segmented_to_virtual(targetAddr);
+    sCurrentCmd = (struct LevelCommand*) segmented_to_virtual(targetAddr);
 }
 
 static void level_cmd_exit(void) {
@@ -142,12 +143,12 @@ static void level_cmd_sleep2(void) {
 }
 
 static void level_cmd_jump(void) {
-    sCurrentCmd = segmented_to_virtual(CMD_GET(void *, 4));
+    sCurrentCmd = (struct LevelCommand*) segmented_to_virtual(CMD_GET(void *, 4));
 }
 
 static void level_cmd_jump_and_link(void) {
     *sStackTop++ = (uintptr_t) NEXT_CMD;
-    sCurrentCmd = segmented_to_virtual(CMD_GET(void *, 4));
+    sCurrentCmd = (struct LevelCommand*) segmented_to_virtual(CMD_GET(void *, 4));
 }
 
 static void level_cmd_return(void) {
@@ -191,7 +192,7 @@ static void level_cmd_loop_until(void) {
 
 static void level_cmd_jump_if(void) {
     if (eval_script_op(CMD_GET(u8, 2), CMD_GET(s32, 4)) != 0) {
-        sCurrentCmd = segmented_to_virtual(CMD_GET(void *, 8));
+        sCurrentCmd = (struct LevelCommand*) segmented_to_virtual(CMD_GET(void *, 8));
     } else {
         sCurrentCmd = CMD_NEXT;
     }
@@ -200,7 +201,7 @@ static void level_cmd_jump_if(void) {
 static void level_cmd_jump_and_link_if(void) {
     if (eval_script_op(CMD_GET(u8, 2), CMD_GET(s32, 4)) != 0) {
         *sStackTop++ = (uintptr_t) NEXT_CMD;
-        sCurrentCmd = segmented_to_virtual(CMD_GET(void *, 8));
+        sCurrentCmd = (struct LevelCommand*) segmented_to_virtual(CMD_GET(void *, 8));
     } else {
         sCurrentCmd = CMD_NEXT;
     }
@@ -445,7 +446,7 @@ static void level_cmd_place_object(void) {
 
     if (sCurrAreaIndex != -1 && ((CMD_GET(u8, 2) & val7) || CMD_GET(u8, 2) == 0x1F)) {
         model = CMD_GET(u8, 3);
-        spawnInfo = alloc_only_pool_alloc(sLevelPool, sizeof(struct SpawnInfo));
+        spawnInfo = (struct SpawnInfo*) alloc_only_pool_alloc(sLevelPool, sizeof(struct SpawnInfo));
 
         spawnInfo->startPos[0] = CMD_GET(s16, 4);
         spawnInfo->startPos[1] = CMD_GET(s16, 6);
@@ -471,7 +472,7 @@ static void level_cmd_place_object(void) {
 
 static void level_cmd_create_warp_node(void) {
     if (sCurrAreaIndex != -1) {
-        struct ObjectWarpNode *warpNode =
+        struct ObjectWarpNode *warpNode = (struct ObjectWarpNode*)
             alloc_only_pool_alloc(sLevelPool, sizeof(struct ObjectWarpNode));
 
         warpNode->node.id = CMD_GET(u8, 2);
@@ -494,7 +495,7 @@ static void level_cmd_create_instant_warp(void) {
 
     if (sCurrAreaIndex != -1) {
         if (gAreas[sCurrAreaIndex].instantWarps == NULL) {
-            gAreas[sCurrAreaIndex].instantWarps =
+            gAreas[sCurrAreaIndex].instantWarps = (struct InstantWarp*)
                 alloc_only_pool_alloc(sLevelPool, 4 * sizeof(struct InstantWarp));
 
             for (i = INSTANT_WARP_INDEX_START; i < INSTANT_WARP_INDEX_STOP; i++) {
@@ -530,7 +531,7 @@ static void level_cmd_create_painting_warp_node(void) {
     if (sCurrAreaIndex != -1) {
         if (gAreas[sCurrAreaIndex].paintingWarpNodes == NULL) {
             gAreas[sCurrAreaIndex].paintingWarpNodes =
-                alloc_only_pool_alloc(sLevelPool, 45 * sizeof(struct WarpNode));
+                (struct WarpNode*) alloc_only_pool_alloc(sLevelPool, 45 * sizeof(struct WarpNode));
 
             for (i = 0; i < 45; i++) {
                 gAreas[sCurrAreaIndex].paintingWarpNodes[i].id = 0;
@@ -553,7 +554,7 @@ static void level_cmd_3A(void) {
 
     if (sCurrAreaIndex != -1) {
         if ((val4 = gAreas[sCurrAreaIndex].unused28) == NULL) {
-            val4 = gAreas[sCurrAreaIndex].unused28 =
+            val4 = gAreas[sCurrAreaIndex].unused28 = (struct UnusedArea28*)
                 alloc_only_pool_alloc(sLevelPool, sizeof(struct UnusedArea28));
         }
 
@@ -577,7 +578,7 @@ static void level_cmd_create_whirlpool(void) {
         || (CMD_GET(u8, 3) == 2 && beatBowser2) || (CMD_GET(u8, 3) == 3 && gCurrActNum >= 2)) {
         if (sCurrAreaIndex != -1 && index < 2) {
             if ((whirlpool = gAreas[sCurrAreaIndex].whirlpools[index]) == NULL) {
-                whirlpool = alloc_only_pool_alloc(sLevelPool, sizeof(struct Whirlpool));
+                whirlpool = (struct Whirlpool*) alloc_only_pool_alloc(sLevelPool, sizeof(struct Whirlpool));
                 gAreas[sCurrAreaIndex].whirlpools[index] = whirlpool;
             }
 
@@ -601,36 +602,44 @@ static void level_cmd_set_gamma(void) {
 
 static void level_cmd_set_terrain_data(void) {
     if (sCurrAreaIndex != -1) {
+#ifndef NO_SEGMENTED_MEMORY
+        gAreas[sCurrAreaIndex].terrainData = segmented_to_virtual(CMD_GET(void *, 4));
+#else
         Collision *data;
         u32 size;
 
         // The game modifies the terrain data and must be reset upon level reload.
-        data = segmented_to_virtual(CMD_GET(void *, 4));
+        data = (Collision*) segmented_to_virtual(CMD_GET(void *, 4));
         size = get_area_terrain_size(data) * sizeof(Collision);
-        gAreas[sCurrAreaIndex].terrainData = alloc_only_pool_alloc(sLevelPool, size);
+        gAreas[sCurrAreaIndex].terrainData = (s16*) alloc_only_pool_alloc(sLevelPool, size);
         memcpy(gAreas[sCurrAreaIndex].terrainData, data, size);
+#endif
     }
     sCurrentCmd = CMD_NEXT;
 }
 
 static void level_cmd_set_rooms(void) {
     if (sCurrAreaIndex != -1) {
-        gAreas[sCurrAreaIndex].surfaceRooms = segmented_to_virtual(CMD_GET(void *, 4));
+        gAreas[sCurrAreaIndex].surfaceRooms = (s8*) segmented_to_virtual(CMD_GET(void *, 4));
     }
     sCurrentCmd = CMD_NEXT;
 }
 
 static void level_cmd_set_macro_objects(void) {
     if (sCurrAreaIndex != -1) {
+#ifndef NO_SEGMENTED_MEMORY
+        gAreas[sCurrAreaIndex].macroObjects = (s16*) segmented_to_virtual(CMD_GET(void *, 4));
+#else
         // The game modifies the macro object data (for example marking coins as taken),
         // so it must be reset when the level reloads.
-        MacroObject *data = segmented_to_virtual(CMD_GET(void *, 4));
+        MacroObject *data = (MacroObject*) segmented_to_virtual(CMD_GET(void *, 4));
         s32 len = 0;
         while (data[len++] != MACRO_OBJECT_END()) {
             len += 4;
         }
-        gAreas[sCurrAreaIndex].macroObjects = alloc_only_pool_alloc(sLevelPool, len * sizeof(MacroObject));
+        gAreas[sCurrAreaIndex].macroObjects = (MacroObject*) alloc_only_pool_alloc(sLevelPool, len * sizeof(MacroObject));
         memcpy(gAreas[sCurrAreaIndex].macroObjects, data, len * sizeof(MacroObject));
+#endif
     }
     sCurrentCmd = CMD_NEXT;
 }
@@ -711,8 +720,6 @@ static void level_cmd_38(void) {
     sCurrentCmd = CMD_NEXT;
 }
 
-extern int gPressedStart;
-
 static void level_cmd_get_or_set_var(void) {
     if (CMD_GET(u8, 2) == 0) {
         switch (CMD_GET(u8, 3)) {
@@ -730,9 +737,6 @@ static void level_cmd_get_or_set_var(void) {
                 break;
             case 4:
                 gCurrAreaIndex = sRegister;
-                break;
-            case 5: 
-                gPressedStart = sRegister; 
                 break;
         }
     } else {
@@ -752,45 +756,9 @@ static void level_cmd_get_or_set_var(void) {
             case 4:
                 sRegister = gCurrAreaIndex;
                 break;
-            case 5: 
-                sRegister = gPressedStart; 
-                break;
         }
     }
 
-    sCurrentCmd = CMD_NEXT;
-}
-
-int gDemoLevels[7] = {
-    LEVEL_BOWSER_1,
-    LEVEL_WF,
-    LEVEL_CCM,
-    LEVEL_BBH,
-    LEVEL_JRB,
-    LEVEL_HMC,
-    LEVEL_PSS
-};
-
-int gDemoLevelID = 0;
-int gDemoInputListID_2 = 0;
-
-extern int start_demo(int);
-
-static void level_cmd_advdemo(void)
-{
-    start_demo(0);
-    if(gDemoLevelID == 6) {
-        sRegister = gDemoLevels[6];
-        gDemoLevelID = 0;
-    } else {
-        sRegister = gDemoLevels[gDemoLevelID++];
-    }
-    sCurrentCmd = CMD_NEXT;
-}
-
-static void level_cmd_cleardemoptr(void)
-{
-    gCurrDemoInput = NULL;
     sCurrentCmd = CMD_NEXT;
 }
 
@@ -856,8 +824,6 @@ static void (*LevelScriptJumpTable[])(void) = {
     /*3A*/ level_cmd_3A,
     /*3B*/ level_cmd_create_whirlpool,
     /*3C*/ level_cmd_get_or_set_var,
-    /*3D*/ level_cmd_advdemo,
-    /*3E*/ level_cmd_cleardemoptr,
 };
 
 struct LevelCommand *level_script_execute(struct LevelCommand *cmd) {

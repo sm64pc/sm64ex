@@ -1,6 +1,8 @@
 #include <ultra64.h>
 #include "sm64.h"
 
+#include "textures.h"
+
 #include "make_const_nonconst.h"
 
 UNUSED static const u64 effect_unused_0 = 0;

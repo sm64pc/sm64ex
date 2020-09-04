@@ -42,7 +42,7 @@ void bhv_respawner_loop(void) {
     struct Object *spawnedObject;
 
     if (!is_point_within_radius_of_mario(o->oPosX, o->oPosY, o->oPosZ, o->oRespawnerMinSpawnDist)) {
-        spawnedObject = spawn_object(o, o->oRespawnerModelToRespawn, o->oRespawnerBehaviorToRespawn);
+        spawnedObject = spawn_object(o, o->oRespawnerModelToRespawn, (const BehaviorScript*) o->oRespawnerBehaviorToRespawn);
         spawnedObject->oBehParams = o->oBehParams;
         o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
     }

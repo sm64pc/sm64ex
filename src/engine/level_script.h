@@ -3,10 +3,12 @@
 
 #include <PR/ultratypes.h>
 
+#include "util/unused.hpp"
+
 struct LevelCommand;
 
-extern u8 level_script_entry[];
+extern const LevelScript* get_level_script_entry(int& out_count = unused_int);
 
-struct LevelCommand *level_script_execute(struct LevelCommand *cmd);
+struct LevelCommand* level_script_execute(struct LevelCommand* cmd);
 
 #endif // LEVEL_SCRIPT_H

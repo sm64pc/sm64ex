@@ -1,3 +1,5 @@
+#include "actors/group17.h"
+
 // Mr I (Iris)
 
 // 0x06002130

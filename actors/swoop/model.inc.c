@@ -1,3 +1,5 @@
+#include "actors/group17.h"
+
 // Swoop
 
 // Unreferenced light group

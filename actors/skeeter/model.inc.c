@@ -1,3 +1,5 @@
+#include "actors/group13.h"
+
 // Skeeter
 
 // Unreferenced light group

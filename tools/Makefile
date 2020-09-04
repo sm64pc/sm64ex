@@ -1,10 +1,22 @@
 CC := gcc
 CXX := g++
-CFLAGS := -I../include -I. -Wall -Wextra -Wno-unused-parameter -pedantic -std=c99 -O2 -s
+CFLAGS := -I . -Wall -Wextra -Wno-unused-parameter -pedantic -std=c99 -O2 -s
 LDFLAGS := -lm
 PROGRAMS := n64graphics n64graphics_ci mio0 n64cksum textconv patch_libultra_math aifc_decode aiff_extract_codebook vadpcm_enc tabledesign extract_data_for_mio skyconv
 
+# if armips is not found on the system, build it in tools
+ifeq (, $(shell which armips 2> /dev/null))
+CXX_PROGRAMS += armips
+endif
+
+ifeq ($(OS),Windows_NT)
+ARMIPS_FLAGS := -municode
+endif
+
 default: all
+
+armips: armips.cpp
+	$(CXX) $(CXXFLAGS) -fno-exceptions -fno-rtti -pipe $^ -o $@ -lpthread $(ARMIPS_FLAGS)
 
 n64graphics_SOURCES := n64graphics.c utils.c
 n64graphics_CFLAGS  := -DN64GRAPHICS_STANDALONE

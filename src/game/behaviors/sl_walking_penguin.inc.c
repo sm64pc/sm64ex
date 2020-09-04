@@ -97,9 +97,7 @@ void bhv_sl_walking_penguin_loop(void) {
     }
     
     cur_obj_move_standard(-78);
-#ifndef NODRAWINGDISTANCE
-     if (!cur_obj_hide_if_mario_far_away_y(1000.0f))
-#endif
+    if (!cur_obj_hide_if_mario_far_away_y(1000.0f))
         play_penguin_walking_sound(PENGUIN_WALK_BIG);
     
     // Adjust the position to get a point better lined up with the visual model, for stopping the wind.

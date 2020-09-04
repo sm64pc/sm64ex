@@ -1,3 +1,5 @@
+#include "actors/group16.h"
+
 // Why are these scripts compressed unlike the other ones?
 // 0x06003754
 const GeoLayout chilly_chief_geo[] = {

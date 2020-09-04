@@ -1,3 +1,5 @@
+#include "actors/group4.h"
+
 // Unagi (Eel)
 
 // Unreferenced light group

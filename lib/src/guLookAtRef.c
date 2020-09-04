@@ -1,3 +1,11 @@
+/*
+ * This file originates from the standard Nintendo 64 SDK libultra src
+ * directory, and it used exclusively when building with the Fast3DEX2
+ * microcode. Not not using it breaks environment mapping.
+ *
+ * Apart from the modifications listed below, this file is unmodified.
+ */
+
 /**************************************************************************
  *									  *
  *		 Copyright (C) 1994, Silicon Graphics, Inc.		  *

@@ -153,8 +153,7 @@ s32 check_warp_checkpoint(struct WarpNode *warpNode);
 enum EuLanguages {
     LANGUAGE_ENGLISH,
     LANGUAGE_FRENCH,
-    LANGUAGE_GERMAN,
-    LANGUAGE_MAX
+    LANGUAGE_GERMAN
 };
 
 void eu_set_language(u16 language);

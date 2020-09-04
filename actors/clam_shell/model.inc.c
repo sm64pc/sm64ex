@@ -1,3 +1,5 @@
+#include "actors/group4.h"
+
 // Clam Shell
 
 // Unreferenced light group

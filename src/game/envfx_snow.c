@@ -79,7 +79,7 @@ s32 envfx_init_snow(s32 mode) {
             break;
     }
 
-    gEnvFxBuffer = mem_pool_alloc(gEffectsMemoryPool, gSnowParticleMaxCount * sizeof(struct EnvFxParticle));
+    gEnvFxBuffer = (struct EnvFxParticle*) mem_pool_alloc(gEffectsMemoryPool, gSnowParticleMaxCount * sizeof(struct EnvFxParticle));
     if (!gEnvFxBuffer) {
         return 0;
     }

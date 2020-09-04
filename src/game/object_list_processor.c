@@ -474,7 +474,7 @@ void spawn_objects_from_info(UNUSED s32 unused, struct SpawnInfo *spawnInfo) {
         const BehaviorScript *script;
         UNUSED s16 arg16 = (s16)(spawnInfo->behaviorArg & 0xFFFF);
 
-        script = segmented_to_virtual(spawnInfo->behaviorScript);
+        script = (const BehaviorScript*) segmented_to_virtual(spawnInfo->behaviorScript);
 
         // If the object was previously killed/collected, don't respawn it
         if ((spawnInfo->behaviorArg & (RESPAWN_INFO_DONT_RESPAWN << 8))

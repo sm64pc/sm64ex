@@ -14,7 +14,7 @@ typedef unsigned long long u64;
 typedef float f32;
 typedef double f64;
 
-#if defined(__sgi) || (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+#ifdef __sgi
 #  define BSWAP16(x)
 #  define BSWAP32(x)
 #  define BSWAP16_MANY(x, n)

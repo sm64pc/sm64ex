@@ -14,14 +14,14 @@ struct ObjectHitbox sUnagiHitbox = {
 
 void bhv_unagi_init(void) {
     if (o->oBehParams2ndByte != 1) {
-        o->oPathedStartWaypoint = segmented_to_virtual(jrb_seg7_trajectory_unagi_1);
+        o->oPathedStartWaypoint = (struct Waypoint*) segmented_to_virtual(jrb_seg7_trajectory_unagi_1);
         if (o->oBehParams2ndByte == 0) {
             o->oFaceAnglePitch = -7600;
         } else {
             o->oAction = 1;
         }
     } else {
-        o->oPathedStartWaypoint = segmented_to_virtual(jrb_seg7_trajectory_unagi_2);
+        o->oPathedStartWaypoint = (struct Waypoint*) segmented_to_virtual(jrb_seg7_trajectory_unagi_2);
         o->oAction = 3;
         o->oAnimState = 1;
 

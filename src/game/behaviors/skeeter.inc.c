@@ -16,10 +16,10 @@ struct ObjectHitbox sSkeeterHitbox = {
 };
 
 struct Struct80331C38 D_80331C38[] = {
-    { 0xFF7E, 0xFF42 },
-    { 0x0082, 0xFF42 },
-    { 0xFF4C, 0x0082 },
-    { 0x00B4, 0x0082 },
+  {(s16)0xFF7E, (s16)0xFF42},
+  {0x0082, (s16)0xFF42},
+  {(s16)0xFF4C, 0x0082},
+  {0x00B4, 0x0082},
 };
 
 static void skeeter_spawn_waves(void) {

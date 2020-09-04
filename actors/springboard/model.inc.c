@@ -1,3 +1,5 @@
+#include "actors/group8.h"
+
 // Springboard (unused)
 
 // 0x05000000

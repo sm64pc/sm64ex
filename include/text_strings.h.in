@@ -3,10 +3,6 @@
 
 #include "text_menu_strings.h"
 
-#ifdef EXT_OPTIONS_MENU
-#include "text_options_strings.h"
-#endif
-
 /**
  * Global Symbols
  */
@@ -94,7 +90,6 @@
 #define TEXT_COURSE _("コース")
 #define TEXT_MYSCORE _("マイスコア")
 #define TEXT_CONTINUE _("つづけて　マリオする？")
-#define TEXT_EXIT_GAME _("ゲームをしゅうりょうする")
 #define TEXT_EXIT_COURSE _("コースからでる？")
 #define TEXT_CAMERA_ANGLE_R _("Ｒボタンのカメラきりかえ")
 
@@ -112,7 +107,6 @@
 // Save Options
 #define TEXT_SAVE_AND_CONTINUE _("セーブしてつづける？")
 #define TEXT_SAVE_AND_QUIT _("セーブしておわる？")
-#define TEXT_SAVE_EXIT_GAME _("ゲームをやめる？")
 #define TEXT_CONTINUE_WITHOUT_SAVING _("セーブしないでつづける？")
 
 /**
@@ -195,7 +189,6 @@
 #define TEXT_MYSCORE _("MYSCORE")
 #define TEXT_CONTINUE _("CONTINUE")
 #define TEXT_EXIT_COURSE _("EXIT COURSE")
-#define TEXT_EXIT_GAME _("EXIT GAME")
 #ifndef VERSION_EU // "R" text is different in EU
 #define TEXT_CAMERA_ANGLE_R _("SET CAMERA ANGLE WITH R")
 #endif
@@ -214,7 +207,6 @@
 // Save Options
 #define TEXT_SAVE_AND_CONTINUE _("SAVE & CONTINUE")
 #define TEXT_SAVE_AND_QUIT _("SAVE & QUIT")
-#define TEXT_SAVE_EXIT_GAME _("SAVE & EXIT GAME")
 #define TEXT_CONTINUE_WITHOUT_SAVING _("CONTINUE, DON'T SAVE")
 
 /**
@@ -341,14 +333,12 @@
 #define TEXT_MY_SCORE_FR                _("MON SCORE")
 #define TEXT_CONTINUE_FR                _("CONTINUER")
 #define TEXT_EXIT_COURSE_FR             _("QUITTER NIVEAU")
-#define TEXT_EXIT_GAME_FR		_("QUITTER JEU")
 #define TEXT_CAMERA_ANGLE_R_FR          _("RÉGLAGE CAMÉRA AVEC [R]")
 // German
 #define TEXT_COURSE_DE                  _("KURS")
 #define TEXT_MY_SCORE_DE                _("LEISTUNG")
 #define TEXT_CONTINUE_DE                _("WEITER")
 #define TEXT_EXIT_COURSE_DE             _("KURS VERLASSEN")
-#define TEXT_EXIT_GAME_DE		_("SPIEL VERLASSEN")
 #define TEXT_CAMERA_ANGLE_R_DE          _("KAMERA MIT [R] VERSTELLEN")
 
 // Camera Options
@@ -371,12 +361,10 @@
 // French
 #define TEXT_SAVE_AND_CONTINUE_FR       _("SAUVEGARDER & CONTINUER")
 #define TEXT_SAVE_AND_QUIT_FR           _("SAUVEGARDER & QUITTER")
-#define TEXT_SAVE_EXIT_GAME_FR		_("SAUVEGARDER & QUITTER JEU")
 #define TEXT_CONTINUE_WITHOUT_SAVING_FR _("CONTINUER SANS SAUVEGARDER")
 // German
 #define TEXT_SAVE_AND_CONTINUE_DE       _("SPEICHERN & WEITER")
 #define TEXT_SAVE_AND_QUIT_DE           _("SPEICHERN & ENDE")
-#define TEXT_SAVE_EXIT_GAME_DE		_("SPEICHERN & SPIEL VERLASSEN")
 #define TEXT_CONTINUE_WITHOUT_SAVING_DE _("WEITER OHNE ZU SPEICHERN")
 
 /**

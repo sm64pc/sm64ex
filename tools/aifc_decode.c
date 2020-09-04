@@ -19,19 +19,11 @@ typedef unsigned int u32;
 typedef unsigned long long u64;
 typedef float f32;
 
-#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-# define bswap16(x) (x)
-# define bswap32(x) (x)
-# define BSWAP16(x)
-# define BSWAP32(x)
-# define BSWAP16_MANY(x, n)
-#else
-# define bswap16(x) __builtin_bswap16(x)
-# define bswap32(x) __builtin_bswap32(x)
-# define BSWAP16(x) x = __builtin_bswap16(x)
-# define BSWAP32(x) x = __builtin_bswap32(x)
-# define BSWAP16_MANY(x, n) for (s32 _i = 0; _i < n; _i++) BSWAP16((x)[_i])
-#endif
+#define bswap16(x) __builtin_bswap16(x)
+#define bswap32(x) __builtin_bswap32(x)
+#define BSWAP16(x) x = __builtin_bswap16(x)
+#define BSWAP32(x) x = __builtin_bswap32(x)
+#define BSWAP16_MANY(x, n) for (s32 _i = 0; _i < n; _i++) BSWAP16((x)[_i])
 
 #define NORETURN __attribute__((noreturn))
 #define UNUSED __attribute__((unused))

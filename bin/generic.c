@@ -1,5 +1,7 @@
 #include "sm64.h"
 
+#include "textures.h"
+
 #include "make_const_nonconst.h"
 
 // 0x09000000

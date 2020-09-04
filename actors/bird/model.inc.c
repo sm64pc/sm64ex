@@ -1,3 +1,5 @@
+#include "actors/group10.h"
+
 // Birds
 
 // 0x05000000

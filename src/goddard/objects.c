@@ -82,7 +82,7 @@ void func_8017BCB0(void) { /* Initialize Plane? */
 void func_8017BD20(void *a0) {
     struct GdVec3f sp1c;
 
-    set_cur_dynobj(a0);
+    set_cur_dynobj((struct GdObj*) a0);
     d_get_world_pos(&sp1c);
 
     if (sp1c.x < D_801B9DA0.p0.x) {
@@ -297,7 +297,7 @@ struct GdObj *make_object(enum ObjTypeFlag objType) {
     objNameStr = get_obj_name_str(objType);
     start_memtracker(objNameStr);
 
-    newObj = gd_malloc(objSize, objPermanence);
+    newObj = (struct GdObj*) gd_malloc(objSize, objPermanence);
 
     if (newObj == NULL) {
         fatal_printf("Cant allocate object '%s' memory!", objNameStr);
@@ -364,7 +364,7 @@ struct Links *make_link_to_obj(struct Links *head, struct GdObj *a1) {
 
     start_memtracker("links");
 
-    newLink = gd_malloc_perm(sizeof(struct Links));
+    newLink = (struct Links*) gd_malloc_perm(sizeof(struct Links));
 
     if (newLink == NULL) {
         fatal_print("Cant allocate link memory!");
@@ -387,7 +387,7 @@ struct Links *make_link_to_obj(struct Links *head, struct GdObj *a1) {
 struct VtxLink *make_vtx_link(struct VtxLink *prevlink, Vtx *data) {
     struct VtxLink *newLink;
 
-    newLink = gd_malloc_perm(sizeof(struct VtxLink));
+    newLink = (struct VtxLink*) gd_malloc_perm(sizeof(struct VtxLink));
 
     if (newLink == NULL) {
         fatal_print("Cant allocate link memory!");
@@ -614,7 +614,7 @@ struct ObjView *make_view(const char *name, s32 flags, s32 a2, s32 ulx, s32 uly,
 
     addto_group(gGdViewsGroup, &newView->header);
 
-    newView->flags = flags | VIEW_UPDATE | VIEW_LIGHT;
+    newView->flags = (enum GdViewFlags) (flags | VIEW_UPDATE | VIEW_LIGHT);
     newView->id = sGdViewInfo.count++;
 
     if ((newView->components = parts) != NULL) {
@@ -1640,7 +1640,7 @@ void move_animator(struct ObjAnimator *animObj) {
                 break;
             case GD_ANIM_CAMERA: // s16(*)[6]?
                 if (linkedObj->type == OBJ_TYPE_CAMERAS) {
-                    camPlaneHArr = animData->data;
+                    camPlaneHArr = (s16 (*)[6]) animData->data;
 
                     tri1.p2.x = (f32) camPlaneHArr[sp38][0];
                     tri1.p2.y = (f32) camPlaneHArr[sp38][1];

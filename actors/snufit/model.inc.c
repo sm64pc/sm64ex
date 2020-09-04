@@ -1,3 +1,5 @@
+#include "actors/group17.h"
+
 // Snufit
 
 // 0x060070E0

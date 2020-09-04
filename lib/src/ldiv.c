@@ -1,7 +1,5 @@
 #include "libultra_internal.h"
-#include "stdlib.h"
-
-#ifdef NO_LDIV
+#include <stdlib.h>
 
 lldiv_t lldiv(long long num, long long denom) {
     lldiv_t ret;
@@ -28,5 +26,3 @@ ldiv_t ldiv(long num, long denom) {
 
     return ret;
 }
-
-#endif

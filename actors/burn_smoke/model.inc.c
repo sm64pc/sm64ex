@@ -11,9 +11,6 @@ static const Vtx burn_smoke_seg4_vertex_040217C0[] = {
 // //! Wrong texture format. Called as rgba16, which makes the burn smoke appear
 //     as a transparent black burn smoke. Probably meant to show up as white-ish
 //     burn smoke, but mistakened for being intended as black smoke.
-//     Due to debate in the Koopa shorts PR surrounding the fix to a similar bug,
-//     said fix is on a compile-time variable. Use TEXTURE_FIX=1 at compile time
-//     to fix this.
 // 0x04021800
 ALIGNED8 static const u8 burn_smoke_seg4_texture_04021800[] = {
 #include "actors/burn_smoke/burn_smoke.ia16.inc.c"
@@ -47,11 +44,7 @@ const Gfx burn_smoke_seg4_dl_04022048[] = {
 // 0x04022070 - 0x040220C8
 const Gfx burn_smoke_seg4_dl_04022070[] = {
     gsSPDisplayList(burn_smoke_seg4_dl_04022000),
-    #ifdef TEXTURE_FIX
-    gsDPLoadTextureBlock(burn_smoke_seg4_texture_04021800, G_IM_FMT_IA, G_IM_SIZ_16b, 32, 32, 0, G_TX_CLAMP, G_TX_CLAMP, 5, 5, G_TX_NOLOD, G_TX_NOLOD),
-    #else
     gsDPLoadTextureBlock(burn_smoke_seg4_texture_04021800, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, 0, G_TX_CLAMP, G_TX_CLAMP, 5, 5, G_TX_NOLOD, G_TX_NOLOD),
-    #endif
     gsSPDisplayList(burn_smoke_seg4_dl_04022028),
     gsSPDisplayList(burn_smoke_seg4_dl_04022048),
     gsSPEndDisplayList(),

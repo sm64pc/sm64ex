@@ -412,14 +412,14 @@ Gfx *movtex_gen_from_quad(s16 y, struct MovtexQuad *quad) {
     s16 rotDir = quad->rotDir;
     s16 alpha = quad->alpha;
     s16 textureId = quad->textureId;
-    Vtx *verts = alloc_display_list(4 * sizeof(*verts));
+    Vtx *verts = (Vtx*) alloc_display_list(4 * sizeof(*verts));
     Gfx *gfxHead;
     Gfx *gfx;
 
     if (textureId == gMovetexLastTextureId) {
-        gfxHead = alloc_display_list(3 * sizeof(*gfxHead));
+        gfxHead = (Gfx*) alloc_display_list(3 * sizeof(*gfxHead));
     } else {
-        gfxHead = alloc_display_list(8 * sizeof(*gfxHead));
+        gfxHead = (Gfx*) alloc_display_list(8 * sizeof(*gfxHead));
     }
 
     if (gfxHead == NULL || verts == NULL) {
@@ -468,9 +468,9 @@ Gfx *movtex_gen_from_quad(s16 y, struct MovtexQuad *quad) {
  * is the number of entries, followed by that number of MovtexQuad structs.
  */
 Gfx *movtex_gen_from_quad_array(s16 y, void *quadArrSegmented) {
-    s16 *quadArr = segmented_to_virtual(quadArrSegmented);
+    s16 *quadArr = (s16*) segmented_to_virtual(quadArrSegmented);
     s16 numLists = quadArr[0];
-    Gfx *gfxHead = alloc_display_list((numLists + 1) * sizeof(*gfxHead));
+    Gfx *gfxHead = (Gfx*) alloc_display_list((numLists + 1) * sizeof(*gfxHead));
     Gfx *gfx = gfxHead;
     Gfx *subList;
     s32 i;
@@ -499,7 +499,7 @@ Gfx *movtex_gen_from_quad_array(s16 y, void *quadArrSegmented) {
  * that will be searched.
  */
 Gfx *movtex_gen_quads_id(s16 id, s16 y, void *movetexQuadsSegmented) {
-    struct MovtexQuadCollection *collection = segmented_to_virtual(movetexQuadsSegmented);
+    struct MovtexQuadCollection *collection = (struct MovtexQuadCollection*) segmented_to_virtual(movetexQuadsSegmented);
     s32 i = 0;
 
     while (collection[i].id != -1) {
@@ -637,7 +637,7 @@ Gfx *geo_movtex_draw_water_regions(s32 callContext, struct GraphNode *node, UNUS
             return NULL;
         }
         numWaterBoxes = gEnvironmentRegions[0];
-        gfxHead = alloc_display_list((numWaterBoxes + 3) * sizeof(*gfxHead));
+        gfxHead = (Gfx*) alloc_display_list((numWaterBoxes + 3) * sizeof(*gfxHead));
         if (gfxHead == NULL) {
             return NULL;
         } else {
@@ -804,8 +804,8 @@ void movtex_write_vertex_index(Vtx *verts, s32 index, s16 *movtexVerts, struct M
  * 'attrLayout' is one of MOVTEX_LAYOUT_NOCOLOR and MOVTEX_LAYOUT_COLORED.
  */
 Gfx *movtex_gen_list(s16 *movtexVerts, struct MovtexObject *movtexList, s8 attrLayout) {
-    Vtx *verts = alloc_display_list(movtexList->vtx_count * sizeof(*verts));
-    Gfx *gfxHead = alloc_display_list(11 * sizeof(*gfxHead));
+    Vtx *verts = (Vtx*) alloc_display_list(movtexList->vtx_count * sizeof(*verts));
+    Gfx *gfxHead = (Gfx*) alloc_display_list(11 * sizeof(*gfxHead));
     Gfx *gfx = gfxHead;
     s32 i;
 
@@ -843,7 +843,7 @@ Gfx *geo_movtex_draw_nocolor(s32 callContext, struct GraphNode *node, UNUSED Mat
             if (gMovtexNonColored[i].geoId == asGenerated->parameter) {
                 asGenerated->fnNode.node.flags =
                     (asGenerated->fnNode.node.flags & 0xFF) | (gMovtexNonColored[i].layer << 8);
-                movtexVerts = segmented_to_virtual(gMovtexNonColored[i].movtexVerts);
+                movtexVerts = (s16*) segmented_to_virtual(gMovtexNonColored[i].movtexVerts);
                 update_moving_texture_offset(movtexVerts, MOVTEX_ATTR_NOCOLOR_S);
                 gfx = movtex_gen_list(movtexVerts, &gMovtexNonColored[i],
                                       MOVTEX_LAYOUT_NOCOLOR); // no perVertex colors
@@ -871,7 +871,7 @@ Gfx *geo_movtex_draw_colored(s32 callContext, struct GraphNode *node, UNUSED Mat
             if (gMovtexColored[i].geoId == asGenerated->parameter) {
                 asGenerated->fnNode.node.flags =
                     (asGenerated->fnNode.node.flags & 0xFF) | (gMovtexColored[i].layer << 8);
-                movtexVerts = segmented_to_virtual(gMovtexColored[i].movtexVerts);
+                movtexVerts = (s16*) segmented_to_virtual(gMovtexColored[i].movtexVerts);
                 update_moving_texture_offset(movtexVerts, MOVTEX_ATTR_COLORED_S);
                 gfx = movtex_gen_list(movtexVerts, &gMovtexColored[i], MOVTEX_LAYOUT_COLORED);
                 break;
@@ -902,7 +902,7 @@ Gfx *geo_movtex_draw_colored_no_update(s32 callContext, struct GraphNode *node, 
             if (gMovtexColored[i].geoId == asGenerated->parameter) {
                 asGenerated->fnNode.node.flags =
                     (asGenerated->fnNode.node.flags & 0xFF) | (gMovtexColored[i].layer << 8);
-                movtexVerts = segmented_to_virtual(gMovtexColored[i].movtexVerts);
+                movtexVerts = (s16*) segmented_to_virtual(gMovtexColored[i].movtexVerts);
                 gfx = movtex_gen_list(movtexVerts, &gMovtexColored[i], MOVTEX_LAYOUT_COLORED);
                 break;
             }
@@ -929,7 +929,7 @@ Gfx *geo_movtex_draw_colored_2_no_update(s32 callContext, struct GraphNode *node
             if (gMovtexColored2[i].geoId == asGenerated->parameter) {
                 asGenerated->fnNode.node.flags =
                     (asGenerated->fnNode.node.flags & 0xFF) | (gMovtexColored2[i].layer << 8);
-                movtexVerts = segmented_to_virtual(gMovtexColored2[i].movtexVerts);
+                movtexVerts = (s16*) segmented_to_virtual(gMovtexColored2[i].movtexVerts);
                 gfx = movtex_gen_list(movtexVerts, &gMovtexColored2[i], MOVTEX_LAYOUT_COLORED);
                 break;
             }
@@ -971,7 +971,7 @@ Gfx *geo_movtex_update_horizontal(s32 callContext, struct GraphNode *node, UNUSE
                 movtexVerts = segmented_to_virtual(ttc_movtex_tris_small_surface_treadmill);
                 break;
         }
-        update_moving_texture_offset(movtexVerts, MOVTEX_ATTR_COLORED_S);
+        update_moving_texture_offset((s16*) movtexVerts, MOVTEX_ATTR_COLORED_S);
     }
     return NULL;
 }

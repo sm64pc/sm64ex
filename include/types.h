@@ -1,12 +1,12 @@
-#ifndef _SM64_TYPES_H_
-#define _SM64_TYPES_H_
+#ifndef TYPES_H
+#define TYPES_H
 
 // This file contains various data types used in Super Mario 64 that don't yet
 // have an appropriate header.
 
 #include <ultra64.h>
 #include "macros.h"
-
+#include <memory>
 
 // Certain functions are marked as having return values, but do not
 // actually return a value. This causes undefined behavior, which we'd rather
@@ -30,9 +30,9 @@ struct Controller
   /*0x12*/ u16 buttonPressed;
   /*0x14*/ OSContStatus *statusData;
   /*0x18*/ OSContPad *controllerData;
+#ifdef VERSION_SH
   /*0x1C*/ int port;
-  /*ext */ s16 extStickX;       // additional (right) stick values
-  /*ext */ s16 extStickY;
+#endif
 };
 
 typedef f32 Vec2f[2];
@@ -204,6 +204,7 @@ struct Object
     /*0x218*/ void *collisionData;
     /*0x21C*/ Mat4 transform;
     /*0x25C*/ void *respawnInfo;
+    std::shared_ptr<void> wrapper;
 };
 
 struct ObjectHitbox
@@ -346,4 +347,4 @@ struct MarioState
     /*0xC4*/ f32 unkC4;
 };
 
-#endif // _SM64_TYPES_H_
+#endif // TYPES_H

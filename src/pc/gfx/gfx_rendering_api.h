@@ -30,7 +30,6 @@ struct GfxRenderingAPI {
     void (*start_frame)(void);
     void (*end_frame)(void);
     void (*finish_render)(void);
-    void (*shutdown)(void);
 };
 
 #endif

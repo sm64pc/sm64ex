@@ -6,6 +6,7 @@
 #include "memory.h"
 #include "print.h"
 #include "segment2.h"
+#include "common/service_locator.hpp"
 
 /**
  * This file handles printing and formatting the colorful text that
@@ -23,7 +24,7 @@ struct TextLabel {
  * Stores the text to be rendered on screen
  * and how they are to be rendered.
  */
-struct TextLabel *sTextLabels[256];
+struct TextLabel *sTextLabels[52];
 s16 sTextLabelsCount = 0;
 
 /**
@@ -177,7 +178,7 @@ void print_text_fmt_int(s32 x, s32 y, const char *str, s32 n) {
     s32 srcIndex = 0;
 
     // Don't continue if there is no memory to do so.
-    if ((sTextLabels[sTextLabelsCount] = mem_pool_alloc(gEffectsMemoryPool,
+    if ((sTextLabels[sTextLabelsCount] = (struct TextLabel*) mem_pool_alloc(gEffectsMemoryPool,
                                                         sizeof(struct TextLabel))) == NULL) {
         return;
     }
@@ -228,7 +229,7 @@ void print_text(s32 x, s32 y, const char *str) {
     s32 srcIndex = 0;
 
     // Don't continue if there is no memory to do so.
-    if ((sTextLabels[sTextLabelsCount] = mem_pool_alloc(gEffectsMemoryPool,
+    if ((sTextLabels[sTextLabelsCount] = (struct TextLabel*) mem_pool_alloc(gEffectsMemoryPool,
                                                         sizeof(struct TextLabel))) == NULL) {
         return;
     }
@@ -261,7 +262,7 @@ void print_text_centered(s32 x, s32 y, const char *str) {
     s32 srcIndex = 0;
 
     // Don't continue if there is no memory to do so.
-    if ((sTextLabels[sTextLabelsCount] = mem_pool_alloc(gEffectsMemoryPool,
+    if ((sTextLabels[sTextLabelsCount] = (struct TextLabel*) mem_pool_alloc(gEffectsMemoryPool,
                                                         sizeof(struct TextLabel))) == NULL) {
         return;
     }
@@ -353,12 +354,35 @@ s8 char_to_glyph_index(char c) {
  * Adds an individual glyph to be rendered.
  */
 void add_glyph_texture(s8 glyphIndex) {
-    const u8 *const *glyphs = segmented_to_virtual(main_hud_lut);
+    const u8 *const *glyphs = (const u8* const*) segmented_to_virtual(main_hud_lut);
 
     gDPPipeSync(gDisplayListHead++);
     gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, glyphs[glyphIndex]);
     gSPDisplayList(gDisplayListHead++, dl_hud_img_load_tex_block);
 }
+
+#ifndef WIDESCREEN
+/**
+ * Clips textrect into the boundaries defined.
+ */
+void clip_to_bounds(s32 *x, s32 *y) {
+    if (*x < TEXRECT_MIN_X) {
+        *x = TEXRECT_MIN_X;
+    }
+
+    if (*x > TEXRECT_MAX_X) {
+        *x = TEXRECT_MAX_X;
+    }
+
+    if (*y < TEXRECT_MIN_Y) {
+        *y = TEXRECT_MIN_Y;
+    }
+
+    if (*y > TEXRECT_MAX_Y) {
+        *y = TEXRECT_MAX_Y;
+    }
+}
+#endif
 
 /**
  * Renders the glyph that's set at the given position.
@@ -369,6 +393,10 @@ void render_textrect(s32 x, s32 y, s32 pos) {
     s32 rectX;
     s32 rectY;
 
+#ifndef WIDESCREEN
+    // For widescreen we must allow drawing outside the usual area
+    clip_to_bounds(&rectBaseX, &rectBaseY);
+#endif
     rectX = rectBaseX;
     rectY = rectBaseY;
     gSPTextureRectangle(gDisplayListHead++, rectX << 2, rectY << 2, (rectX + 15) << 2,
@@ -385,11 +413,14 @@ void render_text_labels(void) {
     s8 glyphIndex;
     Mtx *mtx;
 
+    auto &text_renderer = ServiceLocator::get_text_renderer();
+    text_renderer.render_scheduled_text();
+
     if (sTextLabelsCount == 0) {
         return;
     }
 
-    mtx = alloc_display_list(sizeof(*mtx));
+    mtx = (Mtx*) alloc_display_list(sizeof(*mtx));
 
     if (mtx == NULL) {
         sTextLabelsCount = 0;

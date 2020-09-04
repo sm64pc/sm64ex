@@ -52,7 +52,7 @@ void bhv_bowser_flame_spawn_loop(void) {
     f32 sp28;
     f32 sp24 = coss(bowser->oMoveAngleYaw);
     f32 sp20 = sins(bowser->oMoveAngleYaw);
-    s16 *sp1C = segmented_to_virtual(bowser_seg6_unkmoveshorts_060576FC);
+    s16 *sp1C = (s16*) segmented_to_virtual(bowser_seg6_unkmoveshorts_060576FC);
     if (bowser->oSoundStateID == 6) {
         sp30 = bowser->header.gfx.unk38.animFrame + 1.0f;
         if (bowser->header.gfx.unk38.curAnim->unk08 == sp30)
@@ -977,33 +977,33 @@ void (*sBowserActions[])(void) = { bowser_act_default,  bowser_act_thrown_droppe
                                    bowser_act_spit_fire_into_sky,  bowser_act_spit_fire_onto_floor,  bowser_act_hit_edge, bowser_act_turn_from_edge,
                                    bowser_act_hit_mine, bowser_act_jump, bowser_act_walk_to_mario, bowser_act_breath_fire,
                                    bowser_act_teleport, bowser_act_jump_towards_mario, bowser_act_unused_slow_walk, bowser_act_ride_tilting_platform };
-struct SoundState D_8032F5B8[] = { { 0, 0, 0, NO_SOUND },
-                                   { 0, 0, 0, NO_SOUND },
-                                   { 0, 0, 0, NO_SOUND },
-                                   { 0, 0, 0, NO_SOUND },
-                                   { 0, 0, 0, NO_SOUND },
-                                   { 0, 0, 0, NO_SOUND },
-                                   { 0, 0, 0, NO_SOUND },
-                                   { 0, 0, 0, NO_SOUND },
-                                   { 1, 0, -1, SOUND_OBJ_BOWSER_WALK },
-                                   { 1, 0, -1, SOUND_OBJ2_BOWSER_ROAR },
-                                   { 1, 0, -1, SOUND_OBJ2_BOWSER_ROAR },
-                                   { 0, 0, 0, NO_SOUND },
-                                   { 0, 0, 0, NO_SOUND },
-                                   { 1, 20, 40, SOUND_OBJ_BOWSER_WALK },
-                                   { 1, 20, -1, SOUND_OBJ_BOWSER_WALK },
-                                   { 1, 20, 40, SOUND_OBJ_BOWSER_WALK },
-                                   { 1, 0, -1, SOUND_OBJ_BOWSER_TAIL_PICKUP },
-                                   { 1, 0, -1, SOUND_OBJ_BOWSER_DEFEATED },
-                                   { 1, 8, -1, SOUND_OBJ_BOWSER_WALK },
-                                   { 1, 8, 17, SOUND_OBJ_BOWSER_WALK },
-                                   { 1, 8, -10, SOUND_OBJ_BOWSER_WALK },
-                                   { 0, 0, 0, NO_SOUND },
-                                   { 1, 5, -1, SOUND_OBJ_FLAME_BLOWN },
-                                   { 0, 0, 0, NO_SOUND },
-                                   { 0, 0, 0, NO_SOUND },
-                                   { 1, 0, -1, SOUND_OBJ_BOWSER_TAIL_PICKUP },
-                                   { 1, 0, -1, SOUND_OBJ2_BOWSER_ROAR } };
+struct SoundState D_8032F5B8[] = { { 0, 0, 0, (s32) NO_SOUND },
+                                   { 0, 0, 0, (s32) NO_SOUND },
+                                   { 0, 0, 0, (s32) NO_SOUND },
+                                   { 0, 0, 0, (s32) NO_SOUND },
+                                   { 0, 0, 0, (s32) NO_SOUND },
+                                   { 0, 0, 0, (s32) NO_SOUND },
+                                   { 0, 0, 0, (s32) NO_SOUND },
+                                   { 0, 0, 0, (s32) NO_SOUND },
+                                   { 1, 0, -1, (s32) SOUND_OBJ_BOWSER_WALK },
+                                   { 1, 0, -1, (s32) SOUND_OBJ2_BOWSER_ROAR },
+                                   { 1, 0, -1, (s32) SOUND_OBJ2_BOWSER_ROAR },
+                                   { 0, 0, 0, (s32) NO_SOUND },
+                                   { 0, 0, 0, (s32) NO_SOUND },
+                                   { 1, 20, 40, (s32) SOUND_OBJ_BOWSER_WALK },
+                                   { 1, 20, -1, (s32) SOUND_OBJ_BOWSER_WALK },
+                                   { 1, 20, 40, (s32) SOUND_OBJ_BOWSER_WALK },
+                                   { 1, 0, -1, (s32) SOUND_OBJ_BOWSER_TAIL_PICKUP },
+                                   { 1, 0, -1, (s32) SOUND_OBJ_BOWSER_DEFEATED },
+                                   { 1, 8, -1, (s32) SOUND_OBJ_BOWSER_WALK },
+                                   { 1, 8, 17, (s32) SOUND_OBJ_BOWSER_WALK },
+                                   { 1, 8, -10, (s32) SOUND_OBJ_BOWSER_WALK },
+                                   { 0, 0, 0, (s32) NO_SOUND },
+                                   { 1, 5, -1, (s32) SOUND_OBJ_FLAME_BLOWN },
+                                   { 0, 0, 0, (s32) NO_SOUND },
+                                   { 0, 0, 0, (s32) NO_SOUND },
+                                   { 1, 0, -1, (s32) SOUND_OBJ_BOWSER_TAIL_PICKUP },
+                                   { 1, 0, -1, (s32) SOUND_OBJ2_BOWSER_ROAR } };
 s8 D_8032F690[4] = { 0, 0, 1, 0 };
 s8 D_8032F694[4] = { 1, 1, 3, 0 };
 extern u8 bowser_3_seg7_collision_07004B94[];
@@ -1273,7 +1273,7 @@ Gfx *geo_bits_bowser_coloring(s32 run, struct GraphNode *node, UNUSED s32 a2) {
             sp20->fnNode.node.flags = (sp20->fnNode.node.flags & 0xFF) | GRAPH_NODE_TYPE_FUNCTIONAL;
         else
             sp20->fnNode.node.flags = (sp20->fnNode.node.flags & 0xFF) | (GRAPH_NODE_TYPE_FUNCTIONAL | GRAPH_NODE_TYPE_400);
-        sp28 = sp2C = alloc_display_list(2 * sizeof(Gfx));
+        sp28 = sp2C = (Gfx*) alloc_display_list(2 * sizeof(Gfx));
 
         if (sp24->oBowserUnk1B2 != 0) {
             gSPClearGeometryMode(sp28++, G_LIGHTING);

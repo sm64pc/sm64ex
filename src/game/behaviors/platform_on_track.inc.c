@@ -60,7 +60,7 @@ void bhv_platform_on_track_init(void) {
         o->collisionData =
             segmented_to_virtual(sPlatformOnTrackCollisionModels[o->oPlatformOnTrackType]);
 
-        o->oPlatformOnTrackStartWaypoint = segmented_to_virtual(sPlatformOnTrackPaths[pathIndex]);
+        o->oPlatformOnTrackStartWaypoint = (struct Waypoint*) segmented_to_virtual(sPlatformOnTrackPaths[pathIndex]);
 
         o->oPlatformOnTrackIsNotHMC = pathIndex - 4;
 

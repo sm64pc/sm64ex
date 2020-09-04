@@ -36,7 +36,7 @@ static void racing_penguin_act_show_init_text(void) {
         child = cur_obj_nearest_object_with_behavior(bhvPenguinRaceShortcutCheck);
         child->parentObj = o;
 
-        o->oPathedStartWaypoint = o->oPathedPrevWaypoint =
+        o->oPathedStartWaypoint = o->oPathedPrevWaypoint = (struct Waypoint*)
             segmented_to_virtual(ccm_seg7_trajectory_penguin_race);
         o->oPathedPrevWaypointFlags = 0;
 

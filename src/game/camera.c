@@ -28,7 +28,6 @@
 #include "paintings.h"
 #include "engine/graph_node.h"
 #include "level_table.h"
-#include "pc/configfile.h"
 
 #define CBUTTON_MASK (U_CBUTTONS | D_CBUTTONS | L_CBUTTONS | R_CBUTTONS)
 
@@ -701,10 +700,6 @@ f32 calc_y_to_curr_floor(f32 *posOff, f32 posMul, f32 posBound, f32 *focOff, f32
         *focOff = -focBound;
     }
 }
-//Compiler gets mad if I put this any further above. thanks refresh 7
-#ifdef BETTERCAMERA
-#include "bettercamera.inc.h"
-#endif
 
 void focus_on_mario(Vec3f focus, Vec3f pos, f32 posYOff, f32 focYOff, f32 dist, s16 pitch, s16 yaw) {
     Vec3f marioPos;
@@ -2857,10 +2852,6 @@ void set_camera_mode(struct Camera *c, s16 mode, s16 frames) {
     struct LinearTransitionPoint *start = &sModeInfo.transitionStart;
     struct LinearTransitionPoint *end = &sModeInfo.transitionEnd;
 
-#ifdef BETTERCAMERA
-    if (mode != CAMERA_MODE_NEWCAM && gLakituState.mode != CAMERA_MODE_NEWCAM)
-    {
-#endif
     if (mode == CAMERA_MODE_WATER_SURFACE && gCurrLevelArea == AREA_TTM_OUTSIDE) {
     } else {
         // Clear movement flags that would affect the transition
@@ -2904,9 +2895,6 @@ void set_camera_mode(struct Camera *c, s16 mode, s16 frames) {
         vec3f_get_dist_and_angle(start->focus, start->pos, &start->dist, &start->pitch, &start->yaw);
         vec3f_get_dist_and_angle(end->focus, end->pos, &end->dist, &end->pitch, &end->yaw);
     }
-#ifdef BETTERCAMERA
-    }
-#endif
 }
 
 /**
@@ -2991,12 +2979,7 @@ void update_lakitu(struct Camera *c) {
         gLakituState.roll += sHandheldShakeRoll;
         gLakituState.roll += gLakituState.keyDanceRoll;
 
-        if (c->mode != CAMERA_MODE_C_UP && c->cutscene == 0
-#ifdef BETTERCAMERA
-            && c->mode != CAMERA_MODE_NEWCAM
-#endif
-            )
-        {
+        if (c->mode != CAMERA_MODE_C_UP && c->cutscene == 0) {
             gCheckingSurfaceCollisionsForCamera = TRUE;
             distToFloor = find_floor(gLakituState.pos[0],
                                      gLakituState.pos[1] + 20.0f,
@@ -3029,11 +3012,7 @@ void update_camera(struct Camera *c) {
     update_camera_hud_status(c);
     if (c->cutscene == 0) {
         // Only process R_TRIG if 'fixed' is not selected in the menu
-        if (cam_select_alt_mode(0) == CAM_SELECTION_MARIO
-#ifdef BETTERCAMERA
-            && c->mode != CAMERA_MODE_NEWCAM
-#endif
-            ) {
+        if (cam_select_alt_mode(0) == CAM_SELECTION_MARIO) {
             if (gPlayer1Controller->buttonPressed & R_TRIG) {
                 if (set_cam_angle(0) == CAM_ANGLE_LAKITU) {
                     set_cam_angle(CAM_ANGLE_MARIO);
@@ -3071,22 +3050,10 @@ void update_camera(struct Camera *c) {
     c->mode = gLakituState.mode;
     c->defMode = gLakituState.defMode;
 
-#ifdef BETTERCAMERA
-    if (c->mode != CAMERA_MODE_NEWCAM)
-    {
-#endif
     camera_course_processing(c);
     stub_camera_3(c);
-    sCButtonsPressed = find_c_buttons_pressed(sCButtonsPressed, gPlayer1Controller->buttonPressed,gPlayer1Controller->buttonDown);
-#ifdef BETTERCAMERA
-    }
-
-    if (gMarioState->action == ACT_SHOT_FROM_CANNON && newcam_active)
-    {
-        gMarioState->area->camera->mode = CAMERA_MODE_NEWCAM;
-        gLakituState.mode = CAMERA_MODE_NEWCAM;
-    }
-#endif
+    sCButtonsPressed = find_c_buttons_pressed(sCButtonsPressed, gPlayer1Controller->buttonPressed,
+                                              gPlayer1Controller->buttonDown);
 
     if (c->cutscene != 0) {
         sYawSpeed = 0;
@@ -3123,12 +3090,6 @@ void update_camera(struct Camera *c) {
                 case CAMERA_MODE_INSIDE_CANNON:
                     mode_cannon_camera(c);
                     break;
-
-#ifdef BETTERCAMERA
-                case CAMERA_MODE_NEWCAM:
-                    newcam_loop(c);
-                    break;
-#endif
 
                 default:
                     mode_mario_camera(c);
@@ -3189,12 +3150,6 @@ void update_camera(struct Camera *c) {
                 case CAMERA_MODE_SPIRAL_STAIRS:
                     mode_spiral_stairs_camera(c);
                     break;
-
-#ifdef BETTERCAMERA
-                case CAMERA_MODE_NEWCAM:
-                    newcam_loop(c);
-                    break;
-#endif
             }
         }
     }
@@ -3470,11 +3425,6 @@ void init_camera(struct Camera *c) {
     gLakituState.nextYaw = gLakituState.yaw;
     c->yaw = gLakituState.yaw;
     c->nextYaw = gLakituState.yaw;
-
-#ifdef BETTERCAMERA
-    newcam_init(c, 0);
-    newcam_init_settings();
-#endif
 }
 
 /**
@@ -3534,7 +3484,7 @@ void select_mario_cam_mode(void) {
  */
 void create_camera(struct GraphNodeCamera *gc, struct AllocOnlyPool *pool) {
     s16 mode = gc->config.mode;
-    struct Camera *c = alloc_only_pool_alloc(pool, sizeof(struct Camera));
+    struct Camera *c = (struct Camera*) alloc_only_pool_alloc(pool, sizeof(struct Camera));
 
     gc->config.camera = c;
     c->mode = mode;
@@ -3564,11 +3514,11 @@ void update_graph_node_camera(struct GraphNodeCamera *gc) {
 
 Gfx *geo_camera_main(s32 callContext, struct GraphNode *g, void *context) {
     struct GraphNodeCamera *gc = (struct GraphNodeCamera *) g;
-    UNUSED Mat4 *unusedMat = context;
+    UNUSED Mat4 *unusedMat = (Mat4*) context;
 
     switch (callContext) {
         case GEO_CONTEXT_CREATE:
-            create_camera(gc, context);
+            create_camera(gc, (struct AllocOnlyPool*) context);
             break;
         case GEO_CONTEXT_RENDER:
             update_graph_node_camera(gc);
@@ -5563,10 +5513,6 @@ void set_camera_mode_8_directions(struct Camera *c) {
         s8DirModeBaseYaw = 0;
         s8DirModeYawOffset = 0;
     }
-#ifdef BETTERCAMERA
-    if (newcam_active == 1)
-        c->mode = CAMERA_MODE_NEWCAM;
-#endif
 }
 
 /**
@@ -5585,10 +5531,6 @@ void set_camera_mode_close_cam(u8 *mode) {
         sStatusFlags &= ~CAM_FLAG_SMOOTH_MOVEMENT;
         *mode = CAMERA_MODE_CLOSE;
     }
-#ifdef BETTERCAMERA
-    if (newcam_active == 1)
-        *mode = CAMERA_MODE_NEWCAM;
-#endif
 }
 
 /**
@@ -5613,10 +5555,6 @@ void set_camera_mode_radial(struct Camera *c, s16 transitionTime) {
         }
         sModeOffsetYaw = 0;
     }
-#ifdef BETTERCAMERA
-    if (newcam_active == 1)
-        c->mode = CAMERA_MODE_NEWCAM;
-#endif
 }
 
 /**
@@ -6995,9 +6933,6 @@ s16 cutscene_object(u8 cutscene, struct Object *o) {
 void update_camera_yaw(struct Camera *c) {
     c->nextYaw = calculate_yaw(c->focus, c->pos);
     c->yaw = c->nextYaw;
-#ifdef BETTERCAMERA
-    newcam_apply_outside_values(c,0);
-#endif
 }
 
 void cutscene_reset_spline(void) {
@@ -9266,14 +9201,7 @@ BAD_RETURN(s32) cutscene_non_painting_end(struct Camera *c) {
 
     if (c->defMode == CAMERA_MODE_CLOSE) {
         c->mode = CAMERA_MODE_CLOSE;
-    } else
-#ifdef BETTERCAMERA
-    if (c->defMode == CAMERA_MODE_NEWCAM) {
-        c->mode = CAMERA_MODE_NEWCAM;
-    }
-    else
-#endif
-    {
+    } else {
         c->mode = CAMERA_MODE_FREE_ROAM;
     }
 
@@ -10029,9 +9957,6 @@ BAD_RETURN(s32) cutscene_sliding_doors_follow_mario(struct Camera *c) {
 BAD_RETURN(s32) cutscene_sliding_doors_open(struct Camera *c) {
     UNUSED u32 pad[2];
 
-#ifdef BETTERCAMERA
-    newcam_apply_outside_values(c,1);
-#endif
     reset_pan_distance(c);
     cutscene_event(cutscene_sliding_doors_open_start, c, 0, 8);
     cutscene_event(cutscene_sliding_doors_open_set_cvars, c, 8, 8);
@@ -10228,12 +10153,7 @@ BAD_RETURN(s32) cutscene_unused_exit_focus_mario(struct Camera *c) {
  * Give control back to the player.
  */
 BAD_RETURN(s32) cutscene_exit_painting_end(struct Camera *c) {
-#ifdef BETTERCAMERA
-    if (newcam_active == 1)
-        c->mode = CAMERA_MODE_NEWCAM;
-        else
-#endif
-        c->mode = CAMERA_MODE_CLOSE;
+    c->mode = CAMERA_MODE_CLOSE;
     c->cutscene = 0;
     gCutsceneTimer = CUTSCENE_STOP;
     sStatusFlags |= CAM_FLAG_SMOOTH_MOVEMENT;
@@ -10393,24 +10313,11 @@ BAD_RETURN(s32) cutscene_door_follow_mario(struct Camera *c) {
  * Ends the door cutscene. Sets the camera mode to close mode unless the default is free roam.
  */
 BAD_RETURN(s32) cutscene_door_end(struct Camera *c) {
-#ifndef BETTERCAMERA
     if (c->defMode == CAMERA_MODE_FREE_ROAM) {
         c->mode = CAMERA_MODE_FREE_ROAM;
     } else {
         c->mode = CAMERA_MODE_CLOSE;
     }
-#else
-    if (c->defMode == CAMERA_MODE_CLOSE) {
-        c->mode = CAMERA_MODE_CLOSE;
-    } else
-    if (c->defMode == CAMERA_MODE_NEWCAM) {
-        c->mode = CAMERA_MODE_NEWCAM;
-    }
-    else
-    {
-        c->mode = CAMERA_MODE_FREE_ROAM;
-    }
-#endif
 
     c->cutscene = 0;
     gCutsceneTimer = CUTSCENE_STOP;
@@ -10907,7 +10814,7 @@ u8 sZoomOutAreaMasks[] = {
     ZOOMOUT_AREA_MASK(0,0,0,0, 0,0,0,0), // Unused         | Unused
 };
 
-STATIC_ASSERT(ARRAY_COUNT(sZoomOutAreaMasks) - 1 == LEVEL_MAX / 2, "Make sure you edit sZoomOutAreaMasks when adding / removing courses.");
+// STATIC_ASSERT(ARRAY_COUNT(sZoomOutAreaMasks) - 1 == LEVEL_MAX / 2, "Make sure you edit sZoomOutAreaMasks when adding / removing courses.");
 
 /*
  * credits spline paths.

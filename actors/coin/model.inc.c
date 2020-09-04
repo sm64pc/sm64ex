@@ -1,3 +1,5 @@
+#include "actors/common1.h"
+
 // Coin
 
 // 0x030056C0

@@ -1,3 +1,5 @@
+#include "actors/group9.h"
+
 // Boo
 
 // 0x05009B28

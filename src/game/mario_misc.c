@@ -305,11 +305,11 @@ static Gfx *make_gfx_mario_alpha(struct GraphNodeGenerated *node, s16 alpha) {
 
     if (alpha == 255) {
         node->fnNode.node.flags = (node->fnNode.node.flags & 0xFF) | (LAYER_OPAQUE << 8);
-        gfxHead = alloc_display_list(2 * sizeof(*gfxHead));
+        gfxHead = (Gfx*) alloc_display_list(2 * sizeof(*gfxHead));
         gfx = gfxHead;
     } else {
         node->fnNode.node.flags = (node->fnNode.node.flags & 0xFF) | (LAYER_TRANSPARENT << 8);
-        gfxHead = alloc_display_list(3 * sizeof(*gfxHead));
+        gfxHead = (Gfx*) alloc_display_list(3 * sizeof(*gfxHead));
         gfx = gfxHead;
         gDPSetAlphaCompare(gfx++, G_AC_DITHER);
     }
@@ -637,7 +637,7 @@ Gfx *geo_mirror_mario_backface_culling(s32 callContext, struct GraphNode *node, 
     Gfx *gfx = NULL;
 
     if (callContext == GEO_CONTEXT_RENDER && gCurGraphNodeObject == &gMirrorMario) {
-        gfx = alloc_display_list(3 * sizeof(*gfx));
+        gfx = (Gfx*) alloc_display_list(3 * sizeof(*gfx));
 
         if (asGenerated->parameter == 0) {
             gSPClearGeometryMode(&gfx[0], G_CULL_BACK);

@@ -1110,7 +1110,11 @@
  * Vertex (set up for use with colors)
  */
 typedef struct {
+#ifndef GBI_FLOATS
+	short		ob[3];	/* x, y, z */
+#else
 	float		ob[3];	/* x, y, z */
+#endif
 	unsigned short	flag;
 	short		tc[2];	/* texture coord */
 	unsigned char	cn[4];	/* color & alpha */
@@ -1120,7 +1124,11 @@ typedef struct {
  * Vertex (set up for use with normals)
  */
 typedef struct {
+#ifndef GBI_FLOATS
+	short		ob[3];	/* x, y, z */
+#else
 	float		ob[3];	/* x, y, z */
+#endif
 	unsigned short	flag;
 	short		tc[2];	/* texture coord */
 	signed char	n[3];	/* normal */
@@ -1169,9 +1177,23 @@ typedef struct {
 	unsigned char	v[3];
 } Tri;
 
+#ifndef GBI_FLOATS
+/*
+ * 4x4 matrix, fixed point s15.16 format.
+ * First 8 words are integer portion of the 4x4 matrix
+ * Last 8 words are the fraction portion of the 4x4 matrix
+ */
+typedef s32	Mtx_t[4][4];
+
+typedef union {
+    Mtx_t		m;
+    long long int	force_structure_alignment;
+} Mtx;
+#else
 typedef struct {
     float m[4][4];
 } Mtx;
+#endif
 
 /*
  * Viewport

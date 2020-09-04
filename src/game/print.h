@@ -8,7 +8,7 @@
 #define TEXRECT_MIN_Y 5
 #define TEXRECT_MAX_Y 220
 
-#define GLYPH_SPACE           -1
+#define GLYPH_SPACE           (u8) -1
 #define GLYPH_U               30
 #define GLYPH_EXCLAMATION_PNT 36
 #define GLYPH_TWO_EXCLAMATION 37

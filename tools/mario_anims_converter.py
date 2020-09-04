@@ -106,7 +106,7 @@ try:
                 raise SyntaxError("Error: values array must be written after indices array for " + name)
             values_num_values = len_mapping[values]
             offset_to_struct = "offsetof(struct MarioAnimsObj, " + name + ")"
-            offset_to_end = "offsetof(struct MarioAnimsObj, " + values + ") + sizeof(gMarioAnims." + values + ")"
+            offset_to_end = "offsetof(struct MarioAnimsObj, " + values + ") + sizeof(gMarioAnims_." + values + ")"
             structobj.append("{" + offset_to_struct + ", " + offset_to_end + " - " + offset_to_struct + "},")
     structobj.append("},")
 
@@ -117,7 +117,7 @@ try:
             indices_len = len_mapping[indices] // 6 - 1
             values_num_values = len_mapping[values]
             offset_to_struct = "offsetof(struct MarioAnimsObj, " + name + ")"
-            offset_to_end = "offsetof(struct MarioAnimsObj, " + values + ") + sizeof(gMarioAnims." + values + ")"
+            offset_to_end = "offsetof(struct MarioAnimsObj, " + values + ") + sizeof(gMarioAnims_." + values + ")"
             structdef.append("struct Animation " + name + ";")
             structobj.append("{" + ", ".join([
                 str(v1),
@@ -138,15 +138,20 @@ try:
 
     print("#include \"types.h\"")
     print("#include <stddef.h>")
+    print("#include \"game/game_init.h\"")
     print("")
 
-    print("const struct MarioAnimsObj {")
+    print("struct MarioAnimsObj {")
     for s in structdef:
         print(s)
-    print("} gMarioAnims = {")
+    print("};")
+    
+    print("struct MarioAnimsObj gMarioAnims_ = {")
     for s in structobj:
         print(s)
     print("};")
+
+    print("u8* gMarioAnims = (u8*) &gMarioAnims_;");
 
 except Exception as e:
     note = "NOTE! The mario animation C files are not processed by a normal C compiler, but by the script in tools/mario_anims_converter.py. The format is much more strict than normal C, so please follow the syntax of existing files.\n"

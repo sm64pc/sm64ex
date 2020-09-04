@@ -8,7 +8,7 @@
 #include "game/moving_texture.h"
 #include "game/screen_transition.h"
 #include "game/paintings.h"
-#include "menu/file_select.h"
+#include "menu/file_select.hpp"
 #include "menu/star_select.h"
 
 #include "make_const_nonconst.h"

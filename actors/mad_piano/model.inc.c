@@ -1,3 +1,5 @@
+#include "actors/group9.h"
+
 // Mad Piano
 
 // Unreferenced light group

@@ -198,7 +198,7 @@ void stop_other_paintings(s16 *idptr, struct Painting *paintingGroup[]) {
 
     index = 0;
     while (paintingGroup[index] != NULL) {
-        struct Painting *painting = segmented_to_virtual(paintingGroup[index]);
+        struct Painting *painting = (struct Painting*) segmented_to_virtual(paintingGroup[index]);
 
         // stop all rippling except for the selected painting
         if (painting->id != id) {
@@ -675,7 +675,7 @@ s16 ripple_if_movable(struct Painting *painting, s16 movable, s16 posX, s16 posY
 void painting_generate_mesh(struct Painting *painting, s16 *mesh, s16 numTris) {
     s16 i;
 
-    gPaintingMesh = mem_pool_alloc(gEffectsMemoryPool, numTris * sizeof(struct PaintingMeshVertex));
+    gPaintingMesh = (struct PaintingMeshVertex*) mem_pool_alloc(gEffectsMemoryPool, numTris * sizeof(struct PaintingMeshVertex));
     if (gPaintingMesh == NULL) {
     }
     // accesses are off by 1 since the first entry is the number of vertices
@@ -707,7 +707,7 @@ void painting_generate_mesh(struct Painting *painting, s16 *mesh, s16 numTris) {
 void painting_calculate_triangle_normals(s16 *mesh, s16 numVtx, s16 numTris) {
     s16 i;
 
-    gPaintingTriNorms = mem_pool_alloc(gEffectsMemoryPool, numTris * sizeof(Vec3f));
+    gPaintingTriNorms = (Vec3f*) mem_pool_alloc(gEffectsMemoryPool, numTris * sizeof(Vec3f));
     if (gPaintingTriNorms == NULL) {
     }
     for (i = 0; i < numTris; i++) {
@@ -833,8 +833,8 @@ Gfx *render_painting(u8 *img, s16 tWidth, s16 tHeight, s16 *textureMap, s16 mapV
     s16 numVtx = mapTris * 3;
 
     s16 commands = triGroups * 2 + remGroupTris + 7;
-    Vtx *verts = alloc_display_list(numVtx * sizeof(Vtx));
-    Gfx *dlist = alloc_display_list(commands * sizeof(Gfx));
+    Vtx *verts = (Vtx*) alloc_display_list(numVtx * sizeof(Vtx));
+    Gfx *dlist = (Gfx*) alloc_display_list(commands * sizeof(Gfx));
     Gfx *gfx = dlist;
 
     if (verts == NULL || dlist == NULL) {
@@ -899,11 +899,11 @@ Gfx *render_painting(u8 *img, s16 tWidth, s16 tHeight, s16 *textureMap, s16 mapV
  */
 Gfx *painting_model_view_transform(struct Painting *painting) {
     f32 sizeRatio = painting->size / PAINTING_SIZE;
-    Mtx *rotX = alloc_display_list(sizeof(Mtx));
-    Mtx *rotY = alloc_display_list(sizeof(Mtx));
-    Mtx *translate = alloc_display_list(sizeof(Mtx));
-    Mtx *scale = alloc_display_list(sizeof(Mtx));
-    Gfx *dlist = alloc_display_list(5 * sizeof(Gfx));
+    Mtx *rotX = (Mtx*) alloc_display_list(sizeof(Mtx));
+    Mtx *rotY = (Mtx*) alloc_display_list(sizeof(Mtx));
+    Mtx *translate = (Mtx*) alloc_display_list(sizeof(Mtx));
+    Mtx *scale = (Mtx*) alloc_display_list(sizeof(Mtx));
+    Gfx *dlist = (Gfx*) alloc_display_list(5 * sizeof(Gfx));
     Gfx *gfx = dlist;
 
     if (rotX == NULL || rotY == NULL || translate == NULL || dlist == NULL) {
@@ -934,9 +934,9 @@ Gfx *painting_ripple_image(struct Painting *painting) {
     s16 imageCount = painting->imageCount;
     s16 tWidth = painting->textureWidth;
     s16 tHeight = painting->textureHeight;
-    s16 **textureMaps = segmented_to_virtual(painting->textureMaps);
-    u8 **textures = segmented_to_virtual(painting->textureArray);
-    Gfx *dlist = alloc_display_list((imageCount + 6) * sizeof(Gfx));
+    s16 **textureMaps = (s16**) segmented_to_virtual(painting->textureMaps);
+    u8 **textures = (u8**) segmented_to_virtual(painting->textureArray);
+    Gfx *dlist = (Gfx*) alloc_display_list((imageCount + 6) * sizeof(Gfx));
     Gfx *gfx = dlist;
 
     if (dlist == NULL) {
@@ -949,7 +949,7 @@ Gfx *painting_ripple_image(struct Painting *painting) {
 
     // Map each image to the mesh's vertices
     for (i = 0; i < imageCount; i++) {
-        textureMap = segmented_to_virtual(textureMaps[i]);
+        textureMap = (s16*) segmented_to_virtual(textureMaps[i]);
         meshVerts = textureMap[0];
         meshTris = textureMap[meshVerts * 3 + 1];
         gSPDisplayList(gfx++, render_painting(textures[i], tWidth, tHeight, textureMap, meshVerts, meshTris, painting->alpha));
@@ -973,9 +973,9 @@ Gfx *painting_ripple_env_mapped(struct Painting *painting) {
     s16 *textureMap;
     s16 tWidth = painting->textureWidth;
     s16 tHeight = painting->textureHeight;
-    s16 **textureMaps = segmented_to_virtual(painting->textureMaps);
-    u8 **tArray = segmented_to_virtual(painting->textureArray);
-    Gfx *dlist = alloc_display_list(7 * sizeof(Gfx));
+    s16 **textureMaps = (s16**) segmented_to_virtual(painting->textureMaps);
+    u8 **tArray = (u8**) segmented_to_virtual(painting->textureArray);
+    Gfx *dlist = (Gfx*) alloc_display_list(7 * sizeof(Gfx));
     Gfx *gfx = dlist;
 
     if (dlist == NULL) {
@@ -987,7 +987,7 @@ Gfx *painting_ripple_env_mapped(struct Painting *painting) {
     gSPDisplayList(gfx++, painting->rippleDisplayList);
 
     // Map the image to the mesh's vertices
-    textureMap = segmented_to_virtual(textureMaps[0]);
+    textureMap = (s16*) segmented_to_virtual(textureMaps[0]);
     meshVerts = textureMap[0];
     meshTris = textureMap[meshVerts * 3 + 1];
     gSPDisplayList(gfx++, render_painting(tArray[0], tWidth, tHeight, textureMap, meshVerts, meshTris, painting->alpha));
@@ -1006,8 +1006,8 @@ Gfx *painting_ripple_env_mapped(struct Painting *painting) {
  * The mesh and vertex normals are regenerated and freed every frame.
  */
 Gfx *display_painting_rippling(struct Painting *painting) {
-    s16 *mesh = segmented_to_virtual(seg2_painting_triangle_mesh);
-    s16 *neighborTris = segmented_to_virtual(seg2_painting_mesh_neighbor_tris);
+    s16 *mesh = (s16*) segmented_to_virtual(seg2_painting_triangle_mesh);
+    s16 *neighborTris = (s16*) segmented_to_virtual(seg2_painting_mesh_neighbor_tris);
     s16 numVtx = mesh[0];
     s16 numTris = mesh[numVtx * 3 + 1];
     Gfx *dlist;
@@ -1037,7 +1037,7 @@ Gfx *display_painting_rippling(struct Painting *painting) {
  * Render a normal painting.
  */
 Gfx *display_painting_not_rippling(struct Painting *painting) {
-    Gfx *dlist = alloc_display_list(4 * sizeof(Gfx));
+    Gfx *dlist = (Gfx*) alloc_display_list(4 * sizeof(Gfx));
     Gfx *gfx = dlist;
 
     if (dlist == NULL) {
@@ -1063,6 +1063,7 @@ void reset_painting(struct Painting *painting) {
 
     gRipplingPainting = NULL;
 
+#ifdef NO_SEGMENTED_MEMORY
     // Make sure all variables are reset correctly.
     // With segmented memory the segments that contain the relevant
     // Painting structs are reloaded from ROM upon level load.
@@ -1079,6 +1080,7 @@ void reset_painting(struct Painting *painting) {
         // that moves the painting stops during level unload.
         painting->posX = 3456.0f;
     }
+#endif
 }
 
 /**
@@ -1126,6 +1128,7 @@ void move_ddd_painting(struct Painting *painting, f32 frontPos, f32 backPos, f32
         gDddPaintingStatus = BOWSERS_SUB_BEATEN | DDD_BACK;
     }
 }
+
 /**
  * Set the painting's node's layer based on its alpha
  */
@@ -1218,7 +1221,7 @@ Gfx *geo_painting_draw(s32 callContext, struct GraphNode *node, UNUSED void *con
     s32 id = gen->parameter & 0xFF;
     Gfx *paintingDlist = NULL;
     struct Painting **paintingGroup = sPaintingGroups[group];
-    struct Painting *painting = segmented_to_virtual(paintingGroup[id]);
+    struct Painting *painting = (struct Painting*) segmented_to_virtual(paintingGroup[id]);
 
     if (callContext != GEO_CONTEXT_RENDER) {
         reset_painting(painting);

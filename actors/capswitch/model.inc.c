@@ -1,3 +1,5 @@
+#include "actors/group8.h"
+
 // Capswitch
 
 // 0x05001BB8

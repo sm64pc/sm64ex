@@ -1,3 +1,5 @@
+#include "actors/group14.h"
+
 // Piranha Plant
 
 // 0x060113B0

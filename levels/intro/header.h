@@ -10,17 +10,7 @@ extern const GeoLayout intro_geo_0003B8[];
 extern const GeoLayout intro_geo_000414[];
 
 // leveldata
-extern Vtx titletest_test_mesh_vtx_0[133];
-extern Gfx titletest_test_mesh_tri_0[];
-extern Vtx titletest_test_mesh_vtx_1[407];
-extern Gfx titletest_test_mesh_tri_1[];
-extern Vtx titletest_test_mesh_vtx_2[183];
-extern Gfx titletest_test_mesh_tri_2[];
-extern Vtx titletest_test_mesh_vtx_3[568];
-extern Gfx titletest_test_mesh_tri_3[];
-
-extern Gfx titletest_test_mesh[];
-
+extern const Gfx intro_seg7_dl_0700B3A0[];
 extern const Gfx intro_seg7_dl_0700C6A0[];
 extern const f32 intro_seg7_table_0700C790[];
 extern const f32 intro_seg7_table_0700C880[];

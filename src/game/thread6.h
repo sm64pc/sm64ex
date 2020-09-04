@@ -1,6 +1,8 @@
 #ifndef THREAD6_H
 #define THREAD6_H
 
+#ifdef VERSION_SH
+
 extern s32 gRumblePakTimer;
 
 void init_rumble_pak_scheduler_queue(void);
@@ -15,6 +17,7 @@ void func_sh_8024CA04(void);
 void cancel_rumble(void);
 void create_thread_6(void);
 void rumble_thread_update_vi(void);
-void thread6_rumble_loop(void *a0);
+
+#endif // VERSION_SH
 
 #endif // THREAD6_H

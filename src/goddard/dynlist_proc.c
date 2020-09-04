@@ -172,7 +172,7 @@ struct GdObj *proc_dynlist(struct DynList *dylist) {
                 d_copystr_to_idbuf(Dyn1AsStr(dylist));
                 break;
             case 15:
-                d_makeobj(Dyn2AsInt(dylist), Dyn1AsID(dylist));
+                d_makeobj((enum DObjTypes) Dyn2AsInt(dylist), Dyn1AsID(dylist));
                 break;
             case 46:
                 d_add_net_with_subgroup(Dyn2AsInt(dylist), Dyn1AsID(dylist));
@@ -206,7 +206,7 @@ struct GdObj *proc_dynlist(struct DynList *dylist) {
                 d_link_with_ptr(Dyn1AsPtr(dylist));
                 break;
             case 12:
-                proc_dynlist(Dyn1AsPtr(dylist));
+                proc_dynlist((struct DynList*) Dyn1AsPtr(dylist));
                 break;
             case 0:
                 dynid_is_int(Dyn2AsInt(dylist));
@@ -239,10 +239,10 @@ struct GdObj *proc_dynlist(struct DynList *dylist) {
                 d_set_shape_offset(DynVecX(dylist), DynVecY(dylist), DynVecZ(dylist));
                 break;
             case 44:
-                d_set_parm_f(Dyn2AsInt(dylist), DynVecX(dylist));
+                d_set_parm_f((enum DParmF) Dyn2AsInt(dylist), DynVecX(dylist));
                 break;
             case 45:
-                d_set_parm_ptr(Dyn2AsInt(dylist), Dyn1AsPtr(dylist));
+                d_set_parm_ptr((enum DParmPtr) Dyn2AsInt(dylist), Dyn1AsPtr(dylist));
                 break;
             case 8:
                 d_set_flags(Dyn2AsInt(dylist));
@@ -251,7 +251,7 @@ struct GdObj *proc_dynlist(struct DynList *dylist) {
                 d_clear_flags(Dyn2AsInt(dylist));
                 break;
             case 7:
-                d_set_obj_draw_flag(Dyn2AsInt(dylist));
+                d_set_obj_draw_flag((enum ObjDrawingFlags) Dyn2AsInt(dylist));
                 break;
             case 39:
                 d_attach(Dyn1AsID(dylist));
@@ -275,7 +275,7 @@ struct GdObj *proc_dynlist(struct DynList *dylist) {
                 d_set_planegroup(Dyn1AsID(dylist));
                 break;
             case 24:
-                d_set_shapeptrptr(Dyn1AsPtr(dylist));
+                d_set_shapeptrptr((struct ObjShape**) Dyn1AsPtr(dylist));
                 break;
             case 25:
                 d_set_shapeptr(Dyn1AsID(dylist));
@@ -326,7 +326,7 @@ struct GdObj *proc_dynlist(struct DynList *dylist) {
                 d_make_netfromshapeid(Dyn1AsID(dylist));
                 break;
             case 55:
-                d_make_netfromshape_ptrptr(Dyn1AsPtr(dylist));
+                d_make_netfromshape_ptrptr((struct ObjShape**) Dyn1AsPtr(dylist));
                 break;
             default:
                 fatal_printf("proc_dynlist(): unkown command");
@@ -537,7 +537,7 @@ void add_to_dynobj_list(struct GdObj *newobj, DynId id) {
     start_memtracker("dynlist");
 
     if (sGdDynObjList == NULL) {
-        sGdDynObjList = gd_malloc_temp(DYNOBJ_LIST_SIZE * sizeof(struct DynObjInfo));
+        sGdDynObjList = (struct DynObjInfo*) gd_malloc_temp(DYNOBJ_LIST_SIZE * sizeof(struct DynObjInfo));
         if (sGdDynObjList == NULL) {
             fatal_printf("dMakeObj(): Cant allocate dynlist memory");
         }
@@ -878,7 +878,7 @@ void alloc_animdata(struct ObjAnimator *animator) {
         animCnt++;
     }
 
-    animDst = gd_malloc_perm(animCnt * sizeof(struct AnimDataInfo)); // gd_alloc_perm
+    animDst = (struct AnimDataInfo*) gd_malloc_perm(animCnt * sizeof(struct AnimDataInfo)); // gd_alloc_perm
     if ((animDataArr = animDst) == NULL) {
         fatal_printf("cant allocate animation data");
     }
@@ -944,7 +944,7 @@ void alloc_animdata(struct ObjAnimator *animator) {
                 }
                 curAnimSrc->type = GD_ANIM_MTX_VEC;
             } else {
-                copy_bytes(curAnimSrc->data, allocSpace, curAnimSrc->count * datasize);
+                copy_bytes((u8*) curAnimSrc->data, (u8*) allocSpace, curAnimSrc->count * datasize);
             }
         }
 
@@ -955,7 +955,7 @@ void alloc_animdata(struct ObjAnimator *animator) {
         curAnimSrc++; // next anim data struct
     }
 
-    animgrp->link1C->obj = (void *) animDataArr;
+    animgrp->link1C->obj = (struct GdObj*) animDataArr;
     stop_memtracker("animdata");
 }
 
@@ -1007,7 +1007,7 @@ void chk_shapegen(struct ObjShape *shape) {
                 fatal_printf("shapegen() too many vertices");
             }
 
-            vtxbuf = gd_malloc_temp(VTX_BUF_SIZE * sizeof(struct ObjVertex *));
+            vtxbuf = (struct ObjVertex**) gd_malloc_temp(VTX_BUF_SIZE * sizeof(struct ObjVertex *));
             oldObjHead = gGdObjectList;
 
             for (i = 0; i < vtxdata->count; i++) {
@@ -2331,9 +2331,9 @@ void d_add_valptr(DynId objId, u32 vflags, s32 type, size_t offset) {
             fatal_printf("dAddValPtr(\"%s\"): Undefined object", DynIdAsStr(objId));
         }
 
-        valptr = make_valptrs(info->obj, vflags, type, offset);
+        valptr = make_valptrs(info->obj, vflags, (enum ValPtrType) type, offset);
     } else {
-        valptr = make_valptrs(objId, vflags, type, offset);
+        valptr = make_valptrs((struct GdObj*) objId, vflags, (enum ValPtrType) type, offset);
     }
 
     switch (sDynListCurObj->type) {
@@ -2392,17 +2392,17 @@ void d_link_with_ptr(void *ptr) {
     add_to_stacktrace("dLinkWithPtr");
     switch (sDynListCurObj->type) {
         case OBJ_TYPE_CAMERAS:
-            ((struct ObjCamera *) dynobj)->unk30 = ptr;
+            ((struct ObjCamera *) dynobj)->unk30 = (struct GdObj*) ptr;
             break;
         case OBJ_TYPE_GROUPS:
-            link = make_link_to_obj(NULL, ptr);
+            link = make_link_to_obj(NULL, (struct GdObj*) ptr);
             ((struct ObjGroup *) dynobj)->link1C = link;
             break;
         case OBJ_TYPE_BONES:
-            add_joint2bone((struct ObjBone *) dynobj, ptr);
+            add_joint2bone((struct ObjBone *) dynobj, (struct ObjJoint*) ptr);
             break;
         case OBJ_TYPE_VIEWS:
-            ((struct ObjView *) dynobj)->components = ptr;
+            ((struct ObjView *) dynobj)->components = (struct ObjGroup*) ptr;
             ((struct ObjView *) dynobj)->unk1C =
                 setup_view_buffers(((struct ObjView *) dynobj)->namePtr, ((struct ObjView *) dynobj),
                                    (s32)((struct ObjView *) dynobj)->upperLeft.x,
@@ -2416,7 +2416,7 @@ void d_link_with_ptr(void *ptr) {
                 fatal_printf("too many points");
             }
 
-            ((struct ObjFace *) dynobj)->vertices[((struct ObjFace *) dynobj)->vtxCount] = ptr;
+            ((struct ObjFace *) dynobj)->vertices[((struct ObjFace *) dynobj)->vtxCount] = (struct ObjVertex*) ptr;
             ((struct ObjFace *) dynobj)->vtxCount++;
 
             if (((struct ObjFace *) dynobj)->vtxCount >= 3) {
@@ -2429,10 +2429,10 @@ void d_link_with_ptr(void *ptr) {
                 ((struct ObjAnimator *) dynobj)->unk14 = make_group(0);
             }
 
-            addto_group(((struct ObjAnimator *) dynobj)->unk14, ptr);
+            addto_group(((struct ObjAnimator *) dynobj)->unk14, (struct GdObj*) ptr);
             break;
         case OBJ_TYPE_LABELS:
-            valptr = make_valptrs(ptr, OBJ_TYPE_ALL, 0, 0);
+            valptr = make_valptrs((struct GdObj*) ptr, OBJ_TYPE_ALL, (enum ValPtrType) 0, 0);
             ((struct ObjLabel *) dynobj)->valptr = valptr;
             break;
         default:
@@ -2493,7 +2493,7 @@ void d_set_flags(s32 flags) {
             ((struct ObjCamera *) dynobj)->unk2C |= flags;
             break;
         case OBJ_TYPE_VIEWS:
-            ((struct ObjView *) dynobj)->flags |= flags;
+            ((struct ObjView *) dynobj)->flags = (enum GdViewFlags) (((struct ObjView *) dynobj)->flags | flags);
             break;
         case OBJ_TYPE_SHAPES:
             ((struct ObjShape *) dynobj)->flag |= flags;
@@ -2610,7 +2610,7 @@ void d_set_parm_ptr(enum DParmPtr param, void *ptr) {
         case OBJ_TYPE_LABELS:
             switch (param) {
                 case PARM_PTR_CHAR:
-                    ((struct ObjLabel *) sDynListCurObj)->fmtstr = ptr;
+                    ((struct ObjLabel *) sDynListCurObj)->fmtstr = (char*) ptr;
                     break;
                 default:
                     fatal_printf("Bad parm");
@@ -2619,7 +2619,7 @@ void d_set_parm_ptr(enum DParmPtr param, void *ptr) {
         case OBJ_TYPE_VIEWS:
             switch (param) {
                 case PARM_PTR_CHAR:
-                    ((struct ObjView *) sDynListCurObj)->namePtr = ptr;
+                    ((struct ObjView *) sDynListCurObj)->namePtr = (const char*) ptr;
                     break;
                 default:
                     fatal_printf("Bad parm");
@@ -2632,7 +2632,7 @@ void d_set_parm_ptr(enum DParmPtr param, void *ptr) {
                         fatal_printf("dsetparmp() too many points");
                     }
                     ((struct ObjFace *) sDynListCurObj)
-                        ->vertices[((struct ObjFace *) sDynListCurObj)->vtxCount++] = ptr;
+                        ->vertices[((struct ObjFace *) sDynListCurObj)->vtxCount++] = (struct ObjVertex*) ptr;
                     break;
                 default:
                     fatal_printf("Bad parm");

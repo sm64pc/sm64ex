@@ -120,7 +120,7 @@ void wiggler_init_segments(void) {
     struct ChainSegment *segments;
     struct Object *bodyPart;
 
-    segments = mem_pool_alloc(gObjectMemoryPool, 4 * sizeof(struct ChainSegment));
+    segments = (struct ChainSegment*) mem_pool_alloc(gObjectMemoryPool, 4 * sizeof(struct ChainSegment));
     if (segments != NULL) {
         // Each segment represents the global position and orientation of each
         // object. Segment 0 represents the wiggler's head, and segment i>0

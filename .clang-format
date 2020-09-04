@@ -1,18 +1,19 @@
-IndentWidth: 4
+---
 Language: Cpp
-AlignAfterOpenBracket: Align
-SortIncludes: false
-ColumnLimit: 104
-PointerAlignment: Right
-AllowShortFunctionsOnASingleLine: false
-AllowShortIfStatementsOnASingleLine: false
-BinPackArguments: true
-BinPackParameters: true
-SpaceAfterCStyleCast: true
-BreakBeforeBraces: Attach
-BreakBeforeTernaryOperators: true
-BreakBeforeBinaryOperators: NonAssignment
-Cpp11BracedListStyle: false
-IndentCaseLabels: true
-AlignTrailingComments: true
-UseTab: Never
+BasedOnStyle: Google
+
+BinPackArguments: false
+BinPackParameters: false
+
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: 'pch.h'
+    Priority: 0
+  - Regex: '^<'
+    Priority: 1
+  - Regex: '^".*/'
+    Priority: 2
+  - Regex: '(^((?!/).)*$)'
+    Priority: 3
+
+SortIncludes: true

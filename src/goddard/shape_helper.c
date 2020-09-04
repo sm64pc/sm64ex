@@ -639,8 +639,8 @@ void get_3DG1_shape(struct ObjShape *shape) {
     shape->mtlGroup = make_group(0);
     add_to_stacktrace("get_3DG1_shape");
 
-    vtxPtrArr = gd_malloc_perm(72000 * sizeof(struct ObjVertex *)); // 288,000 = 72,000 * 4
-    facePtrArr = gd_malloc_perm(76000 * sizeof(struct ObjFace *));  // 304,000 = 76,000 * 4
+    vtxPtrArr = (struct ObjVertex**) gd_malloc_perm(72000 * sizeof(struct ObjVertex *)); // 288,000 = 72,000 * 4
+    facePtrArr = (struct ObjFace**) gd_malloc_perm(76000 * sizeof(struct ObjFace *));  // 304,000 = 76,000 * 4
 
     tempNormal.x = 0.0f;
     tempNormal.y = 0.0f;
@@ -1147,10 +1147,12 @@ struct ObjShape *make_grid_shape(enum ObjTypeFlag gridType, s32 a1, s32 a2, s32 
                 sp40 = D_801BAC9C;
             }
 
-            add_3_vtx_to_face(D_801BAC9C, objBuf[row][col + 1], objBuf[row + 1][col + 1],
-                              objBuf[row][col]);
-            add_3_vtx_to_face(D_801BACA0, objBuf[row + 1][col + 1], objBuf[row + 1][col],
-                              objBuf[row][col]);
+            add_3_vtx_to_face(D_801BAC9C, (struct ObjVertex *) objBuf[row][col + 1],
+                              (struct ObjVertex *) objBuf[row + 1][col + 1],
+                              (struct ObjVertex *) objBuf[row][col]);
+            add_3_vtx_to_face(D_801BACA0, (struct ObjVertex *) objBuf[row + 1][col + 1],
+                              (struct ObjVertex *) objBuf[row + 1][col],
+                              (struct ObjVertex *) objBuf[row][col]);
         }
     }
 
@@ -1352,69 +1354,69 @@ s32 load_mario_head(void (*aniFn)(struct ObjAnimator *)) {
     sp24 = make_particle(0, 1, 0.0f, 0.0f, 0.0f);
     sp24->unk60 = 3;
     sp24->unk64 = 2;
-    sp24->unkBC = d_use_obj("N228l"); // probably a camera
+    sp24->unkBC = d_use_obj((DynId) "N228l"); // probably a camera
     sp24->unk1C = gShapeSilverSpark;
     addto_group(gGdLightGroup, &sp24->header);
 
     sp24 = make_particle(0, 2, 0.0f, 0.0f, 0.0f);
     sp24->unk60 = 3;
     sp24->unk64 = 2;
-    sp24->unkBC = d_use_obj("N231l"); // probably a camera
+    sp24->unkBC = d_use_obj((DynId) "N231l"); // probably a camera
     sp24->unk1C = gShapeRedSpark;
     addto_group(gGdLightGroup, &sp24->header);
 
-    sp3C = (struct ObjGroup *) d_use_obj("N1000l");
+    sp3C = (struct ObjGroup *) d_use_obj((DynId) "N1000l");
     create_gddl_for_shapes(sp3C);
     sp38 = gGdObjectList;
 
     sp30 = make_joint_withshape(D_801A82E8, 0, -500.0f, 0.0f, -150.0f);
-    sp34 = d_use_obj("N167l");
+    sp34 = d_use_obj((DynId) "N167l");
     sp30->unk1F8 = make_group(1, sp34);
 
     sp30 = make_joint_withshape(D_801A82E8, 0, 500.0f, 0.0f, -150.0f);
-    sp34 = d_use_obj("N176l");
+    sp34 = d_use_obj((DynId) "N176l");
     sp30->unk1F8 = make_group(1, sp34);
 
     sp30 = make_joint_withshape(D_801A82E8, 0, 0.0f, 700.0f, 300.0f);
-    sp34 = d_use_obj("N131l");
+    sp34 = d_use_obj((DynId) "N131l");
     sp30->unk1F8 = make_group(1, sp34);
 
-    sp34 = d_use_obj("N206l");
+    sp34 = d_use_obj((DynId) "N206l");
     addto_group(sp30->unk1F8, sp34);
 
-    sp34 = d_use_obj("N215l");
+    sp34 = d_use_obj((DynId) "N215l");
     addto_group(sp30->unk1F8, sp34);
 
-    sp34 = d_use_obj("N31l");
+    sp34 = d_use_obj((DynId) "N31l");
     addto_group(sp30->unk1F8, sp34);
 
-    sp34 = d_use_obj("N65l");
+    sp34 = d_use_obj((DynId) "N65l");
     addto_group(sp30->unk1F8, sp34);
 
     sp30 = make_joint_withshape(D_801A82E8, 0, 0.0f, 0.0f, 600.0f);
-    sp34 = d_use_obj("N185l");
+    sp34 = d_use_obj((DynId) "N185l");
     sp30->unk1F8 = make_group(1, sp34);
 
     sp30 = make_joint_withshape(D_801A82E8, 0, 0.0f, -300.0f, 300.0f);
-    sp34 = d_use_obj("N194l");
+    sp34 = d_use_obj((DynId) "N194l");
     sp30->unk1F8 = make_group(1, sp34);
 
     sp30 = make_joint_withshape(D_801A82E8, 0, 250.0f, -150.0f, 300.0f);
-    sp34 = d_use_obj("N158l");
+    sp34 = d_use_obj((DynId) "N158l");
     sp30->unk1F8 = make_group(1, sp34);
 
-    sp34 = d_use_obj("N15l");
+    sp34 = d_use_obj((DynId) "N15l");
     addto_group(sp30->unk1F8, sp34);
 
     sp30 = make_joint_withshape(D_801A82E8, 0, -250.0f, -150.0f, 300.0f);
-    sp34 = d_use_obj("N149l");
+    sp34 = d_use_obj((DynId) "N149l");
     sp30->unk1F8 = make_group(1, sp34);
 
-    sp34 = d_use_obj("N6l");
+    sp34 = d_use_obj((DynId) "N6l");
     addto_group(sp30->unk1F8, sp34);
 
     sp30 = make_joint_withshape(D_801A82E8, 0, 100.0f, 200.0f, 400.0f);
-    sp34 = d_use_obj("N112l");
+    sp34 = d_use_obj((DynId) "N112l");
     sp30->unk1F8 = make_group(1, sp34);
 
     sp30->fn2C = &func_8018EBE8;
@@ -1422,7 +1424,7 @@ s32 load_mario_head(void (*aniFn)(struct ObjAnimator *)) {
     sp30->header.drawFlags &= ~OBJ_IS_GRABBALE;
 
     sp30 = make_joint_withshape(D_801A82E8, 0, -100.0f, 200.0f, 400.0f);
-    sp34 = d_use_obj("N96l");
+    sp34 = d_use_obj((DynId) "N96l");
     sp30->unk1F8 = make_group(1, sp34);
 
     sp30->fn2C = &func_8018EBE8;

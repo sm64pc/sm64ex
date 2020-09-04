@@ -30,9 +30,7 @@ void fire_bar_spawn_flames(s16 a0) {
 }
 
 void fire_bar_act_0(void) {
-#ifndef NODRAWINGDISTANCE
     if (o->oDistanceToMario < 3000.0f)
-#endif
         o->oAction = 1;
 }
 
@@ -47,10 +45,8 @@ void fire_bar_act_1(void) {
 void fire_bar_act_2(void) {
     o->oAngleVelYaw = -0x100;
     o->oMoveAngleYaw += o->oAngleVelYaw;
-#ifndef NODRAWINGDISTANCE
     if (o->oDistanceToMario > 3200.0f)
         o->oAction = 3;
-#endif
 }
 
 void fire_bar_act_3(void) {

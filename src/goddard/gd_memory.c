@@ -81,7 +81,7 @@ struct GMemBlock *into_free_memblock(struct GMemBlock *block) {
 
     empty_mem_block(block);
     freeBlock = make_mem_block(G_MEM_BLOCK_FREE, permanence);
-    freeBlock->ptr = ptr;
+    freeBlock->ptr = (u8*) ptr;
     freeBlock->size = space;
     freeBlock->permFlag = permanence;
 
@@ -152,7 +152,7 @@ struct GMemBlock *make_mem_block(u32 blockType, u8 permFlag) {
 u32 gd_free_mem(void *ptr) {
     register struct GMemBlock *curBlock;
     u32 bytesFreed;
-    register u8 *targetBlock = ptr;
+    register u8 *targetBlock = (u8*) ptr;
 
     for (curBlock = sUsedBlockListHead; curBlock != NULL; curBlock = curBlock->next) {
         if (targetBlock == curBlock->ptr) {
@@ -232,7 +232,7 @@ struct GMemBlock *gd_add_mem_to_heap(u32 size, void *addr, u8 permanence) {
     addr = (void *)(((uintptr_t) addr + 8) & ~7);
 
     newBlock = make_mem_block(G_MEM_BLOCK_FREE, permanence);
-    newBlock->ptr = addr;
+    newBlock->ptr = (u8*) addr;
     newBlock->size = size;
 
     return newBlock;

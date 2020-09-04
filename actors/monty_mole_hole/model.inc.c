@@ -1,3 +1,5 @@
+#include "actors/group6.h"
+
 // Monty Mole Hole
 
 // 0x05000000

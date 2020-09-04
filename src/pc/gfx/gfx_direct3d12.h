@@ -1,4 +1,4 @@
-#ifdef RAPI_D3D12
+#ifdef ENABLE_DX12
 
 #ifndef GFX_DIRECT3D12_H
 #define GFX_DIRECT3D12_H

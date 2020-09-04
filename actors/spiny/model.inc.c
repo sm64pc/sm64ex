@@ -1,3 +1,5 @@
+#include "actors/group11.h"
+
 // Spiny
 
 // 0x050157F8

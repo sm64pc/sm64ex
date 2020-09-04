@@ -56,11 +56,11 @@ s16 bhv_mips_find_furthest_waypoint_to_mario(void) {
     struct Waypoint **pathBase;
     struct Waypoint *waypoint;
 
-    pathBase = segmented_to_virtual(&inside_castle_seg7_trajectory_mips);
+    pathBase = (struct Waypoint**) segmented_to_virtual(&inside_castle_seg7_trajectory_mips);
 
     // For each waypoint in MIPS path...
     for (i = 0; i < 10; i++) {
-        waypoint = segmented_to_virtual(*(pathBase + i));
+        waypoint = (struct Waypoint*) segmented_to_virtual(*(pathBase + i));
         x = waypoint->pos[0];
         y = waypoint->pos[1];
         z = waypoint->pos[2];
@@ -115,8 +115,8 @@ void bhv_mips_act_follow_path(void) {
     struct Waypoint *waypoint;
 
     // Retrieve current waypoint.
-    pathBase = segmented_to_virtual(&inside_castle_seg7_trajectory_mips);
-    waypoint = segmented_to_virtual(*(pathBase + o->oMipsStartWaypointIndex));
+    pathBase = (struct Waypoint**) segmented_to_virtual(&inside_castle_seg7_trajectory_mips);
+    waypoint = (struct Waypoint*) segmented_to_virtual(*(pathBase + o->oMipsStartWaypointIndex));
 
     // Set start waypoint and follow the path from there.
     o->oPathedStartWaypoint = waypoint;

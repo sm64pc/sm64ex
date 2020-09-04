@@ -6,13 +6,7 @@
 #include <assert.h>
 #include <ctype.h>
 
-#include "platform.h"
 #include "configfile.h"
-#include "cliopts.h"
-#include "gfx/gfx_screen_config.h"
-#include "gfx/gfx_window_manager_api.h"
-#include "controller/controller_api.h"
-#include "fs/fs.h"
 
 #define ARRAY_LEN(arr) (sizeof(arr) / sizeof(arr[0]))
 
@@ -20,7 +14,6 @@ enum ConfigOptionType {
     CONFIG_TYPE_BOOL,
     CONFIG_TYPE_UINT,
     CONFIG_TYPE_FLOAT,
-    CONFIG_TYPE_BIND,
 };
 
 struct ConfigOption {
@@ -36,124 +29,51 @@ struct ConfigOption {
 /*
  *Config options and default values
  */
+bool configFullscreen            = false;
+// Keyboard mappings (scancode values)
+unsigned int configKeyA          = 0x26;
+unsigned int configKeyB          = 0x33;
+unsigned int configKeyStart      = 0x39;
+unsigned int configKeyR          = 0x36;
+unsigned int configKeyZ          = 0x25;
+unsigned int configKeyCUp        = 0x148;
+unsigned int configKeyCDown      = 0x150;
+unsigned int configKeyCLeft      = 0x14B;
+unsigned int configKeyCRight     = 0x14D;
+unsigned int configKeyStickUp    = 0x11;
+unsigned int configKeyStickDown  = 0x1F;
+unsigned int configKeyStickLeft  = 0x1E;
+unsigned int configKeyStickRight = 0x20;
 
-// Video/audio stuff
-ConfigWindow configWindow       = {
-    .x = WAPI_WIN_CENTERPOS,
-    .y = WAPI_WIN_CENTERPOS,
-    .w = DESIRED_SCREEN_WIDTH,
-    .h = DESIRED_SCREEN_HEIGHT,
-    .vsync = 1,
-    .reset = false,
-    .fullscreen = false,
-    .exiting_fullscreen = false,
-    .settings_changed = false,
-};
-unsigned int configFiltering    = 1;          // 0=force nearest, 1=linear, (TODO) 2=three-point
-unsigned int configMasterVolume = MAX_VOLUME; // 0 - MAX_VOLUME
-unsigned int configMusicVolume = MAX_VOLUME;
-unsigned int configSfxVolume = MAX_VOLUME;
-unsigned int configEnvVolume = MAX_VOLUME;
-
-// Keyboard mappings (VK_ values, by default keyboard/gamepad/mouse)
-unsigned int configKeyA[MAX_BINDS]          = { 0x0026,   0x1000,     0x1103     };
-unsigned int configKeyB[MAX_BINDS]          = { 0x0033,   0x1002,     0x1101     };
-unsigned int configKeyStart[MAX_BINDS]      = { 0x0039,   0x1006,     VK_INVALID };
-unsigned int configKeyL[MAX_BINDS]          = { 0x002A,   0x1009,     0x1104     };
-unsigned int configKeyR[MAX_BINDS]          = { 0x0036,   0x100A,     0x101B     };
-unsigned int configKeyZ[MAX_BINDS]          = { 0x0025,   0x1007,     0x101A     };
-unsigned int configKeyCUp[MAX_BINDS]        = { 0x0148,   VK_INVALID, VK_INVALID };
-unsigned int configKeyCDown[MAX_BINDS]      = { 0x0150,   VK_INVALID, VK_INVALID };
-unsigned int configKeyCLeft[MAX_BINDS]      = { 0x014B,   VK_INVALID, VK_INVALID };
-unsigned int configKeyCRight[MAX_BINDS]     = { 0x014D,   VK_INVALID, VK_INVALID };
-unsigned int configKeyStickUp[MAX_BINDS]    = { 0x0011,   VK_INVALID, VK_INVALID };
-unsigned int configKeyStickDown[MAX_BINDS]  = { 0x001F,   VK_INVALID, VK_INVALID };
-unsigned int configKeyStickLeft[MAX_BINDS]  = { 0x001E,   VK_INVALID, VK_INVALID };
-unsigned int configKeyStickRight[MAX_BINDS] = { 0x0020,   VK_INVALID, VK_INVALID };
-unsigned int configStickDeadzone = 16; // 16*DEADZONE_STEP=4960 (the original default deadzone)
-unsigned int configRumbleStrength = 50;
-#ifdef EXTERNAL_DATA
-bool configPrecacheRes = true;
-#endif
-#ifdef BETTERCAMERA
-// BetterCamera settings
-unsigned int configCameraXSens   = 50;
-unsigned int configCameraYSens   = 50;
-unsigned int configCameraAggr    = 0;
-unsigned int configCameraPan     = 0;
-unsigned int configCameraDegrade = 10; // 0 - 100%
-bool         configCameraInvertX = true;
-bool         configCameraInvertY = false;
-bool         configEnableCamera  = false;
-bool         configCameraAnalog  = true;
-bool         configCameraMouse   = false;
-#endif
-bool         configSkipIntro     = 0;
-bool         configHUD           = true;
-#ifdef DISCORDRPC
-bool         configDiscordRPC    = true;
-#endif
 
 static const struct ConfigOption options[] = {
-    {.name = "fullscreen",           .type = CONFIG_TYPE_BOOL, .boolValue = &configWindow.fullscreen},
-    {.name = "window_x",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.x},
-    {.name = "window_y",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.y},
-    {.name = "window_w",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.w},
-    {.name = "window_h",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.h},
-    {.name = "vsync",                .type = CONFIG_TYPE_BOOL, .boolValue = &configWindow.vsync},
-    {.name = "texture_filtering",    .type = CONFIG_TYPE_UINT, .uintValue = &configFiltering},
-    {.name = "master_volume",        .type = CONFIG_TYPE_UINT, .uintValue = &configMasterVolume},
-    {.name = "music_volume",         .type = CONFIG_TYPE_UINT, .uintValue = &configMusicVolume},
-    {.name = "sfx_volume",           .type = CONFIG_TYPE_UINT, .uintValue = &configSfxVolume},
-    {.name = "env_volume",           .type = CONFIG_TYPE_UINT, .uintValue = &configEnvVolume},
-    {.name = "key_a",                .type = CONFIG_TYPE_BIND, .uintValue = configKeyA},
-    {.name = "key_b",                .type = CONFIG_TYPE_BIND, .uintValue = configKeyB},
-    {.name = "key_start",            .type = CONFIG_TYPE_BIND, .uintValue = configKeyStart},
-    {.name = "key_l",                .type = CONFIG_TYPE_BIND, .uintValue = configKeyL},
-    {.name = "key_r",                .type = CONFIG_TYPE_BIND, .uintValue = configKeyR},
-    {.name = "key_z",                .type = CONFIG_TYPE_BIND, .uintValue = configKeyZ},
-    {.name = "key_cup",              .type = CONFIG_TYPE_BIND, .uintValue = configKeyCUp},
-    {.name = "key_cdown",            .type = CONFIG_TYPE_BIND, .uintValue = configKeyCDown},
-    {.name = "key_cleft",            .type = CONFIG_TYPE_BIND, .uintValue = configKeyCLeft},
-    {.name = "key_cright",           .type = CONFIG_TYPE_BIND, .uintValue = configKeyCRight},
-    {.name = "key_stickup",          .type = CONFIG_TYPE_BIND, .uintValue = configKeyStickUp},
-    {.name = "key_stickdown",        .type = CONFIG_TYPE_BIND, .uintValue = configKeyStickDown},
-    {.name = "key_stickleft",        .type = CONFIG_TYPE_BIND, .uintValue = configKeyStickLeft},
-    {.name = "key_stickright",       .type = CONFIG_TYPE_BIND, .uintValue = configKeyStickRight},
-    {.name = "stick_deadzone",       .type = CONFIG_TYPE_UINT, .uintValue = &configStickDeadzone},
-    {.name = "rumble_strength",      .type = CONFIG_TYPE_UINT, .uintValue = &configRumbleStrength},
-    #ifdef EXTERNAL_DATA
-    {.name = "precache",             .type = CONFIG_TYPE_BOOL, .boolValue = &configPrecacheRes},
-    #endif
-    #ifdef BETTERCAMERA
-    {.name = "bettercam_enable",     .type = CONFIG_TYPE_BOOL, .boolValue = &configEnableCamera},
-    {.name = "bettercam_analog",     .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraAnalog},
-    {.name = "bettercam_mouse_look", .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraMouse},
-    {.name = "bettercam_invertx",    .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraInvertX},
-    {.name = "bettercam_inverty",    .type = CONFIG_TYPE_BOOL, .boolValue = &configCameraInvertY},
-    {.name = "bettercam_xsens",      .type = CONFIG_TYPE_UINT, .uintValue = &configCameraXSens},
-    {.name = "bettercam_ysens",      .type = CONFIG_TYPE_UINT, .uintValue = &configCameraYSens},
-    {.name = "bettercam_aggression", .type = CONFIG_TYPE_UINT, .uintValue = &configCameraAggr},
-    {.name = "bettercam_pan_level",  .type = CONFIG_TYPE_UINT, .uintValue = &configCameraPan},
-    {.name = "bettercam_degrade",    .type = CONFIG_TYPE_UINT, .uintValue = &configCameraDegrade},
-    #endif
-    {.name = "skip_intro",           .type = CONFIG_TYPE_BOOL, .boolValue = &configSkipIntro},
-    #ifdef DISCORDRPC
-    {.name = "discordrpc_enable",    .type = CONFIG_TYPE_BOOL, .boolValue = &configDiscordRPC},
-    #endif 
+    {.name = "fullscreen",     .type = CONFIG_TYPE_BOOL, .boolValue = &configFullscreen},
+    {.name = "key_a",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyA},
+    {.name = "key_b",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyB},
+    {.name = "key_start",      .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStart},
+    {.name = "key_r",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyR},
+    {.name = "key_z",          .type = CONFIG_TYPE_UINT, .uintValue = &configKeyZ},
+    {.name = "key_cup",        .type = CONFIG_TYPE_UINT, .uintValue = &configKeyCUp},
+    {.name = "key_cdown",      .type = CONFIG_TYPE_UINT, .uintValue = &configKeyCDown},
+    {.name = "key_cleft",      .type = CONFIG_TYPE_UINT, .uintValue = &configKeyCLeft},
+    {.name = "key_cright",     .type = CONFIG_TYPE_UINT, .uintValue = &configKeyCRight},
+    {.name = "key_stickup",    .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStickUp},
+    {.name = "key_stickdown",  .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStickDown},
+    {.name = "key_stickleft",  .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStickLeft},
+    {.name = "key_stickright", .type = CONFIG_TYPE_UINT, .uintValue = &configKeyStickRight},
 };
 
 // Reads an entire line from a file (excluding the newline character) and returns an allocated string
 // Returns NULL if no lines could be read from the file
-static char *read_file_line(fs_file_t *file) {
+static char *read_file_line(FILE *file) {
     char *buffer;
     size_t bufferSize = 8;
     size_t offset = 0; // offset in buffer to write
 
-    buffer = malloc(bufferSize);
+    buffer = (char*) malloc(bufferSize);
     while (1) {
         // Read a line from the file
-        if (fs_readline(file, buffer + offset, bufferSize - offset) == NULL) {
+        if (fgets(buffer + offset, bufferSize - offset, file) == NULL) {
             free(buffer);
             return NULL; // Nothing could be read.
         }
@@ -166,12 +86,12 @@ static char *read_file_line(fs_file_t *file) {
             break;
         }
 
-        if (fs_eof(file)) // EOF was reached
+        if (feof(file)) // EOF was reached
             break;
 
         // If no newline or EOF was reached, then the whole line wasn't read.
         bufferSize *= 2; // Increase buffer size
-        buffer = realloc(buffer, bufferSize);
+        buffer = (char*) realloc(buffer, bufferSize);
         assert(buffer != NULL);
     }
 
@@ -218,19 +138,14 @@ static unsigned int tokenize_string(char *str, int maxTokens, char **tokens) {
     return count;
 }
 
-// Gets the config file path and caches it
-const char *configfile_name(void) {
-    return (gCLIOpts.ConfigFile[0]) ? gCLIOpts.ConfigFile : CONFIGFILE_DEFAULT;
-}
-
 // Loads the config file specified by 'filename'
 void configfile_load(const char *filename) {
-    fs_file_t *file;
+    FILE *file;
     char *line;
 
     printf("Loading configuration from '%s'\n", filename);
 
-    file = fs_open(filename);
+    file = fopen(filename, "r");
     if (file == NULL) {
         // Create a new config file and save defaults
         printf("Config file '%s' not found. Creating it.\n", filename);
@@ -241,18 +156,14 @@ void configfile_load(const char *filename) {
     // Go through each line in the file
     while ((line = read_file_line(file)) != NULL) {
         char *p = line;
-        char *tokens[1 + MAX_BINDS];
+        char *tokens[2];
         int numTokens;
 
         while (isspace(*p))
             p++;
-
-        if (!*p || *p == '#') // comment or empty line
-            continue;
-
-        numTokens = tokenize_string(p, sizeof(tokens) / sizeof(tokens[0]), tokens);
+        numTokens = tokenize_string(p, 2, tokens);
         if (numTokens != 0) {
-            if (numTokens >= 2) {
+            if (numTokens == 2) {
                 const struct ConfigOption *option = NULL;
 
                 for (unsigned int i = 0; i < ARRAY_LEN(options); i++) {
@@ -268,15 +179,11 @@ void configfile_load(const char *filename) {
                         case CONFIG_TYPE_BOOL:
                             if (strcmp(tokens[1], "true") == 0)
                                 *option->boolValue = true;
-                            else
+                            else if (strcmp(tokens[1], "false") == 0)
                                 *option->boolValue = false;
                             break;
                         case CONFIG_TYPE_UINT:
                             sscanf(tokens[1], "%u", option->uintValue);
-                            break;
-                        case CONFIG_TYPE_BIND:
-                            for (int i = 0; i < MAX_BINDS && i < numTokens - 1; ++i)
-                                sscanf(tokens[i + 1], "%x", option->uintValue + i);
                             break;
                         case CONFIG_TYPE_FLOAT:
                             sscanf(tokens[1], "%f", option->floatValue);
@@ -284,9 +191,7 @@ void configfile_load(const char *filename) {
                         default:
                             assert(0); // bad type
                     }
-                    printf("option: '%s', value:", tokens[0]);
-                    for (int i = 1; i < numTokens; ++i) printf(" '%s'", tokens[i]);
-                    printf("\n");
+                    printf("option: '%s', value: '%s'\n", tokens[0], tokens[1]);
                 }
             } else
                 puts("error: expected value");
@@ -294,7 +199,7 @@ void configfile_load(const char *filename) {
         free(line);
     }
 
-    fs_close(file);
+    fclose(file);
 }
 
 // Writes the config file to 'filename'
@@ -303,7 +208,7 @@ void configfile_save(const char *filename) {
 
     printf("Saving configuration to '%s'\n", filename);
 
-    file = fopen(fs_get_write_path(filename), "w");
+    file = fopen(filename, "w");
     if (file == NULL) {
         // error
         return;
@@ -321,12 +226,6 @@ void configfile_save(const char *filename) {
                 break;
             case CONFIG_TYPE_FLOAT:
                 fprintf(file, "%s %f\n", option->name, *option->floatValue);
-                break;
-            case CONFIG_TYPE_BIND:
-                fprintf(file, "%s ", option->name);
-                for (int i = 0; i < MAX_BINDS; ++i)
-                    fprintf(file, "%04x ", option->uintValue[i]);
-                fprintf(file, "\n");
                 break;
             default:
                 assert(0); // unknown type

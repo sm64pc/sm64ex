@@ -1,3 +1,5 @@
+#include "actors/group17.h"
+
 // Scuttlebug
 
 // Unreferenced light group

@@ -18,13 +18,8 @@
 #include <vector>
 using namespace std;
 
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-# define BSWAP32(x) ((((x) >> 24) & 0xff) | (((x) >> 8) & 0xff00) | (((x) << 8) & 0xff0000) | (((x) << 24) & 0xff000000U))
-# define BSWAP16(x) ((((x) >> 8) & 0xff) | (((x) << 8) & 0xff00))
-#else
-# define BSWAP32(x) (x)
-# define BSWAP16(x) (x)
-#endif
+#define BSWAP32(x) ((((x) >> 24) & 0xff) | (((x) >> 8) & 0xff00) | (((x) << 8) & 0xff0000) | (((x) << 24) & 0xff000000U))
+#define BSWAP16(x) ((((x) >> 8) & 0xff) | (((x) << 8) & 0xff00))
 
 const char* OUTPUT_FILE = "assets.json";
 const size_t CHUNK_SIZE = 16;
@@ -227,7 +222,7 @@ tuple<string, string, vector<string>> compileSoundData(const string& lang) {
 }
 
 int main() {
-    //intentional syntax error; // (see comment at top of file)
+    intentional syntax error; // (see comment at top of file)
     map<string, string> assets;
     map<string, vector<pair<string, int>>> soundAssets;
 

@@ -6,7 +6,9 @@ struct DoorAction
     s32 action;
 };
 
-struct DoorAction D_8032F300[] = { { 0x40000, 3 }, { 0x80000, 4 }, { 0x10000, 1 }, { 0x20000, 2 }, { -1, 0 }, };
+struct DoorAction D_8032F300[] = {
+  {0x40000, 3}, {0x80000, 4}, {0x10000, 1}, {0x20000, 2}, {(u32)-1, 0},
+};
 
 s32 D_8032F328[] = { SOUND_GENERAL_OPEN_WOOD_DOOR, SOUND_GENERAL_OPEN_IRON_DOOR };
 

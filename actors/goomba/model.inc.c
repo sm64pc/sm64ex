@@ -1,3 +1,5 @@
+#include "actors/common0.h"
+
 // Goomba
 
 // Unreferenced light group

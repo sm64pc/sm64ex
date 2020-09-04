@@ -23,11 +23,7 @@ SOFTWARE.
 */
 
 #include "exoquant.h"
-
-#ifndef OSX_BUILD // OSX build cannot have malloc defined
 #include <malloc.h>
-#endif
-
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>

@@ -1,3 +1,5 @@
+#include "actors/common0.h"
+
 // Amp
 
 // 0x08000F18

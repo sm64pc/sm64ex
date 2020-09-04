@@ -1,3 +1,5 @@
+#include "actors/group13.h"
+
 // Treasure Chest
 
 // 0x06013F90

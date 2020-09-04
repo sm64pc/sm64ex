@@ -1,32 +1,20 @@
 #include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
 #include <assert.h>
-
-#ifdef EXTERNAL_DATA
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
-#endif
 
 #ifndef _LANGUAGE_C
 #define _LANGUAGE_C
 #endif
 #include <PR/gbi.h>
 
-#include "config.h"
-
 #include "gfx_pc.h"
 #include "gfx_cc.h"
 #include "gfx_window_manager_api.h"
 #include "gfx_rendering_api.h"
 #include "gfx_screen_config.h"
-
-#include "../platform.h"
-#include "../configfile.h"
-#include "../fs/fs.h"
 
 #define SUPPORT_CHECK(x) assert(x)
 
@@ -49,17 +37,6 @@
 #define MAX_BUFFERED 256
 #define MAX_LIGHTS 2
 #define MAX_VERTICES 64
-
-#ifdef EXTERNAL_DATA
-# define MAX_CACHED_TEXTURES 4096 // for preloading purposes
-# define HASH_SHIFT 0
-#else
-# define MAX_CACHED_TEXTURES 512
-# define HASH_SHIFT 5
-#endif
-
-#define HASHMAP_LEN (MAX_CACHED_TEXTURES * 2)
-#define HASH_MASK (HASHMAP_LEN - 1)
 
 struct RGBA {
     uint8_t r, g, b, a;
@@ -87,8 +64,8 @@ struct TextureHashmapNode {
     bool linear_filter;
 };
 static struct {
-    struct TextureHashmapNode *hashmap[HASHMAP_LEN];
-    struct TextureHashmapNode pool[MAX_CACHED_TEXTURES];
+    struct TextureHashmapNode *hashmap[1024];
+    struct TextureHashmapNode pool[512];
     uint32_t pool_pos;
 } gfx_texture_cache;
 
@@ -176,27 +153,11 @@ static size_t buf_vbo_num_tris;
 static struct GfxWindowManagerAPI *gfx_wapi;
 static struct GfxRenderingAPI *gfx_rapi;
 
-// 4x4 pink-black checkerboard texture to indicate missing textures
-#define MISSING_W 4
-#define MISSING_H 4
-static const uint8_t missing_texture[MISSING_W * MISSING_H * 4] = {
-    0xFF, 0x00, 0xFF, 0xFF,  0xFF, 0x00, 0xFF, 0xFF,  0x00, 0x00, 0x00, 0xFF,  0x00, 0x00, 0x00, 0xFF,
-    0xFF, 0x00, 0xFF, 0xFF,  0xFF, 0x00, 0xFF, 0xFF,  0x00, 0x00, 0x00, 0xFF,  0x00, 0x00, 0x00, 0xFF,
-    0x00, 0x00, 0x00, 0xFF,  0x00, 0x00, 0x00, 0xFF,  0xFF, 0x00, 0xFF, 0xFF,  0xFF, 0x00, 0xFF, 0xFF,
-    0x00, 0x00, 0x00, 0xFF,  0x00, 0x00, 0x00, 0xFF,  0xFF, 0x00, 0xFF, 0xFF,  0xFF, 0x00, 0xFF, 0xFF,
-};
-
-#ifdef EXTERNAL_DATA
-static inline size_t string_hash(const uint8_t *str) {
-    size_t h = 0;
-    for (const uint8_t *p = str; *p; p++)
-        h = 31 * h + *p;
-    return h;
-}
-#endif
-
+#include <time.h>
 static unsigned long get_time(void) {
-    return 0;
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return (unsigned long)ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
 }
 
 static void gfx_flush(void) {
@@ -288,19 +249,11 @@ static struct ColorCombiner *gfx_lookup_or_create_color_combiner(uint32_t cc_id)
 }
 
 static bool gfx_texture_cache_lookup(int tile, struct TextureHashmapNode **n, const uint8_t *orig_addr, uint32_t fmt, uint32_t siz) {
-    #ifdef EXTERNAL_DATA // hash and compare the data (i.e. the texture name) itself
-    size_t hash = string_hash(orig_addr);
-    #define CMPADDR(x, y) (x && !sys_strcasecmp((const char *)x, (const char *)y))
-    #else // hash and compare the address
     size_t hash = (uintptr_t)orig_addr;
-    #define CMPADDR(x, y) x == y
-    #endif
-
-    hash = (hash >> HASH_SHIFT) & HASH_MASK;
-
+    hash = (hash >> 5) & 0x3ff;
     struct TextureHashmapNode **node = &gfx_texture_cache.hashmap[hash];
-    while (*node != NULL && *node - gfx_texture_cache.pool < gfx_texture_cache.pool_pos) {
-        if (CMPADDR((*node)->texture_addr, orig_addr) && (*node)->fmt == fmt && (*node)->siz == siz) {
+    while (*node != NULL && *node - gfx_texture_cache.pool < (int)gfx_texture_cache.pool_pos) {
+        if ((*node)->texture_addr == orig_addr && (*node)->fmt == fmt && (*node)->siz == siz) {
             gfx_rapi->select_texture(tile, (*node)->texture_id);
             *n = *node;
             return true;
@@ -311,7 +264,7 @@ static bool gfx_texture_cache_lookup(int tile, struct TextureHashmapNode **n, co
         // Pool is full. We just invalidate everything and start over.
         gfx_texture_cache.pool_pos = 0;
         node = &gfx_texture_cache.hashmap[hash];
-        // puts("Clearing texture cache");
+        //puts("Clearing texture cache");
     }
     *node = &gfx_texture_cache.pool[gfx_texture_cache.pool_pos++];
     if ((*node)->texture_addr == NULL) {
@@ -328,15 +281,6 @@ static bool gfx_texture_cache_lookup(int tile, struct TextureHashmapNode **n, co
     (*node)->siz = siz;
     *n = *node;
     return false;
-    #undef CMPADDR
-}
-
-#ifndef EXTERNAL_DATA
-
-static void import_texture_rgba32(int tile) {
-    uint32_t width = rdp.texture_tile.line_size_bytes / 2;
-    uint32_t height = (rdp.loaded_texture[tile].size_bytes / 2) / rdp.texture_tile.line_size_bytes;
-    gfx_rapi->upload_texture(rdp.loaded_texture[tile].addr, width, height);
 }
 
 static void import_texture_rgba16(int tile) {
@@ -358,6 +302,12 @@ static void import_texture_rgba16(int tile) {
     uint32_t height = rdp.loaded_texture[tile].size_bytes / rdp.texture_tile.line_size_bytes;
     
     gfx_rapi->upload_texture(rgba32_buf, width, height);
+}
+
+static void import_texture_rgba32(int tile) {
+    uint32_t width = rdp.texture_tile.line_size_bytes / 2;
+    uint32_t height = (rdp.loaded_texture[tile].size_bytes / 2) / rdp.texture_tile.line_size_bytes;
+    gfx_rapi->upload_texture(rdp.loaded_texture[tile].addr, width, height);
 }
 
 static void import_texture_ia4(int tile) {
@@ -427,19 +377,23 @@ static void import_texture_ia16(int tile) {
 
 static void import_texture_i4(int tile) {
     uint8_t rgba32_buf[32768];
-    
+
     for (uint32_t i = 0; i < rdp.loaded_texture[tile].size_bytes * 2; i++) {
         uint8_t byte = rdp.loaded_texture[tile].addr[i / 2];
-        uint8_t intensity = (byte >> (4 - (i % 2) * 4)) & 0xf;
-        rgba32_buf[4*i + 0] = SCALE_4_8(intensity);
-        rgba32_buf[4*i + 1] = SCALE_4_8(intensity);
-        rgba32_buf[4*i + 2] = SCALE_4_8(intensity);
+        uint8_t part = (byte >> (4 - (i % 2) * 4)) & 0xf;
+        uint8_t intensity = part;
+        uint8_t r = intensity;
+        uint8_t g = intensity;
+        uint8_t b = intensity;
+        rgba32_buf[4*i + 0] = SCALE_4_8(r);
+        rgba32_buf[4*i + 1] = SCALE_4_8(g);
+        rgba32_buf[4*i + 2] = SCALE_4_8(b);
         rgba32_buf[4*i + 3] = 255;
     }
-    
+
     uint32_t width = rdp.texture_tile.line_size_bytes * 2;
     uint32_t height = rdp.loaded_texture[tile].size_bytes / rdp.texture_tile.line_size_bytes;
-    
+
     gfx_rapi->upload_texture(rgba32_buf, width, height);
 }
 
@@ -448,17 +402,21 @@ static void import_texture_i8(int tile) {
 
     for (uint32_t i = 0; i < rdp.loaded_texture[tile].size_bytes; i++) {
         uint8_t intensity = rdp.loaded_texture[tile].addr[i];
-        rgba32_buf[4*i + 0] = intensity;
-        rgba32_buf[4*i + 1] = intensity;
-        rgba32_buf[4*i + 2] = intensity;
+        uint8_t r = intensity;
+        uint8_t g = intensity;
+        uint8_t b = intensity;
+        rgba32_buf[4*i + 0] = r;
+        rgba32_buf[4*i + 1] = g;
+        rgba32_buf[4*i + 2] = b;
         rgba32_buf[4*i + 3] = 255;
     }
-    
+
     uint32_t width = rdp.texture_tile.line_size_bytes;
     uint32_t height = rdp.loaded_texture[tile].size_bytes / rdp.texture_tile.line_size_bytes;
-    
+
     gfx_rapi->upload_texture(rgba32_buf, width, height);
 }
+
 
 static void import_texture_ci4(int tile) {
     uint8_t rgba32_buf[32768];
@@ -505,129 +463,22 @@ static void import_texture_ci8(int tile) {
     gfx_rapi->upload_texture(rgba32_buf, width, height);
 }
 
-#else // EXTERNAL_DATA
-
-static inline void load_texture(const char *fullpath) {
-    int w, h;
-    u64 imgsize = 0;
-
-    u8 *imgdata = fs_load_file(fullpath, &imgsize);
-    if (imgdata) {
-        // TODO: implement stbi_callbacks or some shit instead of loading the whole texture
-        u8 *data = stbi_load_from_memory(imgdata, imgsize, &w, &h, NULL, 4);
-        free(imgdata);
-        if (data) {
-            gfx_rapi->upload_texture(data, w, h);
-            stbi_image_free(data); // don't need this anymore
-            return;
-        }
-    }
-
-    fprintf(stderr, "could not load texture: `%s`\n", fullpath);
-    // replace with missing texture
-    gfx_rapi->upload_texture(missing_texture, MISSING_W, MISSING_H);
-}
-
-
-// this is taken straight from n64graphics
-static bool texname_to_texformat(const char *name, u8 *fmt, u8 *siz) {
-    static const struct {
-        const char *name;
-        const u8 format;
-        const u8 size;
-    } fmt_table[] = {
-        { "rgba16", G_IM_FMT_RGBA, G_IM_SIZ_16b },
-        { "rgba32", G_IM_FMT_RGBA, G_IM_SIZ_32b },
-        { "ia1",    G_IM_FMT_IA,   G_IM_SIZ_8b  }, // uhh
-        { "ia4",    G_IM_FMT_IA,   G_IM_SIZ_4b  },
-        { "ia8",    G_IM_FMT_IA,   G_IM_SIZ_8b  },
-        { "ia16",   G_IM_FMT_IA,   G_IM_SIZ_16b },
-        { "i4",     G_IM_FMT_I,    G_IM_SIZ_4b  },
-        { "i8",     G_IM_FMT_I,    G_IM_SIZ_8b  },
-        { "ci8",    G_IM_FMT_I,    G_IM_SIZ_8b  },
-        { "ci16",   G_IM_FMT_I,    G_IM_SIZ_16b },
-    };
-
-    char *fstr = strrchr(name, '.');
-    if (!fstr) return false; // no format string?
-    fstr++;
-
-    for (unsigned i = 0; i < sizeof(fmt_table) / sizeof(fmt_table[0]); ++i) {
-        if (!sys_strcasecmp(fstr, fmt_table[i].name)) {
-            *fmt = fmt_table[i].format;
-            *siz = fmt_table[i].size;
-            return true;
-        }
-    }
-
-    return false;
-}
-
-// calls import_texture() on every texture in the res folder
-// we can get the format and size from the texture files
-// and then cache them using gfx_texture_cache_lookup
-static bool preload_texture(void *user, const char *path) {
-    // strip off the extension
-    char texname[SYS_MAX_PATH];
-    strncpy(texname, path, sizeof(texname));
-    texname[sizeof(texname)-1] = 0;
-    char *dot = strrchr(texname, '.');
-    if (dot) *dot = 0;
-
-    // get the format and size from filename
-    u8 fmt, siz;
-    if (!texname_to_texformat(texname, &fmt, &siz)) {
-        fprintf(stderr, "unknown texture format: `%s`, skipping\n", texname);
-        return true; // just skip it, might be a stray skybox or something
-    }
-
-    char *actualname = texname;
-    // strip off the prefix // TODO: make a fs_ function for this shit
-    if (!strncmp(FS_TEXTUREDIR "/", actualname, 4)) actualname += 4;
-    // this will be stored in the hashtable, so make a copy
-    actualname = sys_strdup(actualname);
-    assert(actualname);
-
-    struct TextureHashmapNode *n;
-    if (!gfx_texture_cache_lookup(0, &n, actualname, fmt, siz))
-        load_texture(path); // new texture, load it
-
-    return true;
-}
-
-#endif // EXTERNAL_DATA
-
 static void import_texture(int tile) {
     uint8_t fmt = rdp.texture_tile.fmt;
     uint8_t siz = rdp.texture_tile.siz;
-
-    if (!rdp.loaded_texture[tile].addr) {
-        fprintf(stderr, "NULL texture: tile %d, format %d/%d, size %d\n",
-                tile, (int)fmt, (int)siz, (int)rdp.loaded_texture[tile].size_bytes);
-        return;
-    }
-
+    
     if (gfx_texture_cache_lookup(tile, &rendering_state.textures[tile], rdp.loaded_texture[tile].addr, fmt, siz)) {
         return;
     }
-
-#ifdef EXTERNAL_DATA
-    // the "texture data" is actually a C string with the path to our texture in it
-    // load it from an external image in our data path
-    char texname[SYS_MAX_PATH];
-    snprintf(texname, sizeof(texname), FS_TEXTUREDIR "/%s.png", (const char*)rdp.loaded_texture[tile].addr);
-    load_texture(texname);
-#else
-    // the texture data is actual texture data
+    
     int t0 = get_time();
     if (fmt == G_IM_FMT_RGBA) {
-        if (siz == G_IM_SIZ_32b) {
-            import_texture_rgba32(tile);
-        }
-        else if (siz == G_IM_SIZ_16b) {
+        if (siz == G_IM_SIZ_16b) {
             import_texture_rgba16(tile);
+        } else if (siz == G_IM_SIZ_32b) {
+            import_texture_rgba32(tile);
         } else {
-            sys_fatal("unsupported RGBA texture size: %u", siz);
+            abort();
         }
     } else if (fmt == G_IM_FMT_IA) {
         if (siz == G_IM_SIZ_4b) {
@@ -637,7 +488,7 @@ static void import_texture(int tile) {
         } else if (siz == G_IM_SIZ_16b) {
             import_texture_ia16(tile);
         } else {
-            sys_fatal("unsupported IA texture size: %u", siz);
+            abort();
         }
     } else if (fmt == G_IM_FMT_CI) {
         if (siz == G_IM_SIZ_4b) {
@@ -645,7 +496,7 @@ static void import_texture(int tile) {
         } else if (siz == G_IM_SIZ_8b) {
             import_texture_ci8(tile);
         } else {
-            sys_fatal("unsupported CI texture size: %u", siz);
+            abort();
         }
     } else if (fmt == G_IM_FMT_I) {
         if (siz == G_IM_SIZ_4b) {
@@ -653,14 +504,13 @@ static void import_texture(int tile) {
         } else if (siz == G_IM_SIZ_8b) {
             import_texture_i8(tile);
         } else {
-            sys_fatal("unsupported I texture size: %u", siz);
+            abort();
         }
     } else {
-        sys_fatal("unsupported texture format: %u", fmt);
+        abort();
     }
     int t1 = get_time();
     //printf("Time diff: %d\n", t1 - t0);
-#endif
 }
 
 static void gfx_normalize_vector(float v[3]) {
@@ -701,8 +551,8 @@ static void gfx_matrix_mul(float res[4][4], const float a[4][4], const float b[4
 
 static void gfx_sp_matrix(uint8_t parameters, const int32_t *addr) {
     float matrix[4][4];
-#if 0
-    // Original code when fixed point matrices were used
+#ifndef GBI_FLOATS
+    // Original GBI where fixed point matrices are used
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j += 2) {
             int32_t int_part = addr[i * 2 + j / 2];
@@ -712,6 +562,7 @@ static void gfx_sp_matrix(uint8_t parameters, const int32_t *addr) {
         }
     }
 #else
+    // For a modified GBI where fixed point values are replaced with floats
     memcpy(matrix, addr, sizeof(matrix));
 #endif
     
@@ -974,7 +825,7 @@ static void gfx_sp_tri1(uint8_t vtx1_idx, uint8_t vtx2_idx, uint8_t vtx3_idx) {
                 import_texture(i);
                 rdp.textures_changed[i] = false;
             }
-            bool linear_filter = configFiltering && ((rdp.other_mode_h & (3U << G_MDSFT_TEXTFILT)) != G_TF_POINT);
+            bool linear_filter = (rdp.other_mode_h & (3U << G_MDSFT_TEXTFILT)) != G_TF_POINT;
             if (linear_filter != rendering_state.textures[i]->linear_filter || rdp.texture_tile.cms != rendering_state.textures[i]->cms || rdp.texture_tile.cmt != rendering_state.textures[i]->cmt) {
                 gfx_flush();
                 gfx_rapi->set_sampler_parameters(i, linear_filter, rdp.texture_tile.cms, rdp.texture_tile.cmt);
@@ -1169,12 +1020,11 @@ static void gfx_dp_set_scissor(uint32_t mode, uint32_t ulx, uint32_t uly, uint32
 }
 
 static void gfx_dp_set_texture_image(uint32_t format, uint32_t size, uint32_t width, const void* addr) {
-    rdp.texture_to_load.addr = addr;
+    rdp.texture_to_load.addr = (const uint8_t*) addr;
     rdp.texture_to_load.siz = size;
 }
 
 static void gfx_dp_set_tile(uint8_t fmt, uint32_t siz, uint32_t line, uint32_t tmem, uint8_t tile, uint32_t palette, uint32_t cmt, uint32_t maskt, uint32_t shiftt, uint32_t cms, uint32_t masks, uint32_t shifts) {
-    
     if (tile == G_TX_RENDERTILE) {
         SUPPORT_CHECK(palette == 0); // palette should set upper 4 bits of color index in 4b mode
         rdp.texture_tile.fmt = fmt;
@@ -1232,6 +1082,7 @@ static void gfx_dp_load_block(uint8_t tile, uint32_t uls, uint32_t ult, uint32_t
     }
     uint32_t size_bytes = (lrs + 1) << word_size_shift;
     rdp.loaded_texture[rdp.texture_to_load.tile_number].size_bytes = size_bytes;
+    assert(size_bytes <= 4096 && "bug: too big texture");
     rdp.loaded_texture[rdp.texture_to_load.tile_number].addr = rdp.texture_to_load.addr;
     
     rdp.textures_changed[rdp.texture_to_load.tile_number] = true;
@@ -1246,7 +1097,7 @@ static void gfx_dp_load_tile(uint8_t tile, uint32_t uls, uint32_t ult, uint32_t 
     uint32_t word_size_shift;
     switch (rdp.texture_to_load.siz) {
         case G_IM_SIZ_4b:
-            word_size_shift = 0; // Or -1? It's unused in SM64 anyway.
+            word_size_shift = 0;
             break;
         case G_IM_SIZ_8b:
             word_size_shift = 0;
@@ -1262,6 +1113,7 @@ static void gfx_dp_load_tile(uint8_t tile, uint32_t uls, uint32_t ult, uint32_t 
     uint32_t size_bytes = (((lrs >> G_TEXTURE_IMAGE_FRAC) + 1) * ((lrt >> G_TEXTURE_IMAGE_FRAC) + 1)) << word_size_shift;
     rdp.loaded_texture[rdp.texture_to_load.tile_number].size_bytes = size_bytes;
 
+    assert(size_bytes <= 4096 && "bug: too big texture");
     rdp.loaded_texture[rdp.texture_to_load.tile_number].addr = rdp.texture_to_load.addr;
     rdp.texture_tile.uls = uls;
     rdp.texture_tile.ult = ult;
@@ -1270,6 +1122,7 @@ static void gfx_dp_load_tile(uint8_t tile, uint32_t uls, uint32_t ult, uint32_t 
 
     rdp.textures_changed[rdp.texture_to_load.tile_number] = true;
 }
+
 
 static uint8_t color_comb_component(uint32_t v) {
     switch (v) {
@@ -1547,7 +1400,7 @@ static void gfx_run_dl(Gfx* cmd) {
                 break;
             case G_VTX:
 #ifdef F3DEX_GBI_2
-                gfx_sp_vertex(C0(12, 8), C0(1, 7) - C0(12, 8), seg_addr(cmd->words.w1));
+                gfx_sp_vertex(C0(12, 8), C0(1, 7) - C0(12, 8), (const Vtx*) seg_addr(cmd->words.w1));
 #elif defined(F3DEX_GBI) || defined(F3DLP_GBI)
                 gfx_sp_vertex(C0(10, 6), C0(16, 8) / 2, seg_addr(cmd->words.w1));
 #else
@@ -1719,10 +1572,10 @@ void gfx_get_dimensions(uint32_t *width, uint32_t *height) {
     gfx_wapi->get_dimensions(width, height);
 }
 
-void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi, const char *window_title) {
+void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi, const char *game_name, bool start_in_fullscreen) {
     gfx_wapi = wapi;
     gfx_rapi = rapi;
-    gfx_wapi->init(window_title);
+    gfx_wapi->init(game_name, start_in_fullscreen);
     gfx_rapi->init();
     
     // Used in the 120 star TAS
@@ -1754,17 +1607,10 @@ void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi, co
         0x0920038d,
         0x09200045
     };
-
-    for (size_t i = 0; i < sizeof(precomp_shaders) / sizeof(uint32_t); i++)
+    for (size_t i = 0; i < sizeof(precomp_shaders) / sizeof(uint32_t); i++) {
         gfx_lookup_or_create_shader_program(precomp_shaders[i]);
+    }
 }
-
-#ifdef EXTERNAL_DATA
-void gfx_precache_textures(void) {
-    // preload all textures
-    fs_walk(FS_TEXTUREDIR, preload_texture, NULL, true);
-}
-#endif
 
 struct GfxRenderingAPI *gfx_get_current_rendering_api(void) {
     return gfx_rapi;
@@ -1805,16 +1651,5 @@ void gfx_end_frame(void) {
     if (!dropped_frame) {
         gfx_rapi->finish_render();
         gfx_wapi->swap_buffers_end();
-    }
-}
-
-void gfx_shutdown(void) {
-    if (gfx_rapi) {
-        if (gfx_rapi->shutdown) gfx_rapi->shutdown();
-        gfx_rapi = NULL;
-    }
-    if (gfx_wapi) {
-        if (gfx_wapi->shutdown) gfx_wapi->shutdown();
-        gfx_wapi = NULL;
     }
 }

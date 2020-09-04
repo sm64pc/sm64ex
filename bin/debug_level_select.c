@@ -1,6 +1,9 @@
 #include <ultra64.h>
 #include "sm64.h"
 
+#include "src/menu/debug_level_select.h"
+#include "textures.h"
+
 #include "make_const_nonconst.h"
 
 // 0x07000000 - 0x07000018

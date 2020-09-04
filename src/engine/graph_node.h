@@ -13,13 +13,12 @@
 #define GRAPH_RENDER_Z_BUFFER       (1 << 3)
 #define GRAPH_RENDER_INVISIBLE      (1 << 4)
 #define GRAPH_RENDER_HAS_ANIMATION  (1 << 5)
-#define GRAPH_RENDER_CYLBOARD       (1 << 6)
 
 // Whether the node type has a function pointer of type GraphNodeFunc
 #define GRAPH_NODE_TYPE_FUNCTIONAL            0x100
 
 // Type used for Bowser and an unused geo function in obj_behaviors.c
-#define GRAPH_NODE_TYPE_400                   0x400
+#define GRAPH_NODE_TYPE_400                   0x400				
 
 // The discriminant for different types of geo nodes
 #define GRAPH_NODE_TYPE_ROOT                  0x001
@@ -44,10 +43,6 @@
 #define GRAPH_NODE_TYPE_BACKGROUND           (0x02C | GRAPH_NODE_TYPE_FUNCTIONAL)
 #define GRAPH_NODE_TYPE_HELD_OBJ             (0x02E | GRAPH_NODE_TYPE_FUNCTIONAL)
 #define GRAPH_NODE_TYPE_CULLING_RADIUS        0x02F
-
-// Mesh node type used by the modern renderer
-#define GRAPH_NODE_TYPE_RMODERN_MESH      0x030
-
 
 // The number of master lists. A master list determines the order and render
 // mode with which display lists are drawn.

@@ -180,7 +180,7 @@ static void water_bomb_act_shot_from_cannon(void) {
         /* behParam:        */ 0,
         /* count:           */ 1,
         /* model:           */ MODEL_BUBBLE,
-        /* offsetY:         */ 236,
+        /* offsetY:         */ (s8) 236,
         /* forwardVelBase:  */ 20,
         /* forwardVelRange: */ 5,
         /* velYBase:        */ 0,

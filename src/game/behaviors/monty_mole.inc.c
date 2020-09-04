@@ -35,7 +35,7 @@ static struct Object *link_objects_with_behavior(const BehaviorScript *behavior)
     struct Object *lastObject;
     struct ObjectNode *listHead;
 
-    behaviorAddr = segmented_to_virtual(behavior);
+    behaviorAddr = (const BehaviorScript*) segmented_to_virtual(behavior);
     lastObject = NULL;
 
     listHead = &gObjectLists[get_object_list_from_behavior(behaviorAddr)];

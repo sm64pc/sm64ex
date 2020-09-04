@@ -1,3 +1,5 @@
+#include "actors/common0.h"
+
 // Blue Coin Switch
 
 // 0x08000000

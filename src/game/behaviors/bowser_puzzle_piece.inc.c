@@ -161,7 +161,7 @@ void bhv_lll_bowser_puzzle_piece_action_1(void) {
  * Update the puzzle piece.
  */
 void bhv_lll_bowser_puzzle_piece_update(void) {
-    s8 *nextAction = o->oBowserPuzzlePieceNextAction;
+    s8 *nextAction = (s8*) o->oBowserPuzzlePieceNextAction;
 
     // If Mario is standing on this puzzle piece, set a flag in the parent.
     if (gMarioObject->platform == o)

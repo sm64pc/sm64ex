@@ -75,7 +75,6 @@ char *writeDir;
 char skyboxName[256];
 bool expanded = false;
 bool writeTiles;
-bool storeNamesOnly = false;
 
 static void allocate_tiles() {
     const ImageProps props = IMAGE_PROPERTIES[type][true];
@@ -222,6 +221,7 @@ static void assign_tile_positions() {
 void write_tiles() {
     const ImageProps props = IMAGE_PROPERTIES[type][true];
     char buffer[PATH_MAX];
+    char skyboxName[PATH_MAX];
 
     if (realpath(writeDir, buffer) == NULL) {
         fprintf(stderr, "err: Could not find find img dir %s", writeDir);
@@ -293,22 +293,17 @@ static void write_skybox_c() { /* write c data to disc */
         fprintf(stderr, "err: Could not open %s\n", fBuffer);
     }
 
-    fprintf(cFile, "#include \"sm64.h\"\n\n#include \"make_const_nonconst.h\"\n\n");
+    fprintf(cFile, "#include \"game/skybox.h\"\n\n");
+    fprintf(cFile, "#include \"sm64.h\"\n\n");
+    fprintf(cFile, "#include \"make_const_nonconst.h\"\n\n");
 
     for (int i = 0; i < props.numRows * props.numCols; i++) {
         if (!tiles[i].useless) {
-            if (storeNamesOnly) {
-                fprintf(
-                    cFile,
-                    "ALIGNED8 static const u8 %s_skybox_texture_%05X[] = "
-                    "\"textures/skybox_tiles/%s.%d.rgba16\";\n\n",
-                    skyboxName, tiles[i].pos, skyboxName, tiles[i].pos
-                );
-            } else {
-                fprintf(cFile, "ALIGNED8 static const u8 %s_skybox_texture_%05X[] = {\n", skyboxName, tiles[i].pos);
-                print_raw_data(cFile, &tiles[i]);
-                fputs("};\n\n", cFile);
-            }
+            fprintf(cFile, "ALIGNED8 static const u8 %s_skybox_texture_%05X[] = {\n", skyboxName, tiles[i].pos);
+
+            print_raw_data(cFile, &tiles[i]);
+
+            fputs("};\n\n", cFile);
         }
     }
 
@@ -347,18 +342,9 @@ static void write_cake_c() {
 
     int numTiles = TABLE_DIMENSIONS[type].cols * TABLE_DIMENSIONS[type].rows;
     for (int i = 0; i < numTiles; ++i) {
-        if (storeNamesOnly) {
-            fprintf(
-                cFile,
-                "ALIGNED8 static const u8 cake_end_texture_%s%d[] = "
-                "\"textures/skybox_tiles/cake%s.%d.rgba16\";\n\n",
-                euSuffx, i, *euSuffx ? "_eu" : "", tiles[i].pos
-            );
-        } else {
-            fprintf(cFile, "ALIGNED8 static const u8 cake_end_texture_%s%d[] = {\n", euSuffx, i);
-            print_raw_data(cFile, &tiles[i]);
-            fputs("};\n\n", cFile);
-        }
+        fprintf(cFile, "ALIGNED8 static const u8 cake_end_texture_%s%d[] = {\n", euSuffx, i);
+        print_raw_data(cFile, &tiles[i]);
+        fputs("};\n\n", cFile);
     }
     fclose(cFile);
 }
@@ -392,9 +378,7 @@ void combine_skybox(const char *input, const char *output) {
     uint32_t table[W*H];
     if (fread(table, sizeof(table), 1, file) != 1) goto fail;
 
-    #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     reverse_endian((unsigned char *) table, W*H*4);
-    #endif
 
     uint32_t base = table[0];
     for (int i = 0; i < W*H; i++) {
@@ -497,8 +481,7 @@ static void usage() {
             "Usage: %s --type sky|cake|cake_eu {--combine INPUT OUTPUT | --split INPUT OUTPUT}\n"
             "\n"
             "Optional arguments:\n"
-            " --write-tiles OUTDIR      Also create the individual tiles' PNG files\n"
-            " --store-names             Store texture file names instead of actual data\n", programName);
+            " --write-tiles OUTDIR      Also create the individual tiles' PNG files\n", programName);
 }
 
 // Modified from n64split
@@ -554,10 +537,6 @@ static int parse_arguments(int argc, char *argv[]) {
 
             writeTiles = true;
             writeDir = argv[i];
-        }
-
-        if (strcmp(argv[i], "--store-names") == 0) {
-            storeNamesOnly = true;
         }
     }
 

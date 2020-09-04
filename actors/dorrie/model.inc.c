@@ -1,3 +1,5 @@
+#include "actors/group17.h"
+
 // Dorrie
 
 // 0x06009BA0

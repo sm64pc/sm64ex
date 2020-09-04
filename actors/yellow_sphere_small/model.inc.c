@@ -1,3 +1,5 @@
+#include "actors/group1.h"
+
 // Yellow Sphere (used in a lot of things)
 
 // 0x05000000

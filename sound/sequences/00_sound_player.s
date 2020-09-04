@@ -66,7 +66,7 @@ chan_stereoheadseteffects 1
 chan_setdyntable .channel59_table
 chan_jump .main_loop_023589
 
-
+# Main loop for standard, non-continuous sound effects
 .main_loop_023589:
 chan_delay1
 chan_ioreadval 0
@@ -80,17 +80,17 @@ chan_iowriteval 5
 chan_ioreadval 4
 chan_dyncall
 
-
+# keep looping until layer 0 finishes or we are told to stop or to play something else
 .poll_023589:
 chan_delay1
 chan_ioreadval 0
-chan_bltz .skip_023589
-  chan_beqz .force_stop_023589
-  chan_jump .start_playing_023589
+chan_bltz .skip_023589 # if we have a signal:
+  chan_beqz .force_stop_023589 # told to stop
+  chan_jump .start_playing_023589 # told to play something else
 .skip_023589:
 chan_testlayerfinished 0
-chan_beqz .poll_023589
-chan_jump .main_loop_023589
+chan_beqz .poll_023589 # if layer 0 hasn't finished, keep polling
+chan_jump .main_loop_023589 # otherwise go back to the main loop
 .force_stop_023589:
 chan_freelayer 0
 chan_freelayer 1
@@ -133,7 +133,7 @@ chan_stereoheadseteffects 1
 chan_setdyntable .channel6_table
 chan_jump .main_loop_146
 
-
+# Main loop for moving, env and air sound effects, which play continuously
 .main_loop_146:
 chan_delay1
 chan_ioreadval 0
@@ -148,7 +148,7 @@ chan_iowriteval 5
 chan_ioreadval 4
 chan_dyncall
 
-
+# keep looping until we are told to stop or to play something else
 .poll_146:
 chan_delay1
 chan_ioreadval 0
@@ -170,7 +170,7 @@ chan_iowriteval 5
 chan_stereoheadseteffects 1
 chan_setdyntable .channel7_table
 
-
+# Loop for menu sound effects
 .main_loop_7:
 chan_delay1
 chan_ioreadval 0
@@ -187,19 +187,19 @@ chan_setpanmix 127
 chan_ioreadval 4
 chan_dyncall
 
-
+# keep looping until layer 0 finishes or we are told to stop or to play something else
 .poll_7:
 chan_delay1
 chan_ioreadval 0
-chan_bltz .skip_7
-  chan_beqz .force_stop_7
+chan_bltz .skip_7 # if we have a signal:
+  chan_beqz .force_stop_7 # told to stop
   chan_unreservenotes
-  chan_jump .start_playing_7
+  chan_jump .start_playing_7 # told to play something else
 .skip_7:
 chan_testlayerfinished 0
-chan_beqz .poll_7
+chan_beqz .poll_7 # if layer 0 hasn't finished, keep polling
 chan_unreservenotes
-chan_jump .main_loop_7
+chan_jump .main_loop_7 # otherwise go back to the main loop
 .force_stop_7:
 chan_freelayer 0
 chan_freelayer 1
@@ -207,7 +207,7 @@ chan_freelayer 2
 chan_unreservenotes
 chan_jump .main_loop_7
 
-
+# Delay for a number of ticks (1-255) in an interruptible manner.
 .delay:
 chan_writeseq_nextinstr 0, 1
 chan_loop 20
@@ -222,15 +222,15 @@ chan_end
 chan_setpanmix 127
 chan_setvolscale 127
 chan_setvibratoextent 0
-chan_ioreadval 1
+chan_ioreadval 1 # IO slots 0-3 are reset to -1 when read; restore the value
 chan_iowriteval 0
-chan_break
-chan_break
+chan_break # break out of the loop
+chan_break # force the caller to return immediately
 chan_end
 
-
-
-
+# Set reverb in way that takes area echo level and volume into account. This
+# is done by writing to IO slot 5 and letting get_sound_reverb in external.c
+# do the necessary math.
 .set_reverb:
 chan_writeseq_nextinstr 0, 1
 chan_setreverb 10
@@ -977,7 +977,7 @@ layer_portamento 0x81, 42, 255
 layer_note1 37, 0x1e, 105
 layer_end
 
-.sound_action_climb_down_tree:
+.sound_action_climb_down_tree: # unused
 chan_setbank 0
 chan_setinstr 1
 chan_setlayer 0, .layer_579
@@ -988,7 +988,7 @@ layer_portamento 0x81, 44, 255
 layer_note1 40, 0xb4, 100
 layer_end
 
-.chan_582:
+.chan_582: # unused
 chan_setbank 0
 chan_setinstr 2
 chan_setlayer 0, .layer_58A
@@ -1408,7 +1408,7 @@ layer_note1 42, 0x8, 127
 layer_end
 
 .ifndef VERSION_JP
-  .chan_828:
+  .chan_828: # unused
   chan_setbank 7
   chan_setinstr 3
   chan_setlayer 0, .layer_83C

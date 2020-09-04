@@ -1,3 +1,5 @@
+#include "actors/common1.h"
+
 // Bowser Key
 
 // 0x030156E0, ambient color brown - light color orange

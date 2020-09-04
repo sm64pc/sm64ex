@@ -1,3 +1,5 @@
+#include "actors/common1.h"
+
 // Explosion
 
 // 0x030009C8

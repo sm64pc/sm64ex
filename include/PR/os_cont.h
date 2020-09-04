@@ -60,8 +60,6 @@ typedef struct {
 	u16     button;
 	s8      stick_x;		/* -80 <= stick_x <= 80 */
 	s8      stick_y;		/* -80 <= stick_y <= 80 */
-	s8      ext_stick_x;
-	s8      ext_stick_y;
 	u8	errnum;
 } OSContPad;
 
