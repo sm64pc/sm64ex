@@ -62,7 +62,7 @@ RENDER_API ?= GL
 WINDOW_API ?= SDL2
 # Audio backends: SDL1, SDL2
 AUDIO_API ?= SDL2
-# Controller backends (can have multiple, space separated): SDL2
+# Controller backends (can have multiple, space separated): SDL2, SDL1
 CONTROLLER_API ?= SDL2
 
 # Misc settings for EXTERNAL_DATA
