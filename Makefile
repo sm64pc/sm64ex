@@ -53,6 +53,10 @@ DISCORDRPC ?= 0
 # Enable docker build workarounds
 DOCKERBUILD ?= 0
 
+# Force various options due since coop assumes they are set this way
+NODRAWINGDISTANCE = 1
+TEXTSAVES = 0
+
 # Various workarounds for weird toolchains
 
 NO_BZERO_BCOPY ?= 0
