@@ -534,6 +534,11 @@ s32 act_reading_sign(struct MarioState *m) {
 
     struct Object *marioObj = m->marioObj;
 
+    if (m->playerIndex != 0) {
+        set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
+        return FALSE;
+    }
+
     play_sound_if_no_flag(m, SOUND_ACTION_READ_SIGN, MARIO_ACTION_SOUND_PLAYED);
 
     switch (m->actionState) {
