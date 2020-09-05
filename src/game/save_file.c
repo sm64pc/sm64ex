@@ -399,7 +399,7 @@ BAD_RETURN(s32) save_file_copy(s32 srcFileIndex, s32 destFileIndex) {
 
 #ifdef TEXTSAVES
 static void save_file_load_textsaves(void) {
-    for (file = 0; file < NUM_SAVE_FILES; file++) {
+    for (int file = 0; file < NUM_SAVE_FILES; file++) {
         read_text_save(file);
     }
     gSaveFileModified = TRUE;

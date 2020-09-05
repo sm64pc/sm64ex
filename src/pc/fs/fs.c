@@ -5,7 +5,9 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifndef DOCKERBUILD
 #include <dirent.h>
+#endif
 #include <ctype.h>
 #ifdef _WIN32
 #include <direct.h>
@@ -389,6 +391,9 @@ bool fs_sys_dir_exists(const char *name) {
 }
 
 bool fs_sys_walk(const char *base, walk_fn_t walk, void *user, const bool recur) {
+#ifdef DOCKERBUILD
+    return false;
+#else
     char fullpath[SYS_MAX_PATH];
     DIR *dir;
     struct dirent *ent;
@@ -420,6 +425,7 @@ bool fs_sys_walk(const char *base, walk_fn_t walk, void *user, const bool recur)
 
     closedir(dir);
     return ret;
+#endif
 }
 
 fs_pathlist_t fs_sys_enumerate(const char *base, const bool recur) {

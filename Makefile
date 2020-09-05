@@ -50,6 +50,8 @@ TEXTSAVES ?= 0
 EXTERNAL_DATA ?= 0
 # Enable Discord Rich Presence
 DISCORDRPC ?= 0
+# Enable docker build workarounds
+DOCKERBUILD ?= 0
 
 # Various workarounds for weird toolchains
 
@@ -576,6 +578,12 @@ endif
 ifeq ($(IMMEDIATELOAD),1)
   CC_CHECK += -DIMMEDIATELOAD
   CFLAGS += -DIMMEDIATELOAD
+endif
+
+# Check for docker build workaround option
+ifeq ($(DOCKERBUILD),1)
+  CC_CHECK += -DDOCKERBUILD
+  CFLAGS += -DDOCKERBUILD
 endif
 
 # Check for Puppycam option
