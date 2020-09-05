@@ -1841,6 +1841,7 @@ s32 execute_mario_action(UNUSED struct Object *o) {
 #ifndef VERSION_JP
                 func_803205E8(SOUND_MARIO_SNORING3, gMarioState->marioObj->header.gfx.cameraToObject);
 #endif
+                gMarioState->isSnoring = FALSE;
         }
 
         // If Mario is OOB, stop executing actions.
