@@ -100,6 +100,11 @@ void network_receive_player(struct Packet* p) {
             gMarioStates[1].marioBodyState->punchState = (0 << 6) | 4;
         }
     }
+
+    // action changed, reset timer
+    if (gMarioStates[1].action != oldAction) {
+        gMarioStates[1].actionTimer = 0;
+    }
 }
 
 void network_update_player(void) {

@@ -1566,7 +1566,7 @@ s32 act_lava_boost(struct MarioState *m) {
 }
 
 s32 act_slide_kick(struct MarioState *m) {
-    if (m->actionState == 0 && m->actionTimer == 0) {
+    if (m->actionTimer == 0) {
         play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_HOOHOO);
         set_mario_animation(m, MARIO_ANIM_SLIDE_KICK);
     }
