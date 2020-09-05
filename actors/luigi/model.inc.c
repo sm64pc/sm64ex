@@ -50,43 +50,39 @@ u8 luigi_metal_rgba16[] = {
 #include "actors/mario/mario_metal.rgba16.inc.c"
 };
 
-u8 luigi__0301DF50_rgba16[] = {
-#include "actors/luigi/custom_0301DF50.rgba16.inc.c"
+u8 luigi_logo_rgba16[] = {
+#include "actors/luigi/custom_luigi_logo.rgba16.inc.c"
 };
 
-u8 luigi__04003090_rgba16[] = {
-#include "actors/luigi/custom_04003090.rgba16.inc.c"
+u8 luigi_eyes_center_rgba16[] = {
+#include "actors/luigi/custom_luigi_eyes_center.rgba16.inc.c"
 };
 
-u8 luigi__04002090_ci8[] = {
-#include "actors/luigi/custom_04002090.ci8.inc.c"
+u8 luigi_sideburn_rgba16[] = {
+#include "actors/luigi/custom_luigi_sideburn.rgba16.inc.c"
 };
 
-u8 luigi__04002090_ci8_pal_rgba16[] = {
-#include "actors/luigi/custom_04002090.ci8.inc.c"
+u8 luigi_mustache_rgba16[] = {
+#include "actors/luigi/custom_luigi_mustache.rgba16.inc.c"
 };
 
-u8 luigi__04002890_rgba16[] = {
-#include "actors/luigi/custom_04002890.rgba16.inc.c"
+u8 luigi_eyes_half_closed_rgba16[] = {
+#include "actors/luigi/custom_luigi_eyes_half_closed.rgba16.inc.c"
 };
 
-u8 luigi__04003890_rgba16[] = {
-#include "actors/luigi/custom_04003890.rgba16.inc.c"
+u8 luigi_eyes_closed_rgba16[] = {
+#include "actors/luigi/custom_luigi_eyes_closed.rgba16.inc.c"
 };
 
-u8 luigi__04004090_rgba16[] = {
-#include "actors/luigi/custom_04004090.rgba16.inc.c"
+u8 luigi_eyes_dead_ia8[] = {
+#include "actors/luigi/custom_luigi_eyes_dead.ia8.inc.c"
 };
 
-u8 luigi_luigi_Eyes_Pain_ia8[] = {
-#include "actors/luigi/custom_luigi_Eyes_Pain.ia8.inc.c"
-};
-
-u8 luigi_wing_2_rgba16[] = {
+u8 luigi_wing_tip_rgba16[] = {
 #include "actors/mario/mario_wing_tip.rgba16.inc.c"
 };
 
-u8 luigi_wing1_rgba16[] = {
+u8 luigi_wing_rgba16[] = {
 #include "actors/mario/mario_wing.rgba16.inc.c"
 };
 
@@ -3262,7 +3258,7 @@ Gfx mat_luigi_cap[] = {
     gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
     gsSPTexture(65535, 65535, 0, 0, 1),
     gsDPTileSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, luigi__0301DF50_rgba16),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, luigi_logo_rgba16),
     gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, 7, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0),
     gsDPLoadSync(),
     gsDPLoadTile(7, 0, 0, 124, 124),
@@ -3279,7 +3275,7 @@ Gfx mat_luigi_face_0___eye_open[] = {
     gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
     gsSPTexture(65535, 65535, 0, 0, 1),
     gsDPTileSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, luigi__04003090_rgba16),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, luigi_eyes_center_rgba16),
     gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, 7, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0),
     gsDPLoadSync(),
     gsDPLoadTile(7, 0, 0, 124, 124),
@@ -3295,22 +3291,15 @@ Gfx mat_luigi_sideburns[] = {
     gsDPPipeSync(),
     gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
     gsSPTexture(65535, 65535, 0, 0, 1),
-    gsDPSetTextureLUT(G_TT_RGBA16),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, luigi__04002090_ci8_pal_rgba16),
     gsDPTileSync(),
-    gsDPSetTile(0, 0, 0, 256, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 0, 0),
-    gsDPLoadSync(),
-    gsDPLoadTLUTCmd(7, 19),
-    gsDPPipeSync(),
-    gsDPTileSync(),
-    gsDPSetTextureImage(G_IM_FMT_CI, G_IM_SIZ_8b, 32, luigi__04002090_ci8),
-    gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 7, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, luigi_sideburn_rgba16),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, 7, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0),
     gsDPLoadSync(),
     gsDPLoadTile(7, 0, 0, 124, 124),
     gsDPPipeSync(),
-    gsDPSetTile(G_IM_FMT_CI, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, 0, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0),
     gsDPSetTileSize(0, 0, 0, 124, 124),
-    gsSPSetLights1(luigi_sideburns_lights),
+    gsSPSetLights1(luigi_face_0___eye_open_lights),
     gsSPEndDisplayList(),
 };
 
@@ -3326,7 +3315,7 @@ Gfx mat_luigi_mustache[] = {
     gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
     gsSPTexture(65535, 65535, 0, 0, 1),
     gsDPTileSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, luigi__04002890_rgba16),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, luigi_mustache_rgba16),
     gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, 7, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0),
     gsDPLoadSync(),
     gsDPLoadTile(7, 0, 0, 124, 124),
@@ -3352,7 +3341,7 @@ Gfx mat_luigi_face_1___eye_half[] = {
     gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
     gsSPTexture(65535, 65535, 0, 0, 1),
     gsDPTileSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, luigi__04003890_rgba16),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, luigi_eyes_half_closed_rgba16),
     gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, 7, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0),
     gsDPLoadSync(),
     gsDPLoadTile(7, 0, 0, 124, 124),
@@ -3369,7 +3358,7 @@ Gfx mat_luigi_face_2___eye_closed[] = {
     gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
     gsSPTexture(65535, 65535, 0, 0, 1),
     gsDPTileSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, luigi__04004090_rgba16),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, luigi_eyes_closed_rgba16),
     gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, 7, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0),
     gsDPLoadSync(),
     gsDPLoadTile(7, 0, 0, 124, 124),
@@ -3386,7 +3375,7 @@ Gfx mat_luigi_face_7___eye_X[] = {
     gsDPSetCombineLERP(TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT, TEXEL0, SHADE, TEXEL0_ALPHA, SHADE, 0, 0, 0, ENVIRONMENT),
     gsSPTexture(65535, 65535, 0, 0, 1),
     gsDPTileSync(),
-    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_8b, 32, luigi_luigi_Eyes_Pain_ia8),
+    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_8b, 32, luigi_eyes_dead_ia8),
     gsDPSetTile(G_IM_FMT_IA, G_IM_SIZ_8b, 4, 0, 7, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0),
     gsDPLoadSync(),
     gsDPLoadTile(7, 0, 0, 124, 124),
@@ -3404,7 +3393,7 @@ Gfx mat_luigi_wing_2[] = {
     gsSPClearGeometryMode(G_CULL_BACK),
     gsSPTexture(65535, 65535, 0, 0, 1),
     gsDPTileSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, luigi_wing_2_rgba16),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, luigi_wing_tip_rgba16),
     gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 6, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0),
     gsDPLoadSync(),
     gsDPLoadTile(7, 0, 0, 124, 252),
@@ -3427,7 +3416,7 @@ Gfx mat_luigi_wing_1[] = {
     gsSPClearGeometryMode(G_CULL_BACK),
     gsSPTexture(65535, 65535, 0, 0, 1),
     gsDPTileSync(),
-    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, luigi_wing1_rgba16),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, luigi_wing_rgba16),
     gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 6, 0, G_TX_CLAMP | G_TX_NOMIRROR, 5, 0),
     gsDPLoadSync(),
     gsDPLoadTile(7, 0, 0, 124, 252),
