@@ -1198,6 +1198,7 @@ s32 update_level(void) {
 }
 
 s32 init_level(void) {
+    reset_dialog_render_state();
     network_on_init_level();
 
     s32 val4 = 0;
