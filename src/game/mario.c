@@ -1433,6 +1433,7 @@ void update_mario_inputs(struct MarioState *m) {
         } else {
             sWarpDest.levelNum = gCurrLevelNum;
             sWarpDest.areaIdx = m->area->index;
+            levelResetActNum = gCurrActNum;
         }
 
         sWarpDest.type = 1;
