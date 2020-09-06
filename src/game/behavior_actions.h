@@ -40,6 +40,7 @@ void bhv_beta_chest_bottom_loop(void);
 void bhv_beta_chest_lid_loop(void);
 void bhv_bubble_wave_init(void);
 void bhv_bubble_maybe_loop(void);
+void bhv_bubble_player_loop(void);
 void bhv_small_water_loop(void);
 void bhv_water_air_bubble_init(void);
 void bhv_water_air_bubble_loop(void);

@@ -187,6 +187,7 @@ void whomp_on_ground(void) {
     if (o->oSubAction == 0) {
         u8 anyMarioOnPlatform = FALSE;
         for (int i = 0; i < MAX_PLAYERS; i++) {
+            if (!is_player_active(&gMarioStates[i])) { continue; }
             if (gMarioStates[i].marioObj->platform == o) { anyMarioOnPlatform = TRUE; }
         }
         if (anyMarioOnPlatform) {

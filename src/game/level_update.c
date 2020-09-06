@@ -379,6 +379,14 @@ void init_mario_after_warp(void) {
                 init_door_warp(&gPlayerSpawnInfos[i], sWarpDest.arg);
             }
 
+            // set to a minimum of two lives on level change
+            if (sWarpDest.type == WARP_TYPE_CHANGE_LEVEL) {
+                gMarioStates[i].numLives = max(gMarioStates[i].numLives, 2);
+                gMarioStates[i].health = 0x880;
+                gMarioStates[i].healCounter = 0;
+                gMarioStates[i].hurtCounter = 0;
+            }
+
             if (sWarpDest.type == WARP_TYPE_CHANGE_LEVEL || sWarpDest.type == WARP_TYPE_CHANGE_AREA) {
                 gPlayerSpawnInfos[i].areaIndex = sWarpDest.areaIdx;
                 if (i == 0) { load_mario_area(); }
@@ -387,6 +395,11 @@ void init_mario_after_warp(void) {
 
         init_mario();
         set_mario_initial_action(gMarioState, marioSpawnType, sWarpDest.arg);
+
+        // enforce bubble on area change
+        if (gMarioState->playerIndex == 0 && gMarioState->numLives == -1) {
+            mario_set_bubbled(gMarioState);
+        }
 
         gMarioState->interactObj = spawnNode->object;
         gMarioState->usedObj = spawnNode->object;
@@ -745,9 +758,12 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
                 break;
 
             case WARP_OP_DEATH:
-                if (m->numLives == 0) {
-                    sDelayedWarpOp = WARP_OP_GAME_OVER;
+                if (m->numLives < 2) {
+                    m->numLives = 2;
                 }
+                /*if (m->numLives == 0) {
+                    sDelayedWarpOp = WARP_OP_GAME_OVER;
+                }*/
                 sDelayedWarpTimer = 48;
                 sSourceWarpNodeId = WARP_NODE_DEATH;
                 play_transition(WARP_TRANSITION_FADE_INTO_BOWSER, 0x30, 0x00, 0x00, 0x00);
@@ -757,11 +773,11 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
             case WARP_OP_WARP_FLOOR:
                 sSourceWarpNodeId = WARP_NODE_WARP_FLOOR;
                 if (area_get_warp_node(sSourceWarpNodeId) == NULL) {
-                    if (m->numLives == 0) {
+                    /*if (m->numLives == 0) {
                         sDelayedWarpOp = WARP_OP_GAME_OVER;
-                    } else {
+                    } else {*/
                         sSourceWarpNodeId = WARP_NODE_DEATH;
-                    }
+                    //}
                 }
                 sDelayedWarpTimer = 20;
                 play_transition(WARP_TRANSITION_FADE_INTO_CIRCLE, 0x14, 0x00, 0x00, 0x00);
@@ -937,7 +953,7 @@ void update_hud_values(void) {
         }
 #else
         if (gMarioState->numCoins > 999) {
-            gMarioState->numLives = (s8) 999; //! Wrong variable
+            gMarioState->numCoins = (s16) 999;
         }
 #endif
 

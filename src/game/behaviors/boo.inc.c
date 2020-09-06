@@ -51,6 +51,7 @@ void bhv_boo_init(void) {
 static s32 boo_should_be_stopped(void) {
     if (cur_obj_has_behavior(bhvMerryGoRoundBigBoo) || cur_obj_has_behavior(bhvMerryGoRoundBoo)) {
         for (int i = 0; i < MAX_PLAYERS; i++) {
+            if (!is_player_active(&gMarioStates[i])) { continue; }
             if (gMarioStates[i].currentRoom == BBH_DYNAMIC_SURFACE_ROOM || gMarioStates[i].currentRoom == BBH_NEAR_MERRY_GO_ROUND_ROOM) { return FALSE; }
         }
         return TRUE;
@@ -80,6 +81,7 @@ static s32 boo_should_be_active(void) {
 
     u8 inRoom = FALSE;
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         if (gMarioStates[i].currentRoom == o->oRoom || gMarioStates[i].currentRoom == 0) { inRoom = TRUE; }
     }
 
@@ -614,6 +616,7 @@ static void big_boo_act_1(void) {
     if (cur_obj_has_behavior(bhvMerryGoRoundBigBoo)) {
         u8 inRoom = FALSE;
         for (int i = 0; i < MAX_PLAYERS; i++) {
+            if (!is_player_active(&gMarioStates[i])) { continue; }
             if (gMarioStates[i].currentRoom == BBH_DYNAMIC_SURFACE_ROOM || gMarioStates[i].currentRoom == BBH_NEAR_MERRY_GO_ROUND_ROOM) { inRoom = TRUE; }
         }
 
@@ -924,6 +927,7 @@ void bhv_boo_in_castle_loop(void) {
 
     u8 inRoom = FALSE;
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         if (marioState->floor == NULL) { continue; }
         inRoom = inRoom || (marioState->floor->room == 1);
     }

@@ -16,6 +16,7 @@ void bhv_recovery_heart_loop(void) {
     obj_set_hitbox(o, &sRecoveryHeartHitbox);
 
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         if (obj_check_if_collided_with_object(o, gMarioStates[i].marioObj)) { collided = TRUE; }
     }
 
@@ -40,6 +41,7 @@ void bhv_recovery_heart_loop(void) {
 
         struct MarioState* nearestState = nearest_mario_state_to_object(o);
         for (int i = 0; i < MAX_PLAYERS; i++) {
+            if (!is_player_active(&gMarioStates[i])) { continue; }
             if (&gMarioStates[i] == nearestState || dist_between_objects(o, gMarioStates[i].marioObj) < 1000) {
                 gMarioStates[i].healCounter += 4;
             }

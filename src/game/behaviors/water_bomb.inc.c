@@ -44,6 +44,7 @@ void bhv_water_bomb_spawner_update(void) {
     struct Object* player = NULL;
 
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         f32 latDist = lateral_dist_between_objects(o, gMarioStates[i].marioObj);
         if (latDist < latDistToMario) {
             latDistToMario = latDist;

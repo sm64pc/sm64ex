@@ -3,10 +3,10 @@
 void bhv_1up_interact(void) {
     UNUSED s32 sp1C;
 
-    struct Object* player = nearest_player_to_object(o);
-    if (obj_check_if_collided_with_object(o, player) == 1) {
+    struct MarioState* marioState = nearest_mario_state_to_object(o);
+    if (marioState->playerIndex == 0 && obj_check_if_collided_with_object(o, marioState->marioObj) == 1) {
         play_sound(SOUND_GENERAL_COLLECT_1UP, gDefaultSoundArgs);
-        gMarioState->numLives++;
+        marioState->numLives++;
         o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
     }
 }

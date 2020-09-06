@@ -161,6 +161,7 @@ void bhv_free_bowling_ball_loop(void); /* likely unused */
 void bhv_rr_cruiser_wing_init(void);
 void bhv_rr_cruiser_wing_loop(void);
 struct Object* spawn_default_star(f32 sp20, f32 sp24, f32 sp28);
+u8 is_player_active(struct MarioState* m);
 struct MarioState* nearest_mario_state_to_object(struct Object* obj);
 struct Object* nearest_player_to_object(struct Object* obj);
 #endif // OBJ_BEHAVIORS_H

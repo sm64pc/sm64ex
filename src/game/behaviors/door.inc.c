@@ -83,8 +83,16 @@ void bhv_door_loop(void) {
             play_warp_door_open_noise();
             break;
     }
-    if (o->oAction == 0)
-        load_object_collision_model();
+
+    // make doors intangible when you're bubbled
+    if (o->oAction == 0) {
+        if (gCurrCourseNum != COURSE_NONE && gMarioStates[0].action == ACT_BUBBLED) {
+            o->oIntangibleTimer = -1;
+        } else {
+            load_object_collision_model();
+            o->oIntangibleTimer = 0;
+        }
+    }
     bhv_star_door_loop_2();
 }
 

@@ -387,6 +387,22 @@ void play_mario_sound(struct MarioState *m, s32 actionSound, s32 marioSound) {
  *                     ACTIONS                    *
  **************************************************/
 
+void mario_set_bubbled(struct MarioState* m) {
+    if (m->playerIndex != 0) { return; }
+    if (m->action == ACT_BUBBLED) { return; }
+    set_mario_action(m, ACT_BUBBLED, 0);
+    if (m->numLives != -1) {
+        m->numLives--;
+    }
+    m->healCounter = 0;
+    m->hurtCounter = 31;
+    gCamera->cutscene = 0;
+    m->statusForCamera->action = m->action;
+    m->statusForCamera->cameraEvent = 0;
+    extern s16 gCutsceneTimer;
+    gCutsceneTimer = 0;
+}
+
 /**
  * Sets Mario's other velocities from his forward speed.
  */
@@ -1204,6 +1220,8 @@ s32 transition_submerged_to_walking(struct MarioState *m) {
  * non-submerged action. This also applies the water surface camera preset.
  */
 s32 set_water_plunge_action(struct MarioState *m) {
+    if (m->action == ACT_BUBBLED) { return FALSE; }
+
     m->forwardVel = m->forwardVel / 4.0f;
     m->vel[1] = m->vel[1] / 2.0f;
 
@@ -1828,7 +1846,9 @@ s32 execute_mario_action(UNUSED struct Object *o) {
     * End of cheat stuff
     */
     if (gMarioState->action) {
-        gMarioState->marioObj->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
+        if (gMarioState->action != ACT_BUBBLED) {
+            gMarioState->marioObj->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
+        }
         mario_reset_bodystate(gMarioState);
         update_mario_inputs(gMarioState);
         mario_handle_special_floors(gMarioState);
@@ -1989,8 +2009,10 @@ void init_mario(void) {
     gMarioState->quicksandDepth = 0.0f;
 
     gMarioState->heldObj = NULL;
+    gMarioState->heldByObj = NULL;
     gMarioState->riddenObj = NULL;
     gMarioState->usedObj = NULL;
+    gMarioState->bubbleObj = NULL;
 
     gMarioState->waterLevel =
         find_water_level(gMarioSpawnInfo->startPos[0], gMarioSpawnInfo->startPos[2]);
@@ -2085,7 +2107,7 @@ void init_mario_from_save_file(void) {
         save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_MIN - 1, COURSE_MAX - 1);
     gMarioState->numKeys = 0;
 
-    gMarioState->numLives = 4;
+    gMarioState->numLives = 3;
     gMarioState->health = 0x880;
 
     gMarioState->prevNumStarsForDialog = gMarioState->numStars;

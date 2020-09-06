@@ -3,16 +3,21 @@
 struct MarioState* king_bobomb_nearest_mario_state() {
     struct MarioState* nearest = NULL;
     f32 nearestDist = 0;
-    for (int i = 0; i < MAX_PLAYERS; i++) {
-        float ydiff = (o->oPosY - gMarioStates[i].marioObj->oPosY);
-        if (ydiff >= 1200) { continue; }
+    u8 checkActive = TRUE;
+    do {
+        for (int i = 0; i < MAX_PLAYERS; i++) {
+            if (checkActive && !is_player_active(&gMarioStates[i])) { continue; }
+            float ydiff = (o->oPosY - gMarioStates[i].marioObj->oPosY);
+            if (ydiff >= 1200) { continue; }
 
-        float dist = dist_between_objects(o, gMarioStates[i].marioObj);
-        if (nearest == NULL || dist < nearestDist) {
-            nearest = &gMarioStates[i];
-            nearestDist = dist;
+            float dist = dist_between_objects(o, gMarioStates[i].marioObj);
+            if (nearest == NULL || dist < nearestDist) {
+                nearest = &gMarioStates[i];
+                nearestDist = dist;
+            }
         }
-    }
+        checkActive = FALSE;
+    } while (nearest == NULL);
 
     return nearest;
 }
@@ -62,6 +67,7 @@ void king_bobomb_act_0(void) {
 
 int mario_is_far_below_object(f32 arg0) {
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         if (arg0 >= o->oPosY - gMarioStates[i].marioObj->oPosY) { return FALSE; }
     }
     return TRUE;

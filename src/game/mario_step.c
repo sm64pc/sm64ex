@@ -644,7 +644,7 @@ s32 perform_air_step(struct MarioState *m, u32 stepArg) {
 
     m->terrainSoundAddend = mario_get_terrain_sound_addend(m);
 
-    if (m->action != ACT_FLYING) {
+    if (m->action != ACT_FLYING && m->action != ACT_BUBBLED) {
         apply_gravity(m);
     }
     apply_vertical_wind(m);

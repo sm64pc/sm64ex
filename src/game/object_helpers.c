@@ -2264,6 +2264,7 @@ s32 cur_obj_wait_then_blink(s32 timeUntilBlinking, s32 numBlinks) {
 
 s32 cur_obj_is_mario_ground_pounding_platform(void) {
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         if (gMarioStates[i].marioObj->platform == o) {
             if (gMarioStates[i].action == ACT_GROUND_POUND_LAND) {
                 return TRUE;
@@ -2401,6 +2402,7 @@ s32 cur_obj_is_mario_on_platform(void) {
 
 s32 cur_obj_is_any_player_on_platform(void) {
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         if (gMarioStates[i].marioObj->platform == o) {
             return TRUE;
         }
@@ -2457,6 +2459,7 @@ s32 bit_shift_left(s32 a0) {
 
 s32 cur_obj_mario_far_away(void) {
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         struct Object* player = gMarioStates[i].marioObj;
         f32 dx = o->oHomeX - player->oPosX;
         f32 dy = o->oHomeY - player->oPosY;
@@ -2594,6 +2597,7 @@ void cur_obj_if_hit_wall_bounce_away(void) {
 
 s32 cur_obj_hide_if_mario_far_away_y(f32 distY) {
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         if (absf(o->oPosY - gMarioStates[i].marioObj->oPosY) < distY) {
             cur_obj_unhide();
             return FALSE;

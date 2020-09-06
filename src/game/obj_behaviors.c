@@ -498,6 +498,7 @@ void obj_move_xyz_using_fvel_and_yaw(struct Object *obj) {
  */
 s32 is_point_within_radius_of_mario(f32 x, f32 y, f32 z, s32 dist) {
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         struct Object* player = gMarioStates[i].marioObj;
         f32 mGfxX = player->header.gfx.pos[0];
         f32 mGfxY = player->header.gfx.pos[1];
@@ -512,19 +513,30 @@ s32 is_point_within_radius_of_mario(f32 x, f32 y, f32 z, s32 dist) {
     return FALSE;
 }
 
+u8 is_player_active(struct MarioState* m) {
+    if (m->action == ACT_BUBBLED) { return FALSE; }
+    return TRUE;
+}
+
 /**
  * Returns closest MarioState
  */
 struct MarioState* nearest_mario_state_to_object(struct Object *obj) {
     struct MarioState* nearest = NULL;
     f32 nearestDist = 0;
-    for (int i = 0; i < MAX_PLAYERS; i++) {
-        float dist = dist_between_objects(obj, gMarioStates[i].marioObj);
-        if (nearest == NULL || dist < nearestDist) {
-            nearest = &gMarioStates[i];
-            nearestDist = dist;
+    u8 checkActive = TRUE;
+    do {
+        for (int i = 0; i < MAX_PLAYERS; i++) {
+            if (gMarioStates[i].marioObj == obj) { continue; }
+            if (checkActive && !is_player_active(&gMarioStates[i])) { continue; }
+            float dist = dist_between_objects(obj, gMarioStates[i].marioObj);
+            if (nearest == NULL || dist < nearestDist) {
+                nearest = &gMarioStates[i];
+                nearestDist = dist;
+            }
         }
-    }
+        checkActive = FALSE;
+    } while (nearest == NULL);
 
     return nearest;
 }

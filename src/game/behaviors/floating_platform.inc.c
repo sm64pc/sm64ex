@@ -22,6 +22,7 @@ void floating_platform_act_0(void) {
     f32 z = 0;
     u8 playersTouched = 0;
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         if (gMarioStates[i].marioObj->platform == o) {
             x += gMarioStates[i].marioObj->oPosX;
             z += gMarioStates[i].marioObj->oPosZ;

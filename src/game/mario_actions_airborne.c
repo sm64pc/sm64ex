@@ -1556,7 +1556,13 @@ s32 act_lava_boost(struct MarioState *m) {
     }
 
     if (m->health < 0x100) {
-        level_trigger_warp(m, WARP_OP_DEATH);
+        if (m != &gMarioStates[0]) {
+            // never kill remote marios
+            m->health = 0x100;
+        } else {
+            m->health = 0xFF;
+            return drop_and_set_mario_action(m, ACT_DEATH_ON_BACK, 0);
+        }
     }
 
     m->marioBodyState->eyeState = MARIO_EYES_DEAD;

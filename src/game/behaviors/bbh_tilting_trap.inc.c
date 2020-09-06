@@ -21,6 +21,7 @@ void bhv_bbh_tilting_trap_platform_loop(void) {
     f32 z = 0;
     u8 playersTouched = 0;
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         if (gMarioStates[i].marioObj->platform == o) {
             x += gMarioStates[i].marioObj->oPosX;
             y += gMarioStates[i].marioObj->oPosY;

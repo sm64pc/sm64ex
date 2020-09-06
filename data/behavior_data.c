@@ -556,6 +556,15 @@ const BehaviorScript bhvBubbleMaybe[] = {
     DEACTIVATE(),
 };
 
+const BehaviorScript bhvBubblePlayer[] = {
+    BEGIN(OBJ_LIST_DEFAULT),
+    ID(id_bhvBubblePlayer),
+    OR_INT(oFlags, OBJ_FLAG_UPDATE_GFX_POS_AND_ANGLE),
+    BEGIN_LOOP(),
+        CALL_NATIVE(bhv_bubble_player_loop),
+    END_LOOP(),
+};
+
 const BehaviorScript bhvSmallWaterWave[] = {
     BEGIN(OBJ_LIST_UNIMPORTANT),
     ID(id_bhvSmallWaterWave),
@@ -6657,3 +6666,4 @@ const BehaviorScript bhvIntroScene[] = {
         CALL_NATIVE(bhv_intro_scene_loop),
     END_LOOP(),
 };
+

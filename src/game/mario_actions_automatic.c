@@ -17,6 +17,8 @@
 #include "level_table.h"
 #include "thread6.h"
 #include "object_helpers.h"
+#include "obj_behaviors.h"
+#include "level_update.h"
 
 #define POLE_NONE 0
 #define POLE_TOUCHED_FLOOR 1
@@ -850,6 +852,94 @@ s32 act_tornado_twirling(struct MarioState *m) {
     return FALSE;
 }
 
+s32 act_bubbled(struct MarioState* m) {
+    struct MarioState* targetMarioState = nearest_mario_state_to_object(m->marioObj);
+    struct Object* target = targetMarioState->marioObj;
+    int angleToPlayer = obj_angle_to_object(m->marioObj, target);
+    int distanceToPlayer = dist_between_objects(m->marioObj, target);
+
+    // trigger warp if all are bubbled
+    if (m->playerIndex == 0) {
+        u8 allInBubble = TRUE;
+        for (int i = 0; i < MAX_PLAYERS; i++) {
+            if (gMarioStates[i].action != ACT_BUBBLED) {
+                allInBubble = FALSE;
+                break;
+            }
+        }
+        if (allInBubble) {
+            level_trigger_warp(m, WARP_OP_DEATH);
+            return set_mario_action(m, ACT_DEATH_ON_BACK, 0);
+        }
+    }
+
+    // create bubble
+    if (m->bubbleObj == NULL) {
+        //m->bubbleObj = spawn_object(m->marioObj, MODEL_BUBBLE, bhvBubblePlayer);
+        m->bubbleObj = spawn_object(m->marioObj, MODEL_BUBBLE_PLAYER, bhvBubblePlayer);
+        m->bubbleObj->heldByPlayerIndex = m->playerIndex;
+    }
+
+    // force inactive state
+    if (m->heldObj != NULL) { mario_drop_held_object(m); }
+    m->heldByObj = NULL;
+    m->marioObj->oIntangibleTimer = -1;
+    m->squishTimer = 0;
+    set_mario_animation(m, MARIO_ANIM_SLEEP_IDLE);
+
+    // force inputs
+    m->faceAngle[0] = 0;
+    m->faceAngle[1] = m->intendedYaw;
+    m->forwardVel = m->intendedMag;
+    if (m->input & INPUT_A_DOWN) { m->vel[1] += 3.0f; }
+    if (m->input & INPUT_Z_DOWN) { m->vel[1] -= 3.0f; }
+
+    // set and smooth velocity
+    Vec3f oldVel = { m->vel[0], m->vel[1], m->vel[2] };
+    set_vel_from_pitch_and_yaw(m);
+    for (int i = 0; i < 3; i++) {
+        m->vel[i] = (oldVel[i] * 0.9f + m->vel[i] * 0.1f);
+    }
+
+    // move player
+    switch (perform_air_step(m, 0)) {
+        case AIR_STEP_LANDED:
+            m->vel[1] += 10.0f;
+            break;
+
+        case AIR_STEP_HIT_WALL:
+        case AIR_STEP_HIT_LAVA_WALL:
+            m->vel[0] *= -0.99f;
+            m->vel[2] *= -0.99f;
+            break;
+    }
+
+    // always look toward target
+    m->faceAngle[1] = angleToPlayer;
+    m->marioObj->header.gfx.angle[1] = angleToPlayer;
+
+    // make invisible on -1 lives
+    if (m->numLives == -1) {
+        m->marioObj->header.gfx.node.flags |= GRAPH_RENDER_INVISIBLE;
+    }
+
+    // pop bubble
+    if (m->playerIndex == 0 && distanceToPlayer < 200 && is_player_active(targetMarioState) && m->numLives != -1) {
+        m->hurtCounter = 0;
+        m->healCounter = 31;
+        m->health = 0x100;
+        m->marioObj->oIntangibleTimer = 0;
+        m->peakHeight = m->pos[1];
+        m->vel[0] = 0;
+        m->vel[1] = 0;
+        m->vel[2] = 0;
+        m->marioObj->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
+        return set_mario_action(m, ACT_IDLE, 0);
+    }
+
+    return FALSE;
+}
+
 s32 check_common_automatic_cancels(struct MarioState *m) {
     if (m->pos[1] < m->waterLevel - 100) {
         return set_water_plunge_action(m);
@@ -886,6 +976,7 @@ s32 mario_execute_automatic_action(struct MarioState *m) {
         case ACT_GRABBED:                cancel = act_grabbed(m);                break;
         case ACT_IN_CANNON:              cancel = act_in_cannon(m);              break;
         case ACT_TORNADO_TWIRLING:       cancel = act_tornado_twirling(m);       break;
+        case ACT_BUBBLED:                cancel = act_bubbled(m);                break;
     }
     /* clang-format on */
 

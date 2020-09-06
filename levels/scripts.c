@@ -69,6 +69,7 @@ const LevelScript level_main_scripts_entry[] = {
     LOAD_MODEL_FROM_GEO(MODEL_MARIO2,                  mario2_geo),
     LOAD_MODEL_FROM_GEO(MODEL_LUIGI,                   luigi_geo),
     LOAD_MODEL_FROM_GEO(MODEL_LUIGI2,                  luigi2_geo),
+    LOAD_MODEL_FROM_GEO(MODEL_BUBBLE_PLAYER,           water_bomb_geo),
     LOAD_MODEL_FROM_GEO(MODEL_SMOKE,                   smoke_geo),
     LOAD_MODEL_FROM_GEO(MODEL_SPARKLES,                sparkles_geo),
     LOAD_MODEL_FROM_GEO(MODEL_BUBBLE,                  bubble_geo),

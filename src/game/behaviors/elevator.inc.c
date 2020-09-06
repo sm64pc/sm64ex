@@ -11,6 +11,7 @@ void elevator_act_0(void) {
 
     u8 onPlatform = FALSE;
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         onPlatform = onPlatform || gMarioStates[i].marioObj->platform == o;
     }
 

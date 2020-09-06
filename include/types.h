@@ -368,6 +368,7 @@ struct MarioState
     /*0xC8*/ s16 currentRoom;
     /*0xCA*/ struct Object* heldByObj;
     /*????*/ u8 isSnoring;
+    /*????*/ struct Object* bubbleObj;
 };
 
 #define PLAY_MODE_NORMAL 0

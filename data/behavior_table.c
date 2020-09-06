@@ -19,6 +19,7 @@ const BehaviorScript* gBehaviorTable[id_bhv_max_count] = {
     [id_bhvBetaChestLid] = bhvBetaChestLid,
     [id_bhvBubbleParticleSpawner] = bhvBubbleParticleSpawner,
     [id_bhvBubbleMaybe] = bhvBubbleMaybe,
+    [id_bhvBubblePlayer] = bhvBubblePlayer,
     [id_bhvSmallWaterWave] = bhvSmallWaterWave,
     [id_bhvWaterAirBubble] = bhvWaterAirBubble,
     [id_bhvSmallParticle] = bhvSmallParticle,

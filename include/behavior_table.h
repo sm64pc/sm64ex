@@ -23,6 +23,7 @@ enum BehaviorId {
     id_bhvBetaChestLid,
     id_bhvBubbleParticleSpawner,
     id_bhvBubbleMaybe,
+    id_bhvBubblePlayer,
     id_bhvSmallWaterWave,
     id_bhvWaterAirBubble,
     id_bhvSmallParticle,

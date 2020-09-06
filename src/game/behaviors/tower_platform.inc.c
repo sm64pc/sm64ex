@@ -132,6 +132,7 @@ void bhv_tower_platform_group_loop(void) {
 
     u8 anyPlayerInRange = FALSE;
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         if (gMarioStates[i].marioObj->oPosY > o->oHomeY - 1000.0f) { anyPlayerInRange = TRUE; }
     }
 

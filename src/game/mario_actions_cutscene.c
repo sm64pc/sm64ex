@@ -730,7 +730,8 @@ s32 act_fall_after_star_grab(struct MarioState *m) {
 s32 common_death_handler(struct MarioState *m, s32 animation, s32 frameToDeathWarp) {
     s32 animFrame = set_mario_animation(m, animation);
     if (animFrame == frameToDeathWarp) {
-        level_trigger_warp(m, WARP_OP_DEATH);
+        //level_trigger_warp(m, WARP_OP_DEATH);
+        mario_set_bubbled(m);
     }
     m->marioBodyState->eyeState = MARIO_EYES_DEAD;
     stop_and_set_height_to_floor(m);
@@ -810,7 +811,8 @@ s32 act_eaten_by_bubba(struct MarioState *m) {
     }
 
     if (m->actionTimer++ == 60) {
-        level_trigger_warp(m, WARP_OP_DEATH);
+        //level_trigger_warp(m, WARP_OP_DEATH);
+        mario_set_bubbled(m);
     }
     return FALSE;
 }
@@ -1230,7 +1232,7 @@ s32 act_death_exit(struct MarioState *m) {
         play_sound(SOUND_MARIO_OOOF2, m->marioObj->header.gfx.cameraToObject);
 #endif
         queue_rumble_data_mario(m, 5, 80);
-        m->numLives--;
+        //m->numLives--;
         // restore 7.75 units of health
         m->healCounter = 31;
     }
@@ -1246,7 +1248,7 @@ s32 act_unused_death_exit(struct MarioState *m) {
 #else
         play_sound(SOUND_MARIO_OOOF2, m->marioObj->header.gfx.cameraToObject);
 #endif
-        m->numLives--;
+        //m->numLives--;
         // restore 7.75 units of health
         m->healCounter = 31;
     }
@@ -1263,7 +1265,7 @@ s32 act_falling_death_exit(struct MarioState *m) {
         play_sound(SOUND_MARIO_OOOF2, m->marioObj->header.gfx.cameraToObject);
 #endif
         queue_rumble_data_mario(m, 5, 80);
-        m->numLives--;
+        //m->numLives--;
         // restore 7.75 units of health
         m->healCounter = 31;
     }
@@ -1308,7 +1310,7 @@ s32 act_special_death_exit(struct MarioState *m) {
 
     if (launch_mario_until_land(m, ACT_HARD_BACKWARD_GROUND_KB, MARIO_ANIM_BACKWARD_AIR_KB, -24.0f)) {
         queue_rumble_data_mario(m, 5, 80);
-        m->numLives--;
+        //m->numLives--;
         m->healCounter = 31;
     }
     // show Mario
@@ -1606,9 +1608,11 @@ s32 act_squished(struct MarioState *m) {
             if (m->actionTimer >= 15) {
                 // 1 unit of health
                 if (m->health < 0x0100) {
-                    level_trigger_warp(m, WARP_OP_DEATH);
+                    //level_trigger_warp(m, WARP_OP_DEATH);
                     // woosh, he's gone!
-                    set_mario_action(m, ACT_DISAPPEARED, 0);
+                    //set_mario_action(m, ACT_DISAPPEARED, 0);
+                    drop_and_set_mario_action(m, ACT_DEATH_ON_BACK, 0);
+                    m->squishTimer = 0;
                 } else if (m->hurtCounter == 0) {
                     // un-squish animation
                     m->squishTimer = 30;
@@ -1654,9 +1658,10 @@ s32 act_squished(struct MarioState *m) {
         }
 
         m->hurtCounter = 0;
-        level_trigger_warp(m, WARP_OP_DEATH);
+        //level_trigger_warp(m, WARP_OP_DEATH);
         // woosh, he's gone!
-        set_mario_action(m, ACT_DISAPPEARED, 0);
+        //set_mario_action(m, ACT_DISAPPEARED, 0);
+        mario_set_bubbled(m);
     }
     stop_and_set_height_to_floor(m);
     set_mario_animation(m, MARIO_ANIM_A_POSE);

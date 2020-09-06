@@ -70,6 +70,44 @@ void bhv_small_water_wave_loop(void) {
         obj_mark_for_deletion(o);
 }
 
+void bhv_bubble_player_loop(void) {
+    struct MarioState* marioState = &gMarioStates[o->heldByPlayerIndex];
+
+    // grab positions to find the mid-point
+    f32* torsoPos = marioState->marioBodyState->torsoPos;
+    f32* pos = marioState->pos;
+
+    // sanity check torsoPos
+    if (marioState->marioObj->header.gfx.node.flags & GRAPH_RENDER_INVISIBLE) {
+        torsoPos = marioState->pos;
+    }
+
+    // set the position + offset
+    o->oPosX = (torsoPos[0] + pos[0]) / 2;
+    o->oPosY = (torsoPos[1] + pos[1]) / 2 + 30.0f;
+    o->oPosZ = (torsoPos[2] + pos[2]) / 2;
+
+    // slowly rotate the bubble
+    o->oFaceAnglePitch += 300;
+    o->oFaceAngleYaw += 230;
+    o->oFaceAngleRoll += 170;
+
+    // scale the bubble
+    extern u32 gGlobalTimer;
+    f32 scale = sins(gGlobalTimer * 800) * 0.1f + 1.4f;
+    o->header.gfx.scale[0] = scale;
+    o->header.gfx.scale[1] = sins(gGlobalTimer * 1500) * 0.2f + scale;
+    o->header.gfx.scale[2] = scale;
+
+    // check if the bubble popped
+    if (marioState->action != ACT_BUBBLED) {
+        spawn_mist_particles();
+        create_sound_spawner(SOUND_OBJ_DIVING_IN_WATER);
+        marioState->bubbleObj = NULL;
+        obj_mark_for_deletion(o);
+    }
+}
+
 void scale_bubble_sin(void) {
     o->header.gfx.scale[0] = sins(o->oWaterObjUnkF4) * 0.5 + 2.0;
     o->oWaterObjUnkF4 += o->oWaterObjUnkFC;

@@ -219,6 +219,7 @@ static void platform_on_track_act_move_along_track(void) {
 
     u8 anyMarioOnPlatform = FALSE;
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         if (gMarioStates[i].marioObj->platform == o) { anyMarioOnPlatform = TRUE; }
     }
 
@@ -248,6 +249,7 @@ static void platform_on_track_act_fall(void) {
 
     u8 anyMarioOnPlatform = FALSE;
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         if (gMarioStates[i].marioObj->platform == o) { anyMarioOnPlatform = TRUE; }
     }
 
@@ -270,6 +272,7 @@ static void platform_on_track_rock_ski_lift(void) {
 
     struct Object* player = NULL;
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         if (gMarioStates[i].marioObj->platform != o) { continue; }
         player = gMarioStates[i].marioObj;
         break;
@@ -317,6 +320,7 @@ void bhv_platform_on_track_update(void) {
 
     u8 anyMarioOnPlatform = FALSE;
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         if (gMarioStates[i].marioObj->platform == o) { anyMarioOnPlatform = TRUE; }
     }
 

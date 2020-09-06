@@ -29,6 +29,8 @@
 #define MODEL_LUIGI                       0xE2        // luigi_geo
 #define MODEL_LUIGI2                      0xE3        // luigi2_geo
 
+#define MODEL_BUBBLE_PLAYER               0xE4        // water_bomb_geo
+
 /* Various static level geometry, the geo layout differs but terrain object presets treat them the same.*/
 
 #define MODEL_LEVEL_GEOMETRY_03                0x03

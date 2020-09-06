@@ -128,6 +128,7 @@ static void racing_penguin_act_race(void) {
 
     u8 isInAir = FALSE;
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         isInAir = isInAir || mario_is_in_air_action(&gMarioStates[i]);
     }
 

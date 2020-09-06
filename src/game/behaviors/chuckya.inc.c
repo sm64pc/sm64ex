@@ -2,6 +2,7 @@
 
 void common_anchor_mario_behavior(f32 sp28, f32 sp2C, s32 sp30) {
     for (int i = 0; i < MAX_PLAYERS; i++) {
+        if (!is_player_active(&gMarioStates[i])) { continue; }
         struct MarioState* marioState = &gMarioStates[i];
         struct Object* player = gMarioStates[i].marioObj;
         if (marioState->heldByObj != o->parentObj && marioState->heldByObj != o) { continue; }
