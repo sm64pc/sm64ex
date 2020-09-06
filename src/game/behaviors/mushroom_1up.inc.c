@@ -1,13 +1,19 @@
 // mushroom_1up.c.inc
 
 void bhv_1up_interact(void) {
+    if (o->activeFlags == ACTIVE_FLAG_DEACTIVATED) { return; }
     UNUSED s32 sp1C;
 
     struct MarioState* marioState = nearest_mario_state_to_object(o);
-    if (marioState->playerIndex == 0 && obj_check_if_collided_with_object(o, marioState->marioObj) == 1) {
+    u8 hitLocalPlayer = (marioState->playerIndex == 0) && (obj_check_if_collided_with_object(o, marioState->marioObj) == 1);
+
+    if (hitLocalPlayer || (o->oInteractStatus & INT_STATUS_INTERACTED)) {
         play_sound(SOUND_GENERAL_COLLECT_1UP, gDefaultSoundArgs);
-        marioState->numLives++;
+        gMarioState[0].numLives++;
         o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
+        if (hitLocalPlayer) {
+            network_send_collect_item(o);
+        }
     }
 }
 

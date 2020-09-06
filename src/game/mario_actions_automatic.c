@@ -919,8 +919,12 @@ s32 act_bubbled(struct MarioState* m) {
     m->marioObj->header.gfx.angle[1] = angleToPlayer;
 
     // make invisible on -1 lives
-    if (m->numLives == -1) {
-        m->marioObj->header.gfx.node.flags |= GRAPH_RENDER_INVISIBLE;
+    if (m->playerIndex == 0) {
+        if (m->numLives == -1) {
+            m->marioObj->header.gfx.node.flags |= GRAPH_RENDER_INVISIBLE;
+        } else {
+            m->marioObj->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
+        }
     }
 
     // pop bubble
