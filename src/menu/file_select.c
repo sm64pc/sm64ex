@@ -488,7 +488,7 @@ void print_network_mode_menu_strings(void) {
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
 
-    print_hud_lut_string(HUD_LUT_DIFF, HEADER_HUD_X, 35, textHeader);
+    print_hud_lut_string(HUD_LUT_DIFF, HEADER_HUD_X, 55, textHeader);
 
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
 
@@ -505,6 +505,10 @@ void print_network_mode_menu_strings(void) {
         textX = get_str_x_pos_from_center(mode * 72 + 124, textNetworkModes[mode], 10.0f);
         print_generic_string(textX, 87, textNetworkModes[mode]);
     }
+
+    // Print disclaimers
+    print_generic_ascii_string(98, 150, "Still in early development.");
+    print_generic_ascii_string(35, 34, "Levels after Bowser 1 don't synchronize yet.");
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 }
