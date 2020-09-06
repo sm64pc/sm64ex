@@ -37,8 +37,11 @@
 #include "pc/cheats.h"
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
+extern f32 newcam_yaw_acc;
+extern f32 newcam_tilt_acc;
 #endif
 int levelResetActNum = 0;
+u8 skipStarSelect = false;
 
 u32 unused80339F10;
 s8 filler80339F1C[20];
@@ -1414,12 +1417,30 @@ void update_mario_inputs(struct MarioState *m) {
     update_mario_geometry_inputs(m);
 
     debug_print_speed_action_normal(m);
-    
-    if(m->controller->buttonDown& L_TRIG && m->controller->buttonPressed & R_TRIG){
-        sWarpDest.levelNum = gCurrLevelNum;
-        sWarpDest.areaIdx =  m->area->index;
+
+    if (m->controller->buttonDown & L_TRIG && m->controller->buttonPressed & R_TRIG) {
+        storedWarpDest = sWarpDest;
         levelResetActNum = gCurrActNum;
+    }
+    if (m->controller->buttonDown & Z_TRIG && m->controller->buttonPressed & R_TRIG) {
+        skipStarSelect = true;
+
+        m->health = 0x880;
+        if (storedWarpDest.levelNum != 0) {
+            sWarpDest = storedWarpDest;
+            levelResetActNum = gCurrActNum;
+
+        } else {
+            sWarpDest.levelNum = gCurrLevelNum;
+            sWarpDest.areaIdx = m->area->index;
+        }
+
         sWarpDest.type = 1;
+        reset_dialog_render_state();
+#ifdef BETTERCAMERA
+        newcam_yaw_acc = 0;
+        newcam_tilt_acc = 0;
+#endif
     }
     /* Moonjump cheat */
     while (Cheats.MoonJump == true && Cheats.EnableCheats == true && m->controller->buttonDown & L_TRIG ){

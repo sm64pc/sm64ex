@@ -162,6 +162,7 @@ u16 D_80339ECA;
 s16 sTransitionTimer;
 void (*sTransitionUpdate)(s16 *);
 struct WarpDest sWarpDest;
+struct WarpDest storedWarpDest;
 s16 D_80339EE0;
 s16 sDelayedWarpOp;
 s16 sDelayedWarpTimer;
@@ -171,6 +172,7 @@ s32 sDelayedWarpArg;
 s16 unusedEULevelUpdateBss1;
 #endif
 s8 sTimerRunning;
+s8 speedTimerRunning;
 s8 gShouldNotPlayCastleMusic;
 
 struct MarioState *gMarioState = &gMarioStates[0];
@@ -178,6 +180,7 @@ u8 unused1[4] = { 0 };
 s8 D_8032C9E0 = 0;
 u8 unused3[4];
 u8 unused4[2];
+
 
 u16 level_control_timer(s32 timerOp) {
     switch (timerOp) {
@@ -203,6 +206,31 @@ u16 level_control_timer(s32 timerOp) {
     }
 
     return gHudDisplay.timer;
+}
+u16 speed_running_control_timer(s32 timerOp) {
+    switch (timerOp) {
+        case TIMER_CONTROL_SHOW:
+            gHudDisplay.flags |= HUD_DISPLAY_FLAG_SPEED_TIMER;
+            speedTimerRunning = FALSE;
+            gHudDisplay.speedRunTimer = 0;
+            break;
+
+        case TIMER_CONTROL_START:
+            speedTimerRunning = TRUE;
+            break;
+
+        case TIMER_CONTROL_STOP:
+            speedTimerRunning = FALSE;
+            break;
+
+        case TIMER_CONTROL_HIDE:
+            gHudDisplay.flags &= ~HUD_DISPLAY_FLAG_SPEED_TIMER;
+            speedTimerRunning = FALSE;
+            gHudDisplay.speedRunTimer = 0;
+            break;
+    }
+
+    return gHudDisplay.speedRunTimer;
 }
 
 u32 pressed_pause(void) {
@@ -478,11 +506,12 @@ void warp_level(void) {
     gCurrLevelNum = sWarpDest.levelNum;
 
     level_control_timer(TIMER_CONTROL_HIDE);
+  
 
     load_area(sWarpDest.areaIdx);
     init_mario_after_warp();
-    level_control_timer(TIMER_CONTROL_SHOW);
-    level_control_timer(TIMER_CONTROL_START);
+    speed_running_control_timer(TIMER_CONTROL_SHOW);
+    speed_running_control_timer(TIMER_CONTROL_START);
 }
 
 void warp_credits(void) {
@@ -672,6 +701,7 @@ void initiate_painting_warp(void) {
                 if (!(warpNode.destLevel & 0x80)) {
                     D_8032C9E0 = check_warp_checkpoint(&warpNode);
                 }
+                skipStarSelect = false;
 
                 initiate_warp(warpNode.destLevel & 0x7F, warpNode.destArea, warpNode.destNode, 0);
                 check_if_should_set_warp_checkpoint(&warpNode);
@@ -981,7 +1011,9 @@ s32 play_mode_normal(void) {
     if (sTimerRunning && gHudDisplay.timer < 17999) {
         gHudDisplay.timer += 1;
     }
-
+    if (speedTimerRunning) {
+        gHudDisplay.speedRunTimer += 1;
+    }
     area_update_objects();
     update_hud_values();
 
@@ -1226,7 +1258,7 @@ s32 init_level(void) {
     if (gMarioState->action == ACT_INTRO_CUTSCENE) {
         sound_banks_disable(2, 0x0330);
     }
-
+    
     return 1;
 }
 
@@ -1317,17 +1349,15 @@ s32 lvl_set_current_level(UNUSED s16 arg0, s32 levelNum) {
         return 0;
     }
 
-    if(levelResetActNum){
+    if(skipStarSelect){
         return 0;
     }
 
     return 1;
 }
 
-s32 resetLevelAct(UNUSED s16 arg0){
-    s32 returnVal = levelResetActNum;
-levelResetActNum = 0;
-    return returnVal;
+s32 resetLevelAct(UNUSED s16 arg0) {
+    return levelResetActNum;
 }
 /**
  * Play the "thank you so much for to playing my game" sound.
