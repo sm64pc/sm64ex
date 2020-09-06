@@ -15,6 +15,7 @@
 #include "save_file.h"
 #include "print.h"
 #include "pc/configfile.h"
+#include "pc/network/network.h"
 
 /* @file hud.c
  * This file implements HUD rendering and power meter animations.
@@ -291,7 +292,13 @@ void render_hud_power_meter(void) {
  * Renders the amount of lives Mario has.
  */
 void render_hud_mario_lives(void) {
-    print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(22), HUD_TOP_Y, ","); // 'Mario Head' glyph
+    // two-player hack
+#ifdef VERSION_JP
+    char* displayHead = ",";
+#else
+    char* displayHead = (networkType == NT_SERVER) ? "," : ".";
+#endif
+    print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(22), HUD_TOP_Y, displayHead); // 'Mario Head' glyph
     print_text(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(38), HUD_TOP_Y, "*"); // 'X' glyph
     print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(54), HUD_TOP_Y, "%d", gHudDisplay.lives);
 }

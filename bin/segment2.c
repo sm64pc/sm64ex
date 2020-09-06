@@ -208,6 +208,10 @@ ALIGNED8 static const u8 texture_hud_char_mario_head[] = {
 #include "textures/segment2/segment2.05A00.rgba16.inc.c"
 };
 
+ALIGNED8 static const u8 texture_hud_char_luigi_head[] = {
+#include "textures/segment2/custom_luigi_head.rgba16.inc.c"
+};
+
 ALIGNED8 static const u8 texture_hud_char_star[] = {
 #include "textures/segment2/segment2.05C00.rgba16.inc.c"
 };
@@ -1816,7 +1820,7 @@ const u8 *const main_hud_lut[] = {
                   0x0,               0x0,               0x0,               0x0,
                   0x0,               0x0,               0x0,               0x0,
                   0x0,               0x0, texture_hud_char_multiply, texture_hud_char_coin,
-    texture_hud_char_mario_head, texture_hud_char_star,               0x0,               0x0,
+    texture_hud_char_mario_head, texture_hud_char_star, texture_hud_char_luigi_head, 0x0,
     texture_hud_char_apostrophe, texture_hud_char_double_quote, texture_hud_char_umlaut,
 #elif defined(VERSION_US)
     texture_hud_char_0, texture_hud_char_1, texture_hud_char_2, texture_hud_char_3,
@@ -1832,7 +1836,7 @@ const u8 *const main_hud_lut[] = {
                   0x0,               0x0,               0x0,               0x0,
                   0x0,               0x0,               0x0,               0x0,
                   0x0,               0x0, texture_hud_char_multiply, texture_hud_char_coin,
-    texture_hud_char_mario_head, texture_hud_char_star,               0x0,               0x0,
+    texture_hud_char_mario_head, texture_hud_char_star, texture_hud_char_luigi_head, 0x0,
     texture_hud_char_apostrophe, texture_hud_char_double_quote,
 #else
     texture_hud_char_0, texture_hud_char_1, texture_hud_char_2, texture_hud_char_3,
