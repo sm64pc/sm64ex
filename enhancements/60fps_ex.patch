@@ -1906,7 +1906,7 @@ index 25c9f06..a6461ae 100644
      if (enabled) {
          // try to detect refresh rate
          SDL_GL_SetSwapInterval(1);
--        const int vblanks = test_vsync();
+-        const int vblanks = gCLIOpts.SyncFrames ? (int)gCLIOpts.SyncFrames : test_vsync();
 +        int vblanks = test_vsync();
 +        if (vblanks & 1)
 +            vblanks = 0; // not divisible by 60, fuck that
