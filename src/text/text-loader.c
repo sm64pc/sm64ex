@@ -9,13 +9,15 @@
 #include <dirent.h> 
 #include "libs/cJSON.h"
 
+#define PLACEHOLDER "You are not supposed\nto be here.\n\nKeep this as a secret\n\n- Render96 Team"
+
 struct DialogEntry* * dialogPool;
 struct LanguageEntry* * languages;
 s8 languagesAmount = 0;
 
-char* currentLanguage = "english";
+struct LanguageEntry* current_language;
 
-void preloadLanguageText(char* jsonTxt, s8 language){    
+void load_language(char* jsonTxt, s8 language){    
     languages[language] = malloc (sizeof (struct LanguageEntry));
 
     cJSON *json = cJSON_Parse(jsonTxt);
@@ -38,8 +40,7 @@ void preloadLanguageText(char* jsonTxt, s8 language){
     struct DialogEntry** entries = malloc(DIALOG_COUNT * sizeof(struct DialogEntry));
 
     languages[language]->name = cJSON_GetObjectItemCaseSensitive(manifest, "languageName")->valuestring;
-    languages[language]->logo = cJSON_GetObjectItemCaseSensitive(manifest, "languageLogo")->valuestring;
-    languages[language]->placeholder = cJSON_GetObjectItemCaseSensitive(manifest, "placeholder")->valuestring;
+    languages[language]->logo = cJSON_GetObjectItemCaseSensitive(manifest, "languageLogo")->valuestring;    
 
     dialogs = cJSON_GetObjectItemCaseSensitive(json, "dialogs");
 
@@ -108,32 +109,37 @@ void alloc_languages(void){
             languagesAmount++;
 
             char * jsonTxt = read_file(language_file);
-            preloadLanguageText(jsonTxt, languagesAmount - 1);
+            load_language(jsonTxt, languagesAmount - 1);
         }
     }
 
     languages = realloc(languages, sizeof(struct LanguageEntry*) * (languagesAmount));
 }
 
-void selectLanguage(char* languageName){
+struct LanguageEntry* get_language_by_name(char* name){
 
-    char* lowerName = malloc(sizeof(languageName));
+    char* lowerName = malloc(sizeof(name));
     for(char l = 0; l < sizeof(lowerName) / sizeof(char); l++)
-        lowerName[l] = tolower(languageName[l]);
-
+        lowerName[l] = tolower(name[l]);
     int id = 0;
-    char* languageTmp = "none";
 
     for(int l = 0; l < languagesAmount; l++){
         if(strcmp(languages[l]->name, lowerName) == 0){
-            id = l;
-            languageTmp = languages[l]->name;
+            id = l;            
             break;
         }
-    }
+   }
 
-    currentLanguage = languageTmp;
-    dialogPool = languages[id]->entries;
+   return languages[id];
+}
+
+struct LanguageEntry* get_language(){
+   return current_language;
+}
+
+void set_language(struct LanguageEntry* new_language){    
+    current_language = new_language;
+    dialogPool = new_language->entries;
 }
 
 void alloc_dialog_pool(void){
@@ -141,8 +147,7 @@ void alloc_dialog_pool(void){
         
     languages[0] = malloc (sizeof (struct LanguageEntry));
     languages[0]->name = "none";
-    languages[0]->logo = "none";
-    languages[0]->placeholder = "You are not supposed\nto be here.\n\nKeep this as a secret\n\n- Render96 Team";
+    languages[0]->logo = "none";    
     languages[0]->entries = malloc(DIALOG_COUNT * sizeof(struct DialogEntry));
     
     for(int i = 0; i < DIALOG_COUNT; i++){
@@ -152,11 +157,11 @@ void alloc_dialog_pool(void){
         entry->linesPerBox = 6;
         entry->leftOffset = 95;
         entry->width = 200;
-        entry->str = getTranslatedText(languages[0]->placeholder);
+        entry->str = getTranslatedText(PLACEHOLDER);
 
         languages[0]->entries[i] = entry;
     }    
 
     alloc_languages();
-    selectLanguage(currentLanguage);
+    set_language(get_language_by_name("english"));    
 }
