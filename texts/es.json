@@ -1,4 +1,9 @@
 {
+    "manifest": {
+        "languageName": "Spanish",
+        "languageLogo": "none",
+        "placeholder": "You are not supposed\nto be here.\n\nKeep this as a secret\n\n- Render96 Team"
+    },
     "dialogs": [
         {
             "ID": 0,

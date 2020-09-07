@@ -2,7 +2,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <limits.h>
-#include "dir_utils.h"
+#include "io_utils.h"
+
+#define _READFILE_GUESS 256
 
 void combine(char* destination, const char* path1, const char* path2) {
     if(path1 == NULL || path2 == NULL) {
@@ -31,4 +33,45 @@ void combine(char* destination, const char* path1, const char* path2) {
             strcat(destination, directory_separator);
         strcat(destination, path2);
     }
+}
+
+const char *get_filename_ext(const char *filename) {
+    const char *dot = strrchr(filename, '.');
+    if(!dot || dot == filename) return "";
+    return dot + 1;
+}
+
+char* read_file(char* name){
+    FILE* file;
+    file = fopen(name, "r");
+
+    if(!file)
+        return NULL;
+
+    char* result = malloc(sizeof(char) * _READFILE_GUESS + 1);
+
+    if(result == NULL)
+        return NULL;
+
+    size_t pos = 0;
+    size_t capacity = _READFILE_GUESS;
+    char ch;
+
+    while((ch = getc(file)) != EOF){
+        result[pos++] = ch;
+
+        if(pos >= capacity){
+            capacity += _READFILE_GUESS;
+            result = realloc(result, sizeof(char) * capacity + 1);
+            if(result == NULL)
+                return NULL;
+        }
+    }
+    fclose(file);
+    result = realloc(result, sizeof(char) * pos);
+    if(result == NULL)
+        return NULL;
+    result[pos] = '\0';
+
+    return result;
 }
