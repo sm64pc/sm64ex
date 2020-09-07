@@ -14,7 +14,7 @@ typedef unsigned long long u64;
 typedef float f32;
 typedef double f64;
 
-#if defined(__sgi) || (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+#if (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
 #  define BSWAP16(x)
 #  define BSWAP32(x)
 #  define BSWAP16_MANY(x, n)
@@ -24,13 +24,8 @@ typedef double f64;
 #  define BSWAP16_MANY(x, n) { s32 _i; for (_i = 0; _i < n; _i++) BSWAP16((x)[_i]) }
 #endif
 
-#ifdef __sgi
-#  define MODE_READ "r"
-#  define MODE_WRITE "w"
-#else
 #  define MODE_READ "rb"
 #  define MODE_WRITE "wb"
-#endif
 
 typedef struct {
     u32 ckID;

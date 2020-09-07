@@ -7,11 +7,7 @@
 
 #ifdef VERSION_EU
 
-#ifdef __sgi
-#define stubbed_printf
-#else
 #define stubbed_printf(...)
-#endif
 
 #define SAMPLES_TO_OVERPRODUCE 0x10
 #define EXTRA_BUFFERED_AI_SAMPLES_TARGET 0x40

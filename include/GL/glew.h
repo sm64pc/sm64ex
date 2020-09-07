@@ -223,7 +223,7 @@ typedef _W64 int ptrdiff_t;
 /* SGI MIPSPro doesn't like stdint.h in C++ mode          */
 /* ID: 3376260 Solaris 9 has inttypes.h, but not stdint.h */
 
-#if (defined(__sgi) || defined(__sun)) && !defined(__GNUC__)
+#if (defined(__sun)) && !defined(__GNUC__)
 #include <inttypes.h>
 #else
 #include <stdint.h>

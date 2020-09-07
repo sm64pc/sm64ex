@@ -162,14 +162,6 @@ void seq_channel_layer_process_script(struct SequenceChannelLayer *layer) {
     // inlined copt var that gets pulled out to the rest of the function
     unsigned char _Kqi6;
 
-//! Copt: manually inline these functions in the scope of this routine
-#ifdef __sgi
-#pragma inline routine(m64_read_u8)
-#pragma inline routine(m64_read_compressed_u16)
-#pragma inline routine(m64_read_s16)
-#pragma inline routine(get_instrument)
-#endif
-
     sameSound = TRUE;
     if (layer->enabled == FALSE) {
         return;

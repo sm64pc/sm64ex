@@ -19,18 +19,6 @@ static void int_handler(s32 sig)
 
 static char usage[] = "bitfile";
 
-#ifdef __sgi
-
-// Declaring a sigaction like this is wildly unportable; you're supposed to
-// assign members one by one in code. We do that in the non-SGI case.
-static struct sigaction int_act = {
-    /* sa_flags =   */ SA_RESTART,
-    /* sa_handler = */ &int_handler,
-    /* sa_mask =    */ 0,
-};
-
-#endif
-
 s32 main(s32 argc, char **argv)
 {
     s32 c;
@@ -66,9 +54,7 @@ s32 main(s32 argc, char **argv)
     FILE *ifile;
     char *progname = argv[0];
 
-#ifndef __sgi
     nloops = 0;
-#endif
 
     if (argc < 2)
     {
@@ -163,9 +149,6 @@ s32 main(s32 argc, char **argv)
             BSWAP32(SndDChunk.blockSize)
             // The assert error messages specify line numbers 165/166. Match
             // that using a #line directive.
-#ifdef __sgi
-#  line 164
-#endif
             assert(SndDChunk.offset == 0);
             assert(SndDChunk.blockSize == 0);
             soundPointer = ftell(ifile);
@@ -226,12 +209,10 @@ s32 main(s32 argc, char **argv)
     fseek(ifile, soundPointer, SEEK_SET);
     if (doloop && nloops > 0)
     {
-#ifndef __sgi
         struct sigaction int_act;
         int_act.sa_flags = SA_RESTART;
         int_act.sa_handler = int_handler;
         sigemptyset(&int_act.sa_mask);
-#endif
 
         sigaction(SIGINT, &int_act, NULL);
         flags = fcntl(STDIN_FILENO, F_GETFL, 0);

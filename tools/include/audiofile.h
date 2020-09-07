@@ -57,9 +57,8 @@ typedef void (*AFerrfunc)(long, const char *);
 	defined(__NetBSD__) || \
 	defined(__OpenBSD__) || \
 	defined(__APPLE__) || \
-	defined(__sgi) || \
 	(defined(__linux__) && defined(__LP64__))
-// BSD and IRIX systems define off_t as a 64-bit signed integer.
+
 // Linux defines off_t as a 64-bit signed integer in LP64 mode.
 typedef off_t AFframecount;
 typedef off_t AFfileoffset;

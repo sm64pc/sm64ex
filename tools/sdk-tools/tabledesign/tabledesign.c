@@ -5,14 +5,6 @@
 #include <audiofile.h>
 #include "tabledesign.h"
 
-#ifdef __sgi
-
-typedef long SampleFormat;
-
-#define MODE_READ "r"
-
-#else
-
 // The modern implementation of SGI's audiofile library which is in Ubuntu
 // (https://github.com/mpruett/audiofile/) has renamed some of the functions,
 // and changed some data types.
@@ -27,8 +19,6 @@ typedef int SampleFormat;
 #define AFreadframes afReadFrames
 
 #define MODE_READ "rb"
-
-#endif
 
 char usage[80] = "[-o order -s bits -t thresh -i refine_iter -f frame_size] aifcfile";
 

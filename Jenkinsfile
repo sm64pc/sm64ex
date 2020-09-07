@@ -48,7 +48,6 @@ pipeline {
     }
   }
   environment {
-    QEMU_IRIX = credentials('qemu-irix')
     ROMS_DIR = credentials('roms')
   }
 }

@@ -29,7 +29,7 @@ extern Gfx dl_shadow_9_verts[];
 extern Gfx dl_shadow_4_verts[];
 extern Gfx dl_shadow_end[];
 extern Gfx dl_skybox_begin[];
-extern Gfx dl_skybox_tile_tex_settings[];
+extern const Mtx matrix_identity;
 extern Gfx dl_skybox_end[];
 extern Gfx dl_waterbox_ia16_begin[];
 extern Gfx dl_waterbox_rgba16_begin[];

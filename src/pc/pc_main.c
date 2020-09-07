@@ -240,14 +240,12 @@ void main_func(void) {
 
     inited = true;
 
-#ifdef EXTERNAL_DATA
     // precache data if needed
     if (configPrecacheRes) {
         fprintf(stdout, "precaching data\n");
         fflush(stdout);
         gfx_precache_textures();
     }
-#endif
 
 #ifdef DISCORDRPC
     discord_init();

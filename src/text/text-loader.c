@@ -51,7 +51,7 @@ char* read_file(char* name){
 
 void preloadTexts(){
 
-    char * file = ENGLISH;
+    char * file = SPANISH;
 
     #ifndef WIN32
     char * language_file = realpath(file, NULL);

@@ -121,17 +121,6 @@ u8 gMenuHoldKeyIndex = 0;
 u8 gMenuHoldKeyTimer = 0;
 s32 gDialogResponse = 0;
 
-#if !defined(EXTERNAL_DATA) && (defined(VERSION_JP) || defined(VERSION_SH) || defined(VERSION_EU))
-#ifdef VERSION_EU
-#define CHCACHE_BUFLEN (8 * 8)  // EU only converts 8x8
-#else
-#define CHCACHE_BUFLEN (8 * 16) // JP only converts 8x16 or 16x8 characters
-#endif
-// stores char data unpacked from ia1 to ia8 or ia4
-// so that it won't be reconverted every time a character is rendered
-static struct CachedChar { u8 used; u8 data[CHCACHE_BUFLEN]; } charCache[256];
-#endif // VERSION
-
 void create_dl_identity_matrix(void) {
     Mtx *matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
 
@@ -235,16 +224,7 @@ static inline void alloc_ia8_text_from_i1(u8 *out, u16 *in, s16 width, s16 heigh
 }
 
 static inline u8 *convert_ia8_char(u8 c, u16 *tex, s16 w, s16 h) {
-#ifdef EXTERNAL_DATA
     return (u8 *)tex; // the data's just a name
-#else
-    if (!tex) return NULL;
-    if (!charCache[c].used) {
-        charCache[c].used = 1;
-        alloc_ia8_text_from_i1(charCache[c].data, tex, w, h);
-    }
-    return charCache[c].data;
-#endif
 }
 #endif
 
@@ -296,16 +276,7 @@ static void alloc_ia4_tex_from_i1(u8 *out, u8 *in, s16 width, s16 height) {
 }
 
 static u8 *convert_ia4_char(u8 c, u8 *tex, s16 w, s16 h) {
-#ifdef EXTERNAL_DATA
-    return tex; // the data's just a name
-#else
-    if (!tex) return NULL;
-    if (!charCache[c].used) {
-        charCache[c].used = 1;
-        alloc_ia4_tex_from_i1(charCache[c].data, tex, w, h);
-    }
-    return charCache[c].data;
-#endif
+    return tex;
 }
 
 void render_generic_char_at_pos(s16 xPos, s16 yPos, u8 c) {

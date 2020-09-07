@@ -124,11 +124,9 @@ int main(int argc, char **argv)
         state[i] = 0;
     }
 
-#ifndef __sgi
     // If there is no instrument chunk, make sure to output zeroes instead of
     // garbage. (This matches how the IRIX -g-compiled version behaves.)
     memset(&InstChunk, 0, sizeof(InstChunk));
-#endif
 
     inBuffer = malloc(16 * sizeof(s16));
 
@@ -203,9 +201,6 @@ int main(int argc, char **argv)
             BSWAP32(SndDChunk.blockSize)
             // The assert error messages specify line numbers 219/220. Match
             // that using a #line directive.
-#ifdef __sgi
-#  line 218
-#endif
             assert(SndDChunk.offset == 0);
             assert(SndDChunk.blockSize == 0);
             soundPointer = ftell(ifile);

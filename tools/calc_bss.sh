@@ -13,11 +13,6 @@ if [[ $# = 0 ]]; then
     exit 1
 fi
 
-if [ -z "$QEMU_IRIX" ]; then
-    echo "env variable QEMU_IRIX should point to the qemu-mips binary" >&2
-    exit 1
-fi
-
 if [ -z "$CROSS" ]; then
     CROSS=mips-linux-gnu-
 fi
@@ -36,9 +31,6 @@ while [[ $# -gt 0 ]]; do
 done
 
 echo "char measurement;" >> $TEMPC
-
-$QEMU_IRIX -silent -L $IRIX_ROOT $IRIX_ROOT/usr/bin/cc -c -non_shared -G 0 \
-    -g -Xcpluscomm -mips2 -I $(pwd)/include/ $TEMPC -o $TEMPO
 
 LINE=$(${CROSS}objdump -t $TEMPO | grep measurement | cut -d' ' -f1)
 NUM=$((0x$LINE - 1))

@@ -871,7 +871,6 @@ void load_sequence_internal(u32 player, u32 seqId, s32 loadAsync) {
     seqPlayer->scriptState.pc = sequenceData;
 }
 
-#ifdef EXTERNAL_DATA
 # define LOAD_DATA(x) load_sound_res((const char *)x)
 # include <stdio.h>
 # include <stdlib.h>
@@ -882,9 +881,6 @@ static inline void *load_sound_res(const char *path) {
     //        can't free it immediately after in audio_init()
     return data;
 }
-#else
-# define LOAD_DATA(x) x
-#endif
 
 // (void) must be omitted from parameters
 void audio_init() {

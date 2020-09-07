@@ -518,11 +518,10 @@ endif
 # TODO: Remove -DEXTERNAL_DATA
 
 # Load external textures
-CC_CHECK += -DEXTERNAL_DATA -DFS_BASEDIR="\"$(BASEDIR)\""
-CFLAGS += -DEXTERNAL_DATA -DFS_BASEDIR="\"$(BASEDIR)\""
+CC_CHECK += -DFS_BASEDIR="\"$(BASEDIR)\""
+CFLAGS += -DFS_BASEDIR="\"$(BASEDIR)\""
 # tell skyconv to write names instead of actual texture data and save the split tiles so we can use them later
 SKYTILE_DIR := $(BUILD_DIR)/textures/skybox_tiles
-SKYCONV_ARGS := --store-names --write-tiles "$(SKYTILE_DIR)"
 
 ASFLAGS := -I include -I $(BUILD_DIR) $(VERSION_ASFLAGS)
 
@@ -567,7 +566,6 @@ TEXTCONV = $(TOOLS_DIR)/textconv
 AIFF_EXTRACT_CODEBOOK = $(TOOLS_DIR)/aiff_extract_codebook
 VADPCM_ENC = $(TOOLS_DIR)/vadpcm_enc
 EXTRACT_DATA_FOR_MIO = $(TOOLS_DIR)/extract_data_for_mio
-SKYCONV = $(TOOLS_DIR)/skyconv
 SHA1SUM = sha1sum
 ZEROTERM = $(PYTHON) $(TOOLS_DIR)/zeroterm.py
 
