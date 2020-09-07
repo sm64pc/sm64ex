@@ -142,7 +142,7 @@ static inline void gfx_sdl_set_vsync(const bool enabled) {
     if (enabled) {
         // try to detect refresh rate
         SDL_GL_SetSwapInterval(1);
-        const int vblanks = test_vsync();
+        const int vblanks = gCLIOpts.SyncFrames ? (int)gCLIOpts.SyncFrames : test_vsync();
         if (vblanks) {
             printf("determined swap interval: %d\n", vblanks);
             SDL_GL_SetSwapInterval(vblanks);
