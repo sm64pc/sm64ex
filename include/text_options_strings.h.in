@@ -14,7 +14,8 @@
 
 // Markers
 
-#define TEXT_OPT_HIGHLIGHT _("O")
+#define TEXT_OPT_L_HIGHLIGHT _(">")
+#define TEXT_OPT_R_HIGHLIGHT _("<")
 #define TEXT_OPT_UNBOUND   _("NONE")
 
 // Language specific strings
