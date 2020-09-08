@@ -21,11 +21,6 @@
 #include "obj_behaviors.h"
 #include "save_file.h"
 #include "debug_course.h"
-#ifdef VERSION_EU
-#include "memory.h"
-#include "eu_translation.h"
-#include "segment_symbols.h"
-#endif
 #include "level_table.h"
 #include "course_table.h"
 #include "thread6.h"

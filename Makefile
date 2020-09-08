@@ -558,15 +558,9 @@ export LANG := C
 
 # N64 conversion tools
 TOOLS_DIR = tools
-MIO0TOOL = $(TOOLS_DIR)/mio0
-N64CKSUM = $(TOOLS_DIR)/n64cksum
-N64GRAPHICS = $(TOOLS_DIR)/n64graphics
-N64GRAPHICS_CI = $(TOOLS_DIR)/n64graphics_ci
-TEXTCONV = $(TOOLS_DIR)/textconv
 AIFF_EXTRACT_CODEBOOK = $(TOOLS_DIR)/aiff_extract_codebook
 VADPCM_ENC = $(TOOLS_DIR)/vadpcm_enc
 EXTRACT_DATA_FOR_MIO = $(TOOLS_DIR)/extract_data_for_mio
-SHA1SUM = sha1sum
 ZEROTERM = $(PYTHON) $(TOOLS_DIR)/zeroterm.py
 
 ###################### Dependency Check #####################
@@ -631,45 +625,13 @@ $(BUILD_DIR)/src/game/crash_screen.o: $(CRASH_TEXTURE_C_FILES)
 
 $(BUILD_DIR)/lib/rsp.o: $(BUILD_DIR)/rsp/rspboot.bin $(BUILD_DIR)/rsp/fast3d.bin $(BUILD_DIR)/rsp/audio.bin
 
-#Required so the compiler doesn't complain about this not existing.
-$(BUILD_DIR)/src/game/camera.o: $(BUILD_DIR)/include/text_strings.h
-
-$(BUILD_DIR)/include/text_strings.h: include/text_strings.h.in
-	$(TEXTCONV) charmap.txt $< $@
-
-$(BUILD_DIR)/include/text_menu_strings.h: include/text_menu_strings.h.in
-	$(TEXTCONV) charmap_menu.txt $< $@
-
-$(BUILD_DIR)/include/text_options_strings.h: include/text_options_strings.h.in
-	$(TEXTCONV) charmap.txt $< $@
-
 TEXT_DIRS := text/$(VERSION)
-
-# non-EU encoded text inserted into segment 0x02
-$(BUILD_DIR)/bin/segment2.o: $(BUILD_DIR)/text/$(VERSION)/define_text.inc.c
-
-$(BUILD_DIR)/text/%/define_courses.inc.c: text/define_courses.inc.c text/%/courses.h
-	$(CPP) $(VERSION_CFLAGS) $< -o - -I text/$*/ | $(TEXTCONV) charmap.txt - $@
-
-$(BUILD_DIR)/text/%/define_text.inc.c: text/define_text.inc.c text/%/courses.h text/%/dialogs.h
-	$(CPP) $(VERSION_CFLAGS) $< -o - -I text/$*/ | $(TEXTCONV) charmap.txt - $@
 
 RSP_DIRS := $(BUILD_DIR)/rsp
 ALL_DIRS := $(BUILD_DIR) $(addprefix $(BUILD_DIR)/,$(SRC_DIRS) $(ASM_DIRS) $(GODDARD_SRC_DIRS) $(ULTRA_SRC_DIRS) $(ULTRA_ASM_DIRS) $(ULTRA_BIN_DIRS) $(BIN_DIRS) $(TEXTURE_DIRS) $(TEXT_DIRS) $(SOUND_SAMPLE_DIRS) $(addprefix levels/,$(LEVEL_DIRS)) include) $(MIO0_DIR) $(addprefix $(MIO0_DIR)/,$(VERSION)) $(SOUND_BIN_DIR) $(SOUND_BIN_DIR)/sequences/$(VERSION) $(RSP_DIRS)
 
 # Make sure build directory exists before compiling anything
 DUMMY != mkdir -p $(ALL_DIRS)
-
-$(BUILD_DIR)/include/text_strings.h: $(BUILD_DIR)/include/text_menu_strings.h
-$(BUILD_DIR)/include/text_strings.h: $(BUILD_DIR)/include/text_options_strings.h
-
-$(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h
-$(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h
-$(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h
-$(BUILD_DIR)/src/game/options_menu.o: $(BUILD_DIR)/include/text_strings.h
-ifeq ($(DISCORDRPC),1)
-  $(BUILD_DIR)/src/pc/discord/discordrpc.o: $(BUILD_DIR)/include/text_strings.h
-endif
 # compressed segment generation
 
 # PC Area

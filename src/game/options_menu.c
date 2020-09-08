@@ -1,7 +1,6 @@
 #ifdef EXT_OPTIONS_MENU
 
 #include "sm64.h"
-#include "include/text_strings.h"
 #include "engine/math_util.h"
 #include "audio/external.h"
 #include "game/camera.h"
@@ -21,7 +20,7 @@
 #include "pc/cheats.h"
 #include "pc/configfile.h"
 #include "pc/controller/controller_api.h"
-
+#include "text/text-loader.h"
 #include <stdbool.h>
 #include "../../include/libc/stdlib.h"
 
@@ -40,89 +39,103 @@ static s32 l_counter = 0;
 // menus:   add a new submenu definition and a new
 //          option to the optsMain list
 
-static const u8 toggleStr[][16] = {
-    { TEXT_OPT_DISABLED },
-    { TEXT_OPT_ENABLED },
+static const u8 toggleStr[][20] = {
+    "TEXT_OPT_DISABLED",
+    "TEXT_OPT_ENABLED"
 };
 
 static const u8 menuStr[][32] = {
-    { TEXT_OPT_HIGHLIGHT },
-    { TEXT_OPT_BUTTON1 },
-    { TEXT_OPT_BUTTON2 },
-    { TEXT_OPT_OPTIONS },
-    { TEXT_OPT_CAMERA },
-    { TEXT_OPT_CONTROLS },
-    { TEXT_OPT_VIDEO },
-    { TEXT_OPT_AUDIO },
-    { TEXT_EXIT_GAME },
-    { TEXT_OPT_CHEATS },
-
+    "TEXT_OPT_HIGHLIGHT",
+    "TEXT_OPT_BUTTON1",
+    "TEXT_OPT_BUTTON2",
+    "TEXT_OPT_OPTIONS",
+    "TEXT_OPT_CAMERA",
+    "TEXT_OPT_CONTROLS",
+    "TEXT_OPT_VIDEO",
+    "TEXT_OPT_AUDIO",
+    "TEXT_EXIT_GAME",
+    "TEXT_OPT_CHEATS",
+    "TEXT_OPT_GAME"
 };
 
 static const u8 optsCameraStr[][32] = {
-    { TEXT_OPT_CAMX },
-    { TEXT_OPT_CAMY },
-    { TEXT_OPT_INVERTX },
-    { TEXT_OPT_INVERTY },
-    { TEXT_OPT_CAMC },
-    { TEXT_OPT_CAMP },
-    { TEXT_OPT_ANALOGUE },
-    { TEXT_OPT_MOUSE },
-    { TEXT_OPT_CAMD },
-    { TEXT_OPT_CAMON },
+    "TEXT_OPT_CAMX",
+    "TEXT_OPT_CAMY",
+    "TEXT_OPT_INVERTX",
+    "TEXT_OPT_INVERTY",
+    "TEXT_OPT_CAMC",
+    "TEXT_OPT_CAMP",
+    "TEXT_OPT_ANALOGUE",
+    "TEXT_OPT_MOUSE",
+    "TEXT_OPT_CAMD",
+    "TEXT_OPT_CAMON"
+};
+
+// TODO: Get dynamic languages
+// This is only for testing
+
+static const u8 optsGameStr[][32] = {
+    "TEXT_OPT_LANGUAGE",
+    "TEXT_OPT_LANG_SPANISH",
+    "TEXT_OPT_LANG_ENGLISH"
+};
+
+static const u8 *languageChoices[] = {
+    optsGameStr[1],
+    optsGameStr[2],    
 };
 
 static const u8 optsVideoStr[][32] = {
-    { TEXT_OPT_FSCREEN },
-    { TEXT_OPT_TEXFILTER },
-    { TEXT_OPT_NEAREST },
-    { TEXT_OPT_LINEAR },
-    { TEXT_OPT_RESETWND },
-    { TEXT_OPT_VSYNC },
-    { TEXT_OPT_AUTO },
-    { TEXT_OPT_HUD },
-    { TEXT_OPT_THREEPT },
-    { TEXT_OPT_APPLY },
+    "TEXT_OPT_FSCREEN",
+    "TEXT_OPT_TEXFILTER",
+    "TEXT_OPT_NEAREST",
+    "TEXT_OPT_LINEAR",
+    "TEXT_OPT_RESETWND",
+    "TEXT_OPT_VSYNC",
+    "TEXT_OPT_AUTO",
+    "TEXT_OPT_HUD",
+    "TEXT_OPT_THREEPT",
+    "TEXT_OPT_APPLY"
 };
 
 static const u8 optsAudioStr[][32] = {
-    { TEXT_OPT_MVOLUME },    
-    { TEXT_OPT_MUSVOLUME },
-    { TEXT_OPT_SFXVOLUME },
-    { TEXT_OPT_ENVVOLUME },
+    "TEXT_OPT_MVOLUME",
+    "TEXT_OPT_MUSVOLUME",
+    "TEXT_OPT_SFXVOLUME",
+    "TEXT_OPT_ENVVOLUME"
 };
 
 static const u8 optsCheatsStr[][64] = {
-    { TEXT_OPT_CHEAT1 },
-    { TEXT_OPT_CHEAT2 },
-    { TEXT_OPT_CHEAT3 },
-    { TEXT_OPT_CHEAT4 },
-    { TEXT_OPT_CHEAT5 },
-    { TEXT_OPT_CHEAT6 },
-    { TEXT_OPT_CHEAT7 },
-    { TEXT_OPT_CHEAT8 },
-    { TEXT_OPT_CHEAT9 },
+    "TEXT_OPT_CHEAT1",
+    "TEXT_OPT_CHEAT2",
+    "TEXT_OPT_CHEAT3",
+    "TEXT_OPT_CHEAT4",
+    "TEXT_OPT_CHEAT5",
+    "TEXT_OPT_CHEAT6",
+    "TEXT_OPT_CHEAT7",
+    "TEXT_OPT_CHEAT8",
+    "TEXT_OPT_CHEAT9"
 };
 
 static const u8 bindStr[][32] = {
-    { TEXT_OPT_UNBOUND },
-    { TEXT_OPT_PRESSKEY },
-    { TEXT_BIND_A },
-    { TEXT_BIND_B },
-    { TEXT_BIND_START },
-    { TEXT_BIND_L },
-    { TEXT_BIND_R },
-    { TEXT_BIND_Z },
-    { TEXT_BIND_C_UP },
-    { TEXT_BIND_C_DOWN },
-    { TEXT_BIND_C_LEFT },
-    { TEXT_BIND_C_RIGHT },
-    { TEXT_BIND_UP },
-    { TEXT_BIND_DOWN },
-    { TEXT_BIND_LEFT },
-    { TEXT_BIND_RIGHT },
-    { TEXT_OPT_DEADZONE },
-    { TEXT_OPT_RUMBLE }
+    "TEXT_OPT_UNBOUND",
+    "TEXT_OPT_PRESSKEY",
+    "TEXT_BIND_A",
+    "TEXT_BIND_B",
+    "TEXT_BIND_START",
+    "TEXT_BIND_L",
+    "TEXT_BIND_R",
+    "TEXT_BIND_Z",
+    "TEXT_BIND_C_UP",
+    "TEXT_BIND_C_DOWN",
+    "TEXT_BIND_C_LEFT",
+    "TEXT_BIND_C_RIGHT",
+    "TEXT_BIND_UP",
+    "TEXT_BIND_DOWN",
+    "TEXT_BIND_LEFT",
+    "TEXT_BIND_RIGHT",
+    "TEXT_OPT_DEADZONE",
+    "TEXT_OPT_RUMBL"
 };
 
 static const u8 *filterChoices[] = {
@@ -262,6 +275,10 @@ static struct Option optsVideo[] = {
     DEF_OPT_BUTTON( optsVideoStr[9], optvideo_apply ),
 };
 
+static struct Option optsGame[] = {
+    DEF_OPT_CHOICE( optsGameStr[0], &configLanguage, languageChoices ),    
+};
+
 static struct Option optsAudio[] = {
     DEF_OPT_SCROLL( optsAudioStr[0], &configMasterVolume, 0, MAX_VOLUME, 1 ),
     DEF_OPT_SCROLL( optsAudioStr[1], &configMusicVolume, 0, MAX_VOLUME, 1),
@@ -287,6 +304,7 @@ static struct Option optsCheats[] = {
 #ifdef BETTERCAMERA
 static struct SubMenu menuCamera   = DEF_SUBMENU( menuStr[4], optsCamera );
 #endif
+static struct SubMenu menuGame     = DEF_SUBMENU( menuStr[10], optsGame );
 static struct SubMenu menuControls = DEF_SUBMENU( menuStr[5], optsControls );
 static struct SubMenu menuVideo    = DEF_SUBMENU( menuStr[6], optsVideo );
 static struct SubMenu menuAudio    = DEF_SUBMENU( menuStr[7], optsAudio );
@@ -295,6 +313,7 @@ static struct SubMenu menuCheats   = DEF_SUBMENU( menuStr[9], optsCheats );
 /* main options menu definition */
 
 static struct Option optsMain[] = {
+    DEF_OPT_SUBMENU( menuStr[10], &menuGame ),
 #ifdef BETTERCAMERA
     DEF_OPT_SUBMENU( menuStr[4], &menuCamera ),
 #endif
@@ -361,15 +380,15 @@ static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
     if (opt->type == OPT_SUBMENU || opt->type == OPT_BUTTON)
         y -= 6;
 
-    optmenu_draw_text(x, y, opt->label, sel);
+    optmenu_draw_text(x, y, get_key_string(opt->label), sel);
 
     switch (opt->type) {
         case OPT_TOGGLE:
-            optmenu_draw_text(x, y-13, toggleStr[(int)*opt->bval], sel);
+            optmenu_draw_text(x, y-13, get_key_string(toggleStr[(int)*opt->bval]), sel);
             break;
 
         case OPT_CHOICE:
-            optmenu_draw_text(x, y-13, opt->choices[*opt->uval], sel);
+            optmenu_draw_text(x, y-13, get_key_string(opt->choices[*opt->uval]), sel);
             break;
 
         case OPT_SCROLL:
@@ -384,9 +403,9 @@ static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
                 // TODO: button names
                 if (opt->uval[i] == VK_INVALID) {
                     if (optmenu_binding && white)
-                        optmenu_draw_text(x, y-13, bindStr[1], 1);
+                        optmenu_draw_text(x, y-13, get_key_string(bindStr[1]), 1);
                     else
-                        optmenu_draw_text(x, y-13, bindStr[0], white);
+                        optmenu_draw_text(x, y-13, get_key_string(bindStr[0]), white);
                 } else {
                     uint_to_hex(opt->uval[i], buf);
                     optmenu_draw_text(x, y-13, buf, white);
@@ -405,7 +424,13 @@ static void optmenu_opt_change(struct Option *opt, s32 val) {
             break;
 
         case OPT_CHOICE:
-            *opt->uval = wrap_add(*opt->uval, val, 0, opt->numChoices - 1);
+            *opt->uval = wrap_add(*opt->uval, val, 0, opt->numChoices - 1);            
+            static const char * languages[] = {
+                "Spanish",
+                "English"
+            };
+            printf("SWITCH LANGUAGE: %s\n", languages[configLanguage]);
+            set_language(get_language_by_name(languages[configLanguage]));
             break;
 
         case OPT_SCROLL:
@@ -451,10 +476,12 @@ void optmenu_draw(void) {
     s16 scroll;
     s16 scrollpos;
 
-    const s16 labelX = get_hudstr_centered_x(160, currentMenu->label);
+    u8* label = get_key_string(currentMenu->label);
+
+    const s16 labelX = get_hudstr_centered_x(160, label);
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
-    print_hud_lut_string(HUD_LUT_GLOBAL, labelX, 40, currentMenu->label);
+    print_hud_lut_string(HUD_LUT_GLOBAL, labelX, 40, label);
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
 
     if (currentMenu->numOpts > 4) {
@@ -476,15 +503,15 @@ void optmenu_draw(void) {
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
-    print_hud_lut_string(HUD_LUT_GLOBAL, 80, 90 + (32 * (currentMenu->select - currentMenu->scroll)), menuStr[0]);
-    print_hud_lut_string(HUD_LUT_GLOBAL, 224, 90 + (32 * (currentMenu->select - currentMenu->scroll)), menuStr[0]);
+    print_hud_lut_string(HUD_LUT_GLOBAL, 80, 90 + (32 * (currentMenu->select - currentMenu->scroll)), get_key_string(menuStr[0]));
+    print_hud_lut_string(HUD_LUT_GLOBAL, 224, 90 + (32 * (currentMenu->select - currentMenu->scroll)), get_key_string(menuStr[0]));
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
 }
 
 //This has been separated for interesting reasons. Don't question it.
 void optmenu_draw_prompt(void) {
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
-    optmenu_draw_text(264, 212, menuStr[1 + optmenu_open], 0);
+    optmenu_draw_text(264, 212, get_key_string(menuStr[1 + optmenu_open]), 0);
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 }
 

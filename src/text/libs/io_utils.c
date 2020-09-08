@@ -4,7 +4,7 @@
 #include <limits.h>
 #include "io_utils.h"
 
-#define _READFILE_GUESS 256
+#define _READFILE_GUESS 512
 
 void combine(char* destination, const char* path1, const char* path2) {
     if(path1 == NULL || path2 == NULL) {

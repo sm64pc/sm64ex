@@ -4,7 +4,6 @@
 #include "behavior_data.h"
 #include "engine/behavior_script.h"
 #include "engine/graph_node.h"
-#include "eu_translation.h"
 #include "game/area.h"
 #include "game/game_init.h"
 #include "game/ingame_menu.h"
@@ -17,8 +16,8 @@
 #include "game/segment7.h"
 #include "sm64.h"
 #include "star_select.h"
-#include "text_strings.h"
 #include "prevent_bss_reordering.h"
+#include "text/text-loader.h"
 
 /**
  * @file star_select.c
@@ -52,6 +51,8 @@ static s8 sSelectableStarIndex = 0;
 // Act Selector menu timer that keeps counting until you choose an act.
 static s32 sActSelectorMenuTimer = 0;
 
+unsigned char * myScore;
+unsigned char * starNumbers;
 /**
  * Act Selector Star Type Loop Action
  * Defines a select type for a star in the act selector.
@@ -257,12 +258,6 @@ void print_course_number(void) {
  * Print act selector strings, some with special checks.
  */
 void print_act_selector_strings(void) {
-#ifdef VERSION_EU
-    unsigned char myScore[][10] = { {TEXT_MYSCORE}, {TEXT_MY_SCORE_FR}, {TEXT_MY_SCORE_DE} };
-#else
-    unsigned char myScore[] = { TEXT_MYSCORE };
-#endif
-    unsigned char starNumbers[] = { TEXT_ZERO };
 
 #ifdef VERSION_EU
     u8 **levelNameTbl;

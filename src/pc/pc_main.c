@@ -129,6 +129,7 @@ void game_deinit(void) {
     controller_shutdown();
     audio_shutdown();
     gfx_shutdown();
+    dealloc_dialog_pool();
     inited = false;
 }
 

@@ -2,11 +2,9 @@ CC := gcc
 CXX := g++
 CFLAGS := -I../include -I. -Wall -Wextra -Wno-unused-parameter -pedantic -std=c99 -O2 -s
 LDFLAGS := -lm
-PROGRAMS := textconv aifc_decode aiff_extract_codebook vadpcm_enc tabledesign
+PROGRAMS := aifc_decode aiff_extract_codebook vadpcm_enc tabledesign
 
 default: all
-
-textconv_SOURCES := textconv.c utf8.c hashtable.c
 
 aifc_decode_SOURCES := aifc_decode.c
 

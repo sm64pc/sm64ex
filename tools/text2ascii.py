@@ -16,8 +16,13 @@ for lineIndex, uline in enumerate(lines, 0):
     line = uline.strip()
     if(line.startswith("'")):
         unf = line.split(" = ")
-        char = unf[0].replace("'", "")
-        value = unf[1] if len(unf[1].split(", ")) < 2 else unf[1].split(", ")[1]
+        uchar = unf[0].replace("'", "");
+        char = uchar if len(uchar) > 1 or ord(uchar[0]) <= 128 else "{"+f"{ord(uchar[0])}".zfill(5)+"}"
+        values = unf[1].split(", ")
+        if len(values) > 1:
+            value = "{"+f"{hex(int(values[0], 16))}, {hex(int(values[0], 16))}"+"}"        
+        else:
+            value = "{"+f"{hex(int(values[0], 16))}, NULL"+"}"
         lineID[lineIndex] = "{"+f"\"{char}\", {value}"+"}, "
 
 print(f"Array size: {len(lineID)}")

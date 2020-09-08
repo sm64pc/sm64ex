@@ -7,7 +7,6 @@
 #include "course_table.h"
 #include "dialog_ids.h"
 #include "engine/math_util.h"
-#include "eu_translation.h"
 #include "game_init.h"
 #include "gfx_dimensions.h"
 #include "ingame_menu.h"
@@ -20,7 +19,6 @@
 #include "segment7.h"
 #include "seq_ids.h"
 #include "sm64.h"
-#include "text_strings.h"
 #include "types.h"
 #include "macros.h"
 #include "pc/cheats.h"
@@ -112,9 +110,6 @@ s8 gDialogBoxType = DIALOG_TYPE_ROTATE;
 s16 gDialogID = -1;
 s16 gLastDialogPageStrPos = 0;
 s16 gDialogTextPos = 0;
-#ifdef VERSION_EU
-s32 gInGameLanguage = 0;
-#endif
 s8 gDialogLineNum = 1;
 s8 gLastDialogResponse = 0;
 u8 gMenuHoldKeyIndex = 0;
@@ -1478,22 +1473,10 @@ void render_dialog_triangle_choice(void) {
     gSPDisplayList(gDisplayListHead++, dl_draw_triangle);
 }
 
-#ifdef VERSION_EU
-#define X_VAL5 122.0f
-#define Y_VAL5_1 -16
-#define Y_VAL5_2 3
-#define X_Y_VAL6 0.5f
-#elif defined(VERSION_US)
 #define X_VAL5 118.0f
 #define Y_VAL5_1 -16
 #define Y_VAL5_2 5
 #define X_Y_VAL6 0.8f
-#elif defined(VERSION_JP) || defined(VERSION_SH)
-#define X_VAL5 123.0f
-#define Y_VAL5_1 -20
-#define Y_VAL5_2 2
-#define X_Y_VAL6 0.8f
-#endif
 
 void render_dialog_string_color(s8 linesPerBox) {
     s32 timer = gGlobalTimer;
@@ -1564,82 +1547,6 @@ void handle_special_dialog_text(s16 dialogID) { // dialog ID tables, in order
 }
 
 s16 gMenuMode = -1;
-
-u8 gEndCutsceneStrEn0[] = { TEXT_FILE_MARIO_EXCLAMATION };
-u8 gEndCutsceneStrEn1[] = { TEXT_POWER_STARS_RESTORED };
-u8 gEndCutsceneStrEn2[] = { TEXT_THANKS_TO_YOU };
-u8 gEndCutsceneStrEn3[] = { TEXT_THANK_YOU_MARIO };
-u8 gEndCutsceneStrEn4[] = { TEXT_SOMETHING_SPECIAL };
-u8 gEndCutsceneStrEn5[] = { TEXT_LISTEN_EVERYBODY };
-u8 gEndCutsceneStrEn6[] = { TEXT_LETS_HAVE_CAKE };
-u8 gEndCutsceneStrEn7[] = { TEXT_FOR_MARIO };
-u8 gEndCutsceneStrEn8[] = { TEXT_FILE_MARIO_QUESTION };
-
-u8 *gEndCutsceneStringsEn[] = {
-    gEndCutsceneStrEn0,
-    gEndCutsceneStrEn1,
-    gEndCutsceneStrEn2,
-    gEndCutsceneStrEn3,
-    gEndCutsceneStrEn4,
-    gEndCutsceneStrEn5,
-    gEndCutsceneStrEn6,
-    gEndCutsceneStrEn7,
-    // This [8] string is actually unused. In the cutscene handler, the developers do not
-    // set the 8th one, but use the first string again at the very end, so Peach ends up
-    // saying "Mario!" twice. It is likely that she was originally meant to say "Mario?" at
-    // the end but the developers changed their mind, possibly because the line recorded
-    // sounded more like an exclamation than a question.
-    gEndCutsceneStrEn8,
-    NULL
-};
-
-#ifdef VERSION_EU
-u8 gEndCutsceneStrFr0[] = { TEXT_FILE_MARIO_EXCLAMATION };
-u8 gEndCutsceneStrFr1[] = { TEXT_POWER_STARS_RESTORED_FR };
-u8 gEndCutsceneStrFr2[] = { TEXT_THANKS_TO_YOU_FR };
-u8 gEndCutsceneStrFr3[] = { TEXT_THANK_YOU_MARIO_FR };
-u8 gEndCutsceneStrFr4[] = { TEXT_SOMETHING_SPECIAL_FR };
-u8 gEndCutsceneStrFr5[] = { TEXT_COME_ON_EVERYBODY_FR };
-u8 gEndCutsceneStrFr6[] = { TEXT_LETS_HAVE_CAKE_FR };
-u8 gEndCutsceneStrFr7[] = { TEXT_FOR_MARIO_FR };
-u8 gEndCutsceneStrFr8[] = { TEXT_FILE_MARIO_QUESTION };
-
-u8 *gEndCutsceneStringsFr[] = {
-    gEndCutsceneStrFr0,
-    gEndCutsceneStrFr1,
-    gEndCutsceneStrFr2,
-    gEndCutsceneStrFr3,
-    gEndCutsceneStrFr4,
-    gEndCutsceneStrFr5,
-    gEndCutsceneStrFr6,
-    gEndCutsceneStrFr7,
-    gEndCutsceneStrFr8,
-    NULL
-};
-
-u8 gEndCutsceneStrDe0[] = { TEXT_FILE_MARIO_EXCLAMATION };
-u8 gEndCutsceneStrDe1[] = { TEXT_POWER_STARS_RESTORED_DE };
-u8 gEndCutsceneStrDe2[] = { TEXT_THANKS_TO_YOU_DE };
-u8 gEndCutsceneStrDe3[] = { TEXT_THANK_YOU_MARIO_DE };
-u8 gEndCutsceneStrDe4[] = { TEXT_SOMETHING_SPECIAL_DE };
-u8 gEndCutsceneStrDe5[] = { TEXT_COME_ON_EVERYBODY_DE };
-u8 gEndCutsceneStrDe6[] = { TEXT_LETS_HAVE_CAKE_DE };
-u8 gEndCutsceneStrDe7[] = { TEXT_FOR_MARIO_DE };
-u8 gEndCutsceneStrDe8[] = { TEXT_FILE_MARIO_QUESTION };
-
-u8 *gEndCutsceneStringsDe[] = {
-    gEndCutsceneStrDe0,
-    gEndCutsceneStrDe1,
-    gEndCutsceneStrDe2,
-    gEndCutsceneStrDe3,
-    gEndCutsceneStrDe4,
-    gEndCutsceneStrDe5,
-    gEndCutsceneStrDe6,
-    gEndCutsceneStrDe7,
-    gEndCutsceneStrDe8,
-    NULL
-};
-#endif
 
 u16 gCutsceneMsgFade = 0;
 s16 gCutsceneMsgIndex = -1;
@@ -1879,6 +1786,19 @@ void set_cutscene_message(s16 xOffset, s16 yOffset, s16 msgIndex, s16 msgDuratio
 
 void do_cutscene_handler(void) {
     s16 x;
+
+    u8 * gEndCutsceneStringsEn[] = {
+        get_key_string("TEXT_FILE_MARIO_EXCLAMATION"),
+        get_key_string("TEXT_POWER_STARS_RESTORED"),
+        get_key_string("TEXT_THANKS_TO_YOU"),
+        get_key_string("TEXT_THANK_YOU_MARIO"),
+        get_key_string("TEXT_SOMETHING_SPECIAL"),
+        get_key_string("TEXT_LISTEN_EVERYBODY"),
+        get_key_string("TEXT_LETS_HAVE_CAKE"),
+        get_key_string("TEXT_FOR_MARIO"),
+        get_key_string("TEXT_FILE_MARIO_QUESTION"),
+        NULL
+    };
 
     // is a cutscene playing? do not perform this handler's actions if so.
     if (gCutsceneMsgIndex == -1) {
@@ -2126,20 +2046,6 @@ u8 gTextCourseArr[][7] = {
 #endif
 
 void render_pause_my_score_coins(void) {
-#ifdef VERSION_EU
-    u8 textMyScore[][10] = {
-        { TEXT_MY_SCORE },
-        { TEXT_MY_SCORE_FR },
-        { TEXT_MY_SCORE_DE }
-    };
-#define textMyScore textMyScore[gInGameLanguage]
-#else
-    u8 textCourse[] = { TEXT_COURSE };
-    u8 textMyScore[] = { TEXT_MY_SCORE };
-#endif
-    u8 textStar[] = { TEXT_STAR };
-    u8 textUnfilledStar[] = { TEXT_UNFILLED_STAR };
-
     u8 strCourseNum[4];
     void **courseNameTbl;
     u8 *courseName;
@@ -2187,7 +2093,7 @@ void render_pause_my_score_coins(void) {
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
 
     if (courseIndex < COURSE_STAGES_COUNT && save_file_get_course_star_count(gCurrSaveFileNum - 1, courseIndex) != 0) {
-        print_generic_string(MYSCORE_X, 121, textMyScore);
+        print_generic_string(MYSCORE_X, 121, get_key_string("TEXT_MY_SCORE"));
     }
 
     courseName = segmented_to_virtual(courseNameTbl[courseIndex]);
@@ -2196,7 +2102,7 @@ void render_pause_my_score_coins(void) {
 #ifdef VERSION_EU
         print_generic_string(48, 157, gTextCourseArr[gInGameLanguage]);
 #else
-        print_generic_string(63, 157, textCourse);
+        print_generic_string(63, 157, get_key_string("TEXT_COURSE"));
 #endif
         int_to_str(gCurrCourseNum, strCourseNum);
 #ifdef VERSION_EU
@@ -2208,9 +2114,9 @@ void render_pause_my_score_coins(void) {
         actName = segmented_to_virtual(actNameTbl[(gCurrCourseNum - 1) * 6 + gDialogCourseActNum - 1]);
 
         if (starFlags & (1 << (gDialogCourseActNum - 1))) {
-            print_generic_string(TXT_STAR_X, 140, textStar);
+            print_generic_string(TXT_STAR_X, 140, get_key_string("TEXT_STAR"));
         } else {
-            print_generic_string(TXT_STAR_X, 140, textUnfilledStar);
+            print_generic_string(TXT_STAR_X, 140, get_key_string("TEXT_UNFILLED_STAR"));
         }
         print_generic_string(ACT_NAME_X, 140, actName);
 #ifndef VERSION_JP
@@ -2242,35 +2148,15 @@ void render_pause_my_score_coins(void) {
 #endif
 
 void render_pause_camera_options(s16 x, s16 y, s8 *index, s16 xIndex) {
-    u8 textLakituMario[] = { TEXT_LAKITU_MARIO };
-    u8 textLakituStop[] = { TEXT_LAKITU_STOP };
-#ifdef VERSION_EU
-    u8 textNormalUpClose[][20] = {
-        { TEXT_NORMAL_UPCLOSE },
-        { TEXT_NORMAL_UPCLOSE_FR },
-        { TEXT_NORMAL_UPCLOSE_DE }
-    };
-    u8 textNormalFixed[][17] = {
-        { TEXT_NORMAL_FIXED },
-        { TEXT_NORMAL_FIXED_FR },
-        { TEXT_NORMAL_FIXED_DE },
-    };
-#define textNormalUpClose textNormalUpClose[gInGameLanguage]
-#define textNormalFixed   textNormalFixed[gInGameLanguage]
-#else
-    u8 textNormalUpClose[] = { TEXT_NORMAL_UPCLOSE };
-    u8 textNormalFixed[] = { TEXT_NORMAL_FIXED };
-#endif
-
     handle_menu_scrolling(MENU_SCROLL_HORIZONTAL, index, 1, 2);
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
 
-    print_generic_string(x + 14, y + 2, textLakituMario);
-    print_generic_string(x + TXT1_X, y - 13, textNormalUpClose);
-    print_generic_string(x + 124, y + 2, textLakituStop);
-    print_generic_string(x + TXT2_X, y - 13, textNormalFixed);
+    print_generic_string(x + 14, y + 2, get_key_string("TEXT_LAKITU_MARIO"));
+    print_generic_string(x + TXT1_X, y - 13, get_key_string("TEXT_NORMAL_UPCLOSE"));
+    print_generic_string(x + 124, y + 2, get_key_string("TEXT_LAKITU_STOP"));
+    print_generic_string(x + TXT2_X, y - 13, get_key_string("TEXT_NORMAL_FIXED"));
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
     create_dl_translation_matrix(MENU_MTX_PUSH, ((index[0] - 1) * xIndex) + x, y + Y_VAL7, 0);
@@ -2297,42 +2183,17 @@ void render_pause_camera_options(s16 x, s16 y, s8 *index, s16 xIndex) {
 #endif
 
 void render_pause_course_options(s16 x, s16 y, s8 *index, s16 yIndex) {
-#ifdef VERSION_EU
-    u8 textContinue[][10] = {
-        { TEXT_CONTINUE },
-        { TEXT_CONTINUE_FR },
-        { TEXT_CONTINUE_DE }
-    };
-    u8 textExitCourse[][15] = {
-        { TEXT_EXIT_COURSE },
-        { TEXT_EXIT_COURSE_FR },
-        { TEXT_EXIT_COURSE_DE }
-    };
-
-    u8 textCameraAngleR[][24] = {
-        { TEXT_CAMERA_ANGLE_R },
-        { TEXT_CAMERA_ANGLE_R_FR },
-        { TEXT_CAMERA_ANGLE_R_DE }
-    };
-#define textContinue     textContinue[gInGameLanguage]
-#define textExitCourse   textExitCourse[gInGameLanguage]
-#define textCameraAngleR textCameraAngleR[gInGameLanguage]
-#else
-    u8 textContinue[] = { TEXT_CONTINUE };
-    u8 textExitCourse[] = { TEXT_EXIT_COURSE };
-    u8 textCameraAngleR[] = { TEXT_CAMERA_ANGLE_R };
-#endif
 
     handle_menu_scrolling(MENU_SCROLL_VERTICAL, index, 1, 3);
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
 
-    print_generic_string(x + 10, y - 2, textContinue);
-    print_generic_string(x + 10, y - 17, textExitCourse);
+    print_generic_string(x + 10, y - 2, get_key_string("TEXT_CONTINUE"));
+    print_generic_string(x + 10, y - 17, get_key_string("TEXT_EXIT_COURSE"));
 
     if (index[0] != 3) {
-        print_generic_string(x + 10, y - 33, textCameraAngleR);
+        print_generic_string(x + 10, y - 33, get_key_string("TEXT_CAMERA_ANGLE_R"));
         gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 
         create_dl_translation_matrix(MENU_MTX_PUSH, x - X_VAL8, (y - ((index[0] - 1) * yIndex)) - Y_VAL8, 0);
@@ -2380,18 +2241,12 @@ void highlight_last_course_complete_stars(void) {
     gDialogLineNum = courseDone;
 }
 
-void print_hud_pause_colorful_str(void) {
-    u8 textPause[] = { TEXT_PAUSE };
+void print_hud_pause_colorful_str(void) {    
 
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
 
-#ifdef VERSION_EU
-    print_hud_lut_string(HUD_LUT_GLOBAL, get_str_x_pos_from_center_scale(
-                         SCREEN_WIDTH / 2, textPause, 12.0f), 81, textPause);
-#else
-    print_hud_lut_string(HUD_LUT_GLOBAL, 123, 81, textPause);
-#endif
+    print_hud_lut_string(HUD_LUT_GLOBAL, 123, 81, get_key_string("TEXT_PAUSE"));
 
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
 }
@@ -2401,8 +2256,6 @@ void render_pause_castle_course_stars(s16 x, s16 y, s16 fileNum, s16 courseNum) 
 
     u8 str[COURSE_STAGES_COUNT * 2];
 
-    u8 textStar[] = { TEXT_STAR };
-
     u8 starFlags = save_file_get_star_flags(fileNum, courseNum);
     u16 starCount = save_file_get_course_star_count(fileNum, courseNum);
 
@@ -2410,7 +2263,7 @@ void render_pause_castle_course_stars(s16 x, s16 y, s16 fileNum, s16 courseNum) 
 
     if (starFlags & 0x40) {
         starCount--;
-        print_generic_string(x + 89, y - 5, textStar);
+        print_generic_string(x + 89, y - 5, get_key_string("TEXT_STAR"));
     }
 
     while (hasStar != starCount) {
@@ -2437,37 +2290,12 @@ void render_pause_castle_course_stars(s16 x, s16 y, s16 fileNum, s16 courseNum) 
 }
 
 void render_pause_castle_main_strings(s16 x, s16 y) {
-#ifdef VERSION_EU
-    void **courseNameTbl;
-#else
-    void **courseNameTbl = segmented_to_virtual(seg2_course_name_table);
-#endif
-
-#ifdef VERSION_EU
-    u8 textCoin[] = { TEXT_COIN };
-    u8 textX[] = { TEXT_VARIABLE_X };
-#else
-    u8 textCoin[] = { TEXT_COIN_X };
-#endif
+    void **courseNameTbl = segmented_to_virtual(seg2_course_name_table);    
 
     void *courseName;
 
     u8 strVal[8];
     s16 starNum = gDialogLineNum;
-
-#ifdef VERSION_EU
-    switch (gInGameLanguage) {
-        case LANGUAGE_ENGLISH:
-            courseNameTbl = segmented_to_virtual(course_name_table_eu_en);
-            break;
-        case LANGUAGE_FRENCH:
-            courseNameTbl = segmented_to_virtual(course_name_table_eu_fr);
-            break;
-        case LANGUAGE_GERMAN:
-            courseNameTbl = segmented_to_virtual(course_name_table_eu_de);
-            break;
-    }
-#endif
 
     handle_menu_scrolling(MENU_SCROLL_VERTICAL, &gDialogLineNum, -1, COURSE_STAGES_COUNT + 1);
 
@@ -2500,30 +2328,17 @@ void render_pause_castle_main_strings(s16 x, s16 y) {
     if (gDialogLineNum < COURSE_STAGES_COUNT) {
         courseName = segmented_to_virtual(courseNameTbl[gDialogLineNum]);
         render_pause_castle_course_stars(x, y, gCurrSaveFileNum - 1, gDialogLineNum);
-        print_generic_string(x + 34, y - 5, textCoin);
-#ifdef VERSION_EU
-        print_generic_string(x + 44, y - 5, textX);
-#endif
+        print_generic_string(x + 34, y - 5, get_key_string("TEXT_STAR"));
         int_to_str(save_file_get_course_coin_score(gCurrSaveFileNum - 1, gDialogLineNum), strVal);
         print_generic_string(x + 54, y - 5, strVal);
-#ifdef VERSION_EU
-        print_generic_string(x - 17, y + 30, courseName);
-#endif
-    } else {
-        u8 textStarX[] = { TEXT_STAR_X };
+    } else {        
         courseName = segmented_to_virtual(courseNameTbl[COURSE_MAX]);
-        print_generic_string(x + 40, y + 13, textStarX);
+        print_generic_string(x + 40, y + 13, get_key_string("TEXT_STAR_X"));
         int_to_str(save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_BONUS_STAGES - 1, COURSE_MAX - 1), strVal);
         print_generic_string(x + 60, y + 13, strVal);
-#ifdef VERSION_EU
-        print_generic_string(get_str_x_pos_from_center(x + 51, courseName, 10.0f), y + 30, courseName);
-#endif
     }
 
-#ifndef VERSION_EU
     print_generic_string(x - 9, y + 30, courseName);
-#endif
-
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 }
 
@@ -2535,9 +2350,6 @@ s8 gHudFlash = 0;
 s16 render_pause_courses_and_castle(void) {
     s16 num;
 
-#ifdef VERSION_EU
-    gInGameLanguage = eu_get_language();
-#endif
 #ifdef EXT_OPTIONS_MENU
     if (optmenu_open == 0) {
 #endif
@@ -2546,11 +2358,7 @@ s16 render_pause_courses_and_castle(void) {
             gDialogLineNum = 1;
             gDialogTextAlpha = 0;
             level_set_transition(-1, 0);
-#if defined(VERSION_JP) || defined(VERSION_SH)
-            play_sound(SOUND_MENU_PAUSE, gDefaultSoundArgs);
-#else
             play_sound(SOUND_MENU_PAUSE_HIGHPRIO, gDefaultSoundArgs);
-#endif
 
             if (gCurrCourseNum >= COURSE_MIN && gCurrCourseNum <= COURSE_MAX) {
                 change_dialog_camera_angle();
@@ -2643,41 +2451,15 @@ s16 render_pause_courses_and_castle(void) {
 #define HUD_PRINT_CONGRATULATIONS 1
 
 void print_hud_course_complete_string(s8 str) {
-#ifdef VERSION_EU
-    u8 textHiScore[][15] = {
-        { TEXT_HUD_HI_SCORE },
-        { TEXT_HUD_HI_SCORE_FR },
-        { TEXT_HUD_HI_SCORE_DE }
-    };
-    u8 textCongratulations[][16] = {
-        { TEXT_HUD_CONGRATULATIONS },
-        { TEXT_HUD_CONGRATULATIONS_FR },
-        { TEXT_HUD_CONGRATULATIONS_DE }
-    };
-#else
-    u8 textHiScore[] = { TEXT_HUD_HI_SCORE };
-    u8 textCongratulations[] = { TEXT_HUD_CONGRATULATIONS };
-#endif
-
     u8 colorFade = sins(gDialogColorFadeTimer) * 50.0f + 200.0f;
 
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, colorFade, colorFade, colorFade, 255);
 
     if (str == HUD_PRINT_HISCORE) {
-#ifdef VERSION_EU
-        print_hud_lut_string(HUD_LUT_GLOBAL, get_str_x_pos_from_center_scale(160, textHiScore[gInGameLanguage], 12.0f),
-                  36, textHiScore[gInGameLanguage]);
-#else
-        print_hud_lut_string(HUD_LUT_GLOBAL, TXT_HISCORE_X, TXT_HISCORE_Y, textHiScore);
-#endif
+        print_hud_lut_string(HUD_LUT_GLOBAL, TXT_HISCORE_X, TXT_HISCORE_Y, get_key_string("TEXT_HUD_HI_SCORE"));
     } else { // HUD_PRINT_CONGRATULATIONS
-#ifdef VERSION_EU
-        print_hud_lut_string(HUD_LUT_GLOBAL, get_str_x_pos_from_center_scale(160, textCongratulations[gInGameLanguage], 12.0f),
-                  67, textCongratulations[gInGameLanguage]);
-#else
-        print_hud_lut_string(HUD_LUT_GLOBAL, TXT_CONGRATS_X, 67, textCongratulations);
-#endif
+        print_hud_lut_string(HUD_LUT_GLOBAL, TXT_CONGRATS_X, 67, get_key_string("TEXT_HUD_CONGRATULATIONS"));
     }
 
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
@@ -2750,48 +2532,13 @@ void play_star_fanfare_and_flash_hud(s32 arg, u8 starNum) {
 #endif
 
 void render_course_complete_lvl_info_and_hud_str(void) {
-#if defined(VERSION_JP) || defined(VERSION_SH)
     u8 textSymStar[] = { GLYPH_STAR, GLYPH_SPACE };
-    u8 textCourse[] = { TEXT_COURSE };
-    u8 textCatch[] = { TEXT_CATCH };
-    u8 textClear[] = { TEXT_CLEAR };
-#elif defined(VERSION_EU)
-    UNUSED u8 textCatch[] = { TEXT_CATCH }; // unused in EU
-    u8 textSymStar[] = { GLYPH_STAR, GLYPH_SPACE };
-#define textCourse gTextCourseArr[gInGameLanguage]
-#else
-    u8 textCourse[] = { TEXT_COURSE };
-    UNUSED u8 textCatch[] = { TEXT_CATCH }; // unused in US
-    UNUSED u8 textClear[] = { TEXT_CLEAR };
-    u8 textSymStar[] = { GLYPH_STAR, GLYPH_SPACE };
-#endif
-
     void **actNameTbl;
     void **courseNameTbl;
     u8 *name;
-
     u8 strCourseNum[4];
-
-#ifdef VERSION_EU
-    s16 centerX;
-    switch (gInGameLanguage) {
-        case LANGUAGE_ENGLISH:
-            actNameTbl = segmented_to_virtual(act_name_table_eu_en);
-            courseNameTbl = segmented_to_virtual(course_name_table_eu_en);
-            break;
-        case LANGUAGE_FRENCH:
-            actNameTbl = segmented_to_virtual(act_name_table_eu_fr);
-            courseNameTbl = segmented_to_virtual(course_name_table_eu_fr);
-            break;
-        case LANGUAGE_GERMAN:
-            actNameTbl = segmented_to_virtual(act_name_table_eu_de);
-            courseNameTbl = segmented_to_virtual(course_name_table_eu_de);
-            break;
-    }
-#else
     actNameTbl = segmented_to_virtual(seg2_act_name_table);
     courseNameTbl = segmented_to_virtual(seg2_course_name_table);
-#endif
 
     if (gLastCompletedCourseNum <= COURSE_STAGES_MAX) {
         print_hud_course_complete_coins(118, 103);
@@ -2806,10 +2553,10 @@ void render_course_complete_lvl_info_and_hud_str(void) {
         gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
         int_to_str(gLastCompletedCourseNum, strCourseNum);
         gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, gDialogTextAlpha);
-        print_generic_string(65, 165, textCourse);
+        print_generic_string(65, 165, get_key_string("TEXT_COURSE"));
         print_generic_string(CRS_NUM_X2, 165, strCourseNum);
         gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
-        print_generic_string(63, 167, textCourse);
+        print_generic_string(63, 167, get_key_string("TEXT_COURSE"));
         print_generic_string(CRS_NUM_X3, 167, strCourseNum);
         gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
     } else if (gLastCompletedCourseNum == COURSE_BITDW || gLastCompletedCourseNum == COURSE_BITFS) {
@@ -2821,12 +2568,12 @@ void render_course_complete_lvl_info_and_hud_str(void) {
 #endif
         print_generic_string(TXT_NAME_X1, 130, name);
 #ifndef VERSION_EU
-        print_generic_string(TXT_CLEAR_X1, 130, textClear);
+        print_generic_string(TXT_CLEAR_X1, 130, get_key_string("TEXT_CLEAR"));
 #endif
         gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
         print_generic_string(TXT_NAME_X2, 132, name);
 #ifndef VERSION_EU
-        print_generic_string(TXT_CLEAR_X2, 132, textClear);
+        print_generic_string(TXT_CLEAR_X2, 132, get_key_string("TEXT_CLEAR"));
 #endif
         gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
         print_hud_course_complete_string(HUD_PRINT_CONGRATULATIONS);
@@ -2846,89 +2593,29 @@ void render_course_complete_lvl_info_and_hud_str(void) {
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, gDialogTextAlpha);
     print_generic_string(76, 145, name);
-#if defined(VERSION_JP) || defined(VERSION_SH)
-    print_generic_string(220, 145, textCatch);
-#endif
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
     print_generic_string(74, 147, name);
-#if defined(VERSION_JP) || defined(VERSION_SH)
-    print_generic_string(218, 147, textCatch);
-#endif
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 }
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
-#define TXT_SAVEOPTIONS_X x + 10
-#elif defined(VERSION_US)
 #define TXT_SAVEOPTIONS_X x + 12
-#elif defined(VERSION_EU)
-#define TXT_SAVEOPTIONS_X xOffset
-#endif
-#if defined(VERSION_JP) || defined(VERSION_SH)
-#define TXT_SAVECONT_Y 2
-#define TXT_SAVEQUIT_Y 18
-#define TXT_SAVE_EXIT_GAME_Y 38
-#define TXT_CONTNOSAVE_Y 54
-#else
 #define TXT_SAVECONT_Y 0
 #define TXT_SAVEQUIT_Y 20
 #define TXT_SAVE_EXIT_GAME_Y 40
 #define TXT_CONTNOSAVE_Y 60
-#endif
 
-#ifdef VERSION_EU
-#define X_VAL9 xOffset - 12
-void render_save_confirmation(s16 y, s8 *index, s16 sp6e)
-#else
 #define X_VAL9 x
-void render_save_confirmation(s16 x, s16 y, s8 *index, s16 sp6e)
-#endif
-{
-#ifdef VERSION_EU
-    u8 textSaveAndContinueArr[][24] = {
-        { TEXT_SAVE_AND_CONTINUE },
-        { TEXT_SAVE_AND_CONTINUE_FR },
-        { TEXT_SAVE_AND_CONTINUE_DE }
-    };
-    u8 textSaveAndQuitArr[][22] = {
-        { TEXT_SAVE_AND_QUIT },
-        { TEXT_SAVE_AND_QUIT_FR },
-        { TEXT_SAVE_AND_QUIT_DE }
-    };
 
-    u8 textSaveExitGame[][26] = { // New function to exit game
-        { TEXT_SAVE_EXIT_GAME },
-        { TEXT_SAVE_EXIT_GAME_FR },
-        { TEXT_SAVE_EXIT_GAME_DE }
-    };
-
-    u8 textContinueWithoutSaveArr[][27] = {
-        { TEXT_CONTINUE_WITHOUT_SAVING },
-        { TEXT_CONTINUE_WITHOUT_SAVING_FR },
-        { TEXT_CONTINUE_WITHOUT_SAVING_DE }
-    };
-
-#define textSaveAndContinue textSaveAndContinueArr[gInGameLanguage]
-#define textSaveAndQuit textSaveAndQuitArr[gInGameLanguage]
-#define textSaveExitGame textSaveExitGame[gInGameLanguage]
-#define textContinueWithoutSave textContinueWithoutSaveArr[gInGameLanguage]
-    s16 xOffset = get_str_x_pos_from_center(160, textContinueWithoutSaveArr[gInGameLanguage], 12.0f);
-#else
-    u8 textSaveAndContinue[] = { TEXT_SAVE_AND_CONTINUE };
-    u8 textSaveAndQuit[] = { TEXT_SAVE_AND_QUIT };
-    u8 textSaveExitGame[] = { TEXT_SAVE_EXIT_GAME };
-    u8 textContinueWithoutSave[] = { TEXT_CONTINUE_WITHOUT_SAVING };
-#endif
-
+void render_save_confirmation(s16 x, s16 y, s8 *index, s16 sp6e) {
     handle_menu_scrolling(MENU_SCROLL_VERTICAL, index, 1, 4); // Increased to '4' to handle Exit Game 
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
 
-    print_generic_string(TXT_SAVEOPTIONS_X, y + TXT_SAVECONT_Y, textSaveAndContinue);
-    print_generic_string(TXT_SAVEOPTIONS_X, y - TXT_SAVEQUIT_Y, textSaveAndQuit);
-    print_generic_string(TXT_SAVEOPTIONS_X, y - TXT_SAVE_EXIT_GAME_Y, textSaveExitGame);
-    print_generic_string(TXT_SAVEOPTIONS_X, y - TXT_CONTNOSAVE_Y, textContinueWithoutSave);
+    print_generic_string(TXT_SAVEOPTIONS_X, y + TXT_SAVECONT_Y, get_key_string("TEXT_SAVE_AND_CONTINUE"));
+    print_generic_string(TXT_SAVEOPTIONS_X, y - TXT_SAVEQUIT_Y, get_key_string("TEXT_SAVE_AND_QUIT"));
+    print_generic_string(TXT_SAVEOPTIONS_X, y - TXT_SAVE_EXIT_GAME_Y, get_key_string("TEXT_SAVE_EXIT_GAME"));
+    print_generic_string(TXT_SAVEOPTIONS_X, y - TXT_CONTNOSAVE_Y, get_key_string("TEXT_CONTINUE_WITHOUT_SAVING"));
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 

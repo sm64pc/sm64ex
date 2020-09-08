@@ -6,7 +6,6 @@
 #include "game/segment2.h"
 #include "game/save_file.h"
 #include "bettercamera.h"
-#include "include/text_strings.h"
 #include "engine/surface_collision.h"
 #include "pc/configfile.h"
 #include "pc/controller/controller_mouse.h"

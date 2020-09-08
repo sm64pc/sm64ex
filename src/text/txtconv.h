@@ -2,13 +2,10 @@
 #define TXTDATA
 
 #include "types.h"
-
 struct Character{
-    char txt[3];
-    s32 value;
+    char * txt;
+    s32 value[2];
 };
-
-extern struct Character charmap[340];
 
 u8 * getTranslatedText(char * txt);
 

@@ -9,7 +9,7 @@
 #include "game/save_file.h"
 #include "pc/configfile.h"
 #include "discordrpc.h"
-
+#include "text/text-loader.h"
 #define DISCORDLIBFILE "libdiscord-rpc"
 
 // Thanks Microsoft for being non posix compliant
@@ -53,11 +53,6 @@ void (*Discord_UpdatePresence)(DiscordRichPresence *);
 
 static s16 lastCourseNum = -1;
 static s16 lastActNum = -1;
-
-#ifdef VERSION_EU
-#include "eu_translation.h"
-extern s32 gInGameLanguage;
-#endif
 
 static char stage[188];
 static char act[188];

@@ -87,11 +87,9 @@ enum DialogSpecialChars {
     DIALOG_CHAR_I_NO_DIA = 0xEB,           // 'i' without diacritic
     DIALOG_CHAR_DOUBLE_LOW_QUOTE = 0xF0,   // German opening quotation mark
 #endif
-#if defined(VERSION_US) || defined(VERSION_EU)
     DIALOG_CHAR_SLASH = 0xD0,
     DIALOG_CHAR_MULTI_THE = 0xD1, // 'the'
     DIALOG_CHAR_MULTI_YOU = 0xD2, // 'you'
-#endif
     DIALOG_CHAR_PERIOD = 0x6E,
     DIALOG_CHAR_COMMA = 0x6F,
     DIALOG_CHAR_SPACE = 0x9E,

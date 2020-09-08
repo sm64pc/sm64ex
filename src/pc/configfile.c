@@ -49,6 +49,9 @@ ConfigWindow configWindow       = {
     .exiting_fullscreen = false,
     .settings_changed = false,
 };
+
+unsigned int configLanguage     = 0;
+
 unsigned int configFiltering    = 1;          // 0=force nearest, 1=linear, (TODO) 2=three-point
 unsigned int configMasterVolume = MAX_VOLUME; // 0 - MAX_VOLUME
 unsigned int configMusicVolume = MAX_VOLUME;
