@@ -35,7 +35,7 @@ static s32 l_counter = 0;
 
 // How to add stuff:
 // strings: add them to include/text_strings.h.in
-//          and to optMainStr[] / opts*Str[]
+//          and to menuStr[] / opts*Str[]
 // options: add them to the relevant options list
 // menus:   add a new submenu definition and a new
 //          option to the optsMain list
@@ -52,7 +52,7 @@ static const u8 optSmallStr[][32] = {
     { TEXT_OPT_R_HIGHLIGHT },
 };
 
-static const u8 optMainStr[][32] = {
+static const u8 menuStr[][32] = {
     { TEXT_OPT_OPTIONS },
     { TEXT_OPT_CAMERA },
     { TEXT_OPT_CONTROLS },
@@ -107,7 +107,7 @@ static const u8 optsCheatsStr[][64] = {
     { TEXT_OPT_CHEAT9 },
 };
 
-static const u8 optBindStr[][32] = {
+static const u8 bindStr[][32] = {
     { TEXT_OPT_UNBOUND },
     { TEXT_OPT_PRESSKEY },
     { TEXT_BIND_A },
@@ -236,24 +236,24 @@ static struct Option optsCamera[] = {
 #endif
 
 static struct Option optsControls[] = {
-    DEF_OPT_BIND( optBindStr[ 2], configKeyA ),
-    DEF_OPT_BIND( optBindStr[ 3], configKeyB ),
-    DEF_OPT_BIND( optBindStr[ 4], configKeyStart ),
-    DEF_OPT_BIND( optBindStr[ 5], configKeyL ),
-    DEF_OPT_BIND( optBindStr[ 6], configKeyR ),
-    DEF_OPT_BIND( optBindStr[ 7], configKeyZ ),
-    DEF_OPT_BIND( optBindStr[ 8], configKeyCUp ),
-    DEF_OPT_BIND( optBindStr[ 9], configKeyCDown ),
-    DEF_OPT_BIND( optBindStr[10], configKeyCLeft ),
-    DEF_OPT_BIND( optBindStr[11], configKeyCRight ),
-    DEF_OPT_BIND( optBindStr[12], configKeyStickUp ),
-    DEF_OPT_BIND( optBindStr[13], configKeyStickDown ),
-    DEF_OPT_BIND( optBindStr[14], configKeyStickLeft ),
-    DEF_OPT_BIND( optBindStr[15], configKeyStickRight ),
+    DEF_OPT_BIND( bindStr[ 2], configKeyA ),
+    DEF_OPT_BIND( bindStr[ 3], configKeyB ),
+    DEF_OPT_BIND( bindStr[ 4], configKeyStart ),
+    DEF_OPT_BIND( bindStr[ 5], configKeyL ),
+    DEF_OPT_BIND( bindStr[ 6], configKeyR ),
+    DEF_OPT_BIND( bindStr[ 7], configKeyZ ),
+    DEF_OPT_BIND( bindStr[ 8], configKeyCUp ),
+    DEF_OPT_BIND( bindStr[ 9], configKeyCDown ),
+    DEF_OPT_BIND( bindStr[10], configKeyCLeft ),
+    DEF_OPT_BIND( bindStr[11], configKeyCRight ),
+    DEF_OPT_BIND( bindStr[12], configKeyStickUp ),
+    DEF_OPT_BIND( bindStr[13], configKeyStickDown ),
+    DEF_OPT_BIND( bindStr[14], configKeyStickLeft ),
+    DEF_OPT_BIND( bindStr[15], configKeyStickRight ),
     // max deadzone is 31000; this is less than the max range of ~32768, but this
     // way, the player can't accidentally lock themselves out of using the stick
-    DEF_OPT_SCROLL( optBindStr[16], &configStickDeadzone, 0, 100, 1 ),
-    DEF_OPT_SCROLL( optBindStr[17], &configRumbleStrength, 0, 100, 1)
+    DEF_OPT_SCROLL( bindStr[16], &configStickDeadzone, 0, 100, 1 ),
+    DEF_OPT_SCROLL( bindStr[17], &configRumbleStrength, 0, 100, 1)
 };
 
 static struct Option optsVideo[] = {
@@ -288,28 +288,28 @@ static struct Option optsCheats[] = {
 /* submenu definitions */
 
 #ifdef BETTERCAMERA
-static struct SubMenu menuCamera   = DEF_SUBMENU( optMainStr[1], optsCamera );
+static struct SubMenu menuCamera   = DEF_SUBMENU( menuStr[1], optsCamera );
 #endif
-static struct SubMenu menuControls = DEF_SUBMENU( optMainStr[2], optsControls );
-static struct SubMenu menuVideo    = DEF_SUBMENU( optMainStr[3], optsVideo );
-static struct SubMenu menuAudio    = DEF_SUBMENU( optMainStr[4], optsAudio );
-static struct SubMenu menuCheats   = DEF_SUBMENU( optMainStr[6], optsCheats );
+static struct SubMenu menuControls = DEF_SUBMENU( menuStr[2], optsControls );
+static struct SubMenu menuVideo    = DEF_SUBMENU( menuStr[3], optsVideo );
+static struct SubMenu menuAudio    = DEF_SUBMENU( menuStr[4], optsAudio );
+static struct SubMenu menuCheats   = DEF_SUBMENU( menuStr[6], optsCheats );
 
 /* main options menu definition */
 
 static struct Option optsMain[] = {
 #ifdef BETTERCAMERA
-    DEF_OPT_SUBMENU( optMainStr[1], &menuCamera ),
+    DEF_OPT_SUBMENU( menuStr[1], &menuCamera ),
 #endif
-    DEF_OPT_SUBMENU( optMainStr[2], &menuControls ),
-    DEF_OPT_SUBMENU( optMainStr[3], &menuVideo ),
-    DEF_OPT_SUBMENU( optMainStr[4], &menuAudio ),
-    DEF_OPT_BUTTON ( optMainStr[5], optmenu_act_exit ),
+    DEF_OPT_SUBMENU( menuStr[2], &menuControls ),
+    DEF_OPT_SUBMENU( menuStr[3], &menuVideo ),
+    DEF_OPT_SUBMENU( menuStr[4], &menuAudio ),
+    DEF_OPT_BUTTON ( menuStr[5], optmenu_act_exit ),
     // NOTE: always keep cheats the last option here because of the half-assed way I toggle them
-    DEF_OPT_SUBMENU( optMainStr[6], &menuCheats )
+    DEF_OPT_SUBMENU( menuStr[6], &menuCheats )
 };
 
-static struct SubMenu menuMain = DEF_SUBMENU( optMainStr[0], optsMain );
+static struct SubMenu menuMain = DEF_SUBMENU( menuStr[0], optsMain );
 
 /* implementation */
 
@@ -388,9 +388,9 @@ static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
                 // TODO: button names
                 if (opt->uval[i] == VK_INVALID) {
                     if (optmenu_binding && white)
-                        optmenu_draw_text(x, y-13, optBindStr[1], 1);
+                        optmenu_draw_text(x, y-13, bindStr[1], 1);
                     else
-                        optmenu_draw_text(x, y-13, optBindStr[0], white);
+                        optmenu_draw_text(x, y-13, bindStr[0], white);
                 } else {
                     uint_to_hex(opt->uval[i], buf);
                     optmenu_draw_text(x, y-13, buf, white);
