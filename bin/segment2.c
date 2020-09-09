@@ -906,6 +906,23 @@ ALIGNED8 static const u8 texture_font_char_us_button_C_left[] = "textures/segmen
 ALIGNED8 static const u8 texture_font_char_us_button_C_right[] = "textures/segment2/font_graphics.06FC0.ia4";
 #endif
 
+ALIGNED8 static const u8 texture_font_char_mayus_accent_a [] = "textures/special/mayus_accent_a";
+ALIGNED8 static const u8 texture_font_char_mayus_accent_e [] = "textures/special/mayus_accent_e";
+ALIGNED8 static const u8 texture_font_char_mayus_accent_i [] = "textures/special/mayus_accent_i";
+ALIGNED8 static const u8 texture_font_char_mayus_accent_o [] = "textures/special/mayus_accent_o";
+ALIGNED8 static const u8 texture_font_char_mayus_accent_u [] = "textures/special/mayus_accent_u";
+ALIGNED8 static const u8 texture_font_char_mayus_umlaut   [] = "textures/special/mayus_umlaut";
+ALIGNED8 static const u8 texture_font_char_exclamation    [] = "textures/special/exclamation";
+ALIGNED8 static const u8 texture_font_char_mayus_enye     [] = "textures/special/mayus_enye";
+ALIGNED8 static const u8 texture_font_char_accent_a       [] = "textures/special/accent_a";
+ALIGNED8 static const u8 texture_font_char_accent_e       [] = "textures/special/accent_e";
+ALIGNED8 static const u8 texture_font_char_accent_i       [] = "textures/special/accent_i";
+ALIGNED8 static const u8 texture_font_char_accent_o       [] = "textures/special/accent_o";
+ALIGNED8 static const u8 texture_font_char_accent_u       [] = "textures/special/accent_u";
+ALIGNED8 static const u8 texture_font_char_question       [] = "textures/special/question";
+ALIGNED8 static const u8 texture_font_char_umlaut         [] = "textures/special/umlaut";
+ALIGNED8 static const u8 texture_font_char_enye           [] = "textures/special/enye";
+
 ALIGNED8 static const u8 texture_hud_char_camera[] = "textures/segment2/segment2.07B50.rgba16";
 
 ALIGNED8 static const u8 texture_hud_char_lakitu[] = "textures/segment2/segment2.07D50.rgba16";
@@ -918,23 +935,6 @@ ALIGNED8 static const u8 texture_hud_char_arrow_down[] = "textures/segment2/segm
 
 // Main HUD print table 0x02008250-0x02008337
 const u8 *const main_hud_lut[] = {
-#ifdef VERSION_EU
-    texture_hud_char_0, texture_hud_char_1, texture_hud_char_2, texture_hud_char_3,
-    texture_hud_char_4, texture_hud_char_5, texture_hud_char_6, texture_hud_char_7,
-    texture_hud_char_8, texture_hud_char_9, texture_hud_char_A, texture_hud_char_B,
-    texture_hud_char_C, texture_hud_char_D, texture_hud_char_E, texture_hud_char_F,
-    texture_hud_char_G, texture_hud_char_H, texture_hud_char_I,               0x0,
-    texture_hud_char_K, texture_hud_char_L, texture_hud_char_M, texture_hud_char_N,
-    texture_hud_char_O, texture_hud_char_P,               0x0, texture_hud_char_R,
-    texture_hud_char_S, texture_hud_char_T, texture_hud_char_U, texture_hud_char_V,
-    texture_hud_char_W,               0x0, texture_hud_char_Y, texture_hud_char_Z,
-                  0x0,               0x0,               0x0,               0x0,
-                  0x0,               0x0,               0x0,               0x0,
-                  0x0,               0x0,               0x0,               0x0,
-                  0x0,               0x0, texture_hud_char_multiply, texture_hud_char_coin,
-    texture_hud_char_mario_head, texture_hud_char_star,               0x0,               0x0,
-    texture_hud_char_apostrophe, texture_hud_char_double_quote, texture_hud_char_umlaut,
-#elif defined(VERSION_US)
     texture_hud_char_0, texture_hud_char_1, texture_hud_char_2, texture_hud_char_3,
     texture_hud_char_4, texture_hud_char_5, texture_hud_char_6, texture_hud_char_7,
     texture_hud_char_8, texture_hud_char_9, texture_hud_char_A, texture_hud_char_B,
@@ -950,95 +950,10 @@ const u8 *const main_hud_lut[] = {
                   0x0,               0x0, texture_hud_char_multiply, texture_hud_char_coin,
     texture_hud_char_mario_head, texture_hud_char_star,               0x0,               0x0,
     texture_hud_char_apostrophe, texture_hud_char_double_quote,
-#else
-    texture_hud_char_0, texture_hud_char_1, texture_hud_char_2, texture_hud_char_3,
-    texture_hud_char_4, texture_hud_char_5, texture_hud_char_6, texture_hud_char_7,
-    texture_hud_char_8, texture_hud_char_9, texture_hud_char_A, texture_hud_char_B,
-    texture_hud_char_C, texture_hud_char_D, texture_hud_char_E, texture_hud_char_F,
-    texture_hud_char_G, texture_hud_char_H, texture_hud_char_I, texture_hud_char_J,
-    texture_hud_char_K, texture_hud_char_L, texture_hud_char_M, texture_hud_char_N,
-    texture_hud_char_O, texture_hud_char_P, texture_hud_char_Q, texture_hud_char_R,
-    texture_hud_char_S, texture_hud_char_T, texture_hud_char_U, texture_hud_char_V,
-    texture_hud_char_W, texture_hud_char_X, texture_hud_char_Y, texture_hud_char_Z,
-    texture_hud_char_exclamation, texture_hud_char_double_exclamation, texture_hud_char_question, texture_hud_char_ampersand,
-    texture_hud_char_percent,                 0x0,                      0x0,                  0x0,
-                      0x0,                   0x0,                      0x0,                  0x0,
-                      0x0,                   0x0, texture_hud_char_multiply, texture_hud_char_coin,
-    texture_hud_char_mario_head, texture_hud_char_star, texture_hud_char_decimal_point, texture_hud_char_beta_key,
-    texture_hud_char_apostrophe, texture_hud_char_double_quote,
-#endif
 };
 
 // Main small font print table 0x02008338-0x02008737
 const u8 *const main_font_lut[] = {
-#ifdef VERSION_EU // EU Font Table
-    texture_font_char_eu_0, texture_font_char_eu_1, texture_font_char_eu_2, texture_font_char_eu_3,
-    texture_font_char_eu_4, texture_font_char_eu_5, texture_font_char_eu_6, texture_font_char_eu_7,
-    texture_font_char_eu_8, texture_font_char_eu_9, texture_font_char_eu_A, texture_font_char_eu_B,
-    texture_font_char_eu_C, texture_font_char_eu_D, texture_font_char_eu_E, texture_font_char_eu_F,
-    texture_font_char_eu_G, texture_font_char_eu_H, texture_font_char_eu_I, texture_font_char_eu_J,
-    texture_font_char_eu_K, texture_font_char_eu_L, texture_font_char_eu_M, texture_font_char_eu_N,
-    texture_font_char_eu_O, texture_font_char_eu_P, texture_font_char_eu_Q, texture_font_char_eu_R,
-    texture_font_char_eu_S, texture_font_char_eu_T, texture_font_char_eu_U, texture_font_char_eu_V,
-    texture_font_char_eu_W, texture_font_char_eu_X, texture_font_char_eu_Y, texture_font_char_eu_Z,
-    texture_font_char_eu_a, texture_font_char_eu_b, texture_font_char_eu_c, texture_font_char_eu_d,
-    texture_font_char_eu_e, texture_font_char_eu_f, texture_font_char_eu_g, texture_font_char_eu_h,
-    texture_font_char_eu_i, texture_font_char_eu_j, texture_font_char_eu_k, texture_font_char_eu_l,
-    texture_font_char_eu_m, texture_font_char_eu_n, texture_font_char_eu_o, texture_font_char_eu_p,
-    texture_font_char_eu_q, texture_font_char_eu_r, texture_font_char_eu_s, texture_font_char_eu_t,
-    texture_font_char_eu_u, texture_font_char_eu_v, texture_font_char_eu_w, texture_font_char_eu_x,
-    texture_font_char_eu_y, texture_font_char_eu_z, texture_font_char_eu_apostrophe, texture_font_char_eu_period,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    texture_font_char_eu_button_C_up,
-    texture_font_char_eu_button_C_down,
-    texture_font_char_eu_button_C_left,
-    texture_font_char_eu_button_C_right,
-    texture_font_char_eu_button_A,
-    texture_font_char_eu_button_B,
-    texture_font_char_eu_button_C,
-    texture_font_char_eu_button_Z,
-    texture_font_char_eu_button_R,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    texture_font_char_eu_comma,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    texture_font_char_EU_slash,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-    0x0,
-    texture_font_char_eu_open_parentheses,
-    texture_font_char_eu_close_open_parentheses,
-    texture_font_char_eu_close_parentheses,
-    texture_font_char_eu_left_right_arrow,
-    texture_font_char_eu_ampersand,
-    texture_font_char_eu_colon,
-    texture_font_char_eu_acute,
-    texture_font_char_eu_circumflex,
-    texture_font_char_eu_umlaut,
-    texture_font_char_eu_grave,
-    texture_font_char_eu_unknown,
-    texture_font_char_eu_eszeet,
-    texture_font_char_eu_Cedilla,
-    texture_font_char_eu_cedilla,
-    0x0, 0x0, 0x0,
-    texture_font_char_eu_exclamation,
-    texture_font_char_eu_percent,
-    texture_font_char_eu_question,
-    texture_font_char_eu_double_quote_open,
-    texture_font_char_eu_double_quote_close,
-    texture_font_char_eu_tilde,
-    0x0,
-    texture_font_char_eu_coin,
-    texture_font_char_eu_star_filled,
-    texture_font_char_eu_multiply,
-    texture_font_char_eu_interpunct,
-    texture_font_char_eu_star_hollow,
-    0x0, 0x0,
-#elif defined(VERSION_US) // US Font Table
     texture_font_char_us_0, texture_font_char_us_1, texture_font_char_us_2, texture_font_char_us_3,
     texture_font_char_us_4, texture_font_char_us_5, texture_font_char_us_6, texture_font_char_us_7,
     texture_font_char_us_8, texture_font_char_us_9, texture_font_char_us_A, texture_font_char_us_B,
@@ -1103,72 +1018,11 @@ const u8 *const main_font_lut[] = {
     texture_font_char_us_question, texture_font_char_us_double_quote_open, texture_font_char_us_double_quote_close, texture_font_char_us_tilde,
                   0x0, texture_font_char_us_coin, texture_font_char_us_star_filled, texture_font_char_us_multiply,
     texture_font_char_us_interpunct, texture_font_char_us_star_hollow,               0x0,               0x0,
-#elif defined(VERSION_JP) || defined(VERSION_SH)
-    texture_font_char_jp_0, texture_font_char_jp_1, texture_font_char_jp_2, texture_font_char_jp_3,
-    texture_font_char_jp_4, texture_font_char_jp_5, texture_font_char_jp_6, texture_font_char_jp_7,
-    texture_font_char_jp_8, texture_font_char_jp_9, texture_font_char_jp_A, texture_font_char_jp_B,
-    texture_font_char_jp_C, texture_font_char_jp_D, texture_font_char_jp_E, texture_font_char_jp_F,
-    texture_font_char_jp_G, texture_font_char_jp_H, texture_font_char_jp_I, texture_font_char_jp_J,
-    texture_font_char_jp_K, texture_font_char_jp_L, texture_font_char_jp_M, texture_font_char_jp_N,
-    texture_font_char_jp_O, texture_font_char_jp_P, texture_font_char_jp_Q, texture_font_char_jp_R,
-    texture_font_char_jp_S, texture_font_char_jp_T, texture_font_char_jp_U, texture_font_char_jp_V,
-    texture_font_char_jp_W, texture_font_char_jp_X, texture_font_char_jp_Y, texture_font_char_jp_Z,
-                      0x0,                   0x0,                   0x0,                   0x0,
-                      0x0,                   0x0,                   0x0,                   0x0,
-                      0x0,                   0x0,                   0x0,                   0x0,
-                      0x0,                   0x0,                   0x0,                   0x0,
-                      0x0,                   0x0,                   0x0,                   0x0,
-                      0x0,                   0x0,                   0x0,                   0x0,
-                      0x0,                   0x0,                   0x0,                   0x0,
-    texture_font_char_jp_hiragana_a, texture_font_char_jp_hiragana_i, texture_font_char_jp_hiragana_u, texture_font_char_jp_hiragana_c,
-    texture_font_char_jp_hiragana_o, texture_font_char_jp_hiragana_ka, texture_font_char_jp_hiragana_ki, texture_font_char_jp_hiragana_ku,
-    texture_font_char_jp_hiragana_ke, texture_font_char_jp_hiragana_ko, texture_font_char_jp_hiragana_sa, texture_font_char_jp_hiragana_shi,
-    texture_font_char_jp_hiragana_su, texture_font_char_jp_hiragana_se, texture_font_char_jp_hiragana_so, texture_font_char_jp_hiragana_ta,
-    texture_font_char_jp_hiragana_chi, texture_font_char_jp_hiragana_tsu, texture_font_char_jp_hiragana_te, texture_font_char_jp_hiragana_to,
-    texture_font_char_jp_hiragana_na, texture_font_char_jp_hiragana_ni, texture_font_char_jp_hiragana_nu, texture_font_char_jp_hiragana_ne,
-    texture_font_char_jp_hiragana_no, texture_font_char_jp_hiragana_ha, texture_font_char_jp_hiragana_hi, texture_font_char_jp_hiragana_hu,
-    texture_font_char_jp_hiragana_he, texture_font_char_jp_hiragana_ho, texture_font_char_jp_hiragana_ma, texture_font_char_jp_hiragana_mi,
-    texture_font_char_jp_hiragana_mu, texture_font_char_jp_hiragana_me, texture_font_char_jp_hiragana_mo, texture_font_char_jp_hiragana_ya,
-    texture_font_char_jp_hiragana_yu, texture_font_char_jp_hiragana_yo, texture_font_char_jp_hiragana_ra, texture_font_char_jp_hiragana_ri,
-    texture_font_char_jp_hiragana_ru, texture_font_char_jp_hiragana_re, texture_font_char_jp_hiragana_ro, texture_font_char_jp_hiragana_wa,
-    texture_font_char_jp_hiragana_wo, texture_font_char_jp_hiragana_n,                   0x0, texture_font_char_jp_comma,
-    texture_font_char_jp_katakana_a, texture_font_char_jp_katakana_i, texture_font_char_jp_katakana_u, texture_font_char_jp_katakana_e,
-    texture_font_char_jp_katakana_o, texture_font_char_jp_katakana_ka, texture_font_char_jp_katakana_ki, texture_font_char_jp_katakana_ku,
-    texture_font_char_jp_katakana_ke, texture_font_char_jp_katakana_ko, texture_font_char_jp_katakana_sa, texture_font_char_jp_katakana_shi,
-    texture_font_char_jp_katakana_su, texture_font_char_jp_katakana_se, texture_font_char_jp_katakana_so, texture_font_char_jp_katakana_ta,
-    texture_font_char_jp_katakana_chi, texture_font_char_jp_katakana_tsu, texture_font_char_jp_katakana_te, texture_font_char_jp_katakana_to,
-    texture_font_char_jp_katakana_na, texture_font_char_jp_katakana_ni, texture_font_char_jp_katakana_nu, texture_font_char_jp_katakana_ne,
-    texture_font_char_jp_katakana_no, texture_font_char_jp_katakana_ha, texture_font_char_jp_katakana_hi, texture_font_char_jp_katakana_hu,
-    texture_font_char_jp_katakana_he, texture_font_char_jp_katakana_ho, texture_font_char_jp_katakana_ma, texture_font_char_jp_katakana_mi,
-    texture_font_char_jp_katakana_mu, texture_font_char_jp_katakana_me, texture_font_char_jp_katakana_mo, texture_font_char_jp_katakana_ya,
-    texture_font_char_jp_katakana_yu, texture_font_char_jp_katakana_yo, texture_font_char_jp_katakana_ra, texture_font_char_jp_katakana_ri,
-    texture_font_char_jp_katakana_ru, texture_font_char_jp_katakana_re, texture_font_char_jp_katakana_ro, texture_font_char_jp_katakana_wa,
-                      0x0, texture_font_char_jp_katakana_n,                   0x0, texture_font_char_jp_long_vowel,
-    texture_font_char_jp_hiragana_small_e, texture_font_char_jp_hiragana_small_tsu, texture_font_char_jp_hiragana_small_ya, texture_font_char_jp_hiragana_small_yu,
-    texture_font_char_jp_hiragana_small_yo, texture_font_char_jp_hiragana_small_a, texture_font_char_jp_hiragana_small_i, texture_font_char_jp_hiragana_small_u,
-    texture_font_char_jp_hiragana_small_o,                   0x0,                   0x0,                   0x0,
-                      0x0,                   0x0,                   0x0,                   0x0,
-                      0x0,                   0x0,                   0x0,                   0x0,
-                      0x0,                   0x0,                   0x0,                   0x0,
-                      0x0,                   0x0,                   0x0,                   0x0,
-                      0x0,                   0x0,                   0x0,                   0x0,
-                      0x0,                   0x0,                   0x0,                   0x0,
-                      0x0,                   0x0,                   0x0,                   0x0,
-                      0x0,                   0x0,                   0x0,                   0x0,
-                      0x0,                   0x0,                   0x0,                   0x0,
-    texture_font_char_jp_katakana_small_e, texture_font_char_jp_katakana_small_tsu, texture_font_char_jp_katakana_small_ya, texture_font_char_jp_katakana_small_yu,
-    texture_font_char_jp_katakana_small_yo, texture_font_char_jp_katakana_small_a, texture_font_char_jp_katakana_small_i, texture_font_char_jp_katakana_small_u,
-    texture_font_char_jp_katakana_small_o,                   0x0,                   0x0,                   0x0,
-                      0x0,                   0x0,                   0x0,                   0x0,
-                      0x0, texture_font_char_jp_open_parentheses, texture_font_char_jp_close_open_parentheses, texture_font_char_jp_close_parentheses,
-    texture_font_char_jp_left_right_arrow,                   0x0,                   0x0,                   0x0,
-                      0x0,                   0x0,                   0x0,                   0x0,
-                      0x0,                   0x0,                   0x0,                   0x0,
-    texture_font_char_jp_dakuten, texture_font_char_jp_handakuten, texture_font_char_jp_exclamation, texture_font_char_jp_percent,
-    texture_font_char_jp_question, texture_font_char_jp_double_quotation_open, texture_font_char_jp_double_quotation_close, texture_font_char_jp_wave_dash,
-    texture_font_char_jp_ellipsis, texture_font_char_jp_coin, texture_font_char_jp_star_filled, texture_font_char_jp_multiply,
-    texture_font_char_jp_interpunct, texture_font_char_jp_star_hollow,                   0x0,                   0x0,
-#endif
+    
+    texture_font_char_mayus_accent_a, texture_font_char_mayus_accent_e, texture_font_char_mayus_accent_i, texture_font_char_mayus_accent_o,
+    texture_font_char_mayus_accent_u, texture_font_char_mayus_umlaut, texture_font_char_exclamation, texture_font_char_mayus_enye,
+    texture_font_char_accent_a, texture_font_char_accent_e, texture_font_char_accent_i, texture_font_char_accent_o, texture_font_char_accent_u,
+    texture_font_char_question, texture_font_char_umlaut, texture_font_char_enye,
 };
 
 // credits font LUT 0x02008738-0x020087CB

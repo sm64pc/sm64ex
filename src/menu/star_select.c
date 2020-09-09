@@ -51,8 +51,6 @@ static s8 sSelectableStarIndex = 0;
 // Act Selector menu timer that keeps counting until you choose an act.
 static s32 sActSelectorMenuTimer = 0;
 
-unsigned char * myScore;
-unsigned char * starNumbers;
 /**
  * Act Selector Star Type Loop Action
  * Defines a select type for a star in the act selector.
@@ -259,6 +257,8 @@ void print_course_number(void) {
  */
 void print_act_selector_strings(void) {
 
+    unsigned char * starNumbers = get_key_string("TEXT_ZERO");
+
 #ifdef VERSION_EU
     u8 **levelNameTbl;
     u8 *currLevelName;
@@ -308,11 +308,7 @@ void print_act_selector_strings(void) {
     gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, 255);
     // Print the "MY SCORE" text if the coin score is more than 0
     if (save_file_get_course_coin_score(gCurrSaveFileNum - 1, gCurrCourseNum - 1) != 0) {
-#ifdef VERSION_EU
-        print_generic_string(95, 118, myScore[language]);
-#else
-        print_generic_string(102, 118, myScore);
-#endif
+        print_generic_string(102, 118, get_key_string("TEXT_MY_SCORE"));
     }
 
 #ifdef VERSION_EU

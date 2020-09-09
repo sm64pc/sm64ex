@@ -3267,9 +3267,7 @@
                 "SOMEWHERE OVER THE RAINBOW"
             ]
         },
-        {
-            "course": "ONE OF THE CASTLE'S SECRET STARS!"
-        }
+        { "course": "CASTLE", "acts": ["ONE OF THE CASTLE'S SECRET STARS!"] }
     ],
     "secrets": [
         "   BOWSER IN THE DARK WORLD",

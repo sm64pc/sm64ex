@@ -104,16 +104,14 @@ void load_language(char* jsonTxt, s8 language){
         char* courseName = cJSON_GetObjectItemCaseSensitive(course, "course")->valuestring;
 
         languages[language]->courses[courseID] = getTranslatedText(courseName);
-
+        courseID++;
         cJSON_ArrayForEach(act, acts) {
             languages[language]->acts[actID] = getTranslatedText(act->valuestring);
             actSize += strlen(act->valuestring);
             actID++;
         }
-
-        actSize += strlen(courseName);
         actAmount += cJSON_GetArraySize(acts);
-        courseID++;
+        actSize += strlen(courseName);
     }
 
     languages[language]->acts = realloc(languages[language]->acts, sizeof(u8*) * (actAmount * actSize));
