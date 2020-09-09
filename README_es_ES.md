@@ -155,6 +155,11 @@ sudo xbps-install -S base-devel python3 audiofile-devel SDL2-devel glew-devel
 sudo xbps-install -S base-devel python3 audiofile-devel-32bit SDL2-devel-32bit glew-devel-32bit
 ```
 
+##### Alpine Linux - (compilando para 32 bits y 64 bits)
+```
+sudo apk add build-base python3 audiofile-dev sdl2-dev glew-dev
+```
+
 #### Compila el ejecutable.
 
 Ejecuta `make` para compilar (por defecto `VERSION=us`)
