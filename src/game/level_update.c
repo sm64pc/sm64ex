@@ -1331,4 +1331,5 @@ s32 credits_end_wait_for_reset() {
     if (gPlayer1Controller->buttonPressed & START_BUTTON) {
         return 1;
     }
+    return 0;
 }
