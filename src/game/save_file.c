@@ -615,6 +615,12 @@ u32 save_file_get_star_flags(s32 fileIndex, s32 courseIndex) {
 
     return starFlags;
 }
+u32 save_file_get_cannon_flags(s32 fileIndex, s32 courseIndex) {
+    
+    if (gSaveBuffer.files[fileIndex][0].courseStars[courseIndex+1] & 0x80){return 1;}
+
+    return 0;
+}
 
 /**
  * Add to the bitset of obtained stars in the specified course.
