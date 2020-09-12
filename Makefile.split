@@ -1,8 +1,0 @@
-# --------------------------------------
-# Skybox Rules
-# --------------------------------------
-
-$(BUILD_DIR)/bin/%_skybox.c: textures/skyboxes/%.png
-	$(SKYCONV) $(SKYCONV_ARGS) --type sky --split $^ $(BUILD_DIR)/bin
-
-$(BUILD_DIR)/bin/%_skybox.elf: SEGMENT_ADDRESS := 0x0A000000

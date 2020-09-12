@@ -61,16 +61,16 @@ struct Skybox {
 struct Skybox sSkyBoxInfo[2];
 
 char * sSkyboxTextures[10] = {
-    "textures/skyboxes/water",
-    "textures/skyboxes/bitfs",
-    "textures/skyboxes/wdw",
-    "textures/skyboxes/cloud_floor",
-    "textures/skyboxes/ccm",
-    "textures/skyboxes/ssl",
-    "textures/skyboxes/bbh",
-    "textures/skyboxes/bidw",
-    "textures/skyboxes/clouds",
-    "textures/skyboxes/bits",
+    "textures/skyboxes/water.rgba16",
+    "textures/skyboxes/bitfs.rgba16",
+    "textures/skyboxes/wdw.rgba16",
+    "textures/skyboxes/cloud_floor.rgba16",
+    "textures/skyboxes/ccm.rgba16",
+    "textures/skyboxes/ssl.rgba16",
+    "textures/skyboxes/bbh.rgba16",
+    "textures/skyboxes/bidw.rgba16",
+    "textures/skyboxes/clouds.rgba16",
+    "textures/skyboxes/bits.rgba16",
 };
 
 /**
@@ -178,7 +178,7 @@ Vtx *make_skybox_rect(s32 tileIndex, s8 colorIndex) {
     Vtx *verts = alloc_display_list(4 * sizeof(*verts));
     s16 x = tileIndex % SKYBOX_COLS * SKYBOX_TILE_WIDTH;
     s16 y = SKYBOX_HEIGHT - tileIndex / SKYBOX_COLS * SKYBOX_TILE_HEIGHT;
-    
+
     s16 w = SKYBOX_IMAGE_SIZE / (SKYBOX_COLS - 2);
     s16 h = SKYBOX_IMAGE_SIZE / (SKYBOX_COLS - 2);
     s16 tx = ((tileIndex % SKYBOX_COLS) * w) % SKYBOX_IMAGE_SIZE;
@@ -205,9 +205,9 @@ void draw_skybox_tile_grid(Gfx **dlist, s8 background, s8 player, s8 colorIndex)
     for (row = 0; row < 3; row++) {
         for (col = 0; col < 3; col++) {
             s32 tileIndex = sSkyBoxInfo[player].upperLeftTile + row * SKYBOX_COLS + col;
-            const u8 *const texture = sSkyboxTextures[background];
+            char * texture = sSkyboxTextures[background];
             s16 x = tileIndex % SKYBOX_COLS * SKYBOX_TILE_WIDTH;
-            s16 y = SKYBOX_HEIGHT - tileIndex / SKYBOX_COLS * SKYBOX_TILE_HEIGHT;            
+            s16 y = SKYBOX_HEIGHT - tileIndex / SKYBOX_COLS * SKYBOX_TILE_HEIGHT;
 
             gLoadBlockTexture((*dlist)++, SKYBOX_IMAGE_SIZE, SKYBOX_IMAGE_SIZE, G_IM_FMT_RGBA, texture);
 
@@ -261,7 +261,7 @@ Gfx *init_skybox_display_list(s8 player, s8 background, s8 colorIndex) {
         gSPTexture(dlist++, 0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON);
         gDPTileSync(dlist++);
         gDPSetTile(dlist++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, G_TX_RENDERTILE, 0, G_TX_CLAMP, 5, G_TX_NOLOD, G_TX_CLAMP, 5, G_TX_NOLOD);
-        gDPSetTileSize(dlist++, 0, 0, 0, (SKYBOX_IMAGE_SIZE - 1) << G_TEXTURE_IMAGE_FRAC, (SKYBOX_IMAGE_SIZE - 1) << G_TEXTURE_IMAGE_FRAC);        
+        gDPSetTileSize(dlist++, 0, 0, 0, (SKYBOX_IMAGE_SIZE - 1) << G_TEXTURE_IMAGE_FRAC, (SKYBOX_IMAGE_SIZE - 1) << G_TEXTURE_IMAGE_FRAC);
 
         draw_skybox_tile_grid(&dlist, background, player, colorIndex);
         gSPDisplayList(dlist++, dl_skybox_end);
