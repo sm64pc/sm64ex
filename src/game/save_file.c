@@ -696,3 +696,10 @@ s32 check_warp_checkpoint(struct WarpNode *warpNode) {
 
     return isWarpCheckpointActive;
 }
+
+u32 save_file_get_cannon_flags(s32 fileIndex, s32 courseIndex) {
+
+    if (gSaveBuffer.files[fileIndex][0].courseStars[courseIndex+1] & 0x80){return 1;}
+
+    return 0;
+}
