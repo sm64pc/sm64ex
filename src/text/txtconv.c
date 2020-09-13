@@ -1,11 +1,11 @@
 #include "txtconv.h"
 
-struct Character charmap[348] = {
+struct Character charmap[356] = {
     {"0", {0x0, NULL}}, {"1", {0x1, NULL}}, {"{65297}", {0x1, NULL}}, {"2", {0x2, NULL}}, {"{65298}", {0x2, NULL}}, {"3", {0x3, NULL}}, {"{65299}", {0x3, NULL}}, {"4", {0x4, NULL}}, {"{65300}", {0x4, NULL}}, {"5", {0x5, NULL}},
     {"{65301}", {0x5, NULL}}, {"6", {0x6, NULL}}, {"{65302}", {0x6, NULL}}, {"7", {0x7, NULL}}, {"{65303}", {0x7, NULL}}, {"8", {0x8, NULL}}, {"{65304}", {0x8, NULL}}, {"9", {0x9, NULL}}, {"{65305}", {0x9, NULL}},
     {"A", {0xa, NULL}}, {"{65313}", {0xa, NULL}}, {"B", {0xb, NULL}}, {"{65314}", {0xb, NULL}}, {"C", {0xc, NULL}}, {"{65315}", {0xc, NULL}}, {"D", {0xd, NULL}}, {"{65316}", {0xd, NULL}}, {"E", {0xe, NULL}},
     {"{65317}", {0xe, NULL}}, {"F", {0xf, NULL}}, {"{65318}", {0xf, NULL}}, {"G", {0x10, NULL}}, {"{65319}", {0x10, NULL}}, {"H", {0x11, NULL}}, {"{65320}", {0x11, NULL}}, {"I", {0x12, NULL}}, {"{65321}", {0x12, NULL}},
-    {"J", {0x13, NULL}}, {"{65322}", {0x13, NULL}}, {"K", {0x14, NULL}}, {"{65323}", {0x14, NULL}}, {"L", {0x15, NULL}}, {"{65324}", {0x15, NULL}}, {"M", {0x20, NULL}}, {"{65325}", {0x16, NULL}}, {"N", {0x17, NULL}},
+    {"J", {0x13, NULL}}, {"{65322}", {0x13, NULL}}, {"K", {0x14, NULL}}, {"{65323}", {0x14, NULL}}, {"L", {0x15, NULL}}, {"{65324}", {0x15, NULL}}, {"M", {0x16, NULL}}, {"{65325}", {0x16, NULL}}, {"N", {0x17, NULL}},
     {"{65326}", {0x17, NULL}}, {"O", {0x18, NULL}}, {"{65327}", {0x18, NULL}}, {"P", {0x19, NULL}}, {"{65328}", {0x19, NULL}}, {"Q", {0x1a, NULL}}, {"{65329}", {0x1a, NULL}}, {"R", {0x1b, NULL}}, {"{65330}", {0x1b, NULL}},
     {"S", {0x1c, NULL}}, {"{65331}", {0x1c, NULL}}, {"T", {0x1d, NULL}}, {"{65332}", {0x1d, NULL}}, {"U", {0x1e, NULL}}, {"{65333}", {0x1e, NULL}}, {"V", {0x1f, NULL}}, {"{65334}", {0x1f, NULL}}, {"W", {0x20, NULL}},
     {"{65335}", {0x20, NULL}}, {"X", {0x21, NULL}}, {"{65336}", {0x21, NULL}}, {"Y", {0x22, NULL}}, {"{65337}", {0x22, NULL}}, {"Z", {0x23, NULL}}, {"{65338}", {0x23, NULL}}, {"a", {0x24, NULL}}, {"b", {0x25, NULL}},
@@ -41,13 +41,27 @@ struct Character charmap[348] = {
     {"{00239}", {0xa2, NULL}}, {"{00223}", {0xec, NULL}}, {"{00199}", {0xed, NULL}}, {"{00231}", {0xee, NULL}}, {"{08222}", {0xf0, NULL}},
 
     // SPECIAL CHARACTERS
-    {"{00161}", {0x95, NULL}}, {"{00237}", {0x95, NULL}}, {"{00225}", {0x95, NULL}}, {"{00243}", {0x95, NULL}}, {"{00201}", {0x95, NULL}}, {"{00233}", {0x95, NULL}},
-    {"{00241}", {0x95, NULL}}, {"{00250}", {0x95, NULL}}, {"{00218}", {0x95, NULL}}, {"{00211}", {0x95, NULL}}, {"{00252}", {0x95, NULL}}
+    {"{00225}", {112, NULL}},
+    {"{00233}", {113, NULL}},
+    {"{00237}", {114, NULL}},
+    {"{00243}", {115, NULL}},
+    {"{00250}", {116, NULL}},
+    {"{00193}", {117, NULL}},
+    {"{00201}", {118, NULL}},
+    {"{00205}", {119, NULL}},
+    {"{00211}", {120, NULL}}, 
+    {"{00218}", {121, NULL}},
+    {"{00241}", {122, NULL}}, 
+    {"{00209}", {123, NULL}},
+    {"{00252}", {124, NULL}},
+    {"{00220}", {125, NULL}},
+    {"{00191}", {126, NULL}},   
+    {"{00161}", {127, NULL}}
 };
 
 struct Character getCharacter(char* ch){
     struct Character tmp = {NULL, {NULL, NULL}};
-    for(s32 cmid = 0; cmid < 340; cmid++){
+    for(s32 cmid = 0; cmid < sizeof(charmap) / sizeof(struct Character); cmid++){
         if(charmap[cmid].txt != NULL){
             if(strncmp(charmap[cmid].txt, ch, strlen(charmap[cmid].txt)) == 0) {
                 tmp = charmap[cmid];
@@ -103,8 +117,8 @@ u8 * getTranslatedText(char * txt){
             struct Character ctm = getCharacter(tmpSpecialChar);
 
             if(ctm.txt != NULL){
-                shiftArr += 6;
-                cid += 6;
+                shiftArr += 5;
+                cid += 5;
                 for(int cl = 0; cl < 2; cl++){
                     if(ctm.value[cl] != NULL){
                         tmp[cid - shiftArr + cl] = ctm.value[cl];

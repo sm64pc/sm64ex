@@ -31,6 +31,6 @@ extern u8* get_key_string(char* id);
 extern struct LanguageEntry* get_language_by_name(char* name);
 extern struct LanguageEntry* get_language();
 extern void set_language(struct LanguageEntry* new_language);
-extern void alloc_dialog_pool(void);
+extern void alloc_dialog_pool(char* exePath, char* gamedir);
 extern void dealloc_dialog_pool(void);
 #endif

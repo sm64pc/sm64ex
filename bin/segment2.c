@@ -982,10 +982,11 @@ const u8 *const main_font_lut[] = {
                   0x0,               0x0,               0x0,               0x0,
                   0x0,               0x0,               0x0,               0x0,
                   0x0,               0x0,               0x0, texture_font_char_us_comma,
-                  0x0,               0x0,               0x0,               0x0,
-                  0x0,               0x0,               0x0,               0x0,
-                  0x0,               0x0,               0x0,               0x0,
-                  0x0,               0x0,               0x0,               0x0,
+    // SPECIAL CHARS: Start ID - 112:0x70
+    texture_font_char_accent_a, texture_font_char_accent_e, texture_font_char_accent_i, texture_font_char_accent_o, 
+    texture_font_char_accent_u, texture_font_char_mayus_accent_a, texture_font_char_mayus_accent_e, texture_font_char_mayus_accent_i, 
+    texture_font_char_mayus_accent_o, texture_font_char_mayus_accent_u, texture_font_char_enye, texture_font_char_mayus_enye,
+    texture_font_char_umlaut, texture_font_char_mayus_umlaut, texture_font_char_question, texture_font_char_exclamation, 
                   0x0,               0x0,               0x0,               0x0,
                   0x0,               0x0,               0x0,               0x0,
                   0x0,               0x0,               0x0,               0x0,
@@ -1018,11 +1019,6 @@ const u8 *const main_font_lut[] = {
     texture_font_char_us_question, texture_font_char_us_double_quote_open, texture_font_char_us_double_quote_close, texture_font_char_us_tilde,
                   0x0, texture_font_char_us_coin, texture_font_char_us_star_filled, texture_font_char_us_multiply,
     texture_font_char_us_interpunct, texture_font_char_us_star_hollow,               0x0,               0x0,
-    
-    texture_font_char_mayus_accent_a, texture_font_char_mayus_accent_e, texture_font_char_mayus_accent_i, texture_font_char_mayus_accent_o,
-    texture_font_char_mayus_accent_u, texture_font_char_mayus_umlaut, texture_font_char_exclamation, texture_font_char_mayus_enye,
-    texture_font_char_accent_a, texture_font_char_accent_e, texture_font_char_accent_i, texture_font_char_accent_o, texture_font_char_accent_u,
-    texture_font_char_question, texture_font_char_umlaut, texture_font_char_enye,
 };
 
 // credits font LUT 0x02008738-0x020087CB

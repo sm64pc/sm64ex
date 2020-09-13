@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <dirent.h> 
 #include "libs/cJSON.h"
+#include "pc/configfile.h"
 
 #define PLACEHOLDER "You are not supposed\nto be here.\n\nKeep this as a secret\n\n- Render96 Team"
 
@@ -163,31 +164,37 @@ void load_language(char* jsonTxt, s8 language){
     cJSON_free(json);
 }
 
-void alloc_languages(void){
+void alloc_languages(char* exePath, char* gamedir){
     languages = realloc(languages, sizeof(struct LanguageEntry*) * 30);
 
-    char * languagesDir = "./res/texts/";
+    char *lastSlash = NULL;
+    char *parent = NULL;
+    #ifndef WIN32
+    lastSlash = strrchr(exePath, '/');
+    #else
+    lastSlash = strrchr(exePath, '\\');
+    #endif
+    parent = strndup(exePath, strlen(exePath) - strlen(lastSlash));
+
+    char * languagesDir = malloc(FILENAME_MAX * sizeof(char*));
+    strcpy(languagesDir, parent);
+    strcat(languagesDir, "/");
+    strcat(languagesDir, gamedir);
+    strcat(languagesDir, "/texts/");
+
     DIR *lf = opendir(languagesDir);
     struct dirent *de;
     while ((de = readdir(lf)) != NULL){
         const char* extension = get_filename_ext(de->d_name);
-        char * file = malloc(99 * sizeof(char*));
-        if(strcmp(extension, "json") == 0){
-            strcpy(file, "");
-            strcat(file, "./res/texts/");
+        char * file = malloc(FILENAME_MAX * sizeof(char*));
+        if(strcmp(extension, "json") == 0){                                    
+            
+            strcpy(file, languagesDir);
             strcat(file, de->d_name);
-
-            #ifndef WIN32
-            char * language_file = realpath(file, NULL);
-            #else
-            char * language_file = malloc(_MAX_PATH * sizeof(char));
-            _fullpath(language_file, file, _MAX_PATH );
-            #endif
-
             languagesAmount++;
-            printf("Loading File: %s\n", language_file);
+            printf("Loading File: %s\n", file);
 
-            char * jsonTxt = read_file(language_file);
+            char * jsonTxt = read_file(file);
             load_language(jsonTxt, languagesAmount - 1);
         }
     }
@@ -236,7 +243,7 @@ u8* get_key_string(char* id){
     return tmp;
 }
 
-void alloc_dialog_pool(void){
+void alloc_dialog_pool(char* exePath, char* gamedir){
     languages = malloc(sizeof(struct LanguageEntry*));
     
     languages[0] = malloc (sizeof (struct LanguageEntry));
@@ -256,8 +263,12 @@ void alloc_dialog_pool(void){
         languages[0]->dialogs[i] = entry;
     }    
 
-    alloc_languages();
-    set_language(get_language_by_name("English"));
+    alloc_languages(exePath, gamedir);
+    static const char * languages[] = {
+        "Spanish",
+        "English"
+    };
+    set_language(get_language_by_name(languages[configLanguage]));    
 }
 
 void dealloc_dialog_pool(void){

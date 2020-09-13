@@ -174,16 +174,17 @@ static void on_anim_frame(double time) {
 }
 #endif
 
-void main_func(void) {
+void main_func(char *argv[]) {
     static u64 pool[0x165000/8 / 4 * sizeof(void *)];
     main_pool_init(pool, pool + sizeof(pool) / sizeof(pool[0]));
     gEffectsMemoryPool = mem_pool_init(0x4000, MEMORY_POOL_LEFT);
 
     const char *gamedir = gCLIOpts.GameDir[0] ? gCLIOpts.GameDir : FS_BASEDIR;
-    const char *userpath = gCLIOpts.SavePath[0] ? gCLIOpts.SavePath : sys_user_path();
+    const char *userpath = gCLIOpts.SavePath[0] ? gCLIOpts.SavePath : sys_user_path();    
     fs_init(sys_ropaths, gamedir, userpath);
-    alloc_dialog_pool();
     configfile_load(configfile_name());
+
+    alloc_dialog_pool(argv[0], gamedir);
 
     if (gCLIOpts.FullScreen == 1)
         configWindow.fullscreen = true;
@@ -237,8 +238,7 @@ void main_func(void) {
     audio_init();
     sound_init();
 
-    thread5_game_loop(NULL);
-
+    thread5_game_loop(NULL);    
     inited = true;
 
     // precache data if needed
@@ -267,6 +267,6 @@ void main_func(void) {
 
 int main(int argc, char *argv[]) {
     parse_cli_opts(argc, argv);
-    main_func();
+    main_func(argv);
     return 0;
 }

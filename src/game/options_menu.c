@@ -429,7 +429,6 @@ static void optmenu_opt_change(struct Option *opt, s32 val) {
                 "Spanish",
                 "English"
             };
-            printf("SWITCH LANGUAGE: %s\n", languages[configLanguage]);
             set_language(get_language_by_name(languages[configLanguage]));
             break;
 
