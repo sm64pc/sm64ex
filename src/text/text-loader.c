@@ -104,21 +104,24 @@ void load_language(char* jsonTxt, s8 language){
         const cJSON *act = NULL;
         char* courseName = cJSON_GetObjectItemCaseSensitive(course, "course")->valuestring;
 
-        languages[language]->courses[courseID] = getTranslatedText(courseName);
-        courseID++;
+        if(courseID + 1 <= cJSON_GetArraySize(courses) - 1){
+            languages[language]->courses[courseID] = getTranslatedText(courseName);
+            courseID++;
+        }        
+
         cJSON_ArrayForEach(act, acts) {
             languages[language]->acts[actID] = getTranslatedText(act->valuestring);
             actSize += strlen(act->valuestring);
             actID++;
         }
         actAmount += cJSON_GetArraySize(acts);
-        actSize += strlen(courseName);
+        actSize += strlen(courseName);        
     }
 
     languages[language]->acts = realloc(languages[language]->acts, sizeof(u8*) * (actAmount * actSize));
 
-    cJSON_ArrayForEach(secret, secrets) {
-        languages[language]->courses[courseID] = getTranslatedText(secret->valuestring);
+    cJSON_ArrayForEach(secret, secrets) {        
+        languages[language]->courses[courseID] = getTranslatedText(secret->valuestring);        
         courseID++;
     }
     
