@@ -1,0 +1,8 @@
+- Patched the Backwards Long Jump #NoFunAllowed
+- The drowning noise when Mario is close to drowning no longer plays when Mario has the metal cap
+- You can now get 1ups every 50 coins when finishing a course (was capped as 150 as the developers never thought anyone would get to 200+)
+- Patched "Blast away the wall" skip
+- Patched the Lakitu Skip
+- Patched triple jumping & Kicking on slopes #NoFunAllowed
+- Patched the Hands-free holding when bonking #NoFunAllowed
+- Patched the "Zombie Mario" Glitch by a cannon
