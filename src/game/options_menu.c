@@ -75,14 +75,7 @@ static const u8 optsCameraStr[][32] = {
 // This is only for testing
 
 static const u8 optsGameStr[][32] = {
-    "TEXT_OPT_LANGUAGE",
-    "TEXT_OPT_LANG_SPANISH",
-    "TEXT_OPT_LANG_ENGLISH"
-};
-
-static const u8 *languageChoices[] = {
-    optsGameStr[1],
-    optsGameStr[2],    
+    "TEXT_OPT_LANGUAGE"
 };
 
 static const u8 optsVideoStr[][32] = {
@@ -276,7 +269,7 @@ static struct Option optsVideo[] = {
 };
 
 static struct Option optsGame[] = {
-    DEF_OPT_CHOICE( optsGameStr[0], &configLanguage, languageChoices ),    
+    DEF_OPT_CHOICE( optsGameStr[0], &configLanguage, NULL ),    
 };
 
 static struct Option optsAudio[] = {
@@ -376,6 +369,7 @@ static void optmenu_draw_text(s16 x, s16 y, const u8 *str, u8 col) {
 
 static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
     u8 buf[32] = { 0 };
+    u8* choice;
 
     if (opt->type == OPT_SUBMENU || opt->type == OPT_BUTTON)
         y -= 6;
@@ -388,7 +382,8 @@ static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
             break;
 
         case OPT_CHOICE:
-            optmenu_draw_text(x, y-13, get_key_string(opt->choices[*opt->uval]), sel);
+            choice = strcmp(opt->label, optsGameStr[0]) != 0 ? get_key_string(opt->choices[*opt->uval]) : getTranslatedText(languages[*opt->uval]->name);
+            optmenu_draw_text(x, y-13, choice, sel);
             break;
 
         case OPT_SCROLL:
@@ -424,12 +419,8 @@ static void optmenu_opt_change(struct Option *opt, s32 val) {
             break;
 
         case OPT_CHOICE:
-            *opt->uval = wrap_add(*opt->uval, val, 0, opt->numChoices - 1);            
-            static const char * languages[] = {
-                "Spanish",
-                "English"
-            };
-            set_language(get_language_by_name(languages[configLanguage]));
+            *opt->uval = wrap_add(*opt->uval, val, 0, strcmp(opt->label, optsGameStr[0]) == 0 ? languagesAmount - 1: opt->numChoices - 1);
+            set_language(languages[configLanguage]);
             break;
 
         case OPT_SCROLL:

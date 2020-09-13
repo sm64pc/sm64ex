@@ -168,13 +168,13 @@ void alloc_languages(char* exePath, char* gamedir){
     languages = realloc(languages, sizeof(struct LanguageEntry*) * 30);
 
     char *lastSlash = NULL;
-    char *parent = NULL;
+    char *parent = malloc(FILENAME_MAX * sizeof(char*));
     #ifndef WIN32
     lastSlash = strrchr(exePath, '/');
     #else
     lastSlash = strrchr(exePath, '\\');
     #endif
-    parent = strndup(exePath, strlen(exePath) - strlen(lastSlash));
+    strncpy(parent, exePath, strlen(exePath) - strlen(lastSlash));
 
     char * languagesDir = malloc(FILENAME_MAX * sizeof(char*));
     strcpy(languagesDir, parent);
@@ -196,8 +196,11 @@ void alloc_languages(char* exePath, char* gamedir){
 
             char * jsonTxt = read_file(file);
             load_language(jsonTxt, languagesAmount - 1);
-        }
+            free(file);
+        }        
     }
+
+    free(languagesDir);
 
     languages = realloc(languages, sizeof(struct LanguageEntry*) * (languagesAmount));
 }
@@ -264,11 +267,7 @@ void alloc_dialog_pool(char* exePath, char* gamedir){
     }    
 
     alloc_languages(exePath, gamedir);
-    static const char * languages[] = {
-        "Spanish",
-        "English"
-    };
-    set_language(get_language_by_name(languages[configLanguage]));    
+    set_language(languages[configLanguage]);
 }
 
 void dealloc_dialog_pool(void){
