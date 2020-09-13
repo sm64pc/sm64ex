@@ -128,7 +128,7 @@ static const u8 bindStr[][32] = {
     "TEXT_BIND_LEFT",
     "TEXT_BIND_RIGHT",
     "TEXT_OPT_DEADZONE",
-    "TEXT_OPT_RUMBL"
+    "TEXT_OPT_RUMBLE"
 };
 
 static const u8 *filterChoices[] = {
