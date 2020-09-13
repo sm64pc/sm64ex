@@ -1754,7 +1754,7 @@ s32 act_flying(struct MarioState *m) {
         set_camera_mode(m->area->camera, CAMERA_MODE_BEHIND_MARIO, 1);
 #else
         if (newcam_active == 0)
-            set_camera_mode(m->area->camera, m->area->camera->defMode, 1);
+            set_camera_mode(m->area->camera, CAMERA_MODE_BEHIND_MARIO, 1);
         else
         {
             m->area->camera->mode = CAMERA_MODE_NEWCAM;
