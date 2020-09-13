@@ -369,7 +369,7 @@ static void optmenu_draw_text(s16 x, s16 y, const u8 *str, u8 col) {
 
 static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
     u8 buf[32] = { 0 };
-    u8* choice;
+    u8 * choice;    
 
     if (opt->type == OPT_SUBMENU || opt->type == OPT_BUTTON)
         y -= 6;
@@ -382,8 +382,14 @@ static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
             break;
 
         case OPT_CHOICE:
-            choice = strcmp(opt->label, optsGameStr[0]) != 0 ? get_key_string(opt->choices[*opt->uval]) : getTranslatedText(languages[*opt->uval]->name);
-            optmenu_draw_text(x, y-13, choice, sel);
+            if(strcmp(opt->label, optsGameStr[0]) != 0){
+                choice = get_key_string(opt->choices[*opt->uval]);
+                optmenu_draw_text(x, y-13, choice, sel);
+            }else{
+                choice = getTranslatedText(languages[*opt->uval]->name);
+                optmenu_draw_text(x, y-13, choice, sel);
+                free(choice);
+            }
             break;
 
         case OPT_SCROLL:
