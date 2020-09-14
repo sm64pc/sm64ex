@@ -1,0 +1,3609 @@
+{
+    "manifest": {
+        "langName": "Espa{00241}ol Espa{00241}a",
+        "langLogo": "none"
+    },
+    "dialogs": [
+        {
+            "ID": 0,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Guau! Has acabado en",
+                "mitad de un campo de",
+                "batalla. Encontrar{00225}s las",
+                "estrellas que Bowser rob{00243}",
+                "dentro de los mundos",
+                "de los cuadros.",
+                "Primero, habla con",
+                "este amable Bob-omb.",
+                "([B] para hablar). Te",
+                "ayudar{00225}, y tambi{00233}n",
+                "sus camaradas en otros",
+                "lugares.",
+                "Para leer carteles,",
+                "p{00225}rate, m{00237}ralos y pulsa",
+                "[B] Pulsa [A] o [B]",
+                "para seguir leyendo. ",
+                "Puedes hablar con algunos",
+                "personajes mir{00225}ndoles",
+                "y pulsando [B]."
+            ]
+        },
+        {
+            "ID": 1,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}Ten cuidado! {00161}Si",
+                "merodeas por aqu{00237}, es",
+                "muy probable que seas",
+                "v{00237}ctima de una bomba",
+                "de agua!",
+                "{00161}A esos Bob-omb",
+                "enemigos les encanta",
+                "luchar, y siempre est{00225}n",
+                "buscando nuevas maneras",
+                "de atacar.",
+                "Este prado lleva siendo",
+                "un campo de batalla",
+                "desde que el Gran",
+                "Bob-Omb puso sus",
+                "garras en la ",
+                "Estrella de Poder",
+                "{00191}Podr{00237}as recuperar la",
+                "estrella por nosotros?",
+                "Cruza el puente y ve",
+                "hacia la izquierda",
+                "por el camino para",
+                "llegar hasta el Gran",
+                "Bob-Omb. Por favor,",
+                "ven a verme otra vez",
+                "cuando hayas conseguido",
+                "la Estrella de Poder."
+            ]
+        },
+        {
+            "ID": 2,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}Hey, t{00250}! {00161}Es peligroso",
+                "seguir adelante, as{00237} que",
+                "escucha lo que tengo",
+                "que decirte!",
+                "Cruza los dos puentes",
+                "que hay m{00225}s adelante,",
+                "y tras cruzar, ten",
+                "cuidado con las bombas",
+                "de agua que est{00225}n",
+                "cayendo.",
+                "El Gran Bob-omb en lo",
+                "alto de la monta{00241}a",
+                "es muy fuerte: {00161}no",
+                "dejes que te coja!",
+                "Somos Bob-omb amigables,",
+                "y estamos de tu lado.",
+                "{00161}Puedes hablarnos",
+                "siempre que quieras!"
+            ]
+        },
+        {
+            "ID": 3,
+            "linesPerBox": 6,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}Gracias, Mario! {00161}El Gran",
+                "Bob-omb ya no es m{00225}s que",
+                "el gran abombao! Pero la",
+                "batalla por el castillo no",
+                "ha hecho m{00225}s que empezar.",
+                "",
+                "Hay otros enemigos que",
+                "tienen Estrellas de Poder.",
+                "Si consigues m{00225}s",
+                "Estrellas, {00161}podr{00225}s abrir",
+                "m{00225}s puertas que conducen",
+                "a nuevos mundos!",
+                "Mis amigos Bob-omb te",
+                "est{00225}n esperando. Aseg{00250}rate",
+                "de hablar con ellos: te ",
+                "preparar{00225}n los ca{00241}ones."
+            ]
+        },
+        {
+            "ID": 4,
+            "linesPerBox": 3,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Somos Bob-omb amantes de",
+                "la paz, as{00237} que no usamos",
+                "los ca{00241}ones.",
+                "Pero si quieres salir",
+                "disparado, no hay.",
+                "problema. Ponte c{00243}modo.",
+                "Prepararemos los ca{00241}ones",
+                "de esta {00225}rea para que.",
+                "puedas utilizarlos",
+                "{00161}Bon voyage!"
+            ]
+        },
+        {
+            "ID": 5,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Oye, Mario! {00191}Es verdad",
+                "que derrotaste al Gran",
+                "Bob-omb? {00161}Guay!",
+                "Debes ser fuerte. Y",
+                "r{00225}pido. Pero, {00191}c{00243}mo de",
+                "r{00225}pido, eh?",
+                "{00191}Lo suficiente para vencer",
+                "a Koopa el R{00225}pido? No ",
+                "creo. Venga, int{00233}ntalo.",
+                "{00191}Qu{00233} tal una carrera a la",
+                "cima de la monta{00241}a, donde",
+                "estaba el Gran Bob-omb?",
+                "{00191}Qu{00233} me dices? {00191}Tienes",
+                "agallas para enfrentarte a",
+                "este koorredor?",
+                "Cuando diga",
+                "{12302}Ya,{12303} {00161}empezamos!",
+                "",
+                "Preparados, listos...",
+                "",
+                "//{00161}Ya!//Te esperas"
+            ]
+        },
+        {
+            "ID": 6,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}{00161}{00161}Oye!!! {00161}No intentes",
+                "col{00225}rmela! Tienes que",
+                "hacer el recorrido",
+                "completo. Venga, chao.",
+                "Ya me avisar{00225}s",
+                "cuando quieras echar",
+                "una carrera de verdad."
+            ]
+        },
+        {
+            "ID": 7,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Hufff...fff...pufff...",
+                "{00161}Guau! Eres...muy...",
+                "{00161}r{00225}pido! {00161}Apenas te vi!",
+                "Aqu{00237} tienes: te lo has",
+                "ganado, sin duda.!"
+            ]
+        },
+        {
+            "ID": 8,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "CUIDADO CON CHOMP",
+                "CADENAS {00161}PELIGRO",
+                "EXTREMO!",
+                "",
+                "",
+                "Ac{00233}rcate y pulsa [C]^",
+                "para mirarle mejor.",
+                "Da miedito, {00191}eh?",
+                "{00191}Ves la moneda roja",
+                "encima del poste?",
+                "Si consigues ocho",
+                "una Estrella de",
+                "Poder aparecer{00225} en el",
+                "prado, pasado el puente."
+            ]
+        },
+        {
+            "ID": 9,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Cu{00225}nto tiempo!",
+                "Madr{00233} m{00237}a, s{00237} que te has",
+                "vuelto r{00225}pido, {00191}eh?",
+                "{00191}Has estado entrenando en",
+                "secreto, o es por el",
+                "poder de las Estrellas?",
+                "",
+                "Lo de perder la {00250}ltima",
+                "carrera me ha dejado un",
+                "poco desanimado. Pero si",
+                "ech{00225}semos una carrera",
+                "aqu{00237}, estar{00237}a jugando en",
+                "casa. {00191}Te atreves con",
+                "una revancha?",
+                "//Vamos//// Paso"
+            ]
+        },
+        {
+            "ID": 10,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Has accionado el bot{00243}n",
+                "de la Gorra Voladora.",
+                "Con ella, puedes surcar",
+                "los cielos. A partir de",
+                "ahora, cuando rompas un",
+                "bloque rojo, encontrar{00225}s",
+                "una Gorra Voladora.",
+                "",
+                "{00191}Quieres guardar?",
+                "",
+                "//S{00237}////No"
+            ]
+        },
+        {
+            "ID": 11,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Acabas de accionar el",
+                "bot{00243}n de la Gorra de",
+                "Metal! Esta gorra hace",
+                "a Mario invencible.",
+                "A partir de ahora,",
+                "aparecer{00225}n gorras de",
+                "metal de los bloques",
+                "verdes que rompas.",
+                "{00191}Quieres guardar?",
+                "",
+                "//Yes////No"
+            ]
+        },
+        {
+            "ID": 12,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Acabas de accionar el",
+                "bot{00243}n de la gorra de",
+                "invisibilidad. Esta gorra",
+                "hace desaparecer a Mario.",
+                "Ahora habr{00225}n gorras de",
+                "invisibilidad en los",
+                "bloques azules.",
+                "",
+                "{00191}Quieres guardar?",
+                "",
+                "//S{00237}////No"
+            ]
+        },
+        {
+            "ID": 13,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Has conseguido 100",
+                "monedas! Mario consigue",
+                "m{00225}s poder del castillo.",
+                "{00191}Quieres guardar?",
+                "//S{00237}////No"
+            ]
+        },
+        {
+            "ID": 14,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Guau! {00161}Otra Estrella de",
+                "poder! Gracias al poder",
+                "del castillo, Mar{00237}o est{00225}",
+                "m{00225}s decidido que nunca.",
+                "{00191}Quieres guardar?",
+                "",
+                "//Claro//Luego"
+            ]
+        },
+        {
+            "ID": 15,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Puedes darle un pu{00241}etazo",
+                "para derribarlos. Pulsa",
+                "[A] para saltar, y [B]",
+                "para dar un pu{00241}etazo.",
+                "Para recoger algo, pulsa",
+                "[B]. Si quieres tirar lo",
+                "que has cogido, vuelve a",
+                "pulsar [B]."
+            ]
+        },
+        {
+            "ID": 16,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}S{00250}bete a esa concha y",
+                "dir{00237}gela hacia donde",
+                "quieras! {00161}Arroya a tus",
+                "enemigos!"
+            ]
+        },
+        {
+            "ID": 17,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Soy el Gran Bob-Omb,",
+                "due{00241}o y se{00241}or de toda la",
+                "materia disparable, {00161}el",
+                "rey de las explosiones",
+                "y los disparos de todo",
+                "el mundo.",
+                "{00191}C{00243}mo te atreves a subir",
+                "aqu{00237}? {00191}Qui{00233}n te ha",
+                "dado derecho a pisar mi",
+                "imperio monta{00241}il?",
+                "",
+                "",
+                "Puedes que hayas eludido",
+                "a mis guardias, pero te",
+                "aseguro que no escapar{00225}s",
+                "de esta bola",
+                "explosiva...",
+                "",
+                "...{00161}y nunca te llevar{00225}s mi",
+                "Estrella de Poder! Por la",
+                "presente, {00161}te reto a que",
+                "lo intentes, Mario!",
+                "",
+                "",
+                "Si quieres la Estrella de",
+                "Poder, deber{00225}s de",
+                "demostrar tu valor en el",
+                "campo de batalla.",
+                "",
+                "",
+                "{00191}Ser{00225}s capaz de levantar",
+                "mi peso y hacerme besar",
+                "el suelo? {00161}Lo dudo",
+                "mucho!",
+                "{00161}Desembomba!"
+            ]
+        },
+        {
+            "ID": 18,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Estoy durmiendo porque...",
+                "...tengo sue{00241}o. No quiero",
+                "que nadie me despierte.",
+                "No hagas ruido al",
+                "caminar."
+            ]
+        },
+        {
+            "ID": 19,
+            "linesPerBox": 2,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Shhh! {00161}No corras por",
+                "los pasillos!"
+            ]
+        },
+        {
+            "ID": 20,
+            "linesPerBox": 6,
+            "leftOffset": 95,
+            "width": 150,
+            "lines": [
+                "Querido Mario:",
+                "Por favor, ven al",
+                "castillo. He preparado",
+                "una tarta para ti.",
+                "Atentamente--",
+                "Princesa Toadstool"
+            ]
+        },
+        {
+            "ID": 21,
+            "linesPerBox": 5,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}Hola!.",
+                "{00161}No hay nadie en casa!",
+                "Ahora L{00193}RGATE, {00161}y no",
+                "vuelvas jam{00225}s!",
+                "{00161}Ja ja ja!"
+            ]
+        },
+        {
+            "ID": 22,
+            "linesPerBox": 2,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Necesitas una llave para",
+                "abrir esta puerta."
+            ]
+        },
+        {
+            "ID": 23,
+            "linesPerBox": 3,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}Esta llave no encaja!",
+                "{00191}Igual es para el",
+                "s{00243}tano?"
+            ]
+        },
+        {
+            "ID": 24,
+            "linesPerBox": 6,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Necesitas m{00225}s poder de",
+                "las Estrellas para abrir",
+                "esta puerta. Recupera",
+                "Estrellas de Poder en",
+                "los mundos de los cuadros",
+                "del castillo."
+            ]
+        },
+        {
+            "ID": 25,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Para abrir esta puerta,",
+                "necesitas el poder de 3",
+                "Estrellas. Te faltan [%]",
+                "Estrellas."
+            ]
+        },
+        {
+            "ID": 26,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Para abrir esta puerta,",
+                "necesitas el poder de 8",
+                "Estrellas. Te faltan [%]",
+                "Estrellas."
+            ]
+        },
+        {
+            "ID": 27,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Para abrir esta puerta,",
+                "necesitas el poder de 30",
+                "Estrellas. Te faltan [%]",
+                "Estrellas."
+            ]
+        },
+        {
+            "ID": 28,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Para abrir esta puerta,",
+                "necesitas el poder de 50",
+                "Estrellas. Te faltan [%]",
+                "Estrellas."
+            ]
+        },
+        {
+            "ID": 29,
+            "linesPerBox": 5,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Si pretendes subir hasta",
+                "lo alto de las escaleras",
+                "{12302}infinitas{12303}, necesitar{00225}s",
+                "70 Estrellas",
+                "{00161}Muajajaja!"
+            ]
+        },
+        {
+            "ID": 30,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Hola! Somos los Hermanos",
+                "Lakitu, {00161}en comentando el",
+                "progreso de Mario en",
+                "directo! Va a aprender una",
+                "nueva t{00233}cnica para no",
+                "alertar a sus enemigos.",
+                "El truco consiste en",
+                "caminar muy despacio",
+                "para no hacer ruido",
+                "",
+                "",
+                "",
+                "Y para terminar de",
+                "comentar en las t{00233}cnicas",
+                "de grabaci{00243}n, puedes usar",
+                "[C]> y [C]< para mirar a",
+                "tu alrededor. Pulsa [C]|",
+                "para ver la acci{00243}n desde",
+                "lejos. Cuando no puedas ",
+                "mover m{00225}s la c{00225}mara, ",
+                "oir{00225}s un sonido. Aqu{00237} los",
+                "hermanos Lakitu,",
+                "despidi{00233}ndose."
+            ]
+        },
+        {
+            "ID": 31,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}No puede ser!{00161}Me has",
+                "ganado...{00161}otra vez! {00161}Y",
+                "eso que me he gastado",
+                "todos mis ahorros en",
+                "estos zapatos",
+                "koopas{00243}nicos!",
+                "En fin, supongo que",
+                "tendr{00233} que darle esta",
+                "Estrella al ganador de",
+                "la carrera.",
+                "{00161}Felicidades, Mario!"
+            ]
+        },
+        {
+            "ID": 32,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Si consigues la Gorra",
+                "Voladora, podr{00225}s...",
+                "{00161}exacto, volar! Solo",
+                "tienes que dar un triple",
+                "salto, es decir, saltar",
+                "tres veces seguidas,",
+                "para despegar.",
+                "Con un ca{00241}{00243}n, {00161}podr{00237}as",
+                "volar todav{00237}a m{00225}s alto!",
+                "",
+                "Usa los botones [C] para",
+                "mirad a tu alrededor",
+                "mientras vuelas, y pulsa",
+                "[Z] para aterrizar."
+            ]
+        },
+        {
+            "ID": 33,
+            "linesPerBox": 7,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Hola! Has llegado al",
+                "castillo de la Princesa",
+                "Peach a trav{00233}s de una",
+                "tuber{00237}a. Controlar a",
+                "Mario es muy sencillo.",
+                "",
+                "",
+                "Pulsa [A] para saltar",
+                "y [B] para atacar. [B]",
+                "tambi{00233}n sirve para leer",
+                "carteles. Usa el stick",
+                "anal{00243}gico para mover",
+                "a Mario. Ahora, ve al",
+                "castillo."
+            ]
+        },
+        {
+            "ID": 34,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Buenas tardes. Somos los",
+                "hermanos Lakitu,",
+                "comentando en directo",
+                "desde el exterior del",
+                "castillo de la princesa.",
+                "",
+                "Mario acaba de llegar",
+                "y vamos a grabarle en",
+                "directo mientras entra al",
+                "castillo y busca las",
+                "Estrellas de Poder",
+                "perdidas.",
+                "Como c{00225}mara con",
+                "experiencia que soy,",
+                "grabar{00233} desde el {00225}ngulo",
+                "recomendado, pero puedes",
+                "cambiar el {00225}ngulo de",
+                "la c{00225}mara con [C]",
+                "Si no podemos movernos",
+                "m{00225}s, te avisaremos con",
+                "un sonido. Para echar un",
+                "vistazo a tus",
+                "alrededores, p{00225}rate y",
+                "pulsa [C]^",
+                "De momento, esto ha sido",
+                "todo. Seguiremos en",
+                "directo la aventura de",
+                "Mario."
+            ]
+        },
+        {
+            "ID": 35,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Hay cuatro botones de",
+                "c{00225}mara, tambi{00233}n llamados",
+                "botones [C]. Pulsa [C]^",
+                "para mirar a tu alrededor",
+                "con el stick de control.",
+                "Normalmente ver{00225}s a Mario",
+                "a trav{00233}s de la c{00225}mara de",
+                "Lakitu. Esta es la c{00225}mara",
+                "recomendada para jugar",
+                "casi siempre.",
+                "Puedes cambiar el {00225}ngulo",
+                "pulsando [C]>. Si pulsas",
+                "[R], la vista cambia a la",
+                "c{00225}mara de Mario, que est{00225}",
+                "justo detr{00225}s de {00233}l.",
+                "Si vuelves a pulsar [R],",
+                "volver{00225}s a la c{00225}mara de",
+                "Lakitu.",
+                "",
+                "",
+                "Pulsa [C]| para ver a",
+                "Mario desde lejos, tanto",
+                "con la c{00225}mara de Lakitu",
+                "como la de Mario."
+            ]
+        },
+        {
+            "ID": 36,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "PLATAFORMA DE OBSERVACI{00211}N",
+                "Pulsa [C]^ para admirar",
+                "las vistas. {00161}Aprovecha la",
+                "ocasi{00243}n mira bien!",
+                "Pulsa [R] para cambiar a",
+                "la c{00225}mara de Mario.",
+                "Esta vista siempre sigue",
+                "a Mario. Vuelve a pulsar",
+                "[R] para volver a la",
+                "c{00225}mara de Lakitu. Si ",
+                "pausas el juego, puedes",
+                "cambiar el modo de la ",
+                "c{00225}mara para que se ",
+                "quede {12302}fija{12303} en un sitio",
+                "al pulsar [R]. {00161}Pru{00233}balo!"
+            ]
+        },
+        {
+            "ID": 37,
+            "linesPerBox": 2,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Te he ganado! {00161}Y t{00250} has",
+                "perdido! {00161}Jajaja!",
+                "No se te da mal, pero",
+                "a m{00237} se me da mejor.",
+                "{00161}Que tengas m{00225}s suerte",
+                "la pr{00243}xima vez!"
+            ]
+        },
+        {
+            "ID": 38,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "La puerta est{00225}",
+                "reaccionando al poder de",
+                "la Estrella, y se empieza",
+                "a abrir lentamente."
+            ]
+        },
+        {
+            "ID": 39,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Por decreto del Gran",
+                "Bob-Omb, no se permiten",
+                "visitas.",
+                "",
+                "Jam{00225}s renunciar{00233} a mis",
+                "Estrellas, ya que",
+                "contienen el poder del",
+                "castillo.",
+                "Fueron un regalo del Rey",
+                "Koopa, el mism{00237}simo",
+                "Bowser, y est{00225}n muy bien",
+                "escondidas.",
+                "De ninguna manera dir{00233}",
+                "d{00243}nde se encuentran...",
+                "Bueno, venga, pero solo",
+                "una pista:",
+                "Atento a los nombres",
+                "de las estrellas al",
+                "comienzo de cada mundo.",
+                "//--El Gran Bob-omb"
+            ]
+        },
+        {
+            "ID": 40,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Peligro! {00161}Puente roto!",
+                "{00161}Precipicio bien fr{00237}o",
+                "justo debajo!"
+            ]
+        },
+        {
+            "ID": 41,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}He ganado! {00161}Y t{00250} has",
+                "perdido! {00161}Ja ja ja!",
+                "",
+                "",
+                "Eso es lo que te llevas",
+                "por meterte con Koopa el",
+                "R{00225}pido. {00161}Que tengas m{00225}s",
+                "suerte la pr{00243}xima vez!"
+            ]
+        },
+        {
+            "ID": 42,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Cuidado! {00161}Puente muy",
+                "estrecho!{00161}Cruza",
+                "lentamente!",
+                "",
+                "",
+                "Puedes saltar al bordillo",
+                "del precipicio y colgarte",
+                "{00233}l, y tras eso, puedes",
+                "subir lentamente si",
+                "mueves el stick de control",
+                "hacia delante, o de un",
+                "salto si pulsas A.",
+                "Cuando quieras dejarte",
+                "caer, pulsa [Z] o mueve",
+                "el stick de control en la",
+                "direcci{00243}n contraria a la",
+                "que mira Mario."
+            ]
+        },
+        {
+            "ID": 43,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Si saltas y mantienes",
+                "pulsado [A], puedes",
+                "colgarte de ciertos",
+                "objetos que tengas",
+                "encima.",
+                "{00161}Tal vez incluso podr{00237}as",
+                "colgarte de un p{00225}jaro",
+                "en pleno vuelo!"
+            ]
+        },
+        {
+            "ID": 44,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00191}Qui{00233}n anda ah{00237}? {00191}Qui{00233}n",
+                "me ha despertado? {00161}A{00250}n",
+                "es de d{00237}a, deber{00237}a estar",
+                "durmiendo!",
+                "Bueno, ya estoy despierto,",
+                "as{00237} que de perdidos al",
+                "r{00237}o. {00191}Quieres volar",
+                "conmigo?",
+                "Pulsa y mant{00233}n [A] para",
+                "agarrarte a m{00237}. Suelta",
+                "[A] para soltarte.",
+                "",
+                "Te llevar{00233} hasta donde",
+                "quieras, siempre que mis",
+                "alas puedan aguantar tu",
+                "peso... sin ofender.",
+                "Atento a mi sombra, {00161}y",
+                "ag{00225}rrate fuerte!"
+            ]
+        },
+        {
+            "ID": 45,
+            "linesPerBox": 6,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}Mi madre! No puedo m{00225}s.",
+                "{00161}Rel{00225}jate con la pasta",
+                "Mario! Hasta aqu{00237}",
+                "hemos llegado. Pulsa",
+                "[A] para soltarte, por",
+                "favor. Bueno, {00161}adi{00243}s!"
+            ]
+        },
+        {
+            "ID": 46,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Tienes que dominar tres",
+                "t{00233}cnicas de salto muy",
+                "importantes. Primero,",
+                "vamos con el triple",
+                "salto.",
+                "",
+                "Coge carrerilla, y salta",
+                "tres veces. {00161}Uno, dos,",
+                "tres! Si sincronizas bien",
+                "los saltos, dar{00225}s un",
+                "peque{00241}o salto, luego uno",
+                "un poco m{00225}s alto,",
+                "y luego uno enorme.",
+                "Vale, ahora toca el salto",
+                "largo. Corre, pulsa [Z]",
+                "para agacharte y luego",
+                "pulsa [A] para saltar muy",
+                "lejos.",
+                "Para hacer el salto en",
+                "pared, salta hacia una",
+                "pared y luego vuelve a",
+                "saltar cuando la toques.",
+                "",
+                "",
+                "{00191}Lo pillaste? Triple",
+                "salto, salto largo, y",
+                "salto en pared. Ahora,",
+                "pract{00237}calo sin parar.",
+                "No tienes ninguna",
+                "posibilidad sin dominarlo."
+            ]
+        },
+        {
+            "ID": 47,
+            "linesPerBox": 2,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}Hola! {00161}Te preparar{00233}",
+                "los ca{00241}ones!"
+            ]
+        },
+        {
+            "ID": 48,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Mensaje de la Cumbre de",
+                "la Monta{00241}a Helada:",
+                "{00161}Cuidado con el suelo, que",
+                "resbala! Por favor, entra",
+                "al refugio antes de hacer",
+                "nada."
+            ]
+        },
+        {
+            "ID": 49,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00191}Recuerdas esa complicada",
+                "t{00233}cnica llamada salto",
+                "en pared? Tendr{00225}s que",
+                "dominarla para llegar a",
+                "sitios altos.",
+                "Podr{00225}s saltar de pared",
+                "en pared. Mueve el stick",
+                "en la direcci{00243}n en la",
+                "que quieras rebotar",
+                "para ganar impulso.",
+                "{00161}Lo dominar{00225}s con la",
+                "pr{00225}ctica!"
+            ]
+        },
+        {
+            "ID": 50,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Mant{00233}n pulsado [Z] para",
+                "agacharte y deslizarte por",
+                "una cuesta. O pulsa [Z]",
+                "cuando est{00233}s en el aire",
+                "para dar un pisot{00243}n.",
+                "Si te paras, te agachas,",
+                "y saltas, {00161}har{00225}s una",
+                "pirueta giratoria!",
+                "{00191}Lo pillas?",
+                "{00161}Pues hay m{00225}s! Mientras",
+                "corres, ag{00225}chate y salta,",
+                "y har{00225}s un salto largo.",
+                "O ag{00225}chate y camina",
+                "para...",
+                "Mira, d{00233}jalo."
+            ]
+        },
+        {
+            "ID": 51,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Trepar es f{00225}cil! Cuando",
+                "saltas hacia un {00225}rbol,",
+                "un palo o un pilar, te",
+                "agarrar{00225}s a {00233}l",
+                "autom{00225}ticamente. Pulsa A",
+                "para saltar hacia atr{00225}s.",
+                "Para rotar alrededor del",
+                "objeto, mueve el stick de",
+                "control. Cuando llegues",
+                "a lo m{00225}s alto, {00161}mueve el",
+                "stick hacia arriba para",
+                "apoyarte en tus manos!",
+                "Mientras est{00225}s en esa",
+                "posici{00243}n, pulsa A y",
+                "saltar{00225}s con m{00225}s estilo",
+                "que nadie."
+            ]
+        },
+        {
+            "ID": 52,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "P{00225}rate y pulsa [Z] para",
+                "agacharte, y luego pulsa",
+                "[A] para hacer una pirueta",
+                "giratoria.",
+                "",
+                "Para hacer una pirueta",
+                "lateral, corre, date la",
+                "vuelta r{00225}pidamente, y",
+                "salta. Ambos saltos te",
+                "permiten llegar muy alto."
+            ]
+        },
+        {
+            "ID": 53,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "A veces, si pasas por",
+                "dentro de un anillo de",
+                "monedas o encuentras un",
+                "secreto en un mundo,",
+                "aparecer{00225} un n{00250}mero rojo.",
+                "{00161}Si encuentras los cinco",
+                "n{00250}meros rojos, aparecer{00225}",
+                "una Estrella oculta!"
+            ]
+        },
+        {
+            "ID": 54,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Bienvenido al tobog{00225}n de",
+                "nieve! {00161}Salta! Para",
+                "acelerar, mueve el stick",
+                "de control hacia delante.",
+                "Para frenar, mu{00233}velo",
+                "hacia detr{00225}s."
+            ]
+        },
+        {
+            "ID": 55,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Oye, oye, Mario, fiera!",
+                "{00191}C{00243}mo te va? Vamos,",
+                "acelera. Pareces un t{00237}o",
+                "r{00225}pido. Reconozco la",
+                "velocidad cuando la veo,",
+                "s{00237} se{00241}or: {00161}Soy el",
+                "kooredor m{00225}s r{00225}pido del",
+                "mundo! {00191}Lo sab{00237}as?",
+                "{00191}Echamos una carrera?",
+                "Preparados, listos...",
+                "",
+                "//{00161}Ya!//// Pasando"
+            ]
+        },
+        {
+            "ID": 56,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Has r-r-r-{00161}Has roto mi",
+                "record! {00161}Incre{00237}ble!",
+                "Ya sab{00237}a que eras el m{00225}s",
+                "guay, {00161}pero ahora has",
+                "demostrado que tambi{00233}n",
+                "eres el m{00225}s r{00225}pido!",
+                "No tengo presupuesto",
+                "para una medalla de oro,",
+                "pero toma, una Estrella.",
+                "{00161}Te la has ganado!"
+            ]
+        },
+        {
+            "ID": 57,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Socorro! {00161}Mi beb{00233}! {00191}Has",
+                "visto a mi beb{00233}? {00161}Es la",
+                "ni{00241}a m{00225}s preciosa del",
+                "mundo mundial! {00191}Eh?",
+                "{00191}Que te la describa?",
+                "",
+                "{00161}Pero si te la acabo",
+                "de describir! {00161}La m{00225}s",
+                "guapa! {00191}No te vale con",
+                "eso? Bueno, pues...",
+                "{00161}Tiene el pico igualito",
+                "al m{00237}o!",
+                "{00191}Que c{00243}mo se perdi{00243}?",
+                "A ver, a ver...",
+                "Me par{00233} a por un arenque",
+                "y unos cubos de hielo...",
+                "y entonces...",
+                "",
+                "{00161}Ay! {00161}No me acuerdo!",
+                "{00161}T{00250} b{00250}scala, por favor!",
+                "{00161}Seguro que la reconoces!"
+            ]
+        },
+        {
+            "ID": 58,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Has encontrado a mi",
+                "preciada ni{00241}a! {00191}D{00243}nde",
+                "has estado? {00191}C{00243}mo te lo",
+                "puedo agradecer, Mario?",
+                "Ahora que lo pienso,",
+                "tengo una... Estrella.",
+                "Te la dar{00233}, junto a mi",
+                "eterna gratitud."
+            ]
+        },
+        {
+            "ID": 59,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Esa no es mi ni{00241}a! {00191}Es",
+                "que no ves que no se me",
+                "parece en nada? {00161}Sus",
+                "padres deben estar muy",
+                "preocupados!"
+            ]
+        },
+        {
+            "ID": 60,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Atenci{00243}n!",
+                "{00161}Leer antes de bucear!",
+                "",
+                "",
+                "Si est{00225}s bajo el agua",
+                "demasiado rato, te",
+                "quedar{00225}s sin ox{00237}geno.",
+                "",
+                "Vuelve a la superficie a",
+                "por aire, o encuentra",
+                "burbujas y monedas para",
+                "respirar bajo el agua.",
+                "Pulsa [A] para nadar.",
+                "Mant{00233}n pulsado [A] para",
+                "nadar a un ritmo suave.",
+                "Pulsa [A] repetidamente",
+                "para nadar r{00225}pido.",
+                "Mueve el stick de control",
+                "hacia arriba y pulsa [A]",
+                "para bucear.",
+                "Mueve el stick de control",
+                "hacia abajo y pulsa [A]",
+                "para volver a la",
+                "superficie,",
+                "",
+                "Mant{00233}n el stick de control",
+                "hacia abajo y pulsa A",
+                "mientras est{00233}s en la",
+                "superficie para salir."
+            ]
+        },
+        {
+            "ID": 61,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}BRRR! {00161}Peligro de",
+                "congelamiento! No entrar",
+                "en el agua. Va en serio.",
+                "/--El Ping{00252}ino"
+            ]
+        },
+        {
+            "ID": 62,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Dentro del bloque verde",
+                "se oculta la incre{00237}ble",
+                "Gorra de Metal.",
+                "Con ella, no podr{00225}s",
+                "quemarte y podr{00225}s ignorar",
+                "los ataques enemigos.",
+                "Ni siquiera necesitar{00225}s",
+                "respirar si la llevas",
+                "puesta.",
+                "Pero tiene un defecto:",
+                "NO TE PERMITE NADAR."
+            ]
+        },
+        {
+            "ID": 63,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "La Gorra de Invisibilidad",
+                "est{00225} dentro del bloque",
+                "azul.",
+                "Ni siquiera yo, Don Ojo,",
+                "podr{00233} verte si la usas,",
+                "ya que te har{00225} invisible.",
+                "Incluso podr{00225}s sorprender",
+                "a los Boo, y tambi{00233}n te",
+                "permite atravesar ciertas",
+                "paredes secretas."
+            ]
+        },
+        {
+            "ID": 64,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Cuando te pongas la Gorra",
+                "Voladora, que sale de los",
+                "bloques rojos, haz un",
+                "triple salto para surcar",
+                "el cielo azul.",
+                "",
+                "Usa el stick de control",
+                "para guiar a Mario.",
+                "Mu{00233}velo hacia detr{00225}s para",
+                "elevarte, hacia arriba",
+                "para descender, y [Z]",
+                "para aterrizar."
+            ]
+        },
+        {
+            "ID": 65,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Clase de nataci{00243}n!!",
+                "Pulsa repetidamente [A]",
+                "para hacer el nado del",
+                "delf{00237}n. Si lo pulsas al",
+                "ritmo adecuado, nadar{00225}s",
+                "m{00225}s r{00225}pido.",
+                "Mant{00233}n pulsado [A] para",
+                "nadar despacito con",
+                "los pies. Mueve el",
+                "stick de control hacia",
+                "arriba para descender, y",
+                "abajo para descender.",
+                "Para salir del agua,",
+                "mant{00233}n el stick hacia",
+                "abajo cuando est{00233}s en la",
+                "superficie y pulsa [A]",
+                "M{00225}s f{00225}cil que quitarle el",
+                "caramelo a un ni{00241}o, {00191}eh?",
+                "Pero recuerda: {00161}Mario no",
+                "puede respirar bajo el",
+                "agua! Vuelve a la",
+                "superficie cuando tengas",
+                "poca vida.",
+                "",
+                "Y una {00250}ltima cosa: No",
+                "puedes abrir puertas que",
+                "est{00233}n bajo el agua."
+            ]
+        },
+        {
+            "ID": 66,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Mario, {00161}soy Peach! {00161}Ten",
+                "cuidado! {00161}Bowser est{00225}",
+                "loco! Te intentar{00225} quemar",
+                "con su horrible aliento de",
+                "fuego.",
+                "",
+                "Col{00243}cate detr{00225}s de {00233}l y",
+                "c{00243}gelo por la cola con el",
+                "bot{00243}n [B]. Despu{00233}s,",
+                "usa el stick de control",
+                "para hacerle dar vueltas",
+                "sin parar.",
+                "Cuanto m{00225}s r{00225}pido muevas",
+                "el stick, m{00225}s lejos",
+                "volar{00225} cuando lo sueltes",
+                "volviendo a pulsar [B]",
+                "",
+                "Recuerda que puedes usar",
+                "los botones [C] para",
+                "mirar a tu alrededor.",
+                "Tienes que lanzar a",
+                "Bowser a una de las",
+                "bombas de las esquinas.",
+                "Recuerda: Apunta bien, y",
+                "pulsa [B] en el momento",
+                "adecuado para lanzarlo.",
+                "{00161}Buena suerte, Mario!",
+                "Estamos en tus manos."
+            ]
+        },
+        {
+            "ID": 67,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Lo siento, Mario, {00161}tu",
+                "princesa est{00225} en otro",
+                "castillo! {00161}Ja ja ja!",
+                "Venga, {00161}intenta cogerme",
+                "de la cola!",
+                "",
+                "{00161}No ser{00225}s capaz ni de",
+                "levantarme! {00161}Un blandengue",
+                "como t{00250} jam{00225}s ser{00237}a capaz",
+                "de lanzar a alguien como",
+                "YO! {00161}Jam{00225}s! {00161}Ja!"
+            ]
+        },
+        {
+            "ID": 68,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Est{00225}s en la Tierra de!",
+                "Lava! Si te prendes fuego",
+                "o caes en una masa de",
+                "lava, {00161}empezar{00225}s a botar",
+                "sin parar!",
+                "{00161}Pero a{00250}n as{00237} puedes",
+                "controlar a Mario! {00161}Lo",
+                "importante es que no",
+                "pierdas la calma!"
+            ]
+        },
+        {
+            "ID": 69,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "A veces, mientras vuelas,",
+                "es posible que te",
+                "estrelles contra un muro",
+                "invisible en los l{00237}mites",
+                "de los mundos de los",
+                "cuadros.",
+                "Si te estrellas contra",
+                "uno de estos muros",
+                "mientras vuelas,",
+                "rebotar{00225}s hacia atr{00225}s"
+            ]
+        },
+        {
+            "ID": 70,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Puedes volver a la sala",
+                "principal del castillo",
+                "cuando quieras desde",
+                "cualquiera de los mundos",
+                "de los cuadros.",
+                "Solo tienes que quedarte",
+                "quieto en el suelo,",
+                "pulsar Start para pausar,",
+                "y luego seleccionar",
+                "{12302}Salir del nivel.{12303}",
+                "No hace falta conseguir",
+                "todas las Estrellas de",
+                "Poder en un mundo para",
+                "pasar al siguiente.",
+                "",
+                "Puedes volver m{00225}s",
+                "adelante, cuando tengas",
+                "m{00225}s experiencia, para",
+                "coger las que se te hagan",
+                "muy complicadas.",
+                "Cuando consigas una",
+                "Estrella y vuelvas a",
+                "entrar al mundo,",
+                "aparecer{00225} una pista",
+                "para la siguiente.",
+                "Pero no hace falta que",
+                "las cojas en orden.",
+                "Puedes coger cualquier",
+                "estrella, no tiene que",
+                "ser la de la pista."
+            ]
+        },
+        {
+            "ID": 71,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Peligro!",
+                "{00161}Cuidado con la nube",
+                "extra{00241}a! {00161}No respires el",
+                "aire!",
+                "Si te sientes mareado,",
+                "corre a terreno m{00225}s",
+                "elevado y respira aire",
+                "limpio.",
+                "C{00237}rculo: Refugio",
+                "Flecha: Entrada o salida"
+            ]
+        },
+        {
+            "ID": 72,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Peligro! {00161}Viento fuerte!",
+                "Sujeta bien tu gorra.",
+                "Si se te cae, tendr{00225}s",
+                "que buscarla por toda la",
+                "monta{00241}a."
+            ]
+        },
+        {
+            "ID": 73,
+            "linesPerBox": 5,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}Aarrgh! Zaludos, pirata.",
+                "Tengo un tezoro oculto,",
+                "vaya que z{00237}.",
+                "",
+                "",
+                "Pero ziento dezirte que",
+                "si pretendes echarle la",
+                "zarpa vas a tener que",
+                "abrir los cofres del",
+                "tezoro en el orden",
+                "correcto.",
+                "{00191}Que cual es el orden?",
+                "{00161}Jajaja! {00161}Jam{00225}s te lo ",
+                "dir{00233}, as{00237} que buena",
+                "zuerte!",
+                "//--El Capit{00225}n"
+            ]
+        },
+        {
+            "ID": 74,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Puedes agarrarte a un",
+                "bordillo con las manos",
+                "y quedarte colgado.",
+                "",
+                "",
+                "",
+                "Para dejarte caer del",
+                "bordillo, puedes mover",
+                "el stick de control en",
+                "la direcci{00243}n contraria a",
+                "la que mira Mario, o",
+                "pulsar [Z].",
+                "Para subir a lo alto del",
+                "bordillo, puedes mover el",
+                "stick hacia arriba para",
+                "subir lentamente, o",
+                "pulsar [A] para subir",
+                "de un salto."
+            ]
+        },
+        {
+            "ID": 75,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Mario! Mi castillo est{00225}",
+                "en graves problemas. S{00233}",
+                "que el culpable es Bowser",
+                "y {00161}s{00233} que eres el {00250}nico",
+                "capaz de detenerle!",
+                "Las puertas del castillo",
+                "que han sido selladas por",
+                "Bowser solo se pueden",
+                "abrir con el poder de",
+                "las Estrellas.",
+                "Pero hay caminos ocultos",
+                "en el castillo, que Bowser",
+                "desconoce.",
+                "",
+                "",
+                "{00161}Encuentra las Estrellas",
+                "ocultas, Mario! Te",
+                "ayudar{00225}n en tu misi{00243}n.",
+                "{00161}Por favor, Mario,",
+                "ay{00250}danos!",
+                "{00161}Re{00250}ne todas las",
+                "estrellas del castillo y",
+                "s{00225}canos de esta horrible",
+                "prisi{00243}n! {00161}Por favor!"
+            ]
+        },
+        {
+            "ID": 76,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Gracias al poder de las",
+                "Estrellas, el castillo",
+                "empieza a volver a la",
+                "vida. Por favor, Mario,",
+                "{00161}dale una lecci{00243}n a",
+                "Bowser!",
+                "Mira, deja que te cuente",
+                "un secreto del castillo.",
+                "En la habitaci{00243}n con el",
+                "espejo, estate atento",
+                "a ver si ves algo que",
+                "solo existe en el espejo.",
+                "Y cuando vayas a la",
+                "Ciudad Mojaseca, puedes",
+                "inundarla al entrar si ",
+                "entras por la parte",
+                "superior del cuadro."
+            ]
+        },
+        {
+            "ID": 77,
+            "linesPerBox": 3,
+            "leftOffset": 150,
+            "width": 200,
+            "lines": [
+                "Por decreto real, es",
+                "obligatorio darle un",
+                "pisot{00243}n a los pilares."
+            ]
+        },
+        {
+            "ID": 78,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Abre el contenedor de",
+                "monedas azules d{00225}ndole un",
+                "pisot{00243}n con el bot{00243}n [Z].",
+                "Una moneda azul equivale",
+                "a 5 monedas amarillas.",
+                "Pero si no eres lo",
+                "bastante r{00225}pido, {00161}las",
+                "monedas azules",
+                "desaparecer{00225}n! {00191}Te",
+                "parece injusto?",
+                "Pues te aguantas."
+            ]
+        },
+        {
+            "ID": 79,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Owwwuu! {00161}D{00233}jame ir!",
+                "{00161}Uukee-kee! {00161}Estaba de",
+                "broma! {00191}No tienes sentido",
+                "del humor?",
+                "Mira, hagamos un trato",
+                "Si me dejas ir, te dar{00233},",
+                "algo que te va a gustar.",
+                "",
+                "{00191}Qu{00233} te parece?",
+                "",
+                "//Soltar/ No soltar"
+            ]
+        },
+        {
+            "ID": 80,
+            "linesPerBox": 1,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Jejejeje!"
+            ]
+        },
+        {
+            "ID": 81,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Es un misterio si este",
+                "lugar est{00225} seco o mojado.",
+                "{00191}Y d{00243}nde se encuentra la",
+                "soluci{00243}n a este dilema?",
+                "Tal vez tenga que ver",
+                "con la altura que tienen",
+                "los visitantes en el",
+                "momento de su llegada."
+            ]
+        },
+        {
+            "ID": 82,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}No pierdas tu gorra! Si",
+                "la pierdes, sufrir{00225}s m{00225}s",
+                "da{00241}o de lo normal.",
+                "",
+                "S{00236} pierdes tu gorra,",
+                "tendr{00225}s que encontrarla",
+                "en el mismo mundo en el",
+                "que la perdiste.",
+                "Ay, lo de Peach no tiene",
+                "buena pinta. Sigue",
+                "atrapada en alg{00250}n lugar,",
+                "dentro de las paredes.",
+                "{00161}Por favor, Mario, tienes",
+                "que salvarla! {00191}Sab{00237}as que",
+                "hay mundos enemigos",
+                "dentro de los cuadros?",
+                "{00161}S{00237}, como lo oyes! Las",
+                "tropas de Bowser est{00225}n",
+                "dentro de ellos. Ah, y",
+                "toma esto. Para ti."
+            ]
+        },
+        {
+            "ID": 83,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Ese reloj tiene algo",
+                "extra{00241}o. Intenta fijarte",
+                "en la posici{00243}n que tienen",
+                "las manillas en el momento",
+                "en el que entras. Por",
+                "cierto, {00161}toma esto!"
+            ]
+        },
+        {
+            "ID": 84,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Dios m{00237}o! {00161}Dios m{00237}o!",
+                "{00161}Voy a llegar tarde! {00161}Y",
+                "ahora va un enano bigotudo",
+                "y me coge!",
+                "{00191}Eh? {00191}Esta cosa brillante?",
+                "{00161}Es m{00237}a! {00161}Quien la",
+                "encuentra se la queda!",
+                "{00161}Ahora su{00233}ltame!",
+                "{00161}Que me sueltes te digo!",
+                "Bueno, si tanto la",
+                "quieres, {00161}toma! Prefiero",
+                "d{00225}rtela.",
+                "La otra opci{00243}n es que la",
+                "duquesa me ejecute por",
+                "llegar tarde. {00161}Ahora",
+                "su{00233}ltame!"
+            ]
+        },
+        {
+            "ID": 85,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "No tienes ninguna",
+                "posibilidad de salir vivo",
+                "de esta mansi{00243}n. Si",
+                "consigues salir, ser{00237}a...",
+                "digno de medalla."
+            ]
+        },
+        {
+            "ID": 86,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Algunos enemigos tienen",
+                "el est{00243}mago muy sensible.",
+                "Si les obligas a dar",
+                "vueltas sin parar, tal",
+                "vez se mareen y te dejen",
+                "en paz."
+            ]
+        },
+        {
+            "ID": 87,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Santa Claus no es el",
+                "{00250}nico que puede bajar por",
+                "las chimeneas! {00161}Ven!",
+                "/--El propietario del",
+                "refugio."
+            ]
+        },
+        {
+            "ID": 88,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Ascensor de trabajo.",
+                "Para quien se baje aqu{00237}:",
+                "Ag{00225}rrate al tubo de la",
+                "izquierda y desl{00237}zate con",
+                "cuidado hacia abajo."
+            ]
+        },
+        {
+            "ID": 89,
+            "linesPerBox": 6,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}Peligro en ambas",
+                "direciones! {00161}Cuidado con",
+                "d{00243}nde pisas! Quien no",
+                "sepa hacer el salto",
+                "largo, debe ir a",
+                "la derecha.",
+                "Derecha: Ascensor.",
+                "/// Laberinto gaseoso",
+                "Izquierda: Agujero Negro",
+                "///Lago subterr{00225}neo",
+                "",
+                "",
+                "C{00237}rculo rojo: Ascensor 2",
+                "//// Lago subterr{00225}neo",
+                "Flecha: Tu posici{00243}n"
+            ]
+        },
+        {
+            "ID": 90,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Ja ja ja! {00161}Has ca{00237}do de",
+                "lleno en mi trampa, tal",
+                "y como esperaba! Un",
+                "consejo, {12302}amigo,{12303}",
+                "{00161}cuidado con d{00243}nde pisas!"
+            ]
+        },
+        {
+            "ID": 91,
+            "linesPerBox": 2,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Peligro! {00161}Corrientes",
+                "fuertes!",
+                "Pero el viento tambi{00233}n",
+                "se puede aprovechar."
+            ]
+        },
+        {
+            "ID": 92,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00191}Vienes otra vez a tocar",
+                "las narices, Mario? {00191}No",
+                "ves  que estoy",
+                "pas{00225}ndomelo bien causando",
+                "caos con mis tropas?",
+                "Ya que est{00225}s aqu{00237},",
+                "{00161}devuelve las Estrellas!",
+                "{00161}Mi ej{00233}rcito en las",
+                "paredes las necesitan!",
+                "{00161}Ja ja ja ja!"
+            ]
+        },
+        {
+            "ID": 93,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Mario! {00161}Otra vez t{00250}!",
+                "Llegas justo a tiempo--",
+                "{00161}Estaba buscando algo que",
+                "quemar con mi aliento de",
+                "fuego!",
+                "{00161}El poder de las Estrellas",
+                "es in{00250}til contra m{00237}!",
+                "{00161}Todos tus amigos est{00225}n",
+                "atrapados en las paredes!",
+                "",
+                "{00161}Y jam{00225}s volver{00225}s a ver",
+                "a la princesa!",
+                "{00161}Ja ja ja ja ja!"
+            ]
+        },
+        {
+            "ID": 94,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Coge carrerilla en la",
+                "cuesta! {00191}Te acuerdas del",
+                "salto largo? Corre, pulsa",
+                "[Z], y luego salta!"
+            ]
+        },
+        {
+            "ID": 95,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Para leer un cartel,",
+                "ponte en frente y...",
+                "pulsa [B]... pero...",
+                "acabas de hacerlo,",
+                "as{00237} que eso ya lo sabes.",
+                "Para hablar con un Koopa",
+                "u otro animal, solo",
+                "tienes que ponerte",
+                "enfrente de {00233}l.",
+                "Por favor, recupera las",
+                "estrellas que Bowser rob{00243}",
+                "y escondi{00243} en este mundo."
+            ]
+        },
+        {
+            "ID": 96,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Este camino es muy",
+                "estrecho. {00161}Tienes que ir",
+                "con cuidado! Adem{00225}s, no",
+                "se permiten visitas a la",
+                "cima de la monta{00241}a.",
+                "Por tu propio bien,",
+                "{00161}no despiertes a nadie!",
+                "a nadie! Vamos, que",
+                "camines despacio."
+            ]
+        },
+        {
+            "ID": 97,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}No dejes que te hagan",
+                "bullying! Si alguien te",
+                "empuja, {00161}emp{00250}jale de",
+                "vuelta! Es uno uno contra",
+                "uno, {00161}y el perderdor",
+                "arder{00225}!"
+            ]
+        },
+        {
+            "ID": 98,
+            "linesPerBox": 2,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Ven aqu{00237}...",
+                "...je, je, je..."
+            ]
+        },
+        {
+            "ID": 99,
+            "linesPerBox": 5,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Je je je...",
+                "Ahora mando yo, je je je",
+                "Voy a atravesar esta",
+                "pared. {00191}Puedes hacer lo",
+                "mismo? {00161}Je je je!"
+            ]
+        },
+        {
+            "ID": 100,
+            "linesPerBox": 3,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Ukkiki...Wakkiki...{00161}ki ki!",
+                "{00161}Ja! {00161}Para m{00237}!",
+                "{00161}Es m{00237}a! {00161}Je je je je!"
+            ]
+        },
+        {
+            "ID": 101,
+            "linesPerBox": 3,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}Ay! Sue...su{00233}ltame...",
+                "Me est{00225}s... ahorcando...",
+                "Eh...{00161}me han incriminado!",
+                "{00191}Esta gorra? Ay, vale,",
+                "toma. Es bonita, pero te",
+                "la devuelvo.",
+                "{00161}Pero creo que me queda",
+                "mejor a m{00237} que a ti!",
+                "{00161}Je je je!"
+            ]
+        },
+        {
+            "ID": 102,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Oye! Los Boo son muy",
+                "t{00237}midos. Si les miras a",
+                "la cara, desaparecen,",
+                "pero si les das la",
+                "espalda, vuelven a",
+                "aparecer.",
+                "No sirve de nada",
+                "golpearles cuando han",
+                "desaparecido. Intenta",
+                "golpearles por la espalda."
+            ]
+        },
+        {
+            "ID": 103,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Las cuatro torres",
+                "debes dominar...",
+                "Entonces en la cima",
+                "la luz hallar{00225}s..."
+            ]
+        },
+        {
+            "ID": 104,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Esa estrella oscura que",
+                "tienes enfrente es un",
+                "{12302}Marcador de Estrella.{12303}",
+                "Cuando consigas 8 monedas",
+                "rojas, una Estrella",
+                "aparecer{00225} aqu{00237}."
+            ]
+        },
+        {
+            "ID": 105,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}Listos para disparar!",
+                "{00161}Venga, sube al ca{00241}{00243}n!",
+                "",
+                "",
+                "Puedes llegar a la",
+                "Estrella de la isla",
+                "flotante usando los",
+                "ca{00241}ones.",
+                "Usa el stick de control",
+                "para apuntar, y luego",
+                "pulsa [A] para disparar.",
+                "",
+                "Si tienes buena punter{00237}a,",
+                "puedes darle a un {00225}rbol",
+                "o un tubo, y agarrarte."
+            ]
+        },
+        {
+            "ID": 106,
+            "linesPerBox": 2,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}Listos para disparar!",
+                "{00161}Venga, sube al ca{00241}{00243}n!"
+            ]
+        },
+        {
+            "ID": 107,
+            "linesPerBox": 3,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Los fantasmas...",
+                "...no...",
+                "...{00161}MUEREN!",
+                "{00161}Je, je je!",
+                "{00191}Podr{00225}s salir de aqu{00237}...",
+                "...con vida?"
+            ]
+        },
+        {
+            "ID": 108,
+            "linesPerBox": 2,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}Bu! {00161}Aqu{00237} llega el",
+                "maestro del caos el jefe,",
+                "del terror, el Gran Boo!,",
+                "Ja ja ja ja..."
+            ]
+        },
+        {
+            "ID": 109,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}Oooh, no! {00161}He llevado",
+                "los viajes astrales al",
+                "extremo! {00161}Mi cuerpo se ha",
+                "derretido!",
+                "No sabr{00225}s de alg{00250}n cuerpo",
+                "que est{00233} buscando una",
+                "cabeza, {00191}verdad? {00161}Porque",
+                "me vendr{00237}a muy bien!",
+                "{00161}Brrr! {00161}Se me va a",
+                "congelar la cabeza si",
+                "sigo as{00237}!"
+            ]
+        },
+        {
+            "ID": 110,
+            "linesPerBox": 6,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Necesito encontrar una",
+                "buena cabeza para mis",
+                "hombros. {00191}Sabes de alguna",
+                "que est{00233} en b{00250}squeda de",
+                "un buen cuerpo? Si es",
+                "as{00237}, {00161}te sigo!"
+            ]
+        },
+        {
+            "ID": 111,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}Genial! {00161}Qu{00233} cuerpo tan",
+                "fant{00225}stico! Toma, tu",
+                "recompensa. Seguro que te",
+                "ayuda a entrar en calor."
+            ]
+        },
+        {
+            "ID": 112,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Consigue tantas monedas",
+                "como puedas! Te ayudar{00225}n",
+                "a recuperar tu barra de",
+                "vida.",
+                "",
+                "En el men{00250} de pausa",
+                "puedes comprobar cuantas",
+                "monedas has recogido en",
+                "cada uno de los 15",
+                "mundos enemigos",
+                "Tambi{00233}n puedes recuperar",
+                "vida tocando un coraz{00243}n",
+                "giratorio.",
+                "",
+                "",
+                "Cuanto m{00225}s r{00225}pido te",
+                "est{00233}s moviendo al tocar",
+                "el coraz{00243}n giratorio,",
+                "m{00225}s vida",
+                "recuperar{00225}s."
+            ]
+        },
+        {
+            "ID": 113,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Hay gorras especiales",
+                "ocultas en los bloques",
+                "rojos, verdes y azules.",
+                "Pisa los botones en los",
+                "niveles secretos para",
+                "activarlos."
+            ]
+        },
+        {
+            "ID": 114,
+            "linesPerBox": 7,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}Me toca much{00237}simo las",
+                "narices! Construimos",
+                "vuestras casas, vuestros",
+                "castillos, vuestras",
+                "carreteras, {00161}y a{00250}n as{00237}",
+                "nos pisote{00225}is!",
+                "",
+                "{00191}Alguna vez dec{00237}s",
+                "gracias? {00161}No! {00161}Pues t{00250}",
+                "no vas a limpiarte los",
+                "zapatos en mi espalda!",
+                "{00161}Creo que voy a",
+                "aplastarte, solo por",
+                "diversi{00243}n!",
+                "{00191}Qu{00233}? {00191}Te parece mal?",
+                "{00161}Intenta impedirlo,",
+                "canijo!"
+            ]
+        },
+        {
+            "ID": 115,
+            "linesPerBox": 5,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}No! {00161}Pisoteado otra vez!",
+                "Supongo que no soy m{00225}s que",
+                "asfalto, hecho para ser",
+                "pisado. Acepto mi derrota.",
+                "{00161}Ll{00233}vate esto!"
+            ]
+        },
+        {
+            "ID": 116,
+            "linesPerBox": 6,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00191}Qu...qu{00233}eeee? {00191}De verdad",
+                "un canijo sin chispa como",
+                "t{00250} ha desactivado al Gran",
+                "Bob-omb?",
+                "",
+                "",
+                "Puede que hayas sido",
+                "suficientemente {00225}gil como",
+                "para derrotarme a m{00237},",
+                "pero no sabes lo que te",
+                "espera cuando te",
+                "enfrentes a Bowser.",
+                "{00161}Vas a tener que",
+                "espabilarte si pretendes",
+                "tener la m{00225}s m{00237}nima",
+                "posibilidad de cogerle",
+                "por la cola! A{00250}n as{00237}, lo",
+                "has hecho bien.",
+                "{00161}Incluso dir{00237}a que mis",
+                "tropas podr{00237}an aprender",
+                "un par de cosas de ti!",
+                "Tal y como te promet{00237},",
+                "puedes quedarte con la",
+                "Estrella, Mario.",
+                "Si quieres volverme a",
+                "ver, vuelve a seleccionar",
+                "esta Estrella desde el",
+                "men{00250}. Pero de momento,",
+                "he de despedirme."
+            ]
+        },
+        {
+            "ID": 117,
+            "linesPerBox": 1,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00191}Qui{00233}n...pisar...aqu{00237}?",
+                "{00191}Qui{00233}n...romper...sello?",
+                "{00191}Despertar...ancestros..?",
+                "No gustarnos la luz...",
+                "Urrrgh...",
+                "No gustarnos...{00161}intrusos!",
+                "Ahora, luchar...",
+                "...{00161}mano...",
+                "...a..",
+                "...mano!"
+            ]
+        },
+        {
+            "ID": 118,
+            "linesPerBox": 6,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}Urrrghh!",
+                "{00191}Qu{00233}... ocurrir?",
+                "Nosotros... aplastados...",
+                "{00161}T{00250} tan fuerte!",
+                "{00161}T{00250} dominar pir{00225}mide!",
+                "Por hoy...",
+                "Ahora, toma la Estrella",
+                "Poderosa.",
+                "Nosotros... dormir...",
+                "...oscuridad..."
+            ]
+        },
+        {
+            "ID": 119,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Argh! Tal vez te he",
+                "subestimado. Esto no era",
+                "lo que hab{00237}a planeado.",
+                "{00161}Pero sigo teniendo el",
+                "poder de las Estrellas,",
+                "y a Peach!",
+                "{00161}Ja ja ja! {00161}No vas a",
+                "quitarme m{00225}s estrellas!",
+                "Todav{00237}a no he acabado",
+                "contigo, pero te dejar{00233} ir",
+                "por ahora. {00161}Pero me las",
+                "pagar{00225}s, cr{00233}eme!"
+            ]
+        },
+        {
+            "ID": 120,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Ahhh! {00191}de verdad he",
+                "vuelto a perder? El poder",
+                "de las Estrellas me ha",
+                "fallado... esta vez.",
+                "Considera esto un empate.",
+                "La pr{00243}xima vez, estar{00233}",
+                "en perfectas condiciones.",
+                "",
+                "Ahora, si quieres ver",
+                "a tu preciada princesa,",
+                "ven a verme a lo m{00225}s",
+                "alto de la torre.",
+                "{00161}Te estar{00233} esperando,",
+                "Mario!",
+                "{00161}Ja ja ja ja!"
+            ]
+        },
+        {
+            "ID": 121,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Nooo! {00161}No puede ser!",
+                "{00191}{00161}De verdad me has",
+                "ganado, Mario!? {00161}Le di",
+                "poder a mis tropas, pero",
+                "ahora ese poder est{00225}",
+                "desapareciendo!",
+                "{00161}Puedo ver la paz",
+                "volviendo al mundo! {00161}No lo",
+                "aguanto! Pero esto a{00250}n",
+                "no se ha acabado...",
+                "",
+                "",
+                "{00161}Vamos, tropas! {00161}Veamos el",
+                "final juntos!",
+                "{00161}Ja ja ja!"
+            ]
+        },
+        {
+            "ID": 122,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "El Agujero Negro",
+                "Derecha: Ascensor",
+                "/// Laberinto venenoso",
+                "Izquierda: Lago",
+                "subterr{00225}neo"
+            ]
+        },
+        {
+            "ID": 123,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Caverna de Metal",
+                "Derecha: Cascada",
+                "Izquierda: Bot{00243}n de la",
+                "gorra de metal."
+            ]
+        },
+        {
+            "ID": 124,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Ascensor de trabajo",
+                "{00161}{00161}Peligro!!",
+                "{00161}Leer instrucciones",
+                "detenidamente!",
+                "El ascensor contin{00250}a en",
+                "la direcci{00243}n de la flecha",
+                "que se haya activado."
+            ]
+        },
+        {
+            "ID": 125,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Salida del laberinto",
+                "venenoso. {00161}Peligro!",
+                "Cerrado. No pasar."
+            ]
+        },
+        {
+            "ID": 126,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Arriba: Agujero negro",
+                "Derecha: Ascensor",
+                "/// Laberinto venenoso"
+            ]
+        },
+        {
+            "ID": 127,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Lago subterr{00225}neo",
+                "Derecha:Caverna de metal",
+                "Izquierda:Mina abandonada",
+                "///(Cerrado)",
+                "",
+                "Un amable drag{00243}n de agua",
+                "vive aqu{00237}. Pisa su cabeza",
+                "con fuerza para que baje",
+                "la cabeza. Ciudado, no te",
+                "conviertas en su almuerzo."
+            ]
+        },
+        {
+            "ID": 128,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "{00161}Debes luchar con honor!",
+                "Lanzar al adversario",
+                "fuera del campo de batalla",
+                "est{00225} prohibido!"
+            ]
+        },
+        {
+            "ID": 129,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Bienvenido al mundo de la",
+                "Gorra de Invisibilidad!",
+                "Todos los bloques azules",
+                "que has visto se volver{00225}n",
+                "s{00243}lidos cuando pises el",
+                "bot{00243}n azul.",
+                "Desaparecer{00225}s cuando te",
+                "pongas la Gorra de",
+                "Invisibilidad, as{00237} que",
+                "podr{00225}s atravesar a los",
+                "enemigos y otras cosas.",
+                "{00161}Pru{00233}balo!"
+            ]
+        },
+        {
+            "ID": 130,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Bienvenido al mundo de",
+                "la Gorra de Metal! Cuando",
+                "pises el bot{00243}n bot{00243}n",
+                "verde, todos los bloques",
+                "verdes que has visto se",
+                "volver{00225}n s{00243}lidos.",
+                "Cuando tu cuerpo se",
+                "convierte en metal gracias",
+                "al poder de esta gorra,",
+                "{00161}puedes caminar bajo el",
+                "agua! {00161}Pru{00233}balo!"
+            ]
+        },
+        {
+            "ID": 131,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Bienvenido al mundo de",
+                "la Gorra Voladora! Pisa el",
+                "bot{00243}n rojo en lo alto de",
+                "la torre, al centro del",
+                "anillo arco{00237}ris.",
+                "Cuando pulses el bot{00243}n,",
+                "todos los bloques rojos",
+                "que has visto se volver{00225}n",
+                "s{00243}lidos.",
+                "",
+                "{00161}Prueba la Gorra Voladora!",
+                "Para despegar, haz un",
+                "triple salto, y cuando",
+                "quieras aterrizar, pulsa",
+                "[Z]",
+                "Mueve el stick de control",
+                "hacia detr{00225}s para",
+                "elevarte, y hacia detr{00225}s",
+                "para descender, como si",
+                "controlases un avi{00243}n."
+            ]
+        },
+        {
+            "ID": 132,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Guau, Mario, {00191}de verdad",
+                "estabas intentando hacer",
+                "trampas? No se permiten",
+                "los atajos.",
+                "S{00233} que lo sabes de sobra.",
+                "Est{00225}s descalificado.",
+                "Para la pr{00243}xima, juega",
+                "limpio."
+            ]
+        },
+        {
+            "ID": 133,
+            "linesPerBox": 7,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}No tienes idea de lo",
+                "mucho que me alegra",
+                "verte!",
+                "La princesa, yo, y",
+                "todo el mundo...estamos",
+                "atrapados dentro de las",
+                "paredes del castillo.",
+                "Bowser ha robado las",
+                "Estrellas del castillo, y",
+                "est{00225} usando su poder para",
+                "crear su propio mundo",
+                "dentro de los cuadros y",
+                "las paredes.",
+                "",
+                "{00161}Por favor, recupera las",
+                "Estrellas de Poder!",
+                "Cuando las encuentres,",
+                "podr{00225}s usar su poder para",
+                "abrir las puertas que",
+                "Bowser ha sellado.",
+                "",
+                "Hay cuatro salas en el",
+                "primer piso. Empieza por",
+                "la que tiene un cuadro de",
+                "unos Bob-omb. Es la {00250}nica",
+                "sala que Bowser no ha",
+                "sellado.",
+                "",
+                "Cuando consigas ocho",
+                "Estrellas, podr{00225}s abrir",
+                "la puerta con la estrella",
+                "grande. {00161}Seguro que la",
+                "princesa est{00225} ah{00237}!"
+            ]
+        },
+        {
+            "ID": 134,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Los nombres de las",
+                "Estrellas son pistas de",
+                "c{00243}mo encontrarlas. Puedes",
+                "verlas al entrar a cada",
+                "mundo.",
+                "",
+                "Puedes cogerlas en",
+                "cualquier orden, pero",
+                "hay ciertas Estrellas y",
+                "ciertos enemigos que solo",
+                "aparecer{00225}n si escoges",
+                "una Estrella concreta."
+            ]
+        },
+        {
+            "ID": 135,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Fue Bowser quien rob{00243} las",
+                "Estrellas. {00161}Le vi con",
+                "mis propios ojos!",
+                "",
+                "",
+                "",
+                "Ha escondido seis",
+                "Estrellas en cada mundo,",
+                "pero para coger algunas",
+                "de ellas, necesitar{00225}s",
+                "activar los botones",
+                "de las gorras.",
+                "Puedes comprobar qu{00233}",
+                "Estrellas has conseguido",
+                "al entrar a cada mundo.",
+                "",
+                "",
+                "",
+                "Si quieres volver a ver",
+                "a un enemigo que  ya has",
+                "derrotado, vuelve a",
+                "seleccionar su Estrella",
+                "al entrar al mundo",
+                "correspondiente."
+            ]
+        },
+        {
+            "ID": 136,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Guau! {00191}Ya has conseguido",
+                "todas esas estrellas?",
+                "{00161}Muy bien, Mario! {00161}Seguro",
+                "que nos sacas de aqu{00237} en",
+                "nada!",
+                "",
+                "Pero ten cuidado: Bowser",
+                "y sus secuaces son unos",
+                "expertos del {12302}mal.{12303}",
+                "Te voy a dar un consejo:",
+                "",
+                "",
+                "Cuando necesites curarte",
+                "de tus heridas, coge",
+                "monedas. Las monedas",
+                "amarillas recuperan un",
+                "trozo del medidor de vida.",
+                "Las rojas, dos.",
+                "Y por {00250}ltimo, las azules",
+                "recuperan nada m{00225}s y nada",
+                "menos que cinco.",
+                "Te preguntar{00225}s d{00243}nde",
+                "encontrar esas preciadas",
+                "monedas azules, {00191}eh?",
+                "Busca los bloques de",
+                "monedas azules. Los",
+                "reconocer{00225}s. Si le das un",
+                "pisot{00243}n a uno, aparecer{00225}n",
+                "monedas azules, pero",
+                "debes cogerlas r{00225}pido.",
+                "Por cierto, cuando caigas",
+                "de mucha altura, puedes",
+                "dar un pisot{00243}n justo",
+                "antes de tocar el suelo,",
+                "y recibir menos da{00241}o de",
+                "lo normal por el golpe."
+            ]
+        },
+        {
+            "ID": 137,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Gracias, Mario! La",
+                "energ{00237}a del castillo se",
+                "restaura poco a poco",
+                "seg{00250}n consigues Estrellas",
+                "de Poder, y has hecho",
+                "huir a Bowser.",
+                "Pero seguro que te est{00225}",
+                "esperando m{00225}s adelante.",
+                "Por cierto... espero que",
+                "est{00233}s cogiendo todas las",
+                "monedas que puedas, {00191}eh?",
+                "",
+                "No te lo vas a creer:",
+                "todos los mundos tienen",
+                "una estrella oculta que",
+                "solo aparece si consigues",
+                "100 monedas en ese mundo.",
+                "{00161}Intenta conseguirlas!"
+            ]
+        },
+        {
+            "ID": 138,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Abajo: Lago subterr{00225}neo",
+                "Izquierda: Agujero negro",
+                "Derecha: Laberinto venenoso",
+                "(Cerrado)"
+            ]
+        },
+        {
+            "ID": 139,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Arriba: Auto-ascensor.",
+                "El ascensor se mueve",
+                "autom{00225}ticamente siguiendo",
+                "una ruta predefinida.",
+                "Cuando termina, desaparece",
+                "aut{00243}m{00225}ticamente.",
+                "{00161}No te caigas!"
+            ]
+        },
+        {
+            "ID": 140,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Zona del ascensor",
+                "Derecha:Laberinto venenoso",
+                "/// Entrada",
+                "Izquierda: Agujero negro",
+                "///Ascensor 1",
+                "Flecha: Tu posici{00243}n"
+            ]
+        },
+        {
+            "ID": 141,
+            "linesPerBox": 6,
+            "leftOffset": 150,
+            "width": 200,
+            "lines": [
+                "{00161}Has conseguido una de",
+                "las Estrellas de Poder",
+                "robadas! Ahora puedes",
+                "abrir m{00225}s puertas del",
+                "castillo.",
+                "",
+                "Prueba a ir a la",
+                "habitaci{00243}n de la princesa",
+                "en el segundo piso o",
+                "a la sala con el cuadro",
+                "de la Fortaleza Roco",
+                "en el primer piso.",
+                "Las tropas de Bowser no",
+                "paran de crecer y ganar",
+                "poder, as{00237} que no bajes",
+                "la guardia, Mario. {00161}Sigue",
+                "buscando Estrellas!"
+            ]
+        },
+        {
+            "ID": 142,
+            "linesPerBox": 6,
+            "leftOffset": 150,
+            "width": 200,
+            "lines": [
+                "{00161}Has recuperado tres",
+                "Estrellas de Poder! Ahora",
+                "puedes abrir cualquier",
+                "puerta que tenga un 3",
+                "en la estrella.",
+                "",
+                "Puedes entrar y salir",
+                "de los mundos disponibles",
+                "cuantas veces quieras.",
+                "{00161}Te esperan",
+                "enemigos cada vez m{00225}s",
+                "poderosos, as{00237} que ten",
+                "cuidado!"
+            ]
+        },
+        {
+            "ID": 143,
+            "linesPerBox": 7,
+            "leftOffset": 150,
+            "width": 200,
+            "lines": [
+                "{00161}Has recuperado ocho",
+                "Estrellas de Poder!",
+                "{00161}Ahora puedes abrir la",
+                "puerta con la Estrella",
+                "gigante! Pero Bowser",
+                "est{00225} cerca... {00191}oyes",
+                "a la princesa llam{00225}ndote?"
+            ]
+        },
+        {
+            "ID": 144,
+            "linesPerBox": 6,
+            "leftOffset": 150,
+            "width": 200,
+            "lines": [
+                "{00161}Has recuperado 30",
+                "Estrellas de Poder! Ahora",
+                "puedes abrir la puerta",
+                "con la Estrella grande.",
+                "Pero antes de eso: {00191}qu{00233}",
+                "tal te est{00225} yendo?",
+                "{00191}Has pisoteado las dos",
+                "columnas? Y... no habr{00225}s",
+                "perdido tu gorra, {00191}no?",
+                "Si la has perdido, es muy",
+                "posible que la tenga ese",
+                "desgraciado cuervo...",
+                "Se comenta que Bowser ha",
+                "huido de su refugio",
+                "mar{00237}timo y est{00225} bajo",
+                "tierra. {00191}Lo has",
+                "acorralado por fin?"
+            ]
+        },
+        {
+            "ID": 145,
+            "linesPerBox": 6,
+            "leftOffset": 150,
+            "width": 200,
+            "lines": [
+                "{00161}Has recuperado 50",
+                "Estrellas de Poder! Ahora",
+                "puedes abrir la puerta de",
+                "la Estrella grande del",
+                "tercer piso. Bowser est{00225}",
+                "ah{00237}, como ya sabes.",
+                "{00161}Ah! Imagino que ya has",
+                "activado los botones",
+                "de las gorras, {00191}no? {00191}El",
+                "rojo, el azul y el verde?",
+                "Las gorras a las que te",
+                "dan acceso ayudan mucho.",
+                "Bueno, date prisa. El",
+                "tercer piso est{00225} ah{00237}",
+                "delante."
+            ]
+        },
+        {
+            "ID": 146,
+            "linesPerBox": 6,
+            "leftOffset": 150,
+            "width": 200,
+            "lines": [
+                "{00161}Has encontrado 70",
+                "Estrellas de Poder! Ahora",
+                "esas escaleras infinitas",
+                "de las que tanto presume",
+                "Bowser no son m{00225}s que",
+                "unas escaleras normales.",
+                "{00161}Seguro que no est{00225}",
+                "muy contento! Y lo que le",
+                "espera: {00161}Te toca ir a",
+                "darle una lecci{00243}n!"
+            ]
+        },
+        {
+            "ID": 147,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00191}Est{00225}s usando los bloques",
+                "de las gorras? Porque",
+                "deber{00237}as, {00191}sabes?",
+                "",
+                "",
+                "Para volverlos s{00243}lidos y",
+                "poder romperlos, tendr{00225}s",
+                "que activar sus",
+                "correspondientes botones",
+                "de colores.",
+                "Est{00225}n ocultos en zonas",
+                "secretas del castillo.",
+                "Necesitar{00225}s encontrar",
+                "algunas estrellas antes.",
+                "",
+                "Los bloques rojos te dan",
+                "la gorra voladora, los",
+                "verdes la gorra de metal,",
+                "y los azules la gorra",
+                "de invisibilidad."
+            ]
+        },
+        {
+            "ID": 148,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "La Monta{00241}a del Mu{00241}eco de",
+                "Nieve est{00225} justo delante.",
+                "{00161}No pasar! Y ni se te",
+                "ocurra hacer un triple",
+                "salto por encima del",
+                "dispensador de hielo.",
+                "Si te caes en el lago",
+                "congelado, tu vida bajar{00225}",
+                "muy r{00225}pidamente, y no",
+                "la recuperar{00225}s en la",
+                "superficie.",
+                "//--El Mu{00241}eco de Nieve"
+            ]
+        },
+        {
+            "ID": 149,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Bienvenido al tobog{00225}n",
+                "secreto de la Princesa",
+                "Peach!",
+                "",
+                "Hay una Estrella oculta",
+                "aqu{00237} que Bowser no pudo",
+                "encontrar.",
+                "",
+                "Cuando te deslices, mueve",
+                "el stick hacia delante",
+                "para acelerar, y atr{00225}s",
+                "para frenar.",
+                "Si llegas a la meta muy",
+                "r{00225}pido, {00161}conseguir{00225}s la",
+                "estrella oculta!"
+            ]
+        },
+        {
+            "ID": 150,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Buaaa! {00161}Has inundado mi",
+                "casa! {00191}Por qu{00233} har{00237}as",
+                "algo as{00237}? {00161}Mira este",
+                "desastre! {00191}Qu{00233} voy a",
+                "hacer ahora?",
+                "El techo est{00225} arruinado,",
+                "el suelo est{00225} empapado...",
+                "{00191}qu{00233} puedo hacer? Uff...",
+                "Me... enfada... {00161}MUCHO!",
+                "",
+                "{00161}Desde que encontr{00233} esta",
+                "est{00250}pida estrella, todo",
+                "me ha empezado a salir",
+                "mal! Brilla mucho... pero",
+                "me hace sentir raro."
+            ]
+        },
+        {
+            "ID": 151,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}No puedo m{00225}s! Primero",
+                "inundas todo, {00161}y ahora",
+                "vas y me pisas!",
+                "{00161}Ahora s{00237} que estoy bien",
+                "cabreado!",
+                "{00161}Aaaahhhhh!"
+            ]
+        },
+        {
+            "ID": 152,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Ay! {00161}T{00237}o! {00161}T{00237}o! {00161}Para!",
+                "{00161}Me rindo! {00161}Qu{00233}date esta",
+                "estrella!",
+                "...guau, de repente me",
+                "siento mejor. Igualmente",
+                "no la necesitaba.",
+                "Me gusta mucho ver las",
+                "estrellas por la noche.",
+                "Me hacen sentir en paz.",
+                "Por favor, {00161}ven a verme",
+                "cuando quieras!"
+            ]
+        },
+        {
+            "ID": 153,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Hey! {00191}Qui{00233}n anda ah{00237}?",
+                "{00191}Qu{00233} es esta cosa que",
+                "tengo encima? {00191}Se",
+                "me ha subido un bicho?",
+                "{00161}Sea lo que sea, me",
+                "molesta! {00161}Voy a quit{00225}rmelo",
+                "soplando!"
+            ]
+        },
+        {
+            "ID": 154,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}No pierdas tu gorra! Si",
+                "la pierdes, te har{00225}n da{00241}o",
+                "m{00225}s f{00225}cilmente. Si eso",
+                "ocurre, b{00250}scala en el",
+                "mundo donde la perdiste.",
+                "Hablando de perder, la",
+                "Princesa sigue",
+                "desaparecida, atrapada en",
+                "alguna de las paredes.",
+                "{00161}Ay{00250}dala, Mario!",
+                "Por cierto, sabes que",
+                "algunos mundos est{00225}n",
+                "escondidos directamente",
+                "en las paredes en lugar",
+                "de un cuadro, {00191}verdad?"
+            ]
+        },
+        {
+            "ID": 155,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Gracias al poder de las",
+                "Estrellas, el castillo",
+                "empieza a volver a la",
+                "vida. Por favor, Mario,",
+                "{00161}dale una lecci{00243}n a",
+                "Bowser!",
+                "Mira, deja que te cuente",
+                "un secreto del castillo.",
+                "En la habitaci{00243}n con el",
+                "espejo, estate atento",
+                "a ver si ves algo que",
+                "solo existe en el espejo.",
+                "Y cuando vayas a la",
+                "Ciudad Mojaseca, puedes",
+                "inundarla al entrar si ",
+                "entras por la parte",
+                "superior del cuadro."
+            ]
+        },
+        {
+            "ID": 156,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Ese reloj tiene algo",
+                "extra{00241}o. Intenta fijarte",
+                "en la posici{00243}n que tienen",
+                "las manillas cuando",
+                "entras."
+            ]
+        },
+        {
+            "ID": 157,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Cuidado! {00161}No te hundas",
+                "en las arenas movedizas!",
+                "",
+                "",
+                "",
+                "Si te hundes en la arena,",
+                "no podr{00225}s saltar, y si tu",
+                "cabeza se hunde, tendr{00225}s",
+                "que aprender a convivir",
+                "con los escorpiones.",
+                "Las zonas oscuras son",
+                "pozos sin fondo."
+            ]
+        },
+        {
+            "ID": 158,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "1. Si saltas repetidamente",
+                "y con el ritmo adecuado,",
+                "saltar{00225}s cada vez m{00225}s",
+                "alto. Si lo haces al",
+                "correr tres veces, har{00225}s",
+                "un triple salto.",
+                "2. Salta hacia una pared,",
+                "y cuando la toques vuelve",
+                "a saltar. De esta manera",
+                "podr{00225}s rebotar y llegar",
+                "m{00225}s alto"
+            ]
+        },
+        {
+            "ID": 159,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "3. Para hacer una pirueta",
+                "hacia atr{00225}s, p{00225}rate,",
+                "pulsa [Z], y luego [A]",
+                "Para hacer un salto",
+                "largo, pulsa [Z] y [A]",
+                "mientras corres."
+            ]
+        },
+        {
+            "ID": 160,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Pulsa [B] mientras corres",
+                "r{00225}pido para lanzarte hacia",
+                "delante. Para saltar y",
+                "ponerte de pie, pulsa [A]",
+                "o [B]."
+            ]
+        },
+        {
+            "ID": 161,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}{00161}{00161}Mario!!!",
+                "{00191}De verdad eres t{00250}?",
+                "{00161}Ha pasado tanto tiempo",
+                "desde nuestra {00250}ltima",
+                "aventura!",
+                "{00161}Me hab{00237}an dicho que",
+                "podr{00237}a verte si te",
+                "esperaba aqu{00237}, pero",
+                "estaba a punto de",
+                "rendirme!",
+                "{00191}Es cierto lo que dicen?",
+                "{00191}De verdad has vencido a",
+                "Bowser? {00191}Y has devuelto",
+                "las Estrellas al?",
+                "castillo?",
+                "{00161}Sab{00237}a que podr{00237}as",
+                "hacerlo! Ahora tengo un",
+                "mensaje muy especial para",
+                "ti.",
+                "{12302}{00161}Gracias por jugar a",
+                "Super Mario 64! Este es",
+                "el final del juego, pero",
+                "no el final de la",
+                "diversi{00243}n.",
+                "Queremos que sigas",
+                "jugando, as{00237} que tenemos",
+                "un regalito para ti.",
+                "{00161}Disfr{00250}talo!",
+                "",
+                "Firmado: El equipo de",
+                "Super Mario 64.{12303}"
+            ]
+        },
+        {
+            "ID": 162,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}No, otra vez t{00250} no!",
+                "{00161}Te he dicho que llego",
+                "tarde! {00191}Es que no te",
+                "importa?",
+                "Mira, no tengo tiempo de",
+                "estar peleando por unas",
+                "Estrellas. {00161}No la estaba",
+                "intentando esconder!",
+                "Lo que pasa es que llevo",
+                "mucha prisa. Eso es todo.",
+                "Toma, qu{00233}datela, {00161}Pero",
+                "d{00233}jame irme ya!"
+            ]
+        },
+        {
+            "ID": 163,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Nooo! {00161}Ahora s{00237} que me",
+                "has vencido, Mario! {00161}Y",
+                "no puedo soportar perder",
+                "ante ti!",
+                "",
+                "Mis tropas... {00161}son",
+                "in{00250}tiles! {00161}Han perdido",
+                "todas las estrellas de",
+                "Poder! {00191}C{00243}mo dices?",
+                "{00191}{00191}{00191}Que hay 120???",
+                "{00161}Incre{00237}ble! {00191}Hay algunas",
+                "que no encontr{00233}? {00161}No puede",
+                "ser! {00161}Pensaba que las",
+                "ten{00237}a todas!",
+                "",
+                "Puedo ver la paz",
+                "volviendo al mundo... {00161}no",
+                "lo soporto! {00161}No puedo",
+                "mirar! {00161}Me largo!",
+                "",
+                "Prep{00225}rate para la",
+                "pr{00243}xima.",
+                "Hasta entonces, {00161}haz que",
+                "ese stick de control",
+                "eche humo! {00161}Ja ja ja!"
+            ]
+        },
+        {
+            "ID": 164,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Hola, Mario! {00191}Qu{00233} tal?",
+                "No he estado corriendo",
+                "{00250}ltimamente, as{00237} que no",
+                "estoy muy en forma.",
+                "Pero a{00250}n as{00237}, no puedo.",
+                "decir que no a una",
+                "carrera, especialmente si",
+                "es contra un amigo.",
+                "{00191}Qu{00233} me dices?",
+                "Preparados... listos...",
+                "",
+                "//{00161}Ya!//// {00161}Luego!"
+            ]
+        },
+        {
+            "ID": 165,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Deniego cualquier",
+                "responsabilidad si",
+                "alguien se marea y se",
+                "desmaya por correr ",
+                "alrededor de este",
+                "cartel."
+            ]
+        },
+        {
+            "ID": 166,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Volver{00233} pronto.",
+                "Estoy entrenando,",
+                "as{00237} que vuelve m{00225}s tarde.",
+                "//--Koopa el R{00225}pido"
+            ]
+        },
+        {
+            "ID": 167,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "El castillo de la princesa",
+                "est{00225} justo delante.",
+                "",
+                "",
+                "Pulsa [A] para saltar,[Z]",
+                "para agacharte, y [B] para",
+                "dar un pu{00241}etazo, leer un",
+                "cartel, o coger algo.",
+                "Vuelve a pulsar [B] para",
+                "tirar algo que hayas",
+                "cogido."
+            ]
+        },
+        {
+            "ID": 168,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Hey! {00161}Ya basta! {00161}Es la",
+                "segunda vez que haces eso!",
+                "{00161}Ahora s{00237} que te lo has",
+                "buscado, pesado! {00161}Te vas",
+                "a enterar!"
+            ]
+        },
+        {
+            "ID": 169,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "{00161}Prohibido el paso!",
+                "{00161}Va por ti!!",
+                "{00161}Arrgghh!",
+                "",
+                "A cualquiera que entre en",
+                "esta cueva sin permiso",
+                "le espera un destino",
+                "terrible."
+            ]
+        }
+    ],
+    "courses": [
+        {
+            "course": " 1 CAMPO BOB-OMB",
+            "acts": [
+                "GRAN BOB-OMB EN LA CIMA",
+                "CARRERA CON KOOPA EL R{00193}PIDO",
+                "DISPARA A LA ISLA EN EL CIELO",
+                "ENCUENTRA LAS 8 MONEDAS ROJAS",
+                "MARIO SURCA EL CIELO",
+                "TRAS LAS REJAS DE CHOMP CADENAS"
+            ]
+        },
+        {
+            "course": " 2 FORTALEZA ROCO",
+            "acts": [
+                "PISOTEA AL ROCO",
+                "EN LA CIMA DE LA FORTALEZA",
+                "DISPARA AL CIELO AZUL",
+                "MONEDAS ROJAS EN LA ISLA FLOTANTE",
+                "CAE EN LA ISLA ENJAULADA",
+                "C{00193}RGATE LA PARED"
+            ]
+        },
+        {
+            "course": " 3 LA BAH{00205}A DE LOS PIRATAS",
+            "acts": [
+                "SAQUEA EL BARCO HUNDIDO",
+                "{00191}PUEDE SALIR A JUGAR LA ANGUILA?",
+                "TESORO EN LA CUEVA OCE{00193}NICA",
+                "MONEDAS ROJAS A BORDO",
+                "DISPARA A LA AGUJA",
+                "A CONTRACORRIENTE"
+            ]
+        },
+        {
+            "course": " 4 MONTA{00209}A HELADA",
+            "acts": [
+                "DESLIZA QUE TE DESLIZA",
+                "PING{00220}INITO DESAPARECIDO",
+                "CARRERA CONTRA EL GRAN PING{00220}INO",
+                "MONTA{00209}A ABAJO A POR 8 MONEDAS ROJAS",
+                "MU{00209}ECO DE NIEVE SIN CABEZA",
+                "REBOTA EN LA PARED Y LLEGAR{00193}S"
+            ]
+        },
+        {
+            "course": " 5 LA MANSI{00211}N ENCANTADA DEL GRAN BOO",
+            "acts": [
+                "CAZAFANTASMAS",
+                "MONTA EN EL TIOVIVO DEL GRAN BOO",
+                "EL SECRETO DE LOS LIBROS ENCANTADOS",
+                "CAZA LAS 8 MONEDAS ROJAS",
+                "EL BALC{00211}N DEL GRAN BOO",
+                "{00193}NDATE CON OJO EN LA SALA SECRETA"
+            ]
+        },
+        {
+            "course": " 6 CUEVA LABER{00205}NTICA",
+            "acts": [
+                "LA BESTIA DEL LAGO",
+                "8 MONEDAS ROJAS FLOTANTES",
+                "{00161}LE TOCA A MARIO DE METAL!",
+                "NO TE PIERDAS EN EL LABERINTO T{00211}XICO",
+                "SALIDA DE EMERGENCIA",
+                "RIESGO DE DESPRENDIMIENTO"
+            ]
+        },
+        {
+            "course": " 7 TIERRA DE LAVA",
+            "acts": [
+                "BRONCO AL HORNO",
+                "TRIPLE RACI{00211}N DE BRONCO",
+                "EL PUZZLE DE LAS MONEDAS ROJAS",
+                "TRONCO, CUIDADO QUE TE QUEMAS",
+                "SIN MIEDO DEL VOLC{00193}N",
+                "VISITA GUIADA POR EL VOLC{00193}N"
+            ]
+        },
+        {
+            "course": " 8 DESIERTO PERDIDO",
+            "acts": [
+                "EN LAS GARRAS DEL P{00193}JARO",
+                "UN DESTELLO EN LO ALTO DE LA PIR{00193}MIDE",
+                "DENTRO DE LA PIR{00193}MIDE ANTIGUA",
+                "CONQUISTA LOS CUATRO PILARES",
+                "VOLANDO A POR LAS MONEDAS ROJAS",
+                "ESQUEMA PIRAMIDAL"
+            ]
+        },
+        {
+            "course": " 9 MUELLE DESOLADO",
+            "acts": [
+                "ASALTA EL SUBMARINO DE BOWSER",
+                "COFRES A CONTRACORRIENTE",
+                "A POR LAS MONEDAS ROJAS, DE TUBO EN TUBO",
+                "ATRAVESANDO LA CORRIENTE",
+                "EL TESORO DE LA MANTARRAYA",
+                "CONSIGUE LAS GORRAS..."
+            ]
+        },
+        {
+            "course": "10 EL PA{00205}S DEL MU{00209}ECO DE NIEVE",
+            "acts": [
+                "EL CABEZ{00211}N DE NIEVE",
+                "AL LAGO CON EL BRONCO",
+                "EN LA HELADA PROFUNDIDAD",
+                "FLOTA DESDE EL LAGO HELADO",
+                "ENCONCHADO A POR LAS MONEDAS ROJAS",
+                "EN EL IGL{00218}"
+            ]
+        },
+        {
+            "course": "11 CIUDAD MOJASECA",
+            "acts": [
+                "{00161}PLATAFORMAS ELECTRIZANTES!",
+                "EN LO ALTO LA CIUDAD",
+                "LOS SECRETOS DE LA CIUDAD",
+                "{00161}ASCENSOR EXPRESS!",
+                "LAS 8 MONEDAS ROJAS DE CASARES",
+                "{00161}CARRERA EN LA CIUDAD!"
+            ]
+        },
+        {
+            "course": "12 SUBE Y SUBE LA MONTA{00209}A",
+            "acts": [
+                "SUBE A LA CIMA",
+                "EL MISTERIO DE LA JAULA DEL MONO",
+                "CHAMPI{00209}ONES Y MONEDAS",
+                "EL MISTERIO DE LA LADERA",
+                "VISTAS INCRE{00205}BLES DESDE EL PUENTE",
+                "DISPARA AL CHAMPI{00209}{00211}N SOLITARIO"
+            ]
+        },
+        {
+            "course": "13 ISLA CAMBIANTE",
+            "acts": [
+                "ARRANCA A LA PLANTA PIRA{00209}A",
+                "LA CIMA DE LA ISLA GIGANTE",
+                "REVANCHA CON KOOPA EL R{00193}PIDO",
+                "CINCO SECRETITOS",
+                "LAS MONEDAS ROJAS DE FLORUGA",
+                "CABREA A FLORUGA"
+            ]
+        },
+        {
+            "course": "14 RELOJ TIC TAC",
+            "acts": [
+                "ENJAULADA",
+                "EL P{00201}NDULO Y EL PRECIPICIO",
+                "{00191}ME ECHAS UNA MANILLA?",
+                "PISOTEA AL ROCO",
+                "SALTA EN EL MOMENTO JUSTO",
+                "DET{00201}N EL TIEMPO Y CONSIGUE LAS MONEDAS ROJAS"
+            ]
+        },
+        {
+            "course": "15 ATRACCI{00211}N ARCO IRIS",
+            "acts": [
+                "SURCANDO EL ARCOIRIS",
+                "LA GRAN CASA FLOTANTE",
+                "MONEDAS LABER{00205}NTICAS",
+                "MENEOS AL AIRE LIBRE",
+                "INVIERTE LAS PIR{00193}MIDES",
+                "SOBRE EL ARCO IRIS"
+            ]
+        },
+        { "course": "CASTLE", "acts": ["{00161}UNA DE LAS ESTRELLAS SECRETAS DEL CASTILLO!"] }
+    ],
+    "secrets": [
+        "   BOWSER EN EL MUNDO OSCURO",
+        "   BOWSER EN EL MAR DE LAVA",
+        "   BOWSER EN EL CIELO",
+        "   EL TOBOG{00193}N SECRETO DE LA PRINCESA",
+        "   LA CAVERNA DE LA GORRA DE METAL",
+        "   LA TORRE DE LA GORRA VOLADORA",
+        "   GORRA DE INVISIBILIDAD BAJO EL FOSO",
+        "   MARIO VOLADOR SOBRE EL ARCO IRIS",
+        "   EL ACUARIO SECRETO",
+        "   ESTRELLAS SECRETAS DEL CASTILLO"
+    ],
+    "options": {
+        "TEXT_OPT_OPTIONS": "OPCIONES",
+        "TEXT_OPT_CAMERA": "C{00193}MARA",
+        "TEXT_OPT_CONTROLS": "CONTROLES",
+        "TEXT_OPT_VIDEO": "PANTALLA",
+        "TEXT_OPT_AUDIO": "SONIDO",
+        "TEXT_OPT_CHEATS": "TRUCOS",
+        "TEXT_OPT_HIGHLIGHT": "O",
+        "TEXT_OPT_UNBOUND": "NADA",
+        "TEXT_OPT_PRESSKEY": "...",
+        "TEXT_OPT_BUTTON1": "[R] Opciones",
+        "TEXT_OPT_BUTTON2": "[R] Volver",
+        "TEXT_OPT_ENABLED": "Activado",
+        "TEXT_OPT_DISABLED": "Desactivado",
+        "TEXT_OPT_CAMX": "Sensibilidad del eje X",
+        "TEXT_OPT_CAMY": "Sensibilidad del eje Y",
+        "TEXT_OPT_INVERTX": "Invertir eje X",
+        "TEXT_OPT_INVERTY": "Invertir eje Y",
+        "TEXT_OPT_CAMC": "Agresividad del centrado de c{00225}mara",
+        "TEXT_OPT_CAMP": "Nivel de la orientaci{00243}n de c{00225}mara",
+        "TEXT_OPT_CAMD": "Deceleraci{00243}n de la c{00225}mara",
+        "TEXT_OPT_ANALOGUE": "C{00225}mara anal{00243}gica",
+        "TEXT_OPT_MOUSE": "C{00225}mara con el rat{00243}n",
+        "TEXT_OPT_TEXFILTER": "Filtrado de texturas",
+        "TEXT_OPT_FSCREEN": "Pantala completa",
+        "TEXT_OPT_NEAREST": "M{00225}s cercano",
+        "TEXT_OPT_LINEAR": "Linear",
+        "TEXT_OPT_MVOLUME": "Volumen maestro",
+        "TEXT_OPT_MUSVOLUME": "Volumen de la m{00250}sica",
+        "TEXT_OPT_SFXVOLUME": "Volumen de los efectos de sonido",
+        "TEXT_OPT_ENVVOLUME": "Volumen del entorno",
+        "TEXT_OPT_VSYNC": "Sincronizaci{00243}n vertical",
+        "TEXT_OPT_DOUBLE": "Doble",
+        "TEXT_OPT_HUD": "Interfaz",
+        "TEXT_OPT_THREEPT": "Triple",
+        "TEXT_OPT_APPLY": "Aplicar",
+        "TEXT_OPT_RESETWND": "Reiniciar ventana",
+        "TEXT_BIND_A": "Bot{00243}n A",
+        "TEXT_BIND_B": "Bot{00243}n B",
+        "TEXT_BIND_START": "Bot{00243}n Start",
+        "TEXT_BIND_L": "Gatillo L",
+        "TEXT_BIND_R": "Gatillo R",
+        "TEXT_BIND_Z": "Gatillo Z",
+        "TEXT_BIND_C_UP": "C-Arriba",
+        "TEXT_BIND_C_DOWN": "C-Abajo",
+        "TEXT_BIND_C_LEFT": "C-Izquierda",
+        "TEXT_BIND_C_RIGHT": "C-Derecha",
+        "TEXT_BIND_UP": "Stick arriba",
+        "TEXT_BIND_DOWN": "Stick abaho",
+        "TEXT_BIND_LEFT": "Stick izquierda",
+        "TEXT_BIND_RIGHT": "Stick derecha",
+        "TEXT_OPT_DEADZONE": "Zona muerta del stick",
+        "TEXT_OPT_RUMBLE": "Intensidad de la vibraci{00243}n",
+        "TEXT_OPT_CHEAT1": "Activar trucos",
+        "TEXT_OPT_CHEAT2": "Salto infinito (Pulsa L)",
+        "TEXT_OPT_CHEAT3": "Mario invencible",
+        "TEXT_OPT_CHEAT4": "Vidas infinitas",
+        "TEXT_OPT_CHEAT5": "S{00250}per velocidad",
+        "TEXT_OPT_CHEAT6": "Controles s{00250}per responsivos",
+        "TEXT_OPT_CHEAT7": "Salir del nivel en cualquier momento",
+        "TEXT_OPT_CHEAT8": "Mario gigante",
+        "TEXT_OPT_CHEAT9": "Mario enano",
+        "TEXT_OPT_GAME": "JUEGO",
+        "TEXT_OPT_LANGUAGE": "Idioma actual"
+    },
+    "strings": {
+        "TEXT_ZERO": "0",
+        "TEXT_COIN": "$",
+        "TEXT_STAR": "{09733}",
+        "TEXT_COIN_X": "${00215}",
+        "TEXT_STAR_X": "{09733}{00215}",
+        "TEXT_VARIABLE_X": "{00215}",
+        "TEXT_UNFILLED_STAR": "{09734}",
+        "TEXT_NEW": "NEW",
+        "TEXT_4DASHES": "----",
+        "TEXT_PAUSE": "PAUSE",
+        "TEXT_HUD_CONGRATULATIONS": "CONGRATULATIONS",
+        "TEXT_MARIO": "MARIO",
+        "TEXT_SELECT_FILE": "ELEGIR ARCHIVO",
+        "TEXT_CHECK_FILE": "VER ARCHIVO",
+        "TEXT_COPY_FILE": "COPIAR ARCHIVO",
+        "TEXT_ERASE_FILE": "BORRAR ARCHIVO",
+        "TEXT_SOUND_SELECT": "OPCIONES DE SONIDO",
+        "TEXT_FILE_MARIO_A": "MARIO A",
+        "TEXT_FILE_MARIO_B": "MARIO B",
+        "TEXT_FILE_MARIO_C": "MARIO C",
+        "TEXT_FILE_MARIO_D": "MARIO D",
+        "TEXT_SCORE": "PUNTUACI{00211}N",
+        "TEXT_COPY": "COPIAR",
+        "TEXT_ERASE": "BORRAR",
+        "TEXT_STEREO": "EST{00201}REO",
+        "TEXT_MONO": "MONO",
+        "TEXT_HEADSET": "AURICULARES",
+        "TEXT_SAVED_DATA_EXISTS": "YA EXISTE UN ARCHIVO GUARDADO",
+        "TEXT_NO_SAVED_DATA_EXISTS": "NO EXISTE UN ARCHIVO GUARDADO",
+        "TEXT_RETURN": "VOLVER",
+        "TEXT_CHECK_SCORE": "VER PUNTUACI{00211}N",
+        "TEXT_COPY_FILE_BUTTON": "COPIAR ARCHIVO",
+        "TEXT_ERASE_FILE_BUTTON": "BORRAR ARCHIVO",
+        "TEXT_HI_SCORE": "M{00193}XIMA PUNTUACI{00211}N",
+        "TEXT_MY_SCORE": "MI PUNTUACI{00211}N",
+        "TEXT_SCORE_MARIO_A": "{09786}A",
+        "TEXT_SCORE_MARIO_B": "{09786}B",
+        "TEXT_SCORE_MARIO_C": "{09786}C",
+        "TEXT_SCORE_MARIO_D": "{09786}D",
+        "TEXT_COPY_IT_TO_WHERE": "{00191}COPIAR A D{00211}NDE?",
+        "TEXT_COPYING_COMPLETED": "COPIADO COMPLETADO",
+        "TEXT_NO_FILE_TO_COPY_FROM": "NO HAY ARCHIVOS VAC{00205}OS",
+        "TEXT_SURE": "{00191}SEGURO?",
+        "TEXT_YES": "S{00205}",
+        "TEXT_NO": "NO",
+        "TEXT_FILE_MARIO_A_JUST_ERASED": "MARIO A ELIMINADO",
+        "TEXT_COURSE": "NIVEL",
+        "TEXT_MYSCORE": "MI PUNTUACI{00211}N",
+        "TEXT_CONTINUE": "CONTINUAR",
+        "TEXT_EXIT_COURSE": "SALIR DEL NIVEL",
+        "TEXT_EXIT_GAME": "SALIR DEL JUEGO",
+        "TEXT_CAMERA_ANGLE_R": "CAMBIAR {00193}NGULO DE C{00193}MARA CON R",
+        "TEXT_LAKITU_MARIO": "LAKITUO + MARIO",
+        "TEXT_LAKITU_STOP": "LAKITU + PARAR",
+        "TEXT_NORMAL_UPCLOSE": "(NORMAL)(CERCA)",
+        "TEXT_NORMAL_FIXED": "(NORMAL)(FIJA)",
+        "TEXT_CATCH": "CONSEGUIDA",
+        "TEXT_CLEAR": "COMPLETADA",
+        "TEXT_HUD_HI_SCORE": "NUEVO R{00201}CORD",
+        "TEXT_SAVE_AND_CONTINUE": "GUARDAR Y CONTINUAR",
+        "TEXT_SAVE_AND_QUIT": "GUARDAR Y SALIR",
+        "TEXT_SAVE_EXIT_GAME": "GUARDAR Y CERRAR EL JUEGO",
+        "TEXT_CONTINUE_WITHOUT_SAVING": "CONTINUAR SIN GUARDAR",
+        "TEXT_FILE_MARIO_EXCLAMATION": "{00161}Mario!",
+        "TEXT_POWER_STARS_RESTORED": "El poder de las Estrellas est{00225} volviendo al castillo...",
+        "TEXT_THANKS_TO_YOU": "...{00161}y es todo gracias a ti!",
+        "TEXT_THANK_YOU_MARIO": "{00161}Gracias, Mario!",
+        "TEXT_SOMETHING_SPECIAL": "Tenemos que organizar algo especial para ti...",
+        "TEXT_LISTEN_EVERYBODY": "Escuchadme...",
+        "TEXT_LETS_HAVE_CAKE": "vamos a hornear una deliciosa tarta...",
+        "TEXT_FOR_MARIO": "...para Mario...",
+        "TEXT_FILE_MARIO_QUESTION": "{00161}Mario!"
+    }
+}

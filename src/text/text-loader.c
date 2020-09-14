@@ -227,7 +227,6 @@ struct LanguageEntry* get_language(){
 
 void set_language(struct LanguageEntry* new_language){    
     current_language = new_language;
-    printf("SWITCHED: %s\n", current_language->name);
     dialogPool = new_language->dialogs;
     seg2_act_name_table = new_language->acts;
     seg2_course_name_table = new_language->courses;
