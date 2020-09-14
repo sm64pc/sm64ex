@@ -180,10 +180,17 @@ void alloc_languages(char* exePath, char* gamedir){
     strncpy(parent, exePath, strlen(exePath) - strlen(lastSlash));
 
     char * languagesDir = malloc(FILENAME_MAX * sizeof(char*));
+    #ifndef WIN32
     strcpy(languagesDir, parent);
     strcat(languagesDir, "/");
     strcat(languagesDir, gamedir);
     strcat(languagesDir, "/texts/");
+    #else
+    strcpy(languagesDir, parent);
+    strcat(languagesDir, "\\");
+    strcat(languagesDir, gamedir);
+    strcat(languagesDir, "\\texts\\");
+    #endif    
 
     DIR *lf = opendir(languagesDir);
     struct dirent *de;

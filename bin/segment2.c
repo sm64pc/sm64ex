@@ -923,6 +923,13 @@ ALIGNED8 static const u8 texture_font_char_question       [] = "textures/special
 ALIGNED8 static const u8 texture_font_char_umlaut         [] = "textures/special/umlaut";
 ALIGNED8 static const u8 texture_font_char_enye           [] = "textures/special/enye";
 
+ALIGNED8 static const u8 texture_hud_char_J             [] = "textures/special/hud_j";
+ALIGNED8 static const u8 texture_hud_char_Q             [] = "textures/special/hud_q";
+ALIGNED8 static const u8 texture_hud_char_V             [] = "textures/special/hud_v";
+ALIGNED8 static const u8 texture_hud_char_X             [] = "textures/special/hud_x";
+ALIGNED8 static const u8 texture_hud_char_Z             [] = "textures/special/hud_z";
+ALIGNED8 static const u8 texture_hud_char_decimal_point [] = "textures/special/hud_decimal";
+
 ALIGNED8 static const u8 texture_hud_char_camera[] = "textures/segment2/segment2.07B50.rgba16";
 
 ALIGNED8 static const u8 texture_hud_char_lakitu[] = "textures/segment2/segment2.07D50.rgba16";
@@ -939,16 +946,16 @@ const u8 *const main_hud_lut[] = {
     texture_hud_char_4, texture_hud_char_5, texture_hud_char_6, texture_hud_char_7,
     texture_hud_char_8, texture_hud_char_9, texture_hud_char_A, texture_hud_char_B,
     texture_hud_char_C, texture_hud_char_D, texture_hud_char_E, texture_hud_char_F,
-    texture_hud_char_G, texture_hud_char_H, texture_hud_char_I,               0x0,
+    texture_hud_char_G, texture_hud_char_H, texture_hud_char_I, texture_hud_char_J,
     texture_hud_char_K, texture_hud_char_L, texture_hud_char_M, texture_hud_char_N,
-    texture_hud_char_O, texture_hud_char_P,               0x0, texture_hud_char_R,
-    texture_hud_char_S, texture_hud_char_T, texture_hud_char_U,               0x0,
-    texture_hud_char_W,               0x0, texture_hud_char_Y,               0x0,
-                  0x0,               0x0,               0x0,               0x0,
-                  0x0,               0x0,               0x0,               0x0,
-                  0x0,               0x0,               0x0,               0x0,
-                  0x0,               0x0, texture_hud_char_multiply, texture_hud_char_coin,
-    texture_hud_char_mario_head, texture_hud_char_star,               0x0,               0x0,
+    texture_hud_char_O, texture_hud_char_P, texture_hud_char_Q, texture_hud_char_R,
+    texture_hud_char_S, texture_hud_char_T, texture_hud_char_U, texture_hud_char_V,
+    texture_hud_char_W, texture_hud_char_X, texture_hud_char_Y, texture_hud_char_Z,
+    0x0,                 0x0,                      0x0,                  0x0,
+    0x0,                 0x0,                      0x0,                  0x0,
+    0x0,                 0x0,                      0x0,                  0x0,
+    0x0,                 0x0, texture_hud_char_multiply, texture_hud_char_coin,
+    texture_hud_char_mario_head, texture_hud_char_star, texture_hud_char_decimal_point, 0x0,
     texture_hud_char_apostrophe, texture_hud_char_double_quote,
 };
 
