@@ -49,13 +49,13 @@ struct Character charmap[356] = {
     {"{00193}", {117, NULL}},
     {"{00201}", {118, NULL}},
     {"{00205}", {119, NULL}},
-    {"{00211}", {120, NULL}}, 
+    {"{00211}", {120, NULL}},
     {"{00218}", {121, NULL}},
-    {"{00241}", {122, NULL}}, 
+    {"{00241}", {122, NULL}},
     {"{00209}", {123, NULL}},
     {"{00252}", {124, NULL}},
     {"{00220}", {125, NULL}},
-    {"{00191}", {126, NULL}},   
+    {"{00191}", {126, NULL}},
     {"{00161}", {127, NULL}}
 };
 
@@ -73,6 +73,9 @@ struct Character getCharacter(char* ch){
 }
 
 u8 * getTranslatedText(char * txt){
+
+    txt = (txt == NULL ? "" : txt);
+
     s32 cid;
     s32 strSize = strlen(txt);
     u8 * tmp = malloc((strSize + 1) * sizeof(u8));

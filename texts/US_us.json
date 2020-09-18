@@ -1,4 +1,4 @@
-{   
+{
     "manifest": {
         "langName": "English",
         "langLogo": "none"
@@ -3279,6 +3279,7 @@
         "   VANISH CAP UNDER THE MOAT",
         "   WING MARIO OVER THE RAINBOW",
         "   THE SECRET AQUARIUM",
+        null,
         "   CASTLE SECRET STARS"
     ],
     "options": {

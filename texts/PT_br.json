@@ -1,4 +1,4 @@
-{   
+{
     "manifest": {
         "langName": "Portuguese",
         "langLogo": "none"
@@ -3279,6 +3279,7 @@
         "   VANISH CAP ABAIXO DA PONTE",
         "   WING MARIO AL{00201}M DO ARCO-{00205}RIS",
         "   O AQU{00193}RIO SECRETO",
+        null,
         "   ESTRELAS SECRETAS DO CASTELO"
     ],
     "options": {
