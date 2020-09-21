@@ -56,7 +56,7 @@ static const u8 menuStr[][32] = {
     { TEXT_OPT_AUDIO },
     { TEXT_EXIT_GAME },
     { TEXT_OPT_CHEATS },
-
+    { TEXT_OPT_CONFIRM }
 };
 
 static const u8 optsCameraStr[][32] = {
@@ -101,6 +101,10 @@ static const u8 optsCheatsStr[][64] = {
     { TEXT_OPT_CHEAT7 },
     { TEXT_OPT_CHEAT8 },
     { TEXT_OPT_CHEAT9 },
+};
+
+static const u8 optsConfirmExitStr[][32] = {
+  { TEXT_YES }
 };
 
 static const u8 bindStr[][32] = {
@@ -280,15 +284,20 @@ static struct Option optsCheats[] = {
 
 };
 
+static struct Option optsConfirmExit[] = {
+    DEF_OPT_BUTTON( optsConfirmExitStr[0], optmenu_act_exit ),
+};
+
 /* submenu definitions */
 
 #ifdef BETTERCAMERA
 static struct SubMenu menuCamera   = DEF_SUBMENU( menuStr[4], optsCamera );
 #endif
-static struct SubMenu menuControls = DEF_SUBMENU( menuStr[5], optsControls );
-static struct SubMenu menuVideo    = DEF_SUBMENU( menuStr[6], optsVideo );
-static struct SubMenu menuAudio    = DEF_SUBMENU( menuStr[7], optsAudio );
-static struct SubMenu menuCheats   = DEF_SUBMENU( menuStr[9], optsCheats );
+static struct SubMenu menuControls    = DEF_SUBMENU( menuStr[5], optsControls );
+static struct SubMenu menuVideo       = DEF_SUBMENU( menuStr[6], optsVideo );
+static struct SubMenu menuAudio       = DEF_SUBMENU( menuStr[7], optsAudio );
+static struct SubMenu menuCheats      = DEF_SUBMENU( menuStr[9], optsCheats );
+static struct SubMenu menuConfirmExit = DEF_SUBMENU( menuStr[10], optsConfirmExit );
 
 /* main options menu definition */
 
@@ -299,7 +308,7 @@ static struct Option optsMain[] = {
     DEF_OPT_SUBMENU( menuStr[5], &menuControls ),
     DEF_OPT_SUBMENU( menuStr[6], &menuVideo ),
     DEF_OPT_SUBMENU( menuStr[7], &menuAudio ),
-    DEF_OPT_BUTTON ( menuStr[8], optmenu_act_exit ),
+    DEF_OPT_SUBMENU ( menuStr[8], &menuConfirmExit ),
     // NOTE: always keep cheats the last option here because of the half-assed way I toggle them
     DEF_OPT_SUBMENU( menuStr[9], &menuCheats )
 };

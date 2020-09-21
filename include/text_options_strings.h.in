@@ -10,6 +10,7 @@
 #define TEXT_OPT_CONTROLS  _("CONTROLS")
 #define TEXT_OPT_VIDEO     _("DISPLAY")
 #define TEXT_OPT_AUDIO     _("SOUND")
+#define TEXT_OPT_CONFIRM   _("CONFIRM")
 #define TEXT_OPT_CHEATS    _("CHEATS")
 
 // Markers
