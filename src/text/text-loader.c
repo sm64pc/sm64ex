@@ -68,7 +68,7 @@ void load_language(char* jsonTxt, s8 language){
         lines = cJSON_GetObjectItemCaseSensitive(dialog, "lines");
 
         int lineAmount = cJSON_GetArraySize(lines);
-        int dialogSize = lineAmount * 45;
+        int dialogSize = lineAmount * 45 * 7;
         char* dialogTxt = malloc(dialogSize * sizeof(char));
         strcpy(dialogTxt, "");
         int currLine = 0;
