@@ -10,6 +10,7 @@
 #include "engine/surface_collision.h"
 #include "pc/configfile.h"
 #include "pc/controller/controller_mouse.h"
+
 #if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR) 
 //quick and dirty fix for some older MinGW.org mingwrt
 #else
@@ -18,7 +19,7 @@
 
 #define NEW_CAM_BOUNDING_BOX_RAYS 4
 #define NEW_CAM_BOUNDING_BOX_HRADIUS 250
-#define NEW_CAM_BOUNDING_BOX_VRADIUS 50
+#define NEW_CAM_BOUNDING_BOX_VRADIUS 100
 
 /**
 Quick explanation of the camera modes
@@ -527,6 +528,7 @@ static void newcam_collision(void) {
     camdir[2] = newcam_pos[2]-newcam_lookat[2];
 
     find_surface_on_ray(newcam_pos_target, camdir, &surf, hitpos);
+
     newcam_coldist = sqrtf((newcam_pos_target[0] - hitpos[0]) * (newcam_pos_target[0] - hitpos[0]) + (newcam_pos_target[1] - hitpos[1]) * (newcam_pos_target[1] - hitpos[1]) + (newcam_pos_target[2] - hitpos[2]) * (newcam_pos_target[2] - hitpos[2]));
 
     if (surf) {
