@@ -10,12 +10,16 @@
 #include "engine/surface_collision.h"
 #include "pc/configfile.h"
 #include "pc/controller/controller_mouse.h"
+
 #if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR) 
 //quick and dirty fix for some older MinGW.org mingwrt
 #else
 #include <stdio.h>
 #endif
 
+#define NEW_CAM_BOUNDING_BOX_RAYS 4
+#define NEW_CAM_BOUNDING_BOX_HRADIUS 250
+#define NEW_CAM_BOUNDING_BOX_VRADIUS 100
 
 /**
 Quick explanation of the camera modes
@@ -473,6 +477,47 @@ static void newcam_update_values(void) {
     }
 }
 
+static void newcam_bounding_box(void) {
+    Vec3f camdirs[NEW_CAM_BOUNDING_BOX_RAYS] = { 0 };
+    Vec3f raypos[NEW_CAM_BOUNDING_BOX_RAYS] = { 0 };
+    s16 antiYaw = newcam_yaw - 0x4000;
+
+    // sideways ray 1
+    camdirs[0][0] = coss(antiYaw) * NEW_CAM_BOUNDING_BOX_HRADIUS;
+    camdirs[0][2] = sins(antiYaw) * NEW_CAM_BOUNDING_BOX_HRADIUS;
+
+    // sideways ray 2
+    camdirs[1][0] = -coss(antiYaw) * NEW_CAM_BOUNDING_BOX_HRADIUS;
+    camdirs[1][2] = -sins(antiYaw) * NEW_CAM_BOUNDING_BOX_HRADIUS;
+
+    // vertical rays
+    camdirs[2][1] = -NEW_CAM_BOUNDING_BOX_VRADIUS;
+    camdirs[3][1] =  NEW_CAM_BOUNDING_BOX_VRADIUS;
+
+    for (int i = 0; i < NEW_CAM_BOUNDING_BOX_RAYS; i++) {
+        struct Surface* surf;
+        Vec3f offset = { 0 };
+
+        Vec3f startpos = { 0 };
+        vec3f_copy(startpos, newcam_pos);
+        vec3f_add(startpos, offset);
+
+        find_surface_on_ray(startpos, camdirs[i], &surf, raypos[i]);
+        if (!surf) {
+            vec3f_copy(raypos[i], startpos);
+            vec3f_add(raypos[i], camdirs[i]);
+        }
+    }
+
+    Vec3f avg = { 0 };
+    for (int i = 0; i < NEW_CAM_BOUNDING_BOX_RAYS; i++) {
+        vec3f_add(avg, raypos[i]);
+    }
+    vec3f_mul(avg, 1.0f / ((f32)NEW_CAM_BOUNDING_BOX_RAYS));
+
+    vec3f_copy(newcam_pos, avg);
+}
+
 static void newcam_collision(void) {
     struct Surface *surf;
     Vec3f camdir;
@@ -483,11 +528,20 @@ static void newcam_collision(void) {
     camdir[2] = newcam_pos[2]-newcam_lookat[2];
 
     find_surface_on_ray(newcam_pos_target, camdir, &surf, hitpos);
+
     newcam_coldist = sqrtf((newcam_pos_target[0] - hitpos[0]) * (newcam_pos_target[0] - hitpos[0]) + (newcam_pos_target[1] - hitpos[1]) * (newcam_pos_target[1] - hitpos[1]) + (newcam_pos_target[2] - hitpos[2]) * (newcam_pos_target[2] - hitpos[2]));
 
     if (surf) {
+        // offset the hit pos by the hit normal
+        Vec3f offset = { 0 };
+        offset[0] = surf->normal.x;
+        offset[1] = surf->normal.y;
+        offset[2] = surf->normal.z;
+        vec3f_mul(offset, 5.0f);
+        vec3f_add(hitpos, offset);
+
         newcam_pos[0] = hitpos[0];
-        newcam_pos[1] = approach_f32(hitpos[1],newcam_pos[1],25,-25);
+        newcam_pos[1] = hitpos[1];
         newcam_pos[2] = hitpos[2];
         newcam_pan_x = 0;
         newcam_pan_z = 0;
@@ -541,8 +595,10 @@ static void newcam_position_cam(void) {
     if (newcam_modeflags & NC_FLAG_FOCUSZ)
         newcam_lookat[2] = newcam_pos_target[2]-newcam_pan_z;
 
-    if (newcam_modeflags & NC_FLAG_COLLISION)
-    newcam_collision();
+    if (newcam_modeflags & NC_FLAG_COLLISION) {
+        newcam_collision();
+        newcam_bounding_box();
+    }
 
 }
 
