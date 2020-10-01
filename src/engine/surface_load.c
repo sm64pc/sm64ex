@@ -596,6 +596,7 @@ void load_area_terrain(s16 index, s16 *data, s8 *surfaceRooms, s16 *macroObjects
     gSurfaceNodesAllocated = 0;
     gSurfacesAllocated = 0;
 
+    clear_dynamic_surfaces();
     clear_static_surfaces();
 
     // A while loop iterating through each section of the level data. Sections of data
