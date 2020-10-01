@@ -13,8 +13,6 @@ struct CheatList {
     bool         ExitAnywhere;
     bool         HugeMario;
     bool         TinyMario;
-    bool         SPD;
-    bool         TPF;
     unsigned int JB;
     bool         JBC;
     bool         QuikEnd;

@@ -61,8 +61,6 @@ static const u8 optsCheatsStr[][64] = {
     { TEXT_OPT_CHEAT7 },
     { TEXT_OPT_CHEAT8 },
     { TEXT_OPT_CHEAT9 },
-    { TEXT_OPT_SPDDPS },
-    { TEXT_OPT_TPF },
     { TEXT_OPT_JB },
     { TEXT_OPT_JBC },
     { TEXT_OPT_QUIKEND },

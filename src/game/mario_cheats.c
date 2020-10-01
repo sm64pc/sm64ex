@@ -78,32 +78,17 @@ void cheats_long_jump(struct MarioState *m) {
     if (Cheats.BLJAnywhere >= 7 && Cheats.EnableCheats == true && m->forwardVel < 1.0f
         && (m->controller->buttonDown & A_BUTTON)) {
         set_jumping_action(m, ACT_LONG_JUMP, 0);
-        return m->action != ACT_LONG_JUMP;
+        return FALSE;
     }
 }
 
-/*Main cheat function*/
+/*Main cheat fuunction*/
 void cheats_mario_inputs(struct MarioState *m) {
     m->particleFlags = 0;
     m->collidedObjInteractTypes = m->marioObj->collidedObjInteractTypes;
     m->flags &= 0xFFFFFF;
 
     while (Cheats.EnableCheats == true) {
-
-        /*Speed Display*/
-        if (Cheats.SPD == true) {
-            print_text_fmt_int(210, 72, "SPD %d", m->forwardVel);
-        }
-
-        /*T Pose Float? Actually it's just twirling + MoonJump*/
-        while (Cheats.TPF == true) {
-            if (m->controller->buttonDown & A_BUTTON) {
-                m->vel[1] = 25;
-                set_mario_action(m, ACT_TWIRLING, 0);
-            }
-            break;
-        }
-
         /*QuickEnding cheat*/
         while (Cheats.QuikEnd == true) {
             if (m->numStars == 120) {
@@ -322,8 +307,6 @@ void cheats_mario_inputs(struct MarioState *m) {
                 break;
             }
         }
-
-        /*Jukebox*/
         if (Cheats.JBC == true) {
             if (Cheats.JB == 0) {
                 play_secondary_music(SEQ_EVENT_CUTSCENE_INTRO, 0, 100, 0);
