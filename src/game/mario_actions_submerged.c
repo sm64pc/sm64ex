@@ -1,6 +1,5 @@
 #include <PR/ultratypes.h>
 
-#include "mario_cheats.h"
 #include "sm64.h"
 #include "level_update.h"
 #include "memory.h"
@@ -231,8 +230,6 @@ static void stationary_slow_down(struct MarioState *m) {
 static void update_swimming_speed(struct MarioState *m, f32 decelThreshold) {
     f32 buoyancy = get_buoyancy(m);
     f32 maxSpeed = 28.0f;
-
-    cheats_swimming_speed(m);
 
     if (m->action & ACT_FLAG_STATIONARY) {
         m->forwardVel -= 2.0f;

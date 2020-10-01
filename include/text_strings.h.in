@@ -5,7 +5,6 @@
 
 #ifdef EXT_OPTIONS_MENU
 #include "text_options_strings.h"
-#include "text_cheats_strings.h"
 #endif
 
 /**

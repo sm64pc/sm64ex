@@ -15,7 +15,6 @@
 #include "game/mario_misc.h"
 #include "game/game_init.h"
 #include "game/ingame_menu.h"
-#include "game/cheats_menu.h"
 #include "game/options_menu.h"
 #include "pc/pc_main.h"
 #include "pc/cliopts.h"
@@ -30,6 +29,9 @@ u8 optmenu_open = 0;
 
 static u8 optmenu_binding = 0;
 static u8 optmenu_bind_idx = 0;
+
+/* Keeps track of how many times the user has pressed L while in the options menu, so cheats can be unlocked */
+static s32 l_counter = 0;
 
 // How to add stuff:
 // strings: add them to include/text_strings.h.in
@@ -49,11 +51,11 @@ static const u8 menuStr[][32] = {
     { TEXT_OPT_BUTTON2 },
     { TEXT_OPT_OPTIONS },
     { TEXT_OPT_CAMERA },
-    { TEXT_OPT_CHEATS },
     { TEXT_OPT_CONTROLS },
     { TEXT_OPT_VIDEO },
     { TEXT_OPT_AUDIO },
     { TEXT_EXIT_GAME },
+    { TEXT_OPT_CHEATS },
 
 };
 
@@ -88,6 +90,18 @@ static const u8 optsAudioStr[][32] = {
     { TEXT_OPT_MUSVOLUME },
     { TEXT_OPT_SFXVOLUME },
     { TEXT_OPT_ENVVOLUME },
+};
+
+static const u8 optsCheatsStr[][64] = {
+    { TEXT_OPT_CHEAT1 },
+    { TEXT_OPT_CHEAT2 },
+    { TEXT_OPT_CHEAT3 },
+    { TEXT_OPT_CHEAT4 },
+    { TEXT_OPT_CHEAT5 },
+    { TEXT_OPT_CHEAT6 },
+    { TEXT_OPT_CHEAT7 },
+    { TEXT_OPT_CHEAT8 },
+    { TEXT_OPT_CHEAT9 },
 };
 
 static const u8 bindStr[][32] = {
@@ -201,28 +215,6 @@ static void optvideo_apply(UNUSED struct Option *self, s32 arg) {
     if (!arg) configWindow.settings_changed = true;
 }
 
-
-static void setCap_Wing(UNUSED struct Option *self, s32 arg) {
-    if (!arg) Cheats.WingCap = true;
-}
-static void setCap_Metal(UNUSED struct Option *self, s32 arg) {
-    if (!arg) Cheats.MetalCap = true;
-}
-static void setCap_Vanish(UNUSED struct Option *self, s32 arg) {
-    if (!arg) Cheats.VanishCap = true;
-}
-static void setCap_Remove(UNUSED struct Option *self, s32 arg) {
-    if (!arg) Cheats.RemoveCap = true;
-}
-static void setCap_Normal(UNUSED struct Option *self, s32 arg) {
-    Cheats.WingCap = false;
-    Cheats.MetalCap = false;
-    Cheats.VanishCap = false;
-    Cheats.RemoveCap = false;
-    if (!arg) Cheats.NormalCap = true;
-}
-
-
 /* submenu option lists */
 
 #ifdef BETTERCAMERA
@@ -278,32 +270,15 @@ static struct Option optsAudio[] = {
 };
 
 static struct Option optsCheats[] = {
-    DEF_OPT_TOGGLE(optsCheatsStr[0], &Cheats.EnableCheats),
-    DEF_OPT_TOGGLE(optsCheatsStr[1], &Cheats.MoonJump),
-    DEF_OPT_TOGGLE(optsCheatsStr[2], &Cheats.GodMode),
-    DEF_OPT_TOGGLE(optsCheatsStr[3], &Cheats.InfiniteLives),
-    DEF_OPT_TOGGLE(optsCheatsStr[4], &Cheats.SuperSpeed),
-    DEF_OPT_TOGGLE(optsCheatsStr[5], &Cheats.Responsive),
-    DEF_OPT_TOGGLE(optsCheatsStr[6], &Cheats.ExitAnywhere),
-    DEF_OPT_TOGGLE(optsCheatsStr[7], &Cheats.HugeMario),
-    DEF_OPT_TOGGLE(optsCheatsStr[8], &Cheats.TinyMario),
-    DEF_OPT_CHOICE(optsCheatsStr[9], &Cheats.JB, SeqChoices),
-    DEF_OPT_TOGGLE(optsCheatsStr[10], &Cheats.JBC),
-    DEF_OPT_TOGGLE(optsCheatsStr[11], &Cheats.QuikEnd),
-    DEF_OPT_CHOICE(optsCheatsStr[12], &Cheats.Hurt, HurtCheatChoices),
-    DEF_OPT_TOGGLE(optsCheatsStr[13], &Cheats.Cann),
-    DEF_OPT_TOGGLE(optsCheatsStr[14], &Cheats.AutoWK),
-    DEF_OPT_TOGGLE(optsCheatsStr[15], &Cheats.GetShell),
-    DEF_OPT_TOGGLE(optsCheatsStr[16], &Cheats.GetBob),
-    DEF_OPT_CHOICE(optsCheatsStr[17], &Cheats.Spamba, SpamCheatChoices),
-    DEF_OPT_TOGGLE(optsCheatsStr[18], &Cheats.Swim),
-    DEF_OPT_BUTTON(optsCheatsStr[19], setCap_Wing),
-    DEF_OPT_BUTTON(optsCheatsStr[20], setCap_Metal),
-    DEF_OPT_BUTTON(optsCheatsStr[21], setCap_Vanish),
-    DEF_OPT_BUTTON(optsCheatsStr[22], setCap_Remove),
-    DEF_OPT_TOGGLE(optsCheatsStr[23], &Cheats.DCM),
-    DEF_OPT_BUTTON(optsCheatsStr[24], setCap_Normal),
-    DEF_OPT_CHOICE(optsCheatsStr[25], &Cheats.BLJAnywhere, bljCheatChoices),
+    DEF_OPT_TOGGLE( optsCheatsStr[0], &Cheats.EnableCheats ),
+    DEF_OPT_TOGGLE( optsCheatsStr[1], &Cheats.MoonJump ),
+    DEF_OPT_TOGGLE( optsCheatsStr[2], &Cheats.GodMode ),
+    DEF_OPT_TOGGLE( optsCheatsStr[3], &Cheats.InfiniteLives ),
+    DEF_OPT_TOGGLE( optsCheatsStr[4], &Cheats.SuperSpeed ),
+    DEF_OPT_TOGGLE( optsCheatsStr[5], &Cheats.Responsive ),
+    DEF_OPT_TOGGLE( optsCheatsStr[6], &Cheats.ExitAnywhere ),
+    DEF_OPT_TOGGLE( optsCheatsStr[7], &Cheats.HugeMario ),
+    DEF_OPT_TOGGLE( optsCheatsStr[8], &Cheats.TinyMario ),
 
 };
 
@@ -312,11 +287,10 @@ static struct Option optsCheats[] = {
 #ifdef BETTERCAMERA
 static struct SubMenu menuCamera   = DEF_SUBMENU( menuStr[4], optsCamera );
 #endif
-static struct SubMenu menuCheats   = DEF_SUBMENU( menuStr[5], optsCheats);
-static struct SubMenu menuControls = DEF_SUBMENU( menuStr[6], optsControls );
-static struct SubMenu menuVideo    = DEF_SUBMENU( menuStr[7], optsVideo );
-static struct SubMenu menuAudio    = DEF_SUBMENU( menuStr[8], optsAudio );
-
+static struct SubMenu menuControls = DEF_SUBMENU( menuStr[5], optsControls );
+static struct SubMenu menuVideo    = DEF_SUBMENU( menuStr[6], optsVideo );
+static struct SubMenu menuAudio    = DEF_SUBMENU( menuStr[7], optsAudio );
+static struct SubMenu menuCheats   = DEF_SUBMENU( menuStr[9], optsCheats );
 
 /* main options menu definition */
 
@@ -324,11 +298,12 @@ static struct Option optsMain[] = {
 #ifdef BETTERCAMERA
     DEF_OPT_SUBMENU( menuStr[4], &menuCamera ),
 #endif
-    DEF_OPT_SUBMENU( menuStr[5], &menuCheats),
-    DEF_OPT_SUBMENU( menuStr[6], &menuControls ),
-    DEF_OPT_SUBMENU( menuStr[7], &menuVideo ),
-    DEF_OPT_SUBMENU( menuStr[8], &menuAudio ),
-    DEF_OPT_BUTTON ( menuStr[9], optmenu_act_exit ),
+    DEF_OPT_SUBMENU( menuStr[5], &menuControls ),
+    DEF_OPT_SUBMENU( menuStr[6], &menuVideo ),
+    DEF_OPT_SUBMENU( menuStr[7], &menuAudio ),
+    DEF_OPT_BUTTON ( menuStr[8], optmenu_act_exit ),
+    // NOTE: always keep cheats the last option here because of the half-assed way I toggle them
+    DEF_OPT_SUBMENU( menuStr[9], &menuCheats )
 };
 
 static struct SubMenu menuMain = DEF_SUBMENU( menuStr[3], optsMain );
@@ -521,12 +496,19 @@ void optmenu_toggle(void) {
 
         // HACK: hide the last option in main if cheats are disabled
         menuMain.numOpts = sizeof(optsMain) / sizeof(optsMain[0]);
-
+        if (!Cheats.EnableCheats) {
+            menuMain.numOpts--;
+            if (menuMain.select >= menuMain.numOpts) {
+                menuMain.select = 0; // don't bother
+                menuMain.scroll = 0;
+            }
+        }
 
         currentMenu = &menuMain;
         optmenu_open = 1;
         
-
+        /* Resets l_counter to 0 every time the options menu is open */
+        l_counter = 0;
     } else {
         #ifndef nosound
         play_sound(SOUND_MENU_MARIO_CASTLE_WARP2, gDefaultSoundArgs);
@@ -559,9 +541,14 @@ void optmenu_check_buttons(void) {
     
     /* Enables cheats if the user press the L trigger 3 times while in the options menu. Also plays a sound. */
     
-    if ((gPlayer1Controller->buttonPressed & R_TRIG) && !Cheats.EnableCheats) {
-        Cheats.EnableCheats = true;
-        play_sound(SOUND_MENU_STAR_SOUND, gDefaultSoundArgs);
+    if ((gPlayer1Controller->buttonPressed & L_TRIG) && !Cheats.EnableCheats) {
+        if (l_counter == 2) {
+                Cheats.EnableCheats = true;
+                play_sound(SOUND_MENU_STAR_SOUND, gDefaultSoundArgs);
+                l_counter = 0;
+        } else {
+            l_counter++;
+        }
     }
     
     if (!optmenu_open) return;
