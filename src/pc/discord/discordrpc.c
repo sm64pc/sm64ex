@@ -188,7 +188,7 @@ static void set_state(void) {
         // when exiting a stage the act doesn't get reset
         if (gCurrActNum && gCurrCourseNum) {
             // any stage over 19 is a special stage without acts
-            if (gCurrCourseNum < 19) {
+            if (gCurrCourseNum <= COURSE_STAGES_MAX) {
                 void **actNameTbl;
 #ifndef VERSION_EU
                 actNameTbl = segmented_to_virtual(seg2_act_name_table);
