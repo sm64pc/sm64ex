@@ -572,13 +572,13 @@ void optmenu_check_buttons(void) {
         allowInput = 1;
     }
 
-    if (ABS(gPlayer1Controller->stickY) > 60) {
+    if ((ABS(gPlayer1Controller->stickY) > 60) || (gPlayer1Controller->buttonPressed & (D_CBUTTONS|U_CBUTTONS))) {
         if (allowInput) {
             #ifndef nosound
             play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
             #endif
 
-            if (gPlayer1Controller->stickY >= 60) {
+            if ((gPlayer1Controller->stickY >= 60) || (gPlayer1Controller->buttonPressed & U_CBUTTONS)) {
                 currentMenu->select--;
                 if (currentMenu->select < 0)
                     currentMenu->select = currentMenu->numOpts-1;
@@ -593,12 +593,12 @@ void optmenu_check_buttons(void) {
             else if (currentMenu->select > currentMenu->scroll + 3)
                 currentMenu->scroll = currentMenu->select - 3;
         }
-    } else if (ABS(gPlayer1Controller->stickX) > 60) {
+    } else if ((ABS(gPlayer1Controller->stickX) > 60) || (gPlayer1Controller->buttonPressed & (L_CBUTTONS|R_CBUTTONS))) { 
         if (allowInput) {
             #ifndef nosound
             play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
             #endif
-            if (gPlayer1Controller->stickX >= 60)
+            if ((gPlayer1Controller->stickX >= 60) || (gPlayer1Controller->buttonPressed & R_CBUTTONS))
                 optmenu_opt_change(&currentMenu->opts[currentMenu->select], 1);
             else
                 optmenu_opt_change(&currentMenu->opts[currentMenu->select], -1);
