@@ -6,7 +6,7 @@ Run `./extract_assets.py --clean && make clean` or `make distclean` to remove RO
 
 Please contribute **first** to the [nightly branch](https://github.com/sm64pc/sm64ex/tree/nightly/). New functionality will be merged to master once they're considered to be well-tested.
 
-*Read this in other languages: [Español](README_es_ES.md), [Português](README_pt_BR.md) or [简体中文](README_zh_CN.md).*
+*Read this in other languages: [Việt ngữ](README_vi_VN.md), [Español](README_es_ES.md), [Português](README_pt_BR.md) or [简体中文](README_zh_CN.md).*
 
 ## New features
 
