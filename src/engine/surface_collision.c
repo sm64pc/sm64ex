@@ -925,7 +925,7 @@ void find_surface_on_ray(Vec3f orig, Vec3f dir, struct Surface **hit_surface, Ve
 	}
 
     // increase collision checking precision (normally 1)
-    f32 precision = 3;
+    f32 precision = gCheckingSurfaceCollisionsForCamera ? 3 : 1;
 
     // Get cells we cross using DDA
     if (absx(dir[0]) >= absx(dir[2]))
