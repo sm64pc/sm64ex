@@ -219,7 +219,7 @@ static void controller_sdl_read(OSContPad *pad) {
         update_button(i, new);
     }
 
-    update_button(VK_LTRIGGER - VK_BASE_SDL_GAMEPAD, ltrig > AXIS_THRESHOLD);
+    update_button(VK_LTRIGGER - VK_BASE_SDL_GAMEPAD, ltrig < AXIS_THRESHOLD);
     update_button(VK_RTRIGGER - VK_BASE_SDL_GAMEPAD, rtrig > AXIS_THRESHOLD);
 
     u32 buttons_down = 0;
