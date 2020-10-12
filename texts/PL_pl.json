@@ -1,0 +1,3466 @@
+{   
+    "manifest": {
+        "langName": "Polish",
+        "langLogo": "none"
+    },
+    "dialogs": [
+        {
+            "ID": 0,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Wow! Jestes wlasnie na",
+				"srodku pola bitewnego",
+                "Znajdz Gwiazdy Mocy,",
+                "ktore ukradl Bowser",
+                "ze swiatow w obrazach",
+                "Najpierw, porozmawiaj z ",
+                "Przyjaznym Bob-Ombem.",
+				"(Nacisnij [B] zeby",
+                "rozmawiac.) Na pewno ci",
+                "pomoze, tak samo zrobia ",
+                "jego przyjaciele, w innych",
+                "miejscach. Zeby czytac",
+                "znaki, stoj w miejscu,",
+				"odwroc sie do nich i",
+                "nacisnij [B]. Nacisnij [A]",
+                "lub [B], aby czytac dalej.",
+				"Mozesz rozmawiac z niektorymi",
+                "postaciami, stajac przed nimi,",
+                "i naciskajac [B]."
+            ]
+        },
+        {
+            "ID": 1,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Uwazaj, jesli bedziesz tu ",
+                "spacerowal, mozesz",
+                "zostac trafiony",
+                "kula wodna!",
+                "Te wrogie Bob-Omby kochaja",
+                "walke, zawsze znajduja",
+                "sposob na atak.",
+                "Ta laka stala sie",
+				"polem bitwy,",
+                "kiedy Wielki Bob-Omb.",
+                "zdobyl Gwiazde Mocy.",
+                "Czy moglbys zdobyc dla nas",
+                "Gwiazde Mocy?",
+				"Przejdz przez most,",
+                "i pojdz w lewo po sciezce,",
+                "zeby znalezc",
+				"Wielkiego Bob-Omba.",
+                "Prosze, wroc do mnie,",
+                "po odzyskaniu ",
+                "Gwiazdy Mocy!"
+            ]
+        },
+        {
+            "ID": 2,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Hej, ty! Tam z przodu jest ",
+                "niebezpiecznie, wiec sluchaj! ",
+                "Posluchaj mojej rady.",
+                "",
+                "Przejdz przez dwa mosty",
+                "przed nami, potem,",
+                "uwazaj na",
+                "Kule Wodne.",
+                "Wielki Bob-Omb,",
+                "ktory jest na gorze",
+                "jest bardzo potezny.",
+                "Nie daj mu sie zlapac!",
+                "Jestesmy przyjaznymi Bob-Ombami,",
+                "po twojej stronie.",
+                "Mozesz z nami porozmawiac",
+                "kiedykolwiek chcesz!"
+            ]
+        },
+        {
+            "ID": 3,
+            "linesPerBox": 5,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Dziekuje, Mario, Wielki",
+                "Bob-omb jest zwykla fujara!",
+                "Ale bitwa dopiero sie zaczela!",
+                "Inni wrogowie maja",
+                "reszte Gwiazd Mocy. Jesli",
+                "zdobedziesz wiecej Gwiazd,",
+                "bedziesz mogl otwierac",
+				"nowe drzwi,",
+                "ktore prowadza do",
+				"innych swiatow!",
+                "Moi Bob-Ombowi przyjaciele",
+                "na ciebie czekaja.",
+				"Porozmawiaj z nimi-",
+                "a wtedy pozwola ci",
+                "uzywac armat."
+            ]
+        },
+        {
+            "ID": 4,
+            "linesPerBox": 3,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Jestesmy spokojnymi",
+                "Bob-ombami, wiec nie uzywamy",
+                "armat.",
+                "Ale jesli chcialbys",
+                "poleciec,",
+				"nie przeszkadza nam to.",
+                "Przygotujemy wszystkie.",
+                "armaty w tym swiecie",
+                "zebys mogl ich uzywac.",
+                "Bon Voyage!"
+            ]
+        },
+        {
+            "ID": 5,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Hej, Mario! Czy naprawde",
+                "pokonales Wielkiego",
+                "Bob-omba? swietnie!",
+                "Musisz byc calkiem silny. I",
+                "calkiem szybki.", 
+				"Jak szybki jestes,",
+                "co?",
+                "Na tyle szybki,",
+				"zeby pokonac mnie...",
+                "Koope Szybkiego? Nie",
+                "wydaje mi sie. Sprobuj.",
+                "Co powiesz na wyscig do",
+                "szczytu,",
+                "gdzie byl Wielki Bob-Omb?",
+                "Kiedy powiem",
+                "『Ruszaj,』",
+				"wyscig sie zacznie!",
+                "",
+                "Gotowy....",
+                "",
+                "//Ruszaj!////Poczekaj"
+            ]
+        },
+        {
+            "ID": 6,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Hej!!! Nie oszukuj!",
+                "Musisz przebiec",
+                "cala droge.",
+                "Podejdz do mnie jeszcze raz,",
+                "jesli chcesz scigac sie na",
+                "powaznie."
+            ]
+        },
+        {
+            "ID": 7,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Hufff...fff...pufff...",
+                "lal! Naprawde...",
+				"jestes...bardzo...",
+                "szybki!",
+				"Ludzka rakieta!",
+                "Masz-wygrales.",
+                "Uczciwie!"
+            ]
+        },
+        {
+            "ID": 8,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "UWAzAJ NA CHAIN-CHOMP",
+                "Duze Zagrozenie!",
+                "Podejdz blizej",
+				"i nacisnj",
+                "[C]^, zeby go",
+				"lepiej zobaczyc.",
+                "Straszny, co?",
+                "Widzisz czerwona monete",
+                "na slupie?",
+                "",
+                "Kiedy znajdziesz ich 8,",
+                "na lace pojawi sie",
+				"Gwiazda mocy",
+                "po drugiej stronie mostu."
+            ]
+        },
+        {
+            "ID": 9,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Dawno sie nie",
+				"widzielismy!",
+				"lal,",
+                "naprawde jestes szybki!",
+                "Trenowales,",
+                "czy to moc Gwiazd?",
+                "Bylem smutny,",
+                "bo przegralem ostatni",
+                "wyscig. To moj domowy ",
+                "swiat--co powiesz na ",
+                "rematch?",
+                "Meta jest w",
+                "Wiosce wiatru.",
+                "Gotowy?",
+                "",
+                "//Ruszaj!////Poczekaj"
+            ]
+        },
+        {
+            "ID": 10,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Wlasnie stanales na",
+                "przycisk aktywujacy",
+				"Czapke lotu. Noszac",
+                "Czapke lotu, mozesz",
+                "latac.",
+                "Teraz, Czapki lotu",
+				"wypadna z",
+                "kazdego czerwonego bloku,",
+                "ktory znajdziesz.",
+                "",
+                "Czy chcesz zapisac Gre?",
+                "",
+                "//Tak////Nie"
+            ]
+        },
+        {
+            "ID": 11,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Wlasnie stanales na",
+                "przycisk aktywujacy",
+				"Metalowa czapke.!",
+                "Metalowa czapka sprawia, ze",
+                "Mario jest niezniszczalny.",
+                "Teraz Metalowe czapki",
+				"wypadna z",
+                "kazdego zielonego bloku,",
+                "ktory znajdziesz",
+                "",
+                "Czy chcesz zapisac Gre?",
+                "",
+                "//Tak////Nie"
+            ]
+        },
+        {
+            "ID": 12,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Wlasnie stanales na",
+                "przycisk aktywujacy",
+				"Znikajaca czapke.",
+                "Znikajaca czapka sprawia,",
+				"ze",
+                "Mario znika.",
+                "Teraz Znikajace czapki",
+				"wypadna z",
+                "kazdego niebieskiego bloku,",
+                "ktory znajdziesz.",
+                "",
+                "Czy chcesz zapisac Gre?",
+                "",
+                "//Tak////Nie"
+            ]
+        },
+        {
+            "ID": 13,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Zdobyles 100",
+                "monet! Mario dostaje",
+                "wiecej mocy z zamku.",
+                "Czy chcesz zapisac Gre?",
+                "//Tak////Nie"
+            ]
+        },
+        {
+            "ID": 14,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "lal! Kolejna Gwiazda Mocy!",
+                "Mario staje sie bardziej",
+				"odwazny,",
+                "przez moc",
+                "z zamku.",
+                "Czy chcesz zapisac?",
+                "",
+                "//No jasne//Nie teraz"
+            ]
+        },
+        {
+            "ID": 15,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Mozesz uderzac wrogow, zeby",
+                "ich przewrocic. Nacisnij [A]",
+                "zeby skoczyc, [B] zeby uderzyc.",
+                "Nacisnij [A], a nastepnie [B], zeby kopnac.",
+                "zeby cos podniesc,",
+                "takze nacisnij [B]. zeby rzucic",
+                "tym, co trzymasz,",
+                "nacisnij [B] po raz drugi."
+            ]
+        },
+        {
+            "ID": 16,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Wskocz na swiecaca skorupe, i",
+                "pojedz gdziekolwiek ",
+                "chcesz! Rozwal tych wrogow!"
+            ]
+        },
+        {
+            "ID": 17,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Jestem Wielkim Bob-Ombem,",
+				"lordem",
+                "wszystkiego co wybucha,",
+                "krol wybuchow nawet w",
+                "swiecie obok!",
+                "Masz czelnosc, by",
+				"wspinac sie na moja",
+                "gore? Jak mozesz",
+                "chodzic po moim",
+                "szczycie gory?",
+                "Wymknales sie moim",
+                "straznikom,ale",
+                "nie uciekniesz z",
+				"mojego uscisku...",
+                "",
+                "...i nigdy nie zabierzesz",
+                "mojej Gwiazdy Mocy.",
+                "Wyzywam cie,",
+                "Mario!",
+                "Jesli chcesz dostac",
+				"Gwiazde Mocy, ktora",
+                "trzymam, musisz",
+                "wykazac sie w bitwie.",
+                "",
+                "Czy uda ci sie",
+				"zlapac mnie od tylu,",
+                "a nastepnie rzucic mna?",
+                "Nie wydaje",
+                "mi sie!"
+            ]
+        },
+        {
+            "ID": 18,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "spie, bo...",
+                "...Jestem spiacy.",
+				"Nie lubie,",
+                "jak ktos mi",
+				"przeszkadza.",
+                "Prosze, chodz po cichu."
+            ]
+        },
+        {
+            "ID": 19,
+            "linesPerBox": 2,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Ciii! Prosze, chodz",
+                "po cichu w holu!"
+            ]
+        },
+        {
+            "ID": 20,
+            "linesPerBox": 6,
+            "leftOffset": 95,
+            "width": 150,
+            "lines": [
+                "Drogi Mario:",
+                "Prosze przyjdz do",
+                "zamku. Upieklam ciasto",
+                "tylko dla ciebie.",
+                "Zawsze twoja--",
+                "Ksiezniczka Toadstool"
+            ]
+        },
+        {
+            "ID": 21,
+            "linesPerBox": 5,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Witaj.",
+                "Nikogo nie ma!",
+                "Teraz sobie splywaj--",
+                "i nigdy nie wracaj!",
+                "Gwa ha ha!"
+            ]
+        },
+        {
+            "ID": 22,
+            "linesPerBox": 2,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Potrzebujesz klucza zeby",
+                "otworzyc te drzwi"
+            ]
+        },
+        {
+            "ID": 23,
+            "linesPerBox": 3,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Ten klucz nie pasuje!",
+                "Moze jest do ",
+                "piwnicy..."
+            ]
+        },
+        {
+            "ID": 24,
+            "linesPerBox": 5,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Potrzebujesz mocy gwiazd,",
+                "zeby otworzyc te drzwi.",
+				"Odzyskaj",
+                "Gwiazde Mocy od wroga,",
+                "w jednym z obrazow"
+            ]
+        },
+        {
+            "ID": 25,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Potrzebujesz mocy",
+                "3 Gwiazd, zeby otworzyc",
+                "te drzwi. Potrzebujesz",
+				"[%] wiecej Gwiazd."
+            ]
+        },
+        {
+            "ID": 26,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Potrzebujesz mocy",
+                "8 Gwiazd, zeby otworzyc",
+                "te drzwi. Potrzebujesz",
+				"[%] wiecej Gwiazd"
+            ]
+        },
+        {
+            "ID": 27,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Potrzebujesz mocy",
+                "30 Gwiazd, zeby otworzyc",
+                "te drzwi.",
+				"Potrzebujesz [%] wiecej",
+                "Gwiazd."
+            ]
+        },
+        {
+            "ID": 28,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Potrzebujesz mocy",
+                "50 Gwiazd, zeby otworzyc",
+                "te drzwi.",
+				"Potrzebujesz [%] wiecej",
+                "Gwiazd."
+            ]
+        },
+        {
+            "ID": 29,
+            "linesPerBox": 5,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "zeby otworzyc dzrwi,",
+                "ktore prowadza do",
+				"『nieskonczonych』",
+                "schodow, potrzebujesz 70",
+                "Gwiazd.",
+                "Bwa ha ha!"
+            ]
+        },
+        {
+            "ID": 30,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Witajcie! Bracia Lakitu,",
+                "z aktualnymi informacjami",
+				"o",
+                "postepach Mario.",
+                "Za chwile nauczy sie",
+                "uzytecznej techniki,",
+                "podkradania sie do wroga.",
+                "Technika jest taka:",
+				"Musi isc bardzo",
+                "wolno, zeby",
+                "sie skradac.",
+                "",
+                "",
+                "",
+                "Konczymy filmowanie",
+				"techniki,",
+                "a jesli chodzi o starsze",
+				"techniki,",
+                "mozesz sie rozgladac,",
+                "uzywajac [C]> i",
+                "[C]<. Nacisnij [C]|",
+				"zeby ogladac ",
+                "akcje z dystansu.",
+                "Jesli nie mozesz",
+                "ruszyc kamera dalej,",
+				"uslyszysz",
+                "brzeczyk. To byli",
+                "Bracia Lakitu,",
+                "koniec raportu."
+            ]
+        },
+        {
+            "ID": 31,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Nie wierze! Znowu mnie",
+                "pokonales!!",
+				"Wydalem wszystkie",
+                "moje oszczednosci na",
+                "te nowe buty!",
+                "Masz, przeciez musze",
+                "dac wygranemu",
+                "jego nagrode.",
+                "Gratulacje, Mario!"
+            ]
+        },
+        {
+            "ID": 32,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Jesli zdobedziesz",
+				"Czapke lotu,",
+                "mozesz latac! Zaloz",
+                "czapke, zrob",
+				"potrojny",
+                "skok--skocz trzy razy",
+                "z rzedu--zeby",
+				"poleciec.",
+                "Mozesz latac jeszcze",
+				"wyzej,",
+                "jesli wystrzelisz sie",
+                "z armaty, noszac",
+                "Czapke lotu!",
+                "",
+                "Uzyj [C], zeby sie",
+                "rozgladac podczas lotu.",
+                "Nacisnij [Z], zeby",
+				"wyladowac."
+            ]
+        },
+        {
+            "ID": 33,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Ciao! Doszedles do",
+                "zamku ksiezniczki",
+                "za pomoca rury.",
+                "Uzywanie kontrolera to",
+                "bulka z maslem.",
+                "Nacisnij [A], by skoczyc,",
+                "[B], by zaatakowac oraz",
+                "czytac znaki.",
+                "Uzyj lewego drazka,",
+                "zeby poruszac Mario.",
+                "Teraz wejdz do zamku."
+            ]
+        },
+        {
+            "ID": 34,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Dzien dobry. Bracia",
+                "Lakitu",
+                "reportuja z",
+				"zewnatrz",
+                "zamku ksiezniczki",
+                "",
+                "Mario wlasnie",
+                "przyszedl do zamku.",
+                "Bedziemy nagrywali",
+                "jego przygode.",
+                "Musi odzyskac",
+				"zgubione",
+                "Gwiazdy Mocy.",
+                "Jako doswiadczeni",
+				"kamerzysci,",
+                "bedziemy nagrywac",
+                "najlepsze katy, ale",
+                "mozesz zmienic kat",
+                "kamery, naciskajac",
+                "[C].",
+                "Jesli nie da sie",
+                "zmienic widoku,",
+                "zabrzeczy. To take a look at",
+                "the surroundings, stop",
+                "and press [C]^.",
+                "",
+                "Press [A] to resume play.",
+                "Switch camera modes with",
+                "the [R] Button. Signs along",
+                "the way will review these",
+                "instructions.",
+                "",
+                "For now, reporting live,",
+                "this has been the",
+                "Lakitu Bros."
+            ]
+        },
+        {
+            "ID": 35,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "There are four camera, or",
+                "『[C],』 Buttons. Press [C]^",
+                "to look around using the",
+                "Control Stick.",
+                "",
+                "You'll usually see Mario",
+                "through Lakitu's camera.",
+                "It is the camera",
+                "recommended for normal",
+                "play.",
+                "You can change angles by",
+                "pressing [C]>. If you press",
+                "[R], the view switches to",
+                "Mario's camera, which",
+                "is directly behind him.",
+                "Press [R] again to return",
+                "to Lakitu's camera. Press",
+                "[C]| to see Mario from",
+                "afar, using either",
+                "Lakitu's or Mario's view."
+            ]
+        },
+        {
+            "ID": 36,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "OBSERVATION PLATFORM",
+                "Press [C]^ to take a look",
+                "around. Don't miss",
+                "anything!",
+                "",
+                "Press [R] to switch to",
+                "Mario's camera. It",
+                "always follows Mario.",
+                "Press [R] again to switch",
+                "to Lakitu's camera.",
+                "Pause the game and",
+                "switch the mode to 『fix』",
+                "the camera in place while",
+                "holding [R]. Give it a try!"
+            ]
+        },
+        {
+            "ID": 37,
+            "linesPerBox": 2,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "I win! You lose!",
+                "Ha ha ha ha!",
+                "You're no slouch, but I'm",
+                "a better sledder!",
+                "Better luck next time!"
+            ]
+        },
+        {
+            "ID": 38,
+            "linesPerBox": 3,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Reacting to the Star",
+                "power, the door slowly",
+                "opens."
+            ]
+        },
+        {
+            "ID": 39,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "No visitors allowed,",
+                "by decree of",
+                "the Big Bob-omb",
+                "",
+                "I shall never surrender my",
+                "Stars, for they hold the",
+                "power of the castle in",
+                "their glow.",
+                "They were a gift from",
+                "Bowser, the Koopa King",
+                "himself, and they lie well",
+                "hidden within my realm.",
+                "Not a whisper of their",
+                "whereabouts shall leave",
+                "my lips. Oh, all right,",
+                "perhaps one hint:",
+                "Heed the Star names at",
+                "the beginning of the",
+                "course.",
+                "//--The Big Bob-omb"
+            ]
+        },
+        {
+            "ID": 40,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Warning!",
+                "Cold, Cold Crevasse",
+                "Below!"
+            ]
+        },
+        {
+            "ID": 41,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "I win! You lose!",
+                "Ha ha ha!",
+                "",
+                "That's what you get for",
+                "messin' with Koopa the",
+                "Quick.",
+                "Better luck next time!"
+            ]
+        },
+        {
+            "ID": 42,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Caution! Narrow Bridge!",
+                "Cross slowly!",
+                "",
+                "",
+                "You can jump to the edge",
+                "of the cliff and hang on,",
+                "and you can climb off the",
+                "edge if you move slowly.",
+                "When you want to let go,",
+                "either press [Z] or press",
+                "the Control Stick in the",
+                "direction of Mario's back.",
+                "To climb up, press Up on",
+                "the Control Stick. To",
+                "scurry up quickly, press",
+                "the [A] Button."
+            ]
+        },
+        {
+            "ID": 43,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "If you jump and hold the",
+                "[A] Button, you can hang on",
+                "to some objects overhead.",
+                "It's the same as grabbing",
+                "a flying bird!"
+            ]
+        },
+        {
+            "ID": 44,
+            "linesPerBox": 5,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Whooo's there? Whooo",
+                "woke me up? It's still",
+                "daylight--I should be",
+                "sleeping!",
+                "",
+                "Hey, as long as I'm",
+                "awake, why not take a",
+                "short flight with me?",
+                "Press and hold [A] to grab",
+                "on. Release [A] to let go.",
+                "I'll take you wherever",
+                "you want to go, as long",
+                "as my wings hold out.",
+                "Watch my shadow, and",
+                "grab on."
+            ]
+        },
+        {
+            "ID": 45,
+            "linesPerBox": 6,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Whew! I'm just about",
+                "flapped out. You should",
+                "lay off the pasta, Mario!",
+                "That's it for now. Press",
+                "[A] to let go. Okay,",
+                "bye byyyyyyeeee!"
+            ]
+        },
+        {
+            "ID": 46,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "You have to master three",
+                "important jumping",
+                "techniques.",
+                "First try the Triple Jump.",
+                "",
+                "Run fast, then jump three",
+                "times, one, two, three.",
+                "If you time the jumps",
+                "right, you'll hop, skip,",
+                "then jump really high.",
+                "Next, go for distance",
+                "with the Long Jump. Run,",
+                "press [Z] to crouch then [A]",
+                "to jump really far.",
+                "",
+                "To do the Wall Kick, press",
+                "[A] to jump at a wall, then",
+                "jump again when you hit",
+                "the wall.",
+                "",
+                "Got that? Triple Jump,",
+                "Long Jump, Wall Kick.",
+                "Practice, practice,",
+                "practice. You don't stand",
+                "a chance without them."
+            ]
+        },
+        {
+            "ID": 47,
+            "linesPerBox": 2,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Hi! I'll prepare the",
+                "cannon for you!"
+            ]
+        },
+        {
+            "ID": 48,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Snow Mountain Summit",
+                "Watch for slippery",
+                "conditions! Please enter",
+                "the cottage first."
+            ]
+        },
+        {
+            "ID": 49,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Remember that tricky Wall",
+                "Kick jump? It's a",
+                "technique you'll have to",
+                "master in order to reach",
+                "high places.",
+                "Use it to jump from wall",
+                "to wall. Press the",
+                "Control Stick in the",
+                "direction you want to",
+                "bounce to gain momentum.",
+                "Practice makes perfect!"
+            ]
+        },
+        {
+            "ID": 50,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Hold [Z] to crouch and",
+                "slide down a slope.",
+                "Or press [Z] while in the",
+                "air to Pound the Ground!",
+                "If you stop, crouch, then",
+                "jump, you'll do a",
+                "Backward Somersault!",
+                "Got that?",
+                "There's more. Crouch and",
+                "then jump to do a",
+                "Long Jump! Or crouch and",
+                "walk to...never mind."
+            ]
+        },
+        {
+            "ID": 51,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Climbing's easy! When you",
+                "jump at trees, poles or",
+                "pillars, you'll grab them",
+                "automatically. Press [A] to",
+                "jump off backward.",
+                "",
+                "To rotate around the",
+                "object, press Right or",
+                "Left on the Control Stick.",
+                "When you reach the top,",
+                "press Up to do a",
+                "handstand!",
+                "Jump off from the",
+                "handstand for a high,",
+                "stylin' dismount."
+            ]
+        },
+        {
+            "ID": 52,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Stop and press [Z] to",
+                "crouch, then press [A]",
+                "to do a high, Backward",
+                "Somersault!",
+                "",
+                "To perform a Side",
+                "Somersault, run, do a",
+                "sharp U-turn and jump.",
+                "You can catch lots of",
+                "air with both jumps."
+            ]
+        },
+        {
+            "ID": 53,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Sometimes, if you pass",
+                "through a coin ring or",
+                "find a secret point in a",
+                "course, a red number will",
+                "appear.",
+                "If you trigger five red",
+                "numbers, a secret Star",
+                "will show up."
+            ]
+        },
+        {
+            "ID": 54,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Welcome to the snow",
+                "slide! Hop on! To speed",
+                "up, press forward on the",
+                "Control Stick. To slow",
+                "down, pull back."
+            ]
+        },
+        {
+            "ID": 55,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Hey-ey, Mario, buddy,",
+                "howzit goin'? Step right",
+                "up. You look like a fast",
+                "sleddin' kind of guy.",
+                "I know speed when I see",
+                "it, yes siree--I'm the",
+                "world champion sledder,",
+                "you know. Whaddya say?",
+                "How about a race?",
+                "Ready...",
+                "",
+                "//Go//// Don't Go"
+            ]
+        },
+        {
+            "ID": 56,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "You brrrr-oke my record!",
+                "Unbelievable! I knew",
+                "that you were the coolest.",
+                "Now you've proven",
+                "that you're also the",
+                "fastest!",
+                "I can't award you a gold",
+                "medal, but here, take this",
+                "Star instead. You've",
+                "earned it!"
+            ]
+        },
+        {
+            "ID": 57,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Egad! My baby!! Have you",
+                "seen my baby??? She's",
+                "the most precious baby in",
+                "the whole wide world.",
+                "(They say she has my",
+                "beak...) I just can't",
+                "remember where I left",
+                "her.",
+                "Let's see...I stopped",
+                "for herring and ice cubes,",
+                "then I...oohh! I just",
+                "don't know!"
+            ]
+        },
+        {
+            "ID": 58,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "You found my precious,",
+                "precious baby! Where",
+                "have you been? How can",
+                "I ever thank you, Mario?",
+                "Oh, I do have this...",
+                "...Star. Here, take it",
+                "with my eternal",
+                "gratitude."
+            ]
+        },
+        {
+            "ID": 59,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "That's not my baby! She",
+                "looks nothing like me!",
+                "Her parents must be",
+                "worried sick!"
+            ]
+        },
+        {
+            "ID": 60,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "ATTENTION!",
+                "Read Before Diving In!",
+                "",
+                "",
+                "If you stay under the",
+                "water for too long, you'll",
+                "run out of oxygen.",
+                "",
+                "Return to the surface for",
+                "air or find an air bubble",
+                "or coins to breathe while",
+                "underwater.",
+                "Press [A] to swim. Hold [A]",
+                "to swim slow and steady.",
+                "Tap [A] with smooth timing",
+                "to gain speed.",
+                "Press Up on the",
+                "Control Stick and press [A]",
+                "to dive.",
+                "",
+                "Press Down on the Control",
+                "Stick and press [A] to",
+                "return to the surface.",
+                "",
+                "Hold Down and press [A]",
+                "while on the surface near",
+                "the edge of the water to",
+                "jump out."
+            ]
+        },
+        {
+            "ID": 61,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "BRRR! Frostbite Danger!",
+                "Do not swim here.",
+                "I'm serious.",
+                "/--The Penguin"
+            ]
+        },
+        {
+            "ID": 62,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Hidden inside the green",
+                "block is the amazing",
+                "Metal Cap.",
+                "Wearing it, you won't",
+                "catch fire or be hurt",
+                "by enemy attacks.",
+                "You don't even have to",
+                "breathe while wearing it.",
+                "",
+                "The only problem:",
+                "You can't swim in it."
+            ]
+        },
+        {
+            "ID": 63,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "The Vanish Cap is inside",
+                "the blue block. Mr. I.",
+                "will be surprised, since",
+                "you'll be invisible when",
+                "you wear it!",
+                "Even the Big Boo will be",
+                "fooled--and you can walk",
+                "through secret walls, too."
+            ]
+        },
+        {
+            "ID": 64,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "When you put on the Wing",
+                "Cap that comes from a",
+                "red block, do the Triple",
+                "Jump to soar high into",
+                "the sky.",
+                "Use the Control Stick to",
+                "guide Mario. Pull back to",
+                "to fly up, press forward",
+                "to nose down, and press [Z]",
+                "to land."
+            ]
+        },
+        {
+            "ID": 65,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Swimming Lessons!",
+                "Tap [A] to do the breast",
+                "stroke. If you time the",
+                "taps right, you'll swim",
+                "fast.",
+                "",
+                "Press and hold [A] to do a",
+                "slow, steady flutter kick.",
+                "Press Up on the Control",
+                "Stick to dive, and pull",
+                "back on the stick to head",
+                "for the surface.",
+                "To jump out of the water,",
+                "hold Down on the Control",
+                "Stick, then press [A].",
+                "Easy as pie, right?",
+                "",
+                "",
+                "But remember:",
+                "Mario can't breathe under",
+                "the water! Return to the",
+                "surface for air when the",
+                "Power Meter runs low.",
+                "",
+                "And one last thing: You",
+                "can't open doors that",
+                "are underwater."
+            ]
+        },
+        {
+            "ID": 66,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Mario, it's Peach!",
+                "Please be careful! Bowser",
+                "is so wicked! He will try",
+                "to burn you with his",
+                "horrible flame breath.",
+                "Run around behind and",
+                "grab him by the tail with",
+                "the [B] Button. Once you",
+                "grab hold, swing him",
+                "around in great circles.",
+                "Rotate the Control Stick",
+                "to go faster and faster.",
+                "The faster you swing him,",
+                "the farther he'll fly.",
+                "",
+                "Use the [C] Buttons to look",
+                "around, Mario. You have",
+                "to throw Bowser into one",
+                "of the bombs in the four",
+                "corners.",
+                "Aim well, then press [B]",
+                "again to launch Bowser.",
+                "Good luck, Mario! Our",
+                "fate is in your hands."
+            ]
+        },
+        {
+            "ID": 67,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Tough luck, Mario!",
+                "Princess Toadstool isn't",
+                "here...Gwa ha ha!! Go",
+                "ahead--just try to grab",
+                "me by the tail!",
+                "You'll never be able to",
+                "swing ME around! A wimp",
+                "like you won't throw me",
+                "out of here! Never! Ha!"
+            ]
+        },
+        {
+            "ID": 68,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "It's Lethal Lava Land!",
+                "If you catch fire or fall",
+                "into a pool of flames,",
+                "you'll be hopping mad, but",
+                "don't lose your cool.",
+                "You can still control",
+                "Mario--just try to keep",
+                "calm!"
+            ]
+        },
+        {
+            "ID": 69,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Sometimes you'll bump into",
+                "invisible walls at the",
+                "edges of the painting",
+                "worlds. If you hit a wall",
+                "while flying, you'll bounce",
+                "back."
+            ]
+        },
+        {
+            "ID": 70,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "You can return to the",
+                "castle's main hall at any",
+                "time from the painting",
+                "worlds where the enemies",
+                "live.",
+                "Just stop, stand still,",
+                "press Start to pause the",
+                "game, then select",
+                "『Exit Course.』",
+                "",
+                "You don't have to collect",
+                "all Power Stars in one",
+                "course before going on to",
+                "the next.",
+                "",
+                "Return later, when you're",
+                "more experienced, to pick",
+                "up difficult ones.",
+                "",
+                "",
+                "Whenever you find a Star,",
+                "a hint for finding the",
+                "next one will appear on",
+                "the course's start screen.",
+                "",
+                "You can, however, collect",
+                "any of the remaining",
+                "Stars next. You don't",
+                "have to recover the one",
+                "described by the hint."
+            ]
+        },
+        {
+            "ID": 71,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Danger Ahead!",
+                "Beware of the strange",
+                "cloud! Don't inhale!",
+                "If you feel faint, run for",
+                "higher ground and fresh",
+                "air!",
+                "Circle: Shelter",
+                "Arrow: Entrance-Exit"
+            ]
+        },
+        {
+            "ID": 72,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "High winds ahead!",
+                "Pull your Cap down tight.",
+                "If it blows off, you'll",
+                "have to find it on this",
+                "mountain."
+            ]
+        },
+        {
+            "ID": 73,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Aarrgh! Ahoy, matey. I",
+                "have sunken treasure,",
+                "here, I do.",
+                "",
+                "But to pluck the plunder,",
+                "you must open the",
+                "Treasure Chests in the",
+                "right order.",
+                "What order is that,",
+                "ye say?",
+                "",
+                "",
+                "I'll never tell!",
+                "",
+                "//--The Cap'n"
+            ]
+        },
+        {
+            "ID": 74,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "You can grab on to the",
+                "edge of a cliff or ledge",
+                "with your fingertips and",
+                "hang down from it.",
+                "",
+                "To drop from the edge,",
+                "either press the Control",
+                "Stick in the direction of",
+                "Mario's back or press the",
+                "[Z] Button.",
+                "To get up onto the ledge,",
+                "either press Up on the",
+                "Control Stick or press [A]",
+                "as soon as you grab the",
+                "ledge to climb up quickly."
+            ]
+        },
+        {
+            "ID": 75,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Mario!! My castle is in",
+                "great peril. I know that",
+                "Bowser is the cause...and",
+                "I know that only you can",
+                "stop him!",
+                "The doors in the castle",
+                "that have been sealed by",
+                "Bowser can be opened only",
+                "with Star Power.",
+                "",
+                "But there are secret",
+                "paths in the castle,",
+                "paths that Bowser hasn't",
+                "found.",
+                "",
+                "One of those paths is in",
+                "this room, and it holds",
+                "one of the castle's Secret",
+                "Stars!",
+                "",
+                "Find that Secret Star,",
+                "Mario! It will help you",
+                "on your quest. Please,",
+                "Mario, you have to",
+                "help us!",
+                "Retrieve all of the",
+                "Power Stars in the castle",
+                "and free us from this",
+                "awful prison!",
+                "Please!"
+            ]
+        },
+        {
+            "ID": 76,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Thanks to the power of",
+                "the Stars, life is",
+                "returning to the castle.",
+                "Please, Mario, you have",
+                "to give Bowser the boot!",
+                "",
+                "Here, let me tell you a",
+                "little something about the",
+                "castle. In the room with",
+                "the mirrors, look carefully",
+                "for anything that's not",
+                "reflected in the mirror.",
+                "And when you go to the",
+                "water town, you can flood",
+                "it with a high jump into",
+                "the painting. Oh, by the",
+                "way, look what I found!"
+            ]
+        },
+        {
+            "ID": 77,
+            "linesPerBox": 2,
+            "leftOffset": 150,
+            "width": 200,
+            "lines": [
+                "It is decreed that one",
+                "shall pound the pillars."
+            ]
+        },
+        {
+            "ID": 78,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Break open the Blue Coin",
+                "Block by Pounding the",
+                "Ground with the [Z] Button.",
+                "One Blue Coin is worth",
+                "five Yellow Coins.",
+                "But you have to hurry!",
+                "The coins will disappear",
+                "if you're not quick to",
+                "collect them! Too bad."
+            ]
+        },
+        {
+            "ID": 79,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Owwwuu! Let me go!",
+                "Uukee-kee! I was only",
+                "teasing! Can't you take",
+                "a joke?",
+                "I'll tell you what, let's",
+                "trade. If you let me go,",
+                "I'll give you something",
+                "really good.",
+                "So, how about it?",
+                "",
+                "//Free him/ Hold on"
+            ]
+        },
+        {
+            "ID": 80,
+            "linesPerBox": 1,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Eeeh hee hee hee!"
+            ]
+        },
+        {
+            "ID": 81,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "The mystery is of Wet",
+                "or Dry.",
+                "And where does the",
+                "solution lie?",
+                "The city welcomes visitors",
+                "with the depth they bring",
+                "as they enter."
+            ]
+        },
+        {
+            "ID": 82,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Hold on to your hat! If",
+                "you lose it, you'll be",
+                "injured easily.",
+                "",
+                "If you do lose your Cap,",
+                "you'll have to find it in",
+                "the course where you",
+                "lost it.",
+                "Oh, boy, it's not looking",
+                "good for Peach. She's",
+                "still trapped somewhere",
+                "inside the walls.",
+                "Please, Mario, you have",
+                "to help her! Did you know",
+                "that there are enemy",
+                "worlds inside the walls?",
+                "Yup. It's true. Bowser's",
+                "troops are there, too.",
+                "Oh, here, take this. I've",
+                "been keeping it for you."
+            ]
+        },
+        {
+            "ID": 83,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "There's something strange",
+                "about that clock. As you",
+                "jump inside, watch the",
+                "position of the big hand.",
+                "Oh, look what I found!",
+                "Here, Mario, catch!"
+            ]
+        },
+        {
+            "ID": 84,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Yeeoww! Unhand me,",
+                "brute! I'm late, so late,",
+                "I must make haste!",
+                "This shiny thing? Mine!",
+                "It's mine. Finders,",
+                "keepers, losers...",
+                "Late, late, late...",
+                "Ouch! Take it then! A",
+                "gift from Bowser, it was.",
+                "Now let me be! I have a",
+                "date! I cannot be late",
+                "for tea!"
+            ]
+        },
+        {
+            "ID": 85,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "You don't stand a ghost",
+                "of a chance in this house.",
+                "If you walk out of here,",
+                "you deserve...",
+                "...a Ghoul Medal..."
+            ]
+        },
+        {
+            "ID": 86,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Running around in circles",
+                "makes some bad guys roll",
+                "their eyes."
+            ]
+        },
+        {
+            "ID": 87,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Santa Claus isn't the only",
+                "one who can go down a",
+                "chimney! Come on in!",
+                "/--Cabin Proprietor"
+            ]
+        },
+        {
+            "ID": 88,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Work Elevator",
+                "For those who get off",
+                "here: Grab the pole to the",
+                "left and slide carefully",
+                "down."
+            ]
+        },
+        {
+            "ID": 89,
+            "linesPerBox": 5,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Both ways fraught with",
+                "danger! Watch your feet!",
+                "Those who can't do the",
+                "Long Jump, tsk, tsk. Make",
+                "your way to the right.",
+                "Right: Work Elevator",
+                "/// Cloudy Maze",
+                "Left: Black Hole",
+                "///Underground Lake",
+                "",
+                "Red Circle: Elevator 2",
+                "//// Underground Lake",
+                "Arrow: You are here"
+            ]
+        },
+        {
+            "ID": 90,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Bwa ha ha ha!",
+                "You've stepped right into",
+                "my trap, just as I knew",
+                "you would! I warn you,",
+                "『Friend,』 watch your",
+                "step!"
+            ]
+        },
+        {
+            "ID": 91,
+            "linesPerBox": 2,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Danger!",
+                "Strong Gusts!",
+                "But the wind makes a",
+                "comfy ride."
+            ]
+        },
+        {
+            "ID": 92,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Pestering me again, are",
+                "you, Mario? Can't you see",
+                "that I'm having a merry",
+                "little time, making",
+                "mischief with my minions?",
+                "Now, return those Stars!",
+                "My troops in the walls",
+                "need them! Bwa ha ha!"
+            ]
+        },
+        {
+            "ID": 93,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Mario! You again! Well",
+                "that's just fine--I've",
+                "been looking for something",
+                "to fry with my fire",
+                "breath!",
+                "Your Star Power is",
+                "useless against me!",
+                "Your friends are all",
+                "trapped within the",
+                "walls...",
+                "And you'll never see the",
+                "Princess again!",
+                "Bwa ha ha ha!"
+            ]
+        },
+        {
+            "ID": 94,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Get a good run up the",
+                "slope! Do you remember",
+                "the Long Jump? Run, press",
+                "[Z], then jump!"
+            ]
+        },
+        {
+            "ID": 95,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "To read a sign, stand in",
+                "front of it and press [B],",
+                "like you did just now.",
+                "",
+                "When you want to talk to",
+                "a Koopa Troopa or other",
+                "animal, stand right in",
+                "front of it.",
+                "Please recover the Stars",
+                "that were stolen by",
+                "Bowser in this course."
+            ]
+        },
+        {
+            "ID": 96,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "The path is narrow here.",
+                "Easy does it! No one is",
+                "allowed on top of the",
+                "mountain!",
+                "And if you know what's",
+                "good for you, you won't",
+                "wake anyone who's",
+                "sleeping!",
+                "Move slowly,",
+                "tread lightly."
+            ]
+        },
+        {
+            "ID": 97,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Don't be a pushover!",
+                "If anyone tries to shove",
+                "you around, push back!",
+                "It's one-on-one, with a",
+                "fiery finish for the loser!"
+            ]
+        },
+        {
+            "ID": 98,
+            "linesPerBox": 2,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Come on in here...",
+                "...heh, heh, heh..."
+            ]
+        },
+        {
+            "ID": 99,
+            "linesPerBox": 5,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Eh he he...",
+                "You're mine, now, hee hee!",
+                "I'll pass right through",
+                "this wall. Can you do",
+                "that? Heh, heh, heh!"
+            ]
+        },
+        {
+            "ID": 100,
+            "linesPerBox": 3,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Ukkiki...Wakkiki...kee kee!",
+                "Ha! I snagged it!",
+                "It's mine! Heeheeheeee!"
+            ]
+        },
+        {
+            "ID": 101,
+            "linesPerBox": 3,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Ackk! Let...go...",
+                "You're...choking...me...",
+                "Cough...I've been framed!",
+                "This Cap? Oh, all right,",
+                "take it. It's a cool Cap,",
+                "but I'll give it back.",
+                "I think it looks better on",
+                "me than it does on you,",
+                "though! Eeeee! Kee keee!"
+            ]
+        },
+        {
+            "ID": 102,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Pssst! The Boos are super",
+                "shy. If you look them",
+                "in the eyes, they fade",
+                "away, but if you turn",
+                "your back, they reappear.",
+                "It's no use trying to hit",
+                "them when they're fading",
+                "away. Instead, sneak up",
+                "behind them and punch."
+            ]
+        },
+        {
+            "ID": 103,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Upon four towers",
+                "one must alight...",
+                "Then at the peak",
+                "shall shine the light..."
+            ]
+        },
+        {
+            "ID": 104,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "The shadowy star in front",
+                "of you is a 『Star",
+                "Marker.』 When you collect",
+                "all 8 Red Coins, the Star",
+                "will appear here."
+            ]
+        },
+        {
+            "ID": 105,
+            "linesPerBox": 3,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Ready for blastoff! Come",
+                "on, hop into the cannon!",
+                "",
+                "You can reach the Star on",
+                "the floating island by",
+                "using the four cannons.",
+                "Use the Control Stick to",
+                "aim, then press [A] to fire.",
+                "",
+                "If you're handy, you can",
+                "grab on to trees or poles",
+                "to land."
+            ]
+        },
+        {
+            "ID": 106,
+            "linesPerBox": 2,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Ready for blastoff! Come",
+                "on, hop into the cannon!"
+            ]
+        },
+        {
+            "ID": 107,
+            "linesPerBox": 3,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Ghosts...",
+                "...don't...",
+                "...DIE!",
+                "Heh, heh, heh!",
+                "Can you get out of here...",
+                "...alive?"
+            ]
+        },
+        {
+            "ID": 108,
+            "linesPerBox": 2,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Boooooo-m! Here comes",
+                "the master of mischief,",
+                "the tower of terror,",
+                "the Big Boo!",
+                "Ka ha ha ha..."
+            ]
+        },
+        {
+            "ID": 109,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Ooooo Nooooo!",
+                "Talk about out-of-body",
+                "experiences--my body",
+                "has melted away!",
+                "Have you run in to any",
+                "headhunters lately??",
+                "I could sure use a new",
+                "body!",
+                "Brrr! My face might",
+                "freeze like this!"
+            ]
+        },
+        {
+            "ID": 110,
+            "linesPerBox": 5,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "I need a good head on my",
+                "shoulders. Do you know of",
+                "anybody in need of a good",
+                "body? Please! I'll follow",
+                "you if you do!"
+            ]
+        },
+        {
+            "ID": 111,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Perfect! What a great",
+                "new body! Here--this is a",
+                "present for you. It's sure",
+                "to warm you up."
+            ]
+        },
+        {
+            "ID": 112,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Collect as many coins as",
+                "possible! They'll refill",
+                "your Power Meter.",
+                "",
+                "You can check to see how",
+                "many coins you've",
+                "collected in each of the",
+                "15 enemy worlds.",
+                "You can also recover",
+                "power by touching the",
+                "Spinning Heart.",
+                "",
+                "The faster you run",
+                "through the heart, the",
+                "more power you'll recover."
+            ]
+        },
+        {
+            "ID": 113,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "There are special Caps in",
+                "the red, green and blue",
+                "blocks. Step on the",
+                "switches in the hidden",
+                "courses to activate the",
+                "Cap Blocks."
+            ]
+        },
+        {
+            "ID": 114,
+            "linesPerBox": 5,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "It makes me so mad! We",
+                "build your houses, your",
+                "castles. We pave your",
+                "roads, and still you",
+                "walk all over us.",
+                "Do you ever say thank",
+                "you? No! Well, you're not",
+                "going to wipe your feet",
+                "on me! I think I'll crush",
+                "you just for fun!",
+                "Do you have a problem",
+                "with that? Just try to",
+                "pound me, wimp! Ha!"
+            ]
+        },
+        {
+            "ID": 115,
+            "linesPerBox": 5,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "No! Crushed again!",
+                "I'm just a stepping stone,",
+                "after all. I won't gravel,",
+                "er, grovel. Here, you win.",
+                "Take this with you!"
+            ]
+        },
+        {
+            "ID": 116,
+            "linesPerBox": 5,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Whaaa....Whaaat?",
+                "Can it be that a",
+                "pipsqueak like you has",
+                "defused the Bob-omb",
+                "king????",
+                "You might be fast enough",
+                "to ground me, but you'll",
+                "have to pick up the pace",
+                "if you want to take King",
+                "Bowser by the tail.",
+                "Methinks my troops could",
+                "learn a lesson from you!",
+                "Here is your Star, as I",
+                "promised, Mario.",
+                "",
+                "If you want to see me",
+                "again, select this Star",
+                "from the menu. For now,",
+                "farewell."
+            ]
+        },
+        {
+            "ID": 117,
+            "linesPerBox": 1,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Who...walk...here?",
+                "Who...break...seal?",
+                "Wake..ancient..ones?",
+                "We no like light...",
+                "Rrrrummbbble...",
+                "We no like...intruders!",
+                "Now battle...",
+                "...hand...",
+                "...to...",
+                "...hand!"
+            ]
+        },
+        {
+            "ID": 118,
+            "linesPerBox": 6,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "Grrrrumbbble!",
+                "What...happen?",
+                "We...crushed like pebble.",
+                "You so strong!",
+                "You rule ancient pyramid!",
+                "For today...",
+                "Now, take Star of Power.",
+                "We...sleep...darkness."
+            ]
+        },
+        {
+            "ID": 119,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Grrr! I was a bit",
+                "careless. This is not as I",
+                "had planned...but I still",
+                "hold the power of the",
+                "Stars, and I still have",
+                "Peach.",
+                "Bwa ha ha! You'll get no",
+                "more Stars from me! I'm",
+                "not finished with you yet,",
+                "but I'll let you go for",
+                "now. You'll pay for this...",
+                "later!"
+            ]
+        },
+        {
+            "ID": 120,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Ooowaah! Can it be that",
+                "I've lost??? The power of",
+                "the Stars has failed me...",
+                "this time.",
+                "Consider this a draw.",
+                "Next time, I'll be in",
+                "perfect condition.",
+                "",
+                "Now, if you want to see",
+                "your precious Princess,",
+                "come to the top of the",
+                "tower.",
+                "I'll be waiting!",
+                "Gwa ha ha ha!"
+            ]
+        },
+        {
+            "ID": 121,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Nooo! It can't be!",
+                "You've really beaten me,",
+                "Mario?!! I gave those",
+                "troops power, but now",
+                "it's fading away!",
+                "Arrgghh! I can see peace",
+                "returning to the world! I",
+                "can't stand it! Hmmm...",
+                "It's not over yet...",
+                "",
+                "C'mon troops! Let's watch",
+                "the ending together!",
+                "Bwa ha ha!"
+            ]
+        },
+        {
+            "ID": 122,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "The Black Hole",
+                "Right: Work Elevator",
+                "/// Cloudy Maze",
+                "Left: Underground Lake"
+            ]
+        },
+        {
+            "ID": 123,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Metal Cavern",
+                "Right: To Waterfall",
+                "Left: Metal Cap Switch"
+            ]
+        },
+        {
+            "ID": 124,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Work Elevator",
+                "Danger!!",
+                "Read instructions",
+                "thoroughly!",
+                "Elevator continues in the",
+                "direction of the arrow",
+                "activated."
+            ]
+        },
+        {
+            "ID": 125,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Hazy Maze-Exit",
+                "Danger! Closed.",
+                "Turn back now."
+            ]
+        },
+        {
+            "ID": 126,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Up: Black Hole",
+                "Right: Work Elevator",
+                "/// Hazy Maze"
+            ]
+        },
+        {
+            "ID": 127,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Underground Lake",
+                "Right: Metal Cave",
+                "Left: Abandoned Mine",
+                "///(Closed)",
+                "A gentle sea dragon lives",
+                "here. Pound on his back to",
+                "make him lower his head.",
+                "Don't become his lunch."
+            ]
+        },
+        {
+            "ID": 128,
+            "linesPerBox": 4,
+            "leftOffset": 95,
+            "width": 200,
+            "lines": [
+                "You must fight with",
+                "honor! It is against the",
+                "royal rules to throw the",
+                "king out of the ring!"
+            ]
+        },
+        {
+            "ID": 129,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Welcome to the Vanish",
+                "Cap Switch Course! All of",
+                "the blue blocks you find",
+                "will become solid once you",
+                "step on the Cap Switch.",
+                "You'll disappear when you",
+                "put on the Vanish Cap, so",
+                "you'll be able to elude",
+                "enemies and walk through",
+                "many things. Try it out!"
+            ]
+        },
+        {
+            "ID": 130,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Welcome to the Metal Cap",
+                "Switch Course! Once you",
+                "step on the Cap Switch,",
+                "the green blocks will",
+                "become solid.",
+                "When you turn your body",
+                "into metal with the Metal",
+                "Cap, you can walk",
+                "underwater! Try it!"
+            ]
+        },
+        {
+            "ID": 131,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Welcome to the Wing Cap",
+                "Course! Step on the red",
+                "switch at the top of the",
+                "tower, in the center of",
+                "the rainbow ring.",
+                "When you trigger the",
+                "switch, all of the red",
+                "blocks you find will",
+                "become solid.",
+                "",
+                "Try out the Wing Cap! Do",
+                "the Triple Jump to take",
+                "off and press [Z] to land.",
+                "",
+                "",
+                "Pull back on the Control",
+                "Stick to go up and push",
+                "forward to nose down,",
+                "just as you would when",
+                "flying an airplane."
+            ]
+        },
+        {
+            "ID": 132,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Whoa, Mario, pal, you",
+                "aren't trying to cheat,",
+                "are you? Shortcuts aren't",
+                "allowed.",
+                "Now, I know that you",
+                "know better. You're",
+                "disqualified! Next time,",
+                "play fair!"
+            ]
+        },
+        {
+            "ID": 133,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Am I glad to see you! The",
+                "Princess...and I...and,",
+                "well, everybody...we're all",
+                "trapped inside the castle",
+                "walls.",
+                "",
+                "Bowser has stolen the",
+                "castle's Stars, and he's",
+                "using their power to",
+                "create his own world in",
+                "the paintings and walls.",
+                "",
+                "Please recover the Power",
+                "Stars! As you find them,",
+                "you can use their power",
+                "to open the doors that",
+                "Bowser has sealed.",
+                "",
+                "There are four rooms on",
+                "the first floor. Start in",
+                "the one with the painting",
+                "of Bob-omb inside. It's",
+                "the only room that Bowser",
+                "hasn't sealed.",
+                "When you collect eight",
+                "Power Stars, you'll be",
+                "able to open the door",
+                "with the big star. The",
+                "Princess must be inside!"
+            ]
+        },
+        {
+            "ID": 134,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "The names of the Stars",
+                "are also hints for",
+                "finding them. They are",
+                "displayed at the beginning",
+                "of each course.",
+                "You can collect the Stars",
+                "in any order. You won't",
+                "find some Stars, enemies",
+                "or items unless you select",
+                "a specific Star.",
+                "After you collect some",
+                "Stars, you can try",
+                "another course.",
+                "We're all waiting for",
+                "your help!"
+            ]
+        },
+        {
+            "ID": 135,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "It was Bowser who stole",
+                "the Stars. I saw him with",
+                "my own eyes!",
+                "",
+                "",
+                "He's hidden six Stars in",
+                "each course, but you",
+                "won't find all of them in",
+                "some courses until you",
+                "press the Cap Switches.",
+                "The Stars you've found",
+                "will show on each course's",
+                "starting screen.",
+                "",
+                "",
+                "If you want to see some",
+                "of the enemies you've",
+                "already defeated, select",
+                "the Stars you recovered",
+                "from them."
+            ]
+        },
+        {
+            "ID": 136,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Wow! You've already",
+                "recovered that many",
+                "Stars? Way to go, Mario!",
+                "I'll bet you'll have us out",
+                "of here in no time!",
+                "",
+                "Be careful, though.",
+                "Bowser and his band",
+                "wrote the book on 『bad.』",
+                "Take my advice: When you",
+                "need to recover from",
+                "injuries, collect coins.",
+                "Yellow Coins refill one",
+                "piece of the Power Meter,",
+                "Red Coins refill two",
+                "pieces, and Blue Coins",
+                "refill five.",
+                "",
+                "To make Blue Coins",
+                "appear, pound on Blue",
+                "Coin Blocks.",
+                "",
+                "",
+                "",
+                "Also, if you fall from",
+                "high places, you'll",
+                "minimize damage if you",
+                "Pound the Ground as you",
+                "land."
+            ]
+        },
+        {
+            "ID": 137,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Thanks, Mario! The castle",
+                "is recovering its energy",
+                "as you retrieve Power",
+                "Stars, and you've chased",
+                "Bowser right out of here,",
+                "on to some area ahead.",
+                "Oh, by the by, are you",
+                "collecting coins? Special",
+                "Stars appear when you",
+                "collect 100 coins in each",
+                "of the 15 courses!"
+            ]
+        },
+        {
+            "ID": 138,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Down: Underground Lake",
+                "Left: Black Hole",
+                "Right: Hazy Maze (Closed)"
+            ]
+        },
+        {
+            "ID": 139,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Above: Automatic Elevator",
+                "Elevator begins",
+                "automatically and follows",
+                "pre-set course.",
+                "It disappears",
+                "automatically, too."
+            ]
+        },
+        {
+            "ID": 140,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Elevator Area",
+                "Right: Hazy Maze",
+                "/// Entrance",
+                "Left: Black Hole",
+                "///Elevator 1",
+                "Arrow: You are here"
+            ]
+        },
+        {
+            "ID": 141,
+            "linesPerBox": 5,
+            "leftOffset": 150,
+            "width": 200,
+            "lines": [
+                "You've recovered one of",
+                "the stolen Power Stars!",
+                "Now you can open some of",
+                "the sealed doors in the",
+                "castle.",
+                "Try the Princess's room",
+                "on the second floor and",
+                "the room with the",
+                "painting of Whomp's",
+                "Fortress on Floor 1.",
+                "Bowser's troops are still",
+                "gaining power, so you",
+                "can't give up. Save us,",
+                "Mario! Keep searching for",
+                "Stars!"
+            ]
+        },
+        {
+            "ID": 142,
+            "linesPerBox": 5,
+            "leftOffset": 150,
+            "width": 200,
+            "lines": [
+                "You've recovered three",
+                "Power Stars! Now you can",
+                "open any door with a 3",
+                "on its star.",
+                "",
+                "You can come and go from",
+                "the open courses as you",
+                "please. The enemies ahead",
+                "are even meaner, so be",
+                "careful!"
+            ]
+        },
+        {
+            "ID": 143,
+            "linesPerBox": 6,
+            "leftOffset": 150,
+            "width": 200,
+            "lines": [
+                "You've recovered eight of",
+                "the Power Stars! Now you",
+                "can open the door with",
+                "the big Star! But Bowser",
+                "is just ahead...can you",
+                "hear the Princess calling?"
+            ]
+        },
+        {
+            "ID": 144,
+            "linesPerBox": 6,
+            "leftOffset": 150,
+            "width": 200,
+            "lines": [
+                "You've recovered 30",
+                "Power Stars! Now you can",
+                "open the door with the",
+                "big Star! But before you",
+                "move on, how's it going",
+                "otherwise?",
+                "Did you pound the two",
+                "columns down? You didn't",
+                "lose your hat, did you?",
+                "If you did, you'll have to",
+                "stomp on the condor to",
+                "get it back!",
+                "They say that Bowser has",
+                "sneaked out of the sea",
+                "and into the underground.",
+                "Have you finally",
+                "cornered him?"
+            ]
+        },
+        {
+            "ID": 145,
+            "linesPerBox": 6,
+            "leftOffset": 150,
+            "width": 200,
+            "lines": [
+                "You've recovered 50",
+                "Power Stars! Now you can",
+                "open the Star Door on the",
+                "third floor. Bowser's",
+                "there, you know.",
+                "",
+                "Oh! You've found all of",
+                "the Cap Switches, haven't",
+                "you? Red, green and blue?",
+                "The Caps you get from the",
+                "colored blocks are really",
+                "helpful.",
+                "Hurry along, now. The",
+                "third floor is just ahead."
+            ]
+        },
+        {
+            "ID": 146,
+            "linesPerBox": 6,
+            "leftOffset": 150,
+            "width": 200,
+            "lines": [
+                "You've found 70 Power",
+                "Stars! The mystery of the",
+                "endless stairs is solved,",
+                "thanks to you--and is",
+                "Bowser ever upset! Now,",
+                "on to the final bout!"
+            ]
+        },
+        {
+            "ID": 147,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Are you using the Cap",
+                "Blocks? You really should,",
+                "you know.",
+                "",
+                "",
+                "To make them solid so you",
+                "can break them, you have",
+                "to press the colored Cap",
+                "Switches in the castle's",
+                "hidden courses.",
+                "You'll find the hidden",
+                "courses only after",
+                "regaining some of the",
+                "Power Stars.",
+                "",
+                "The Cap Blocks are a big",
+                "help! Red for the Wing",
+                "Cap, green for the Metal",
+                "Cap, blue for the Vanish",
+                "Cap."
+            ]
+        },
+        {
+            "ID": 148,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Snowman Mountain ahead.",
+                "Keep out! And don't try",
+                "the Triple Jump over the",
+                "ice block shooter.",
+                "",
+                "",
+                "If you fall into the",
+                "freezing pond, your power",
+                "decreases quickly, and",
+                "you won't recover",
+                "automatically.",
+                "//--The Snowman"
+            ]
+        },
+        {
+            "ID": 149,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Welcome to",
+                "Princess Toadstool's",
+                "secret slide!",
+                "There's a Star hidden",
+                "here that Bowser couldn't",
+                "find.",
+                "When you slide, press",
+                "forward to speed up,",
+                "pull back to slow down.",
+                "If you slide really",
+                "fast, you'll win the Star!"
+            ]
+        },
+        {
+            "ID": 150,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Waaaa! You've flooded my",
+                "house! Wh-why?? Look at",
+                "this mess! What am I",
+                "going to do now?",
+                "",
+                "The ceiling's ruined, the",
+                "floor is soaked...what to",
+                "do, what to do? Huff...",
+                "huff...it makes me so...",
+                "MAD!!!",
+                "Everything's been going",
+                "wrong ever since I got",
+                "this Star...It's so shiny,",
+                "but it makes me feel...",
+                "strange..."
+            ]
+        },
+        {
+            "ID": 151,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "I can't take this",
+                "anymore! First you get",
+                "me all wet, then you",
+                "stomp on me!",
+                "Now I'm really, really,",
+                "REALLY mad!",
+                "Waaaaaaaaaaaaaaaaa!!!"
+            ]
+        },
+        {
+            "ID": 152,
+            "linesPerBox": 3,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Owwch! Uncle! Uncle!",
+                "Okay, I give up. Take this",
+                "Star!",
+                "Whew! I feel better now.",
+                "I don't really need it",
+                "anymore, anyway--",
+                "I can see the stars",
+                "through my ceiling at",
+                "night.",
+                "They make me feel...",
+                "...peaceful. Please, come",
+                "back and visit anytime."
+            ]
+        },
+        {
+            "ID": 153,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Hey! Who's there?",
+                "What's climbing on me?",
+                "Is it an ice ant?",
+                "A snow flea?",
+                "Whatever it is, it's",
+                "bugging me! I think I'll",
+                "blow it away!"
+            ]
+        },
+        {
+            "ID": 154,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Hold on to your hat! If",
+                "you lose it, you'll be",
+                "easily injured. If you",
+                "lose it, look for it in the",
+                "course where you lost it.",
+                "Speaking of lost, the",
+                "Princess is still stuck in",
+                "the walls somewhere.",
+                "Please help, Mario!",
+                "",
+                "Oh, you know that there",
+                "are secret worlds in the",
+                "walls as well as in the",
+                "paintings, right?"
+            ]
+        },
+        {
+            "ID": 155,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Thanks to the power of",
+                "the Stars, life is",
+                "returning to the castle.",
+                "Please, Mario, you have",
+                "to give Bowser the boot!",
+                "",
+                "Here, let me tell you a",
+                "little something about the",
+                "castle. In the room with",
+                "the mirrors, look carefully",
+                "for anything that's not",
+                "reflected in the mirror.",
+                "And when you go to the",
+                "water town, you can flood",
+                "it with a high jump into",
+                "the painting."
+            ]
+        },
+        {
+            "ID": 156,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "The world inside the",
+                "clock is so strange!",
+                "When you jump inside,",
+                "watch the position of",
+                "the big hand!"
+            ]
+        },
+        {
+            "ID": 157,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Watch out! Don't let",
+                "yourself be swallowed by",
+                "quicksand.",
+                "",
+                "",
+                "If you sink into the sand,",
+                "you won't be able to",
+                "jump, and if your head",
+                "goes under, you'll be",
+                "smothered.",
+                "The dark areas are",
+                "bottomless pits."
+            ]
+        },
+        {
+            "ID": 158,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "1. If you jump repeatedly",
+                "and time it right, you'll",
+                "jump higher and higher.",
+                "If you run really fast and",
+                "time three jumps right,",
+                "you can do a Triple Jump.",
+                "2. Jump into a solid wall,",
+                "then jump again when you",
+                "hit the wall. You can",
+                "bounce to a higher level",
+                "using this Wall Kick."
+            ]
+        },
+        {
+            "ID": 159,
+            "linesPerBox": 6,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "3. If you stop, press [Z]",
+                "to crouch, then jump, you",
+                "can perform a Backward",
+                "Somersault. To do a Long",
+                "Jump, run fast, press [Z],",
+                "then jump."
+            ]
+        },
+        {
+            "ID": 160,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Press [B] while running",
+                "fast to do a Body Slide",
+                "attack. To stand while",
+                "sliding, press [A] or [B]."
+            ]
+        },
+        {
+            "ID": 161,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Mario!!!",
+                "Czy to naprawde ty???",
+                "Tak duzo czasu minelo",
+                "od naszej przygody!",
+                "Powiedziano mi, ze",
+                "zobacze cie, jesli tu",
+                "poczekam, prawie sie",
+                "poddalem!",
+                "Czy to prawda? Czy",
+                "naprawde pokonales Bowsera?",
+                "Przywrociles moc do zamku?",
+                "I uratowales ksiezniczke?",
+                "Wiedzialem, ze dasz rade!",
+                "Mam dla ciebie bardzo",
+                "specjalna wiadomosc.",
+                "『Dziekujemy za granie",
+                "w Mario 64! To koniec",
+                "gry, ale nie",
+                "koniec zabawy. Chcemy, zebys",
+                "dalej gral, wiec mamy",
+                "cos dla ciebie.",
+                "Baw sie dobrze! 』",
+                "",
+                "Zespol Mario 64",
+				"i DAGzex"
+            ]
+        },
+        {
+            "ID": 162,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Nie, nie, nie! To",
+                "znowu ty! Spiesze",
+                "sie, nie widzisz?",
+                "",
+                "Nie mam czasu na",
+                "klotnie o Gwiazdy.",
+                "Wez ta. Nie mialem zamiaru",
+                "jej kryc...",
+                "Po prostu sie spiesze.",
+                "To wszystko.",
+                "Musze juz isc.",
+                "All! Pusc mnie!"
+            ]
+        },
+        {
+            "ID": 163,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Noooo! You've really",
+                "beaten me this time,",
+                "Mario! I can't stand",
+                "losing to you!",
+                "",
+                "My troops...worthless!",
+                "They've turned over all",
+                "the Power Stars! What?!",
+                "There are 120 in all???",
+                "",
+                "Amazing! There were some",
+                "in the castle that I",
+                "missed??!!",
+                "",
+                "",
+                "Now I see peace",
+                "returning to the world...",
+                "Oooo! I really hate that!",
+                "I can't watch--",
+                "I'm outta here!",
+                "Just you wait until next",
+                "time. Until then, keep",
+                "that Control Stick",
+                "smokin'!",
+                "Buwaa ha ha!"
+            ]
+        },
+        {
+            "ID": 164,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Mario! What's up, pal?",
+                "I haven't been on the",
+                "slide lately, so I'm out",
+                "of shape.",
+                "Still, I'm always up for a",
+                "good race, especially",
+                "against an old sleddin'",
+                "buddy.",
+                "Whaddya say?",
+                "Ready...set...",
+                "",
+                "//Go//// Don't Go"
+            ]
+        },
+        {
+            "ID": 165,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "I take no responsibility",
+                "whatsoever for those who",
+                "get dizzy and pass out",
+                "from running around",
+                "this post."
+            ]
+        },
+        {
+            "ID": 166,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Zaraz wracam.",
+                "W tej chwili",
+                "trenuje, wroc pozniej.",
+                "//--Koopa Szybki."
+            ]
+        },
+        {
+            "ID": 167,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Zamek ksiezniczki",
+                "jest blisko.",
+                "",
+                "",
+                "Wcisnij [A], by skoczyc,",
+                "[Z], by kucnac.",
+                "[B], by kopnac, czytac",
+                "znaki, lub cos podniesc.",
+                "Wcisnij [B] znowu,",
+                "by rzucic tym,",
+				"co trzymasz."
+            ]
+        },
+        {
+            "ID": 168,
+            "linesPerBox": 5,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Hey! Knock it off! That's",
+                "the second time you've",
+                "nailed me. Now you're",
+                "asking for it, linguine",
+                "breath!"
+            ]
+        },
+        {
+            "ID": 169,
+            "linesPerBox": 4,
+            "leftOffset": 30,
+            "width": 200,
+            "lines": [
+                "Keep out!",
+                "That means you!",
+                "Arrgghh!",
+                "",
+                "Anyone entering this cave",
+                "without permission will",
+                "meet certain disaster."
+            ]
+        }
+    ],
+    "courses": [
+        {
+            "course": " 1 POLE BITEWNE BOB-OMBoW",
+            "acts": [
+                "WIELKI BOB-OMB NA SZCZYCIE",
+                "WYsCIG Z KOOPa SZYBKIM",
+                "STRZEL DO WYSPY NA NIEBIE",
+                "ZNAJDz 8 CZERWONYCH MONET",
+                "MARIO SZYBUJE PO NIEBIE",
+                "ZA BRAMa CHAIN CHOMPA"
+            ]
+        },
+        {
+            "course": " 2 FORTECA WHOMPA",
+            "acts": [
+                "ZNISZCZ BLOK WHOMPA",
+                "NA SAMa GoRe FORTECY",
+                "STRZEL W NIEBO",
+                "CZERWONE MONETY NA UNIESIONEJ PLATFORMIE",
+                "SPADNIJ NA WYSPe W KLATCE",
+                "WYSTRZEL W sCIANe"
+            ]
+        },
+        {
+            "course": " 3 WESOlA ZATOKA",
+            "acts": [
+                "GRABIEz W ZATOPIONYM STATKU",
+                "CZY WeGORZ MOzE SIe POBAWIc?",
+                "SKARB JASKINI W OCEANIE",
+                "CZERWONE MONETY NA STATKU",
+                "WYSTRZEL DO KAMIENNEGO FLIARU",
+                "POPRZEZ STRUMIEn"
+            ]
+        },
+        {
+            "course": " 4 CHlODNA, CHlODNA GoRA",
+            "acts": [
+                "sLISKA ZJEzDzALNIA",
+                "ZAGUBIONY PINGWINEK",
+                "WYsCIG Z DUzYM PINGWINEM",
+                "MROzNA ZJEzDzALNIA DLA 8 CZERWONYCH MONET",
+                "BAlWAN ZGUBIl GlOWe",
+                "KOPNIAKI ZADZIAlAJa"
+            ]
+        },
+        {
+            "course": " 5 NAWIEDZANIE WIELKIEGO BOO",
+            "acts": [
+                "POLOWANIE DUCHoW",
+                "PRZEJEDz SIe NA KARUZELI",
+                "SEKRET NAWIEDZONYCH KSIazEK",
+                "ZNAJDz 8 CZERWONYCH MONET",
+                "BALKON WIELKIEGO BOO",
+                "OKO W OKO W SEKRETNYM POKOJU"
+            ]
+        },
+        {
+            "course": " 6 MGLISTY LABIRYNT JASKIn",
+            "acts": [
+                "PlYWAJaCA BESTIA W JASKINI",
+                "WJEDz NA GoRe PO 8 CZERWONYCH MONET",
+                "METALOWY MARIO MOze SIe PORUSZAc!",
+                "NAWIGUJaC W TOKSYCZNYM LABIRYNCIE",
+                "sWIETNE WYJsCIE AWARYJNE",
+                "UWAzAJ NA TOCZaCE SIe KAMIENIE"
+            ]
+        },
+        {
+            "course": " 7 sMIERTELNA KRAINA LAWY",
+            "acts": [
+                "UGOTUJ WIELKIEGO DReCZYCIELA",
+                "ZADReCZ DReCZYCIELI",
+                "8-MONETOWE PUZZLE Z 15 KAWAlKAMI",
+                "TOCZENIE GORaCYCH KloD",
+                "OCHOCZE WEJsCIE DO WULKANU",
+                "WINDA W WULKANIE"
+            ]
+        },
+        {
+            "course": " 8 ZMIENNA KRAINA Z PIASKU",
+            "acts": [
+                "W SZPONACH WIELKIEGO PTAKA",
+                "sWIECaCA NA GoRZE PIRAMIDY",
+                "W sRODKU STAROzYTNEJ PIRAMIDY",
+                "STAn NA 4 FILARACH",
+                "LATANIE PO 8 CZERWONYCH MONET",
+                "ZAGADKA W PIRAMIDZIE"
+            ]
+        },
+        {
+            "course": " 9 STRASZNE, STRASZNE DOKI",
+            "acts": [
+                "WEJDz NA loDz BOWSERA",
+                "SKRZYNIE W WODZIE",
+                "8 CZERWONYCH MONET NA SlUPACH",
+                "PRZEZ STRUMIEn",
+                "NAGRODA OD MANTY",
+                "ZBIERZ CZAPKI..."
+            ]
+        },
+        {
+            "course": "10 KRAINA BAlWANA",
+            "acts": [
+                "DUzA GlOWA BAlWANA",
+                "SCHlODz SIe Z DReCZYCIELEM",
+                "NA GleBOKIM LODZIE",
+                "WIR Z MROzNEGO STAWU",
+                "ROZBIJ SKORUPY DLA CZEROWNYCH MONET",
+                "W IGLOO"
+            ]
+        },
+        {
+            "course": "11 MOKRY-SUCHY sWIAT",
+            "acts": [
+                "PRZERAzAJaCE WINDY",
+                "WIERZCHOlEK MIASTA",
+                "SEKRETY W NIEBIE I WODZIE",
+                "SZYBKA WINDA--POSPIESZ SIe!",
+                "PoJDz DO MIASTA PO CZERWONE MONETY",
+                "SZYBKI WYsCIG PO MIEsCIE!"
+            ]
+        },
+        {
+            "course": "12 WYSOKA, WYSOKA GoRA",
+            "acts": [
+                "WEJDz NA GoRe",
+                "TAJEMNICA MAlPIEJ KLATKI",
+                "STRASZNE GRZYBY, CZERWONE MONETY",
+                "TAJEMNICZE ZBOCZE",
+                "sWIETNY WIDOK Z MOSTU",
+                "WYSTRZEL DO SAMOTNEGO GRZYBA"
+            ]
+        },
+        {
+            "course": "13 MAlA-WIELKA WYSPA",
+            "acts": [
+                "WYRWIJ KWIAT PIRANII",
+                "WIERZCHOlEK WIELKIEJ WYSPY",
+                "REMATCH Z KOOPa SZYBKIM",
+                "PIec MAlYCH SEKREToW",
+                "8 CZERWONYCH MONET WIGGLERA",
+                "NIECH WIGGLER SIe ZWINIE"
+            ]
+        },
+        {
+            "course": "14 ZEGAR TIK-TAK",
+            "acts": [
+                "WTOCZ SIe DO KLATKI",
+                "DZIURY I WAHADlA",
+                "POMOCNA DlOn",
+                "ZNISZCZ THOWMPA",
+                "SKOKI NA RUCHOMYCH PLATFORMACH",
+                "ZATRZYMAJ CZAS DLA CZERWONYCH MONET"
+            ]
+        },
+        {
+            "course": "15 TeCZOWA PRZEJAzDzKA",
+            "acts": [
+                "zEGLUGA PRZEZ TeCZe",
+                "WIELKI DOM W NIEBIE",
+                "MONETY W LABIRYNCIE",
+                "KOlYSANIE W WIETRZYKU",
+                "TRUDNE TRoJKaTY!",
+                "GDZIEs ZA TeCZa"
+            ]
+        },
+        { "course": "ZAMEK", "acts": ["UKRYTA GWIAZDA W ZAMKU!"] }
+    ],
+    "secrets": [
+        "   BOWSER W MROCZNYM sWIECIE",
+        "   BOWSER W OGNISTYM MORZU",
+        "   BOWSER W NIEBIE",
+        "   UKRYTA ZJEzDzALNIA",
+        "   JASKINIA METALOWEJ CZAPKI",
+        "   JASKINIA CZAPKI LOTU",
+        "   ZNIKAJaCA CZAPKA POD FOSa",
+        "   SKRZYDLATY MARIO ZA TeCZa",
+        "   UKRYTE AKWARIUM",
+        "   UKRYTE GWIAZDY ZAMKU"
+    ],
+    "options": {
+        "TEXT_OPT_OPTIONS": "OPCJE",
+        "TEXT_OPT_CAMERA": "KAMERA",
+        "TEXT_OPT_CONTROLS": "STEROWANIE",
+        "TEXT_OPT_VIDEO": "EKRAN",
+        "TEXT_OPT_AUDIO": "DZWIEK",
+        "TEXT_OPT_CHEATS": "KODY",
+        "TEXT_OPT_HIGHLIGHT": "O",
+        "TEXT_OPT_UNBOUND": "BRAK",
+        "TEXT_OPT_PRESSKEY": "...",
+        "TEXT_OPT_BUTTON1": "[R] Opcje",
+        "TEXT_OPT_BUTTON2": "[R] Powrot",
+        "TEXT_OPT_ENABLED": "Wlaczone",
+        "TEXT_OPT_DISABLED": "Wylaczone",
+        "TEXT_OPT_CAMX": "Camera X Sensitivity",
+        "TEXT_OPT_CAMY": "Camera Y Sensitivity",
+        "TEXT_OPT_INVERTX": "Invert X Axis",
+        "TEXT_OPT_INVERTY": "Invert Y Axis",
+        "TEXT_OPT_CAMC": "Camera Centre Aggression",
+        "TEXT_OPT_CAMP": "Camera Pan Level",
+        "TEXT_OPT_CAMD": "Camera Deceleration",
+        "TEXT_OPT_CAMON": "Free Camera",
+        "TEXT_OPT_ANALOGUE": "Analogue Camera",
+        "TEXT_OPT_MOUSE": "Mouse Look",
+        "TEXT_OPT_TEXFILTER": "Texture Filtering",
+        "TEXT_OPT_FSCREEN": "Pelny Ekran",
+        "TEXT_OPT_NEAREST": "Nearest",
+        "TEXT_OPT_LINEAR": "Linear",
+        "TEXT_OPT_MVOLUME": "Master Volume",
+        "TEXT_OPT_MUSVOLUME": "Muzyka",
+        "TEXT_OPT_SFXVOLUME": "Efekty dzwiekowe",
+        "TEXT_OPT_ENVVOLUME": "Otoczenie",
+        "TEXT_OPT_VSYNC": "Vertical Sync",
+        "TEXT_OPT_AUTO": "Auto",
+        "TEXT_OPT_HUD": "HUD",
+        "TEXT_OPT_THREEPT": "Three-point",
+        "TEXT_OPT_APPLY": "Apply",
+        "TEXT_OPT_RESETWND": "Reset Window",
+        "TEXT_BIND_A": "A Button",
+        "TEXT_BIND_B": "B Button",
+        "TEXT_BIND_START": "Start Button",
+        "TEXT_BIND_L": "L Trigger",
+        "TEXT_BIND_R": "R Trigger",
+        "TEXT_BIND_Z": "Z Trigger",
+        "TEXT_BIND_C_UP": "C-Up",
+        "TEXT_BIND_C_DOWN": "C-Down",
+        "TEXT_BIND_C_LEFT": "C-Left",
+        "TEXT_BIND_C_RIGHT": "C-Right",
+        "TEXT_BIND_UP": "Stick Up",
+        "TEXT_BIND_DOWN": "Stick Down",
+        "TEXT_BIND_LEFT": "Stick Left",
+        "TEXT_BIND_RIGHT": "Stick Right",
+        "TEXT_OPT_DEADZONE": "Stick Deadzone",
+        "TEXT_OPT_RUMBLE": "Rumble Strength",
+        "TEXT_OPT_CHEAT1": "Enable cheats",
+        "TEXT_OPT_CHEAT2": "Moonjump (Press L)",
+        "TEXT_OPT_CHEAT3": "Invincible Mario",
+        "TEXT_OPT_CHEAT4": "Infinite lives",
+        "TEXT_OPT_CHEAT5": "Super speed",
+        "TEXT_OPT_CHEAT6": "Super responsive controls",
+        "TEXT_OPT_CHEAT7": "Exit course at any time",
+        "TEXT_OPT_CHEAT8": "Huge Mario",
+        "TEXT_OPT_CHEAT9": "Tiny Mario",
+        "TEXT_OPT_GAME": "GRA",
+        "TEXT_OPT_LANGUAGE": "Jezyk"
+    },
+    "strings": {
+        "TEXT_ZERO": "0",
+        "TEXT_COIN": "$",
+        "TEXT_STAR": "{09733}",
+        "TEXT_COIN_X": "${00215}",
+        "TEXT_STAR_X": "{09733}{00215}",
+        "TEXT_VARIABLE_X": "{00215}",
+        "TEXT_UNFILLED_STAR": "{09734}",
+        "TEXT_NEW": "NOWY",
+        "TEXT_4DASHES": "----",
+        "TEXT_PAUSE": "PAUZA",
+        "TEXT_HUD_CONGRATULATIONS": "GRATULACJE",
+        "TEXT_MARIO": "MARIO",
+        "TEXT_SELECT_FILE": "WYBIERZ PLIK",
+        "TEXT_CHECK_FILE": "SPRAWDz PLIK",
+        "TEXT_COPY_FILE": "SKOPIUJ PLIK",
+        "TEXT_ERASE_FILE": "USUN PLIK",
+        "TEXT_SOUND_SELECT": "RODZAJ DzWIeKU",
+        "TEXT_FILE_MARIO_A": "MARIO A",
+        "TEXT_FILE_MARIO_B": "MARIO B",
+        "TEXT_FILE_MARIO_C": "MARIO C",
+        "TEXT_FILE_MARIO_D": "MARIO D",
+        "TEXT_SCORE": "REKORDY",
+        "TEXT_COPY": "SKOPIUJ",
+        "TEXT_ERASE": "USUN",
+        "TEXT_STEREO": "STEREO",
+        "TEXT_MONO": "MONO",
+        "TEXT_HEADSET": "SlUCHAWKI",
+        "TEXT_SAVED_DATA_EXISTS": "PLIK ISTNIEJE",
+        "TEXT_NO_SAVED_DATA_EXISTS": "PLIK NIE ISTNIEJE",
+        "TEXT_RETURN": "WROC",
+        "TEXT_CHECK_SCORE": "SPRAWDZ REKORDY",
+        "TEXT_COPY_FILE_BUTTON": "SKOPIUJ PLIK",
+        "TEXT_ERASE_FILE_BUTTON": "USUN PLIK",
+        "TEXT_HI_SCORE": "NOWY REKORD",
+        "TEXT_MY_SCORE": "MoJ REKORD",
+        "TEXT_SCORE_MARIO_A": "{09786}A",
+        "TEXT_SCORE_MARIO_B": "{09786}B",
+        "TEXT_SCORE_MARIO_C": "{09786}C",
+        "TEXT_SCORE_MARIO_D": "{09786}D",
+        "TEXT_COPY_IT_TO_WHERE": "SKOPIUJ GDZIE?",
+        "TEXT_COPYING_COMPLETED": "KOPIOWANIE SKOnCZONE",
+        "TEXT_NO_FILE_TO_COPY_FROM": "BRAK PUSTEGO PLIKU",
+        "TEXT_SURE": "NA PEWNO?",
+        "TEXT_YES": "TAK",
+        "TEXT_NO": "NIE",
+        "TEXT_FILE_MARIO_A_JUST_ERASED": "MARIO A USUNIeTE",
+        "TEXT_COURSE": "sWIAT",
+        "TEXT_MYSCORE": "MoJ REKORD",
+        "TEXT_CONTINUE": "KONTYNUUJ",
+        "TEXT_EXIT_COURSE": "WYJDz",
+        "TEXT_EXIT_GAME": "WYJDz Z GRY",
+        "TEXT_CAMERA_ANGLE_R": "USTAW KAT KAMERY",
+        "TEXT_LAKITU_MARIO": "LAKITU + MARIO",
+        "TEXT_LAKITU_STOP": "LAKITU + STOP",
+        "TEXT_NORMAL_UPCLOSE": "(NORMALNA)(BLISKA)",
+        "TEXT_NORMAL_FIXED": "(NORMALNA)(UMIEJSCOWIONA)",
+        "TEXT_CATCH": "CATCH",
+        "TEXT_CLEAR": "SKOnCZONY",
+        "TEXT_HUD_HI_SCORE": "NOWY REKORD",
+        "TEXT_SAVE_AND_CONTINUE": "ZAPISZ I KONTYNUUJ",
+        "TEXT_SAVE_AND_QUIT": "ZAPISZ I WYJDz",
+        "TEXT_SAVE_EXIT_GAME": "ZAPISZ I ZAKOnCZ GRe",
+        "TEXT_CONTINUE_WITHOUT_SAVING": "KONTYNUUJ",
+        "TEXT_FILE_MARIO_EXCLAMATION": "Mario!",
+        "TEXT_POWER_STARS_RESTORED": "Moc gwiazd zostala przywrocona zamkowi...",
+        "TEXT_THANKS_TO_YOU": "...a to wszystko dzieki tobie!",
+        "TEXT_THANK_YOU_MARIO": "Dziekuje ci, Mario",
+        "TEXT_SOMETHING_SPECIAL": "Zrobmy cos specjalnego...",
+        "TEXT_LISTEN_EVERYBODY": "Sluchajcie, wszyscy",
+        "TEXT_LETS_HAVE_CAKE": "przyrzadzmy pyszne ciasto...",
+        "TEXT_FOR_MARIO": "...dla Mario...",
+        "TEXT_FILE_MARIO_QUESTION": "Mario!"
+    }
+}
