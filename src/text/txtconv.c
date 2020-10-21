@@ -70,7 +70,7 @@ struct Character charmap[358] = {
     {"{07765}", {0x33, NULL}}  //   latin small letter p with acute (ES_la)
 };
 
-struct Character getCharacter(char* ch){
+struct Character getCharacter(char *ch){
     struct Character tmp = {NULL, {NULL, NULL}};
     for(s32 cmid = 0; cmid < sizeof(charmap) / sizeof(struct Character); cmid++){
         if(charmap[cmid].txt != NULL){
@@ -83,26 +83,26 @@ struct Character getCharacter(char* ch){
     return tmp;
 }
 
-u8 * getTranslatedText(char * txt){
+u8 *getTranslatedText(char  *txt){
 
     txt = (txt == NULL ? "" : txt);
 
     s32 cid = 0;
     s32 shiftArr = 0;
     s32 strSize = strlen(txt);
-    u8 * tmp = malloc((strSize + 1) * sizeof(u8));
+
+    u8 *tmp = malloc((strSize + 1) * sizeof(u8));
     u8 icon = FALSE;
 
     char tmpIcon[3];
-
     char tmpSpecialChar[7];
 
     memset(tmpIcon, 0, sizeof(tmpIcon));
     memset(tmpSpecialChar, 0, sizeof(tmpSpecialChar));
 
     for(cid = 0; cid < strSize; cid++){
-        char ch = txt[cid];
-
+    char ch = txt[cid];
+    
         if(ch == '['){
             tmpIcon[0] = ch;
             tmpIcon[1] = txt[cid + 1];

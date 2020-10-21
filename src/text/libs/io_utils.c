@@ -5,7 +5,7 @@
 #include <limits.h>
 #include "io_utils.h"
 
-void combine(char* destination, const char* path1, const char* path2) {
+void combine(char *destination, const char *path1, const char *path2) {
     if(path1 == NULL || path2 == NULL) {
         strcpy(destination, "");
     }
@@ -28,15 +28,16 @@ void combine(char* destination, const char* path1, const char* path2) {
             append_directory_separator = 1;
         }
         strcpy(destination, path1);
-        if(append_directory_separator)
+        if(append_directory_separator) {
             strcat(destination, directory_separator);
+        }
         strcat(destination, path2);
     }
 }
 
 const char *get_filename_ext(const char *filename) {
     const char *dot = strrchr(filename, '.');
-    if(!dot || dot == filename) return "";
+    if(!dot || dot == filename) { return ""; }
     return dot + 1;
 }
 

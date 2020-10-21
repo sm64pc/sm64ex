@@ -13,16 +13,16 @@
 #define MAX_LANG 30
 #define SECRET_NULL 24
 
-struct DialogEntry* * dialogPool;
-u8* * seg2_course_name_table;
-u8* * seg2_act_name_table;
+struct DialogEntry * *dialogPool;
+u8 * *seg2_course_name_table;
+u8 * *seg2_act_name_table;
 
-struct LanguageEntry* * languages;
+struct LanguageEntry * *languages;
 u8 languagesAmount = 0;
 
-struct LanguageEntry* current_language;
+struct LanguageEntry *current_language;
 
-void load_language(char* jsonTxt, s8 language){
+void load_language(char *jsonTxt, s8 language){
     languages[language] = malloc (sizeof (struct LanguageEntry));
 
     const char *endTxt;
@@ -60,9 +60,9 @@ void load_language(char* jsonTxt, s8 language){
     int eid = 0;
     cJSON_ArrayForEach(dialog, dialogs) {
         int id = cJSON_GetObjectItemCaseSensitive(dialog, "ID")->valueint;
-
-        struct DialogEntry *entry = malloc (sizeof (struct DialogEntry));
-
+        
+        struct DialogEntry *entry = malloc(sizeof(struct DialogEntry));
+        
         entry->unused = 1;
         entry->linesPerBox = cJSON_GetObjectItemCaseSensitive(dialog, "linesPerBox")->valueint;
         entry->leftOffset = cJSON_GetObjectItemCaseSensitive(dialog, "leftOffset")->valueint;
@@ -74,11 +74,11 @@ void load_language(char* jsonTxt, s8 language){
 
         int lineAmount = cJSON_GetArraySize(lines);
         int dialogSize = lineAmount * 45 * 7;
-        char* dialogTxt = malloc(dialogSize * sizeof(char));
+        char *dialogTxt = malloc(dialogSize * sizeof(char));
         strcpy(dialogTxt, "");
         int currLine = 0;
         cJSON_ArrayForEach(line, lines) {
-            char * str = line->valuestring;
+            char *str = line->valuestring;
             strcat(dialogTxt, str);
             if(currLine < lineAmount - 1) {
                 strcat(dialogTxt, "\n");
@@ -107,7 +107,7 @@ void load_language(char* jsonTxt, s8 language){
     cJSON_ArrayForEach(course, courses) {
         const cJSON *acts = cJSON_GetObjectItemCaseSensitive(course, "acts");
         const cJSON *act = NULL;
-        char* courseName = cJSON_GetObjectItemCaseSensitive(course, "course")->valuestring;
+        char *courseName = cJSON_GetObjectItemCaseSensitive(course, "course")->valuestring;
 
         if(courseID + 1 <= cJSON_GetArraySize(courses) - 1){
             languages[language]->courses[courseID] = getTranslatedText(courseName);
@@ -144,11 +144,11 @@ void load_language(char* jsonTxt, s8 language){
     languages[language]->strings = malloc(sizeof(struct StringTable) * stringSize);
 
     int stringID = 0;
-    cJSON* option;
-    cJSON* str;
+    cJSON *option;
+    cJSON *str;
 
     cJSON_ArrayForEach(option, options) {
-        struct StringTable *entry = malloc (sizeof (struct StringTable));
+        struct StringTable *entry = malloc (sizeof(struct StringTable));
 
         char* key = malloc(strlen(option->string) + 1);
         char* value = malloc(strlen(option->valuestring) + 1);
@@ -182,7 +182,7 @@ void load_language(char* jsonTxt, s8 language){
     cJSON_Delete(json);
 }
 
-void alloc_languages(char* exePath, char* gamedir){
+void alloc_languages(char *exePath, char *gamedir){
     languages = realloc(languages, sizeof(struct LanguageEntry*) * MAX_LANG);
 
     char *lastSlash = NULL;
@@ -195,7 +195,7 @@ void alloc_languages(char* exePath, char* gamedir){
     strncpy(parent, exePath, strlen(exePath) - strlen(lastSlash));
     parent[strlen(exePath) - strlen(lastSlash)] = 0;
 
-    char * languagesDir = malloc(FILENAME_MAX * sizeof(char*));
+    char *languagesDir = malloc(FILENAME_MAX * sizeof(char*));
     #ifndef WIN32
     strcpy(languagesDir, parent);
     strcat(languagesDir, "/");
@@ -211,16 +211,16 @@ void alloc_languages(char* exePath, char* gamedir){
     DIR *lf = opendir(languagesDir);
     struct dirent *de;
     while ((de = readdir(lf)) != NULL){
-        const char* extension = get_filename_ext(de->d_name);
-        char * file = malloc(FILENAME_MAX * sizeof(char*));
+        const char *extension = get_filename_ext(de->d_name);
         if(strcmp(extension, "json") == 0){
+            char *file = malloc(FILENAME_MAX * sizeof(char*));
 
             strcpy(file, languagesDir);
             strcat(file, de->d_name);
             languagesAmount++;
             printf("Loading File: %s\n", file);
 
-            char * jsonTxt = read_file(file);
+            char *jsonTxt = read_file(file);
             load_language(jsonTxt, languagesAmount - 1);
             free(jsonTxt);
             free(file);
@@ -239,7 +239,7 @@ void alloc_languages(char* exePath, char* gamedir){
     }
 }
 
-struct LanguageEntry* get_language_by_name(char* name){
+struct LanguageEntry *get_language_by_name(char *name){
     int id = 0;
 
     for(int l = 0; l < languagesAmount; l++){
@@ -252,24 +252,24 @@ struct LanguageEntry* get_language_by_name(char* name){
    return languages[id];
 }
 
-struct LanguageEntry* get_language(){
+struct LanguageEntry *get_language(){
    return current_language;
 }
 
-void set_language(struct LanguageEntry* new_language){
+void set_language(struct LanguageEntry *new_language){
     current_language = new_language;
     dialogPool = new_language->dialogs;
     seg2_act_name_table = new_language->acts;
     seg2_course_name_table = new_language->courses;
 }
 
-u8* get_key_string(char* id){
-    struct LanguageEntry * current = current_language;
+u8 *get_key_string(char *id){
+    struct LanguageEntry *current = current_language;
 
-    u8* tmp = getTranslatedText("NONE");
+    u8 *tmp = getTranslatedText("NONE");
 
     for(int stringID = 0; stringID < current->num_strings; stringID++){
-        struct StringTable * str = current->strings[stringID];
+        struct StringTable *str = current->strings[stringID];
         if(strcmp(str->key, id) == 0){
             tmp = str->value;
             break;
@@ -279,7 +279,7 @@ u8* get_key_string(char* id){
     return tmp;
 }
 
-void alloc_dialog_pool(char* exePath, char* gamedir){
+void alloc_dialog_pool(char *exePath, char *gamedir){
     languages = malloc(sizeof(struct LanguageEntry*));
 
     alloc_languages(exePath, gamedir);
