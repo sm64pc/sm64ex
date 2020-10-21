@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "txtconv.h"
 
 struct Character charmap[356] = {

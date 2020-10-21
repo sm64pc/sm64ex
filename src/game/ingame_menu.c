@@ -29,6 +29,7 @@
 #include "options_menu.h"
 #endif
 
+#include "text/txtconv.h"
 #include "text/text-loader.h"
 
 u16 gDialogColorFadeTimer;
