@@ -10,47 +10,52 @@
 #include "libs/cJSON.h"
 #include "pc/configfile.h"
 
-#define PLACEHOLDER "You are not supposed\nto be here.\n\nKeep this as a secret\n\n- Render96 Team"
+#define MAX_LANG 30
+#define SECRET_NULL 24
 
 struct DialogEntry* * dialogPool;
 u8* * seg2_course_name_table;
 u8* * seg2_act_name_table;
 
 struct LanguageEntry* * languages;
-s8 languagesAmount = 0;
+u8 languagesAmount = 0;
 
 struct LanguageEntry* current_language;
 
 void load_language(char* jsonTxt, s8 language){
     languages[language] = malloc (sizeof (struct LanguageEntry));
 
-    cJSON *json = cJSON_Parse(jsonTxt);
+    const char *endTxt;
+    cJSON *json = cJSON_ParseWithOpts(jsonTxt, &endTxt, 1);
 
-    if (json == NULL) {
-        const char *error_ptr = cJSON_GetErrorPtr();
-
-        if (error_ptr != NULL) {
-            fprintf(stderr, "Error before: %s\n", error_ptr);
-        } else {
-            fprintf(stderr, "Error loading the JSON file\n");
-        }
+    if(*endTxt != 0) {
+        fprintf(stderr, "Error before: %s\n", endTxt);
         exit(1);
     }
 
+    const cJSON *manifest = cJSON_GetObjectItemCaseSensitive(json, "manifest");
     const cJSON *dialogs = cJSON_GetObjectItemCaseSensitive(json, "dialogs");
     const cJSON *courses = cJSON_GetObjectItemCaseSensitive(json, "courses");
     const cJSON *secrets = cJSON_GetObjectItemCaseSensitive(json, "secrets");
     const cJSON *options = cJSON_GetObjectItemCaseSensitive(json, "options");
     const cJSON *strings = cJSON_GetObjectItemCaseSensitive(json, "strings");
-    const cJSON *manifest = cJSON_GetObjectItemCaseSensitive(json, "manifest");
     const cJSON *dialog = NULL;
     const cJSON *course = NULL;
     const cJSON *secret = NULL;
 
-    languages[language]->dialogs = malloc(DIALOG_COUNT * sizeof(struct DialogEntry));
+    char *nametmp = cJSON_GetObjectItemCaseSensitive(manifest, "langName")->valuestring;
+    char *logotmp = cJSON_GetObjectItemCaseSensitive(manifest, "langLogo")->valuestring;
 
-    languages[language]->name = cJSON_GetObjectItemCaseSensitive(manifest, "langName")->valuestring;
-    languages[language]->logo = cJSON_GetObjectItemCaseSensitive(manifest, "langLogo")->valuestring;
+    char *name = malloc(strlen(nametmp) + 1);
+    char *logo = malloc(strlen(logotmp) + 1);
+
+    strcpy(name, nametmp);
+    strcpy(logo, logotmp);
+
+    languages[language]->name = name;
+    languages[language]->logo = logo;
+
+    languages[language]->dialogs = malloc(DIALOG_COUNT * sizeof(struct DialogEntry));
 
     int eid = 0;
     cJSON_ArrayForEach(dialog, dialogs) {
@@ -121,14 +126,21 @@ void load_language(char* jsonTxt, s8 language){
 
     languages[language]->acts = realloc(languages[language]->acts, sizeof(u8*) * (actAmount * actSize));
 
+    int padding = 0;
+
     cJSON_ArrayForEach(secret, secrets) {
-        languages[language]->courses[courseID] = getTranslatedText(secret->valuestring);
+        if((courseID == SECRET_NULL) && (secret->valuestring != NULL)) {
+            languages[language]->courses[courseID] = getTranslatedText(0);
+            padding++;
+        }
+
+        languages[language]->courses[courseID + padding] = getTranslatedText(secret->valuestring);
         courseID++;
     }
 
-    size_t stringSize = cJSON_GetArraySize(options) + cJSON_GetArraySize(strings);
+    size_t stringSize = cJSON_GetArraySize(options) + cJSON_GetArraySize(strings) + padding;
 
-    languages[language]->string_length = stringSize;
+    languages[language]->num_strings = stringSize;
     languages[language]->strings = malloc(sizeof(struct StringTable) * stringSize);
 
     int stringID = 0;
@@ -147,6 +159,7 @@ void load_language(char* jsonTxt, s8 language){
         entry->key = key;
         entry->value = getTranslatedText(value);
         languages[language]->strings[stringID] = entry;
+        free(value);
         stringID++;
     }
 
@@ -162,14 +175,15 @@ void load_language(char* jsonTxt, s8 language){
         entry->key = key;
         entry->value = getTranslatedText(value);
         languages[language]->strings[stringID] = entry;
+        free(value);
         stringID++;
     }
 
-    cJSON_free(json);
+    cJSON_Delete(json);
 }
 
 void alloc_languages(char* exePath, char* gamedir){
-    languages = realloc(languages, sizeof(struct LanguageEntry*) * 30);
+    languages = realloc(languages, sizeof(struct LanguageEntry*) * MAX_LANG);
 
     char *lastSlash = NULL;
     char *parent = malloc(FILENAME_MAX * sizeof(char*));
@@ -208,13 +222,21 @@ void alloc_languages(char* exePath, char* gamedir){
 
             char * jsonTxt = read_file(file);
             load_language(jsonTxt, languagesAmount - 1);
+            free(jsonTxt);
             free(file);
         }
     }
 
     free(languagesDir);
-
-    languages = realloc(languages, sizeof(struct LanguageEntry*) * (languagesAmount));
+    free(parent);
+    closedir(lf);
+  
+    if(languagesAmount > 0){
+        languages = realloc(languages, sizeof(struct LanguageEntry*) * (languagesAmount));
+    }else{
+        printf("Loading File: No language files found, aborting.\n");
+        exit(1);
+    }
 }
 
 struct LanguageEntry* get_language_by_name(char* name){
@@ -246,7 +268,7 @@ u8* get_key_string(char* id){
 
     u8* tmp = getTranslatedText("NONE");
 
-    for(int stringID = 0; stringID < current->string_length; stringID++){
+    for(int stringID = 0; stringID < current->num_strings; stringID++){
         struct StringTable * str = current->strings[stringID];
         if(strcmp(str->key, id) == 0){
             tmp = str->value;
@@ -260,46 +282,29 @@ u8* get_key_string(char* id){
 void alloc_dialog_pool(char* exePath, char* gamedir){
     languages = malloc(sizeof(struct LanguageEntry*));
 
-    languages[0] = malloc (sizeof (struct LanguageEntry));
-    languages[0]->name = "none";
-    languages[0]->logo = "none";
-    languages[0]->dialogs = malloc(DIALOG_COUNT * sizeof(struct DialogEntry));
-
-    for(int i = 0; i < DIALOG_COUNT; i++){
-        struct DialogEntry *entry = malloc (sizeof (struct DialogEntry));
-
-        entry->unused = 1;
-        entry->linesPerBox = 6;
-        entry->leftOffset = 95;
-        entry->width = 200;
-        entry->str = getTranslatedText(PLACEHOLDER);
-
-        languages[0]->dialogs[i] = entry;
-    }
-
     alloc_languages(exePath, gamedir);
+
+    if(configLanguage >= languagesAmount){
+        printf("Loading File: Configured language doesn't exist, resetting to defaults.\n");
+        configLanguage = 0;
+    }
     set_language(languages[configLanguage]);
 }
 
 void dealloc_dialog_pool(void){
     for(int l = 0; l < languagesAmount; l++){
         struct LanguageEntry * entry = languages[l];
+        for(int i = 0; i < entry->num_strings; i++) free(entry->strings[i]);
         for(int i = 0; i < sizeof(entry->acts) / sizeof(entry->acts[0]); i++) free(entry->acts[i]);
         for(int i = 0; i < sizeof(entry->courses) / sizeof(entry->courses[0]); i++) free(entry->courses[i]);
         for(int i = 0; i < DIALOG_COUNT; i++) free(entry->dialogs[i]);
-        for(int i = 0; i < entry->string_length; i++) free(entry->strings[i]);
+        free(entry->strings);
         free(entry->acts);
         free(entry->courses);
         free(entry->dialogs);
         free(entry->logo);
         free(entry->name);
-        free(entry->strings);
-        entry->acts = NULL;
-        entry->courses = NULL;
-        entry->dialogs = NULL;
-        entry->logo = NULL;
-        entry->name = NULL;
-        entry->strings = NULL;
+        free(languages[l]); 
     }
 
     free(languages);
