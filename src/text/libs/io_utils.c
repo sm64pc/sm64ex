@@ -5,8 +5,6 @@
 #include <limits.h>
 #include "io_utils.h"
 
-#define _READFILE_GUESS 512
-
 void combine(char* destination, const char* path1, const char* path2) {
     if(path1 == NULL || path2 == NULL) {
         strcpy(destination, "");
@@ -42,37 +40,31 @@ const char *get_filename_ext(const char *filename) {
     return dot + 1;
 }
 
-char* read_file(char* name){
-    FILE* file;
-    file = fopen(name, "r");
+char *read_file(char *name){
+    char *result = NULL;
+    FILE *file = fopen(name, "r");
+    if (file != NULL) {
+        // Go to end of ile
+        if (fseek(file, 0L, SEEK_END) == 0) {
+            
+            // get size of file
+            long bufsize = ftell(file);
+            if (bufsize == -1) { return NULL; }
 
-    if(!file)
-        return NULL;
+            // allocate buzzer to size
+            result = malloc(sizeof(char) * (bufsize + 1));
 
-    char* result = malloc(sizeof(char) * _READFILE_GUESS + 1);
+            // go back to start of file
+            if (fseek(file, 0L, SEEK_SET) != 0) { return NULL; }
 
-    if(result == NULL)
-        return NULL;
-
-    size_t pos = 0;
-    size_t capacity = _READFILE_GUESS;
-    char ch;
-
-    while((ch = getc(file)) != EOF){
-        result[pos++] = ch;
-
-        if(pos >= capacity){
-            capacity += _READFILE_GUESS;
-            result = realloc(result, sizeof(char) * capacity + 1);
-            if(result == NULL)
-                return NULL;
+            // read file into memory
+            size_t newLen = fread(result, sizeof(char), bufsize, file);
+            if ( ferror( file ) != 0 ) { return NULL; }
+            else {
+                result[newLen++] = '\0'; // just to be safe
+            }
         }
+        fclose(file);
     }
-    fclose(file);
-    result = realloc(result, sizeof(char) * pos);
-    if(result == NULL)
-        return NULL;
-    result[pos] = '\0';
-
     return result;
 }
