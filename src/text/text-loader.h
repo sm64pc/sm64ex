@@ -5,7 +5,7 @@
 #include "game/ingame_menu.h"
 
 extern char* currentLanguage;
-extern s8 languagesAmount;
+extern u8 languagesAmount;
 
 extern struct DialogEntry* * dialogPool;
 extern u8* * seg2_course_name_table;
@@ -22,7 +22,7 @@ struct LanguageEntry {
     char * logo;
     struct DialogEntry* * dialogs;
     struct StringTable* * strings;
-    int string_length;
+    int num_strings;
     u8* * courses;
     u8* * acts;
 };

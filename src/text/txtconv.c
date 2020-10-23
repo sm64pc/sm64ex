@@ -1,6 +1,9 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "txtconv.h"
 
-struct Character charmap[356] = {
+struct Character charmap[358] = {
     {"0", {0x0, NULL}}, {"1", {0x1, NULL}}, {"{65297}", {0x1, NULL}}, {"2", {0x2, NULL}}, {"{65298}", {0x2, NULL}}, {"3", {0x3, NULL}}, {"{65299}", {0x3, NULL}}, {"4", {0x4, NULL}}, {"{65300}", {0x4, NULL}}, {"5", {0x5, NULL}},
     {"{65301}", {0x5, NULL}}, {"6", {0x6, NULL}}, {"{65302}", {0x6, NULL}}, {"7", {0x7, NULL}}, {"{65303}", {0x7, NULL}}, {"8", {0x8, NULL}}, {"{65304}", {0x8, NULL}}, {"9", {0x9, NULL}}, {"{65305}", {0x9, NULL}},
     {"A", {0xa, NULL}}, {"{65313}", {0xa, NULL}}, {"B", {0xb, NULL}}, {"{65314}", {0xb, NULL}}, {"C", {0xc, NULL}}, {"{65315}", {0xc, NULL}}, {"D", {0xd, NULL}}, {"{65316}", {0xd, NULL}}, {"E", {0xe, NULL}},
@@ -56,10 +59,20 @@ struct Character charmap[356] = {
     {"{00252}", {124, NULL}},
     {"{00220}", {125, NULL}},
     {"{00191}", {126, NULL}},
-    {"{00161}", {127, NULL}}
+    {"{00161}", {127, NULL}},
+
+// *MISSING* SPECIAL CHARACTERS WITH SUBSTITIONS
+//      *NOTE: when adding characters here, don't forget to increment charmap size
+//             (value is number of '}}' in this file minus 1)
+    {"{00227}", {0x24, NULL}}, //   latin small letter a with tilde (PT_br)
+    {"{00195}", {0x0a, NULL}}, // latin capital letter A with tilde (PT_br)
+    {"{00245}", {0x32, NULL}}, //   latin small letter o with tilde (PT_br)
+    {"{00213}", {0x18, NULL}}, // latin capital letter O with tilde (PT_br)
+    {"{00236}", {0x2c, NULL}}, //   latin small letter i with grave (ES_es)
+    {"{07765}", {0x33, NULL}}  //   latin small letter p with acute (ES_la)
 };
 
-struct Character getCharacter(char* ch){
+struct Character getCharacter(char *ch){
     struct Character tmp = {NULL, {NULL, NULL}};
     for(s32 cmid = 0; cmid < sizeof(charmap) / sizeof(struct Character); cmid++){
         if(charmap[cmid].txt != NULL){
@@ -72,26 +85,26 @@ struct Character getCharacter(char* ch){
     return tmp;
 }
 
-u8 * getTranslatedText(char * txt){
+u8 *getTranslatedText(char  *txt){
 
     txt = (txt == NULL ? "" : txt);
 
-    s32 cid;
+    s32 cid = 0;
+    s32 shiftArr = 0;
     s32 strSize = strlen(txt);
-    u8 * tmp = malloc((strSize + 1) * sizeof(u8));
+
+    u8 *tmp = malloc((strSize + 1) * sizeof(u8));
     u8 icon = FALSE;
 
-    s32 shiftArr = 0;
-
-    char tmpId = 0;
     char tmpIcon[3];
-
     char tmpSpecialChar[7];
 
-    s32 ignoreUntil = 0;
-    for(cid = 0; cid < strSize; cid++){
-        char ch = txt[cid];
+    memset(tmpIcon, 0, sizeof(tmpIcon));
+    memset(tmpSpecialChar, 0, sizeof(tmpSpecialChar));
 
+    for(cid = 0; cid < strSize; cid++){
+    char ch = txt[cid];
+    
         if(ch == '['){
             tmpIcon[0] = ch;
             tmpIcon[1] = txt[cid + 1];
@@ -108,6 +121,43 @@ u8 * getTranslatedText(char * txt){
                 }
                 memset(tmpIcon, 0, sizeof(tmpIcon));
             }
+        } else if(ch == ')'){
+
+            struct Character ctm;
+
+            // case: ')' at end of string
+            if (cid == (strSize - 1)) {
+                ctm = getCharacter(")");
+                if(ctm.txt != NULL){
+                    tmp[cid - shiftArr] = ctm.value[0];
+                }
+                break; // avoids out of bounds read/write
+            }
+
+            char tmpIcon[2];
+            tmpIcon[0] = ch;
+            tmpIcon[1] = txt[cid + 1];
+
+            // case: ')(' contained in string
+            if (tmpIcon[1] == '(') {
+                ctm = getCharacter(")(");
+                shiftArr += 1;
+                cid += 1;
+                for(int cl = 0; cl < 2; cl++){
+                    if(ctm.value[cl] != NULL){
+                        tmp[cid - shiftArr + cl] = ctm.value[cl];
+                        shiftArr-=cl;
+                    }
+                }
+            // case: ')' contained in string
+            } else {
+                ctm = getCharacter(")");
+                if(ctm.txt != NULL){
+                    tmp[cid] = ctm.value[0];
+                }
+            }
+            memset(tmpIcon, 0, sizeof(tmpIcon));
+
         } else if(ch == '{'){
             tmpSpecialChar[0] = ch;
             tmpSpecialChar[1] = txt[cid + 1];
@@ -128,8 +178,10 @@ u8 * getTranslatedText(char * txt){
                         shiftArr-=cl;
                     }
                 }
-                memset(tmpSpecialChar, 0, sizeof(tmpSpecialChar));
+            } else {
+                printf("Loading File: missing special character found: %s\n", tmpSpecialChar);
             }
+            memset(tmpSpecialChar, 0, sizeof(tmpSpecialChar));
         } else {
             char findTxt[1] = {ch};
 

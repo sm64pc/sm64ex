@@ -113,7 +113,7 @@ CJSON_PUBLIC(double) cJSON_GetNumberValue(const cJSON * const item)
 }
 
 /* This is a safeguard to prevent copy-pasters from using incompatible C and header files */
-#if (CJSON_VERSION_MAJOR != 1) || (CJSON_VERSION_MINOR != 7) || (CJSON_VERSION_PATCH != 13)
+#if (CJSON_VERSION_MAJOR != 1) || (CJSON_VERSION_MINOR != 7) || (CJSON_VERSION_PATCH != 14)
     #error cJSON.h and cJSON.c have different versions. Make sure that both have the same.
 #endif
 
@@ -1975,15 +1975,6 @@ static cJSON_bool add_item_to_array(cJSON *array, cJSON *item)
             suffix_object(child->prev, item);
             array->child->prev = item;
         }
-        else
-        {
-            while (child->next)
-            {
-                child = child->next;
-            }
-            suffix_object(child, item);
-            array->child->prev = item;
-        }
     }
 
     return true;
@@ -2571,6 +2562,7 @@ CJSON_PUBLIC(cJSON *) cJSON_CreateIntArray(const int *numbers, int count)
         }
         p = n;
     }
+    a->child->prev = n;
 
     return a;
 }
@@ -2607,6 +2599,7 @@ CJSON_PUBLIC(cJSON *) cJSON_CreateFloatArray(const float *numbers, int count)
         }
         p = n;
     }
+    a->child->prev = n;
 
     return a;
 }
@@ -2643,6 +2636,7 @@ CJSON_PUBLIC(cJSON *) cJSON_CreateDoubleArray(const double *numbers, int count)
         }
         p = n;
     }
+    a->child->prev = n;
 
     return a;
 }
@@ -2679,6 +2673,7 @@ CJSON_PUBLIC(cJSON *) cJSON_CreateStringArray(const char *const *strings, int co
         }
         p = n;
     }
+    a->child->prev = n;
 
     return a;
 }
@@ -2750,6 +2745,10 @@ CJSON_PUBLIC(cJSON *) cJSON_Duplicate(const cJSON *item, cJSON_bool recurse)
             next = newchild;
         }
         child = child->next;
+    }
+    if (newitem && newitem->child)
+    {
+        newitem->child->prev = newchild;
     }
 
     return newitem;

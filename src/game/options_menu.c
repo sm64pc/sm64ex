@@ -20,9 +20,11 @@
 #include "pc/cheats.h"
 #include "pc/configfile.h"
 #include "pc/controller/controller_api.h"
-#include "text/text-loader.h"
 #include <stdbool.h>
 #include "../../include/libc/stdlib.h"
+
+#include "text/txtconv.h"
+#include "text/text-loader.h"
 
 u8 optmenu_open = 0;
 
