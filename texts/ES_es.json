@@ -3489,6 +3489,7 @@
         "TEXT_OPT_CAMC": "Agresividad del centrado de c{00225}mara",
         "TEXT_OPT_CAMP": "Nivel de la orientaci{00243}n de c{00225}mara",
         "TEXT_OPT_CAMD": "Deceleraci{00243}n de la c{00225}mara",
+        "TEXT_OPT_CAMON": "C{00225}mara Libre",
         "TEXT_OPT_ANALOGUE": "C{00225}mara anal{00243}gica",
         "TEXT_OPT_MOUSE": "C{00225}mara con el rat{00243}n",
         "TEXT_OPT_TEXFILTER": "Filtrado de texturas",
