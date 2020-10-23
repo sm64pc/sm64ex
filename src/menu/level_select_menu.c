@@ -61,6 +61,7 @@ int run_press_start_demo_timer(s32 timer) {
                 timer = (s8)((struct DemoInput *) gDemo.targetAnim)->timer;
                 gCurrSaveFileNum = 1;
                 gCurrActNum = 1;
+                D_U_801A7C34 = 1;
             }
         } else { // activity was detected, so reset the demo countdown.
             gDemoCountdown = 0;
@@ -163,7 +164,11 @@ int intro_default(void) {
 
 #ifndef VERSION_JP
     if (D_U_801A7C34 == 1) {
-        play_sound(SOUND_MARIO_HELLO, gDefaultSoundArgs);
+        if (gGlobalTimer < 0x81) {
+            play_sound(SOUND_MARIO_HELLO, gDefaultSoundArgs);
+        } else {
+            play_sound(SOUND_MARIO_PRESS_START_TO_PLAY, gDefaultSoundArgs);
+        }
         D_U_801A7C34 = 0;
     }
 #endif
