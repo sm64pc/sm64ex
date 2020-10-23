@@ -1,4 +1,6 @@
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "txtconv.h"
 
 struct Character charmap[358] = {
@@ -62,10 +64,10 @@ struct Character charmap[358] = {
 // *MISSING* SPECIAL CHARACTERS WITH SUBSTITIONS
 //      *NOTE: when adding characters here, don't forget to increment charmap size
 //             (value is number of '}}' in this file minus 1)
-    {"{00227}", {0x61, NULL}}, //   latin small letter a with tilde (PT_br)
-    {"{00195}", {0x65, NULL}}, // latin capital letter A with tilde (PT_br)
-    {"{00245}", {0x91, NULL}}, //   latin small letter o with tilde (PT_br)
-    {"{00213}", {0x95, NULL}}, // latin capital letter O with tilde (PT_br)
+    {"{00227}", {0x24, NULL}}, //   latin small letter a with tilde (PT_br)
+    {"{00195}", {0x0a, NULL}}, // latin capital letter A with tilde (PT_br)
+    {"{00245}", {0x32, NULL}}, //   latin small letter o with tilde (PT_br)
+    {"{00213}", {0x18, NULL}}, // latin capital letter O with tilde (PT_br)
     {"{00236}", {0x2c, NULL}}, //   latin small letter i with grave (ES_es)
     {"{07765}", {0x33, NULL}}  //   latin small letter p with acute (ES_la)
 };

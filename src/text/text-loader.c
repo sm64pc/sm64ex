@@ -29,7 +29,7 @@ void load_language(char *jsonTxt, s8 language){
     cJSON *json = cJSON_ParseWithOpts(jsonTxt, &endTxt, 1);
 
     if(*endTxt != 0) {
-        fprintf(stderr, "Error before: %s\n", endTxt);
+        fprintf(stderr, "Loading File: Error before: %s\n", endTxt);
         exit(1);
     }
 
@@ -60,9 +60,9 @@ void load_language(char *jsonTxt, s8 language){
     int eid = 0;
     cJSON_ArrayForEach(dialog, dialogs) {
         int id = cJSON_GetObjectItemCaseSensitive(dialog, "ID")->valueint;
-        
+
         struct DialogEntry *entry = malloc(sizeof(struct DialogEntry));
-        
+
         entry->unused = 1;
         entry->linesPerBox = cJSON_GetObjectItemCaseSensitive(dialog, "linesPerBox")->valueint;
         entry->leftOffset = cJSON_GetObjectItemCaseSensitive(dialog, "leftOffset")->valueint;
@@ -221,7 +221,12 @@ void alloc_languages(char *exePath, char *gamedir){
             printf("Loading File: %s\n", file);
 
             char *jsonTxt = read_file(file);
-            load_language(jsonTxt, languagesAmount - 1);
+            if(jsonTxt != NULL){
+                load_language(jsonTxt, languagesAmount - 1);
+            }else{
+                fprintf(stderr, "Loading File: Error reading '%s'\n", file);
+                exit(1);
+            }
             free(jsonTxt);
             free(file);
         }
@@ -230,11 +235,11 @@ void alloc_languages(char *exePath, char *gamedir){
     free(languagesDir);
     free(parent);
     closedir(lf);
-  
+
     if(languagesAmount > 0){
         languages = realloc(languages, sizeof(struct LanguageEntry*) * (languagesAmount));
     }else{
-        printf("Loading File: No language files found, aborting.\n");
+        fprintf(stderr, "Loading File: No language files found, aborting.\n");
         exit(1);
     }
 }
