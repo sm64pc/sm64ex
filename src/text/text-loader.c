@@ -249,6 +249,7 @@ u8* get_key_string(char* id){
     for(int stringID = 0; stringID < current->string_length; stringID++){
         struct StringTable * str = current->strings[stringID];
         if(strcmp(str->key, id) == 0){
+            free(tmp);
             tmp = str->value;
             break;
         }

@@ -98,13 +98,13 @@ static void controller_sdl_init(void) {
 
     // try loading an external gamecontroller mapping file
     uint64_t gcsize = 0;
-    void *gcdata = fs_load_file("gamecontrollerdb.txt", &gcsize);
+    void *gcdata = fs_load_file("db/gamecontrollerdb.txt", &gcsize);
     if (gcdata && gcsize) {
         SDL_RWops *rw = SDL_RWFromConstMem(gcdata, gcsize);
         if (rw) {
             int nummaps = SDL_GameControllerAddMappingsFromRW(rw, SDL_TRUE);
             if (nummaps >= 0)
-                printf("loaded %d controller mappings from 'gamecontrollerdb.txt'\n", nummaps);
+                printf("loaded %d controller mappings from 'db/gamecontrollerdb.txt'\n", nummaps);
         }
         free(gcdata);
     }

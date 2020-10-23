@@ -179,16 +179,22 @@ Vtx *make_skybox_rect(s32 tileIndex, s8 colorIndex) {
     s16 x = tileIndex % SKYBOX_COLS * SKYBOX_TILE_WIDTH;
     s16 y = SKYBOX_HEIGHT - tileIndex / SKYBOX_COLS * SKYBOX_TILE_HEIGHT;
 
+    s16 tw = SKYBOX_TILE_WIDTH;
     s16 w = SKYBOX_IMAGE_SIZE / (SKYBOX_COLS - 2);
     s16 h = SKYBOX_IMAGE_SIZE / (SKYBOX_COLS - 2);
     s16 tx = ((tileIndex % SKYBOX_COLS) * w) % SKYBOX_IMAGE_SIZE;
+    if(tx == 0){
+        int gapSize = 5;
+        x -= gapSize;
+        tw += gapSize;
+    }
     s16 ty = ((tileIndex / SKYBOX_COLS) * h) % SKYBOX_IMAGE_SIZE;
 
     if (verts != NULL) {
         make_vertex(verts, 0, x, y, -1,                                          tx << 5,       ty << 5,       sSkyboxColors[colorIndex][0], sSkyboxColors[colorIndex][1], sSkyboxColors[colorIndex][2], 255);
         make_vertex(verts, 1, x, y - SKYBOX_TILE_HEIGHT, -1,                     tx << 5,       (ty + w) << 5, sSkyboxColors[colorIndex][0], sSkyboxColors[colorIndex][1], sSkyboxColors[colorIndex][2], 255);
-        make_vertex(verts, 2, x + SKYBOX_TILE_WIDTH, y - SKYBOX_TILE_HEIGHT, -1, (tx + w) << 5, (ty + h) << 5, sSkyboxColors[colorIndex][0], sSkyboxColors[colorIndex][1], sSkyboxColors[colorIndex][2], 255);
-        make_vertex(verts, 3, x + SKYBOX_TILE_WIDTH, y, -1,                      (tx + w) << 5, ty << 5,       sSkyboxColors[colorIndex][0], sSkyboxColors[colorIndex][1], sSkyboxColors[colorIndex][2], 255);
+        make_vertex(verts, 2, x + tw, y - SKYBOX_TILE_HEIGHT, -1, (tx + w) << 5, (ty + h) << 5, sSkyboxColors[colorIndex][0], sSkyboxColors[colorIndex][1], sSkyboxColors[colorIndex][2], 255);
+        make_vertex(verts, 3, x + tw, y, -1,                      (tx + w) << 5, ty << 5,       sSkyboxColors[colorIndex][0], sSkyboxColors[colorIndex][1], sSkyboxColors[colorIndex][2], 255);
     }
     return verts;
 }
