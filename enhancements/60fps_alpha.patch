@@ -1,5 +1,5 @@
 diff --git a/include/types.h b/include/types.h
-index b3dc27e..c46bdf0 100644
+index b3dc27e2..c46bdf01 100644
 --- a/include/types.h
 +++ b/include/types.h
 @@ -118,6 +118,10 @@ struct GraphNodeObject_sub
@@ -48,7 +48,7 @@ index b3dc27e..c46bdf0 100644
  
  struct MarioBodyState
 diff --git a/src/engine/graph_node.h b/src/engine/graph_node.h
-index 802d97a..1b0d677 100644
+index 802d97a8..1b0d6772 100644
 --- a/src/engine/graph_node.h
 +++ b/src/engine/graph_node.h
 @@ -110,6 +110,8 @@ struct GraphNodePerspective
@@ -112,7 +112,7 @@ index 802d97a..1b0d677 100644
  
  /** A node that allows an object to specify a different culling radius than the
 diff --git a/src/engine/surface_collision.c b/src/engine/surface_collision.c
-index 5b6775f..2c11e25 100644
+index 5b6775fe..2c11e254 100644
 --- a/src/engine/surface_collision.c
 +++ b/src/engine/surface_collision.c
 @@ -8,6 +8,7 @@
@@ -232,7 +232,7 @@ index 5b6775f..2c11e25 100644
          break;
      }
 diff --git a/src/engine/surface_load.c b/src/engine/surface_load.c
-index ac2ee50..323b7d0 100644
+index ac2ee50c..323b7d05 100644
 --- a/src/engine/surface_load.c
 +++ b/src/engine/surface_load.c
 @@ -14,6 +14,7 @@
@@ -256,7 +256,7 @@ index ac2ee50..323b7d0 100644
      surface->vertex2[0] = x2;
      surface->vertex3[0] = x3;
 diff --git a/src/game/camera.c b/src/game/camera.c
-index bde0662..9351dea 100644
+index bde06626..9351dea4 100644
 --- a/src/game/camera.c
 +++ b/src/game/camera.c
 @@ -484,6 +484,10 @@ CameraTransition sModeTransitions[] = {
@@ -375,7 +375,7 @@ index bde0662..9351dea 100644
  
  /**
 diff --git a/src/game/camera.h b/src/game/camera.h
-index 173ab8a..b1abdc4 100644
+index 173ab8a7..b1abdc4f 100644
 --- a/src/game/camera.h
 +++ b/src/game/camera.h
 @@ -657,6 +657,8 @@ struct LakituState
@@ -388,7 +388,7 @@ index 173ab8a..b1abdc4 100644
  
  // bss order hack to not affect BSS order. if possible, remove me, but it will be hard to match otherwise
 diff --git a/src/game/envfx_bubbles.c b/src/game/envfx_bubbles.c
-index 16a9272..ee1b029 100644
+index 16a92720..ee1b029d 100644
 --- a/src/game/envfx_bubbles.c
 +++ b/src/game/envfx_bubbles.c
 @@ -35,6 +35,20 @@ Vtx_t gBubbleTempVtx[3] = {
@@ -496,7 +496,7 @@ index 16a9272..ee1b029 100644
      gSPDisplayList(sGfxCursor++, &tiny_bubble_dl_0B006AB0);
      gSPEndDisplayList(sGfxCursor++);
 diff --git a/src/game/envfx_snow.c b/src/game/envfx_snow.c
-index c3c14a5..d2212ef 100644
+index c3c14a5c..d2212ef6 100644
 --- a/src/game/envfx_snow.c
 +++ b/src/game/envfx_snow.c
 @@ -54,6 +54,26 @@ extern void *tiny_bubble_dl_0B006AB0;
@@ -594,7 +594,7 @@ index c3c14a5..d2212ef 100644
      gSPDisplayList(gfx++, &tiny_bubble_dl_0B006AB0) gSPEndDisplayList(gfx++);
  
 diff --git a/src/game/envfx_snow.h b/src/game/envfx_snow.h
-index 7a83b53..f4acc2d 100644
+index 7a83b536..f4acc2de 100644
 --- a/src/game/envfx_snow.h
 +++ b/src/game/envfx_snow.h
 @@ -25,7 +25,8 @@ struct EnvFxParticle {
@@ -608,7 +608,7 @@ index 7a83b53..f4acc2d 100644
  
  extern s8 gEnvFxMode;
 diff --git a/src/game/hud.c b/src/game/hud.c
-index 1540b67..0de6e0b 100644
+index 1540b675..0de6e0bb 100644
 --- a/src/game/hud.c
 +++ b/src/game/hud.c
 @@ -59,6 +59,20 @@ static struct UnusedHUDStruct sUnusedHUDValues = { 0x00, 0x0A, 0x00 };
@@ -658,13 +658,13 @@ index 1540b67..0de6e0b 100644
      gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(mtx++),
                G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
 diff --git a/src/game/ingame_menu.c b/src/game/ingame_menu.c
-index 7ae9f1e..1c23c96 100644
+index c1711475..896dca6e 100644
 --- a/src/game/ingame_menu.c
 +++ b/src/game/ingame_menu.c
-@@ -130,6 +130,42 @@ s32 gDialogResponse = 0;
- static struct CachedChar { u8 used; u8 data[CHCACHE_BUFLEN]; } charCache[256];
- #endif // VERSION
- 
+@@ -115,6 +115,47 @@ s8 gLastDialogResponse = 0;
+ u8 gMenuHoldKeyIndex = 0;
+ u8 gMenuHoldKeyTimer = 0;
+ s32 gDialogResponse = 0;
 +static Gfx *sInterpolatedDialogOffsetPos;
 +static f32 sInterpolatedDialogOffset;
 +static Gfx *sInterpolatedDialogRotationPos;
@@ -678,33 +678,38 @@ index 7ae9f1e..1c23c96 100644
 +    if (sInterpolatedDialogOffsetPos != NULL) {
 +        matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
 +        guTranslate(matrix, 0, sInterpolatedDialogOffset, 0);
-+        gSPMatrix(sInterpolatedDialogOffsetPos, VIRTUAL_TO_PHYSICAL(matrix), G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
++        gSPMatrix(sInterpolatedDialogOffsetPos, VIRTUAL_TO_PHYSICAL(matrix),
++                  G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 +        sInterpolatedDialogOffsetPos = NULL;
 +    }
 +    if (sInterpolatedDialogRotationPos != NULL) {
 +        matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
 +        guScale(matrix, 1.0 / sInterpolatedDialogScale, 1.0 / sInterpolatedDialogScale, 1.0f);
-+        gSPMatrix(sInterpolatedDialogRotationPos++, VIRTUAL_TO_PHYSICAL(matrix), G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
++        gSPMatrix(sInterpolatedDialogRotationPos++, VIRTUAL_TO_PHYSICAL(matrix),
++                  G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 +        matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
 +        guRotate(matrix, sInterpolatedDialogRotation * 4.0f, 0, 0, 1.0f);
-+        gSPMatrix(sInterpolatedDialogRotationPos, VIRTUAL_TO_PHYSICAL(matrix), G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
++        gSPMatrix(sInterpolatedDialogRotationPos, VIRTUAL_TO_PHYSICAL(matrix),
++                  G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 +        sInterpolatedDialogRotationPos = NULL;
 +    }
 +    if (sInterpolatedDialogZoomPos != NULL) {
 +        matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
-+        guTranslate(matrix, 65.0 - (65.0 / sInterpolatedDialogScale), (40.0 / sInterpolatedDialogScale) - 40, 0);
-+        gSPMatrix(sInterpolatedDialogZoomPos++, VIRTUAL_TO_PHYSICAL(matrix), G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
++        guTranslate(matrix, 65.0 - (65.0 / sInterpolatedDialogScale),
++                    (40.0 / sInterpolatedDialogScale) - 40, 0);
++        gSPMatrix(sInterpolatedDialogZoomPos++, VIRTUAL_TO_PHYSICAL(matrix),
++                  G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 +        matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
 +        guScale(matrix, 1.0 / sInterpolatedDialogScale, 1.0 / sInterpolatedDialogScale, 1.0f);
-+        gSPMatrix(sInterpolatedDialogZoomPos, VIRTUAL_TO_PHYSICAL(matrix), G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
++        gSPMatrix(sInterpolatedDialogZoomPos, VIRTUAL_TO_PHYSICAL(matrix),
++                  G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 +        sInterpolatedDialogZoomPos = NULL;
 +    }
 +}
-+
+ 
  void create_dl_identity_matrix(void) {
      Mtx *matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
- 
-@@ -969,6 +1005,14 @@ void render_dialog_box_type(struct DialogEntry *dialog, s8 linesPerBox) {
+@@ -937,6 +978,14 @@ void render_dialog_box_type(struct DialogEntry *dialog, s8 linesPerBox) {
      switch (gDialogBoxType) {
          case DIALOG_TYPE_ROTATE: // Renders a dialog black box with zoom and rotation
              if (gDialogBoxState == DIALOG_STATE_OPENING || gDialogBoxState == DIALOG_STATE_CLOSING) {
@@ -719,7 +724,7 @@ index 7ae9f1e..1c23c96 100644
                  create_dl_scale_matrix(MENU_MTX_NOPUSH, 1.0 / gDialogBoxScale, 1.0 / gDialogBoxScale, 1.0f);
                  // convert the speed into angle
                  create_dl_rotation_matrix(MENU_MTX_NOPUSH, gDialogBoxOpenTimer * 4.0f, 0, 0, 1.0f);
-@@ -977,6 +1021,12 @@ void render_dialog_box_type(struct DialogEntry *dialog, s8 linesPerBox) {
+@@ -945,6 +994,12 @@ void render_dialog_box_type(struct DialogEntry *dialog, s8 linesPerBox) {
              break;
          case DIALOG_TYPE_ZOOM: // Renders a dialog white box with zoom
              if (gDialogBoxState == DIALOG_STATE_OPENING || gDialogBoxState == DIALOG_STATE_CLOSING) {
@@ -732,7 +737,7 @@ index 7ae9f1e..1c23c96 100644
                  create_dl_translation_matrix(MENU_MTX_NOPUSH, 65.0 - (65.0 / gDialogBoxScale),
                                                (40.0 / gDialogBoxScale) - 40, 0);
                  create_dl_scale_matrix(MENU_MTX_NOPUSH, 1.0 / gDialogBoxScale, 1.0 / gDialogBoxScale, 1.0f);
-@@ -1259,6 +1309,8 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
+@@ -1227,6 +1282,8 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
  #ifdef VERSION_EU
          gDialogY -= gDialogScrollOffsetY;
  #else
@@ -742,7 +747,7 @@ index 7ae9f1e..1c23c96 100644
  #endif
      }
 diff --git a/src/game/level_geo.c b/src/game/level_geo.c
-index 4c98e70..abc5121 100644
+index 4c98e705..abc51213 100644
 --- a/src/game/level_geo.c
 +++ b/src/game/level_geo.c
 @@ -34,12 +34,16 @@ Gfx *geo_envfx_main(s32 callContext, struct GraphNode *node, Mat4 mtxf) {
@@ -763,7 +768,7 @@ index 4c98e70..abc5121 100644
              }
              SET_HIGH_U16_OF_32(*params, gAreaUpdateCounter);
 diff --git a/src/game/object_helpers.c b/src/game/object_helpers.c
-index 22b45b3..109d7f7 100644
+index 22b45b32..109d7f74 100644
 --- a/src/game/object_helpers.c
 +++ b/src/game/object_helpers.c
 @@ -1554,6 +1554,7 @@ void cur_obj_set_pos_to_home(void) {
@@ -775,7 +780,7 @@ index 22b45b3..109d7f7 100644
  
  void cur_obj_set_pos_to_home_and_stop(void) {
 diff --git a/src/game/paintings.c b/src/game/paintings.c
-index 6cae19c..a304d4a 100644
+index 6cae19c0..a304d4ae 100644
 --- a/src/game/paintings.c
 +++ b/src/game/paintings.c
 @@ -189,6 +189,32 @@ struct Painting **sPaintingGroups[] = {
@@ -852,7 +857,7 @@ index 6cae19c..a304d4a 100644
      // Update the ripple, may automatically reset the painting's state.
      painting_update_ripple_state(painting);
 diff --git a/src/game/rendering_graph_node.c b/src/game/rendering_graph_node.c
-index d5bf577..71656b4 100644
+index d5bf5778..71656b49 100644
 --- a/src/game/rendering_graph_node.c
 +++ b/src/game/rendering_graph_node.c
 @@ -39,6 +39,8 @@
@@ -1700,7 +1705,7 @@ index d5bf577..71656b4 100644
                    G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
          gCurGraphNodeRoot = node;
 diff --git a/src/game/screen_transition.c b/src/game/screen_transition.c
-index b49ddaf..d6656af 100644
+index b49ddaf5..d6656af2 100644
 --- a/src/game/screen_transition.c
 +++ b/src/game/screen_transition.c
 @@ -16,6 +16,19 @@
@@ -1821,7 +1826,7 @@ index b49ddaf..d6656af 100644
      switch (transType) {
          case WARP_TRANSITION_FADE_FROM_COLOR:
 diff --git a/src/menu/intro_geo.c b/src/menu/intro_geo.c
-index 37c6752..d823d40 100644
+index 1d3be071..01c5ad61 100644
 --- a/src/menu/intro_geo.c
 +++ b/src/menu/intro_geo.c
 @@ -1,5 +1,6 @@
@@ -1859,21 +1864,20 @@ index 37c6752..d823d40 100644
      graphNode = sp54;
      displayList = NULL;
      displayListIter = NULL;
-@@ -110,7 +125,11 @@ Gfx *geo_title_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context) {
-             scaleY = 0.0f;
+@@ -111,6 +126,11 @@ Gfx *geo_title_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context) {
              scaleZ = 0.0f;
          }
--        guScale(scaleMat, scaleX, scaleY, scaleZ);
+         guScale(scaleMat, scaleX, scaleY, scaleZ);
 +        vec3f_set(scale, scaleX, scaleY, scaleZ);
 +        interpolate_vectors(scaleInterpolated, sIntroScale, scale);
 +        vec3f_set(sIntroScale, scaleX, scaleY, scaleZ);
 +        guScale(scaleMat, scaleInterpolated[0], scaleInterpolated[1], scaleInterpolated[2]);
 +        sIntroScalePos = displayListIter;
          gSPMatrix(displayListIter++, scaleMat, G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
-         gSPDisplayList(displayListIter++, &intro_seg7_dl_0700B3A0);
+         gSPDisplayList(displayListIter++, &titletest_test_mesh);
          gSPPopMatrix(displayListIter++, G_MTX_MODELVIEW);
 diff --git a/src/pc/gfx/gfx_dxgi.cpp b/src/pc/gfx/gfx_dxgi.cpp
-index 0467495..fa4eb33 100644
+index 04674952..fa4eb33c 100644
 --- a/src/pc/gfx/gfx_dxgi.cpp
 +++ b/src/pc/gfx/gfx_dxgi.cpp
 @@ -36,10 +36,10 @@
@@ -1890,7 +1894,7 @@ index 0467495..fa4eb33 100644
  
  using namespace Microsoft::WRL; // For ComPtr
 diff --git a/src/pc/gfx/gfx_sdl2.c b/src/pc/gfx/gfx_sdl2.c
-index 25c9f06..a6461ae 100644
+index 4d907893..0b21e230 100644
 --- a/src/pc/gfx/gfx_sdl2.c
 +++ b/src/pc/gfx/gfx_sdl2.c
 @@ -53,7 +53,7 @@ static void (*kb_all_keys_up)(void) = NULL;
@@ -1916,10 +1920,10 @@ index 25c9f06..a6461ae 100644
              printf("determined swap interval: %d\n", vblanks);
              SDL_GL_SetSwapInterval(vblanks);
 diff --git a/src/pc/pc_main.c b/src/pc/pc_main.c
-index ed6ee74..63679ad 100644
+index 3a725c03..7bff83d5 100644
 --- a/src/pc/pc_main.c
 +++ b/src/pc/pc_main.c
-@@ -83,6 +83,25 @@ void send_display_list(struct SPTask *spTask) {
+@@ -85,6 +85,25 @@ void send_display_list(struct SPTask *spTask) {
  #define SAMPLES_LOW 528
  #endif
  
@@ -1945,7 +1949,7 @@ index ed6ee74..63679ad 100644
  void produce_one_frame(void) {
      gfx_start_frame();
  
-@@ -110,6 +129,11 @@ void produce_one_frame(void) {
+@@ -112,6 +131,11 @@ void produce_one_frame(void) {
      audio_api->play((u8 *)audio_buffer, 2 * num_audio_samples * 4);
  
      gfx_end_frame();
