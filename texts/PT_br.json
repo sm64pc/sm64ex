@@ -3284,7 +3284,7 @@
     ],
     "options": {
         "TEXT_OPT_OPTIONS": "OPCOES",
-        "TEXT_OPT_CAMERA": "C{00194}MERA",
+        "TEXT_OPT_CAMERA": "CAMERA",
         "TEXT_OPT_CONTROLS": "CONTROLES",
         "TEXT_OPT_VIDEO": "DISPLAY",
         "TEXT_OPT_AUDIO": "SOM",
