@@ -315,7 +315,6 @@ static struct SubMenu menuMain = DEF_SUBMENU( menuStr[0], optsMain );
 
 static s32 optmenu_option_timer = 0;
 static u8 optmenu_hold_count = 0;
-static s32 optmenu_sin_timer = 0;
 
 static struct SubMenu *currentMenu = &menuMain;
 
@@ -454,7 +453,6 @@ static inline s16 get_hudstr_centered_x(const s16 sx, const u8 *str) {
 void optmenu_draw(void) {
     s16 scroll;
     s16 scrollpos;
-    f32 sinpos;
 
     const s16 labelX = get_hudstr_centered_x(160, currentMenu->label);
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
@@ -478,11 +476,10 @@ void optmenu_draw(void) {
             optmenu_draw_opt(&currentMenu->opts[i], 160, scroll, (currentMenu->select == i));
     }
 
-    sinpos = sins(optmenu_sin_timer*5000)*4;
     gDPSetScissor(gDisplayListHead++, G_SC_NON_INTERLACE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
-    print_generic_string(80 - sinpos, 132 - (32 * (currentMenu->select - currentMenu->scroll)), optSmallStr[2]);
-    print_generic_string(224 + sinpos, 132 - (32 * (currentMenu->select - currentMenu->scroll)), optSmallStr[3]);
+    print_generic_string(72, 132 - (32 * (currentMenu->select - currentMenu->scroll)), optSmallStr[2]);
+    print_generic_string(232, 132 - (32 * (currentMenu->select - currentMenu->scroll)), optSmallStr[3]);
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 }
 
@@ -542,8 +539,6 @@ void optmenu_check_buttons(void) {
 
     if (gPlayer1Controller->buttonPressed & R_TRIG)
         optmenu_toggle();
-    
-    optmenu_sin_timer++;
 
     /* Enables cheats if the user press the L trigger 3 times while in the options menu. Also plays a sound. */
     
