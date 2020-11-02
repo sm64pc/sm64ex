@@ -112,7 +112,7 @@ index 802d97a..1b0d677 100644
  
  /** A node that allows an object to specify a different culling radius than the
 diff --git a/src/engine/surface_collision.c b/src/engine/surface_collision.c
-index 5b6775f..2c11e25 100644
+index 1da535b..49a5c03 100644
 --- a/src/engine/surface_collision.c
 +++ b/src/engine/surface_collision.c
 @@ -8,6 +8,7 @@
@@ -1890,19 +1890,10 @@ index 0467495..fa4eb33 100644
  
  using namespace Microsoft::WRL; // For ComPtr
 diff --git a/src/pc/gfx/gfx_sdl2.c b/src/pc/gfx/gfx_sdl2.c
-index 25c9f06..a6461ae 100644
+index 0108ca9..28d56ac 100644
 --- a/src/pc/gfx/gfx_sdl2.c
 +++ b/src/pc/gfx/gfx_sdl2.c
-@@ -53,7 +53,7 @@ static void (*kb_all_keys_up)(void) = NULL;
- // whether to use timer for frame control
- static bool use_timer = true;
- // time between consequtive game frames
--static const int frame_time = 1000 / FRAMERATE;
-+static const int frame_time = 1000 / (2 * FRAMERATE);
- 
- const SDL_Scancode windows_scancode_table[] = {
-   /*  0                        1                            2                         3                            4                     5                            6                            7  */
-@@ -142,7 +142,11 @@ static inline void gfx_sdl_set_vsync(const bool enabled) {
+@@ -150,7 +150,11 @@ static inline void gfx_sdl_set_vsync(const bool enabled) {
      if (enabled) {
          // try to detect refresh rate
          SDL_GL_SetSwapInterval(1);
@@ -1915,8 +1906,17 @@ index 25c9f06..a6461ae 100644
          if (vblanks) {
              printf("determined swap interval: %d\n", vblanks);
              SDL_GL_SetSwapInterval(vblanks);
+@@ -233,7 +237,7 @@ static void gfx_sdl_init(const char *window_title) {
+     gfx_sdl_set_fullscreen();
+ 
+     perf_freq = SDL_GetPerformanceFrequency();
+-    frame_time = perf_freq / FRAMERATE;
++    frame_time = perf_freq / (2 * FRAMERATE);
+ 
+     for (size_t i = 0; i < sizeof(windows_scancode_table) / sizeof(SDL_Scancode); i++) {
+         inverted_scancode_table[windows_scancode_table[i]] = i;
 diff --git a/src/pc/pc_main.c b/src/pc/pc_main.c
-index ed6ee74..63679ad 100644
+index 923e7ea..4fe6161 100644
 --- a/src/pc/pc_main.c
 +++ b/src/pc/pc_main.c
 @@ -83,6 +83,25 @@ void send_display_list(struct SPTask *spTask) {
