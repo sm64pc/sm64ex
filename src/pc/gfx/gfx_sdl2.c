@@ -347,7 +347,7 @@ static inline void sync_framerate_with_timer(void) {
         const double elapsed = last_sec ? (now - last_sec) : (now - last_time);
         if ((elapsed < frame_time && !last_sec) || (elapsed < frames_since_last_sec * frame_time && last_sec)) {
             const double delay = last_sec ? frames_since_last_sec * frame_time - elapsed : frame_time - elapsed;
-            usleep(delay / perf_freq * 1000000.0);
+            sys_sleep(delay / perf_freq * 1000000.0);
             last_time = now + delay;
         } else {
             last_time = now;
