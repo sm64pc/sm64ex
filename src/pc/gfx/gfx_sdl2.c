@@ -24,6 +24,7 @@
 
 #endif // End of OS-Specific GL defines
 
+#include <stdint.h>
 #include <stdio.h>
 #include <unistd.h>
 
@@ -52,8 +53,10 @@ static void (*kb_all_keys_up)(void) = NULL;
 
 // whether to use timer for frame control
 static bool use_timer = true;
-// time between consequtive game frames
-static const int frame_time = 1000 / FRAMERATE;
+// time between consequtive game frames, in perf counter ticks
+static double frame_time = 0.0; // set in init()
+// GetPerformanceFrequency
+static double perf_freq = 0.0;
 
 const SDL_Scancode windows_scancode_table[] = {
   /*  0                        1                            2                         3                            4                     5                            6                            7  */
@@ -107,7 +110,12 @@ const SDL_Scancode scancode_rmapping_nonextended[][2] = {
 
 #define IS_FULLSCREEN() ((SDL_GetWindowFlags(wnd) & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
 
-int test_vsync(void) {
+static inline void sys_sleep(const uint64_t us) {
+    // TODO: not everything has usleep()
+    usleep(us);
+}
+
+static int test_vsync(void) {
     // Even if SDL_GL_SetSwapInterval succeeds, it doesn't mean that VSync actually works.
     // A 60 Hz monitor should have a swap interval of 16.67 milliseconds.
     // Try to detect the length of a vsync by swapping buffers some times.
@@ -224,6 +232,9 @@ static void gfx_sdl_init(const char *window_title) {
 
     gfx_sdl_set_fullscreen();
 
+    perf_freq = SDL_GetPerformanceFrequency();
+    frame_time = perf_freq / FRAMERATE;
+
     for (size_t i = 0; i < sizeof(windows_scancode_table) / sizeof(SDL_Scancode); i++) {
         inverted_scancode_table[windows_scancode_table[i]] = i;
     }
@@ -327,13 +338,27 @@ static bool gfx_sdl_start_frame(void) {
 }
 
 static inline void sync_framerate_with_timer(void) {
-    static Uint32 last_time = 0;
-    // get base timestamp on the first frame (might be different from 0)
-    if (last_time == 0) last_time = SDL_GetTicks();
-    const int elapsed = SDL_GetTicks() - last_time;
-    if (elapsed < frame_time)
-        SDL_Delay(frame_time - elapsed);
-    last_time += frame_time;
+    static double last_time;
+    static double last_sec;
+    static int frames_since_last_sec;
+    const double now = SDL_GetPerformanceCounter();
+    frames_since_last_sec += 1;
+    if (last_time) {
+        const double elapsed = last_sec ? (now - last_sec) : (now - last_time);
+        if ((elapsed < frame_time && !last_sec) || (elapsed < frames_since_last_sec * frame_time && last_sec)) {
+            const double delay = last_sec ? frames_since_last_sec * frame_time - elapsed : frame_time - elapsed;
+            usleep(delay / perf_freq * 1000000.0);
+            last_time = now + delay;
+        } else {
+            last_time = now;
+        }
+        if ((int64_t)(now / perf_freq) > (int64_t)(last_sec / perf_freq)) {
+            last_sec = last_time;
+            frames_since_last_sec = 0;
+        }
+    } else {
+        last_time = now;
+    }
 }
 
 static void gfx_sdl_swap_buffers_begin(void) {
