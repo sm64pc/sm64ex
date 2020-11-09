@@ -2,7 +2,10 @@
 
 #include <stdio.h>
 #include <stdint.h>
+// stdbool.h can not be defined (and does not need to be defined) on the below platform
+#if !defined(__APPLE__) && !defined(__BIG_ENDIAN__) && !defined(__GNU__C)
 #include <stdbool.h>
+#endif
 #include <math.h>
 
 #include <SDL2/SDL.h>

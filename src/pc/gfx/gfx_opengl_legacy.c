@@ -1,7 +1,10 @@
 #ifdef RAPI_GL_LEGACY
 
 #include <stdint.h>
+// stdbool.h can not be defined (and does not need to be defined) on the below platform
+#if !defined(__APPLE__) && !defined(__BIG_ENDIAN__) && !defined(__GNU__C)
 #include <stdbool.h>
+#endif
 #include <assert.h>
 
 #ifndef _LANGUAGE_C

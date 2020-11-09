@@ -620,6 +620,8 @@ extern "C" {
 #define __attribute__(x)
 #endif
 
+extern long long int llrint ( double x );
+
 void _af_error (int errorCode, const char *fmt, ...)
 	__attribute__((format(printf, 2, 3)));
 
@@ -5075,7 +5077,7 @@ bool ModuleState::fileModuleHandlesSeeking() const
 
 status ModuleState::setup(AFfilehandle file, Track *track)
 {
-	AFframecount fframepos = std::llrint(track->nextvframe * track->f.sampleRate / track->v.sampleRate);
+	AFframecount fframepos = llrint(track->nextvframe * track->f.sampleRate / track->v.sampleRate);
 	bool isReading = file->m_access == _AF_READ_ACCESS;
 
 	if (!track->v.isUncompressed())
@@ -5146,11 +5148,11 @@ status ModuleState::setup(AFfilehandle file, Track *track)
 		if (track->totalfframes == -1)
 			track->totalvframes = -1;
 		else
-			track->totalvframes = std::llrint(track->totalfframes *
+			track->totalvframes = llrint(track->totalfframes *
 				(track->v.sampleRate / track->f.sampleRate));
 
 		track->nextfframe = fframepos;
-		track->nextvframe = std::llrint(fframepos * track->v.sampleRate / track->f.sampleRate);
+		track->nextvframe = llrint(fframepos * track->v.sampleRate / track->f.sampleRate);
 
 		m_isDirty = false;
 
