@@ -620,7 +620,10 @@ extern "C" {
 #define __attribute__(x)
 #endif
 
+// This function can not be found by MacPorts GCC 4.9 and needs to be explicitly stated
+#if defined(__APPLE__) && defined(__BIG_ENDIAN__) && defined(__GNU__C)
 extern long long int llrint ( double x );
+#endif
 
 void _af_error (int errorCode, const char *fmt, ...)
 	__attribute__((format(printf, 2, 3)));

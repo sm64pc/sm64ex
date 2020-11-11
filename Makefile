@@ -574,7 +574,6 @@ ifeq ($(WINDOW_API),DXGI)
   endif
   BACKEND_LDFLAGS += -ld3dcompiler -ldxgi -ldxguid
   BACKEND_LDFLAGS += -lsetupapi -ldinput8 -luser32 -lgdi32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion -luuid -static
-# This isn't actually searched for includes on Leopard, and sdl-config is one directory too deep
 else ifeq ($(WINDOW_API),SDL2)
   ifeq ($(WINDOWS_BUILD),1)
     BACKEND_LDFLAGS += -lglew32 -lglu32 -lopengl32
@@ -598,7 +597,11 @@ endif
 
 # SDL can be used by different systems, so we consolidate all of that shit into this
 ifeq ($(SDL_USED),2)
+  ifeq ($(PPC_OSX_BUILD),1)
   BACKEND_CFLAGS += -DHAVE_SDL2=1 `$(SDLCONFIG) --cflags` -I/usr/local/include
+  else
+  BACKEND_CFLAGS += -DHAVE_SDL2=1 `$(SDLCONFIG) --cflags`
+  endif
   ifeq ($(WINDOWS_BUILD),1)
     BACKEND_LDFLAGS += `$(SDLCONFIG) --static-libs` -lsetupapi -luser32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion
   else
@@ -705,7 +708,7 @@ else ifeq ($(TARGET_RPI),1)
 
 else ifeq ($(OSX_BUILD),1)
   LDFLAGS := -lm $(BACKEND_LDFLAGS) -no-pie -lpthread
-# Flag -no-pie not available in MacPorts GCC 4.9
+# Flag -no-pie not available in MacPorts GCC 4.9, and most likely is not neccesary anyways according to https://opensource.apple.com/source/ld64/ld64-134.9/ld64-134.9/doc/man/man1/ld.1.auto.html
 else ifeq ($(PPC_OSX_BUILD),1)
   LDFLAGS := -lm $(BACKEND_LDFLAGS) -lpthread
 else
