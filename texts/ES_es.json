@@ -24,8 +24,8 @@
                 "lugares.",
                 "Para leer carteles,",
                 "p{00225}rate, m{00237}ralos y pulsa",
-                "[B] Pulsa [A] o [B]",
-                "para seguir leyendo. ",
+                "[A] o [B] para seguir",
+                "leyendo.",
                 "Puedes hablar con algunos",
                 "personajes mir{00225}ndoles",
                 "y pulsando [B]."
@@ -159,7 +159,7 @@
                 "",
                 "Preparados, listos...",
                 "",
-                "//{00161}Ya!//Te esperas"
+                "//{00161}Ya!////Te esperas"
             ]
         },
         {
@@ -270,7 +270,7 @@
                 "verdes que rompas.",
                 "{00191}Quieres guardar?",
                 "",
-                "//Yes////No"
+                "//Sí ////No"
             ]
         },
         {
@@ -317,7 +317,7 @@
                 "m{00225}s decidido que nunca.",
                 "{00191}Quieres guardar?",
                 "",
-                "//Claro//Luego"
+                "//Claro///Luego"
             ]
         },
         {
@@ -1078,7 +1078,7 @@
                 "{00191}Echamos una carrera?",
                 "Preparados, listos...",
                 "",
-                "//{00161}Ya!//// Pasando"
+                "//{00161}Ya!////Pasando"
             ]
         },
         {
@@ -1187,7 +1187,6 @@
                 "hacia abajo y pulsa [A]",
                 "para volver a la",
                 "superficie,",
-                "",
                 "Mant{00233}n el stick de control",
                 "hacia abajo y pulsa A",
                 "mientras est{00233}s en la",
@@ -1359,7 +1358,7 @@
             "leftOffset": 30,
             "width": 200,
             "lines": [
-                "{00161}Est{00225}s en la Tierra de!",
+                "{00161}Est{00225}s en la Tierra de",
                 "Lava! Si te prendes fuego",
                 "o caes en una masa de",
                 "lava, {00161}empezar{00225}s a botar",
@@ -1770,7 +1769,7 @@
                 "largo, debe ir a",
                 "la derecha.",
                 "Derecha: Ascensor.",
-                "/// Laberinto gaseoso",
+                "/// Laberinto venenoso",
                 "Izquierda: Agujero Negro",
                 "///Lago subterr{00225}neo",
                 "",
@@ -3248,7 +3247,7 @@
                 "est{00225} justo delante.",
                 "",
                 "",
-                "Pulsa [A] para saltar,[Z]",
+                "Pulsa [A] para saltar, [Z]",
                 "para agacharte, y [B] para",
                 "dar un pu{00241}etazo, leer un",
                 "cartel, o coger algo.",
@@ -3277,7 +3276,7 @@
             "width": 200,
             "lines": [
                 "{00161}Prohibido el paso!",
-                "{00161}Va por ti!!",
+                "{00161}Va por ti!",
                 "{00161}Arrgghh!",
                 "",
                 "A cualquiera que entre en",
@@ -3311,7 +3310,7 @@
             ]
         },
         {
-            "course": " 3 LA BAH{00205}A DE LOS PIRATAS",
+            "course": " 3 BAH{00205}A DE LOS PIRATAS",
             "acts": [
                 "SAQUEA EL BARCO HUNDIDO",
                 "{00191}PUEDE SALIR A JUGAR LA ANGUILA?",
@@ -3333,7 +3332,7 @@
             ]
         },
         {
-            "course": " 5 LA MANSI{00211}N ENCANTADA DEL GRAN BOO",
+            "course": " 5 MANSI{00211}N DEL GRAN BOO",
             "acts": [
                 "CAZAFANTASMAS",
                 "MONTA EN EL TIOVIVO DEL GRAN BOO",
@@ -3366,7 +3365,7 @@
             ]
         },
         {
-            "course": " 8 DESIERTO PERDIDO",
+            "course": " 8 ARENAS CAMBIANTES",
             "acts": [
                 "EN LAS GARRAS DEL P{00193}JARO",
                 "UN DESTELLO EN LO ALTO DE LA PIR{00193}MIDE",
@@ -3388,7 +3387,7 @@
             ]
         },
         {
-            "course": "10 EL PA{00205}S DEL MU{00209}ECO DE NIEVE",
+            "course": "10 PA{00205}S MU{00209}ECO DE NIEVE",
             "acts": [
                 "EL CABEZ{00211}N DE NIEVE",
                 "AL LAGO CON EL BRONCO",
@@ -3410,7 +3409,7 @@
             ]
         },
         {
-            "course": "12 SUBE Y SUBE LA MONTA{00209}A",
+            "course": "12 MONTA{00209}A SUBE SUBE",
             "acts": [
                 "SUBE A LA CIMA",
                 "EL MISTERIO DE LA JAULA DEL MONO",
@@ -3466,7 +3465,7 @@
         "   MARIO VOLADOR SOBRE EL ARCO IRIS",
         "   EL ACUARIO SECRETO",
         null,
-        "   ESTRELLAS SECRETAS DEL CASTILLO"
+        "   ESTRELLAS SECRETAS"
     ],
     "options": {
         "TEXT_OPT_OPTIONS": "OPCIONES",
@@ -3593,7 +3592,7 @@
         "TEXT_NORMAL_FIXED": "(NORMAL)(FIJA)",
         "TEXT_CATCH": "CONSEGUIDA",
         "TEXT_CLEAR": "COMPLETADA",
-        "TEXT_HUD_HI_SCORE": "NUEVO R{00201}CORD",
+        "TEXT_HUD_HI_SCORE": "NUEVO RECORD",
         "TEXT_SAVE_AND_CONTINUE": "GUARDAR Y CONTINUAR",
         "TEXT_SAVE_AND_QUIT": "GUARDAR Y SALIR",
         "TEXT_SAVE_EXIT_GAME": "GUARDAR Y CERRAR EL JUEGO",
@@ -3609,3 +3608,4 @@
         "TEXT_FILE_MARIO_QUESTION": "{00161}Mario!"
     }
 }
+

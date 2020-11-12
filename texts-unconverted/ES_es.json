@@ -24,8 +24,8 @@
                 "lugares.",
                 "Para leer carteles,",
                 "párate, míralos y pulsa",
-                "[B] Pulsa [A] o [B]",
-                "para seguir leyendo. ",
+                "[A] o [B] para seguir",
+                "leyendo.",
                 "Puedes hablar con algunos",
                 "personajes mirándoles",
                 "y pulsando [B]."
@@ -159,7 +159,7 @@
                 "",
                 "Preparados, listos...",
                 "",
-                "//¡Ya!//Te esperas"
+                "//¡Ya!////Te esperas"
             ]
         },
         {
@@ -270,7 +270,7 @@
                 "verdes que rompas.",
                 "¿Quieres guardar?",
                 "",
-                "//Yes////No"
+                "//Sí////No"
             ]
         },
         {
@@ -317,7 +317,7 @@
                 "más decidido que nunca.",
                 "¿Quieres guardar?",
                 "",
-                "//Claro//Luego"
+                "//Claro///Luego"
             ]
         },
         {
@@ -1078,7 +1078,7 @@
                 "¿Echamos una carrera?",
                 "Preparados, listos...",
                 "",
-                "//¡Ya!//// Pasando"
+                "//¡Ya!////Pasando"
             ]
         },
         {
@@ -1187,7 +1187,6 @@
                 "hacia abajo y pulsa [A]",
                 "para volver a la",
                 "superficie,",
-                "",
                 "Mantén el stick de control",
                 "hacia abajo y pulsa A",
                 "mientras estés en la",
@@ -1359,7 +1358,7 @@
             "leftOffset": 30,
             "width": 200,
             "lines": [
-                "¡Estás en la Tierra de!",
+                "¡Estás en la Tierra de",
                 "Lava! Si te prendes fuego",
                 "o caes en una masa de",
                 "lava, ¡empezarás a botar",
@@ -1648,7 +1647,7 @@
                 "la pierdes, sufrirás más",
                 "daño de lo normal.",
                 "",
-                "Sì pierdes tu gorra,",
+                "Si pierdes tu gorra,",
                 "tendrás que encontrarla",
                 "en el mismo mundo en el",
                 "que la perdiste.",
@@ -1770,7 +1769,7 @@
                 "largo, debe ir a",
                 "la derecha.",
                 "Derecha: Ascensor.",
-                "/// Laberinto gaseoso",
+                "/// Laberinto venenoso",
                 "Izquierda: Agujero Negro",
                 "///Lago subterráneo",
                 "",
@@ -3248,7 +3247,7 @@
                 "está justo delante.",
                 "",
                 "",
-                "Pulsa [A] para saltar,[Z]",
+                "Pulsa [A] para saltar, [Z]",
                 "para agacharte, y [B] para",
                 "dar un puñetazo, leer un",
                 "cartel, o coger algo.",
@@ -3277,7 +3276,7 @@
             "width": 200,
             "lines": [
                 "¡Prohibido el paso!",
-                "¡Va por ti!!",
+                "¡Va por ti!",
                 "¡Arrgghh!",
                 "",
                 "A cualquiera que entre en",
@@ -3311,7 +3310,7 @@
             ]
         },
         {
-            "course": " 3 LA BAHÍA DE LOS PIRATAS",
+            "course": " 3 BAHÍA DE LOS PIRATAS",
             "acts": [
                 "SAQUEA EL BARCO HUNDIDO",
                 "¿PUEDE SALIR A JUGAR LA ANGUILA?",
@@ -3333,7 +3332,7 @@
             ]
         },
         {
-            "course": " 5 LA MANSIÓN ENCANTADA DEL GRAN BOO",
+            "course": " 5 MANSIÓN DEL GRAN BOO",
             "acts": [
                 "CAZAFANTASMAS",
                 "MONTA EN EL TIOVIVO DEL GRAN BOO",
@@ -3366,7 +3365,7 @@
             ]
         },
         {
-            "course": " 8 DESIERTO PERDIDO",
+            "course": " 8 ARENAS CAMBIANTES",
             "acts": [
                 "EN LAS GARRAS DEL PÁJARO",
                 "UN DESTELLO EN LO ALTO DE LA PIRÁMIDE",
@@ -3388,7 +3387,7 @@
             ]
         },
         {
-            "course": "10 EL PAÍS DEL MUÑECO DE NIEVE",
+            "course": "10 PAÍS MUÑECO DE NIEVE",
             "acts": [
                 "EL CABEZÓN DE NIEVE",
                 "AL LAGO CON EL BRONCO",
@@ -3410,7 +3409,7 @@
             ]
         },
         {
-            "course": "12 SUBE Y SUBE LA MONTAÑA",
+            "course": "12 MONTAÑA SUBE SUBE",
             "acts": [
                 "SUBE A LA CIMA",
                 "EL MISTERIO DE LA JAULA DEL MONO",
@@ -3466,11 +3465,11 @@
         "   MARIO VOLADOR SOBRE EL ARCO IRIS",
         "   EL ACUARIO SECRETO",
         null,
-        "   ESTRELLAS SECRETAS DEL CASTILLO"
+        "   ESTRELLAS SECRETAS"
     ],
     "options": {
         "TEXT_OPT_OPTIONS": "OPCIONES",
-        "TEXT_OPT_CAMERA": "CÁMARA",
+        "TEXT_OPT_CAMERA": "CAMARA",
         "TEXT_OPT_CONTROLS": "CONTROLES",
         "TEXT_OPT_VIDEO": "PANTALLA",
         "TEXT_OPT_AUDIO": "SONIDO",
@@ -3489,6 +3488,7 @@
         "TEXT_OPT_CAMC": "Agresividad del centrado de cámara",
         "TEXT_OPT_CAMP": "Nivel de la orientación de cámara",
         "TEXT_OPT_CAMD": "Deceleración de la cámara",
+        "TEXT_OPT_CAMON": "Cámara Libre",
         "TEXT_OPT_ANALOGUE": "Cámara analógica",
         "TEXT_OPT_MOUSE": "Cámara con el ratón",
         "TEXT_OPT_TEXFILTER": "Filtrado de texturas",
@@ -3536,15 +3536,15 @@
     "strings": {
         "TEXT_ZERO": "0",
         "TEXT_COIN": "$",
-        "TEXT_STAR": "★",
-        "TEXT_COIN_X": "$×",
-        "TEXT_STAR_X": "★×",
-        "TEXT_VARIABLE_X": "×",
-        "TEXT_UNFILLED_STAR": "☆",
-        "TEXT_NEW": "NEW",
+        "TEXT_STAR": "{09733}",
+        "TEXT_COIN_X": "${00215}",
+        "TEXT_STAR_X": "{09733}{00215}",
+        "TEXT_VARIABLE_X": "{00215}",
+        "TEXT_UNFILLED_STAR": "{09734}",
+        "TEXT_NEW": "NUEVO",
         "TEXT_4DASHES": "----",
-        "TEXT_PAUSE": "PAUSE",
-        "TEXT_HUD_CONGRATULATIONS": "CONGRATULATIONS",
+        "TEXT_PAUSE": "PAUSA",
+        "TEXT_HUD_CONGRATULATIONS": "FELICIDADES",
         "TEXT_MARIO": "MARIO",
         "TEXT_SELECT_FILE": "ELEGIR ARCHIVO",
         "TEXT_CHECK_FILE": "VER ARCHIVO",
@@ -3569,10 +3569,10 @@
         "TEXT_ERASE_FILE_BUTTON": "BORRAR ARCHIVO",
         "TEXT_HI_SCORE": "MÁXIMA PUNTUACIÓN",
         "TEXT_MY_SCORE": "MI PUNTUACIÓN",
-        "TEXT_SCORE_MARIO_A": "☺A",
-        "TEXT_SCORE_MARIO_B": "☺B",
-        "TEXT_SCORE_MARIO_C": "☺C",
-        "TEXT_SCORE_MARIO_D": "☺D",
+        "TEXT_SCORE_MARIO_A": "{09786}A",
+        "TEXT_SCORE_MARIO_B": "{09786}B",
+        "TEXT_SCORE_MARIO_C": "{09786}C",
+        "TEXT_SCORE_MARIO_D": "{09786}D",
         "TEXT_COPY_IT_TO_WHERE": "¿COPIAR A DÓNDE?",
         "TEXT_COPYING_COMPLETED": "COPIADO COMPLETADO",
         "TEXT_NO_FILE_TO_COPY_FROM": "NO HAY ARCHIVOS VACÍOS",
@@ -3592,7 +3592,7 @@
         "TEXT_NORMAL_FIXED": "(NORMAL)(FIJA)",
         "TEXT_CATCH": "CONSEGUIDA",
         "TEXT_CLEAR": "COMPLETADA",
-        "TEXT_HUD_HI_SCORE": "NUEVO RÉCORD",
+        "TEXT_HUD_HI_SCORE": "NUEVO RECORD",
         "TEXT_SAVE_AND_CONTINUE": "GUARDAR Y CONTINUAR",
         "TEXT_SAVE_AND_QUIT": "GUARDAR Y SALIR",
         "TEXT_SAVE_EXIT_GAME": "GUARDAR Y CERRAR EL JUEGO",
@@ -3608,3 +3608,4 @@
         "TEXT_FILE_MARIO_QUESTION": "¡Mario!"
     }
 }
+

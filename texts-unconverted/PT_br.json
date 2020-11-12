@@ -1,4 +1,4 @@
-{
+{   
     "manifest": {
         "langName": "Portuguese",
         "langLogo": "none"
@@ -95,10 +95,10 @@
                 "Outros inimigos estão guardando",
                 "as outras Power Stars. Se",
                 "você restaurar mais Stars,",
-                "você pode abrir novas portas",
-                "isso levará para novos mundos!",
+                "você pode abrir novas portas.",
+                "Isso levará para novos mundos!",
                 "Meus Bob-omb Buddies estão",
-                "esperando por você. certifique-se",
+                "esperando por você. Certifique-se",
                 "de falar com eles--eles irão",
                 "liberar os canhões para você."
             ]
@@ -114,7 +114,7 @@
                 "canhões.",
                 "Mas se você quiser",
                 "se atirar, siga em",
-                "frente. Ajude-se.",
+                "frente. Cuide-se.",
                 "Nós iremos deixar tudo",
                 "pronto nos canhões deste nível",
                 "para você usar. Bon Voyage!"
@@ -139,7 +139,7 @@
                 "topo da montanha, onde",
                 "Big Bob-omb esteve?",
                 "O que diz? Quando eu disser",
-                "『Go,』 vamos começar a corrida!",
+                "『Já,』 vamos começar a corrida!",
                 "",
                 "Preparar....",
                 "",
@@ -155,7 +155,7 @@
                 "Ei!!! Não tente me sacanear!!!",
                 "Você deve correr",
                 "por todo o curso.",
-                "Após isso. Veja quando",
+                "Após isso, veja quando",
                 "você irá correr de",
                 "verdade."
             ]
@@ -206,8 +206,8 @@
                 "o poder das Power Stars?",
                 "Eu me senti mal após",
                 "perder a última",
-                "corrida. Este é meu lar",
-                "nível--que tal uma",
+                "corrida. Este é meu nível-",
+                "lar--que tal uma",
                 "revanche?",
                 "O objetivo está em",
                 "Windswept Valley.",
@@ -262,7 +262,7 @@
             "lines": [
                 "Você pisou no",
                 "botão de Vanish Cap.",
-                "A Vanish Cap faze com que",
+                "A Vanish Cap faz com que",
                 "Mario desapareça.",
                 "Agora os blocos azuis",
                 "de Vanish Cap que você achar",
@@ -425,7 +425,7 @@
             "leftOffset": 95,
             "width": 200,
             "lines": [
-                "Essa chave não encaixa!",
+                "Esta chave não encaixa!",
                 "Talvez seja para o",
                 "porão..."
             ]
@@ -436,7 +436,7 @@
             "leftOffset": 95,
             "width": 200,
             "lines": [
-                "Você precisa do poder da estrela para",
+                "Você precisa da Power Star para",
                 "abrir a porta. Restaure uma",
                 "Power Star de um inimigo",
                 "dentro de um quadro do",
@@ -516,7 +516,7 @@
                 "Mario. Ele está prestes a",
                 "aprender uma técnica para",
                 "pegar inimigos de surpresa.",
-                "O truque é esse: Ele deve",
+                "O truque é esse: ele deve",
                 "andar devagar para que",
                 "ande silenciosamente.",
                 "",
@@ -558,7 +558,7 @@
             "leftOffset": 30,
             "width": 200,
             "lines": [
-                "se você conseguir a Wing Cap,",
+                "Se você conseguir a Wing Cap,",
                 "você pode voar! Coloque a Cap",
                 "e então execute o pulo",
                 "triplo--pule três vezes",
@@ -3108,7 +3108,7 @@
                 "TEMPORADA DO BIG BOB-OMB",
                 "CORRIDA A PÉ COM KOOPA THE QUICK",
                 "ATIRAR PARA A ILHA NO CÉU",
-                "ENTRE AS 8 MOEDAS VERMELHAS",
+                "ENCONTRE AS 8 MOEDAS VERMELHAS",
                 "MARIO WINGS NO CÉU",
                 "POR TRÁS DO PORTÃO DO CHAIN CHOMP"
             ]
@@ -3141,7 +3141,7 @@
                 "ESCORREGANDO COM TUDO",
                 "PINGUIM LI'L PERDIDO",
                 "CORRIDA DO GRANDE PINGUIM",
-                "DESCIDA CONGELADO PARA 8 MOEDAS VERMELHAS",
+                "DESCIDA CONGELADA PARA 8 MOEDAS VERMELHAS",
                 "BONECO DE NEVE PERDEU A CABEÇA",
                 "WALL KICKS IRÃO FUNCIONAR"
             ]
@@ -3226,7 +3226,7 @@
         {
             "course": "12 MONTANHA ALTA",
             "acts": [
-                "ESCALE A MOUNTAIN",
+                "ESCALE A MONTANHA",
                 "MISTÉRIO DA GAIOLA DO MACACO",
                 "MOEDAS VERMELHAS DOS COGUMELOS TENSOS",
                 "LADO MISTERIOSO DA MONTANHA",
@@ -3283,43 +3283,43 @@
         "   ESTRELAS SECRETAS DO CASTELO"
     ],
     "options": {
-        "TEXT_OPT_OPTIONS": "OPÇÕES",
-        "TEXT_OPT_CAMERA": "CÂMERA",
-        "TEXT_OPT_CONTROLS": "CONTROLES",
+        "TEXT_OPT_OPTIONS": "OPTIONS",
+        "TEXT_OPT_CAMERA": "CAMERA",
+        "TEXT_OPT_CONTROLS": "CONTROLS",
         "TEXT_OPT_VIDEO": "DISPLAY",
-        "TEXT_OPT_AUDIO": "SOM",
+        "TEXT_OPT_AUDIO": "SOUND",
         "TEXT_OPT_CHEATS": "CHEATS",
         "TEXT_OPT_HIGHLIGHT": "O",
         "TEXT_OPT_UNBOUND": "NONE",
         "TEXT_OPT_PRESSKEY": "...",
-        "TEXT_OPT_BUTTON1": "[R] Opções",
-        "TEXT_OPT_BUTTON2": "[R] Retornar",
-        "TEXT_OPT_ENABLED": "Habilitado",
-        "TEXT_OPT_DISABLED": "Desabilitado",
-        "TEXT_OPT_CAMX": "Sensibilidade - Câmera X",
-        "TEXT_OPT_CAMY": "Sensibilidade - Câmera Y",
-        "TEXT_OPT_INVERTX": "Inverter Eixo X",
-        "TEXT_OPT_INVERTY": "Inverter Eixo Y",
+        "TEXT_OPT_BUTTON1": "[R] Options",
+        "TEXT_OPT_BUTTON2": "[R] Return",
+        "TEXT_OPT_ENABLED": "Enabled",
+        "TEXT_OPT_DISABLED": "Disabled",
+        "TEXT_OPT_CAMX": "Camera X Sensitivity",
+        "TEXT_OPT_CAMY": "Camera Y Sensitivity",
+        "TEXT_OPT_INVERTX": "Invert X Axis",
+        "TEXT_OPT_INVERTY": "Invert Y Axis",
         "TEXT_OPT_CAMC": "Camera Centre Aggression",
         "TEXT_OPT_CAMP": "Camera Pan Level",
         "TEXT_OPT_CAMD": "Camera Deceleration",
         "TEXT_OPT_CAMON": "Free Camera",
         "TEXT_OPT_ANALOGUE": "Analogue Camera",
         "TEXT_OPT_MOUSE": "Mouse Look",
-        "TEXT_OPT_TEXFILTER": "Filtro de Textura",
-        "TEXT_OPT_FSCREEN": "Tela Cheia",
+        "TEXT_OPT_TEXFILTER": "Texture Filtering",
+        "TEXT_OPT_FSCREEN": "Fullscreen",
         "TEXT_OPT_NEAREST": "Nearest",
         "TEXT_OPT_LINEAR": "Linear",
-        "TEXT_OPT_MVOLUME": "Volume Geral",
-        "TEXT_OPT_MUSVOLUME": "Volume da Música",
-        "TEXT_OPT_SFXVOLUME": "Volume de Efeitos Sonoros",
+        "TEXT_OPT_MVOLUME": "Master Volume",
+        "TEXT_OPT_MUSVOLUME": "Music Volume",
+        "TEXT_OPT_SFXVOLUME": "Sfx Volume",
         "TEXT_OPT_ENVVOLUME": "Env Volume",
-        "TEXT_OPT_VSYNC": "Sincronização Vertical",
+        "TEXT_OPT_VSYNC": "Vertical Sync",
         "TEXT_OPT_AUTO": "Auto",
         "TEXT_OPT_HUD": "HUD",
         "TEXT_OPT_THREEPT": "Three-point",
-        "TEXT_OPT_APPLY": "Aplicar",
-        "TEXT_OPT_RESETWND": "Resetar Janela",
+        "TEXT_OPT_APPLY": "Apply",
+        "TEXT_OPT_RESETWND": "Reset Window",
         "TEXT_BIND_A": "A Button",
         "TEXT_BIND_B": "B Button",
         "TEXT_BIND_START": "Start Button",
@@ -3346,7 +3346,7 @@
         "TEXT_OPT_CHEAT8": "Huge Mario",
         "TEXT_OPT_CHEAT9": "Tiny Mario",
         "TEXT_OPT_GAME": "JOGO",
-        "TEXT_OPT_LANGUAGE": "Idioma atual"
+        "TEXT_OPT_LANGUAGE": "Idioma Atual"
     },
     "strings": {
         "TEXT_ZERO": "0",
@@ -3423,3 +3423,4 @@
         "TEXT_FILE_MARIO_QUESTION": "Mario!"
     }
 }
+
