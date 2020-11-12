@@ -270,7 +270,7 @@
                 "verdes que rompas.",
                 "{00191}Quieres guardar?",
                 "",
-                "//Sí ////No"
+                "//S{00237}////No"
             ]
         },
         {
@@ -1647,7 +1647,7 @@
                 "la pierdes, sufrir{00225}s m{00225}s",
                 "da{00241}o de lo normal.",
                 "",
-                "S{00236} pierdes tu gorra,",
+                "Si pierdes tu gorra,",
                 "tendr{00225}s que encontrarla",
                 "en el mismo mundo en el",
                 "que la perdiste.",
@@ -3541,10 +3541,10 @@
         "TEXT_STAR_X": "{09733}{00215}",
         "TEXT_VARIABLE_X": "{00215}",
         "TEXT_UNFILLED_STAR": "{09734}",
-        "TEXT_NEW": "NEW",
+        "TEXT_NEW": "NUEVO",
         "TEXT_4DASHES": "----",
-        "TEXT_PAUSE": "PAUSE",
-        "TEXT_HUD_CONGRATULATIONS": "CONGRATULATIONS",
+        "TEXT_PAUSE": "PAUSA",
+        "TEXT_HUD_CONGRATULATIONS": "FELICIDADES",
         "TEXT_MARIO": "MARIO",
         "TEXT_SELECT_FILE": "ELEGIR ARCHIVO",
         "TEXT_CHECK_FILE": "VER ARCHIVO",
