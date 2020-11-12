@@ -3,12 +3,15 @@
 #include <stdio.h>
 #include <stdint.h>
 // stdbool.h can not be defined (and does not need to be defined) on the below platform
-#if !defined(__APPLE__) && !defined(__BIG_ENDIAN__) && !defined(__GNU__C)
+#if !defined(__APPLE__) && !defined(__BIG_ENDIAN__)
 #include <stdbool.h>
 #endif
 #include <math.h>
-
+#if !defined(__APPLE__) && !defined(__BIG_ENDIAN__)
 #include <SDL2/SDL.h>
+#else
+#include <SDL.h>
+#endif
 
 // Analog camera movement by Pathétique (github.com/vrmiguel), y0shin and Mors
 // Contribute or communicate bugs at github.com/vrmiguel/sm64-analog-camera

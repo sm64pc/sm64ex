@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 // stdbool.h can not be defined (and does not need to be defined) on the below platform
-#if !defined(__APPLE__) && !defined(__BIG_ENDIAN__) && !defined(__GNU__C)
+#if !defined(__APPLE__) && !defined(__BIG_ENDIAN__)
 #include <stdbool.h>
 #endif
 #include <assert.h>
@@ -18,15 +18,18 @@
 # define FOR_WINDOWS 0
 #endif
 
-#include <SDL2/SDL.h>
-
 #if FOR_WINDOWS || defined(OSX_BUILD)
 # define GLEW_STATIC
 # include <GL/glew.h>
 #endif
 
 #define GL_GLEXT_PROTOTYPES 1
-#include <SDL2/SDL_opengl.h>
+
+#if !defined(__APPLE__) && !defined(__BIG_ENDIAN__)
+#include <SDL2/SDL.h>
+#else
+#include <SDL.h>
+#endif
 
 // redefine this if using a different GL loader
 #define mglGetProcAddress(name) SDL_GL_GetProcAddress(name)

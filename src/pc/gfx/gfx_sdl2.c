@@ -13,11 +13,19 @@
 #define GL_GLEXT_PROTOTYPES 1
 #include <SDL2/SDL_opengl.h>
 #else
+#if !defined(__APPLE__) && !defined(__BIG_ENDIAN__)
 #include <SDL2/SDL.h>
+#else
+#include <SDL.h>
+#endif
 #define GL_GLEXT_PROTOTYPES 1
 
 #ifdef OSX_BUILD
+#if !defined(__APPLE__) && !defined(__BIG_ENDIAN__)
 #include <SDL2/SDL_opengl.h>
+#else
+#include <SDL_opengl.h>
+#endif
 #else
 #include <SDL2/SDL_opengles2.h>
 #endif

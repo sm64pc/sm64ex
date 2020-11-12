@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 // stdbool.h can not be defined (and does not need to be defined) on the below platform
-#if !defined(__APPLE__) && !defined(__BIG_ENDIAN__) && !defined(__GNU__C)
+#if !defined(__APPLE__) && !defined(__BIG_ENDIAN__)
 #include <stdbool.h>	#include <stdbool.h>
 #endif
 
@@ -22,13 +22,25 @@
 # include <GL/glew.h>
 #endif
 
+#if !defined(__APPLE__) && !defined(__BIG_ENDIAN__)
 #include <SDL2/SDL.h>
+#else
+#include <SDL.h>
+#endif
 
 #define GL_GLEXT_PROTOTYPES 1
 #ifdef USE_GLES
-# include <SDL2/SDL_opengles2.h>
+#if !defined(__APPLE__) && !defined(__BIG_ENDIAN__)
+#include <SDL2/SDL_opengles2.h>
 #else
-# include <SDL2/SDL_opengl.h>
+#include <SDL_opengles2.h>
+#endif
+#else
+#if !defined(__APPLE__) && !defined(__BIG_ENDIAN__)
+#include <SDL2/SDL_opengl.h>
+#else
+#include <SDL_opengl.h>
+#endif
 #endif
 
 #include "../platform.h"

@@ -621,7 +621,7 @@ extern "C" {
 #endif
 
 // This function can not be found by MacPorts GCC 4.9 and needs to be explicitly stated
-#if defined(__APPLE__) && defined(__BIG_ENDIAN__) && defined(__GNU__C)
+#if defined(__APPLE__) && defined(__BIG_ENDIAN__)
 extern long long int llrint ( double x );
 #endif
 

@@ -82,7 +82,11 @@ void sys_fatal(const char *fmt, ...) {
 #ifdef HAVE_SDL2
 
 // we can just ask SDL for most of this shit if we have it
+#if !defined(__APPLE__) && !defined(__BIG_ENDIAN__)
 #include <SDL2/SDL.h>
+#else
+#include <SDL.h>
+#endif
 
 const char *sys_user_path(void) {
     static char path[SYS_MAX_PATH] = { 0 };

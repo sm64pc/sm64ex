@@ -1,6 +1,9 @@
 #ifdef AAPI_SDL2
-
+#if !defined(__APPLE__) && !defined(__BIG_ENDIAN__)
 #include <SDL2/SDL.h>
+#else
+#include <SDL.h>
+#endif
 
 #include "audio_api.h"
 
