@@ -2633,7 +2633,7 @@
                 "puedes abrir la puerta con",
                 "la gran Estrella! Pero ",
                 "Bowser est{00225} adelante...",
-                "Oyes el llamado de la",
+                "{00191}Oyes el llamado de la",
                 "princesa?"
             ]
         },
@@ -3331,7 +3331,6 @@
         "   GORRA INVISIBLE BAJO EL FOSO",
         "   MARIO ALADO SOBRE EL ARCO{00205}RIS",
         "   EL ACUARIO SECRETO",
-        null,
         "   ESTRELLAS OCULTAS"
     ],
     "options": {
@@ -3475,4 +3474,3 @@
         "TEXT_FILE_MARIO_QUESTION": "{00161}Mario!"
     }
 }
-

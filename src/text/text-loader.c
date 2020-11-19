@@ -22,7 +22,7 @@ u8 languagesAmount = 0;
 
 struct LanguageEntry *current_language;
 
-void load_language(char *jsonTxt, s8 language){
+void load_language(char *jsonTxt, s8 language) {
     languages[language] = malloc (sizeof (struct LanguageEntry));
 
     const char *endTxt;
@@ -109,7 +109,7 @@ void load_language(char *jsonTxt, s8 language){
         const cJSON *act = NULL;
         char *courseName = cJSON_GetObjectItemCaseSensitive(course, "course")->valuestring;
 
-        if(courseID + 1 <= cJSON_GetArraySize(courses) - 1){
+        if(courseID + 1 <= cJSON_GetArraySize(courses) - 1) {
             languages[language]->courses[courseID] = getTranslatedText(courseName);
             courseID++;
         }
@@ -138,7 +138,7 @@ void load_language(char *jsonTxt, s8 language){
         courseID++;
     }
 
-    size_t stringSize = cJSON_GetArraySize(options) + cJSON_GetArraySize(strings) + padding;
+    size_t stringSize = cJSON_GetArraySize(options) + cJSON_GetArraySize(strings);
 
     languages[language]->num_strings = stringSize;
     languages[language]->strings = malloc(sizeof(struct StringTable) * stringSize);
@@ -182,7 +182,7 @@ void load_language(char *jsonTxt, s8 language){
     cJSON_Delete(json);
 }
 
-void alloc_languages(char *exePath, char *gamedir){
+void alloc_languages(char *exePath, char *gamedir) {
     languages = realloc(languages, sizeof(struct LanguageEntry*) * MAX_LANG);
 
     char *lastSlash = NULL;
@@ -210,9 +210,9 @@ void alloc_languages(char *exePath, char *gamedir){
 
     DIR *lf = opendir(languagesDir);
     struct dirent *de;
-    while ((de = readdir(lf)) != NULL){
+    while ((de = readdir(lf)) != NULL) {
         const char *extension = get_filename_ext(de->d_name);
-        if(strcmp(extension, "json") == 0){
+        if(strcmp(extension, "json") == 0) {
             char *file = malloc(FILENAME_MAX * sizeof(char*));
 
             strcpy(file, languagesDir);
@@ -221,7 +221,7 @@ void alloc_languages(char *exePath, char *gamedir){
             printf("Loading File: %s\n", file);
 
             char *jsonTxt = read_file(file);
-            if(jsonTxt != NULL){
+            if(jsonTxt != NULL) {
                 load_language(jsonTxt, languagesAmount - 1);
             }else{
                 fprintf(stderr, "Loading File: Error reading '%s'\n", file);
@@ -236,7 +236,7 @@ void alloc_languages(char *exePath, char *gamedir){
     free(parent);
     closedir(lf);
 
-    if(languagesAmount > 0){
+    if(languagesAmount > 0) {
         languages = realloc(languages, sizeof(struct LanguageEntry*) * (languagesAmount));
     }else{
         fprintf(stderr, "Loading File: No language files found, aborting.\n");
@@ -244,38 +244,38 @@ void alloc_languages(char *exePath, char *gamedir){
     }
 }
 
-struct LanguageEntry *get_language_by_name(char *name){
+struct LanguageEntry *get_language_by_name(char *name) {
     int id = 0;
 
-    for(int l = 0; l < languagesAmount; l++){
-        if(strcmp(languages[l]->name, name) == 0){
+    for(int l = 0; l < languagesAmount; l++) {
+        if(strcmp(languages[l]->name, name) == 0) {
             id = l;
             break;
         }
-   }
+    }
 
-   return languages[id];
+    return languages[id];
 }
 
-struct LanguageEntry *get_language(){
-   return current_language;
+struct LanguageEntry *get_language() {
+    return current_language;
 }
 
-void set_language(struct LanguageEntry *new_language){
+void set_language(struct LanguageEntry *new_language) {
     current_language = new_language;
     dialogPool = new_language->dialogs;
     seg2_act_name_table = new_language->acts;
     seg2_course_name_table = new_language->courses;
 }
 
-u8 *get_key_string(char *id){
+u8 *get_key_string(char *id) {
     struct LanguageEntry *current = current_language;
 
     u8 *tmp = getTranslatedText("NONE");
 
-    for(int stringID = 0; stringID < current->num_strings; stringID++){
+    for(int stringID = 0; stringID < current->num_strings; stringID++) {
         struct StringTable *str = current->strings[stringID];
-        if(strcmp(str->key, id) == 0){
+        if(strcmp(str->key, id) == 0) {
             free(tmp);
             tmp = str->value;
             break;
@@ -285,20 +285,20 @@ u8 *get_key_string(char *id){
     return tmp;
 }
 
-void alloc_dialog_pool(char *exePath, char *gamedir){
+void alloc_dialog_pool(char *exePath, char *gamedir) {
     languages = malloc(sizeof(struct LanguageEntry*));
 
     alloc_languages(exePath, gamedir);
 
-    if(configLanguage >= languagesAmount){
+    if(configLanguage >= languagesAmount) {
         printf("Loading File: Configured language doesn't exist, resetting to defaults.\n");
         configLanguage = 0;
     }
     set_language(languages[configLanguage]);
 }
 
-void dealloc_dialog_pool(void){
-    for(int l = 0; l < languagesAmount; l++){
+void dealloc_dialog_pool(void) {
+    for(int l = 0; l < languagesAmount; l++) {
         struct LanguageEntry * entry = languages[l];
         for(int i = 0; i < entry->num_strings; i++) free(entry->strings[i]);
         for(int i = 0; i < sizeof(entry->acts) / sizeof(entry->acts[0]); i++) free(entry->acts[i]);

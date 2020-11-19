@@ -2633,7 +2633,7 @@
                 "puedes abrir la puerta con",
                 "la gran Estrella! Pero ",
                 "Bowser está adelante...",
-                "Oyes el llamado de la",
+                "¿Oyes el llamado de la",
                 "princesa?"
             ]
         },
@@ -3331,7 +3331,6 @@
         "   GORRA INVISIBLE BAJO EL FOSO",
         "   MARIO ALADO SOBRE EL ARCOÍRIS",
         "   EL ACUARIO SECRETO",
-        null,
         "   ESTRELLAS OCULTAS"
     ],
     "options": {
@@ -3475,4 +3474,3 @@
         "TEXT_FILE_MARIO_QUESTION": "¡Mario!"
     }
 }
-

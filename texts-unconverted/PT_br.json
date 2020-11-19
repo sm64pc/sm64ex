@@ -294,7 +294,7 @@
             "lines": [
                 "Wow! Outra Power Star!",
                 "Mario ganha mais coragem",
-                "da Power Start",
+                "da Power Star",
                 "para o castelo.",
                 "Gostaria de salvar?",
                 "",
@@ -336,12 +336,12 @@
             "lines": [
                 "Eu sou Big Bob-omb, lord",
                 "de todas as coisas explosivas,",
-                "king dos ka-booms do",
+                "rei dos ka-booms do",
                 "mundo a fora!",
                 "Como pode escalar minha",
                 "montanha? Com que direito",
-                "você pisa na minha",
-                "imperial topo-da-montanha?",
+                "você pisa na meu",
+                "topo imperial?",
                 "Você pode ter feito meus",
                 "guardas de trouxas, mas nunca irá",
                 "escapar de mim...",
@@ -355,7 +355,7 @@
                 "seu valor em batalha.",
                 "",
                 "Você pode me pegar",
-                "e me jogar nesse",
+                "e me jogar neste",
                 "território real? Eu acho",
                 "que não!"
             ]
@@ -404,7 +404,7 @@
             "lines": [
                 "Bem-vindo.",
                 "Ninguém está em casa!",
-                "Agora vaza--",
+                "Agora cai fora--",
                 "e não volte mais!",
                 "Gwa ha ha!"
             ]
@@ -498,7 +498,7 @@
             "width": 200,
             "lines": [
                 "Para abrir a porta que",
-                "leva para escadaria 『sem fim』",
+                "leva à escadaria 『sem fim』",
                 "você precisa de 70",
                 "Power Stars.",
                 "Bwa ha ha!"
@@ -510,7 +510,7 @@
             "leftOffset": 30,
             "width": 200,
             "lines": [
-                "Olá! Aqui o Lakitu Bros.,",
+                "Olá! Aqui é o Lakitu Bros.,",
                 "com atualização ao vivo",
                 "do progresso de",
                 "Mario. Ele está prestes a",
@@ -523,14 +523,14 @@
                 "",
                 "",
                 "E fechando o filme",
-                "técnicas serão reportadas",
-                "previamente, você pode dar",
+                "técnicas reportadas",
+                "anteriormente, você pode dar",
                 "uma olhada em volta com [C]> e",
                 "[C]<. Pressione [C]| para visualizar a",
                 "ação de uma distância.",
                 "Quando você não puder mais",
                 "mover a câmera, um",
-                "som irá disparar. Esse é",
+                "som irá disparar. Aqui é",
                 "o Lakitu Bros.,",
                 "desligando."
             ]
@@ -774,7 +774,7 @@
                 "",
                 "Você pode pular para a ponta",
                 "do penhasco e segurar,",
-                "e você pode escala a",
+                "e você pode escalar a",
                 "ponta se você mover devagar.",
                 "Quando você desejar ir,",
                 "pressione [Z] ou pressione",
@@ -814,7 +814,7 @@
                 "acordada, por que não",
                 "pegar um pequeno voo comigo?",
                 "Pressione e segure [A] para agarrar",
-                "Solte [A] para deixar.",
+                "Solte [A] para largar.",
                 "Eu te levo para onde",
                 "você desejar, desde que",
                 "minhas asas possam suportar.",
@@ -854,7 +854,7 @@
                 "e então pular mais alto.",
                 "Próximo, pulo em distância",
                 "with Long Jump. Corra,",
-                "pressione [Z] to abaixar e então [A]",
+                "pressione [Z] para abaixar e então [A]",
                 "para saltar longe.",
                 "",
                 "Para fazer Wall Kick, pressione",
@@ -886,7 +886,7 @@
             "width": 200,
             "lines": [
                 "Temporada na Snow Mountain",
-                "Cuidade com as condições",
+                "Cuidado com as condições",
                 "escorregadias! Por favor, entre",
                 "na cabana primeiro."
             ]
@@ -924,7 +924,7 @@
                 "saltar, você irá executar o",
                 "Backward Somersault!",
                 "Sacou?",
-                "Tem mais. Abaixe and",
+                "Tem mais. Abaixe e",
                 "então salte para executar o",
                 "Long Jump! Ou abaixe e",
                 "ande para...deixa pra lá."
@@ -968,7 +968,7 @@
                 "Somersault, corra, faça",
                 "faça uma curva em U e pule.",
                 "Você pode pegar bastante",
-                "ar com ambos os pulos."
+                "altura com ambos os pulos."
             ]
         },
         {
@@ -978,7 +978,7 @@
             "width": 200,
             "lines": [
                 "Às vezes, se você passar",
-                "através de um anel vermelho ou",
+                "através de um anel de moedas ou",
                 "encontrar um ponto secreto em um",
                 "nível, um número vermelho irá",
                 "aparecer.",
@@ -996,7 +996,7 @@
                 "Bem-vindo à neve",
                 "deslize! Salte! Para velocidade",
                 "cima, pressione para frente",
-                "no analógico. To ir devagar",
+                "no analógico. Para ir devagar",
                 "trás e puxe de volta."
             ]
         },
@@ -1052,7 +1052,7 @@
                 "bico...) Eu não",
                 "lembro quando deixer",
                 "ela.",
-                "Vamos ver...I parei",
+                "Vamos ver...Eu parei",
                 "para peixes e cubos de gelo,",
                 "E então...oohh! Eu",
                 "não sei!"
@@ -1131,7 +1131,7 @@
                 "BRRR! Perigo de congelamento!",
                 "Não nade aqui.",
                 "Estou falando sério.",
-                "/--The Pinguim"
+                "/--O Pinguim"
             ]
         },
         {
@@ -1388,7 +1388,7 @@
                 "",
                 "Eu nunca irei dizer!",
                 "",
-                "//--The Cap'n"
+                "//--O Capitão"
             ]
         },
         {
@@ -1542,7 +1542,7 @@
                 "ou no molhado.",
                 "E onde a solução",
                 "se esconde?",
-                "The cidade recepciona os visitantes",
+                "A cidade recepciona os visitantes",
                 "com a profundidade que",
                 "elas entram."
             ]
@@ -1553,7 +1553,7 @@
             "leftOffset": 30,
             "width": 200,
             "lines": [
-                "Cuidado com o boina! Se",
+                "Cuidado com a boina! Se",
                 "você perder, você irá",
                 "levar dano facilmente.",
                 "",
@@ -2942,7 +2942,7 @@
                 "castelo?",
                 "E salvou a princesa?",
                 "Eu sabia que poderia fazer isso!",
-                "Agora eu tenho um mensagem",
+                "Agora eu tenho uma mensagem",
                 "muito especial para você.",
                 "『Obrigado por jogar Super",
                 "Mario 64! Esse é o",
@@ -3279,7 +3279,6 @@
         "   VANISH CAP ABAIXO DA PONTE",
         "   WING MARIO ALÉM DO ARCO-ÍRIS",
         "   O AQUÁRIO SECRETO",
-        null,
         "   ESTRELAS SECRETAS DO CASTELO"
     ],
     "options": {
@@ -3423,4 +3422,3 @@
         "TEXT_FILE_MARIO_QUESTION": "Mario!"
     }
 }
-

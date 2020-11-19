@@ -3464,7 +3464,6 @@
         "   GORRA DE INVISIBILIDAD BAJO EL FOSO",
         "   MARIO VOLADOR SOBRE EL ARCO IRIS",
         "   EL ACUARIO SECRETO",
-        null,
         "   ESTRELLAS SECRETAS"
     ],
     "options": {
@@ -3608,4 +3607,3 @@
         "TEXT_FILE_MARIO_QUESTION": "¡Mario!"
     }
 }
-
