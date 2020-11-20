@@ -596,9 +596,9 @@
                 "[B] tambi{00233}n para leer",
                 "letreros. Usa el Stick de",
                 "Control en el centro del",
-                "control para mover a Mario",
-                "alrededor. Ahora, ve hacia",
-                "el castillo."
+                "control para mover a",
+                "Mario alrededor. Ahora,",
+                "ve hacia el castillo."
             ]
         },
         {
@@ -3412,7 +3412,7 @@
         "TEXT_PAUSE": "PAUSA",
         "TEXT_HUD_CONGRATULATIONS": "FELICIDADES",
         "TEXT_MARIO": "MARIO",
-        "TEXT_SELECT_FILE": "SELECCIONE ARCHIVO",
+        "TEXT_SELECT_FILE": "ELIJA ARCHIVO",
         "TEXT_CHECK_FILE": "REVISAR ARCHIVO",
         "TEXT_COPY_FILE": "COPIAR ARCHIVO",
         "TEXT_ERASE_FILE": "BORRAR ARCHIVO",
