@@ -1,14 +1,14 @@
+################################################################################
+############################### SM64PC Makefile ################################
+################################################################################
 
-# Makefile to rebuild SM64 split image
-
-### Default target ###
-
+## Default target ##
 default: all
 
-### Build Options ###
+################################ Build Options #################################
 
-# These options can either be changed by modifying the makefile, or
-# by building with 'make SETTING=value'. 'make clean' may be required.
+## These options can either be changed by modifying the makefile, or
+## by building with 'make SETTING=value'. 'make clean' may be required.
 
 # Build debug version
 DEBUG ?= 0
@@ -18,20 +18,15 @@ VERSION ?= us
 GRUCODE ?= f3dex2e
 # If NON_MATCHING is 1, define the NON_MATCHING and AVOID_UB macros when building (recommended)
 NON_MATCHING ?= 1
-
 # Build and optimize for Raspberry Pi(s)
 TARGET_RPI ?= 0
-
 # Build for Emscripten/WebGL
 TARGET_WEB ?= 0
-
 # Makeflag to enable OSX fixes
 OSX_BUILD ?= 0
-
 # Specify the target you are building for, TARGET_BITS=0 means native
 TARGET_ARCH ?= native
 TARGET_BITS ?= 0
-
 # Disable better camera by default
 BETTERCAMERA ?= 0
 # Disable no drawing distance by default
@@ -42,12 +37,11 @@ TEXTURE_FIX ?= 0
 EXT_OPTIONS_MENU ?= 1
 # Enable Discord Rich Presence
 DISCORDRPC ?= 0
-
 # Various workarounds for weird toolchains
 NO_BZERO_BCOPY ?= 0
 NO_LDIV ?= 0
 
-# Backend selection
+## Backend selection
 
 # Renderers: GL, GL_LEGACY, D3D11, D3D12
 RENDER_API ?= GL
@@ -58,17 +52,18 @@ AUDIO_API ?= SDL2
 # Controller backends (can have multiple, space separated): SDL2
 CONTROLLER_API ?= SDL2
 
-LEGACY_RES ?= 0
-BASEDIR ?= res
+## External assets
 
+# Asset directory
+BASEDIR ?= res
+# Create zip file with legacy assets
+LEGACY_RES ?= 0
 # Copy assets to BASEDIR? (useful for iterative debugging)
 NO_COPY ?= 0
 
-# Automatic settings for PC port(s)
+################################# OS Detection #################################
 
 WINDOWS_BUILD ?= 0
-
-# Attempt to detect OS
 
 ifeq ($(OS),Windows_NT)
   HOST_OS ?= Windows
@@ -87,7 +82,6 @@ ifeq ($(TARGET_WEB),0)
 endif
 
 # MXE overrides
-
 ifeq ($(WINDOWS_BUILD),1)
   ifeq ($(CROSS),i686-w64-mingw32.static-)
     TARGET_ARCH = i386pe
@@ -159,7 +153,7 @@ ifeq ($(TARGET_RPI),1) # Define RPi to change SDL2 title & GLES2 hints
 endif
 
 ifeq ($(OSX_BUILD),1) # Modify GFX & SDL2 for OSX GL
-     VERSION_CFLAGS += -DOSX_BUILD
+  VERSION_CFLAGS += -DOSX_BUILD
 endif
 
 VERSION_ASFLAGS := --defsym AVOID_UB=1
@@ -184,7 +178,7 @@ else
   endif
 endif
 
-################### Universal Dependencies ###################
+############################ Universal Dependencies ############################
 
 # (This is a bit hacky, but a lot of rules implicitly depend
 # on tools and assets, and we use directory globs further down
@@ -213,7 +207,7 @@ endif
 endif
 endif
 
-################ Target Executable and Sources ###############
+######################### Target Executable and Sources ########################
 
 # BUILD_DIR is location where all build artifacts are placed
 BUILD_DIR_BASE := build
@@ -228,17 +222,17 @@ LIBULTRA := $(BUILD_DIR)/libultra.a
 
 ifeq ($(TARGET_WEB),1)
 EXE := $(BUILD_DIR)/$(TARGET).html
-	else
-	ifeq ($(WINDOWS_BUILD),1)
-		EXE := $(BUILD_DIR)/$(TARGET).exe
+  else
+  ifeq ($(WINDOWS_BUILD),1)
+    EXE := $(BUILD_DIR)/$(TARGET).exe
 
-		else # Linux builds/binary namer
-		ifeq ($(TARGET_RPI),1)
-			EXE := $(BUILD_DIR)/$(TARGET).arm
-		else
-			EXE := $(BUILD_DIR)/$(TARGET)
-		endif
-	endif
+    else # Linux builds/binary namer
+    ifeq ($(TARGET_RPI),1)
+      EXE := $(BUILD_DIR)/$(TARGET).arm
+    else
+      EXE := $(BUILD_DIR)/$(TARGET)
+    endif
+  endif
 endif
 
 ELF := $(BUILD_DIR)/$(TARGET).elf
@@ -294,9 +288,9 @@ ifeq ($(TARGET_RPI),1)
                 model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
 
                 ifneq (,$(findstring 3,$(model)))
-                         OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -O3
-                         else
-                         OPT_FLAGS := -march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4 -O3
+                        OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -O3
+                else
+                        OPT_FLAGS := -march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4 -O3
                 endif
         endif
 
@@ -305,9 +299,9 @@ ifeq ($(TARGET_RPI),1)
         ifneq (,$(findstring aarch64,$(machine)))
                 model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
                 ifneq (,$(findstring 3,$(model)))
-                         OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -O3
+                        OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -O3
                 else ifneq (,$(findstring 4,$(model)))
-                         OPT_FLAGS := -march=armv8-a+crc+simd -mtune=cortex-a72 -O3
+                        OPT_FLAGS := -march=armv8-a+crc+simd -mtune=cortex-a72 -O3
                 endif
 
         endif
@@ -352,13 +346,13 @@ SOUND_SAMPLE_AIFCS := $(foreach file,$(SOUND_SAMPLE_AIFFS),$(BUILD_DIR)/$(file:.
 SOUND_OBJ_FILES := $(SOUND_BIN_DIR)/sound_data.o
 
 # Object files
-O_FILES := $(foreach file,$(C_FILES),$(BUILD_DIR)/$(file:.c=.o)) \
-           $(foreach file,$(CXX_FILES),$(BUILD_DIR)/$(file:.cpp=.o)) \
-           $(foreach file,$(S_FILES),$(BUILD_DIR)/$(file:.s=.o)) \
-           $(foreach file,$(GENERATED_C_FILES),$(file:.c=.o))
+O_FILES :=  $(foreach file,$(C_FILES),$(BUILD_DIR)/$(file:.c=.o)) \
+            $(foreach file,$(CXX_FILES),$(BUILD_DIR)/$(file:.cpp=.o)) \
+            $(foreach file,$(S_FILES),$(BUILD_DIR)/$(file:.s=.o)) \
+            $(foreach file,$(GENERATED_C_FILES),$(file:.c=.o))
 
-ULTRA_O_FILES := $(foreach file,$(ULTRA_S_FILES),$(BUILD_DIR)/$(file:.s=.o)) \
-                 $(foreach file,$(ULTRA_C_FILES),$(BUILD_DIR)/$(file:.c=.o))
+ULTRA_O_FILES :=  $(foreach file,$(ULTRA_S_FILES),$(BUILD_DIR)/$(file:.s=.o)) \
+                  $(foreach file,$(ULTRA_C_FILES),$(BUILD_DIR)/$(file:.c=.o))
 
 GODDARD_O_FILES := $(foreach file,$(GODDARD_C_FILES),$(BUILD_DIR)/$(file:.c=.o))
 
@@ -380,7 +374,8 @@ DEP_FILES := $(O_FILES:.o=.d) $(ULTRA_O_FILES:.o=.d) $(GODDARD_O_FILES:.o=.d) $(
 # Segment elf files
 SEG_FILES := $(SEGMENT_ELF_FILES) $(ACTOR_ELF_FILES) $(LEVEL_ELF_FILES)
 
-##################### Compiler Options #######################
+############################ Compiler Options ##################################
+
 INCLUDE_CFLAGS := $(PLATFORM_CFLAGS) -I include -I $(BUILD_DIR) -I $(BUILD_DIR)/include -I src -I .
 ENDIAN_BITWIDTH := $(BUILD_DIR)/endian-and-bitwidth
 
@@ -543,8 +538,6 @@ ifeq ($(LEGACY_GL),1)
   CFLAGS += -DLEGACY_GL
 endif
 
-# TODO: Remove -DEXTERNAL_DATA
-
 # Load external textures
 CC_CHECK += -DFS_BASEDIR="\"$(BASEDIR)\""
 CFLAGS += -DFS_BASEDIR="\"$(BASEDIR)\""
@@ -582,8 +575,7 @@ endif # End of LDFLAGS
 # Prevent a crash with -sopt
 export LANG := C
 
-####################### Other Tools #########################
-
+################################# Other Tools ##################################
 # N64 conversion tools
 TOOLS_DIR = tools
 AIFF_EXTRACT_CODEBOOK = $(TOOLS_DIR)/aiff_extract_codebook
@@ -591,11 +583,11 @@ VADPCM_ENC = $(TOOLS_DIR)/vadpcm_enc
 EXTRACT_DATA_FOR_MIO = $(TOOLS_DIR)/extract_data_for_mio
 ZEROTERM = $(PYTHON) $(TOOLS_DIR)/zeroterm.py
 
-###################### Dependency Check #####################
+############################### Dependency Check ###############################
 
 # Stubbed
 
-######################## Targets #############################
+#################################### Targets ###################################
 
 all: $(EXE)
 
