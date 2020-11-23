@@ -452,8 +452,7 @@ DEP_FILES := $(O_FILES:.o=.d) $(ULTRA_O_FILES:.o=.d) $(GODDARD_O_FILES:.o=.d) $(
 # Segment elf files
 SEG_FILES := $(SEGMENT_ELF_FILES) $(ACTOR_ELF_FILES) $(LEVEL_ELF_FILES)
 
-############################ Compiler Options ##################################
-
+##################### Compiler Options #######################
 INCLUDE_CFLAGS := $(PLATFORM_CFLAGS) -I include -I $(BUILD_DIR) -I $(BUILD_DIR)/include -I src -I .
 ENDIAN_BITWIDTH := $(BUILD_DIR)/endian-and-bitwidth
 
