@@ -61,6 +61,9 @@ CONTROLLER_API ?= SDL2
 LEGACY_RES ?= 0
 BASEDIR ?= res
 
+# Copy assets to BASEDIR? (useful for iterative debugging)
+NO_COPY ?= 0
+
 # Automatic settings for PC port(s)
 
 WINDOWS_BUILD ?= 0
@@ -620,9 +623,11 @@ $(BASEPACK_LST): $(EXE)
 	@find texts -name \*.json -exec echo "{} {}" >> $(BASEPACK_LST) \;
 	@find db -name \*.* -exec echo "{} {}" >> $(BASEPACK_LST) \;
 
+ifneq ($(NO_COPY),1)
 # prepares the resource ZIP with base data
 $(BASEPACK_PATH): $(BASEPACK_LST)
 	@$(PYTHON) $(TOOLS_DIR)/mkzip.py $(BASEPACK_LST) $(BASEPACK_PATH) $(LEGACY_RES)
+endif
 
 clean:
 	$(RM) -r $(BUILD_DIR_BASE)
