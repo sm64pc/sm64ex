@@ -1,5 +1,5 @@
-CC := gcc
-CXX := g++
+CC ?= gcc
+CXX ?= g++
 CFLAGS := -I../include -I. -Wall -Wextra -Wno-unused-parameter -pedantic -std=c99 -O2 -s
 LDFLAGS := -lm
 PROGRAMS := n64graphics aifc_decode aiff_extract_codebook mio0 vadpcm_enc tabledesign skyconv
@@ -31,7 +31,7 @@ vadpcm_enc_CFLAGS := -Wno-unused-result -Wno-uninitialized -Wno-sign-compare -Wn
 LIBAUDIOFILE := audiofile/libaudiofile.a
 
 $(LIBAUDIOFILE):
-	@$(MAKE) -C audiofile
+	@CC=$(CC) CXX=$(CXX) $(MAKE) -C audiofile
 
 all: $(LIBAUDIOFILE) $(PROGRAMS) $(CXX_PROGRAMS)
 
