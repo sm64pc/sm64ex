@@ -1,3 +1,5 @@
+#include "pc/configfile.h"
+
 /**
  * @file fish.inc.c
  * Implements behaviour and spawning for fish located in the Secret Aquarium and other levels.
@@ -19,22 +21,22 @@ void fish_act_spawn(void) {
         
         // Blue fish with a quanitiy of twenty.
         case 0:
-            model = MODEL_FISH;    schoolQuantity = 20;    minDistToMario = 1500.0f;    fishAnimation = blue_fish_seg3_anims_0301C2B0;
+            model = MODEL_FISH;    schoolQuantity = 20;    minDistToMario = 15 * configDrawDistance;    fishAnimation = blue_fish_seg3_anims_0301C2B0;
             break;
             
         // Blue fish with a quanitiy of five.
         case 1:
-            model = MODEL_FISH;    schoolQuantity = 5;    minDistToMario = 1500.0f;    fishAnimation = blue_fish_seg3_anims_0301C2B0;
+            model = MODEL_FISH;    schoolQuantity = 5;    minDistToMario = 15 * configDrawDistance;    fishAnimation = blue_fish_seg3_anims_0301C2B0;
             break;
             
         // Cyan fish with a quanitiy of twenty.
         case 2:
-            model = MODEL_CYAN_FISH;    schoolQuantity = 20;    minDistToMario = 1500.0f;    fishAnimation = cyan_fish_seg6_anims_0600E264;
+            model = MODEL_CYAN_FISH;    schoolQuantity = 20;    minDistToMario = 15 * configDrawDistance;    fishAnimation = cyan_fish_seg6_anims_0600E264;
             break;
             
         // Cyan fish with a quanitiy of five.
         case 3:
-            model = MODEL_CYAN_FISH;    schoolQuantity = 5;    minDistToMario = 1500.0f;    fishAnimation = cyan_fish_seg6_anims_0600E264;
+            model = MODEL_CYAN_FISH;    schoolQuantity = 5;    minDistToMario = 15 * configDrawDistance;    fishAnimation = cyan_fish_seg6_anims_0600E264;
             break;
     }
     /**
@@ -64,7 +66,7 @@ void fish_act_spawn(void) {
 void fish_act_respawn(void) {
 #ifndef NODRAWINGDISTANCE
     if (gCurrLevelNum != LEVEL_SA) {
-        if (gMarioObject->oPosY - o->oPosY > 2000.0f) {
+        if (gMarioObject->oPosY - o->oPosY > 20 * configDrawDistance) {
             o->oAction = FISH_ACT_RESPAWN;
         }
     }

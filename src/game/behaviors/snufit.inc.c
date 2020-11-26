@@ -1,3 +1,5 @@
+#include "pc/configfile.h"
+
 /**
  * Behavior file for bhvSnufit and bhvSnufitBalls.
  * Snufits are present in HMC and CotMC, and are the fly guy
@@ -181,7 +183,7 @@ void bhv_snufit_balls_loop(void) {
     // If far from Mario or in a different room, despawn.
     if ((o->activeFlags & ACTIVE_FLAG_IN_DIFFERENT_ROOM)
 #ifndef NODRAWINGDISTANCE
-        || (o->oTimer != 0 && o->oDistanceToMario > 1500.0f)
+        || (o->oTimer != 0 && o->oDistanceToMario > 15 * configDrawDistance)
 #endif
             ){
         obj_mark_for_deletion(o);

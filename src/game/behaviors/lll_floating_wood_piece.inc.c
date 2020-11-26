@@ -1,5 +1,7 @@
 // lll_floating_wood_piece.c.inc
 
+#include "pc/configfile.h"
+
 void bhv_lll_wood_piece_loop(void) {
     if (o->oTimer == 0)
         o->oPosY -= 100.0f;
@@ -15,7 +17,7 @@ void bhv_lll_floating_wood_bridge_loop(void) {
     switch (o->oAction) {
         case 0:
 #ifndef NODRAWINGDISTANCE
-            if (o->oDistanceToMario < 2500.0f) {
+            if (o->oDistanceToMario < 25 * configDrawDistance) {
 #endif
                 for (i = 1; i < 4; i++) {
                     sp3C = spawn_object_relative(0, (i - 2) * 300, 0, 0, o, MODEL_LLL_WOOD_BRIDGE,
@@ -29,7 +31,7 @@ void bhv_lll_floating_wood_bridge_loop(void) {
             break;
         case 1:
 #ifndef NODRAWINGDISTANCE
-            if (o->oDistanceToMario > 2600.0f)
+            if (o->oDistanceToMario > 26 * configDrawDistance)
                 o->oAction = 2;
 #endif
             break;

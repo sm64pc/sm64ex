@@ -1,3 +1,5 @@
+#include "pc/configfile.h"
+
 // coin.c.inc
 
 struct ObjectHitbox sYellowCoinHitbox = {
@@ -185,7 +187,7 @@ void bhv_coin_formation_loop(void) {
     switch (o->oAction) {
         case 0:
 #ifndef NODRAWINGDISTANCE
-            if (o->oDistanceToMario < 2000.0f) {
+            if (o->oDistanceToMario < 20 * configDrawDistance) {
 #endif
                 for (bitIndex = 0; bitIndex < 8; bitIndex++) {
                     if (!(o->oCoinUnkF4 & (1 << bitIndex)))
@@ -198,7 +200,7 @@ void bhv_coin_formation_loop(void) {
             break;
         case 1:
 #ifndef NODRAWINGDISTANCE
-            if (o->oDistanceToMario > 2100.0f)
+            if (o->oDistanceToMario > 21 * configDrawDistance)
                 o->oAction++;
 #endif
             break;

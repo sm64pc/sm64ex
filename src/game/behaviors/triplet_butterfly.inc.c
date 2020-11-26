@@ -1,3 +1,5 @@
+#include "pc/configfile.h"
+
 struct TripletButterflyActivationData {
     s32 model;
     const BehaviorScript *behavior;
@@ -55,7 +57,7 @@ static void triplet_butterfly_act_init(void) {
 
 static void triplet_butterfly_act_wander(void) {
 #ifndef NODRAWINGDISTANCE
-    if (o->oDistanceToMario > 1500.0f) {
+    if (o->oDistanceToMario > 15 * configDrawDistance) {
         obj_mark_for_deletion(o);
     } else {
 #endif

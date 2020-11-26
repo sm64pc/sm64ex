@@ -1,3 +1,5 @@
+#include "pc/configfile.h"
+
 
 /**
  * Behavior for bhvCloud and bhvCloudPart.
@@ -48,7 +50,7 @@ static void cloud_act_spawn_parts(void) {
  */
 static void cloud_act_fwoosh_hidden(void) {
 #ifndef NODRAWINGDISTANCE
-    if (o->oDistanceToMario < 2000.0f) {
+    if (o->oDistanceToMario < 20 * configDrawDistance) {
 #endif
         cur_obj_unhide();
         o->oAction = CLOUD_ACT_SPAWN_PARTS;
@@ -63,7 +65,7 @@ static void cloud_act_fwoosh_hidden(void) {
  */
 static void cloud_fwoosh_update(void) {
 #ifndef NODRAWINGDISTANCE
-    if (o->oDistanceToMario > 2500.0f) {
+    if (o->oDistanceToMario > 25 * configDrawDistance) {
         o->oAction = CLOUD_ACT_UNLOAD;
     } else {
 #endif
