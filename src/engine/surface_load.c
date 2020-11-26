@@ -14,7 +14,9 @@
 #include "game/mario.h"
 #include "game/object_list_processor.h"
 #include "surface_load.h"
+#ifndef NODRAWINGDISTANCE
 #include "pc/configfile.h"
+#endif
 
 s32 unused8038BE90;
 

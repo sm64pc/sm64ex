@@ -27,7 +27,9 @@
 #include "obj_behaviors.h"
 #include "object_helpers.h"
 #include "object_list_processor.h"
+#ifndef NODRAWINGDISTANCE
 #include "pc/configfile.h"
+#endif
 #include "rendering_graph_node.h"
 #include "save_file.h"
 #include "spawn_object.h"

@@ -1,4 +1,6 @@
+#ifndef NODRAWINGDISTANCE
 #include "pc/configfile.h"
+#endif
 
 // coin.c.inc
 

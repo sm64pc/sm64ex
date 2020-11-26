@@ -1,6 +1,8 @@
 // water_bomb_cannon.inc.c
 
+#ifndef NODRAWINGDISTANCE
 #include "pc/configfile.h"
+#endif
 
 void bhv_bubble_cannon_barrel_loop(void) {
     struct Object *val04;

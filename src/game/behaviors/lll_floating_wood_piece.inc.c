@@ -1,6 +1,8 @@
 // lll_floating_wood_piece.c.inc
 
+#ifndef NODRAWINGDISTANCE
 #include "pc/configfile.h"
+#endif
 
 void bhv_lll_wood_piece_loop(void) {
     if (o->oTimer == 0)

@@ -1,6 +1,8 @@
 // lll_rotating_hex_flame.c.inc
 
+#ifndef NODRAWINGDISTANCE
 #include "pc/configfile.h"
+#endif
 
 void bhv_lll_rotating_hex_flame_loop(void) {
     f32 sp24 = o->oLllRotatingHexFlameUnkF4;
