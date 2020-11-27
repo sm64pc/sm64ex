@@ -185,7 +185,7 @@ index ac2ee50c..323b7d05 100644
 +
      surface->vertex1[0] = x1;
 diff --git a/src/game/camera.c b/src/game/camera.c
-index bde06626..9351dea4 100644
+index bde06626..aa65c00b 100644
 --- a/src/game/camera.c
 +++ b/src/game/camera.c
 @@ -486,2 +486,6 @@ extern u8 sZoomOutAreaMasks[];
@@ -235,15 +235,7 @@ index bde06626..9351dea4 100644
      vec3f_set(c->pos, -149.f, 1021.f, -1216.f);
 +    skip_camera_interpolation();
  }
-@@ -7506,2 +7520,3 @@ BAD_RETURN(s32) cutscene_ending_look_at_sky(struct Camera *c) {
-     vec3f_set(c->pos, 699.f, 1680.f, -703.f);
-+    skip_camera_interpolation();
- }
-@@ -10342,2 +10357,3 @@ BAD_RETURN(s32) cutscene_door_fix_cam(struct Camera *c) {
-     vec3f_copy(c->focus, sCutsceneVars[1].point);
-+    skip_camera_interpolation();
- }
-@@ -10375,2 +10391,3 @@ BAD_RETURN(s32) cutscene_door_move_behind_mario(struct Camera *c) {
+@@ -10375,2 +10389,3 @@ BAD_RETURN(s32) cutscene_door_move_behind_mario(struct Camera *c) {
      offset_rotated(c->pos, sMarioCamState->pos, camOffset, sCutsceneVars[0].angle);
 +    skip_camera_interpolation();
  }
