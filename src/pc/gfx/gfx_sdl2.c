@@ -35,6 +35,12 @@
 
 #include "src/pc/controller/controller_keyboard.h"
 
+#ifdef TARGET_SWITCH
+// can't include <switch.h> or even <switch/services/applet.h> because
+// the basic libnx types have the same names as some of the types in this
+extern int appletGetOperationMode(void);
+#endif
+
 // TODO: figure out if this shit even works
 #ifdef VERSION_EU
 # define FRAMERATE 25
@@ -139,6 +145,10 @@ int test_vsync(void) {
 }
 
 static inline void gfx_sdl_set_vsync(const bool enabled) {
+#ifdef TARGET_SWITCH
+    SDL_GL_SetSwapInterval(2);
+    use_timer = false;
+#else
     if (enabled) {
         // try to detect refresh rate
         SDL_GL_SetSwapInterval(1);
@@ -155,6 +165,7 @@ static inline void gfx_sdl_set_vsync(const bool enabled) {
 
     use_timer = true;
     SDL_GL_SetSwapInterval(0);
+#endif
 }
 
 static void gfx_sdl_set_fullscreen(void) {
@@ -210,8 +221,21 @@ static void gfx_sdl_init(const char *window_title) {
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
+    #ifdef TARGET_SWITCH
+    configWindow.fullscreen = false;
+    if (appletGetOperationMode() == 1) {
+        configWindow.w = 1920;
+        configWindow.h = 1080;
+    } else {
+        configWindow.w = 1280;
+        configWindow.h = 720;
+    }
+    int xpos = 0;
+    int ypos = 0;
+    #else
     int xpos = (configWindow.x == WAPI_WIN_CENTERPOS) ? SDL_WINDOWPOS_CENTERED : configWindow.x;
     int ypos = (configWindow.y == WAPI_WIN_CENTERPOS) ? SDL_WINDOWPOS_CENTERED : configWindow.y;
+    #endif
 
     wnd = SDL_CreateWindow(
         window_title,

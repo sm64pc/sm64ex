@@ -3345,7 +3345,9 @@
         "TEXT_OPT_CHEAT8": "Huge Mario",
         "TEXT_OPT_CHEAT9": "Tiny Mario",
         "TEXT_OPT_GAME": "GAME",
-        "TEXT_OPT_LANGUAGE": "Current Language"
+        "TEXT_OPT_LANGUAGE": "Current Language",
+        "TEXT_OPT_PRECACHE": "Precache Textures",
+        "TEXT_OPT_SWITCH_HUD": "Switch HUD"
     },
     "strings": {
         "TEXT_ZERO": "0",

@@ -14,7 +14,7 @@
 const char *sys_ropaths[] = {
     ".", // working directory
     "!", // executable directory
-#if defined(__linux__) || defined(__unix__)
+#if (defined(__linux__) || defined(__unix__)) && !defined(TARGET_SWITCH)
     // some common UNIX directories for read only stuff
     "/usr/local/share/sm64pc",
     "/usr/share/sm64pc",

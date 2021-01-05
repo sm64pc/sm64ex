@@ -8,6 +8,7 @@
 #include "game/print.h"
 #include "game/segment2.h"
 #include "game/save_file.h"
+#include "game/hud.h"
 #ifdef BETTERCAMERA
 #include "game/bettercamera.h"
 #endif
@@ -73,11 +74,10 @@ static const u8 optsCameraStr[][32] = {
     "TEXT_OPT_CAMON"
 };
 
-// TODO: Get dynamic languages
-// This is only for testing
-
 static const u8 optsGameStr[][32] = {
-    "TEXT_OPT_LANGUAGE"
+    "TEXT_OPT_LANGUAGE",
+    "TEXT_OPT_PRECACHE",
+    "TEXT_OPT_SWITCH_HUD"
 };
 
 static const u8 optsVideoStr[][32] = {
@@ -262,16 +262,24 @@ static struct Option optsControls[] = {
 };
 
 static struct Option optsVideo[] = {
+    #ifndef TARGET_SWITCH
     DEF_OPT_TOGGLE( optsVideoStr[0], &configWindow.fullscreen ),
     DEF_OPT_TOGGLE( optsVideoStr[5], &configWindow.vsync ),
+    #endif
     DEF_OPT_CHOICE( optsVideoStr[1], &configFiltering, filterChoices ),
     DEF_OPT_TOGGLE( optsVideoStr[7], &configHUD ),
+    #ifndef TARGET_SWITCH
     DEF_OPT_BUTTON( optsVideoStr[4], optvideo_reset_window ),
     DEF_OPT_BUTTON( optsVideoStr[9], optvideo_apply ),
+    #endif
 };
 
 static struct Option optsGame[] = {
-    DEF_OPT_CHOICE( optsGameStr[0], &configLanguage, NULL ),    
+    DEF_OPT_CHOICE( optsGameStr[0], &configLanguage, NULL ),
+    DEF_OPT_TOGGLE( optsGameStr[1], &configPrecacheRes ),
+    #ifdef TARGET_SWITCH
+    DEF_OPT_TOGGLE( optsGameStr[2], &configSwitchHud ),
+    #endif
 };
 
 static struct Option optsAudio[] = {
@@ -378,6 +386,11 @@ static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
 
     optmenu_draw_text(x, y, get_key_string(opt->label), sel);
 
+    s16 sx = 0;
+    s16 sy = 0;
+    s16 sw = 0;
+    s16 sh = 0;    
+
     switch (opt->type) {
         case OPT_TOGGLE:
             optmenu_draw_text(x, y-13, get_key_string(toggleStr[(int)*opt->bval]), sel);
@@ -395,8 +408,13 @@ static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
             break;
 
         case OPT_SCROLL:
-            int_to_str(*opt->uval, buf);
-            optmenu_draw_text(x, y-13, buf, sel);
+            sx = x - 127 / 2;
+            sy = 209 - (y - 35);            
+            sw = sx + (127.0 * (((*opt->uval * 1.0) + __FLT_MIN__) / (opt->scrMax * 1.0)));
+            sh = sy + 7;
+
+            render_hud_rectangle(sx - 1, sy - 1, (sx + 126), sh + 1, 180, 180, 180);
+            render_hud_rectangle(sx, sy, sw - 2, sh, 255, 255, 255);
             break;
 
         case OPT_BIND:
@@ -500,10 +518,10 @@ void optmenu_draw(void) {
     gDPSetScissor(gDisplayListHead++, G_SC_NON_INTERLACE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
-    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
-    print_hud_lut_string(HUD_LUT_GLOBAL, 80, 90 + (32 * (currentMenu->select - currentMenu->scroll)), get_key_string(menuStr[0]));
-    print_hud_lut_string(HUD_LUT_GLOBAL, 224, 90 + (32 * (currentMenu->select - currentMenu->scroll)), get_key_string(menuStr[0]));
-    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
+    // gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
+    // print_hud_lut_string(HUD_LUT_GLOBAL, 80, 90 + (32 * (currentMenu->select - currentMenu->scroll)), get_key_string(menuStr[0]));
+    // print_hud_lut_string(HUD_LUT_GLOBAL, 224, 90 + (32 * (currentMenu->select - currentMenu->scroll)), get_key_string(menuStr[0]));
+    // gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
 }
 
 //This has been separated for interesting reasons. Don't question it.

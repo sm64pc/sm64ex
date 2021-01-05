@@ -3397,7 +3397,9 @@
         "TEXT_OPT_CHEAT8": "Mario Gigante",
         "TEXT_OPT_CHEAT9": "Mario Pequeño",
         "TEXT_OPT_GAME": "JUEGO",
-        "TEXT_OPT_LANGUAGE": "Idioma actual"
+        "TEXT_OPT_LANGUAGE": "Idioma actual",
+        "TEXT_OPT_PRECACHE": "Precargar texturas",
+        "TEXT_OPT_SWITCH_HUD": "Interfaz de la switch"
     },
     "strings": {
         "TEXT_ZERO": "0",

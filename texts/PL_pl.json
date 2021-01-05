@@ -3388,7 +3388,9 @@
         "TEXT_OPT_CHEAT8": "Huge Mario",
         "TEXT_OPT_CHEAT9": "Tiny Mario",
         "TEXT_OPT_GAME": "GRA",
-        "TEXT_OPT_LANGUAGE": "Jezyk"
+        "TEXT_OPT_LANGUAGE": "Jezyk",
+        "TEXT_OPT_PRECACHE": "Precache Textures",
+        "TEXT_OPT_SWITCH_HUD": "Switch HUD"
     },
     "strings": {
         "TEXT_ZERO": "0",

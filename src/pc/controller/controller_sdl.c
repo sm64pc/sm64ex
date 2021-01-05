@@ -18,6 +18,9 @@
 #include "../platform.h"
 #include "../fs/fs.h"
 
+#define AVOID_UTYPES
+#include "nx/m_controller.h"
+
 #include "game/level_update.h"
 
 // mouse buttons are also in the controller namespace (why), just offset 0x100
@@ -96,6 +99,7 @@ static void controller_sdl_init(void) {
 
     haptics_enabled = (SDL_InitSubSystem(SDL_INIT_HAPTIC) == 0);
 
+    #ifndef TARGET_SWITCH
     // try loading an external gamecontroller mapping file
     uint64_t gcsize = 0;
     void *gcdata = fs_load_file("db/gamecontrollerdb.txt", &gcsize);
@@ -108,7 +112,8 @@ static void controller_sdl_init(void) {
         }
         free(gcdata);
     }
-
+    #endif
+    
 #ifdef BETTERCAMERA
     if (newcam_mouse == 1)
         SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -118,11 +123,17 @@ static void controller_sdl_init(void) {
     controller_sdl_bind();
 
     init_ok = true;
+
+#ifdef TARGET_SWITCH
+    haptics_enabled = true;
+#endif
+
 }
 
 static SDL_Haptic *controller_sdl_init_haptics(const int joy) {
     if (!haptics_enabled) return NULL;
 
+#ifndef TARGET_SWITCH
     SDL_Haptic *hap = SDL_HapticOpen(joy);
     if (!hap) return NULL;
 
@@ -138,6 +149,11 @@ static SDL_Haptic *controller_sdl_init_haptics(const int joy) {
 
     printf("controller %s has haptics support, rumble enabled\n", SDL_JoystickNameForIndex(joy));
     return hap;
+#else
+    controller_nx_init();
+    printf("switch controller has haptics support, rumble enabled\n");
+    return NULL;
+#endif
 }
 
 static inline void update_button(const int i, const bool new) {
@@ -176,7 +192,7 @@ static void controller_sdl_read(OSContPad *pad) {
         sdl_cntrl = NULL;
         sdl_haptic = NULL;
     }
-
+    
     if (sdl_cntrl == NULL) {
         for (int i = 0; i < SDL_NumJoysticks(); i++) {
             if (SDL_IsGameController(i)) {
@@ -263,13 +279,21 @@ static void controller_sdl_read(OSContPad *pad) {
 }
 
 static void controller_sdl_rumble_play(f32 strength, f32 length) {
+#ifndef TARGET_SWITCH
     if (sdl_haptic)
         SDL_HapticRumblePlay(sdl_haptic, strength, (u32)(length * 1000.0f));
+#else    
+    controller_nx_rumble_play(strength, length);
+#endif
 }
 
 static void controller_sdl_rumble_stop(void) {
+#ifndef TARGET_SWITCH
     if (sdl_haptic)
         SDL_HapticRumbleStop(sdl_haptic);
+#else
+    controller_nx_rumble_stop();
+#endif
 }
 
 static u32 controller_sdl_rawkey(void) {

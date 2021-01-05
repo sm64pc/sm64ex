@@ -16,6 +16,12 @@
 #include "print.h"
 #include "pc/configfile.h"
 
+#ifdef TARGET_SWITCH
+#define AVOID_UTYPES
+#include "nx/m_nx.h"
+#include "nx/m_controller.h"
+#endif
+
 /* @file hud.c
  * This file implements HUD rendering and power meter animations.
  * That includes stars, lives, coins, camera status, power meter, timer
@@ -59,6 +65,15 @@ static struct UnusedHUDStruct sUnusedHUDValues = { 0x00, 0x0A, 0x00 };
 
 static struct CameraHUD sCameraHUD = { CAM_STATUS_NONE };
 
+void render_hud_rectangle(s16 x1, s16 y1, s16 x2, s16 y2, u8 r, u8 g, u8 b) {
+    gDPPipeSync(gDisplayListHead++);
+    gDPSetRenderMode(gDisplayListHead++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
+    gDPSetCycleType(gDisplayListHead++, G_CYC_FILL);
+    gDPSetFillColor(gDisplayListHead++, GPACK_RGBA5551(r, g, b, 255));
+    gDPFillRectangle(gDisplayListHead++, x1, y1, x2 + 1, y2 + 1);
+    gDPPipeSync(gDisplayListHead++);
+    gDPSetCycleType(gDisplayListHead++, G_CYC_1CYCLE);
+}
 /**
  * Renders a rgba16 16x16 glyph texture from a table list.
  */
@@ -86,6 +101,20 @@ void render_hud_small_tex_lut(s32 x, s32 y, u8 *texture) {
     gDPLoadBlock(gDisplayListHead++, G_TX_LOADTILE, 0, 0, 8 * 8 - 1, CALC_DXT(8, G_IM_SIZ_16b_BYTES));
     gSPTextureRectangle(gDisplayListHead++, x << 2, y << 2, (x + 7) << 2, (y + 7) << 2, G_TX_RENDERTILE,
                         0, 0, 4 << 10, 1 << 10);
+}
+
+void render_hud_texture(s32 x, s32 y, u32 w, u32 h, u8 *texture) {
+    gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);    
+    gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 0, 0, G_TX_LOADTILE, 0, G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD);
+    gDPTileSync(gDisplayListHead++);
+    gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 2, 0, G_TX_RENDERTILE, 0, G_TX_NOMIRROR, 3, G_TX_NOLOD, G_TX_NOMIRROR, 3, G_TX_NOLOD);
+    gDPSetTileSize(gDisplayListHead++, G_TX_RENDERTILE, 0, 0, w << G_TEXTURE_IMAGE_FRAC, h << G_TEXTURE_IMAGE_FRAC);
+    gDPPipeSync(gDisplayListHead++);
+    gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 1, texture);
+    gDPLoadSync(gDisplayListHead++);
+    gDPLoadBlock(gDisplayListHead++, G_TX_LOADTILE, 0, 0, w * h - 1, CALC_DXT(w, G_IM_SIZ_32b_BYTES));
+    gSPTextureRectangle(gDisplayListHead++, x << 2, y << 2, (x + w) << 2, (y + h) << 2, G_TX_RENDERTILE, 0, 0, 4 << 10, 1 << 10);
+    gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
 }
 
 /**
@@ -416,6 +445,32 @@ void render_hud_camera_status(void) {
     gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
 }
 
+#ifdef TARGET_SWITCH
+void render_nx_hud(void){
+    s16 x = GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(40);
+    s16 y = 212;
+    s16 w = x + 14;
+    s16 h = y + 6;
+
+    render_hud_rectangle(x - 1, y - 1, w + 1, h + 1, 57, 57, 57);
+    render_hud_rectangle(w, y + 1, w + 2, y + 6, 57, 57, 57);
+    render_hud_rectangle(x, y, w, h, 194, 194, 194);
+    render_hud_rectangle(x, y, x + (s16)(14 * getBatteryPercentage()), h, 76, 235, 52);
+
+    x = GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(20);
+    y = 207;    
+
+    struct NXController controller;
+
+    get_controller_nx(&controller);
+
+    gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
+    render_hud_tex_lut(x, y, controller.icon);
+    gSPDisplayList(gDisplayListHead++, dl_hud_img_end);    
+
+}
+#endif
+
 /**
  * Render HUD strings using hudDisplayFlags with it's render functions,
  * excluding the cannon reticle which detects a camera preset for it.
@@ -465,10 +520,6 @@ void render_hud(void) {
             render_hud_stars();
         }
 
-        if (hudDisplayFlags & HUD_DISPLAY_FLAG_KEYS && configHUD) {
-            render_hud_keys();
-        }
-
         if (hudDisplayFlags & HUD_DISPLAY_FLAG_CAMERA_AND_POWER && configHUD) {
             render_hud_power_meter();
             render_hud_camera_status();
@@ -476,6 +527,15 @@ void render_hud(void) {
 
         if (hudDisplayFlags & HUD_DISPLAY_FLAG_TIMER && configHUD) {
             render_hud_timer();
+        }
+    
+        if( configHUD ) {
+
+        #ifdef TARGET_SWITCH
+            if ( configSwitchHud )
+                render_nx_hud();
+        #endif
+        
         }
     }
 }

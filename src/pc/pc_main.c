@@ -39,6 +39,10 @@
 #include "pc/discord/discordrpc.h"
 #endif
 
+#ifdef TARGET_SWITCH
+#include "nx/m_nx.h"
+#endif
+
 #include "text/text-loader.h"
 
 OSMesg D_80339BEC;
@@ -95,6 +99,9 @@ void produce_one_frame(void) {
 
     game_loop_one_iteration();
     thread6_rumble_loop(NULL);
+#ifdef TARGET_SWITCH
+    controller_nx_rumble_loop();
+#endif
 
     int samples_left = audio_api->buffered();
     u32 num_audio_samples = samples_left < audio_api->get_desired_buffered() ? SAMPLES_HIGH : SAMPLES_LOW;
@@ -266,7 +273,13 @@ void main_func(char *argv[]) {
 }
 
 int main(int argc, char *argv[]) {
+#ifdef TARGET_SWITCH
+    initNX();
+#endif
     parse_cli_opts(argc, argv);
     main_func(argv);
+#ifdef TARGET_SWITCH
+    exitNX();
+#endif
     return 0;
 }
