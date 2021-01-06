@@ -145,7 +145,7 @@
                 "szczytu,",
                 "gdzie byl Wielki Bob-Omb?",
                 "Kiedy powiem",
-                "{12302}Ruszaj,{12303}",
+                "『Ruszaj,』",
 				"wyscig sie zacznie!",
                 "",
                 "Gotowy....",
@@ -528,7 +528,7 @@
             "lines": [
                 "zeby otworzyc dzrwi,",
                 "ktore prowadza do",
-				"{12302}nieskonczonych{12303}",
+				"『nieskonczonych』",
                 "schodow, potrzebujesz 70",
                 "Gwiazd.",
                 "Bwa ha ha!"
@@ -683,7 +683,7 @@
             "width": 200,
             "lines": [
                 "There are four camera, or",
-                "{12302}[C],{12303} Buttons. Press [C]^",
+                "『[C],』 Buttons. Press [C]^",
                 "to look around using the",
                 "Control Stick.",
                 "",
@@ -721,7 +721,7 @@
                 "Press [R] again to switch",
                 "to Lakitu's camera.",
                 "Pause the game and",
-                "switch the mode to {12302}fix{12303}",
+                "switch the mode to 『fix』",
                 "the camera in place while",
                 "holding [R]. Give it a try!"
             ]
@@ -1357,7 +1357,7 @@
                 "Just stop, stand still,",
                 "press Start to pause the",
                 "game, then select",
-                "{12302}Exit Course.{12303}",
+                "『Exit Course.』",
                 "",
                 "You don't have to collect",
                 "all Power Stars in one",
@@ -1731,7 +1731,7 @@
                 "You've stepped right into",
                 "my trap, just as I knew",
                 "you would! I warn you,",
-                "{12302}Friend,{12303} watch your",
+                "『Friend,』 watch your",
                 "step!"
             ]
         },
@@ -1933,8 +1933,8 @@
             "width": 200,
             "lines": [
                 "The shadowy star in front",
-                "of you is a {12302}Star",
-                "Marker.{12303} When you collect",
+                "of you is a 『Star",
+                "Marker.』 When you collect",
                 "all 8 Red Coins, the Star",
                 "will appear here."
             ]
@@ -2503,7 +2503,7 @@
                 "",
                 "Be careful, though.",
                 "Bowser and his band",
-                "wrote the book on {12302}bad.{12303}",
+                "wrote the book on 『bad.』",
                 "Take my advice: When you",
                 "need to recover from",
                 "injuries, collect coins.",
@@ -2985,13 +2985,13 @@
                 "Wiedzialem, ze dasz rade!",
                 "Mam dla ciebie bardzo",
                 "specjalna wiadomosc.",
-                "{12302}Dziekujemy za granie",
+                "『Dziekujemy za granie",
                 "w Mario 64! To koniec",
                 "gry, ale nie",
                 "koniec zabawy. Chcemy, zebys",
                 "dalej gral, wiec mamy",
                 "cos dla ciebie.",
-                "Baw sie dobrze! {12303}",
+                "Baw sie dobrze! 』",
                 "",
                 "Zespol Mario 64",
 				"i DAGzex"

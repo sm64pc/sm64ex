@@ -449,13 +449,13 @@ void render_hud_camera_status(void) {
 void render_nx_hud(void){
     s16 x = GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(40);
     s16 y = 212;
-    s16 w = x + 14;
-    s16 h = y + 6;
+    s16 w = x + 12;
+    s16 h = y + 4;
 
     render_hud_rectangle(x - 1, y - 1, w + 1, h + 1, 57, 57, 57);
-    render_hud_rectangle(w, y + 1, w + 2, y + 6, 57, 57, 57);
+    render_hud_rectangle(w, y, w + 2, y + 4, 57, 57, 57);
     render_hud_rectangle(x, y, w, h, 194, 194, 194);
-    render_hud_rectangle(x, y, x + (s16)(14 * getBatteryPercentage()), h, 76, 235, 52);
+    render_hud_rectangle(x, y, x + (s16)(12 * getBatteryPercentage()), h, 76, 235, 52);
 
     x = GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(20);
     y = 207;    
