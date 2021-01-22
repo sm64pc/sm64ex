@@ -90,13 +90,6 @@ static void controller_sdl_bind(void) {
 }
 
 static void controller_sdl_init(void) {
-    if (SDL_Init(SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS) != 0) {
-        fprintf(stderr, "SDL init error: %s\n", SDL_GetError());
-        return;
-    }
-
-    haptics_enabled = (SDL_InitSubSystem(SDL_INIT_HAPTIC) == 0);
-
     // try loading an external gamecontroller mapping file
     uint64_t gcsize = 0;
     void *gcdata = fs_load_file("gamecontrollerdb.txt", &gcsize);
@@ -109,6 +102,13 @@ static void controller_sdl_init(void) {
         }
         free(gcdata);
     }
+
+    if (SDL_Init(SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS) != 0) {
+        fprintf(stderr, "SDL init error: %s\n", SDL_GetError());
+        return;
+    }
+
+    haptics_enabled = (SDL_InitSubSystem(SDL_INIT_HAPTIC) == 0);
 
 #ifdef BETTERCAMERA
     if (newcam_mouse == 1)
