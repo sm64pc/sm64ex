@@ -33,6 +33,9 @@ OSX_BUILD ?= 0
 # Makeflag to enable OSX fixes on older versions
 LEGACY_OSX_BUILD ?= 0
 
+# Enable -no-pie linker option
+NO_PIE ?= 1
+
 # Specify the target you are building for, TARGET_BITS=0 means native
 TARGET_ARCH ?= native
 TARGET_BITS ?= 0
@@ -654,9 +657,13 @@ else ifeq ($(LEGACY_OSX_BUILD),1)
   LDFLAGS := -lm $(BACKEND_LDFLAGS) -fno-pie -lpthread
 
 else
-  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm $(BACKEND_LDFLAGS) -no-pie -lpthread
+  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm $(BACKEND_LDFLAGS) -lpthread -ldl
+  ifeq ($(NO_PIE), 1)
+    LDFLAGS += -no-pie
+  endif
+
   ifeq ($(DISCORDRPC),1)
-    LDFLAGS += -ldl -Wl,-rpath .
+    LDFLAGS += -Wl,-rpath .
   endif
 
 endif # End of LDFLAGS
