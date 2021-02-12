@@ -386,7 +386,10 @@ void render_multi_text_string(s16 *xPos, s16 *yPos, s8 multiTextID)
  * In JP/EU a IA1 texture is used but in US a IA4 texture is used.
  */
 void print_generic_string(s16 x, s16 y, const u8 *str) {
+    // get rid of this unused variable when both VERSION_EU and QOL_FIXES
+#if !defined(VERSION_EU) && !defined(QOL_FIXES)
     UNUSED s8 mark = DIALOG_MARK_NONE; // unused in EU
+#endif
     s32 strPos = 0;
     u8 lineNum = 1;
 #ifdef VERSION_EU
@@ -534,7 +537,9 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
                 create_dl_translation_matrix(MENU_MTX_NOPUSH, 10.0f, 0.0f, 0.0f);
 #else
                 create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[str[strPos]]), 0.0f, 0.0f);
+#if !defined(VERSION_JP) || !(VERSION_SH) || !defined(QOL_FIXES)
                 break; // what an odd difference. US added a useless break here.
+#endif
 #endif
 #endif
         }
@@ -604,7 +609,7 @@ void print_hud_lut_string(s8 hudLUT, s16 x, s16 y, const u8 *str) {
                 break;
             default:
 #endif
-#if defined(VERSION_US) || defined(VERSION_SH) || !defined(QOL_FIXES)
+#if defined(VERSION_US) || defined(VERSION_SH)
         if (str[strPos] == GLOBAL_CHAR_SPACE) {
             if (0) //! dead code
             {
@@ -778,8 +783,7 @@ void handle_menu_scrolling(s8 scrollDirection, s8 *currentIndex, s8 minIndex, s8
             currentIndex[0]++;
         }
         #else
-        // It makes more sense for this if statement to have > instead of >= here
-        if (currentIndex[0] > maxIndex) {
+        if (currentIndex[0] >= maxIndex) {
             play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
             currentIndex[0]++;
         }
