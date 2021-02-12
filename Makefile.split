@@ -147,9 +147,11 @@ endef
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(MAKECMDGOALS),distclean)
+ifneq ($(MAKECMDGOALS),cleantools)
 $(BUILD_DIR)/level_rules.mk: levels/level_rules.mk levels/level_defines.h
 	$(CPP) $(VERSION_CFLAGS) -I . -o $@ $<
 include $(BUILD_DIR)/level_rules.mk
+endif
 endif
 endif
 
