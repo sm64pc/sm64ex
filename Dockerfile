@@ -1,6 +1,7 @@
 FROM ubuntu:18.04 as build
 
 RUN apt-get update && \
+    apt-get upgrade && \
     apt-get install -y \
         binutils-mips-linux-gnu \
         bsdmainutils \
