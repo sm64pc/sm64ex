@@ -221,7 +221,7 @@ s8 init_shadow(struct Shadow *s, f32 xPos, f32 yPos, f32 zPos, s16 shadowScale, 
         waterLevel = get_water_level_below_shadow(s);
     }
     #else
-    waterLevel = get_water_level_below_shasow(s);
+    waterLevel = get_water_level_below_shadow(s);
     #endif
     if (gShadowAboveWaterOrLava) {
         //! @bug Use of potentially undefined variable `waterLevel`
