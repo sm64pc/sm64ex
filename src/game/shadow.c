@@ -214,7 +214,7 @@ s8 init_shadow(struct Shadow *s, f32 xPos, f32 yPos, f32 zPos, s16 shadowScale, 
 
     s->floorHeight = find_floor_height_and_data(s->parentX, s->parentY, s->parentZ, &floorGeometry);
 
-    // This can lead to waterLevel being undefined if gEnvironmentRegions is 0 or less,
+    // This can lead to waterLevel being undefined if gEnvironmentRegions is 0,
     // so this fix will be made for QOL_FIXES to compensate for this
     #ifndef QOL_FIXES
     if (gEnvironmentRegions != 0) {
