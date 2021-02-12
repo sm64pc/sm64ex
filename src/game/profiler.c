@@ -89,10 +89,10 @@ void draw_profiler_bar(OSTime clockBase, OSTime clockStart, OSTime clockEnd, s16
     }
     #else
     if (rectX1 > 320) {
-        clockStart = 320;
+        rectX1 = 320;
     }
     if (rectX2 > 320) {
-        clockEnd = 320;
+        rectX2 = 320;
     }
     #endif
 
