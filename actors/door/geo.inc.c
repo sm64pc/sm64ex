@@ -21,7 +21,9 @@ const GeoLayout castle_door_geo[] = {
          GEO_CLOSE_NODE(),
       GEO_CLOSE_NODE(),
    GEO_CLOSE_NODE(),
+#ifndef QOL_FIXES
 GEO_CLOSE_NODE(), //! more close than open nodes
+#endif
 GEO_END(),
 };
 
@@ -48,7 +50,9 @@ const GeoLayout cabin_door_geo[] = {
          GEO_CLOSE_NODE(),
       GEO_CLOSE_NODE(),
    GEO_CLOSE_NODE(),
+#ifndef QOL_FIXES
 GEO_CLOSE_NODE(), //! more close than open nodes
+#endif
 GEO_END(),
 };
 
@@ -75,7 +79,9 @@ const GeoLayout wooden_door_geo[] = {
          GEO_CLOSE_NODE(),
       GEO_CLOSE_NODE(),
    GEO_CLOSE_NODE(),
+#ifndef QOL_FIXES
 GEO_CLOSE_NODE(), //! more close than open nodes
+#endif
 GEO_END(),
 };
 
@@ -102,7 +108,9 @@ const GeoLayout wooden_door2_geo[] = {
          GEO_CLOSE_NODE(),
       GEO_CLOSE_NODE(),
    GEO_CLOSE_NODE(),
+#ifndef QOL_FIXES
 GEO_CLOSE_NODE(), //! more close than open nodes
+#endif
 GEO_END(),
 };
 
@@ -129,7 +137,9 @@ const GeoLayout metal_door_geo[] = {
          GEO_CLOSE_NODE(),
       GEO_CLOSE_NODE(),
    GEO_CLOSE_NODE(),
+#ifndef QOL_FIXES
 GEO_CLOSE_NODE(), //! more close than open nodes
+#endif
 GEO_END(),
 };
 
@@ -156,7 +166,9 @@ const GeoLayout hazy_maze_door_geo[] = {
          GEO_CLOSE_NODE(),
       GEO_CLOSE_NODE(),
    GEO_CLOSE_NODE(),
+#ifndef QOL_FIXES
 GEO_CLOSE_NODE(), //! more close than open nodes
+#endif
 GEO_END(),
 };
 
@@ -183,7 +195,9 @@ const GeoLayout haunted_door_geo[] = {
          GEO_CLOSE_NODE(),
       GEO_CLOSE_NODE(),
    GEO_CLOSE_NODE(),
+#ifndef QOL_FIXES
 GEO_CLOSE_NODE(), //! more close than open nodes
+#endif
 GEO_END(),
 };
 
@@ -216,7 +230,9 @@ const GeoLayout castle_door_0_star_geo[] = {
          GEO_CLOSE_NODE(),
       GEO_CLOSE_NODE(),
    GEO_CLOSE_NODE(),
+#ifndef QOL_FIXES
 GEO_CLOSE_NODE(), //! more close than open nodes
+#endif
 GEO_END(),
 };
 
@@ -249,7 +265,9 @@ const GeoLayout castle_door_1_star_geo[] = {
          GEO_CLOSE_NODE(),
       GEO_CLOSE_NODE(),
    GEO_CLOSE_NODE(),
+#ifndef QOL_FIXES
 GEO_CLOSE_NODE(), //! more close than open nodes
+#endif
 GEO_END(),
 };
 
@@ -282,7 +300,9 @@ const GeoLayout castle_door_3_stars_geo[] = {
          GEO_CLOSE_NODE(),
       GEO_CLOSE_NODE(),
    GEO_CLOSE_NODE(),
+#ifndef QOL_FIXES
 GEO_CLOSE_NODE(), //! more close than open nodes
+#endif
 GEO_END(),
 };
 
@@ -315,6 +335,8 @@ const GeoLayout key_door_geo[] = {
          GEO_CLOSE_NODE(),
       GEO_CLOSE_NODE(),
    GEO_CLOSE_NODE(),
+#ifndef QOL_FIXES
 GEO_CLOSE_NODE(), //! more close than open nodes
+#endif
 GEO_END(),
 };

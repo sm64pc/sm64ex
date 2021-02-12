@@ -664,6 +664,7 @@ struct GdObj *d_makeobj(enum DObjTypes type, DynId id) {
             //! @bug When making a `D_LABEL`, the call to `make_label()`
             //!      compiles incorrectly due to Goddard only declaring
             //!      the functions, not prototyping the functions
+            //       Fix is planned for QOL_FIXES
             dobj = &make_label(NULL, NULL, 8, 0, 0, 0)->header;
             break;
         case D_VIEW:
@@ -1023,6 +1024,7 @@ void chk_shapegen(struct ObjShape *shape) {
                 //! @bug Call to `make_face_with_colour()` compiles incorrectly
                 //!      due to Goddard only declaring the functions,
                 //!      not prototyping the functions
+                //       Fix is planned for QOL_FIXES
                 face = make_face_with_colour(1.0, 1.0, 1.0);
                 face->mtlId = (s32) facedata->data[i][0];
                 add_3_vtx_to_face(face, vtxbuf[facedata->data[i][1]], vtxbuf[facedata->data[i][2]],
@@ -2952,7 +2954,10 @@ void d_set_matrix(Mat4f *src) {
             gd_copy_mat4f(src, &((struct ObjNet *) sDynListCurObj)->mat128);
             //! @bug When setting an `ObjNet` matrix, the source is copied twice
             //!      due to a probable copy-paste line repeat error
+            //       Fixed in QOL_FIXES
+            #ifndef QOL_FIXES
             gd_copy_mat4f(src, &((struct ObjNet *) sDynListCurObj)->mat128);
+            #endif
             break;
         case OBJ_TYPE_JOINTS:
             gd_copy_mat4f(src, &((struct ObjJoint *) sDynListCurObj)->matE8);

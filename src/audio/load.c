@@ -485,7 +485,7 @@ void patch_audio_bank(struct AudioBank *mem, u8 *offset, u32 numInstruments, u32
                 drum = PATCH(patched, mem);
                 mem->drums[i] = drum;
                 if (drum->loaded == 0) {
-#ifndef VERSION_EU
+#if !defined(VERSION_EU) || !defined(QOL_FIXES)
                     //! copt replaces drum with 'patched' for these two lines
                     PATCH_SOUND(&(*(struct Drum *)patched).sound, mem, offset);
                     patched = (*(struct Drum *)patched).envelope;

@@ -12,17 +12,17 @@ Vec4s *gSplineKeyframe;
 float gSplineKeyframeFraction;
 int gSplineState;
 
-// These functions have bogus return values.
-// Disable the compiler warning.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wreturn-local-addr"
+// These functions have bogus return values
+// unless QOL_FIXES is set to 1.
 
 /// Copy vector 'src' to 'dest'
 void *vec3f_copy(Vec3f dest, Vec3f src) {
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
-    return &dest; //! warning: function returns address of local variable
+    #ifndef QOL_FIXES
+        return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Set vector 'dest' to (x, y, z)
@@ -30,7 +30,9 @@ void *vec3f_set(Vec3f dest, f32 x, f32 y, f32 z) {
     dest[0] = x;
     dest[1] = y;
     dest[2] = z;
-    return &dest; //! warning: function returns address of local variable
+    #ifndef QOL_FIXES
+        return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Add vector 'a' to 'dest'
@@ -38,7 +40,9 @@ void *vec3f_add(Vec3f dest, Vec3f a) {
     dest[0] += a[0];
     dest[1] += a[1];
     dest[2] += a[2];
-    return &dest; //! warning: function returns address of local variable
+    #ifndef QOL_FIXES
+        return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Make 'dest' the sum of vectors a and b.
@@ -46,7 +50,9 @@ void *vec3f_sum(Vec3f dest, Vec3f a, Vec3f b) {
     dest[0] = a[0] + b[0];
     dest[1] = a[1] + b[1];
     dest[2] = a[2] + b[2];
-    return &dest; //! warning: function returns address of local variable
+    #ifndef QOL_FIXES
+        return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Multiply vector 'dest' by a
@@ -55,7 +61,9 @@ void *vec3f_mul(Vec3f dest, f32 a)
     dest[0] *= a;
     dest[1] *= a;
     dest[2] *= a;
-    return &dest; //! warning: function returns address of local variable
+    #ifndef QOL_FIXES
+        return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Copy vector src to dest
@@ -63,7 +71,9 @@ void *vec3s_copy(Vec3s dest, Vec3s src) {
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
-    return &dest; //! warning: function returns address of local variable
+    #ifndef QOL_FIXES
+        return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Set vector 'dest' to (x, y, z)
@@ -71,7 +81,9 @@ void *vec3s_set(Vec3s dest, s16 x, s16 y, s16 z) {
     dest[0] = x;
     dest[1] = y;
     dest[2] = z;
-    return &dest; //! warning: function returns address of local variable
+    #ifndef QOL_FIXES
+        return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Add vector a to 'dest'
@@ -79,7 +91,9 @@ void *vec3s_add(Vec3s dest, Vec3s a) {
     dest[0] += a[0];
     dest[1] += a[1];
     dest[2] += a[2];
-    return &dest; //! warning: function returns address of local variable
+    #ifndef QOL_FIXES
+        return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Make 'dest' the sum of vectors a and b.
@@ -87,7 +101,9 @@ void *vec3s_sum(Vec3s dest, Vec3s a, Vec3s b) {
     dest[0] = a[0] + b[0];
     dest[1] = a[1] + b[1];
     dest[2] = a[2] + b[2];
-    return &dest; //! warning: function returns address of local variable
+    #ifndef QOL_FIXES
+        return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Make 'dest' the difference of vectors a and b.
@@ -95,7 +111,9 @@ void *vec3f_dif(Vec3f dest, Vec3f a, Vec3f b) {
     dest[0] = a[0] - b[0];
     dest[1] = a[1] - b[1];
     dest[2] = a[2] - b[2];
-    return &dest; //! warning: function returns address of local variable
+    #ifndef QOL_FIXES
+        return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Convert short vector a to float vector 'dest'
@@ -103,7 +121,9 @@ void *vec3s_to_vec3f(Vec3f dest, Vec3s a) {
     dest[0] = a[0];
     dest[1] = a[1];
     dest[2] = a[2];
-    return &dest; //! warning: function returns address of local variable
+    #ifndef QOL_FIXES
+        return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /**
@@ -115,7 +135,9 @@ void *vec3f_to_vec3s(Vec3s dest, Vec3f a) {
     dest[0] = a[0] + ((a[0] > 0) ? 0.5f : -0.5f);
     dest[1] = a[1] + ((a[1] > 0) ? 0.5f : -0.5f);
     dest[2] = a[2] + ((a[2] > 0) ? 0.5f : -0.5f);
-    return &dest; //! warning: function returns address of local variable
+    #ifndef QOL_FIXES
+        return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /**
@@ -127,7 +149,9 @@ void *find_vector_perpendicular_to_plane(Vec3f dest, Vec3f a, Vec3f b, Vec3f c) 
     dest[0] = (b[1] - a[1]) * (c[2] - b[2]) - (c[1] - b[1]) * (b[2] - a[2]);
     dest[1] = (b[2] - a[2]) * (c[0] - b[0]) - (c[2] - b[2]) * (b[0] - a[0]);
     dest[2] = (b[0] - a[0]) * (c[1] - b[1]) - (c[0] - b[0]) * (b[1] - a[1]);
-    return &dest; //! warning: function returns address of local variable
+    #ifndef QOL_FIXES
+        return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Make vector 'dest' the cross product of vectors a and b.
@@ -135,18 +159,31 @@ void *vec3f_cross(Vec3f dest, Vec3f a, Vec3f b) {
     dest[0] = a[1] * b[2] - b[1] * a[2];
     dest[1] = a[2] * b[0] - b[2] * a[0];
     dest[2] = a[0] * b[1] - b[0] * a[1];
-    return &dest; //! warning: function returns address of local variable
+    #ifndef QOL_FIXES
+        return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Scale vector 'dest' so it has length 1
 void *vec3f_normalize(Vec3f dest) {
-    //! Possible division by zero
-    f32 invsqrt = 1.0f / sqrtf(dest[0] * dest[0] + dest[1] * dest[1] + dest[2] * dest[2]);
+    #ifndef QOL_FIXES
+        //! Possible division by zero
+        f32 invsqrt = 1.0f / sqrtf(dest[0] * dest[0] + dest[1] * dest[1] + dest[2] * dest[2]);
+    #else
+        // Fix the division by zero warning by multiplying by 0 when the sqrtf equation happens to equal 0
+        if (sqrtf(dest[0] * dest[0] + dest[1] * dest[1] + dest[2] * dest[2]) != 0) {
+            f32 invsqrt = 1.0f / sqrtf(dest[0] * dest[0] + dest[1] * dest[1] + dest[2] * dest[2]);
+        } else {
+            f32 invsqrt = 1.0f * 0;
+        }
+    #endif
 
     dest[0] *= invsqrt;
     dest[1] *= invsqrt;
     dest[2] *= invsqrt;
-    return &dest; //! warning: function returns address of local variable
+    #ifndef QOL_FIXES
+        return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Get length of vector 'a'
@@ -160,8 +197,6 @@ f32 vec3f_dot(Vec3f a, Vec3f b)
 {
 	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
-
-#pragma GCC diagnostic pop
 
 /// Copy matrix 'src' to 'dest'
 void mtxf_copy(Mat4 dest, Mat4 src) {

@@ -41,8 +41,8 @@ TARGET_BITS ?= 0
 BETTERCAMERA ?= 0
 # Disable no drawing distance by default
 NODRAWINGDISTANCE ?= 0
-# Disable texture fixes by default (helps with them purists)
-TEXTURE_FIX ?= 0
+# Disable QoL fixes by default (helps with them purists)
+QOL_FIXES ?= 0
 # Enable extended options menu by default
 EXT_OPTIONS_MENU ?= 1
 # Disable text-based save-files by default
@@ -582,9 +582,9 @@ ifeq ($(DISCORDRPC),1)
 endif
 
 # Check for texture fix option
-ifeq ($(TEXTURE_FIX),1)
-  CC_CHECK += -DTEXTURE_FIX
-  CFLAGS += -DTEXTURE_FIX
+ifeq ($(QOL_FIXES),1)
+  CC_CHECK += -DQOL_FIXES
+  CFLAGS += -DQOL_FIXES
 endif
 
 # Check for extended options menu option

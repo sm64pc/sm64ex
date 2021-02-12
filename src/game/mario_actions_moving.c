@@ -383,10 +383,18 @@ void update_shell_speed(struct MarioState *m) {
         m->forwardVel -= 1.0f;
     }
 
+    #ifndef QOL_FIXES
     //! No backward speed cap (shell hyperspeed)
     if (m->forwardVel > 64.0f) {
         m->forwardVel = 64.0f;
     }
+    #else
+    if (m->forwardVel > 64.0f) {
+        m->forwardVel = 64.0f;
+    } else if (m->forwardVel < -64.0f) {
+        m->forwardVel = -64.0f;
+    }
+    #endif
 
     m->faceAngle[1] =
         m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800, 0x800);
@@ -1298,6 +1306,10 @@ s32 act_crawling(struct MarioState *m) {
                 mario_set_forward_vel(m, 10.0f);
             }
             //! Possibly unintended missing break
+            // fixed in QOL_FIXES
+            #ifdef QOL_FIXES
+            break;
+            #endif
 
         case GROUND_STEP_NONE:
             align_with_floor(m);

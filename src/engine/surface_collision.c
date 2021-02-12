@@ -313,7 +313,7 @@ f32 find_ceil(f32 posX, f32 posY, f32 posZ, struct Surface **pceil) {
     s16 x, y, z;
 
     //! (Parallel Universes) Because position is casted to an s16, reaching higher
-    // float locations  can return ceilings despite them not existing there.
+    // float locations can return ceilings despite them not existing there.
     //(Dynamic ceilings will unload due to the range.)
     x = (s16) posX;
     y = (s16) posY;

@@ -75,8 +75,14 @@ void bhv_pokey_body_part_update(void) {
             //! If you kill a body part as it's expanding, the body part that
             //  was above it will instantly shrink and begin expanding in its
             //  place.
+            //  Partially fixed for now (a full fix is planned) in QOL_FIXES
+            #ifndef QOL_FIXES
             else if (o->parentObj->oPokeyBottomBodyPartSize < 1.0f
                      && o->oBehParams2ndByte + 1 == o->parentObj->oPokeyNumAliveBodyParts) {
+            #else
+            if (o->parentObj->oPokeyBottomBodyPartSize < 1.0f
+                     && o->oBehParams2ndByte + 1 == o->parentObj->oPokeyNumAliveBodyParts) {
+            #endif
                 approach_f32_ptr(&o->parentObj->oPokeyBottomBodyPartSize, 1.0f, 0.1f);
                 cur_obj_scale(o->parentObj->oPokeyBottomBodyPartSize * 3.0f);
             }

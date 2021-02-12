@@ -271,6 +271,7 @@ void seq_channel_layer_process_script(struct SequenceChannelLayer *layer) {
 
             case 0xc4: // layer_somethingon
             case 0xc5: // layer_somethingoff
+            #ifndef QOL_FIXES
                 //! copt needs a ternary:
                 //layer->continuousNotes = (cmd == 0xc4) ? TRUE : FALSE;
                 if (cmd == 0xc4) {
@@ -278,6 +279,9 @@ void seq_channel_layer_process_script(struct SequenceChannelLayer *layer) {
                 } else {
                     temp8 = FALSE;
                 }
+            #else
+                temp8 = layer->continuousNotes = (cmd == 0xc4) ? TRUE : FALSE;
+            #endif
                 layer->continuousNotes = temp8;
                 seq_channel_layer_note_decay(layer);
                 break;
@@ -427,6 +431,7 @@ l1090:
                     }
 
                     if (layer->portamento.mode != 0) {
+                        #ifndef QOL_FIXES
                         //! copt needs a ternary:
                         //usedSemitone = (layer->portamentoTargetNote < SEMITONE) ? SEMITONE : layer->portamentoTargetNote;
                         if (layer->portamentoTargetNote < SEMITONE) {
@@ -434,6 +439,9 @@ l1090:
                         } else {
                             USED_SEMITONE = layer->portamentoTargetNote;
                         }
+                        #else
+                            USED_SEMITONE = (layer->portamentoTargetNote < SEMITONE) ? SEMITONE : layer->portamentoTargetNote;
+                        #endif
 
                         if (instrument != NULL) {
                             sound = (u8) USED_SEMITONE < instrument->normalRangeLo ? &instrument->lowNotesSound

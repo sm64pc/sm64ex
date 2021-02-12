@@ -27,7 +27,12 @@ const Trajectory ccm_seg7_trajectory_penguin_race[] = {
     TRAJECTORY_POS(24, /*pos*/  1333,   761, -1733),
     TRAJECTORY_POS(25, /*pos*/  2488,   562, -2944),
     TRAJECTORY_POS(26, /*pos*/  2977,   361, -4988),
+    #ifndef QOL_FIXES
     //! missing ID
+    #else
+    //TODO: Find suitable coordinates for this
+    //TRAJECTORY_POS(27, /*pos*/     0,     0,     0),
+    #endif
     TRAJECTORY_POS(28, /*pos*/  3754,   329, -5689),
     TRAJECTORY_POS(29, /*pos*/  5805,    86, -5980),
     TRAJECTORY_POS(30, /*pos*/  6566,  -449, -4133),

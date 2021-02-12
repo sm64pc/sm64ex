@@ -1120,15 +1120,31 @@ s32 act_exit_land_save_dialog(struct MarioState *m) {
                 case -1:
                     spawn_obj_at_mario_rel_yaw(m, MODEL_BOWSER_KEY_CUTSCENE, bhvBowserKeyCourseExit, -32768);
                     //! fall through
+                    // fixed with QOL_FIXES
+                    #ifdef QOL_FIXES
+                    break;
+                    #endif
                 case 67:
                     play_sound(SOUND_ACTION_KEY_SWISH, m->marioObj->header.gfx.cameraToObject);
                     //! fall through
+                    // fixed with QOL_FIXES
+                    #ifdef QOL_FIXES
+                    break;
+                    #endif
                 case 83:
                     play_sound(SOUND_ACTION_PAT_BACK, m->marioObj->header.gfx.cameraToObject);
                     //! fall through
+                    // fixed with QOL_FIXES
+                    #ifdef QOL_FIXES
+                    break;
+                    #endif
                 case 111:
                     play_sound(SOUND_ACTION_UNKNOWN45C, m->marioObj->header.gfx.cameraToObject);
                     // no break
+                    // fixed with QOL_FIXES
+                    #ifdef QOL_FIXES
+                    break;
+                    #endif
             }
             handle_save_menu(m);
             break;
@@ -1965,10 +1981,16 @@ void generate_yellow_sparkles(s16 x, s16 y, s16 z, f32 radius) {
     spawn_object_abs_with_rot(gCurrentObject, 0, MODEL_NONE, bhvSparkleSpawn, x + offsetX, y + offsetY,
                               z + offsetZ, 0, 0, 0);
 
+    #ifndef QOL_FIXES
     //! copy paste error
     offsetX = offsetX * 4 / 3;
     offsetX = offsetY * 4 / 3;
     offsetX = offsetZ * 4 / 3;
+    #else
+    offsetX = offsetX * 4 / 3;
+    offsetY = offsetY * 4 / 3;
+    offsetZ = offsetZ * 4 / 3;
+    #endif
 
     spawn_object_abs_with_rot(gCurrentObject, 0, MODEL_NONE, bhvSparkleSpawn, x - offsetX, y - offsetY,
                               z - offsetZ, 0, 0, 0);

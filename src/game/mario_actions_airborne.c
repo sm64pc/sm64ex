@@ -68,17 +68,12 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
 
     fallHeight = m->peakHeight - m->pos[1];
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wtype-limits"
-
-    //! Never true
+    //! Only true when QOL_FIXES is set to 1
     if (m->actionState == ACT_GROUND_POUND) {
         damageHeight = 600.0f;
     } else {
         damageHeight = 1150.0f;
     }
-
-#pragma GCC diagnostic pop
 
     if (m->action != ACT_TWIRLING && m->floor->type != SURFACE_BURNING) {
         if (m->vel[1] < -55.0f) {
@@ -160,7 +155,11 @@ s32 check_horizontal_wind(struct MarioState *m) {
         if (speed > 48.0f) {
             m->slideVelX = m->slideVelX * 48.0f / speed;
             m->slideVelZ = m->slideVelZ * 48.0f / speed;
+            #ifndef QOL_FIXES
             speed = 32.0f; //! This was meant to be 48?
+            #else
+            speed = 48.0f;
+            #endif
         } else if (speed > 32.0f) {
             speed = 32.0f;
         }

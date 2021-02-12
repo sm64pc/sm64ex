@@ -291,7 +291,11 @@ struct MarioState
     /*0x0C*/ u32 action;
     /*0x10*/ u32 prevAction;
     /*0x14*/ u32 terrainSoundAddend;
+    #ifdef QOL_FIXES
+    /*0x18*/ u32 actionState;
+    #else
     /*0x18*/ u16 actionState;
+    #endif
     /*0x1A*/ u16 actionTimer;
     /*0x1C*/ u32 actionArg;
     /*0x20*/ f32 intendedMag;
@@ -329,10 +333,17 @@ struct MarioState
     /*0x9C*/ struct Controller *controller;
     /*0xA0*/ struct MarioAnimation *animation;
     /*0xA4*/ u32 collidedObjInteractTypes;
+    #ifndef QOL_FIXES
     /*0xA8*/ s16 numCoins;
     /*0xAA*/ s16 numStars;
     /*0xAC*/ s8 numKeys; // Unused key mechanic
     /*0xAD*/ s8 numLives;
+    #else
+    /*0xA8*/ u64 numCoins;
+    /*0xAA*/ u64 numStars;
+    /*0xAC*/ u64 numKeys; // Unused key mechanic
+    /*0xAD*/ u64 numLives;
+    #endif
     /*0xAE*/ s16 health;
     /*0xB0*/ s16 unkB0;
     /*0xB2*/ u8 hurtCounter;

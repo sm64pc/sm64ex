@@ -112,7 +112,7 @@ void bhv_bowling_ball_initializeLoop(void) {
 
     bowling_ball_set_waypoints();
 
-    //! Uninitialzed parameter, but the parameter is unused in the called function
+    //! Uninitialized parameter, but the parameter is unused in the called function
     sp1c = cur_obj_follow_path(sp1c);
 
     o->oMoveAngleYaw = o->oPathedTargetYaw;

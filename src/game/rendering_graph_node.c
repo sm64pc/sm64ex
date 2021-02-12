@@ -760,8 +760,14 @@ static int obj_is_in_view(struct GraphNodeObject *node, Mat4 matrix) {
     hScreenEdge *= GFX_DIMENSIONS_ASPECT_RATIO;
 
     if (geo != NULL && geo->type == GRAPH_NODE_TYPE_CULLING_RADIUS) {
+        // I don't get it either, so removing the cast for QOL_FIXES
+        #ifndef QOL_FIXES
         cullingRadius =
             (f32)((struct GraphNodeCullingRadius *) geo)->cullingRadius; //! Why is there a f32 cast?
+        #else
+        cullingRadius =
+            ((struct GraphNodeCullingRadius *) geo)->cullingRadius;
+        #endif
     } else {
         cullingRadius = 300;
     }

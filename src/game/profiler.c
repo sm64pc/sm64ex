@@ -79,12 +79,22 @@ void draw_profiler_bar(OSTime clockBase, OSTime clockStart, OSTime clockEnd, s16
     //! I believe this is supposed to cap rectX1 and rectX2 to 320, but the
     //  code seems to use the wrong variables... it's possible that the variable
     //  names were very similar within a single letter.
+    // We work based off this hunch in QOL_FIXES
+    #ifndef QOL_FIXES
     if (rectX1 > 319) {
         clockStart = 319;
     }
     if (rectX2 > 319) {
         clockEnd = 319;
     }
+    #else
+    if (rectX1 > 320) {
+        clockStart = 320;
+    }
+    if (rectX2 > 320) {
+        clockEnd = 320;
+    }
+    #endif
 
     // perform the render if start is less than end. in most cases, it should be.
     if (rectX1 < rectX2) {

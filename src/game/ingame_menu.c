@@ -414,7 +414,13 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
             case DIALOG_CHAR_LOWER_A_UMLAUT:
                 render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('a'), str[strPos] & 0xF);
                 break;
+            #ifndef QOL_FIXES
             case DIALOG_CHAR_UPPER_A_UMLAUT: // @bug grave and circumflex (0x64-0x65) are absent here
+            #else
+            case DIALOG_CHAR_UPPER_A_GRAVE:
+            case DIALOG_CHAR_UPPER_A_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_A_UMLAUT:
+            #endif
                 render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('A'), str[strPos] & 0xF);
                 break;
             case DIALOG_CHAR_LOWER_E_GRAVE:
@@ -434,14 +440,25 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
             case DIALOG_CHAR_LOWER_U_UMLAUT:
                 render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('u'), str[strPos] & 0xF);
                 break;
+            #ifndef QOL_FIXES
             case DIALOG_CHAR_UPPER_U_UMLAUT: // @bug grave and circumflex (0x84-0x85) are absent here
+            #else
+            case DIALOG_CHAR_UPPER_U_GRAVE:
+            case DIALOG_CHAR_UPPER_U_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_U_UMLAUT:
+            #endif
                 render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('U'), str[strPos] & 0xF);
                 break;
             case DIALOG_CHAR_LOWER_O_CIRCUMFLEX:
             case DIALOG_CHAR_LOWER_O_UMLAUT:
                 render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('o'), str[strPos] & 0xF);
                 break;
+            #ifndef QOL_FIXES
             case DIALOG_CHAR_UPPER_O_UMLAUT: // @bug circumflex (0x95) is absent here
+            #else
+            case DIALOG_CHAR_UPPER_O_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_O_UMLAUT:
+            #endif
                 render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('O'), str[strPos] & 0xF);
                 break;
             case DIALOG_CHAR_LOWER_I_CIRCUMFLEX:
@@ -587,7 +604,7 @@ void print_hud_lut_string(s8 hudLUT, s16 x, s16 y, const u8 *str) {
                 break;
             default:
 #endif
-#if defined(VERSION_US) || defined(VERSION_SH)
+#if defined(VERSION_US) || defined(VERSION_SH) || !defined(QOL_FIXES)
         if (str[strPos] == GLOBAL_CHAR_SPACE) {
             if (0) //! dead code
             {
@@ -751,13 +768,22 @@ void handle_menu_scrolling(s8 scrollDirection, s8 *currentIndex, s8 minIndex, s8
     }
 
     if (((index ^ gMenuHoldKeyIndex) & index) == 2) {
+        #ifndef QOL_FIXES
         if (currentIndex[0] == maxIndex) {
             //! Probably originally a >=, but later replaced with an == and an else statement.
+            // QOL_FIXES restores the original behavior of this if statement
             currentIndex[0] = maxIndex;
         } else {
             play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
             currentIndex[0]++;
         }
+        #else
+        // It makes more sense for this if statement to have > instead of >= here
+        if (currentIndex[0] > maxIndex) {
+            play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
+            currentIndex[0]++;
+        }
+        #endif
     }
 
     if (((index ^ gMenuHoldKeyIndex) & index) == 1) {
@@ -806,6 +832,7 @@ s16 get_str_x_pos_from_center_scale(s16 centerPos, u8 *str, f32 scale) {
     f32 spacesWidth = 0.0f;
 
     while (str[strPos] != DIALOG_CHAR_TERMINATOR) {
+        #if !defined(QOL_FIXES) && defined(VERSION_EU)
         //! EU checks for dakuten and handakuten despite dialog code unable to handle it
         if (str[strPos] == DIALOG_CHAR_SPACE) {
             spacesWidth += 1.0;
@@ -813,6 +840,7 @@ s16 get_str_x_pos_from_center_scale(s16 centerPos, u8 *str, f32 scale) {
                    && str[strPos] != DIALOG_CHAR_PERIOD_OR_HANDAKUTEN) {
             charsWidth += 1.0;
         }
+        #endif
         strPos++;
     }
     // return the x position of where the string starts as half the string's
@@ -1551,12 +1579,16 @@ void handle_special_dialog_text(s16 dialogID) { // dialog ID tables, in order
     // Red Switch, Green Switch, Blue Switch, 100 coins star, Bowser Red Coin Star
     s16 dialogStarSound[] = { 10, 11, 12, 13, 14 };
     // King Bob-omb (Start), Whomp (Defeated), King Bob-omb (Defeated, missing in JP), Eyerock (Defeated), Wiggler (Defeated)
+#ifndef QOL_FIXES
 #if BUGFIX_KING_BOB_OMB_FADE_MUSIC
     s16 dialogBossStop[] = { 17, 115, 116, 118, 152 };
 #else
     //! @bug JP misses King Bob-omb defeated dialog "116", meaning that the boss music will still
     //! play after King Bob-omb is defeated until BOB loads it's music after the star cutscene
     s16 dialogBossStop[] = { 17, 115, 118, 152 };
+#endif
+#else
+    s16 dialogBossStop[] = { 17, 115, 116, 118, 152 };
 #endif
     s16 i;
 
@@ -2780,8 +2812,11 @@ void print_hud_course_complete_coins(s16 x, s16 y) {
         if ((gCourseDoneMenuTimer & 1) || gHudDisplay.coins > 70) {
             gCourseCompleteCoins++;
             play_sound(SOUND_MENU_YOSHI_GAIN_LIVES, gDefaultSoundArgs);
-
+            #ifndef QOL_FIXES
             if (gCourseCompleteCoins == 50 || gCourseCompleteCoins == 100 || gCourseCompleteCoins == 150) {
+            #else
+            if (gCourseCompleteCoins % 50 == 0) {
+            #endif
                 play_sound(SOUND_GENERAL_COLLECT_1UP, gDefaultSoundArgs);
                 gMarioState[0].numLives++;
             }
@@ -3074,6 +3109,7 @@ s16 render_menus_and_dialogs() {
 
     if (gMenuMode != -1) {
         switch (gMenuMode) {
+            #ifndef QOL_FIXES
             case 0:
                 mode = render_pause_courses_and_castle();
                 break;
@@ -3086,6 +3122,16 @@ s16 render_menus_and_dialogs() {
             case 3:
                 mode = render_course_complete_screen();
                 break;
+            #else
+            case 0:
+            case 1:
+                mode = render_pause_courses_and_castle();
+                break;
+            case 2:
+            case 3:
+                mode = render_course_complete_screen();
+                break;
+            #endif
         }
 
         gDialogColorFadeTimer = (s16) gDialogColorFadeTimer + 0x1000;

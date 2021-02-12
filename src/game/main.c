@@ -109,13 +109,14 @@ void unknown_main_func(void) {
     osSetTime(time);
     osMapTLB(0, b, NULL, 0, 0, 0);
     osUnmapTLBAll();
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wnonnull"
+#ifndef QOL_FIXES
     sprintf(NULL, NULL);
-#pragma GCC diagnostic pop
+#else
+    sprintf("", "");
+#endif
 }
 
+#ifndef QOL_FIXES
 void stub_main_1(void) {
 }
 
@@ -124,6 +125,7 @@ void stub_main_2(void) {
 
 void stub_main_3(void) {
 }
+#endif
 
 void setup_mesg_queues(void) {
     osCreateMesgQueue(&gDmaMesgQueue, gDmaMesgBuf, ARRAY_COUNT(gDmaMesgBuf));

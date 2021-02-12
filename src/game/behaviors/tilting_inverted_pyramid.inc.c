@@ -90,11 +90,16 @@ void bhv_tilting_inverted_pyramid_loop(void) {
         linear_mtxf_mul_vec3f(*transform, posBeforeRotation, dist);
 
         dx = gMarioObject->oPosX - o->oPosX;
+        #ifndef QOL_FIXES
         dy = 500.0f;
+        #else
+        dy = gMarioObject->oPosY - o->oPosY;
+        #endif
         dz = gMarioObject->oPosZ - o->oPosZ;
         d = sqrtf(dx * dx + dy * dy + dz * dz);
     
         //! Always true since dy = 500, making d >= 500.
+        // fixed above in QOL_FIXES
         if (d != 0.0f) {
             // Normalizing
             d = 1.0 / d;

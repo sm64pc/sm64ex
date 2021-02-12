@@ -57,6 +57,10 @@ int detect_object_hitbox_overlap(struct Object *a, struct Object *b) {
     }
 
     //! no return value
+    // fixed in QOL_FIXES
+    #ifdef QOL_FIXES
+    return 0;
+    #endif
 }
 
 int detect_object_hurtbox_overlap(struct Object *a, struct Object *b) {
@@ -89,6 +93,10 @@ int detect_object_hurtbox_overlap(struct Object *a, struct Object *b) {
     }
 
     //! no return value
+    // fixed in QOL_FIXES
+    #ifdef QOL_FIXES
+    return 0;
+    #endif
 }
 
 void clear_object_collision(struct Object *a) {

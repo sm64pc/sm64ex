@@ -1,6 +1,8 @@
 #include <ultra64.h>
 #include <stdbool.h>
-
+#ifdef QOL_FIXES
+#include <limits.h>
+#endif
 #include "sm64.h"
 #include "seq_ids.h"
 #include "dialog_ids.h"
@@ -907,7 +909,7 @@ void update_hud_values(void) {
                 play_sound(coinSound, gMarioState->marioObj->header.gfx.cameraToObject);
             }
         }
-
+#ifndef QOL_FIXES
         if (gMarioState->numLives > 100) {
             gMarioState->numLives = 100;
         }
@@ -925,7 +927,21 @@ void update_hud_values(void) {
             gMarioState->numLives = (s8) 999; //! Wrong variable
         }
 #endif
+#else
+        if (gMarioState->numLives > ULLONG_MAX) {
+            gMarioState->numLives = ULLONG_MAX;
+        }
 
+        if (gMarioState->numKeys > ULLONG_MAX) {
+            gMarioState->numKeys = ULLONG_MAX;
+        }
+
+        if (gMarioState->numCoins > ULLONG_MAX) {
+            gMarioState->numCoins = ULLONG_MAX;
+        }
+
+        gHudDisplay.coins = gMarioState->numCoins;
+#endif
         gHudDisplay.stars = gMarioState->numStars;
         gHudDisplay.lives = gMarioState->numLives;
         gHudDisplay.keys = gMarioState->numKeys;
@@ -1069,20 +1085,32 @@ void level_set_transition(s16 length, void (*updateFunction)(s16 *)) {
  * Play the transition and then return to normal play mode.
  */
 s32 play_mode_change_area(void) {
+#ifndef QOL_FIXES
     //! This maybe was supposed to be sTransitionTimer == -1? sTransitionUpdate
     // is never set to -1.
     if (sTransitionUpdate == (void (*)(s16 *)) - 1) {
+#else
+    if (sTransitionUpdate == -1) {
+#endif
         update_camera(gCurrentArea->camera);
     } else if (sTransitionUpdate != NULL) {
         sTransitionUpdate(&sTransitionTimer);
     }
 
+#ifndef QOL_FIXES
     if (sTransitionTimer > 0) {
+#else
+    if (sTransitionTimer >= 0) {
+#endif
         sTransitionTimer -= 1;
     }
 
+#ifndef QOL_FIXES
     //! If sTransitionTimer is -1, this will miss.
     if (sTransitionTimer == 0) {
+#else
+    if (sTransitionTimer <= 0) {
+#endif
         sTransitionUpdate = NULL;
         set_play_mode(PLAY_MODE_NORMAL);
     }
@@ -1098,8 +1126,12 @@ s32 play_mode_change_level(void) {
         sTransitionUpdate(&sTransitionTimer);
     }
 
+#ifndef QOL_FIXES
     //! If sTransitionTimer is -1, this will miss.
     if (--sTransitionTimer == -1) {
+#else
+    if (sTransitionTimer <= -1) {
+#endif
         gHudDisplay.flags = HUD_DISPLAY_NONE;
         sTransitionTimer = 0;
         sTransitionUpdate = NULL;

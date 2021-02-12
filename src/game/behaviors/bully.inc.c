@@ -121,8 +121,12 @@ void bully_act_back_up(void) {
     //  will be stuck in BULLY_ACT_BACK_UP forever until Mario hits it or its death
     //  conditions are activated. However because its angle is set to its facing angle,
     //  it will walk forward instead of backing up.
-
+    //  A potential fix for this is used in QOL_FIXES.
+    #ifndef QOL_FIXES
     if (o->oTimer == 15) {
+    #else
+    if (o->oTimer >= 15) {
+    #endif
         o->oMoveAngleYaw = o->oFaceAngleYaw;
         o->oFlags |= 0x8; /* bit 3 */
         o->oAction = BULLY_ACT_PATROL;

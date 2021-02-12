@@ -488,10 +488,18 @@ void save_file_collect_star_or_key(s16 coinScore, s16 starIndex) {
     if (courseIndex >= 0 && courseIndex < COURSE_STAGES_COUNT) {
         //! Compares the coin score as a 16 bit value, but only writes the 8 bit
         // truncation. This can allow a high score to decrease.
-
+        // Because the coin score value was increased to a u64 in QOL_FIXES, we
+        // must fix this a different way than we would otherwise
+        
+        #ifndef QOL_FIXES
         if (coinScore > ((u16) save_file_get_max_coin_score(courseIndex) & 0xFFFF)) {
             sUnusedGotGlobalCoinHiScore = 1;
         }
+        #else
+        if (coinScore > ((u64) save_file_get_max_coin_score(courseIndex) & 0xFFFFFFFFFFFFFFFFL)) {
+            sUnusedGotGlobalCoinHiScore = 1;
+        }
+        #endif
 
         if (coinScore > save_file_get_course_coin_score(fileIndex, courseIndex)) {
             gSaveBuffer.files[fileIndex][0].courseCoinScores[courseIndex] = coinScore;

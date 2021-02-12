@@ -6,9 +6,14 @@ void bhv_squishable_platform_loop(void) {
 }
 
 void bhv_bitfs_sinking_platform_loop(void) {
+    // remove the conversion entirely in QOL_FIXES
+    #ifndef QOL_FIXES
     o->oPosY -=
         sins(o->oPlatformTimer)
         * 0.58; //! f32 double conversion error accumulates on Wii VC causing the platform to rise up
+    #else
+    o->oPosY -= sins(o->oPlatformTimer) * 0.58f;
+    #endif
     o->oPlatformTimer += 0x100;
 }
 

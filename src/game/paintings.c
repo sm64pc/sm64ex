@@ -578,7 +578,16 @@ void painting_update_ripple_state(struct Painting *painting) {
         //! 16777216 (1 << 24), at which point it will freeze (due to floating-point
         //! imprecision?) and the painting will stop rippling. This happens to HMC, DDD, and
         //! CotMC. This happens on Wii VC. Untested on N64 and Wii U VC.
+        // Work around this in QOL_FIXES by wrapping the timer value itself (this value)
+        // around to 0 and back again whenever it hits 16777216 (1 << 24).
+        #ifndef QOL_FIXES
         painting->rippleTimer += 1.0;
+        #else
+        if (painting->rippleTimer >= 16777216.0) {
+            painting->rippleTimer = 0.0;
+        } else {
+            painting->rippleTimer += 1.0;
+        }
     }
     if (painting->rippleTrigger == RIPPLE_TRIGGER_PROXIMITY) {
         // if the painting is barely rippling, make it stop rippling

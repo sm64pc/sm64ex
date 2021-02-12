@@ -668,10 +668,16 @@ f32 calc_y_to_curr_floor(f32 *posOff, f32 posMul, f32 posBound, f32 *focOff, f32
     UNUSED s32 filler;
 
     if (!(sMarioCamState->action & ACT_FLAG_METAL_WATER)) {
+        #ifndef QOL_FIXES
         //! @bug this should use sMarioGeometry.waterHeight
         if (floorHeight < (waterHeight = find_water_level(sMarioCamState->pos[0], sMarioCamState->pos[2]))) {
             floorHeight = waterHeight;
         }
+        #else
+        if (floorHeight < (sMarioGeometry.waterHeight = find_water_level(sMarioCamState->pos[0], sMarioCamState->pos[2]))) {
+            floorHeight = sMarioGeometry.waterHeight;
+        }
+        #endif
     }
 
     if (sMarioCamState->action & ACT_FLAG_ON_POLE) {
@@ -1578,9 +1584,11 @@ s32 update_boss_fight_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
     }
 
     focusDistance = calc_abs_dist(sMarioCamState->pos, secondFocus) * 1.6f;
+    #ifndef QOL_FIXES
     if (focusDistance < 800.f) {
         focusDistance = 800.f;
     }
+    #endif
     if (focusDistance > 5000.f) {
         focusDistance = 5000.f;
     }
@@ -1609,9 +1617,18 @@ s32 update_boss_fight_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
         switch (gCurrLevelArea) {
             case AREA_BOB:
                 pos[1] += 125.f;
+                #ifndef QOL_FIXES
                 //! fall through, makes the BoB boss fight camera move up twice as high as it should
+                #else
+                break;
+                #endif
             case AREA_WF:
                 pos[1] += 125.f;
+                // what if there's other bosses that have their boss fight cameras set here by mods?
+                // fix them with QOL_FIXES
+                #ifdef QOL_FIXES
+                break;
+                #endif
         }
     }
 
@@ -1639,10 +1656,14 @@ s32 update_boss_fight_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
                                                                      : -gMarioStates[0].angleVel[1]);
     }
 
+    #ifdef QOL_FIXES
     //! Unnecessary conditional, focusDistance is already bounded to 800
+    // Under QOL_FIXES, this conditional takes effect instead of the other conditional that sets
+    // focusDistance's minimum bound to 800
     if (focusDistance < 400.f) {
         focusDistance = 400.f;
     }
+    #endif
 
     // Set C-Down distance and pitch.
     // C-Down will essentially double the distance from the center.
@@ -1781,10 +1802,12 @@ s32 update_behind_mario_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
     // Focus on Mario
     vec3f_copy(focus, sMarioCamState->pos);
     c->focus[1] += focYOff;
+    #ifndef QOL_FIXES
     //! @bug unnecessary
     dist = calc_abs_dist(focus, pos);
     //! @bug unnecessary
     pitch = calculate_pitch(focus, pos);
+    #endif
     vec3f_get_dist_and_angle(focus, pos, &dist, &pitch, &yaw);
     if (dist > maxDist) {
         dist = maxDist;
@@ -2195,12 +2218,16 @@ s16 update_default_camera(struct Camera *c) {
         unusedFreeRoamWallYaw = avoidYaw;
         sAvoidYawVel = yaw;
         sStatusFlags |= CAM_FLAG_COLLIDED_WITH_WALL;
+        #ifndef QOL_FIXES
         //! Does nothing
         vec3f_get_dist_and_angle(sMarioCamState->pos, cPos, &xzDist, &tempPitch, &tempYaw);
+        #endif
         // Rotate to avoid the wall
         approach_s16_asymptotic_bool(&yaw, avoidYaw, 10);
+        #ifndef QOL_FIXES
         //! Does nothing
         vec3f_set_dist_and_angle(sMarioCamState->pos, cPos, xzDist, tempPitch, tempYaw);
+        #endif
         sAvoidYawVel = (sAvoidYawVel - yaw) / 0x100;
     } else {
         if (gMarioStates[0].forwardVel == 0.f) {
@@ -2455,8 +2482,10 @@ s32 update_spiral_stairs_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
     }
     focYaw += sSpiralStairsYawOffset;
     posYaw = focYaw;
+    #ifndef QOL_FIXES
     //! @bug unnecessary
     camera_approach_s16_symmetric_bool(&posYaw, focYaw, 0x1000);
+    #endif
 
     vec3f_set_dist_and_angle(sFixedModeBasePosition, cPos, 300.f, 0, posYaw);
 
@@ -2924,14 +2953,17 @@ void update_lakitu(struct Camera *c) {
     if (gCameraMovementFlags & CAM_MOVE_PAUSE_SCREEN) {
     } else {
         if (c->cutscene) {
+        #ifndef QOL_FIXES
         }
         if (TRUE) {
+        #endif
             newYaw = next_lakitu_state(newPos, newFoc, c->pos, c->focus, sOldPosition, sOldFocus,
                                        c->nextYaw);
             set_or_approach_s16_symmetric(&c->yaw, newYaw, sYawSpeed);
             sStatusFlags &= ~CAM_FLAG_UNUSED_CUTSCENE_ACTIVE;
         } else {
             //! dead code, moved to next_lakitu_state()
+            // no longer dead in QOL_FIXES
             vec3f_copy(newPos, c->pos);
             vec3f_copy(newFoc, c->focus);
         }
@@ -4819,13 +4851,22 @@ s32 offset_yaw_outward_radial(struct Camera *c, s16 areaYaw) {
     }
     // When the final yaw is out of [-60,60] degrees, approach yawGoal faster than dYaw will ever be,
     // making the camera lock in one direction until yawGoal drops below 60 (or Mario presses a C button)
+    // QOL_FIXES makes an attempt to fix this
     if (yaw < -DEGREES(60)) {
+        #ifndef QOL_FIXES
         //! Maybe they meant to reverse yawGoal's sign?
         camera_approach_s16_symmetric_bool(&yaw, -yawGoal, 0x200);
+        #else
+        camera_approach_s16_symmetric_bool(&yaw, yawGoal, 0x200);
+        #endif
     }
     if (yaw > DEGREES(60)) {
+        #ifndef QOL_FIXES
         //! Maybe they meant to reverse yawGoal's sign?
         camera_approach_s16_symmetric_bool(&yaw, yawGoal, 0x200);
+        #else
+        camera_approach_s16_symmetric_bool(&yaw, -yawGoal, 0x200);
+        #endif
     }
     return yaw;
 }
@@ -4897,7 +4938,11 @@ void play_sound_if_cam_switched_to_lakitu_or_mario(void) {
  * Handles input for radial, outwards radial, parallel tracking, and 8 direction mode.
  */
 s32 radial_camera_input(struct Camera *c, UNUSED f32 unused) {
+    #ifndef QOL_FIXES
     s16 dummy;
+    #else
+    s16 dummy = 0;
+    #endif
 
     if ((gCameraMovementFlags & CAM_MOVE_ENTERED_ROTATE_SURFACE) || !(gCameraMovementFlags & CAM_MOVE_ROTATE)) {
 
@@ -4996,6 +5041,7 @@ s32 radial_camera_input(struct Camera *c, UNUSED f32 unused) {
     }
 
     //! returning uninitialized variable
+    // fixed in QOL_FIXES
     return dummy;
 }
 
@@ -5386,8 +5432,12 @@ void offset_rotated(Vec3f dst, Vec3f from, Vec3f to, Vec3s rotation) {
     vec3f_copy(unusedCopy, from);
 
     // First rotate the direction by rotation's pitch
+    #ifndef QOL_FIXES
     //! The Z axis is flipped here.
     pitchRotated[2] = -(to[2] * coss(rotation[0]) - to[1] * sins(rotation[0]));
+    #else
+    pitchRotated[2] =   to[2] * coss(rotation[0]) - to[1] * sins(rotation[0]);
+    #endif
     pitchRotated[1] =   to[2] * sins(rotation[0]) + to[1] * coss(rotation[0]);
     pitchRotated[0] =   to[0];
 
@@ -6310,8 +6360,10 @@ struct CameraTrigger sCamCastle[] = {
     { 1, cam_castle_close_mode, -2304, -264, -4072, 140, 150, 140, 0 },
     { 1, cam_castle_close_mode, -2304, 145, -1344, 140, 150, 140, 0 },
     { 1, cam_castle_enter_lobby, -2304, 145, -802, 140, 150, 140, 0 },
+    #ifndef QOL_FIXES
     //! Sets the camera mode when leaving secret aquarium
     { 1, cam_castle_close_mode, 2816, 1200, -256, 100, 100, 100, 0 },
+    #endif
     { 1, cam_castle_close_mode, 256, -161, -4226, 140, 150, 140, 0 },
     { 1, cam_castle_close_mode, 256, 145, -1344, 140, 150, 140, 0 },
     { 1, cam_castle_enter_lobby, 256, 145, -802, 140, 150, 140, 0 },
@@ -6333,8 +6385,10 @@ struct CameraTrigger sCamCastle[] = {
     { 1, cam_castle_close_mode, -3393, 350, -793, 140, 150, 140, 0x4000 },
     { 1, cam_castle_enter_lobby, -2851, 350, -792, 140, 150, 140, 0x4000 },
     { 1, cam_castle_enter_lobby, 803, 350, -228, 140, 150, 140, -0x4000 },
+    #ifndef QOL_FIXES
     //! Duplicate camera trigger outside JRB door
     { 1, cam_castle_enter_lobby, 803, 350, -228, 140, 150, 140, -0x4000 },
+    #endif
     { 1, cam_castle_close_mode, 1345, 350, -229, 140, 150, 140, 0x4000 },
     { 1, cam_castle_close_mode, -946, -929, 622, 300, 150, 300, 0 },
     { 2, cam_castle_look_upstairs, -205, 1456, 2508, 210, 928, 718, 0 },
@@ -6590,6 +6644,7 @@ s16 camera_course_processing(struct Camera *c) {
                                   sCameraTriggers[level][b].boundsY,
                                   sCameraTriggers[level][b].boundsZ);
 
+                #ifndef QOL_FIXES
                 // Check if Mario is inside the bounds
                 if (is_pos_in_bounds(sMarioCamState->pos, center, bounds,
                                                    sCameraTriggers[level][b].boundsYaw) == TRUE) {
@@ -6600,6 +6655,15 @@ s16 camera_course_processing(struct Camera *c) {
                         insideBounds = TRUE;
                     }
                 }
+                #else
+                if (!(sStatusFlags & CAM_FLAG_BLOCK_AREA_PROCESSING)) {
+                    if (is_pos_in_bounds(sMarioCamState->pos, center, bounds,
+                                                   sCameraTriggers[level][b].boundsYaw) == TRUE) {
+                        sCameraTriggers[level][b].event(c);
+                        insideBounds = TRUE;
+                    }
+                }
+                #endif
             }
 
             if ((sCameraTriggers[level])[b].area == -1) {
@@ -6705,8 +6769,13 @@ s16 camera_course_processing(struct Camera *c) {
                 break;
 
             case AREA_DDD_WHIRLPOOL:
+                #ifndef QOL_FIXES
                 //! @bug this does nothing
                 gLakituState.defMode = CAMERA_MODE_OUTWARD_RADIAL;
+                #else
+                // maybe the above was supposed to be the following instead
+                set_mode_if_not_set_by_surface(c, CAMERA_MODE_OUTWARD_RADIAL);
+                #endif
                 break;
 
             case AREA_DDD_SUB:
@@ -6722,8 +6791,12 @@ s16 camera_course_processing(struct Camera *c) {
                         }
                     }
                 }
+                #ifndef QOL_FIXES
                 //! @bug this does nothing
                 gLakituState.defMode = CAMERA_MODE_FREE_ROAM;
+                #else
+                // maybe the above was supposed to be the following instead
+                set_mode_if_not_set_by_surface(c, CAMERA_MODE_FREE_ROAM);
                 break;
         }
     }
@@ -7035,7 +7108,11 @@ void copy_spline_segment(struct CutsceneSplinePoint dst[], struct CutsceneSpline
             init_spline_point(&dst[i], src[j].index, src[j].speed, src[j].point);
             i += 1;
             j += 1;
+        #ifndef QOL_FIXES
         } while ((src[j].index != -1) && (src[j].index != -1)); //! same comparison performed twice
+        #else
+        } while ((src[j].index != -1));
+        #endif
     } while (j > 16);
 
     // Create the end of the spline by duplicating the last point
@@ -7480,9 +7557,14 @@ BAD_RETURN(s32) cutscene_ending_kiss_here_we_go(struct Camera *c) {
     set_fov_function(CAM_FOV_DEFAULT);
     vec3f_set(foc, 233.f, 1068.f, -1298.f);
     vec3f_set(pos, -250.f, 966.f, -1111.f);
+    #ifndef QOL_FIXES
     //! another double typo
     approach_vec3f_asymptotic(c->pos, pos, 0.2, 0.1f, 0.2f);
     approach_vec3f_asymptotic(c->focus, foc, 0.2, 0.1f, 0.2f);
+    #else
+    approach_vec3f_asymptotic(c->pos, pos, 0.2f, 0.1f, 0.2f);
+    approach_vec3f_asymptotic(c->focus, foc, 0.2f, 0.1f, 0.2f);
+    #endif
 }
 
 /**
@@ -9233,10 +9315,14 @@ BAD_RETURN(s32) cutscene_exit_bowser_succ_focus_left(UNUSED struct Camera *c) {
  * The shake lasts 32 frames.
  */
 BAD_RETURN(s32) cutscene_exit_bowser_key_toss_shake(struct Camera *c) {
+    #ifndef QOL_FIXES
     //! Unnecessary check.
     if (c->cutscene == CUTSCENE_EXIT_BOWSER_SUCC) {
         set_camera_pitch_shake(0x800, 0x40, 0x800);
     }
+    #else
+    set_camera_pitch_shake(0x800, 0x40, 0x800);
+    #endif
 }
 
 /**
@@ -10347,7 +10433,12 @@ BAD_RETURN(s32) cutscene_door_fix_cam(struct Camera *c) {
  */
 BAD_RETURN(s32) cutscene_door_loop(struct Camera *c) {
     //! bitwise AND instead of boolean
+    // fixed with QOL_FIXES
+    #ifndef QOL_FIXES
     if ((sMarioCamState->action != ACT_PULLING_DOOR) & (sMarioCamState->action != ACT_PUSHING_DOOR)) {
+    #else
+    if ((sMarioCamState->action != ACT_PULLING_DOOR) && (sMarioCamState->action != ACT_PUSHING_DOOR)) {
+    #endif
         gCutsceneTimer = CUTSCENE_STOP;
         c->cutscene = 0;
     }
@@ -10366,11 +10457,15 @@ BAD_RETURN(s32) cutscene_door_move_behind_mario(struct Camera *c) {
     vec3s_set(sCutsceneVars[0].angle, 0, sMarioCamState->faceAngle[1] + doorRotation, 0);
     vec3f_set(camOffset, 0.f, 125.f, 250.f);
 
+    #ifndef QOL_FIXES
     if (doorRotation == 0) { //! useless code
         camOffset[0] = 0.f;
     } else {
         camOffset[0] = 0.f;
     }
+    #else
+        camOffset[0] = 0.f;
+    #endif
 
     offset_rotated(c->pos, sMarioCamState->pos, camOffset, sCutsceneVars[0].angle);
 }
@@ -11306,9 +11401,15 @@ void play_cutscene(struct Camera *c) {
 #undef CUTSCENE
 
     if ((cutsceneDuration != 0) && !(gCutsceneTimer & CUTSCENE_STOP)) {
+        #ifndef QOL_FIXES
         //! @bug This should check for 0x7FFF (CUTSCENE_LOOP)
         //! instead, cutscenes that last longer than 0x3FFF frames will never end on their own
+        // fixed with QOL_FIXES
+        #ifndef QOL_FIXES
         if (gCutsceneTimer < 0x3FFF) {
+        #else
+        if (gCutsceneTimer < CUTSCENE_LOOP) {
+        #endif
             gCutsceneTimer += 1;
         }
         //! Because gCutsceneTimer is often set to 0x7FFF (CUTSCENE_LOOP), this conditional can only
@@ -11533,6 +11634,11 @@ Gfx *geo_camera_fov(s32 callContext, struct GraphNode *g, UNUSED void *context) 
                 approach_fov_60(marioState);
                 break;
             //! No default case
+            // fixed by QOL_FIXES
+            #ifdef QOL_FIXES
+            default:
+                break;
+            #endif
         }
     }
 

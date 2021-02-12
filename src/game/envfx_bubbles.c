@@ -348,16 +348,18 @@ s32 envfx_init_bubble(s32 mode) {
     bzero(gEnvFxBubbleConfig, sizeof(gEnvFxBubbleConfig));
 
     if (mode == ENVFX_LAVA_BUBBLES) {
+    #ifndef QOL_FIXES
         //! Dead code
         if (0) {
         }
-
+    #endif
         for (i = 0; i < sBubbleParticleCount; i++) {
             (gEnvFxBuffer + i)->animFrame = random_float() * 7.0f;
         }
-
+    #ifndef QOL_FIXES
         if (0) {
         }
+    #endif
     }
 
     gEnvFxMode = mode;

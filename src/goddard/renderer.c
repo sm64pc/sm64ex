@@ -492,7 +492,7 @@ ALIGNED8 static u8 gd_texture_sparkle_4[] = {
 
 //! No reference to this texture. Two DL's uses the same previous texture
 //  instead of using this texture.
-// Fixed via setting TEXTURE_FIX to 1.
+// Fixed via setting QOL_FIXES to 1.
 ALIGNED8 static u8 gd_texture_sparkle_5[] = {
 #include "textures/intro_raw/sparkle_5.rgba16.inc.c"
 };
@@ -569,7 +569,7 @@ static Gfx gd_dl_red_sparkle_4[] = {
     gsSPBranchList(gd_dl_sparkle),
 };
 
-#ifndef TEXTURE_FIX
+#ifndef QOL_FIXES
 static Gfx gd_dl_red_sparkle_4_dup[] ={
     gsDPPipeSync(),
     gsSPDisplayList(gd_dl_sparkle_red_color),
@@ -621,7 +621,7 @@ static Gfx gd_dl_silver_sparkle_4[] = {
     gsSPBranchList(gd_dl_sparkle),
 };
 
-#ifndef TEXTURE_FIX
+#ifndef QOL_FIXES
 static Gfx gd_dl_silver_sparkle_4_dup[] = {
     gsDPPipeSync(),
     gsSPDisplayList(gd_dl_sparkle_white_color),
@@ -649,7 +649,7 @@ static Gfx *gd_red_sparkle_dl_array[] = {
     gd_dl_red_sparkle_1,
     gd_dl_red_sparkle_0,
     gd_dl_red_sparkle_0,
-#ifndef TEXTURE_FIX
+#ifndef QOL_FIXES
     gd_dl_red_sparkle_4_dup,
     gd_dl_red_sparkle_4_dup,
 #else
@@ -669,7 +669,7 @@ static Gfx *gd_silver_sparkle_dl_array[] = {
     gd_dl_silver_sparkle_1,
     gd_dl_silver_sparkle_0,
     gd_dl_silver_sparkle_0,
-#ifndef TEXTURE_FIX
+#ifndef QOL_FIXES
     gd_dl_silver_sparkle_4_dup,
     gd_dl_silver_sparkle_4_dup,
 #else
@@ -931,7 +931,10 @@ void gd_printf(const char *format, ...) {
                         csr++;
                         *csr = '\0';
                         break;
+                        // two breaks here? Why? QOL_FIXES removes this one
+                        #ifndef QOL_FIXES
                         break; // needed to match
+                        #endif
                     case 'f':
                         val.f = (f32) va_arg(args, double);
                         csr = sprint_val_withspecifiers(csr, val, spec);
@@ -941,7 +944,12 @@ void gd_printf(const char *format, ...) {
                         break;
                     case 'c':
                         //! @bug formatter 'c' uses `s32` for va_arg instead of `char`
+                        // Fixed in QOL_FIXES
+                        #ifndef QOL_FIXES
                         *csr = va_arg(args, s32);
+                        #else
+                        *csr = va_arg(args, char);
+                        #endif
                         csr++;
                         *csr = '\0';
                         break;
@@ -1323,8 +1331,11 @@ void *gdm_gettestdl(s32 id) {
                 fatal_printf("gdm_gettestdl(): DL number %d undefined", id);
             }
             //! @bug Code treats `sYoshiSceneView` as group; not called in game though
+            // Potential fix in QOL_FIXES
+            #ifndef QOL_FIXES
             apply_to_obj_types_in_group(OBJ_TYPE_VIEWS, (applyproc_t) update_view,
                                         (struct ObjGroup *) sYoshiSceneView);
+            #endif
             dobj = d_use_obj("yoshi_scene");
             gddl = sGdDLArray[((struct ObjView *) dobj)->gdDlNum];
             sUpdateYoshiScene = TRUE;
@@ -1354,8 +1365,11 @@ void *gdm_gettestdl(s32 id) {
                 fatal_printf("gdm_gettestdl(): DL number %d undefined", id);
             }
             //! @bug Code treats `sCarSceneView` as group; not called in game though
+            // Potential fix in QOL_FIXES
+            #ifndef QOL_FIXES
             apply_to_obj_types_in_group(OBJ_TYPE_VIEWS, (applyproc_t) update_view,
                                         (struct ObjGroup *) sCarSceneView);
+            #endif
             dobj = d_use_obj("car_scene");
             gddl = sGdDLArray[((struct ObjView *) dobj)->gdDlNum];
             sUpdateCarScene = TRUE;
@@ -2781,6 +2795,10 @@ void func_801A43DC(UNUSED struct GdObj *obj) {
 /* 252BC0 -> 252BE0 */
 void *func_801A43F0(UNUSED const char *menufmt, ...) {
     //! @bug no return; function was stubbed
+    // Add a return here for QOL_FIXES
+    #ifdef QOL_FIXES
+    return 0;
+    #endif
 }
 
 /* 252BE0 -> 252BF0 */

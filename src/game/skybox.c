@@ -139,7 +139,12 @@ f32 calculate_skybox_scaled_x(s8 player, f32 fov) {
     f32 yaw = sSkyBoxInfo[player].yaw;
 
     //! double literals are used instead of floats
+    // fixed in QOL_FIXES
+    #ifndef QOL_FIXES
     f32 scaledX = SCREEN_WIDTH * 360.0 * yaw / (fov * 65536.0);
+    #else
+    f32 scaledX = SCREEN_WIDTH * 360.0f * yaw / (fov * 65536.0f);
+    #endif
 
     if (scaledX > SKYBOX_WIDTH) {
         scaledX -= (s32) scaledX / SKYBOX_WIDTH * SKYBOX_WIDTH;

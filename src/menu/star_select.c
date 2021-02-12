@@ -141,9 +141,12 @@ void bhv_act_selector_init(void) {
 
     //! Useless, since sInitSelectedActNum has already been set in this
     //! scenario by the code that shows the next uncollected star.
+    // Because of this, let that code do the work in QOL_FIXES instead
+    #ifndef QOL_FIXES
     if (sObtainedStars == 0) {
         sInitSelectedActNum = 1;
     }
+    #endif
 
     // Render star selector objects
     for (i = 0; i < sVisibleStars; i++) {
