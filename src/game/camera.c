@@ -6797,6 +6797,7 @@ s16 camera_course_processing(struct Camera *c) {
                 #else
                 // maybe the above was supposed to be the following instead
                 set_mode_if_not_set_by_surface(c, CAMERA_MODE_FREE_ROAM);
+                #endif
                 break;
         }
     }
