@@ -537,7 +537,7 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
                 create_dl_translation_matrix(MENU_MTX_NOPUSH, 10.0f, 0.0f, 0.0f);
 #else
                 create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[str[strPos]]), 0.0f, 0.0f);
-#if !defined(VERSION_JP) || !(VERSION_SH) || !defined(QOL_FIXES)
+#if !defined(VERSION_JP) || !defined(VERSION_SH) || !defined(QOL_FIXES)
                 break; // what an odd difference. US added a useless break here.
 #endif
 #endif
