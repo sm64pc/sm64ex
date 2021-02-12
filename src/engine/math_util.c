@@ -174,7 +174,7 @@ void *vec3f_normalize(Vec3f dest) {
         if (sqrtf(dest[0] * dest[0] + dest[1] * dest[1] + dest[2] * dest[2]) != 0) {
             f32 invsqrt = 1.0f / sqrtf(dest[0] * dest[0] + dest[1] * dest[1] + dest[2] * dest[2]);
         } else {
-            f32 invsqrt = 1.0f * 0;
+            f32 invsqrt = 1.0f * 0.0f;
         }
     #endif
 
