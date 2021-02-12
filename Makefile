@@ -117,23 +117,17 @@ endif
 
 ifeq ($(VERSION),jp)
   VERSION_DEF := VERSION_JP
-else
-ifeq ($(VERSION),us)
+else ifeq ($(VERSION),us)
   VERSION_DEF := VERSION_US
-else
-ifeq ($(VERSION),eu)
+else ifeq ($(VERSION),eu)
   VERSION_DEF := VERSION_EU
-else
-ifeq ($(VERSION),sh)
+else ifeq ($(VERSION),sh)
   $(warning Building SH is experimental and is prone to breaking. Try at your own risk.)
   VERSION_DEF := VERSION_SH
 # TODO: GET RID OF THIS!!! We should mandate assets for Shindou like EU but we dont have the addresses extracted yet so we'll just pretend you have everything extracted for now.
   NOEXTRACT := 1
 else
   $(error unknown version "$(VERSION)")
-endif
-endif
-endif
 endif
 
 TARGET := sm64.$(VERSION)
@@ -155,33 +149,25 @@ ifeq ($(GRUCODE),f3dex) # Fast3DEX
   GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1
   TARGET := $(TARGET).f3dex
   COMPARE := 0
-else
-ifeq ($(GRUCODE),f3dex2) # Fast3DEX2
+else ifeq ($(GRUCODE),f3dex2) # Fast3DEX2
   GRUCODE_DEF := F3DEX_GBI_2
   GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1
   TARGET := $(TARGET).f3dex2
   COMPARE := 0
-else
-ifeq ($(GRUCODE),f3dex2e) # Fast3DEX2 Extended (PC default)
+else ifeq ($(GRUCODE),f3dex2e) # Fast3DEX2 Extended (PC default)
   GRUCODE_DEF := F3DEX_GBI_2E
   TARGET := $(TARGET).f3dex2e
   COMPARE := 0
-else
-ifeq ($(GRUCODE),f3d_new) # Fast3D 2.0H (Shindou)
+else ifeq ($(GRUCODE),f3d_new) # Fast3D 2.0H (Shindou)
   GRUCODE_DEF := F3D_NEW
   TARGET := $(TARGET).f3d_new
   COMPARE := 0
-else
-ifeq ($(GRUCODE),f3dzex) # Fast3DZEX (2.0J / Animal Forest - Dōbutsu no Mori)
+else ifeq ($(GRUCODE),f3dzex) # Fast3DZEX (2.0J / Animal Forest - Dōbutsu no Mori)
   $(warning Fast3DZEX is experimental. Try at your own risk.)
   GRUCODE_DEF := F3DEX_GBI_2
   GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1
   TARGET := $(TARGET).f3dzex
   COMPARE := 0
-endif
-endif
-endif
-endif
 endif
 
 GRUCODE_CFLAGS := -D$(GRUCODE_DEF)
@@ -581,7 +567,7 @@ ifeq ($(DISCORDRPC),1)
   CFLAGS += -DDISCORDRPC
 endif
 
-# Check for texture fix option
+# Check for QoL fix option
 ifeq ($(QOL_FIXES),1)
   CC_CHECK += -DQOL_FIXES
   CFLAGS += -DQOL_FIXES
