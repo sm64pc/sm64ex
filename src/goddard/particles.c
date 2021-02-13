@@ -247,7 +247,12 @@ struct Connection *func_801825FC(struct ObjVertex *vtx1, struct ObjVertex *vtx2)
     sp34->unk24 = gd_vec3f_magnitude(&sp28);
     // Duplicate conditional. Possibly should've checked `vtx2`;
     // Also, this shouldn't be called with particle types...
+    // fixed in QOL_FIXES
+    #ifndef QOL_FIXES
     if (vtx1->header.type == OBJ_TYPE_PARTICLES && vtx1->header.type == OBJ_TYPE_PARTICLES) {
+    #else
+    if (vtx1->header.type == OBJ_TYPE_PARTICLES && vtx2->header.type == OBJ_TYPE_PARTICLES) {
+    #endif
         if ((((struct ObjParticle *) vtx1)->unk54 & 4) && (((struct ObjParticle *) vtx2)->unk54 & 4)) {
             sp34->unk28 |= 1;
         }

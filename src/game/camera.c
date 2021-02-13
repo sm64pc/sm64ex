@@ -5218,8 +5218,13 @@ u8 get_cutscene_from_mario_status(struct Camera *c) {
                     //! doorStatus is never DOOR_ENTER_LOBBY when cameraEvent == 6, because
                     //! doorStatus is only used for the star door in the lobby, which uses
                     //! ACT_ENTERING_STAR_DOOR
+                    // This seemingly errant behavior is removed when QOL_FIXES=1
+                    #ifndef QOL_FIXES
                     if (c->mode == CAMERA_MODE_SPIRAL_STAIRS || c->mode == CAMERA_MODE_CLOSE
                                                                  || c->doorStatus == DOOR_ENTER_LOBBY) {
+                    #else
+                    if (c->mode == CAMERA_MODE_SPIRAL_STAIRS || c->mode == CAMERA_MODE_CLOSE) {
+                    #endif
                         cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL_MODE, CUTSCENE_DOOR_PUSH_MODE);
                     } else {
                         cutscene = open_door_cutscene(CUTSCENE_DOOR_PULL, CUTSCENE_DOOR_PUSH);

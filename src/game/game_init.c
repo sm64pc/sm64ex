@@ -129,7 +129,7 @@ void clear_z_buffer(void) {
     gDPSetFillColor(gDisplayListHead++,
                     GPACK_ZDZ(G_MAXFBZ, 0) << 16 | GPACK_ZDZ(G_MAXFBZ, 0));
 
-    gDPFillRectangle(gDisplayListHead++, 0, BORDER_HEIGHT, SCREEN_WIDTH - 1,
+    gDPFillRectangle(gDisplayListHead++, GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(0), BORDER_HEIGHT, GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(0) - 1,
                      SCREEN_HEIGHT - 1 - BORDER_HEIGHT);
 }
 

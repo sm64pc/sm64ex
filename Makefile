@@ -103,7 +103,7 @@ ifeq ($(WINDOWS_BUILD),1)
     TARGET_BITS = 32
     NO_BZERO_BCOPY := 1
   else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
-    TARGET_ARCH = i386pe
+    TARGET_ARCH = i386pep
     TARGET_BITS = 64
     NO_BZERO_BCOPY := 1
   endif
@@ -213,9 +213,7 @@ endif
 # on tools and assets, and we use directory globs further down
 # in the makefile that we want should cover assets.)
 
-ifneq ($(MAKECMDGOALS),clean)
-ifneq ($(MAKECMDGOALS),distclean)
-ifneq ($(MAKECMDGOALS),cleantools)
+ifeq (,$(findstring clean,$(MAKECMDGOALS)))
 
 # Make sure assets exist
 NOEXTRACT ?= 0
@@ -233,8 +231,6 @@ ifeq ($(DUMMY),FAIL)
 endif
 
 endif
-endif
-endif
 
 ################ Target Executable and Sources ###############
 
@@ -251,17 +247,12 @@ LIBULTRA := $(BUILD_DIR)/libultra.a
 
 ifeq ($(TARGET_WEB),1)
 EXE := $(BUILD_DIR)/$(TARGET).html
-	else
-	ifeq ($(WINDOWS_BUILD),1)
-		EXE := $(BUILD_DIR)/$(TARGET).exe
-
-		else # Linux builds/binary namer
-		ifeq ($(TARGET_RPI),1)
-			EXE := $(BUILD_DIR)/$(TARGET).arm
-		else
-			EXE := $(BUILD_DIR)/$(TARGET)
-		endif
-	endif
+else ifeq ($(WINDOWS_BUILD),1)
+EXE := $(BUILD_DIR)/$(TARGET).exe
+else ifeq ($(TARGET_RPI),1) # Linux builds/binary namer
+EXE := $(BUILD_DIR)/$(TARGET).arm
+else
+EXE := $(BUILD_DIR)/$(TARGET)
 endif
 
 ELF := $(BUILD_DIR)/$(TARGET).elf

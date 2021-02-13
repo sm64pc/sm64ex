@@ -1250,10 +1250,17 @@ die Temperatur!"))
 
 DEFINE_DIALOG(DIALOG_098, 1, 1, 95, 200, _("\
 Komm nur näher, hehehe!"))
-
+#ifndef QOL_FIXES
 DEFINE_DIALOG(DIALOG_099, 1, 3, 95, 200, _("\
 "))
-
+#else
+DEFINE_DIALOG(DIALOG_099, 1, 3, 95, 200, _("\
+Eh he he...\n\
+Du gehörst mir, hee hee!\n\
+Ich gehe einfach durch\n\
+diese Wand. Kannst du\n\
+das auch? Heh, heh, heh!"))
+#endif
 DEFINE_DIALOG(DIALOG_100, 1, 2, 95, 200, _("\
 Jippiiiiieee, ich hab' sie!\n\
 Jetzt gehört sie mir!!!"))
