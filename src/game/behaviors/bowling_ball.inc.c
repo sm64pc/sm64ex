@@ -78,7 +78,11 @@ void bowling_ball_set_waypoints(void) {
 
 void bhv_bowling_ball_roll_loop(void) {
     s16 collisionFlags;
+    #ifndef QOL_FIXES
     s32 sp18;
+    #else
+    s32 sp18 = 0;
+    #endif
 
     bowling_ball_set_waypoints();
     collisionFlags = object_step();
