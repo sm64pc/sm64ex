@@ -411,7 +411,11 @@ void fatal_printf(const char *fmt, ...) {
                         gd_printf("%s", va_arg(vl, char *));
                         break;
                     case 'c':
+                    #ifndef QOL_FIXES
                         gd_printf("%c", va_arg(vl, char));
+                    #else
+                        gd_printf("%c", va_arg(vl, int));
+                    #endif
                         break;
                     case 'x':
                         gd_printf("%x", va_arg(vl, s32));

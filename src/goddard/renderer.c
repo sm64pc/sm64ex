@@ -944,11 +944,11 @@ void gd_printf(const char *format, ...) {
                         break;
                     case 'c':
                         //! @bug formatter 'c' uses `s32` for va_arg instead of `char`
-                        // Fixed in QOL_FIXES
+                        // Fixed in QOL_FIXES (`int` is actually supposed to be used instead of `char`)
                         #ifndef QOL_FIXES
                         *csr = va_arg(args, s32);
                         #else
-                        *csr = va_arg(args, char);
+                        *csr = va_arg(args, int);
                         #endif
                         csr++;
                         *csr = '\0';

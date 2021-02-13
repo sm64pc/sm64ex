@@ -39,6 +39,8 @@
 #include "pc/discord/discordrpc.h"
 #endif
 
+#include "macros.h"
+
 OSMesg D_80339BEC;
 OSMesgQueue gSIEventMesgQueue;
 
@@ -64,7 +66,7 @@ void game_loop_one_iteration(void);
 void dispatch_audio_sptask(struct SPTask *spTask) {
 }
 
-void set_vblank_handler(s32 index, struct VblankHandler *handler, OSMesgQueue *queue, OSMesg *msg) {
+void set_vblank_handler(UNUSED s32 index, UNUSED struct VblankHandler *handler, UNUSED OSMesgQueue *queue, UNUSED OSMesg *msg) {
 }
 
 static bool inited = false;

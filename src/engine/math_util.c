@@ -170,11 +170,12 @@ void *vec3f_normalize(Vec3f dest) {
         //! Possible division by zero
         f32 invsqrt = 1.0f / sqrtf(dest[0] * dest[0] + dest[1] * dest[1] + dest[2] * dest[2]);
     #else
+        f32 invsqrt = 0.0f;
         // Fix the division by zero warning by multiplying by 0 when the sqrtf equation happens to equal 0
         if (sqrtf(dest[0] * dest[0] + dest[1] * dest[1] + dest[2] * dest[2]) != 0) {
-            f32 invsqrt = 1.0f / sqrtf(dest[0] * dest[0] + dest[1] * dest[1] + dest[2] * dest[2]);
+            invsqrt = 1.0f / sqrtf(dest[0] * dest[0] + dest[1] * dest[1] + dest[2] * dest[2]);
         } else {
-            f32 invsqrt = 1.0f * 0.0f;
+            invsqrt = 1.0f * 0.0f;
         }
     #endif
 

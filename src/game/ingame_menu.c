@@ -2633,7 +2633,11 @@ void render_pause_castle_main_strings(s16 x, s16 y) {
 
 s8 gCourseCompleteCoinsEqual = 0;
 s32 gCourseDoneMenuTimer = 0;
+#ifndef QOL_FIXES
 s32 gCourseCompleteCoins = 0;
+#else
+u64 gCourseCompleteCoins = 0;
+#endif
 s8 gHudFlash = 0;
 
 s16 render_pause_courses_and_castle(void) {

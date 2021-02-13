@@ -664,20 +664,19 @@ void unused_set_camera_pitch_shake_env(s16 shake) {
  */
 f32 calc_y_to_curr_floor(f32 *posOff, f32 posMul, f32 posBound, f32 *focOff, f32 focMul, f32 focBound) {
     f32 floorHeight = sMarioGeometry.currFloorHeight;
+    #ifndef QOL_FIXES
     f32 waterHeight;
+    #else
+    f32 waterHeight = sMarioGeometry.waterHeight;
+    #endif
     UNUSED s32 filler;
 
     if (!(sMarioCamState->action & ACT_FLAG_METAL_WATER)) {
-        #ifndef QOL_FIXES
         //! @bug this should use sMarioGeometry.waterHeight
+        // the variable itself is initialized to sMarioGeometry.waterHeight in QOL_FIXES
         if (floorHeight < (waterHeight = find_water_level(sMarioCamState->pos[0], sMarioCamState->pos[2]))) {
             floorHeight = waterHeight;
         }
-        #else
-        if (floorHeight < (sMarioGeometry.waterHeight = find_water_level(sMarioCamState->pos[0], sMarioCamState->pos[2]))) {
-            floorHeight = sMarioGeometry.waterHeight;
-        }
-        #endif
     }
 
     if (sMarioCamState->action & ACT_FLAG_ON_POLE) {
@@ -9320,15 +9319,16 @@ BAD_RETURN(s32) cutscene_exit_bowser_succ_focus_left(UNUSED struct Camera *c) {
  * Instead of focusing on the key, just start a pitch shake. Clever!
  * The shake lasts 32 frames.
  */
+#ifndef QOL_FIXES
 BAD_RETURN(s32) cutscene_exit_bowser_key_toss_shake(struct Camera *c) {
-    #ifndef QOL_FIXES
     //! Unnecessary check.
     if (c->cutscene == CUTSCENE_EXIT_BOWSER_SUCC) {
         set_camera_pitch_shake(0x800, 0x40, 0x800);
     }
-    #else
+#else
+BAD_RETURN(s32) cutscene_exit_bowser_key_toss_shake(UNUSED struct Camera *c) {
     set_camera_pitch_shake(0x800, 0x40, 0x800);
-    #endif
+#endif
 }
 
 /**

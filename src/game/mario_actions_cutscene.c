@@ -235,7 +235,11 @@ static void stub_is_textbox_active(u16 *a0) {
 s32 get_star_collection_dialog(struct MarioState *m) {
     s32 i;
     s32 dialogID = 0;
+    #ifndef QOL_FIXES
     s32 numStarsRequired;
+    #else
+    u64 numStarsRequired;
+    #endif
 
     for (i = 0; i < 6; i++) {
         numStarsRequired = sStarsNeededForDialog[i];
