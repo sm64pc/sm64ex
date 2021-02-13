@@ -460,7 +460,7 @@ void spawn_objects_from_info(UNUSED s32 unused, struct SpawnInfo *spawnInfo) {
     //! (Spawning Displacement) On the Japanese version, Mario's platform object
     //  isn't cleared when transitioning between areas. This can cause Mario to
     //  receive displacement after spawning.
-#if (!defined(VERSION_JP) || !defined(QOL_FIXES)) || (defined(VERSION_JP) && defined(QOL_FIXES))
+#if (!defined(VERSION_JP) && !defined(QOL_FIXES)) || (defined(VERSION_JP) && defined(QOL_FIXES))
     clear_mario_platform();
 #endif
 
