@@ -833,17 +833,15 @@ s16 get_str_x_pos_from_center_scale(s16 centerPos, u8 *str, f32 scale) {
     f32 spacesWidth = 0.0f;
 
     while (str[strPos] != DIALOG_CHAR_TERMINATOR) {
-        #ifdef VERSION_EU
+        #if defined(VERSION_EU) && !defined(QOL_FIXES)
         //! EU checks for dakuten and handakuten despite dialog code unable to handle it
         // fixed in QOL_FIXES
-        #ifndef QOL_FIXES
         if (str[strPos] == DIALOG_CHAR_SPACE) {
             spacesWidth += 1.0;
         } else if (str[strPos] != DIALOG_CHAR_DAKUTEN
                    && str[strPos] != DIALOG_CHAR_PERIOD_OR_HANDAKUTEN) {
             charsWidth += 1.0;
         }
-        #endif
         #endif
         strPos++;
     }
