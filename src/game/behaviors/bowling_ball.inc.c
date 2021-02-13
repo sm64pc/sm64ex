@@ -87,7 +87,7 @@ void bhv_bowling_ball_roll_loop(void) {
     bowling_ball_set_waypoints();
     collisionFlags = object_step();
 
-    //! Uninitialzed parameter, but the parameter is unused in the called function
+    //! Uninitialized parameter, but the parameter is unused in the called function
     // Fixed in QOL_FIXES
     sp18 = cur_obj_follow_path(sp18);
 
