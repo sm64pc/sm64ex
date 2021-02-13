@@ -52,6 +52,11 @@ const LevelScript level_vcutm_entry[] = {
     JUMP_LINK(script_func_global_1),
     JUMP_LINK(script_func_global_9),
     LOAD_MODEL_FROM_GEO(MODEL_VCUTM_SEESAW_PLATFORM, vcutm_geo_0001F0),
+    #ifdef QOL_FIXES
+    // hard to tell exactly what was supposed to be loaded here, so load a blank model for now
+    // if anyone figures this out, PLEASE update this
+    LOAD_MODEL_FROM_GEO(MODEL_VCUTM_CHECKERBOARD_PLATFORM_SPAWNER, NULL),
+    #endif
     LOAD_MODEL_FROM_GEO(MODEL_VCUTM_WARP_PIPE,       warp_pipe_geo),
 
     AREA(/*index*/ 1, vcutm_geo_000208),
