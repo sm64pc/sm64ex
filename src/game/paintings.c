@@ -588,6 +588,7 @@ void painting_update_ripple_state(struct Painting *painting) {
         } else {
             painting->rippleTimer += 1.0;
         }
+        #endif
     }
     if (painting->rippleTrigger == RIPPLE_TRIGGER_PROXIMITY) {
         // if the painting is barely rippling, make it stop rippling
