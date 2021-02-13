@@ -789,7 +789,11 @@ void preload_sequence(u32 seqId, u8 preloadMask) {
 
     if (preloadMask & PRELOAD_SEQUENCE) {
         // @bug should be IS_SEQ_LOAD_COMPLETE
+        #ifndef QOL_FIXES
         if (IS_BANK_LOAD_COMPLETE(seqId) == TRUE) {
+        #else
+        if (IS_SEQ_LOAD_COMPLETE(seqId) == TRUE) {
+        #endif
             sequenceData = get_bank_or_seq(&gSeqLoadedPool, 2, seqId);
         } else {
             sequenceData = NULL;
