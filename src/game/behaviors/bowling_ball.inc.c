@@ -88,6 +88,7 @@ void bhv_bowling_ball_roll_loop(void) {
     collisionFlags = object_step();
 
     //! Uninitialzed parameter, but the parameter is unused in the called function
+    // Fixed in QOL_FIXES
     sp18 = cur_obj_follow_path(sp18);
 
     o->oBowlingBallTargetYaw = o->oPathedTargetYaw;
@@ -112,11 +113,16 @@ void bhv_bowling_ball_roll_loop(void) {
 }
 
 void bhv_bowling_ball_initializeLoop(void) {
+    #ifndef QOL_FIXES
     s32 sp1c;
+    #else
+    s32 sp1c = 0;
+    #endif
 
     bowling_ball_set_waypoints();
 
     //! Uninitialized parameter, but the parameter is unused in the called function
+    // Fixed in QOL_FIXES
     sp1c = cur_obj_follow_path(sp1c);
 
     o->oMoveAngleYaw = o->oPathedTargetYaw;
