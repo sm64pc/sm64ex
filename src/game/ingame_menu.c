@@ -386,12 +386,7 @@ void render_multi_text_string(s16 *xPos, s16 *yPos, s8 multiTextID)
  * In JP/EU a IA1 texture is used but in US a IA4 texture is used.
  */
 void print_generic_string(s16 x, s16 y, const u8 *str) {
-    // get rid of this unused variable when both VERSION_EU and QOL_FIXES
-#ifdef QOL_FIXES
-#ifndef VERSION_EU
     UNUSED s8 mark = DIALOG_MARK_NONE; // unused in EU
-#endif
-#endif
     s32 strPos = 0;
     u8 lineNum = 1;
 #ifdef VERSION_EU
