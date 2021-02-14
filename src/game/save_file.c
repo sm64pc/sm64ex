@@ -505,7 +505,11 @@ void save_file_collect_star_or_key(u64 coinScore, s16 starIndex) {
         }
         #endif
 
+        #ifndef QOL_FIXES
         if (coinScore > save_file_get_course_coin_score(fileIndex, courseIndex)) {
+        #else
+        if (coinScore > (u64)save_file_get_course_coin_score(fileIndex, courseIndex)) {
+        #endif
             gSaveBuffer.files[fileIndex][0].courseCoinScores[courseIndex] = coinScore;
             touch_coin_score_age(fileIndex, courseIndex);
 

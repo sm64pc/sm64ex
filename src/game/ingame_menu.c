@@ -2807,7 +2807,7 @@ void print_hud_course_complete_coins(s16 x, s16 y) {
 
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
 
-    if (gCourseCompleteCoins >= gHudDisplay.coins) {
+    if (gCourseCompleteCoins >= (u64)gHudDisplay.coins) {
         gCourseCompleteCoinsEqual = 1;
         gCourseCompleteCoins = gHudDisplay.coins;
 
@@ -2828,14 +2828,18 @@ void print_hud_course_complete_coins(s16 x, s16 y) {
             }
         }
 
-        if (gHudDisplay.coins == gCourseCompleteCoins && gGotFileCoinHiScore != 0) {
+        if ((u64)gHudDisplay.coins == gCourseCompleteCoins && gGotFileCoinHiScore != 0) {
             play_sound(SOUND_MENU_MARIO_CASTLE_WARP2, gDefaultSoundArgs);
         }
     }
 }
 
 void play_star_fanfare_and_flash_hud(s32 arg, u8 starNum) {
+    #ifndef QOL_FIXES
     if (gHudDisplay.coins == gCourseCompleteCoins && (gCurrCourseStarFlags & starNum) == 0 && gHudFlash == 0) {
+    #else
+    if ((u64)gHudDisplay.coins == gCourseCompleteCoins && (gCurrCourseStarFlags & starNum) == 0 && gHudFlash == 0) {
+    #endif
         play_star_fanfare();
         gHudFlash = arg;
     }

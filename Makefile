@@ -102,12 +102,22 @@ ifeq ($(WINDOWS_BUILD),1)
     TARGET_ARCH = i386pe
     TARGET_BITS = 32
     NO_BZERO_BCOPY := 1
-    NO_PIE := 0
+    NO_PIE = 0
   else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
     TARGET_ARCH = i386pep
     TARGET_BITS = 64
     NO_BZERO_BCOPY := 1
-    NO_PIE := 0
+    NO_PIE = 0
+  else ifeq ($(CROSS),mxe-i686-w64-mingw32.static-)
+    TARGET_ARCH = i386pe
+    TARGET_BITS = 32
+    NO_BZERO_BCOPY := 1
+    NO_PIE = 0
+  else ifeq ($(CROSS),mxe-x86_64-w64-mingw32.static-)
+    TARGET_ARCH = i386pep
+    TARGET_BITS = 64
+    NO_BZERO_BCOPY := 1
+    NO_PIE = 0
   endif
 endif
 
@@ -300,34 +310,32 @@ ifeq ($(TARGET_WEB),1)
 endif
 
 ifeq ($(TARGET_RPI),1)
-	machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
+  machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
 # Raspberry Pi B+, Zero, etc
-	ifneq (,$(findstring armv6l,$(machine)))
-                OPT_FLAGS := -march=armv6zk+fp -mfpu=vfp -Ofast
-        endif
+  ifneq (,$(findstring armv6l,$(machine)))
+    OPT_FLAGS := -march=armv6zk+fp -mfpu=vfp -Ofast
+  endif
 
 # Raspberry Pi 2 and 3 in ARM 32bit mode
-        ifneq (,$(findstring armv7l,$(machine)))
-                model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
-
-                ifneq (,$(findstring 3,$(model)))
-                         OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -O3
-                         else
-                         OPT_FLAGS := -march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4 -O3
-                endif
-        endif
+ifneq (,$(findstring armv7l,$(machine)))
+  model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
+  ifneq (,$(findstring 3,$(model)))
+    OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -O3
+  else
+    OPT_FLAGS := -march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4 -O3
+  endif
+endif
 
 # RPi3 or RPi4, in ARM64 (aarch64) mode. NEEDS TESTING 32BIT.
 # DO NOT pass -mfpu stuff here, thats for 32bit ARM only and will fail for 64bit ARM.
-        ifneq (,$(findstring aarch64,$(machine)))
-                model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
-                ifneq (,$(findstring 3,$(model)))
-                         OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -O3
-                else ifneq (,$(findstring 4,$(model)))
-                         OPT_FLAGS := -march=armv8-a+crc+simd -mtune=cortex-a72 -O3
-                endif
-
-        endif
+ifneq (,$(findstring aarch64,$(machine)))
+  model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
+  ifneq (,$(findstring 3,$(model)))
+    OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -O3
+  else ifneq (,$(findstring 4,$(model)))
+    OPT_FLAGS := -march=armv8-a+crc+simd -mtune=cortex-a72 -O3
+  endif
+endif
 endif
 
 # File dependencies and variables for specific files
@@ -363,15 +371,15 @@ ULTRA_C_FILES := $(addprefix lib/src/,$(ULTRA_C_FILES))
 ifeq ($(VERSION),sh)
 SOUND_BANK_FILES := $(wildcard sound/sound_banks/*.json)
 SOUND_SEQUENCE_FILES := $(wildcard sound/sequences/jp/*.m64) \
-    $(wildcard sound/sequences/*.m64) \
-    $(foreach file,$(wildcard sound/sequences/jp/*.s),$(BUILD_DIR)/$(file:.s=.m64)) \
-    $(foreach file,$(wildcard sound/sequences/*.s),$(BUILD_DIR)/$(file:.s=.m64))
+  $(wildcard sound/sequences/*.m64) \
+  $(foreach file,$(wildcard sound/sequences/jp/*.s),$(BUILD_DIR)/$(file:.s=.m64)) \
+  $(foreach file,$(wildcard sound/sequences/*.s),$(BUILD_DIR)/$(file:.s=.m64))
 else
 SOUND_BANK_FILES := $(wildcard sound/sound_banks/*.json)
 SOUND_SEQUENCE_FILES := $(wildcard sound/sequences/$(VERSION)/*.m64) \
-    $(wildcard sound/sequences/*.m64) \
-    $(foreach file,$(wildcard sound/sequences/$(VERSION)/*.s),$(BUILD_DIR)/$(file:.s=.m64)) \
-    $(foreach file,$(wildcard sound/sequences/*.s),$(BUILD_DIR)/$(file:.s=.m64))
+  $(wildcard sound/sequences/*.m64) \
+  $(foreach file,$(wildcard sound/sequences/$(VERSION)/*.s),$(BUILD_DIR)/$(file:.s=.m64)) \
+  $(foreach file,$(wildcard sound/sequences/*.s),$(BUILD_DIR)/$(file:.s=.m64))
 endif
 
 SOUND_SAMPLE_DIRS := $(wildcard sound/samples/*)

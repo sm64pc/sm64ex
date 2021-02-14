@@ -896,7 +896,7 @@ void update_hud_values(void) {
             gHudDisplay.flags &= ~HUD_DISPLAY_FLAG_COIN_COUNT;
         }
 
-        if (gHudDisplay.coins < gMarioState->numCoins) {
+        if ((u64)gHudDisplay.coins < gMarioState->numCoins) {
             if (gGlobalTimer & 0x00000001) {
                 u32 coinSound;
                 if (gMarioState->action & (ACT_FLAG_SWIMMING | ACT_FLAG_METAL_WATER)) {
@@ -1090,7 +1090,7 @@ s32 play_mode_change_area(void) {
     // is never set to -1.
     if (sTransitionUpdate == (void (*)(s16 *)) - 1) {
 #else
-    if (sTransitionUpdate == -1) {
+    if (sTransitionTimer == -1) {
 #endif
         update_camera(gCurrentArea->camera);
     } else if (sTransitionUpdate != NULL) {
