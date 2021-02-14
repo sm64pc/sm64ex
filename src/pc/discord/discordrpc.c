@@ -231,7 +231,7 @@ void set_logo(void) {
     }
 
     /*
-    if (lastActNum)
+    if (lastActNum) {
         if (snprintf(smallImageKey, sizeof(largeImageKey), "%d", lastActNum) < 0) {
             abort();
         };
