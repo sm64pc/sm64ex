@@ -371,15 +371,15 @@ ULTRA_C_FILES := $(addprefix lib/src/,$(ULTRA_C_FILES))
 ifeq ($(VERSION),sh)
 SOUND_BANK_FILES := $(wildcard sound/sound_banks/*.json)
 SOUND_SEQUENCE_FILES := $(wildcard sound/sequences/jp/*.m64) \
-  $(wildcard sound/sequences/*.m64) \
-  $(foreach file,$(wildcard sound/sequences/jp/*.s),$(BUILD_DIR)/$(file:.s=.m64)) \
-  $(foreach file,$(wildcard sound/sequences/*.s),$(BUILD_DIR)/$(file:.s=.m64))
+    $(wildcard sound/sequences/*.m64) \
+    $(foreach file,$(wildcard sound/sequences/jp/*.s),$(BUILD_DIR)/$(file:.s=.m64)) \
+    $(foreach file,$(wildcard sound/sequences/*.s),$(BUILD_DIR)/$(file:.s=.m64))
 else
 SOUND_BANK_FILES := $(wildcard sound/sound_banks/*.json)
 SOUND_SEQUENCE_FILES := $(wildcard sound/sequences/$(VERSION)/*.m64) \
-  $(wildcard sound/sequences/*.m64) \
-  $(foreach file,$(wildcard sound/sequences/$(VERSION)/*.s),$(BUILD_DIR)/$(file:.s=.m64)) \
-  $(foreach file,$(wildcard sound/sequences/*.s),$(BUILD_DIR)/$(file:.s=.m64))
+    $(wildcard sound/sequences/*.m64) \
+    $(foreach file,$(wildcard sound/sequences/$(VERSION)/*.s),$(BUILD_DIR)/$(file:.s=.m64)) \
+    $(foreach file,$(wildcard sound/sequences/*.s),$(BUILD_DIR)/$(file:.s=.m64))
 endif
 
 SOUND_SAMPLE_DIRS := $(wildcard sound/samples/*)
@@ -445,6 +445,10 @@ else ifeq ($(WINDOWS_BUILD),1)
   ifeq ($(CROSS),i686-w64-mingw32.static-) # fixes compilation in MXE on Linux and WSL
     LD := $(CC)
   else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+    LD := $(CC)
+  else ifeq ($(CROSS),mxe-i686-w64-mingw32.static-)
+    LD := $(CC)
+  else ifeq ($(CROSS),mxe-x86_64-w64-mingw32.static-)
     LD := $(CC)
   else
     LD := $(CXX)
@@ -530,16 +534,15 @@ ifneq ($(SDL1_USED)$(SDL2_USED),00)
 endif
 
 ifeq ($(WINDOWS_BUILD),1)
-  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS)
+  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra $(VERSION_CFLAGS) $(GRUCODE_CFLAGS)
   CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(BACKEND_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv
 
 else ifeq ($(TARGET_WEB),1)
-  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
+  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
   CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(BACKEND_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv -s USE_SDL=2
 
-# Linux / Other builds below
-else
-  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS)
+else # Linux / Other builds below
+  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra $(VERSION_CFLAGS) $(GRUCODE_CFLAGS)
   CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(BACKEND_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv
 
 endif
@@ -631,7 +634,7 @@ else ifeq ($(OSX_BUILD),1)
 
 else
   LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm $(BACKEND_LDFLAGS) -lpthread -ldl
-  ifeq ($(NO_PIE), 1)
+  ifeq ($(NO_PIE),1)
     LDFLAGS += -no-pie
   endif
 
@@ -713,7 +716,7 @@ clean:
 	$(RM) -r $(BUILD_DIR_BASE)
 
 cleantools:
-	$(MAKE) -s -C tools clean
+	$(MAKE) -C tools clean
 
 distclean:
 	$(RM) -r $(BUILD_DIR_BASE)
@@ -776,7 +779,7 @@ $(BUILD_DIR)/text/%/define_courses.inc.c: text/define_courses.inc.c text/%/cours
 	$(CPP) $(VERSION_CFLAGS) $< -o - -I text/$*/ | $(TEXTCONV) charmap.txt - $@
 
 $(BUILD_DIR)/text/%/define_text.inc.c: text/define_text.inc.c text/%/courses.h text/%/dialogs.h
-	$(CPP) $(VERSION_CFLAGS) $< -o - -I text/$*/ | $(TEXTCONV) charmap.txt - $@
+	$(CPP) $(VERSION_CFLAGS) -Wno-trigraphs $< -o - -I text/$*/ | $(TEXTCONV) charmap.txt - $@
 
 RSP_DIRS := $(BUILD_DIR)/rsp
 ALL_DIRS := $(BUILD_DIR) $(addprefix $(BUILD_DIR)/,$(SRC_DIRS) $(ASM_DIRS) $(GODDARD_SRC_DIRS) $(ULTRA_SRC_DIRS) $(ULTRA_ASM_DIRS) $(ULTRA_BIN_DIRS) $(BIN_DIRS) $(TEXTURE_DIRS) $(TEXT_DIRS) $(SOUND_SAMPLE_DIRS) $(addprefix levels/,$(LEVEL_DIRS)) include) $(MIO0_DIR) $(addprefix $(MIO0_DIR)/,$(VERSION)) $(SOUND_BIN_DIR) $(SOUND_BIN_DIR)/sequences/$(VERSION) $(RSP_DIRS)
