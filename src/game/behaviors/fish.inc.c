@@ -8,31 +8,40 @@
  * These settings are animations, colour, and spawn quantity.
  * Fish spawning restricted to within a set distance from Mario.
  */
+
+#ifdef NODRAWINGDISTANCE
+#include "macros.h"
+#endif
+
 void fish_act_spawn(void) {
     s32 i;
     s32 schoolQuantity;
     s16 model;
+    #ifndef NODRAWINGDISTANCE
     f32 minDistToMario;
+    #else
+    UNUSED f32 minDistToMario;
+    #endif
     const struct Animation * const*fishAnimation;
     struct Object *fishObject;
     switch (o->oBehParams2ndByte) {
         
-        // Blue fish with a quanitiy of twenty.
+        // Blue fish with a quantity of twenty.
         case 0:
             model = MODEL_FISH;    schoolQuantity = 20;    minDistToMario = 1500.0f;    fishAnimation = blue_fish_seg3_anims_0301C2B0;
             break;
             
-        // Blue fish with a quanitiy of five.
+        // Blue fish with a quantity of five.
         case 1:
             model = MODEL_FISH;    schoolQuantity = 5;    minDistToMario = 1500.0f;    fishAnimation = blue_fish_seg3_anims_0301C2B0;
             break;
             
-        // Cyan fish with a quanitiy of twenty.
+        // Cyan fish with a quantity of twenty.
         case 2:
             model = MODEL_CYAN_FISH;    schoolQuantity = 20;    minDistToMario = 1500.0f;    fishAnimation = cyan_fish_seg6_anims_0600E264;
             break;
             
-        // Cyan fish with a quanitiy of five.
+        // Cyan fish with a quantity of five.
         case 3:
             model = MODEL_CYAN_FISH;    schoolQuantity = 5;    minDistToMario = 1500.0f;    fishAnimation = cyan_fish_seg6_anims_0600E264;
             break;

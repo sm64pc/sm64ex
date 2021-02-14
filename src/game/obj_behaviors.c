@@ -31,7 +31,9 @@
 #include "save_file.h"
 #include "spawn_object.h"
 #include "spawn_sound.h"
-
+#ifdef NODRAWINGDISTANCE
+#include "macros.h"
+#endif
 /**
  * @file obj_behaviors.c
  * This file contains a portion of the obj behaviors and many helper functions for those
@@ -525,10 +527,17 @@ s32 is_point_close_to_object(struct Object *obj, f32 x, f32 y, f32 z, s32 dist) 
 /**
  * Sets an object as visible if within a certain distance of Mario's graphical position.
  */
+#ifndef NODRAWINGDISTANCE
 void set_object_visibility(struct Object *obj, s32 dist) {
     f32 objX = obj->oPosX;
     f32 objY = obj->oPosY;
     f32 objZ = obj->oPosZ;
+#else
+void set_object_visibility(struct Object *obj, UNUSED s32 dist) {
+    UNUSED f32 objX = obj->oPosX;
+    UNUSED f32 objY = obj->oPosY;
+    UNUSED f32 objZ = obj->oPosZ;
+#endif
 
 #ifndef NODRAWINGDISTANCE
     if (is_point_within_radius_of_mario(objX, objY, objZ, dist) == TRUE) {
