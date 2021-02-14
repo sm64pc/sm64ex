@@ -7,7 +7,7 @@
  * in the "demofiles" array.
  * "ifdef" is an optional array property which can be used to specify
  * requirement of SM64 version.
- * "extraSize" is an optional property which will be added the size of the
+ * "extraSize" is an optional property which will be added to the size of the
  * demofile.
  *
  * The "demofiles" array declares the inclusion order of the demofiles.
@@ -22,14 +22,15 @@
         {"demofile":"bitdw", "ifdef":["VERSION_US"]},
         
         /* Whomp's Fortress has the wrong size.
-           The original entries probably manually input the sizes. */
+           The original entries probably manually input the sizes.
+           The unused demo will be showing up with the CCM demo's header in QOL_FIXES. */
         {"demofile":"wf", "extraSize":368},
-        
         {"demofile":"ccm"},
         {"demofile":"bbh"},
         {"demofile":"jrb"},
         {"demofile":"hmc"},
-        {"demofile":"pss"}
+        {"demofile":"pss"},
+        {"demofile":"unused", "ifdef":["QOL_FIXES"]}
     ],
     "demofiles": [
         {"name":"bbh"},

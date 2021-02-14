@@ -6,7 +6,7 @@ IRIX_CC := $(QEMU_IRIX) -silent -L $(IRIX_ROOT) $(IRIX_ROOT)/usr/bin/cc
 IRIX_CFLAGS := -fullwarn -Wab,-r4300_mul -Xcpluscomm -mips1 -O2
 
 NATIVE_CC := gcc
-NATIVE_CFLAGS := -Wall -Wno-uninitialized -O2
+NATIVE_CFLAGS := -Wall -O2
 
 LDFLAGS := -lm -laudiofile
 

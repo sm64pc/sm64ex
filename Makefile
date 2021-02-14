@@ -102,10 +102,12 @@ ifeq ($(WINDOWS_BUILD),1)
     TARGET_ARCH = i386pe
     TARGET_BITS = 32
     NO_BZERO_BCOPY := 1
+    NO_PIE := 0
   else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
     TARGET_ARCH = i386pep
     TARGET_BITS = 64
     NO_BZERO_BCOPY := 1
+    NO_PIE := 0
   endif
 endif
 

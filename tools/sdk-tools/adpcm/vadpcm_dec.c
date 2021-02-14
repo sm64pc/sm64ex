@@ -212,8 +212,7 @@ s32 main(s32 argc, char **argv)
 
     if (coefTable == NULL)
     {
-        // @bug should use progname; argv[0] may be an option
-        fprintf(stderr, "%s: Codebook missing from bitstream [%s]\n", argv[0], argv[1]);
+        fprintf(stderr, "%s: Codebook missing from bitstream [%s]\n", progname, argv[1]);
         exit(1);
     }
 

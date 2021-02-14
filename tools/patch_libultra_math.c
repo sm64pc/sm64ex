@@ -122,5 +122,5 @@ int main(int argc, char **argv) {
         fseek(f, filesize - sizeof(hdr), SEEK_CUR);
     }
     fclose(f);
-    return 0;
+    return argc;
 }
