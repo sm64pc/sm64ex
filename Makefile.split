@@ -145,12 +145,10 @@ define level_rules =
     $$(BUILD_DIR)/levels/$(1)/leveldata.elf: TEXTURE_BIN := $(2)
 endef
 
-ifneq ($(MAKECMDGOALS),clean)
-ifneq ($(MAKECMDGOALS),distclean)
+ifeq (,$(findstring clean,$(MAKECMDGOALS)))
 $(BUILD_DIR)/level_rules.mk: levels/level_rules.mk levels/level_defines.h
 	$(CPP) $(VERSION_CFLAGS) -I . -o $@ $<
 include $(BUILD_DIR)/level_rules.mk
-endif
 endif
 
 # --------------------------------------
