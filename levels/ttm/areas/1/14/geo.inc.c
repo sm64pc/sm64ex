@@ -7,6 +7,12 @@ const GeoLayout ttm_geo_000920[] = {
          GEO_DISPLAY_LIST(LAYER_OPAQUE, ttm_seg7_dl_0700DF78),
          GEO_OPEN_NODE(),
          GEO_CLOSE_NODE(),
+#ifndef QOL_FIXES
     //! Too many open nodes. Unfortunately not exploitable
          GEO_END(),
+#else
+      GEO_CLOSE_NODE(),
+   GEO_CLOSE_NODE(),
+   GEO_END(),
+#endif
 };

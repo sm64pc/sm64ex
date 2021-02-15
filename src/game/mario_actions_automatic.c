@@ -400,7 +400,11 @@ s32 act_start_hanging(struct MarioState *m) {
     }
 
     //! Crash if Mario's referenced ceiling is NULL (same for other hanging actions)
+    #ifndef QOL_FIXES
     if (m->ceil->type != SURFACE_HANGABLE) {
+    #else
+    if (m->ceil->type != SURFACE_HANGABLE || m->ceil->type == NULL) {
+    #endif
         return set_mario_action(m, ACT_FREEFALL, 0);
     }
 

@@ -86,6 +86,9 @@ void bhv_pyramid_top_explode(void) {
         pyramidFragment->oGravity = random_float() * 2 + 5;
     }
 
+#ifdef QOL_FIXES
+    disable_time_stop_including_mario();
+#endif
     // Deactivate the pyramid top.
     o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
 }
@@ -95,12 +98,18 @@ void bhv_pyramid_top_loop(void) {
         case PYRAMID_TOP_ACT_CHECK_IF_SOLVED:
             if (o->oPyramidTopPillarsTouched == 4) {
                 play_puzzle_jingle();
+                #ifdef QOL_FIXES
+                cutscene_object(CUTSCENE_SSL_PYRAMID_EXPLODE, o);
+                #endif
                 o->oAction = PYRAMID_TOP_ACT_SPINNING;
             }
             break;
 
         case PYRAMID_TOP_ACT_SPINNING:
             if (o->oTimer == 0) {
+                #ifdef QOL_FIXES
+                enable_time_stop_including_mario();
+                #endif
                 cur_obj_play_sound_2(SOUND_GENERAL2_PYRAMID_TOP_SPIN);
             }
 

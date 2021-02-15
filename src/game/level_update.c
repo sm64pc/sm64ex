@@ -1071,7 +1071,11 @@ void level_set_transition(s16 length, void (*updateFunction)(s16 *)) {
 s32 play_mode_change_area(void) {
     //! This maybe was supposed to be sTransitionTimer == -1? sTransitionUpdate
     // is never set to -1.
+    #ifndef QOL_FIXES
     if (sTransitionUpdate == (void (*)(s16 *)) - 1) {
+    #else
+    if (sTransitionTimer == -1) {
+    #endif
         update_camera(gCurrentArea->camera);
     } else if (sTransitionUpdate != NULL) {
         sTransitionUpdate(&sTransitionTimer);
@@ -1082,7 +1086,11 @@ s32 play_mode_change_area(void) {
     }
 
     //! If sTransitionTimer is -1, this will miss.
+    #ifndef QOL_FIXES
     if (sTransitionTimer == 0) {
+    #else
+    if (sTransitionTimer <= 0) {
+    #endif
         sTransitionUpdate = NULL;
         set_play_mode(PLAY_MODE_NORMAL);
     }
@@ -1099,7 +1107,11 @@ s32 play_mode_change_level(void) {
     }
 
     //! If sTransitionTimer is -1, this will miss.
+    #ifndef QOL_FIXES
     if (--sTransitionTimer == -1) {
+    #else
+    if (sTransitionTimer <= 0) {
+    #endif
         gHudDisplay.flags = HUD_DISPLAY_NONE;
         sTransitionTimer = 0;
         sTransitionUpdate = NULL;
@@ -1118,7 +1130,12 @@ s32 play_mode_change_level(void) {
  * Unused play mode. Doesn't call transition update and doesn't reset transition at the end.
  */
 static s32 play_mode_unused(void) {
+    //! If sTransitionTimer is -1, this will miss.
+    #ifndef QOL_FIXES
     if (--sTransitionTimer == -1) {
+    #else
+    if (sTransitionTimer <= 0) {
+    #endif
         gHudDisplay.flags = HUD_DISPLAY_NONE;
 
         if (sWarpDest.type != WARP_TYPE_NOT_WARPING) {
@@ -1145,7 +1162,11 @@ s32 update_level(void) {
             changeLevel = play_mode_change_area();
             break;
         case PLAY_MODE_CHANGE_LEVEL:
+            #if USE_UNUSED_PLAY_STATE
+            changeLevel = play_mode_unused();
+            #else
             changeLevel = play_mode_change_level();
+            #endif
             break;
         case PLAY_MODE_FRAME_ADVANCE:
             changeLevel = play_mode_frame_advance();

@@ -38,9 +38,15 @@ const MacroObject thi_seg7_area_2_macro_objs[] = {
     MACRO_OBJECT(/*preset*/ macro_tiny_goomba,                 /*yaw*/   0, /*pos*/  1822,  -460, -1511),
     MACRO_OBJECT(/*preset*/ macro_tiny_goomba,                 /*yaw*/   0, /*pos*/  2148,  -460,  -918),
     MACRO_OBJECT(/*preset*/ macro_yellow_coin_2,               /*yaw*/   0, /*pos*/  -133,  -491, -1481),
+    #ifdef QOL_FIXES
+    MACRO_OBJECT(/*preset*/ macro_yellow_coin_2,               /*yaw*/   0, /*pos*/ -1466,    26,  -814),
+    MACRO_OBJECT(/*preset*/ macro_yellow_coin_2,               /*yaw*/   0, /*pos*/ -1466,   -16,  -518),
+    MACRO_OBJECT(/*preset*/ macro_yellow_coin_2,               /*yaw*/   0, /*pos*/ -1466,  -149,  -162),
+    #else
     MACRO_OBJECT(/*preset*/ macro_yellow_coin_2,               /*yaw*/   0, /*pos*/ -1466,   -70,  -814),
     MACRO_OBJECT(/*preset*/ macro_yellow_coin_2,               /*yaw*/   0, /*pos*/ -1466,  -107,  -518),
     MACRO_OBJECT(/*preset*/ macro_yellow_coin_2,               /*yaw*/   0, /*pos*/ -1466,  -151,  -162),
+    #endif
     MACRO_OBJECT(/*preset*/ macro_yellow_coin_2,               /*yaw*/   0, /*pos*/   133,  -491, -1496),
     MACRO_OBJECT(/*preset*/ macro_box_1up,                     /*yaw*/   0, /*pos*/ -1866,  -400,   311),
     MACRO_OBJECT(/*preset*/ macro_yellow_coin_2,               /*yaw*/   0, /*pos*/  -380,  -480,   370),

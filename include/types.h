@@ -291,7 +291,11 @@ struct MarioState
     /*0x0C*/ u32 action;
     /*0x10*/ u32 prevAction;
     /*0x14*/ u32 terrainSoundAddend;
+    #ifndef QOL_FIXES
     /*0x18*/ u16 actionState;
+    #else
+    /*0x18*/ u32 actionState;
+    #endif
     /*0x1A*/ u16 actionTimer;
     /*0x1C*/ u32 actionArg;
     /*0x20*/ f32 intendedMag;

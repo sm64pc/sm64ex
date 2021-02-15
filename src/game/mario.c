@@ -879,7 +879,13 @@ static u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actio
             //  too much velocity, but misses backwards longs allowing high negative speeds.
             if ((m->forwardVel *= 1.5f) > 48.0f) {
                 m->forwardVel = 48.0f;
+            #if BUGFIX_BLJ
+            } else if ((m->forwardVel *= 1.5f) < -48.0f) {
+                m->forwardVel = -48.0f;
             }
+            #else
+            }
+            #endif
             break;
 
         case ACT_SLIDE_KICK:
@@ -1532,7 +1538,11 @@ void update_mario_health(struct MarioState *m) {
         }
 
         // Play a noise to alert the player when Mario is close to drowning.
-        if (((m->action & ACT_GROUP_MASK) == ACT_GROUP_SUBMERGED) && (m->health < 0x300)) {
+        if (((m->action & ACT_GROUP_MASK) == ACT_GROUP_SUBMERGED) && (m->health < 0x300)
+#ifdef QOL_FIXES
+        && !((m->flags & (MARIO_METAL_CAP)) > 0)
+#endif
+        ) {
             play_sound(SOUND_MOVING_ALMOST_DROWNING, gDefaultSoundArgs);
             if (!gRumblePakTimer) {
                 gRumblePakTimer = 36;

@@ -66,6 +66,9 @@ void tuxies_mother_act_1(void) {
             break;
         case 1:
             if (o->prevObj->oHeldState == HELD_FREE) {
+#ifdef QOL_FIXES
+                o->prevObj->oInteractionSubtype &= ~INT_SUBTYPE_DROP_IMMEDIATELY;                
+#else
                 //! This line is was almost certainly supposed to be something
                 // like o->prevObj->oInteractionSubtype &= ~INT_SUBTYPE_DROP_IMMEDIATELY;
                 // however, this code uses the value of o->oInteractionSubtype
@@ -75,6 +78,7 @@ void tuxies_mother_act_1(void) {
                 // which has no effect as o->prevObj->oUnknownUnk88 is always 0
                 // or 1, which is not affected by the bitwise AND.
                 o->prevObj->OBJECT_FIELD_S32(o->oInteractionSubtype) &= ~INT_SUBTYPE_DROP_IMMEDIATELY;
+#endif
                 obj_set_behavior(o->prevObj, bhvUnused20E0);
 #ifndef VERSION_JP
                 cur_obj_spawn_star_at_y_offset(3167.0f, -4300.0f, 5108.0f, 200.0f);
@@ -86,8 +90,12 @@ void tuxies_mother_act_1(void) {
             break;
         case 2:
             if (o->prevObj->oHeldState == HELD_FREE) {
+#ifdef QOL_FIXES
+                o->prevObj->oInteractionSubtype &= ~INT_SUBTYPE_DROP_IMMEDIATELY;                
+#else
                 //! Same bug as above
                 o->prevObj->OBJECT_FIELD_S32(o->oInteractionSubtype) &= ~INT_SUBTYPE_DROP_IMMEDIATELY;
+#endif
                 obj_set_behavior(o->prevObj, bhvPenguinBaby);
                 o->oAction = 2;
             }
@@ -291,12 +299,29 @@ Gfx *geo_switch_tuxie_mother_eyes(s32 run, struct GraphNode *node, UNUSED Mat4 *
     if (run == TRUE) {
         obj = (struct Object *) gCurGraphNodeObject;
         switchCase = (struct GraphNodeSwitchCase *) node;
+        #ifdef QOL_FIXES
+        int babyDelivered = obj->oAction == 2;
+        if (obj->behavior == segmented_to_virtual(bhvTuxiesMother)) {
+            switchCase->selectedCase = babyDelivered ? 0 : 4;
+        } else {
+            switchCase->selectedCase = 0;
+        #else
         switchCase->selectedCase = 0;
+        #endif
 
         // timer logic for blinking. uses cases 0-2.
         timer = gGlobalTimer % 50;
         if (timer < 43)
+            #ifdef QOL_FIXES
+            if (obj->behavior == segmented_to_virtual(bhvTuxiesMother)) {
+                switchCase->selectedCase = babyDelivered ? 0 : 4;
+            } else {
+                switchCase->selectedCase = bapDelivered ? 0 : 4;
+                switchCase->selectedCase = 0;
+            }
+            #else
             switchCase->selectedCase = 0;
+            #endif
         else if (timer < 45)
             switchCase->selectedCase = 1;
         else if (timer < 47)

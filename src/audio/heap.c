@@ -558,8 +558,13 @@ void func_eu_802e27e4_unused(f32 arg0, f32 arg1, u16 *arg2) {
 
     for (i = 2; i < 8; i++) {
         //! @bug they probably meant to store the value to tmp[i] and tmp[8 + i]
+        #ifndef QOL_FIXES
         arg2[i] = arg1 * tmp[i - 2] + arg0 * tmp[i - 1];
         arg2[8 + i] = arg1 * tmp[6 + i] + arg0 * tmp[7 + i];
+        #else
+        tmp[i] = arg1 * tmp[i - 2] + arg0 * tmp[i - 1];
+        tmp[8 + i] = arg1 * tmp[6 + i] + arg0 * tmp[7 + i];
+        #endif
     }
 
     for (i = 0; i < 16; i++) {

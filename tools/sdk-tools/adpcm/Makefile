@@ -6,7 +6,7 @@ IRIX_CC := $(QEMU_IRIX) -silent -L $(IRIX_ROOT) $(IRIX_ROOT)/usr/bin/cc
 IRIX_CFLAGS := -fullwarn -woff 515,608,658,799 -Wab,-r4300_mul -g -Xcpluscomm -mips1 -o32
 
 NATIVE_CC := gcc
-NATIVE_CFLAGS := -g -Wall -O2 -Wno-unused-result -Wno-uninitialized
+NATIVE_CFLAGS := -g -Wall -O2
 
 default: native
 all: irix native

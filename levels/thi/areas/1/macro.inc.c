@@ -16,7 +16,11 @@ const MacroObject thi_seg7_area_1_macro_objs[] = {
     MACRO_OBJECT(/*preset*/ macro_huge_goomba,          /*yaw*/   0, /*pos*/  4600, -1544,  3455),
     MACRO_OBJECT(/*preset*/ macro_huge_goomba,          /*yaw*/   0, /*pos*/  3444,  -522,  3011),
     MACRO_OBJECT(/*preset*/ macro_huge_goomba,          /*yaw*/   0, /*pos*/ -3622,  -511,  3100),
+    #ifdef QOL_FIXES
+    MACRO_OBJECT(/*preset*/ macro_coin_line_horizontal, /*yaw*/   0, /*pos*/ -4911,  -165, -1433),
+    #else
     MACRO_OBJECT(/*preset*/ macro_coin_line_horizontal, /*yaw*/   0, /*pos*/ -4911,  -395, -1433),
+    #endif
     MACRO_OBJECT(/*preset*/ macro_coin_line_horizontal, /*yaw*/  90, /*pos*/   199,  2233,   433),
     MACRO_OBJECT(/*preset*/ macro_huge_goomba,          /*yaw*/   0, /*pos*/ -3177,  1255, -2366),
     MACRO_OBJECT(/*preset*/ macro_chuckya,              /*yaw*/   0, /*pos*/ -1800,  2233,  -322),

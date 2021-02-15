@@ -1,10 +1,10 @@
-# About n64-fast32-engine
+# About n64-fast3d-engine
 
-sm64pc supports OpenGL through [n64-fast32-engine](https://github.com/Emill/n64-fast3d-engine/), by [Emill](https://github.com/Emill/).
+sm64pc supports OpenGL through [n64-fast3d-engine](https://github.com/Emill/n64-fast3d-engine/), by [Emill](https://github.com/Emill/).
 
 We recommend that you visit the repo if you wish for a better understanding on how this port was possible.
 
-n64-fast32-engine is licensed under
+n64-fast3d-engine is licensed under
 ```
 Copyright (c) 2020, Emill
 

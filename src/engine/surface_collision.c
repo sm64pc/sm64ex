@@ -313,7 +313,7 @@ f32 find_ceil(f32 posX, f32 posY, f32 posZ, struct Surface **pceil) {
     s16 x, y, z;
 
     //! (Parallel Universes) Because position is casted to an s16, reaching higher
-    // float locations  can return ceilings despite them not existing there.
+    // float locations can return ceilings despite them not existing there.
     //(Dynamic ceilings will unload due to the range.)
     x = (s16) posX;
     y = (s16) posY;
@@ -519,7 +519,7 @@ f32 find_floor(f32 xPos, f32 yPos, f32 zPos, struct Surface **pfloor) {
     f32 dynamicHeight = -11000.0f;
 
     //! (Parallel Universes) Because position is casted to an s16, reaching higher
-    // float locations  can return floors despite them not existing there.
+    // float locations can return floors despite them not existing there.
     //(Dynamic floors will unload due to the range.)
     s16 x = (s16) xPos;
     s16 y = (s16) yPos;
@@ -552,7 +552,7 @@ f32 find_floor(f32 xPos, f32 yPos, f32 zPos, struct Surface **pfloor) {
     if (!gFindFloorIncludeSurfaceIntangible) {
         //! (BBH Crash) Most NULL checking is done by checking the height of the floor returned
         //  instead of checking directly for a NULL floor. If this check returns a NULL floor
-        //  (happens when there is no floor under the SURFACE_INTANGIBLE floor) but returns the height
+        //  (happens when there is no floor under the SURFACE_INTANGIBLE floor), it returns the height
         //  of the SURFACE_INTANGIBLE floor instead of the typical -11000 returned for a NULL floor.
         if (floor != NULL && floor->type == SURFACE_INTANGIBLE) {
             floor = find_floor_from_list(surfaceList, x, (s32)(height - 200.0f), z, &height);

@@ -214,10 +214,19 @@ void stop_other_paintings(s16 *idptr, struct Painting *paintingGroup[]) {
 f32 painting_mario_y(struct Painting *painting) {
     //! Unnecessary use of double constants
     // Add 50 to make the ripple closer to Mario's center of mass.
+    #ifndef QOL_FIXES
     f32 relY = gPaintingMarioYPos - painting->posY + 50.0;
+    #else
+    f32 relY = gPaintingMarioYPos - painting->posY + 50.0f;
+    #endif
 
+    #ifndef QOL_FIXES
     if (relY < 0.0) {
         relY = 0.0;
+    #else
+    if (relY < 0.0f) {
+        relY = 0.0f;
+    #endif
     } else if (relY > painting->size) {
         relY = painting->size;
     }
@@ -578,7 +587,15 @@ void painting_update_ripple_state(struct Painting *painting) {
         //! 16777216 (1 << 24), at which point it will freeze (due to floating-point
         //! imprecision?) and the painting will stop rippling. This happens to HMC, DDD, and
         //! CotMC. This happens on Wii VC. Untested on N64 and Wii U VC.
+        #ifndef QOL_FIXES
         painting->rippleTimer += 1.0;
+        #else
+        if (painting->rippleTimer >= 16777216.0) {
+            painting->rippleTimer = 0.0;
+        } else {
+            painitng->rippleTimer += 1.0;
+        }
+        #endif
     }
     if (painting->rippleTrigger == RIPPLE_TRIGGER_PROXIMITY) {
         // if the painting is barely rippling, make it stop rippling

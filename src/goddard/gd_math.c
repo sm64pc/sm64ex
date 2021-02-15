@@ -692,7 +692,11 @@ void UNUSED gd_create_quat_rot_mat(f32 quat[4], UNUSED s32 unused, Mat4f *mtx) {
     //! latter portions remain what they were originally. Perhaps this was meant
     //! to call gd_create_neg_vec_zero_first_mat_row?
     (*mtx)[0][0] = 1.0f;
+    #ifndef QOL_FIXES
     gd_shift_mat_up(mtx);
+    #else
+    gd_create_neg_vec_zero_first_mat_row(mtx);
+    #endif
 }
 
 /**

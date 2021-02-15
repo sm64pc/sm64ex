@@ -112,7 +112,11 @@ void unknown_main_func(void) {
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wnonnull"
+#ifndef QOL_FIXES
     sprintf(NULL, NULL);
+#else
+    sprintf("", "");
+#endif
 #pragma GCC diagnostic pop
 }
 

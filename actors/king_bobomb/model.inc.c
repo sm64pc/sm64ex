@@ -527,6 +527,50 @@ static const Vtx king_bobomb_seg5_vertex_0500B218[] = {
     {{{   124,   -158,    493}, 0, {   990,      0}, {0x00, 0xe8, 0x7c, 0xff}}},
 };
 
+#ifdef QOL_FIXES
+const Gfx king_bobomb_dl_eyes_start_block[] = {
+    gsDPPipeSync(),
+    gsDPSetCombineMode(G_CC_DECALRGBA, G_CC_DECALRGBA),
+    gsSPClearGeometryMode(G_LIGHTING),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD, G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD),
+    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+    gsDPTileSync(),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, G_TX_RENDERTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, G_TX_NOLOD, G_TX_WRAP | G_TX_NOMIRROR, 5, G_TX_NOLOD),
+    gsDPSetTileSize(0, 0, 0, (32 - 1) << G_TEXTURE_IMAGE_FRAC, (32 - 1) << G_TEXTURE_IMAGE_FRAC),
+    gsSPEndDisplayList(),
+};
+
+const Gfx king_bobomb_dl_eyes_end_block[] = {
+    gsSPLight(&king_bobomb_seg5_lights_0500B200.l, 1),
+    gsSPLight(&king_bobomb_seg5_lights_0500B200.a, 2),
+    gsSPVertex(king_bobomb_seg5_vertex_0500B218, 6, 0),
+    gsSP2Triangles( 0,  1,  2, 0x0,  3,  2,  4, 0x0),
+    gsSP2Triangles( 2,  3,  0, 0x0,  4,  5,  3, 0x0),
+    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_OFF),
+    gsDPPipeSync(),
+    gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
+    gsSPSetGeometryMode(G_LIGHTING),
+    gsSPEndDisplayList(),
+};
+
+const Gfx king_bobomb_dl_eyes[] = {
+    gsSPDisplayList(king_bobomb_dl_eyes_start_block),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, king_bobomb_seg5_texture_05004878),
+    gsDPLoadSync(),
+    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 32 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
+    gsSPDisplayList(king_bobomb_dl_eyes_end_block),
+    gsSPEndDisplayList(),
+};
+
+const Gfx king_bobomb_dl_eyes_blink[] = {
+    gsSPDisplayList(king_bobomb_dl_eyes_start_block),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, king_bobomb_seg5_texture_05005078),
+    gsDPLoadSync(),
+    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 32 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
+    gsSPDisplayList(king_bobomb_dl_eyes_end_block),
+    gsSPEndDisplayList(),
+};
+#else
 // 0x0500B278 - 0x0500B2D0
 const Gfx king_bobomb_seg5_dl_0500B278[] = {
     gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, king_bobomb_seg5_texture_05004878),
@@ -555,6 +599,7 @@ const Gfx king_bobomb_seg5_dl_0500B2D0[] = {
     gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
     gsSPEndDisplayList(),
 };
+#endif
 
 // 0x0500B330
 static const Lights1 king_bobomb_seg5_lights_0500B330 = gdSPDefLights1(

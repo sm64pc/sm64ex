@@ -52,7 +52,11 @@ void bhv_big_bully_init(void) {
 }
 
 void bully_check_mario_collision(void) {
-    if (o->oInteractStatus & INT_STATUS_INTERACTED) {
+    if (
+#if BUGFIX_BULLY_NO_INTERACT_DEATH
+        o->oAction != BULLY_ACT_LAVA_DEATH && o->oAction != BULLY_ACT_DEATH_PLANE_DEATH &&
+#endif
+        o->oInteractStatus & INT_STATUS_INTERACTED) {
         if (o->oBehParams2ndByte == BULLY_BP_SIZE_SMALL)
             cur_obj_play_sound_2(SOUND_OBJ2_BULLY_ATTACKED);
         else
@@ -122,7 +126,11 @@ void bully_act_back_up(void) {
     //  conditions are activated. However because its angle is set to its facing angle,
     //  it will walk forward instead of backing up.
 
+    #ifndef QOL_FIXES
     if (o->oTimer == 15) {
+    #else
+    if (o->oTimer >= 15) {
+    #endif
         o->oMoveAngleYaw = o->oFaceAngleYaw;
         o->oFlags |= 0x8; /* bit 3 */
         o->oAction = BULLY_ACT_PATROL;
@@ -219,7 +227,13 @@ void bhv_bully_loop(void) {
     //  death action by colliding with it. Since the bully hitbox is tall enough to collide
     //  with Mario even when it is under a lava floor, this can get the bully stuck OOB
     //  if there is nothing under the lava floor.
+    #ifndef QOL_FIXES
     bully_check_mario_collision();
+    #else
+    if (o->oAction != BULLY_ACT_LAVA_DEATH || o->oAction != BULLY_ACT_DEATH_PLANE_DEATH) {
+        bully_check_mario_collision();
+    }
+    #endif
 
     switch (o->oAction) {
         case BULLY_ACT_PATROL:
@@ -336,11 +350,15 @@ void bhv_big_bully_with_minions_loop(void) {
             //  for counting the number of dead minions. This means that when it activates,
             //  the knockback timer is at 3 instead of 0. So the bully knockback time will
             //  be reduced by 3 frames (16.67%) on the first hit.
+            //
             if (o->oBullyKBTimerAndMinionKOCounter == 3) {
                 play_puzzle_jingle();
 
                 if (o->oTimer >= 91)
                     o->oAction = BULLY_ACT_ACTIVATE_AND_FALL;
+                #ifdef QOL_FIXES
+                    o->oBullyKBTimerAndMinionKOCounter == 0;
+                #endif
             }
             break;
 

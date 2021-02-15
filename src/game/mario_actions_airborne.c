@@ -160,7 +160,11 @@ s32 check_horizontal_wind(struct MarioState *m) {
         if (speed > 48.0f) {
             m->slideVelX = m->slideVelX * 48.0f / speed;
             m->slideVelZ = m->slideVelZ * 48.0f / speed;
+            #ifndef QOL_FIXES
             speed = 32.0f; //! This was meant to be 48?
+            #else
+            speed = 48.0f;
+            #endif
         } else if (speed > 32.0f) {
             speed = 32.0f;
         }
@@ -2069,17 +2073,54 @@ s32 act_special_triple_jump(struct MarioState *m) {
 
     switch (perform_air_step(m, 0)) {
         case AIR_STEP_LANDED:
+            #ifndef QOL_FIXES
             if (m->actionState++ == 0) {
                 m->vel[1] = 42.0f;
             } else {
                 set_mario_action(m, ACT_FREEFALL_LAND_STOP, 0);
             }
+            #else
+            if (m->actionState++ != 0) {
+                set_mario_action(m, ACT_FREEFALL_LAND_STOP, 0);
+            }
+            #endif
             play_mario_landing_sound(m, SOUND_ACTION_TERRAIN_LANDING);
             break;
 
+        #ifdef QOL_FIXES
+        case AIR_STEP_HIT_WALL:
+            if (m->forwardVel > 16.0f) {
+                mario_bonk_reflection(m, FALSE);
+                m->faceAngle[1] += 0x8000;
+                if (m->wall != NULL)
+                    set_mario_action(m, ACT_AIR_HIT_WALL, 0);
+                else {
+                    if (m->vel[1] > 0.0f)
+                        m->vel[1] = 0.0f;
+                    if (m->forwardVel >= 38.0f) {
+                        m->particleFlags |= PARTICLE_VERTICAL_STAR;
+                        set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
+                    } else {
+                        if (m->forwardVel > 8.0f)
+                            mario_set_forward_vel(m, -8.0f);
+                        return set_mario_action(m, ACT_SOFT_BONK, 0);
+                    }
+                }
+            } else
+                mario_set_forward_vel(m, 0.0f);
+            break;
+        case AIR_STEP_GRABBED_LEDGE:
+            set_mario_animation(m, MARIO_ANIM_IDLE_ON_LEDGE);
+            drop_and_set_mario_action(m, ACT_LEDGE_GRAB, 0);
+            break;
+        case AIR_STEP_GRABBED_CEILING:
+            set_mario_action(m, ACT_START_HANGING, 0);
+            break;
+        #else
         case AIR_STEP_HIT_WALL:
             mario_bonk_reflection(m, TRUE);
             break;
+        #endif
     }
 
     if (m->actionState == 0 || m->vel[1] > 0.0f) {

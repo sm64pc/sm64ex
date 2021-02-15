@@ -22,7 +22,9 @@ void *vec3f_copy(Vec3f dest, Vec3f src) {
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
+    #ifndef QOL_FIXES
     return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Set vector 'dest' to (x, y, z)
@@ -30,7 +32,9 @@ void *vec3f_set(Vec3f dest, f32 x, f32 y, f32 z) {
     dest[0] = x;
     dest[1] = y;
     dest[2] = z;
+    #ifndef QOL_FIXES
     return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Add vector 'a' to 'dest'
@@ -38,7 +42,9 @@ void *vec3f_add(Vec3f dest, Vec3f a) {
     dest[0] += a[0];
     dest[1] += a[1];
     dest[2] += a[2];
+    #ifndef QOL_FIXES
     return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Make 'dest' the sum of vectors a and b.
@@ -46,7 +52,9 @@ void *vec3f_sum(Vec3f dest, Vec3f a, Vec3f b) {
     dest[0] = a[0] + b[0];
     dest[1] = a[1] + b[1];
     dest[2] = a[2] + b[2];
+    #ifndef QOL_FIXES
     return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Multiply vector 'dest' by a
@@ -55,7 +63,9 @@ void *vec3f_mul(Vec3f dest, f32 a)
     dest[0] *= a;
     dest[1] *= a;
     dest[2] *= a;
+    #ifndef QOL_FIXES
     return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Copy vector src to dest
@@ -63,7 +73,9 @@ void *vec3s_copy(Vec3s dest, Vec3s src) {
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
+    #ifndef QOL_FIXES
     return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Set vector 'dest' to (x, y, z)
@@ -71,7 +83,9 @@ void *vec3s_set(Vec3s dest, s16 x, s16 y, s16 z) {
     dest[0] = x;
     dest[1] = y;
     dest[2] = z;
+    #ifndef QOL_FIXES
     return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Add vector a to 'dest'
@@ -79,7 +93,9 @@ void *vec3s_add(Vec3s dest, Vec3s a) {
     dest[0] += a[0];
     dest[1] += a[1];
     dest[2] += a[2];
+    #ifndef QOL_FIXES
     return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Make 'dest' the sum of vectors a and b.
@@ -87,7 +103,9 @@ void *vec3s_sum(Vec3s dest, Vec3s a, Vec3s b) {
     dest[0] = a[0] + b[0];
     dest[1] = a[1] + b[1];
     dest[2] = a[2] + b[2];
+    #ifndef QOL_FIXES
     return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Make 'dest' the difference of vectors a and b.
@@ -95,7 +113,9 @@ void *vec3f_dif(Vec3f dest, Vec3f a, Vec3f b) {
     dest[0] = a[0] - b[0];
     dest[1] = a[1] - b[1];
     dest[2] = a[2] - b[2];
+    #ifndef QOL_FIXES
     return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Convert short vector a to float vector 'dest'
@@ -103,7 +123,9 @@ void *vec3s_to_vec3f(Vec3f dest, Vec3s a) {
     dest[0] = a[0];
     dest[1] = a[1];
     dest[2] = a[2];
+    #ifndef QOL_FIXES
     return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /**
@@ -115,7 +137,9 @@ void *vec3f_to_vec3s(Vec3s dest, Vec3f a) {
     dest[0] = a[0] + ((a[0] > 0) ? 0.5f : -0.5f);
     dest[1] = a[1] + ((a[1] > 0) ? 0.5f : -0.5f);
     dest[2] = a[2] + ((a[2] > 0) ? 0.5f : -0.5f);
+    #ifndef QOL_FIXES
     return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /**
@@ -127,7 +151,9 @@ void *find_vector_perpendicular_to_plane(Vec3f dest, Vec3f a, Vec3f b, Vec3f c) 
     dest[0] = (b[1] - a[1]) * (c[2] - b[2]) - (c[1] - b[1]) * (b[2] - a[2]);
     dest[1] = (b[2] - a[2]) * (c[0] - b[0]) - (c[2] - b[2]) * (b[0] - a[0]);
     dest[2] = (b[0] - a[0]) * (c[1] - b[1]) - (c[0] - b[0]) * (b[1] - a[1]);
+    #ifndef QOL_FIXES
     return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Make vector 'dest' the cross product of vectors a and b.
@@ -135,18 +161,31 @@ void *vec3f_cross(Vec3f dest, Vec3f a, Vec3f b) {
     dest[0] = a[1] * b[2] - b[1] * a[2];
     dest[1] = a[2] * b[0] - b[2] * a[0];
     dest[2] = a[0] * b[1] - b[0] * a[1];
+    #ifndef QOL_FIXES
     return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Scale vector 'dest' so it has length 1
 void *vec3f_normalize(Vec3f dest) {
+    #ifndef QOL_FIXES
     //! Possible division by zero
     f32 invsqrt = 1.0f / sqrtf(dest[0] * dest[0] + dest[1] * dest[1] + dest[2] * dest[2]);
+    #else
+    f32 invsqrt = 0.0f;
+    if (sqrtf(dest[0] * dest[0] + dest[1] * dest[1] + dest[2] * dest[2]) != 0) {
+        invsqrt = 1.0f / sqrtf(dest[0] * dest[0] + dest[1] * dest[1] + dest[2] * dest[2]);
+    } else {
+        invsqrt = 1.0f * 0.0f;
+    }
+    #endif
 
     dest[0] *= invsqrt;
     dest[1] *= invsqrt;
     dest[2] *= invsqrt;
+    #ifndef QOL_FIXES
     return &dest; //! warning: function returns address of local variable
+    #endif
 }
 
 /// Get length of vector 'a'
@@ -729,6 +768,49 @@ f32 approach_f32(f32 current, f32 target, f32 inc, f32 dec) {
     }
     return current;
 }
+
+#ifdef QOL_FIXES
+/**
+ * Return the value 'current' after it tries to approach target, going up at
+ * most 'inc' and going down at most 'dec'.
+ */
+s64 approach_s64(s64 current, s64 target, s64 inc, s64 dec) {
+    //! If target is close to the max or min s64, then it's possible to overflow
+    // past it without stopping.
+
+    if (current < target) {
+        current += inc;
+        if (current > target) {
+            current = target;
+        }
+    } else {
+        current -= dec;
+        if (current < target) {
+            current = target;
+        }
+    }
+    return current;
+}
+
+/**
+ * Return the value 'current' after it tries to approach target, going up at
+ * most 'inc' and going down at most 'dec'.
+ */
+f64 approach_f64(f64 current, f64 target, f64 inc, f64 dec) {
+    if (current < target) {
+        current += inc;
+        if (current > target) {
+            current = target;
+        }
+    } else {
+        current -= dec;
+        if (current < target) {
+            current = target;
+        }
+    }
+    return current;
+}
+#endif
 
 /**
  * Helper function for atan2s. Does a look up of the arctangent of y/x assuming

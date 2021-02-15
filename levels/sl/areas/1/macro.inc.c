@@ -3,7 +3,11 @@ const MacroObject sl_seg7_area_1_macro_objs[] = {
     MACRO_OBJECT_WITH_BEH_PARAM(/*preset*/ macro_wooden_signpost,      /*yaw*/  90, /*pos*/  4086,  1024,   400, /*behParam*/ DIALOG_086),
     MACRO_OBJECT(/*preset*/ macro_yellow_coin_2,        /*yaw*/   0, /*pos*/  1285,  2210,   385),
     MACRO_OBJECT(/*preset*/ macro_yellow_coin_2,        /*yaw*/   0, /*pos*/  1728,  2560,  -671),
+    #ifdef QOL_FIXES
+    MACRO_OBJECT(/*preset*/ macro_yellow_coin_2,        /*yaw*/   0, /*pos*/  1371,  3072,  -500),
+    #else
     MACRO_OBJECT(/*preset*/ macro_yellow_coin_2,        /*yaw*/   0, /*pos*/  1371,  2188,  -500),
+    #endif
     MACRO_OBJECT(/*preset*/ macro_yellow_coin_2,        /*yaw*/   0, /*pos*/  1814,  3174,   114),
     MACRO_OBJECT(/*preset*/ macro_yellow_coin_2,        /*yaw*/   0, /*pos*/    28,  3328,  1885),
     MACRO_OBJECT(/*preset*/ macro_yellow_coin_2,        /*yaw*/   0, /*pos*/  -228,  3482,  1742),

@@ -180,10 +180,14 @@ void print_mapinfo(void) {
     print_debug_top_down_normal("mapinfo", 0);
     print_debug_top_down_mapinfo("area %x", area);
     print_debug_top_down_mapinfo("wx   %d", gCurrentObject->oPosX);
+    #ifndef QOL_FIXES
     //! Fat finger: programmer hit tab instead of space. Japanese
     // thumb shift keyboards had the tab key next to the spacebar,
     // so this was likely the reason.
     print_debug_top_down_mapinfo("wy\t  %d", gCurrentObject->oPosY);
+    #else
+    print_debug_top_down_mapinfo("wy   %d", gCurrentObject->oPosY);
+    #endif
     print_debug_top_down_mapinfo("wz   %d", gCurrentObject->oPosZ);
     print_debug_top_down_mapinfo("bgY  %d", bgY);
     print_debug_top_down_mapinfo("angY %d", angY);

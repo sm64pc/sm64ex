@@ -19,6 +19,9 @@ void bhv_unused_poundable_platform(void) {
         if (cur_obj_is_mario_ground_pounding_platform()) {
             spawn_mist_particles();
             spawn_triangle_break_particles(20, 56, 3.0f, 0);
+#ifdef QOL_FIXES
+            create_sound_spawner(SOUND_GENERAL_BREAK_BOX);
+#endif
             o->oAction++;
         }
     } else if (o->oTimer > 7) {

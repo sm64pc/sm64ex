@@ -30,7 +30,11 @@ static void camera_lakitu_intro_act_trigger_cutscene(void) {
     //  the RTA speedrunning method of lakitu skip
     if (gMarioObject->oPosX > -544.0f && gMarioObject->oPosX < 545.0f && gMarioObject->oPosY > 800.0f
         && gMarioObject->oPosZ > -2000.0f && gMarioObject->oPosZ < -177.0f
+        #ifndef QOL_FIXES
         && gMarioObject->oPosZ < -177.0f) // always double check your conditions
+        #else
+        && gMarioObject->oPosZ > 178.0f)
+        #endif
     {
         if (set_mario_npc_dialog(2) == 1) {
             o->oAction = CAMERA_LAKITU_INTRO_ACT_SPAWN_CLOUD;

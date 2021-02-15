@@ -1261,6 +1261,9 @@ static s32 cur_obj_move_xz(f32 steepSlopeNormalY, s32 careAboutEdgesAndSteepSlop
         o->oPosZ = intendedZ;
         //! Returning FALSE but moving anyway (not exploitable; return value is
         //  never used)
+        #ifdef QOL_FIXES
+        return TRUE;
+        #endif
     }
 
     // We are likely trying to move onto a steep upward slope
@@ -1747,13 +1750,12 @@ static void cur_obj_update_floor(void) {
         if (floor->type == SURFACE_BURNING) {
             o->oMoveFlags |= OBJ_MOVE_ABOVE_LAVA;
         }
-#ifndef VERSION_JP
+#if !defined(VERSION_JP) || defined(QOL_FIXES)
         else if (floor->type == SURFACE_DEATH_PLANE) {
             //! This misses SURFACE_VERTICAL_WIND (and maybe SURFACE_WARP)
             o->oMoveFlags |= OBJ_MOVE_ABOVE_DEATH_BARRIER;
         }
 #endif
-
         o->oFloorType = floor->type;
         o->oFloorRoom = floor->room;
     } else {
@@ -2590,7 +2592,7 @@ s32 cur_obj_update_dialog(s32 actionArg, s32 dialogFlags, s32 dialogID, UNUSED s
     UNUSED s32 doneTurning = TRUE;
 
     switch (o->oDialogState) {
-#ifdef VERSION_JP
+#if (defined(VERSION_JP) && !defined(QOL_FIXES))
         case DIALOG_UNK1_ENABLE_TIME_STOP:
             //! We enable time stop even if Mario is not ready to speak. This
             //  allows us to move during time stop as long as Mario never enters
@@ -2667,7 +2669,7 @@ s32 cur_obj_update_dialog_with_cutscene(s32 actionArg, s32 dialogFlags, s32 cuts
     s32 doneTurning = TRUE;
 
     switch (o->oDialogState) {
-#ifdef VERSION_JP
+#if (defined(VERSION_JP) && !defined(QOL_FIXES))
         case DIALOG_UNK2_ENABLE_TIME_STOP:
             //! We enable time stop even if Mario is not ready to speak. This
             //  allows us to move during time stop as long as Mario never enters

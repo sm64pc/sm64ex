@@ -1176,7 +1176,8 @@ void load_score_menu_from_submenu(s16 prevMenuButtonID, struct Object *sourceBut
     }
     // If the previous button is in default state
     if (sMainMenuButtons[prevMenuButtonID]->oMenuButtonState == MENU_BUTTON_STATE_DEFAULT) {
-        // Hide buttons of corresponding button menu groups
+        // Hide buttons of corresponding button menu 
+        #ifndef QOL_FIXES
         if (prevMenuButtonID == MENU_BUTTON_SCORE) //! Not possible, this is checking if the score menu
                                                    //! was opened from the score menu!
         {
@@ -1184,6 +1185,7 @@ void load_score_menu_from_submenu(s16 prevMenuButtonID, struct Object *sourceBut
                 mark_obj_for_deletion(sMainMenuButtons[buttonID]);
             }
         }
+        #endif
         if (prevMenuButtonID == MENU_BUTTON_COPY) {
             for (buttonID = MENU_BUTTON_COPY_MIN; buttonID < MENU_BUTTON_COPY_MAX; buttonID++) {
                 mark_obj_for_deletion(sMainMenuButtons[buttonID]);
@@ -1223,6 +1225,7 @@ void load_copy_menu_from_submenu(s16 prevMenuButtonID, struct Object *sourceButt
                 mark_obj_for_deletion(sMainMenuButtons[buttonID]);
             }
         }
+        #ifndef QOL_FIXES
         if (prevMenuButtonID == MENU_BUTTON_COPY) //! Not possible, this is checking if the copy menu
                                                   //! was opened from the copy menu!
         {
@@ -1230,6 +1233,7 @@ void load_copy_menu_from_submenu(s16 prevMenuButtonID, struct Object *sourceButt
                 mark_obj_for_deletion(sMainMenuButtons[buttonID]);
             }
         }
+        #endif
         if (prevMenuButtonID == MENU_BUTTON_ERASE) {
             for (buttonID = MENU_BUTTON_ERASE_MIN; buttonID < MENU_BUTTON_ERASE_MAX; buttonID++) {
                 mark_obj_for_deletion(sMainMenuButtons[buttonID]);
@@ -1269,6 +1273,7 @@ void load_erase_menu_from_submenu(s16 prevMenuButtonID, struct Object *sourceBut
                 mark_obj_for_deletion(sMainMenuButtons[buttonID]);
             }
         }
+        #ifndef QOL_FIXES
         if (prevMenuButtonID == MENU_BUTTON_ERASE) //! Not possible, this is checking if the erase menu
                                                    //! was opened from the erase menu!
         {
@@ -1276,6 +1281,7 @@ void load_erase_menu_from_submenu(s16 prevMenuButtonID, struct Object *sourceBut
                 mark_obj_for_deletion(sMainMenuButtons[buttonID]);
             }
         }
+        #endif
         // Play zoom in sound, select erase menu and render it's buttons
         sSelectedButtonID = MENU_BUTTON_ERASE;
         play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);

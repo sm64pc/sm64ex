@@ -57,8 +57,23 @@ void transfer_bully_speed(struct BullyCollisionData *obj1, struct BullyCollision
     f32 rz = obj2->posZ - obj1->posZ;
 
     //! Bully NaN crash
+    #ifndef QOL_FIXES
     f32 projectedV1 = (rx * obj1->velX + rz * obj1->velZ) / (rx * rx + rz * rz);
     f32 projectedV2 = (-rx * obj2->velX - rz * obj2->velZ) / (rx * rx + rz * rz);
+    #else
+    f32 projectedV1 = 0.0f;
+    f32 projectedV2 = 0.0f;
+    if ((rx * obj1->velX + rz * obj1->velZ) / (rx * rx + rz * rz) != NaN)
+    || ((-rx * obj2->velX - rz * obj2->velZ) / (rx * rx + rz * rz) != NaN)
+    || ((rx * obj1->velX + rz * obj1->velZ) / (rx * rx + rz * rz) != NaN
+    && (-rx * obj2->velX - rz * obj2->velZ) / (rx * rx + rz * rz) != NaN) {
+        projectedV1 = (rx * obj1->velX + rz * obj1->velZ) / (rx * rx + rz * rz);
+        projectedV2 = (-rx * obj2->velX - rz * obj2->velZ) / (rx * rx + rz * rz);
+    } else {
+        projectedV1 = 0.0f;
+        projectedV2 = 0.0f;
+    }
+    #endif
 
     // Kill speed along r. Convert one object's speed along r and transfer it to
     // the other object.
@@ -281,7 +296,12 @@ static s32 perform_ground_quarter_step(struct MarioState *m, Vec3f nextPos) {
     if ((m->action & ACT_FLAG_RIDING_SHELL) && floorHeight < waterLevel) {
         floorHeight = waterLevel;
         floor = &gWaterSurfacePseudoFloor;
+        #ifndef QOL_FIXES
         floor->originOffset = floorHeight; //! Wrong origin offset (no effect)
+        #else
+        // this might have been waterLevel instead
+        floor->originOffset = waterLevel;
+        #endif
     }
 
     if (nextPos[1] > floorHeight + 100.0f) {
@@ -368,7 +388,12 @@ u32 check_ledge_grab(struct MarioState *m, struct Surface *wall, Vec3f intendedP
     // a higher ledge than expected (glitchy ledge grab)
     ledgePos[0] = nextPos[0] - wall->normal.x * 60.0f;
     ledgePos[2] = nextPos[2] - wall->normal.z * 60.0f;
+    #ifndef QOL_FIXES
     ledgePos[1] = find_floor(ledgePos[0], nextPos[1] + 160.0f, ledgePos[2], &ledgeFloor);
+    #else
+    // start the search for floors at y instead of y + 160
+    ledgePos[1] = find_floor(ledgePos[0], nextPos[1], ledgePos[2], &ledgeFloor);
+    #endif
 
     if (ledgePos[1] - nextPos[1] <= 100.0f) {
         return 0;
@@ -424,7 +449,12 @@ s32 perform_air_quarter_step(struct MarioState *m, Vec3f intendedPos, u32 stepAr
     if ((m->action & ACT_FLAG_RIDING_SHELL) && floorHeight < waterLevel) {
         floorHeight = waterLevel;
         floor = &gWaterSurfacePseudoFloor;
+        #ifndef QOL_FIXES
         floor->originOffset = floorHeight; //! Incorrect origin offset (no effect)
+        #else
+        // this might have been waterLevel instead
+        floor->originOffset = waterLevel;
+        #endif
     }
 
     //! This check uses f32, but findFloor uses short (overflow jumps)
@@ -439,6 +469,11 @@ s32 perform_air_quarter_step(struct MarioState *m, Vec3f intendedPos, u32 stepAr
         //! When ceilHeight - floorHeight <= 160, the step result says that
         // Mario landed, but his movement is cancelled and his referenced floor
         // isn't updated (pedro spots)
+        #ifdef QOL_FIXES
+        m->pos[0] = nextPos[0];
+        m->pos[2] = nextPos[2];
+        m->floor = floor;
+        #endif
         m->pos[1] = floorHeight;
         return AIR_STEP_LANDED;
     }

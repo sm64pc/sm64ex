@@ -1,3 +1,7 @@
+#ifdef QOL_FIXES
+#include <limits.h>
+#include <float.h>
+#endif
 
 /**
  * Behavior for bhvMontyMole, bhvMontyMoleHole, and bhvMontyMoleRock.
@@ -377,7 +381,11 @@ void bhv_monty_mole_update(void) {
             //! The two farthest holes on the bottom level of TTM are more than
             //  1500 units away from each other, so the counter resets if you
             //  attack moles in these holes consecutively.
+            #ifndef QOL_FIXES
             if (distToLastKill < 1500.0f) {
+            #else
+            if (distToLastKill <= FLT_MAX) {
+            #endif
                 if (sMontyMoleKillStreak == 7) {
                     play_puzzle_jingle();
                     spawn_object(o, MODEL_1UP, bhv1upWalking);
@@ -388,7 +396,15 @@ void bhv_monty_mole_update(void) {
         }
 
         //! No overflow check
+        #ifndef QOL_FIXES
         sMontyMoleKillStreak += 1;
+        #else
+        if (sMontyMoleKillStreak > INT_MAX) {
+            sMontyMoleKillStreak = INT_MAX;
+        } else {
+            sMontyMoleKillStreak += 1;
+        }
+        #endif
 
         sMontyMoleLastKilledPosX = o->oPosX;
         sMontyMoleLastKilledPosY = o->oPosY;

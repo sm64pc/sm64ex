@@ -29,9 +29,10 @@ void water_ring_init(void) {
 
     // Adding this code will alter the ring's graphical orientation to align with the faulty
     // collision orientation:
-    //
-    // o->oFaceAngleYaw = 0;
-    // o->oFaceAngleRoll *= -1;
+    #ifdef QOL_FIXES
+        o->oFaceAngleYaw = 0;
+        o->oFaceAngleRoll *= -1;
+    #endif
 }
 
 void bhv_jet_stream_water_ring_init(void) {
@@ -162,8 +163,13 @@ void water_ring_spawner_act_inactive(void) {
     //  come around again.
     if (o->oTimer == 300)
         o->oTimer = 0;
+    #ifndef QOL_FIXES
     if ((o->oTimer == 0) || (o->oTimer == 50) || (o->oTimer == 150) || (o->oTimer == 200)
         || (o->oTimer == 250)) {
+    #else
+    // This makes it much easier to collect this star
+    if ((o->oTimer % 50 == 0)) {
+    #endif
         waterRing = spawn_object(o, MODEL_WATER_RING, bhvJetStreamWaterRing);
         waterRing->oWaterRingIndex = currentObj->oWaterRingMgrNextRingIndex;
         currentObj->oWaterRingMgrNextRingIndex++;

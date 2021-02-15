@@ -79,12 +79,21 @@ void draw_profiler_bar(OSTime clockBase, OSTime clockStart, OSTime clockEnd, s16
     //! I believe this is supposed to cap rectX1 and rectX2 to 320, but the
     //  code seems to use the wrong variables... it's possible that the variable
     //  names were very similar within a single letter.
+    #ifndef QOL_FIXES
     if (rectX1 > 319) {
         clockStart = 319;
     }
     if (rectX2 > 319) {
         clockEnd = 319;
     }
+    #else
+    if (rectX1 > 320) {
+        rectX1 = 320;
+    }
+    if (rectX2 > 320) {
+        rectX2 = 320;
+    }
+    #endif
 
     // perform the render if start is less than end. in most cases, it should be.
     if (rectX1 < rectX2) {
@@ -261,7 +270,11 @@ void draw_profiler_mode_0(void) {
     //  potentially be passed to draw_profiler_bar, because it could be sending
     //  pairs that are beyond the numVblankTimes enforced non-odd limit, due to
     //  using the wrong num value.
+    #ifndef QOL_FIXES
     for (i = 0; i < profiler->numSoundTimes; i += 2) {
+    #else
+    for (i = 0; i < profiler->vblankTimes; i += 2) {
+    #endif
         vblank += (profiler->vblankTimes[i + 1] - profiler->vblankTimes[i]);
     }
 

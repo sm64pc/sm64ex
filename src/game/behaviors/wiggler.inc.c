@@ -153,7 +153,7 @@ void wiggler_init_segments(void) {
         cur_obj_unhide();
     }
 
-#if defined(VERSION_EU) || defined(AVOID_UB)
+#if BUGFIX_WIGGLER_HEALTH
     o->oHealth = 4; // This fixes Wiggler reading UB on his first frame of his acceleration, as his health is not set.
 #endif
 }

@@ -52,7 +52,7 @@ s32 particle_is_laterally_close(s32 index, s32 x, s32 z, s32 distance) {
 }
 
 /**
- * Generate a uniform random number in range [-2000, -1000[ or [1000, 2000[
+ * Generate a uniform random number in range [-2000, -1000] or [1000, 2000]
  * Used to position flower particles
  */
 s32 random_flower_offset(void) {
@@ -348,16 +348,20 @@ s32 envfx_init_bubble(s32 mode) {
     bzero(gEnvFxBubbleConfig, sizeof(gEnvFxBubbleConfig));
 
     if (mode == ENVFX_LAVA_BUBBLES) {
+        #ifndef QOL_FIXES
         //! Dead code
         if (0) {
         }
 
+        #endif
         for (i = 0; i < sBubbleParticleCount; i++) {
             (gEnvFxBuffer + i)->animFrame = random_float() * 7.0f;
         }
+        #ifndef QOL_FIXES
 
         if (0) {
         }
+        #endif
     }
 
     gEnvFxMode = mode;

@@ -39,6 +39,8 @@
 #include "pc/discord/discordrpc.h"
 #endif
 
+#include "macros.h"
+
 OSMesg D_80339BEC;
 OSMesgQueue gSIEventMesgQueue;
 
@@ -61,10 +63,10 @@ extern void thread5_game_loop(void *arg);
 extern void create_next_audio_buffer(s16 *samples, u32 num_samples);
 void game_loop_one_iteration(void);
 
-void dispatch_audio_sptask(struct SPTask *spTask) {
+void dispatch_audio_sptask(UNUSED struct SPTask *spTask) {
 }
 
-void set_vblank_handler(s32 index, struct VblankHandler *handler, OSMesgQueue *queue, OSMesg *msg) {
+void set_vblank_handler(UNUSED s32 index, UNUSED struct VblankHandler *handler, UNUSED OSMesgQueue *queue, UNUSED OSMesg *msg) {
 }
 
 static bool inited = false;
@@ -96,16 +98,22 @@ void produce_one_frame(void) {
 
     int samples_left = audio_api->buffered();
     u32 num_audio_samples = samples_left < audio_api->get_desired_buffered() ? SAMPLES_HIGH : SAMPLES_LOW;
-    //printf("Audio samples: %d %u\n", samples_left, num_audio_samples);
+    #ifdef DEBUG
+    printf("Audio samples: %d %u\n", samples_left, num_audio_samples);
+    #endif
     s16 audio_buffer[SAMPLES_HIGH * 2 * 2];
     for (int i = 0; i < 2; i++) {
-        /*if (audio_cnt-- == 0) {
+        #ifdef DEBUG
+        if (audio_cnt-- == 0) {
             audio_cnt = 2;
         }
-        u32 num_audio_samples = audio_cnt < 2 ? 528 : 544;*/
+        u32 num_audio_samples = audio_cnt < 2 ? 528 : 544;
+        #endif
         create_next_audio_buffer(audio_buffer + i * (num_audio_samples * 2), num_audio_samples);
     }
-    //printf("Audio samples before submitting: %d\n", audio_api->buffered());
+    #ifdef DEBUG
+    printf("Audio samples before submitting: %d\n", audio_api->buffered());
+    #endif
 
     audio_api->play((u8 *)audio_buffer, 2 * num_audio_samples * 4);
 

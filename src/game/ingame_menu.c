@@ -414,7 +414,13 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
             case DIALOG_CHAR_LOWER_A_UMLAUT:
                 render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('a'), str[strPos] & 0xF);
                 break;
+            #ifndef QOL_FIXES
             case DIALOG_CHAR_UPPER_A_UMLAUT: // @bug grave and circumflex (0x64-0x65) are absent here
+            #else
+            case DIALOG_CHAR_UPPER_A_GRAVE:
+            case DIALOG_CHAR_UPPER_A_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_A_UMLAUT:
+            #endif
                 render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('A'), str[strPos] & 0xF);
                 break;
             case DIALOG_CHAR_LOWER_E_GRAVE:
@@ -434,14 +440,25 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
             case DIALOG_CHAR_LOWER_U_UMLAUT:
                 render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('u'), str[strPos] & 0xF);
                 break;
+            #ifndef QOL_FIXES
             case DIALOG_CHAR_UPPER_U_UMLAUT: // @bug grave and circumflex (0x84-0x85) are absent here
+            #else
+            case DIALOG_CHAR_UPPER_U_GRAVE:
+            case DIALOG_CHAR_UPPER_U_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_U_UMLAUT:
+            #endif
                 render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('U'), str[strPos] & 0xF);
                 break;
             case DIALOG_CHAR_LOWER_O_CIRCUMFLEX:
             case DIALOG_CHAR_LOWER_O_UMLAUT:
                 render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('o'), str[strPos] & 0xF);
                 break;
+            #ifndef QOL_FIXES
             case DIALOG_CHAR_UPPER_O_UMLAUT: // @bug circumflex (0x95) is absent here
+            #else
+            case DIALOG_CHAR_UPPER_O_CIRCUMFLEX:
+            case DIALOG_CHAR_UPPER_O_UMLAUT:
+            #endif
                 render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('O'), str[strPos] & 0xF);
                 break;
             case DIALOG_CHAR_LOWER_I_CIRCUMFLEX:
@@ -589,11 +606,15 @@ void print_hud_lut_string(s8 hudLUT, s16 x, s16 y, const u8 *str) {
 #endif
 #if defined(VERSION_US) || defined(VERSION_SH)
         if (str[strPos] == GLOBAL_CHAR_SPACE) {
+            #ifndef QOL_FIXES
             if (0) //! dead code
             {
             }
+            #endif
             curX += 8;
+            #ifndef QOL_FIXES
             ; //! useless statement
+            #endif
         } else {
 #endif
             gDPPipeSync(gDisplayListHead++);
@@ -751,6 +772,7 @@ void handle_menu_scrolling(s8 scrollDirection, s8 *currentIndex, s8 minIndex, s8
     }
 
     if (((index ^ gMenuHoldKeyIndex) & index) == 2) {
+        #ifndef QOL_FIXES
         if (currentIndex[0] == maxIndex) {
             //! Probably originally a >=, but later replaced with an == and an else statement.
             currentIndex[0] = maxIndex;
@@ -758,6 +780,13 @@ void handle_menu_scrolling(s8 scrollDirection, s8 *currentIndex, s8 minIndex, s8
             play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
             currentIndex[0]++;
         }
+        #else
+        // if >=, this could cause an OOB array access and crash. Use > instead here to fix this.
+        if (currentIndex[0] > maxIndex) {
+            play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
+            currentIndex[0]++;
+        }
+        #endif
     }
 
     if (((index ^ gMenuHoldKeyIndex) & index) == 1) {
@@ -809,10 +838,14 @@ s16 get_str_x_pos_from_center_scale(s16 centerPos, u8 *str, f32 scale) {
         //! EU checks for dakuten and handakuten despite dialog code unable to handle it
         if (str[strPos] == DIALOG_CHAR_SPACE) {
             spacesWidth += 1.0;
+        #if (defined(VERSION_EU) && !defined(QOL_FIXES)) || defined(VERSION_JP) || defined(VERSION_SH)
         } else if (str[strPos] != DIALOG_CHAR_DAKUTEN
                    && str[strPos] != DIALOG_CHAR_PERIOD_OR_HANDAKUTEN) {
             charsWidth += 1.0;
         }
+        #elif (defined(VERSION_EU) && defined(QOL_FIXES))
+        }
+        #endif
         strPos++;
     }
     // return the x position of where the string starts as half the string's
@@ -2780,8 +2813,11 @@ void print_hud_course_complete_coins(s16 x, s16 y) {
         if ((gCourseDoneMenuTimer & 1) || gHudDisplay.coins > 70) {
             gCourseCompleteCoins++;
             play_sound(SOUND_MENU_YOSHI_GAIN_LIVES, gDefaultSoundArgs);
-
+            #ifndef QOL_FIXES
             if (gCourseCompleteCoins == 50 || gCourseCompleteCoins == 100 || gCourseCompleteCoins == 150) {
+            #else
+            if (gCourseCompleteCoins % 50 == 0) {
+            #endif
                 play_sound(SOUND_GENERAL_COLLECT_1UP, gDefaultSoundArgs);
                 gMarioState[0].numLives++;
             }

@@ -182,7 +182,9 @@ s32 turn_obj_away_from_steep_floor(struct Surface *objFloor, f32 floorY, f32 obj
 
     if (objFloor == NULL) {
         //! (OOB Object Crash) TRUNC overflow exception after 36 minutes
+        #ifndef QOL_FIXES
         o->oMoveAngleYaw += 32767.999200000002; /* ¯\_(ツ)_/¯ */
+        #endif
         return FALSE;
     }
 
@@ -283,7 +285,11 @@ void calc_new_obj_vel_and_pos_y(struct Surface *objFloor, f32 objFloorY, f32 obj
     }
 
     //! (Obj Position Crash) If you got an object with height past 2^31, the game would crash.
+    #ifndef QOL_FIXES
     if ((s32) o->oPosY >= (s32) objFloorY && (s32) o->oPosY < (s32) objFloorY + 37) {
+    #else
+    if ((u32) o->oPosY >= (u32) objFloorY && (u32) o->oPosY < (u32) objFloorY + 37) {
+    #endif
         obj_orient_graph(o, floor_nX, floor_nY, floor_nZ);
 
         // Adds horizontal component of gravity for horizontal speed.
@@ -720,6 +726,9 @@ void obj_check_floor_death(s16 collisionFlags, struct Surface *floor) {
                 o->oAction = OBJ_ACT_LAVA_DEATH;
                 break;
             //! @BUG Doesn't check for the vertical wind death floor.
+            #ifdef QOL_FIXES
+            case SURFACE_VERTICAL_WIND:
+            #endif
             case SURFACE_DEATH_PLANE:
                 o->oAction = OBJ_ACT_DEATH_PLANE_DEATH;
                 break;

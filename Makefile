@@ -41,8 +41,8 @@ TARGET_BITS ?= 0
 BETTERCAMERA ?= 0
 # Disable no drawing distance by default
 NODRAWINGDISTANCE ?= 0
-# Disable texture fixes by default (helps with them purists)
-TEXTURE_FIX ?= 0
+# Disable QoL fixes by default (helps with them purists)
+QOL_FIXES ?= 0
 # Enable extended options menu by default
 EXT_OPTIONS_MENU ?= 1
 # Disable text-based save-files by default
@@ -103,7 +103,15 @@ ifeq ($(WINDOWS_BUILD),1)
     TARGET_BITS = 32
     NO_BZERO_BCOPY := 1
   else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
+    TARGET_ARCH = i386pep
+    TARGET_BITS = 64
+    NO_BZERO_BCOPY := 1
+  else ifeq ($(CROSS),mxe-i686-w64-mingw32.static-)
     TARGET_ARCH = i386pe
+    TARGET_BITS = 32
+    NO_BZERO_BCOPY := 1
+  else ifeq ($(CROSS),mxe-x86_64-w64-mingw32.static-)
+    TARGET_ARCH = i386pep
     TARGET_BITS = 64
     NO_BZERO_BCOPY := 1
   endif
@@ -117,23 +125,17 @@ endif
 
 ifeq ($(VERSION),jp)
   VERSION_DEF := VERSION_JP
-else
-ifeq ($(VERSION),us)
+else ifeq ($(VERSION),us)
   VERSION_DEF := VERSION_US
-else
-ifeq ($(VERSION),eu)
+else ifeq ($(VERSION),eu)
   VERSION_DEF := VERSION_EU
-else
-ifeq ($(VERSION),sh)
+else ifeq ($(VERSION),sh)
   $(warning Building SH is experimental and is prone to breaking. Try at your own risk.)
   VERSION_DEF := VERSION_SH
 # TODO: GET RID OF THIS!!! We should mandate assets for Shindou like EU but we dont have the addresses extracted yet so we'll just pretend you have everything extracted for now.
   NOEXTRACT := 1
 else
   $(error unknown version "$(VERSION)")
-endif
-endif
-endif
 endif
 
 TARGET := sm64.$(VERSION)
@@ -155,33 +157,25 @@ ifeq ($(GRUCODE),f3dex) # Fast3DEX
   GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1
   TARGET := $(TARGET).f3dex
   COMPARE := 0
-else
-ifeq ($(GRUCODE),f3dex2) # Fast3DEX2
+else ifeq ($(GRUCODE),f3dex2) # Fast3DEX2
   GRUCODE_DEF := F3DEX_GBI_2
   GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1
   TARGET := $(TARGET).f3dex2
   COMPARE := 0
-else
-ifeq ($(GRUCODE),f3dex2e) # Fast3DEX2 Extended (PC default)
+else ifeq ($(GRUCODE),f3dex2e) # Fast3DEX2 Extended (PC default)
   GRUCODE_DEF := F3DEX_GBI_2E
   TARGET := $(TARGET).f3dex2e
   COMPARE := 0
-else
-ifeq ($(GRUCODE),f3d_new) # Fast3D 2.0H (Shindou)
+else ifeq ($(GRUCODE),f3d_new) # Fast3D 2.0H (Shindou)
   GRUCODE_DEF := F3D_NEW
   TARGET := $(TARGET).f3d_new
   COMPARE := 0
-else
-ifeq ($(GRUCODE),f3dzex) # Fast3DZEX (2.0J / Animal Forest - Dōbutsu no Mori)
+else ifeq ($(GRUCODE),f3dzex) # Fast3DZEX (2.0J / Animal Forest - Dōbutsu no Mori)
   $(warning Fast3DZEX is experimental. Try at your own risk.)
   GRUCODE_DEF := F3DEX_GBI_2
   GRUCODE_ASFLAGS := --defsym F3DEX_GBI_SHARED=1
   TARGET := $(TARGET).f3dzex
   COMPARE := 0
-endif
-endif
-endif
-endif
 endif
 
 GRUCODE_CFLAGS := -D$(GRUCODE_DEF)
@@ -227,8 +221,7 @@ endif
 # on tools and assets, and we use directory globs further down
 # in the makefile that we want should cover assets.)
 
-ifneq ($(MAKECMDGOALS),clean)
-ifneq ($(MAKECMDGOALS),distclean)
+ifeq (,$(findstring clean,$(MAKECMDGOALS)))
 
 # Make sure assets exist
 NOEXTRACT ?= 0
@@ -246,7 +239,6 @@ ifeq ($(DUMMY),FAIL)
 endif
 
 endif
-endif
 
 ################ Target Executable and Sources ###############
 
@@ -262,18 +254,13 @@ endif
 LIBULTRA := $(BUILD_DIR)/libultra.a
 
 ifeq ($(TARGET_WEB),1)
-EXE := $(BUILD_DIR)/$(TARGET).html
-	else
-	ifeq ($(WINDOWS_BUILD),1)
-		EXE := $(BUILD_DIR)/$(TARGET).exe
-
-		else # Linux builds/binary namer
-		ifeq ($(TARGET_RPI),1)
-			EXE := $(BUILD_DIR)/$(TARGET).arm
-		else
-			EXE := $(BUILD_DIR)/$(TARGET)
-		endif
-	endif
+  EXE := $(BUILD_DIR)/$(TARGET).html
+else ifeq ($(WINDOWS_BUILD),1)
+  EXE := $(BUILD_DIR)/$(TARGET).exe
+else ifeq ($(TARGET_RPI),1) # Linux builds/binary namer
+  EXE := $(BUILD_DIR)/$(TARGET).arm
+else
+	EXE := $(BUILD_DIR)/$(TARGET)
 endif
 
 ELF := $(BUILD_DIR)/$(TARGET).elf
@@ -322,31 +309,29 @@ ifeq ($(TARGET_RPI),1)
 	machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
 # Raspberry Pi B+, Zero, etc
 	ifneq (,$(findstring armv6l,$(machine)))
-                OPT_FLAGS := -march=armv6zk+fp -mfpu=vfp -Ofast
-        endif
+    OPT_FLAGS := -march=armv6zk+fp -mfpu=vfp -Ofast
+  endif
 
 # Raspberry Pi 2 and 3 in ARM 32bit mode
-        ifneq (,$(findstring armv7l,$(machine)))
-                model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
-
-                ifneq (,$(findstring 3,$(model)))
-                         OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -O3
-                         else
-                         OPT_FLAGS := -march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4 -O3
-                endif
-        endif
+  ifneq (,$(findstring armv7l,$(machine)))
+    model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
+    ifneq (,$(findstring 3,$(model)))
+      OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -O3
+    else
+      OPT_FLAGS := -march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4 -O3
+    endif
+  endif
 
 # RPi3 or RPi4, in ARM64 (aarch64) mode. NEEDS TESTING 32BIT.
 # DO NOT pass -mfpu stuff here, thats for 32bit ARM only and will fail for 64bit ARM.
-        ifneq (,$(findstring aarch64,$(machine)))
-                model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
-                ifneq (,$(findstring 3,$(model)))
-                         OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -O3
-                else ifneq (,$(findstring 4,$(model)))
-                         OPT_FLAGS := -march=armv8-a+crc+simd -mtune=cortex-a72 -O3
-                endif
-
-        endif
+  ifneq (,$(findstring aarch64,$(machine)))
+    model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
+    ifneq (,$(findstring 3,$(model)))
+      OPT_FLAGS := -march=armv8-a+crc -mtune=cortex-a53 -O3
+    else ifneq (,$(findstring 4,$(model)))
+      OPT_FLAGS := -march=armv8-a+crc+simd -mtune=cortex-a72 -O3
+    endif
+  endif
 endif
 
 # File dependencies and variables for specific files
@@ -457,6 +442,10 @@ else ifeq ($(WINDOWS_BUILD),1)
     LD := $(CC)
   else ifeq ($(CROSS),x86_64-w64-mingw32.static-)
     LD := $(CC)
+  else ifeq ($(CROSS),mxe-i686-w64-mingw32.static-)
+    LD := $(CC)
+  else ifeq ($(CROSS),mxe-x86_64-w64-mingw32.static-)
+    LD := $(CC)
   else
     LD := $(CXX)
   endif
@@ -484,7 +473,7 @@ SDLCONFIG := $(CROSS)sdl2-config
 BACKEND_CFLAGS := -DRAPI_$(RENDER_API)=1 -DWAPI_$(WINDOW_API)=1 -DAAPI_$(AUDIO_API)=1
 # can have multiple controller APIs
 BACKEND_CFLAGS += $(foreach capi,$(CONTROLLER_API),-DCAPI_$(capi)=1)
-BACKEND_LDFLAG0S :=
+BACKEND_LDFLAGS :=
 
 SDL1_USED := 0
 SDL2_USED := 0
@@ -541,16 +530,15 @@ ifneq ($(SDL1_USED)$(SDL2_USED),00)
 endif
 
 ifeq ($(WINDOWS_BUILD),1)
-  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS)
+  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra $(VERSION_CFLAGS) $(GRUCODE_CFLAGS)
   CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(BACKEND_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv
 
 else ifeq ($(TARGET_WEB),1)
-  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
+  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -s USE_SDL=2
   CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(BACKEND_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv -s USE_SDL=2
 
-# Linux / Other builds below
-else
-  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS)
+else # Linux / Other builds below
+  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra $(VERSION_CFLAGS) $(GRUCODE_CFLAGS)
   CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(BACKEND_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv
 
 endif
@@ -581,10 +569,10 @@ ifeq ($(DISCORDRPC),1)
   CFLAGS += -DDISCORDRPC
 endif
 
-# Check for texture fix option
-ifeq ($(TEXTURE_FIX),1)
-  CC_CHECK += -DTEXTURE_FIX
-  CFLAGS += -DTEXTURE_FIX
+# Check for QoL fix option
+ifeq ($(QOL_FIXES),1)
+  CC_CHECK += -DQOL_FIXES
+  CFLAGS += -DQOL_FIXES
 endif
 
 # Check for extended options menu option
@@ -642,7 +630,7 @@ else ifeq ($(OSX_BUILD),1)
 
 else
   LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm $(BACKEND_LDFLAGS) -lpthread -ldl
-  ifeq ($(NO_PIE), 1)
+  ifeq ($(NO_PIE),1)
     LDFLAGS += -no-pie
   endif
 
@@ -724,7 +712,7 @@ clean:
 	$(RM) -r $(BUILD_DIR_BASE)
 
 cleantools:
-	$(MAKE) -s -C tools clean
+	$(MAKE) -C tools clean
 
 distclean:
 	$(RM) -r $(BUILD_DIR_BASE)
@@ -770,8 +758,7 @@ $(BUILD_DIR)/levels/menu/leveldata.o: $(BUILD_DIR)/text/us/define_courses.inc.c
 $(BUILD_DIR)/levels/menu/leveldata.o: $(BUILD_DIR)/text/de/define_courses.inc.c
 $(BUILD_DIR)/levels/menu/leveldata.o: $(BUILD_DIR)/text/fr/define_courses.inc.c
 
-else
-ifeq ($(VERSION),sh)
+else ifeq ($(VERSION),sh)
 TEXT_DIRS := text/jp
 $(BUILD_DIR)/bin/segment2.o: $(BUILD_DIR)/text/jp/define_text.inc.c
 
@@ -781,13 +768,12 @@ TEXT_DIRS := text/$(VERSION)
 # non-EU encoded text inserted into segment 0x02
 $(BUILD_DIR)/bin/segment2.o: $(BUILD_DIR)/text/$(VERSION)/define_text.inc.c
 endif
-endif
 
 $(BUILD_DIR)/text/%/define_courses.inc.c: text/define_courses.inc.c text/%/courses.h
 	$(CPP) $(VERSION_CFLAGS) $< -o - -I text/$*/ | $(TEXTCONV) charmap.txt - $@
 
 $(BUILD_DIR)/text/%/define_text.inc.c: text/define_text.inc.c text/%/courses.h text/%/dialogs.h
-	$(CPP) $(VERSION_CFLAGS) $< -o - -I text/$*/ | $(TEXTCONV) charmap.txt - $@
+	$(CPP) $(VERSION_CFLAGS) -Wno-trigraphs $< -o - -I text/$*/ | $(TEXTCONV) charmap.txt - $@
 
 RSP_DIRS := $(BUILD_DIR)/rsp
 ALL_DIRS := $(BUILD_DIR) $(addprefix $(BUILD_DIR)/,$(SRC_DIRS) $(ASM_DIRS) $(GODDARD_SRC_DIRS) $(ULTRA_SRC_DIRS) $(ULTRA_ASM_DIRS) $(ULTRA_BIN_DIRS) $(BIN_DIRS) $(TEXTURE_DIRS) $(TEXT_DIRS) $(SOUND_SAMPLE_DIRS) $(addprefix levels/,$(LEVEL_DIRS)) include) $(MIO0_DIR) $(addprefix $(MIO0_DIR)/,$(VERSION)) $(SOUND_BIN_DIR) $(SOUND_BIN_DIR)/sequences/$(VERSION) $(RSP_DIRS)
@@ -918,8 +904,13 @@ $(BUILD_DIR)/include/level_headers.h: levels/level_headers.h.in
 $(BUILD_DIR)/assets/mario_anim_data.c: $(wildcard assets/anims/*.inc.c)
 	$(PYTHON) tools/mario_anims_converter.py > $@
 
+ifneq ($(QOL_FIXES),1)
 $(BUILD_DIR)/assets/demo_data.c: assets/demo_data.json $(wildcard assets/demos/*.bin)
 	$(PYTHON) tools/demo_data_converter.py assets/demo_data.json $(VERSION_CFLAGS) > $@
+else
+$(BUILD_DIR)/assets/demo_data.c: assets/qol_demo_data.json $(wildcard assets/demos/*.bin)
+	$(PYTHON) tools/demo_data_converter.py assets/qol_demo_data.json $(VERSION_CFLAGS) > $@
+endif
 
 # Source code
 $(BUILD_DIR)/levels/%/leveldata.o: OPT_FLAGS := -g
@@ -996,7 +987,7 @@ $(BUILD_DIR)/%.o: %.s
 $(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(BUILD_DIR)/$(RPC_LIBS)
 	$(LD) -L $(BUILD_DIR) -o $@ $(O_FILES) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(LDFLAGS)
 
-.PHONY: all clean distclean default diff test load libultra res
+.PHONY: all clean distclean cleantools default diff test load libultra res
 .PRECIOUS: $(BUILD_DIR)/bin/%.elf $(SOUND_BIN_DIR)/%.ctl $(SOUND_BIN_DIR)/%.tbl $(SOUND_SAMPLE_TABLES) $(SOUND_BIN_DIR)/%.s $(BUILD_DIR)/%
 .DELETE_ON_ERROR:
 

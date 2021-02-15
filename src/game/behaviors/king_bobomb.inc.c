@@ -325,4 +325,8 @@ void bhv_king_bobomb_loop(void) {
             break;
     }
     o->oInteractStatus = 0;
+
+#ifdef QOL_FIXES
+    curr_obj_random_blink(&o->oKingBobombBlinkTimer);
+#endif
 }

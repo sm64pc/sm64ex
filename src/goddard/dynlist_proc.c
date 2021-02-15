@@ -2952,7 +2952,9 @@ void d_set_matrix(Mat4f *src) {
             gd_copy_mat4f(src, &((struct ObjNet *) sDynListCurObj)->mat128);
             //! @bug When setting an `ObjNet` matrix, the source is copied twice
             //!      due to a probable copy-paste line repeat error
+            #ifndef QOL_FIXES
             gd_copy_mat4f(src, &((struct ObjNet *) sDynListCurObj)->mat128);
+            #endif
             break;
         case OBJ_TYPE_JOINTS:
             gd_copy_mat4f(src, &((struct ObjJoint *) sDynListCurObj)->matE8);

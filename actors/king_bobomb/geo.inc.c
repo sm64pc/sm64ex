@@ -35,7 +35,15 @@ const GeoLayout king_bobomb_geo[] = {
                      GEO_CLOSE_NODE(),
                   GEO_CLOSE_NODE(),
                GEO_CLOSE_NODE(),
+#ifdef QOL_FIXES
+               GEO_SWITCH_CASE(2, geo_switch_anim_state),
+               GEO_OPEN_NODE(),
+                  GEO_ANIMATED_PART(LAYER_ALPHA, 0, 0, 0, king_bobomb_dl_eyes),
+                  GEO_ANIMATED_PART(LAYER_ALPHA, 0, 0, 0, king_bobomb_dl_eyes_blink),
+               GEO_CLOSE_NODE(),
+#else
                GEO_ANIMATED_PART(LAYER_ALPHA, 0, 0, 0, king_bobomb_seg5_dl_0500B2D0),
+#endif
                GEO_ANIMATED_PART(LAYER_OPAQUE, 0, 0, 0, king_bobomb_seg5_dl_0500B418),
                GEO_ANIMATED_PART(LAYER_OPAQUE, 0, 0, 0, king_bobomb_seg5_dl_0500B6C0),
                GEO_ANIMATED_PART(LAYER_OPAQUE, 0, 243, 0, NULL),
@@ -115,6 +123,8 @@ const GeoLayout king_bobomb_geo[] = {
          GEO_CLOSE_NODE(),
       GEO_CLOSE_NODE(),
    GEO_CLOSE_NODE(),
+#ifndef QOL_FIXES
 GEO_CLOSE_NODE(), //! more close than open nodes
+#endif
 GEO_END(),
 };
