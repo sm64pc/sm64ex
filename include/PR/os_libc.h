@@ -12,12 +12,12 @@
 
 #elif defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE >= 200809L) || defined(NO_BZERO_BCOPY)
 
-// there's no way that shit's defined, use memcpy/memset
+// there's no way that shit's defined, use memmove/memset
 #include <string.h>
 #undef bzero
 #undef bcopy
 #define bzero(buf, len) memset((buf), 0, (len))
-#define bcopy(src, dst, len) memcpy((dst), (src), (len))
+#define bcopy(src, dst, len) memmove((dst), (src), (len))
 
 #else
 
