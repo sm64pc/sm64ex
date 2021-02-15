@@ -2806,8 +2806,11 @@ void print_hud_course_complete_coins(s16 x, s16 y) {
     print_hud_lut_string(HUD_LUT_GLOBAL, x + 32, y, courseCompleteCoinsStr);
 
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
-
+    #ifndef QOL_FIXES
+    if (gCourseCompleteCoins >= gHudDisplay.coins) {
+    #else
     if (gCourseCompleteCoins >= (u64)gHudDisplay.coins) {
+    #endif
         gCourseCompleteCoinsEqual = 1;
         gCourseCompleteCoins = gHudDisplay.coins;
 
@@ -2828,7 +2831,11 @@ void print_hud_course_complete_coins(s16 x, s16 y) {
             }
         }
 
+        #ifndef QOL_FIXES
+        if (gHudDisplay.coins == gCourseCompleteCoins && gGotFileCoinHiScore != 0) {
+        #else
         if ((u64)gHudDisplay.coins == gCourseCompleteCoins && gGotFileCoinHiScore != 0) {
+        #endif
             play_sound(SOUND_MENU_MARIO_CASTLE_WARP2, gDefaultSoundArgs);
         }
     }

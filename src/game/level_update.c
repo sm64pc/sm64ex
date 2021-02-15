@@ -896,7 +896,11 @@ void update_hud_values(void) {
             gHudDisplay.flags &= ~HUD_DISPLAY_FLAG_COIN_COUNT;
         }
 
+        #ifndef QOL_FIXES
+        if (gHudDisplay.coins < gMarioState->numCoins) {
+        #else
         if ((u64)gHudDisplay.coins < gMarioState->numCoins) {
+        #endif
             if (gGlobalTimer & 0x00000001) {
                 u32 coinSound;
                 if (gMarioState->action & (ACT_FLAG_SWIMMING | ACT_FLAG_METAL_WATER)) {
