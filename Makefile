@@ -43,6 +43,8 @@ BETTERCAMERA ?= 0
 NODRAWINGDISTANCE ?= 0
 # Disable QoL fixes by default (helps with them purists)
 QOL_FIXES ?= 0
+# Disable unused play state tweak by default
+USE_UNUSED_PLAY_STATE ?= 0
 # Enable extended options menu by default
 EXT_OPTIONS_MENU ?= 1
 # Disable text-based save-files by default
@@ -573,6 +575,12 @@ endif
 ifeq ($(QOL_FIXES),1)
   CC_CHECK += -DQOL_FIXES
   CFLAGS += -DQOL_FIXES
+endif
+
+# Check for unused play state option
+ifeq ($(USE_UNUSED_PLAY_STATE),1)
+  CC_CHECK += DUSE_UNUSED_PLAY_STATE
+  CFLAGS += DUSE_UNUSED_PLAY_STATE
 endif
 
 # Check for extended options menu option
