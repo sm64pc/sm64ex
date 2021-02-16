@@ -8992,7 +8992,9 @@ BAD_RETURN(s32) cutscene_pyramid_top_explode(struct Camera *c) {
  * End the pyramid top explosion cutscene.
  */
 BAD_RETURN(s32) cutscene_pyramid_top_explode_end(struct Camera *c) {
+    #ifndef QOL_FIXES
     cutscene_stop_dialog(c);
+    #endif
     stop_cutscene_and_retrieve_stored_info(c);
     // Move the camera back to Mario
     transition_next_state(c, 30);
@@ -10763,12 +10765,10 @@ struct Cutscene sCutsceneEnterPyramidTop[] = {
  * Unused cutscene for when the pyramid explodes.
  */
 struct Cutscene sCutscenePyramidTopExplode[] = {
-#ifndef QOL_FIXES
+    #ifndef QOL_FIXES
     { cutscene_mario_dialog, CUTSCENE_LOOP },
+    #endif
     { cutscene_pyramid_top_explode, 150 },
-#else
-    { cutscene_pyramid_top_explode, 170 },
-#endif
     { cutscene_pyramid_top_explode_end, 0 }
 };
 
