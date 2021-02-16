@@ -6894,7 +6894,7 @@ s32 rotate_camera_around_walls(struct Camera *c, Vec3f cPos, s16 *avoidYaw, s16 
         colData.y = sMarioCamState->pos[1] + ((cPos[1] - sMarioCamState->pos[1]) * checkDist);
         colData.z = sMarioCamState->pos[2] + ((cPos[2] - sMarioCamState->pos[2]) * checkDist);
         colData.radius = coarseRadius;
-        // Increase the coarse check 
+        // Increase the coarse check radius
         #ifndef QOL_FIXES
         camera_approach_f32_symmetric_bool(&coarseRadius, 250.f, 30.f);
         #else
