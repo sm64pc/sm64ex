@@ -35,6 +35,7 @@ static const LevelScript script_func_local_2[] = {
 static const LevelScript script_func_local_3[] = {
     OBJECT(/*model*/ MODEL_NONE,       /*pos*/ 4600, 250, -4500, /*angle*/ 0, 0, 0, /*behParam*/ 0x00000000, /*beh*/ bhvHiddenRedCoinStar),
     RETURN(),
+};
 
 const LevelScript level_vcutm_entry[] = {
     INIT_LEVEL(),
