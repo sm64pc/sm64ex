@@ -1105,11 +1105,7 @@ s32 play_mode_change_level(void) {
         sTransitionUpdate(&sTransitionTimer);
     }
 
-    #ifndef QOL_FIXES
     if (--sTransitionTimer == -1) {
-    #else
-    if (sTransitionTimer == 0) {
-    #endif
         gHudDisplay.flags = HUD_DISPLAY_NONE;
         sTransitionTimer = 0;
         sTransitionUpdate = NULL;
@@ -1128,11 +1124,7 @@ s32 play_mode_change_level(void) {
  * Unused play mode. Doesn't call transition update and doesn't reset transition at the end.
  */
 static s32 play_mode_unused(void) {
-    #ifndef QOL_FIXES
     if (--sTransitionTimer == -1) {
-    #else
-    if (sTransitionTimer == 0) {
-    #endif
         gHudDisplay.flags = HUD_DISPLAY_NONE;
 
         if (sWarpDest.type != WARP_TYPE_NOT_WARPING) {
