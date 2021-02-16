@@ -1,7 +1,8 @@
 FROM ubuntu:18.04 as build
 
-RUN apt-get update && \
-    apt-get install -y \
+RUN apt update && \
+    apt upgrade && \
+    apt install \
         binutils-mips-linux-gnu \
         bsdmainutils \
         build-essential \
