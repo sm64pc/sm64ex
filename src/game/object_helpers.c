@@ -1755,7 +1755,7 @@ static void cur_obj_update_floor(void) {
         else if (floor->type == SURFACE_DEATH_PLANE) {
             //! This misses SURFACE_VERTICAL_WIND (and maybe SURFACE_WARP)
         #else
-        else if (floor->type == SURFACE_DEATH_PLANE || floor->type == SURFACE_VERTICAL_WIND || SURFACE_WARP) {
+        else if (floor->type == SURFACE_DEATH_PLANE || floor->type == SURFACE_VERTICAL_WIND || floor->type == SURFACE_WARP) {
         #endif
             o->oMoveFlags |= OBJ_MOVE_ABOVE_DEATH_BARRIER;
         }
