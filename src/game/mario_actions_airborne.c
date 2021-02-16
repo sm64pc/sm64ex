@@ -17,7 +17,6 @@
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif
-
 void play_flip_sounds(struct MarioState *m, s16 frame1, s16 frame2, s16 frame3) {
     s32 animFrame = m->marioObj->header.gfx.unk38.animFrame;
     if (animFrame == frame1 || animFrame == frame2 || animFrame == frame3) {

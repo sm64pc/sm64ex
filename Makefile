@@ -427,9 +427,13 @@ ifeq ($(OSX_BUILD),1)
 AS := i686-w64-mingw32-as
 endif
 
+# Initialize CC and CXX so that way they'll propagate properly
+CC ?= 
+CXX ?= 
+
 ifneq ($(TARGET_WEB),1) # As in, not-web PC port
-  CC ?= $(CROSS)gcc
-  CXX ?= $(CROSS)g++
+  CC := $(CROSS)gcc
+  CXX := $(CROSS)g++
 else
   CC := emcc
   CXX := emcc

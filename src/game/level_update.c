@@ -1074,7 +1074,7 @@ s32 play_mode_change_area(void) {
     #ifndef QOL_FIXES
     if (sTransitionUpdate == (void (*)(s16 *)) - 1) {
     #else
-    if (sTransitionTimer <= -1) {
+    if (sTransitionTimer == -1) {
     #endif
         update_camera(gCurrentArea->camera);
     } else if (sTransitionUpdate != NULL) {
@@ -1089,12 +1089,7 @@ s32 play_mode_change_area(void) {
         #endif
     }
 
-    //! If sTransitionTimer is -1, this will miss.
-    #ifndef QOL_FIXES
     if (sTransitionTimer == 0) {
-    #else
-    if (sTransitionTimer <= 0) {
-    #endif
         sTransitionUpdate = NULL;
         set_play_mode(PLAY_MODE_NORMAL);
     }
@@ -1110,11 +1105,10 @@ s32 play_mode_change_level(void) {
         sTransitionUpdate(&sTransitionTimer);
     }
 
-    //! If sTransitionTimer is -1, this will miss.
     #ifndef QOL_FIXES
     if (--sTransitionTimer == -1) {
     #else
-    if (sTransitionTimer <= 0) {
+    if (sTransitionTimer == 0) {
     #endif
         gHudDisplay.flags = HUD_DISPLAY_NONE;
         sTransitionTimer = 0;
@@ -1134,11 +1128,10 @@ s32 play_mode_change_level(void) {
  * Unused play mode. Doesn't call transition update and doesn't reset transition at the end.
  */
 static s32 play_mode_unused(void) {
-    //! If sTransitionTimer is -1, this will miss.
     #ifndef QOL_FIXES
     if (--sTransitionTimer == -1) {
     #else
-    if (sTransitionTimer <= 0) {
+    if (sTransitionTimer == 0) {
     #endif
         gHudDisplay.flags = HUD_DISPLAY_NONE;
 
