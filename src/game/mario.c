@@ -1918,7 +1918,11 @@ void init_mario(void) {
     vec3f_copy(gMarioState->marioObj->header.gfx.pos, gMarioState->pos);
     vec3s_set(gMarioState->marioObj->header.gfx.angle, 0, gMarioState->faceAngle[1], 0);
 
-    if (save_file_get_cap_pos(capPos)) {
+    if (save_file_get_cap_pos(capPos)
+#ifdef QOL_FIXES
+    && (count_objects_with_behavior(bhvNormalCap) > 1)
+#endif
+    ) {
         capObject = spawn_object(gMarioState->marioObj, MODEL_MARIOS_CAP, bhvNormalCap);
 
         capObject->oPosX = capPos[0];

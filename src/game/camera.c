@@ -727,12 +727,21 @@ void focus_on_mario(Vec3f focus, Vec3f pos, f32 posYOff, f32 focYOff, f32 dist, 
 static UNUSED void set_pos_to_mario(Vec3f foc, Vec3f pos, f32 yOff, f32 focYOff, f32 dist, s16 pitch, s16 yaw) {
     Vec3f marioPos;
     f32 posDist;
+    #ifndef QOL_FIXES
     f32 focDist;
+    #else
+    UNUSED f32 focDist;
+    #endif
 
     s16 posPitch;
     s16 posYaw;
+    #ifndef QOL_FIXES
     s16 focPitch;
     s16 focYaw;
+    #else
+    UNUSED s16 focPitch;
+    UNUSED s16 focYaw;
+    #endif
 
     vec3f_copy(marioPos, sMarioCamState->pos);
     marioPos[1] += yOff;

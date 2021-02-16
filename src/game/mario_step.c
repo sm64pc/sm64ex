@@ -63,10 +63,8 @@ void transfer_bully_speed(struct BullyCollisionData *obj1, struct BullyCollision
     #else
     f32 projectedV1 = 0.0f;
     f32 projectedV2 = 0.0f;
-    if ((rx * obj1->velX + rz * obj1->velZ) / (rx * rx + rz * rz) != NaN)
-    || ((-rx * obj2->velX - rz * obj2->velZ) / (rx * rx + rz * rz) != NaN)
-    || ((rx * obj1->velX + rz * obj1->velZ) / (rx * rx + rz * rz) != NaN
-    && (-rx * obj2->velX - rz * obj2->velZ) / (rx * rx + rz * rz) != NaN) {
+    if ((rx * obj1->velX + rz * obj1->velZ) / (rx * rx + rz * rz) != NAN
+    && (-rx * obj2->velX - rz * obj2->velZ) / (rx * rx + rz * rz) != NAN) {
         projectedV1 = (rx * obj1->velX + rz * obj1->velZ) / (rx * rx + rz * rz);
         projectedV2 = (-rx * obj2->velX - rz * obj2->velZ) / (rx * rx + rz * rz);
     } else {

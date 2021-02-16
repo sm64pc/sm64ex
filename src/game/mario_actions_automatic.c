@@ -403,7 +403,7 @@ s32 act_start_hanging(struct MarioState *m) {
     #ifndef QOL_FIXES
     if (m->ceil->type != SURFACE_HANGABLE) {
     #else
-    if (m->ceil->type != SURFACE_HANGABLE || m->ceil->type == NULL) {
+    if (m->ceil->type != SURFACE_HANGABLE || m->ceil->type != NULL) {
     #endif
         return set_mario_action(m, ACT_FREEFALL, 0);
     }

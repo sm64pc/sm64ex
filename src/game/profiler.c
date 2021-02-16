@@ -273,7 +273,7 @@ void draw_profiler_mode_0(void) {
     #ifndef QOL_FIXES
     for (i = 0; i < profiler->numSoundTimes; i += 2) {
     #else
-    for (i = 0; i < profiler->vblankTimes; i += 2) {
+    for (i = 0; i < profiler->numVblankTimes; i += 2) {
     #endif
         vblank += (profiler->vblankTimes[i + 1] - profiler->vblankTimes[i]);
     }

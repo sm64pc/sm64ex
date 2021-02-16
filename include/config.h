@@ -40,7 +40,7 @@
 #define BUGFIX_BLJ (0 || VERSION_SH || QOL_FIXES)
 // --| Misc QoL Fixes (these aren't really covered by QOL_FIXES)
 /// Reenables the unused play state
-#define USE_UNUSED_PLAY_STATE (0 || USE_UNUSED_PLAY_STATE)
+#define TWEAK_USE_UNUSED_PLAY_STATE (0 || USE_UNUSED_PLAY_STATE)
 
 
 // Screen Size Defines

@@ -593,7 +593,7 @@ void painting_update_ripple_state(struct Painting *painting) {
         if (painting->rippleTimer >= 16777216.0) {
             painting->rippleTimer = 0.0;
         } else {
-            painitng->rippleTimer += 1.0;
+            painting->rippleTimer += 1.0;
         }
         #endif
     }

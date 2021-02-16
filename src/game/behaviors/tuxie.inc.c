@@ -305,6 +305,7 @@ Gfx *geo_switch_tuxie_mother_eyes(s32 run, struct GraphNode *node, UNUSED Mat4 *
             switchCase->selectedCase = babyDelivered ? 0 : 4;
         } else {
             switchCase->selectedCase = 0;
+        }
         #else
         switchCase->selectedCase = 0;
         #endif
@@ -316,7 +317,6 @@ Gfx *geo_switch_tuxie_mother_eyes(s32 run, struct GraphNode *node, UNUSED Mat4 *
             if (obj->behavior == segmented_to_virtual(bhvTuxiesMother)) {
                 switchCase->selectedCase = babyDelivered ? 0 : 4;
             } else {
-                switchCase->selectedCase = bapDelivered ? 0 : 4;
                 switchCase->selectedCase = 0;
             }
             #else

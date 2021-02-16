@@ -879,6 +879,9 @@
     #define KLEPTO_ANIM_STATE_HOLDING_NOTHING 0
     #define KLEPTO_ANIM_STATE_HOLDING_CAP 1
     #define KLEPTO_ANIM_STATE_HOLDING_STAR 2
+    #ifdef QOL_FIXES
+    #define KLEPTO_ANIM_STATE_HOLDING_BLUE_STAR 3
+    #endif
 
 /* Bird */
     /* oAction */

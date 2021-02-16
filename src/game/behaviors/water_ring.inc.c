@@ -21,18 +21,16 @@ void water_ring_init(void) {
     //  This cause the ring's orientation for the purposes of collision to be
     //  different than the graphical orientation, which means that Mario won't
     //  necessarily collect a ring even if he appears to swim through it.
+#ifdef QOL_FIXES
+    o->oWaterRingNormalX = sins(o->oFaceAngleYaw)   * sins(o->oFaceAngleRoll);
+    o->oWaterRingNormalY = coss(o->oFaceAnglePitch) * coss(o->oFaceAngleRoll);
+    o->oWaterRingNormalZ = coss(o->oFaceAngleYaw)   * sins(o->oFaceAnglePitch);
+#else
     o->oWaterRingNormalX = coss(o->oFaceAnglePitch) * sins(o->oFaceAngleRoll) * -1.0f;
     o->oWaterRingNormalY = coss(o->oFaceAnglePitch) * coss(o->oFaceAngleRoll);
     o->oWaterRingNormalZ = sins(o->oFaceAnglePitch);
-
+#endif
     o->oWaterRingMarioDistInFront = water_ring_calc_mario_dist();
-
-    // Adding this code will alter the ring's graphical orientation to align with the faulty
-    // collision orientation:
-    #ifdef QOL_FIXES
-        o->oFaceAngleYaw = 0;
-        o->oFaceAngleRoll *= -1;
-    #endif
 }
 
 void bhv_jet_stream_water_ring_init(void) {
@@ -164,7 +162,7 @@ void water_ring_spawner_act_inactive(void) {
     #ifndef QOL_FIXES
     if (o->oTimer == 300)
     #else
-    if (o->oTimer > 300)
+    if (o->oTimer >= 300)
     #endif
         o->oTimer = 0;
     #ifndef QOL_FIXES
@@ -172,7 +170,7 @@ void water_ring_spawner_act_inactive(void) {
         || (o->oTimer == 250)) {
     #else
     // This makes it much easier to collect this star
-    if ((o->oTimer % 50 == 0)) {
+    if (o->oTimer % 50 == 0) {
     #endif
         waterRing = spawn_object(o, MODEL_WATER_RING, bhvJetStreamWaterRing);
         waterRing->oWaterRingIndex = currentObj->oWaterRingMgrNextRingIndex;

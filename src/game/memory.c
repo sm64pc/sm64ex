@@ -222,7 +222,7 @@ u32 main_pool_pop_state(void) {
  * function blocks until completion.
  */
 static void dma_read(u8 *dest, u8 *srcStart, u8 *srcEnd) {
-    u32 size = ALIGN16(srcEnd - srcStart);
+    UNUSED u32 size = ALIGN16(srcEnd - srcStart);
 
     memcpy(dest, srcStart, srcEnd - srcStart);
 }

@@ -70,7 +70,11 @@ int run_press_start_demo_timer(s32 timer) {
     return timer;
 }
 
+#ifndef QOL_FIXES
 extern int gDemoInputListID_2;
+#else
+extern unsigned int gDemoInputListID_2;
+#endif
 extern int gPressedStart;
 
 int start_demo(int timer)

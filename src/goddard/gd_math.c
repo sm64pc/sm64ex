@@ -695,7 +695,7 @@ void UNUSED gd_create_quat_rot_mat(f32 quat[4], UNUSED s32 unused, Mat4f *mtx) {
     #ifndef QOL_FIXES
     gd_shift_mat_up(mtx);
     #else
-    gd_create_neg_vec_zero_first_mat_row(mtx);
+    gd_create_neg_vec_zero_first_mat_row(mtx, 0, 0, 0, 0);
     #endif
 }
 

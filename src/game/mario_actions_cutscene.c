@@ -789,10 +789,24 @@ s32 launch_mario_until_land(struct MarioState *m, s32 endAction, s32 animation, 
 }
 
 s32 act_unlocking_key_door(struct MarioState *m) {
+#ifdef QOL_FIXES
+    f32 angle;
+#endif
     m->faceAngle[1] = m->usedObj->oMoveAngleYaw;
 
+#ifdef QOL_FIXES
+    if (m->faceAngle[1] >= -0x4000 && m->faceAngle[1] <= 0x4000) {
+        angle -= 75.0f;
+    } else {
+        angle += 75.0f;
+    }
+
+    m->pos[0] = m->usedObj->oPosX + coss(m->faceAngle[1]) * angle;
+    m->pos[2] = m->usedObj->oPosZ + sins(m->faceAngle[1]) * angle;
+#else
     m->pos[0] = m->usedObj->oPosX + coss(m->faceAngle[1]) * 75.0f;
     m->pos[2] = m->usedObj->oPosZ + sins(m->faceAngle[1]) * 75.0f;
+#endif
 
     if (m->actionArg & 2) {
         m->faceAngle[1] += 0x8000;

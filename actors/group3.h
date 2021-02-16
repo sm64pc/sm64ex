@@ -24,11 +24,11 @@ extern const Gfx king_bobomb_seg5_dl_0500B068[];
 extern const Gfx king_bobomb_seg5_dl_0500B118[];
 extern const Gfx king_bobomb_seg5_dl_0500B150[];
 extern const Gfx king_bobomb_seg5_dl_0500B188[];
-extern const Gfx king_bobomb_seg5_dl_0500B278[];
 #ifdef QOL_FIXES
 extern const Gfx king_bobomb_dl_eyes[];
 extern const Gfx king_bobomb_dl_eyes_blink[];
 #else
+extern const Gfx king_bobomb_seg5_dl_0500B278[];
 extern const Gfx king_bobomb_seg5_dl_0500B2D0[];
 #endif
 extern const Gfx king_bobomb_seg5_dl_0500B3C8[];

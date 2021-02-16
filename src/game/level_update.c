@@ -1162,7 +1162,7 @@ s32 update_level(void) {
             changeLevel = play_mode_change_area();
             break;
         case PLAY_MODE_CHANGE_LEVEL:
-            #if USE_UNUSED_PLAY_STATE
+            #ifdef USE_UNUSED_PLAY_STATE
             changeLevel = play_mode_unused();
             #else
             changeLevel = play_mode_change_level();

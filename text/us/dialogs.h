@@ -16,6 +16,12 @@
 #define GIVE_UP "give"
 #endif
 
+#ifdef QOL_FIXES
+#define YOSHI_IT "Is"
+#else
+#define YOSHI_IT "It"
+#endif
+
 DEFINE_DIALOG(DIALOG_000, 1, 6, 30, 200, _("\
 Wow! You're smack in the\n\
 middle of the battlefield.\n\
@@ -1982,7 +1988,7 @@ Enjoy!!!"
 
 DEFINE_DIALOG(DIALOG_161, 1, 4, 30, 200, _("\
 Mario!!!\n\
-Is that really you???\n\
+" YOSHI_IT " that really you???\n\
 It has been so long since\n\
 our last adventure!\n\
 They told me that I might\n\

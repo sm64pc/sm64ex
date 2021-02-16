@@ -579,8 +579,8 @@ endif
 
 # Check for unused play state option
 ifeq ($(USE_UNUSED_PLAY_STATE),1)
-  CC_CHECK += DUSE_UNUSED_PLAY_STATE
-  CFLAGS += DUSE_UNUSED_PLAY_STATE
+  CC_CHECK += -DUSE_UNUSED_PLAY_STATE
+  CFLAGS += -DUSE_UNUSED_PLAY_STATE
 endif
 
 # Check for extended options menu option
