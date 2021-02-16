@@ -386,7 +386,13 @@ void update_shell_speed(struct MarioState *m) {
     //! No backward speed cap (shell hyperspeed)
     if (m->forwardVel > 64.0f) {
         m->forwardVel = 64.0f;
+    #if !BUGFIX_BLJ
     }
+    #else
+    } else if (m->forwardVel < -64.0f) {
+        m->forwardVel = -64.0f;
+    }
+    #endif
 
     m->faceAngle[1] =
         m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800, 0x800);
