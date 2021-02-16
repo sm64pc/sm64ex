@@ -428,7 +428,7 @@ l1090:
 
                     if (layer->portamento.mode != 0) {
                         //! copt needs a ternary:
-                        //(layer->portamentoTargetNote < SEMITONE) ? SEMITONE : layer->portamentoTargetNote;
+                        //usedSemitone = (layer->portamentoTargetNote < SEMITONE) ? SEMITONE : layer->portamentoTargetNote;
                         if (layer->portamentoTargetNote < SEMITONE) {
                             USED_SEMITONE = SEMITONE;
                         } else {
