@@ -1176,7 +1176,7 @@ void load_score_menu_from_submenu(s16 prevMenuButtonID, struct Object *sourceBut
     }
     // If the previous button is in default state
     if (sMainMenuButtons[prevMenuButtonID]->oMenuButtonState == MENU_BUTTON_STATE_DEFAULT) {
-        // Hide buttons of corresponding button menu 
+        // Hide buttons of corresponding button menu groups
         #ifndef QOL_FIXES
         if (prevMenuButtonID == MENU_BUTTON_SCORE) //! Not possible, this is checking if the score menu
                                                    //! was opened from the score menu!
