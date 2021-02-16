@@ -293,13 +293,13 @@ void gfx_direct3d_common_build_shader(char buf[4096], size_t& len, size_t& num_f
         if (cc_features.opt_alpha) {
             append_line(buf, &len, "    texel = float4(lerp(texel.rgb, input.fog.rgb, input.fog.a), texel.a);");
         } else {
-            append_line(buf, &len, "    texel.a *= round(saturate(random(float3(floor(coords), noise_frame)) + texel.a - 0.5));");
+            append_line(buf, &len, "    texel = lerp(texel, input.fog.rgb, input.fog.a);");
         }
     }
 
     if (cc_features.opt_alpha && cc_features.opt_noise) {
         append_line(buf, &len, "    float2 coords = (input.screenPos.xy / input.screenPos.w) * noise_scale;");
-        append_line(buf, &len, "    texel.a *= round(random(float3(floor(coords), noise_frame)));");
+        append_line(buf, &len, "    texel.a *= round(saturate(random(float3(floor(coords), noise_frame)) + texel.a - 0.5));");
     }
 
     if (cc_features.opt_alpha) {
