@@ -162,7 +162,6 @@ void water_ring_spawner_act_inactive(void) {
     #ifndef QOL_FIXES
     if (o->oTimer == 300)
         o->oTimer = 0;
-
     if ((o->oTimer == 0) || (o->oTimer == 50) || (o->oTimer == 150) || (o->oTimer == 200)
         || (o->oTimer == 250)) {
     #else
