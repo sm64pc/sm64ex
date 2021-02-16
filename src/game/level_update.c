@@ -1074,7 +1074,7 @@ s32 play_mode_change_area(void) {
     #ifndef QOL_FIXES
     if (sTransitionUpdate == (void (*)(s16 *)) - 1) {
     #else
-    if (sTransitionTimer == -1) {
+    if (sTransitionTimer <= -1) {
     #endif
         update_camera(gCurrentArea->camera);
     } else if (sTransitionUpdate != NULL) {
@@ -1082,7 +1082,11 @@ s32 play_mode_change_area(void) {
     }
 
     if (sTransitionTimer > 0) {
+        #ifndef QOL_FIXES
         sTransitionTimer -= 1;
+        #else
+        sTransitionTimer--;
+        #endif
     }
 
     //! If sTransitionTimer is -1, this will miss.

@@ -222,24 +222,22 @@ static void set_state(void) {
 }
 
 void set_logo(void) {
-    if (lastCourseNum)
+    if (lastCourseNum) {
         if (snprintf(largeImageKey, sizeof(largeImageKey), "%d", lastCourseNum) < 0)
             abort();
-    else 
+    } else { 
         strcpy(largeImageKey, "0");
+    }
 
-    /*
-    if (lastActNum)
-        if (snprintf(smallImageKey, sizeof(largeImageKey), "%d", lastActNum) < 0)
+    if (lastActNum) {
+        if (snprintf(smallImageKey, sizeof(smallImageKey), "%d", lastActNum) < 0)
             abort();
-    else
+    } else {
         smallImageKey[0] = '\0';
-    */
+    }
 
     discordRichPresence.largeImageKey = largeImageKey;
-    //discordRichPresence.largeImageText = "";
-    //discordRichPresence.smallImageKey = smallImageKey;
-    //discordRichPresence.smallImageText = "";
+    discordRichPresence.smallImageKey = smallImageKey;
 }
 
 void discord_update_rich_presence(void) {
