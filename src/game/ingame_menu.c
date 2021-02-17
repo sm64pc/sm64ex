@@ -781,8 +781,9 @@ void handle_menu_scrolling(s8 scrollDirection, s8 *currentIndex, s8 minIndex, s8
             currentIndex[0]++;
         }
         #else
-        // if >=, this could cause an OOB array access and crash. Use > instead here to fix this.
-        if (currentIndex[0] > maxIndex) {
+        // if <=, this could cause an OOB array access and crash. Use < instead here to fix this.
+        // >= is incorrect and will cause the menu to not function correctly
+        if (currentIndex[0] < maxIndex) {
             play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
             currentIndex[0]++;
         }
@@ -790,12 +791,20 @@ void handle_menu_scrolling(s8 scrollDirection, s8 *currentIndex, s8 minIndex, s8
     }
 
     if (((index ^ gMenuHoldKeyIndex) & index) == 1) {
+        #ifndef QOL_FIXES
         if (currentIndex[0] == minIndex) {
             // Same applies to here as above
         } else {
             play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
             currentIndex[0]--;
         }
+        #else
+        // if >=, this could cause an OOB array access and crash. Use > instead here to fix this.
+        if (currentIndex[0] > minIndex) {
+            play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
+            currentIndex[0]--;
+        }
+        #endif
     }
 
     if (gMenuHoldKeyTimer == 10) {
@@ -2813,6 +2822,7 @@ void print_hud_course_complete_coins(s16 x, s16 y) {
         if ((gCourseDoneMenuTimer & 1) || gHudDisplay.coins > 70) {
             gCourseCompleteCoins++;
             play_sound(SOUND_MENU_YOSHI_GAIN_LIVES, gDefaultSoundArgs);
+
             #ifndef QOL_FIXES
             if (gCourseCompleteCoins == 50 || gCourseCompleteCoins == 100 || gCourseCompleteCoins == 150) {
             #else

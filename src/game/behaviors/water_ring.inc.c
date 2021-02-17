@@ -159,9 +159,9 @@ void water_ring_spawner_act_inactive(void) {
     //! Because the index counter overflows at 10000, it's possible to wait
     //  for about 4 hours and 38 minutes if you miss a ring, and the index will
     //  come around again.
-    #ifndef QOL_FIXES
     if (o->oTimer == 300)
         o->oTimer = 0;
+    #ifndef QOL_FIXES
     if ((o->oTimer == 0) || (o->oTimer == 50) || (o->oTimer == 150) || (o->oTimer == 200)
         || (o->oTimer == 250)) {
     #else
