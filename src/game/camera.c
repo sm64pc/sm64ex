@@ -1625,10 +1625,9 @@ s32 update_boss_fight_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
         pos[1] = 300.f - (nx * pos[0] + nz * pos[2] + oo) / ny;
         switch (gCurrLevelArea) {
             case AREA_BOB:
+                #ifndef QOL_FIXES
                 pos[1] += 125.f;
                 //! fall through, makes the BoB boss fight camera move up twice as high as it should
-                #ifdef QOL_FIXES
-                break;
                 #endif
             case AREA_WF:
                 pos[1] += 125.f;
@@ -2128,7 +2127,11 @@ s16 update_default_camera(struct Camera *c) {
     if (gCameraMovementFlags & CAM_MOVE_ZOOMED_OUT) {
         //! In Mario mode, the camera is zoomed out further than in Lakitu mode (1400 vs 1200)
         if (set_cam_angle(0) == CAM_ANGLE_MARIO) {
+            #ifndef QOL_FIXES
             zoomDist = gCameraZoomDist + 1050;
+            #else
+            zoomDist = gCameraZoomDist + 850;
+            #endif
         } else {
             zoomDist = gCameraZoomDist + 400;
         }
@@ -2954,22 +2957,28 @@ void update_lakitu(struct Camera *c) {
     s16 newYaw;
     UNUSED u8 unused1[8];
 
+    #ifndef QOL_FIXES
     if (gCameraMovementFlags & CAM_MOVE_PAUSE_SCREEN) {
     } else {
+    #else
+    if (!(gCameraMovementFlags & CAM_MOVE_PAUSE_SCREEN)) {
+    #endif
+    #ifndef QOL_FIXES
         if (c->cutscene) {
-        #ifndef QOL_FIXES
         }
         if (TRUE) {
-        #endif
+    #endif
             newYaw = next_lakitu_state(newPos, newFoc, c->pos, c->focus, sOldPosition, sOldFocus,
                                        c->nextYaw);
             set_or_approach_s16_symmetric(&c->yaw, newYaw, sYawSpeed);
             sStatusFlags &= ~CAM_FLAG_UNUSED_CUTSCENE_ACTIVE;
+    #ifndef QOL_FIXES
         } else {
             //! dead code, moved to next_lakitu_state()
             vec3f_copy(newPos, c->pos);
             vec3f_copy(newFoc, c->focus);
         }
+    #endif
 
         // Update old state
         vec3f_copy(sOldPosition, newPos);
@@ -7111,7 +7120,7 @@ void copy_spline_segment(struct CutsceneSplinePoint dst[], struct CutsceneSpline
         #ifndef QOL_FIXES
         } while ((src[j].index != -1) && (src[j].index != -1)); //! same comparison performed twice
         #else
-        } while ((src[j].index != -1));
+        } while (src[j].index != -1);
         #endif
     } while (j > 16);
 

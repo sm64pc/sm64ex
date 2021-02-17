@@ -814,14 +814,8 @@ void tilt_body_walking(struct MarioState *m, s16 startYaw) {
         if (val00 < 0) {
             val00 = 0;
         }
-
-        #ifndef QOL_FIXES
         val0C->torsoAngle[2] = approach_s32(val0C->torsoAngle[2], val02, 0x400, 0x400);
         val0C->torsoAngle[0] = approach_s32(val0C->torsoAngle[0], val00, 0x400, 0x400);
-        #else
-        val0C->torsoAngle[2] = approach_s64(val0C->torsoAngle[2], val02, 0x400, 0x400);
-        val0C->torsoAngle[0] = approach_s64(val0C->torsoAngle[0], val00, 0x400, 0x400);
-        #endif
         #ifndef QOL_FIXES
         ;
         #endif
@@ -860,13 +854,8 @@ void tilt_body_ground_shell(struct MarioState *m, s16 startYaw) {
         val02 = 0;
     }
 
-    #ifndef QOL_FIXES
     val0C->torsoAngle[2] = approach_s32(val0C->torsoAngle[2], val04, 0x200, 0x200);
     val0C->torsoAngle[0] = approach_s32(val0C->torsoAngle[0], val02, 0x200, 0x200);
-    #else
-    val0C->torsoAngle[2] = approach_s64(val0C->torsoAngle[2], val04, 0x200, 0x200);
-    val0C->torsoAngle[0] = approach_s64(val0C->torsoAngle[0], val02, 0x200, 0x200);
-    #endif
     val0C->headAngle[2] = -val0C->torsoAngle[2];
 
     marioObj->header.gfx.angle[2] = val0C->torsoAngle[2];
@@ -901,9 +890,9 @@ s32 act_walking(struct MarioState *m) {
 
 #ifdef QOL_FIXES
     if (analog_stick_held_back(m)) {
-        if (m->forwardVel >= 16.0f){
+        if (m->forwardVel >= 16.0f) {
             return set_mario_action(m, ACT_TURNING_AROUND, 0);
-        } else if ((m->forwardVel) < 10.0f && (m->forwardVel > 0.0f)){
+        } else if ((m->forwardVel) < 10.0f && (m->forwardVel > 0.0f)) {
             m->faceAngle[1] = m->intendedYaw;
             return set_mario_action(m, ACT_TURNING_AROUND, 0);
         }
@@ -1180,7 +1169,11 @@ s32 act_braking(struct MarioState *m) {
 }
 
 s32 act_decelerating(struct MarioState *m) {
+    #ifndef QOL_FIXES
     s32 val0C;
+    #else
+    s64 val0C;
+    #endif
     s16 slopeClass = mario_get_floor_class(m);
 
     if (!(m->input & INPUT_FIRST_PERSON)) {
@@ -1230,7 +1223,11 @@ s32 act_decelerating(struct MarioState *m) {
         m->particleFlags |= PARTICLE_DUST;
     } else {
         // (Speed Crash) Crashes if speed exceeds 2^17.
+        #ifndef QOL_FIXES
         if ((val0C = (s32)(m->forwardVel / 4.0f * 0x10000)) < 0x1000) {
+        #else
+        if ((val0C = (s64)(m->forwardVel / 4.0f * 0x10000)) < 0x1000) {
+        #endif
             val0C = 0x1000;
         }
 

@@ -769,49 +769,6 @@ f32 approach_f32(f32 current, f32 target, f32 inc, f32 dec) {
     return current;
 }
 
-#ifdef QOL_FIXES
-/**
- * Return the value 'current' after it tries to approach target, going up at
- * most 'inc' and going down at most 'dec'.
- */
-s64 approach_s64(s64 current, s64 target, s64 inc, s64 dec) {
-    //! If target is close to the max or min s64, then it's possible to overflow
-    // past it without stopping.
-
-    if (current < target) {
-        current += inc;
-        if (current > target) {
-            current = target;
-        }
-    } else {
-        current -= dec;
-        if (current < target) {
-            current = target;
-        }
-    }
-    return current;
-}
-
-/**
- * Return the value 'current' after it tries to approach target, going up at
- * most 'inc' and going down at most 'dec'.
- */
-f64 approach_f64(f64 current, f64 target, f64 inc, f64 dec) {
-    if (current < target) {
-        current += inc;
-        if (current > target) {
-            current = target;
-        }
-    } else {
-        current -= dec;
-        if (current < target) {
-            current = target;
-        }
-    }
-    return current;
-}
-#endif
-
 /**
  * Helper function for atan2s. Does a look up of the arctangent of y/x assuming
  * the resulting angle is in range [0, 0x2000] (1/8 of a circle).

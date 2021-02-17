@@ -912,13 +912,8 @@ $(BUILD_DIR)/include/level_headers.h: levels/level_headers.h.in
 $(BUILD_DIR)/assets/mario_anim_data.c: $(wildcard assets/anims/*.inc.c)
 	$(PYTHON) tools/mario_anims_converter.py > $@
 
-ifneq ($(QOL_FIXES),1)
 $(BUILD_DIR)/assets/demo_data.c: assets/demo_data.json $(wildcard assets/demos/*.bin)
 	$(PYTHON) tools/demo_data_converter.py assets/demo_data.json $(VERSION_CFLAGS) > $@
-else
-$(BUILD_DIR)/assets/demo_data.c: assets/qol_demo_data.json $(wildcard assets/demos/*.bin)
-	$(PYTHON) tools/demo_data_converter.py assets/qol_demo_data.json $(VERSION_CFLAGS) > $@
-endif
 
 # Source code
 $(BUILD_DIR)/levels/%/leveldata.o: OPT_FLAGS := -g
