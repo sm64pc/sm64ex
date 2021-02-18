@@ -30,7 +30,11 @@ void bhv_beta_trampoline_spring_loop(void) {
     // must be replaced with 150 (the height of the trampoline).
     // Note that all of the numbers in this if/else block are doubles.
     if ((yDisplacement = o->oPosY - o->oHomeY) >= 0) {
+        #ifndef QOL_FIXES
         yScale = yDisplacement / 10.0 + 1.0;
+        #else
+        yScale = yDisplacement / 150.0f + 1.0;
+        #endif
     } else {
         // Otherwise (if the trampoline is compressed),
         // scale by 1 - (the displacement)/500.
@@ -38,7 +42,12 @@ void bhv_beta_trampoline_spring_loop(void) {
         // must be replaced with 150 (the height of the trampoline),
         // as with the above code.
         yDisplacement = -yDisplacement;
+        #ifndef QOL_FIXES
         yScale = 1.0 - yDisplacement / 500.0;
+        #else
+        yScale = 1.0 - yDisplacement / 150.0f;
+        o->oPosY += 75.0f * (1.0f - yScale);
+        #endif
     }
 
     // Scale the spring
@@ -73,9 +82,29 @@ void bhv_beta_trampoline_top_loop(void) {
     // when Mario's on it in this if statement?
     if (gMarioObject->platform == o) {
         o->oBetaTrampolineMarioOnTrampoline = TRUE;
+        #ifdef QOL_FIXES
+        o->oPosY =
+            (o->oPosY > (o->oHomeY - 150.0f + 75.0f)) ?
+            (o->oPosY - 10) :
+            (o->oHomeY - 150.0f + 65.0f);
+
+        o->oBetaTrampolineAdditiveYVel =
+            ((o->oBehParams2ndByte >> 4) / 2.0f) +
+            ((o->oHomeY - o->oPosY) / ((o->oBehParams2ndByte & 0x0F) / 2.0f));
+        #endif
     } else {
         o->oBetaTrampolineMarioOnTrampoline = FALSE;
         o->oPosY = o->oHomeY;
+        #ifdef QOL_FIXES
+        o->oPosY =
+            (o->oPosY > (o->oHomeY - 150.0f + 75.0f)) ?
+            (o->oPosY - 10) :
+            (o->oHomeY - 150.0f + 65.0f);
+
+        o->oBetaTrampolineAdditiveYVel =
+            ((o->oBehParams2ndByte >> 4) / 2.0f) +
+            ((o->oHomeY - o->oPosY) / ((o->oBehParams2ndByte & 0x0F) / 2.0f));
+        #endif
     }
 
     // This function is from mario_step.c, and is empty.

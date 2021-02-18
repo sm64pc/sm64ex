@@ -350,7 +350,6 @@ void bhv_big_bully_with_minions_loop(void) {
             //  for counting the number of dead minions. This means that when it activates,
             //  the knockback timer is at 3 instead of 0. So the bully knockback time will
             //  be reduced by 3 frames (16.67%) on the first hit.
-            //
             if (o->oBullyKBTimerAndMinionKOCounter == 3) {
                 play_puzzle_jingle();
 

@@ -786,9 +786,6 @@ void handle_menu_scrolling(s8 scrollDirection, s8 *currentIndex, s8 minIndex, s8
         if (currentIndex[0] < maxIndex) {
             play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
             currentIndex[0]++;
-        // this allows the pause menu arrow to loop when stick up is held down
-        } else if (currentIndex[0] >= maxIndex) {
-            currentIndex[0] = minIndex;
         }
         #endif
     }
@@ -806,10 +803,6 @@ void handle_menu_scrolling(s8 scrollDirection, s8 *currentIndex, s8 minIndex, s8
         if (currentIndex[0] > minIndex) {
             play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
             currentIndex[0]--;
-        // same as above, but with stick down instead of stick up
-        } else if (currentIndex[0] <= minIndex) {
-            play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
-            currentIndex[0] = maxIndex;
         }
         #endif
     }
