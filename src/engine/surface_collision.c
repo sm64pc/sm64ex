@@ -310,14 +310,24 @@ f32 find_ceil(f32 posX, f32 posY, f32 posZ, struct Surface **pceil) {
     struct SurfaceNode *surfaceList;
     f32 height = 20000.0f;
     f32 dynamicHeight = 20000.0f;
+    #ifndef QOL_FIXES
     s16 x, y, z;
+    #else
+    s32 x, y, z;
+    #endif
 
     //! (Parallel Universes) Because position is casted to an s16, reaching higher
     // float locations can return ceilings despite them not existing there.
     //(Dynamic ceilings will unload due to the range.)
+    #ifndef QOL_FIXES
     x = (s16) posX;
     y = (s16) posY;
     z = (s16) posZ;
+    #else
+    x = (s32) posX;
+    y = (s32) posY;
+    z = (s32) posZ;
+    #endif
     *pceil = NULL;
 
     if (x <= -LEVEL_BOUNDARY_MAX || x >= LEVEL_BOUNDARY_MAX) {
@@ -501,8 +511,13 @@ f32 unused_find_dynamic_floor(f32 xPos, f32 yPos, f32 zPos, struct Surface **pfl
     #endif
 
     // Each level is split into cells to limit load, find the appropriate cell.
+    #ifndef QOL_FIXES
     s16 cellX = ((x + LEVEL_BOUNDARY_MAX) / CELL_SIZE) & 0x0F;
     s16 cellZ = ((z + LEVEL_BOUNDARY_MAX) / CELL_SIZE) & 0x0F;
+    #else
+    s32 cellX = ((x + LEVEL_BOUNDARY_MAX) / CELL_SIZE) & 0x0F;
+    s32 cellZ = ((z + LEVEL_BOUNDARY_MAX) / CELL_SIZE) & 0x0F;
+    #endif
 
     surfaceList = gDynamicSurfacePartition[cellZ][cellX][SPATIAL_PARTITION_FLOORS].next;
     floor = find_floor_from_list(surfaceList, x, y, z, &floorHeight);
