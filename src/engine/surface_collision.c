@@ -490,9 +490,15 @@ f32 unused_find_dynamic_floor(f32 xPos, f32 yPos, f32 zPos, struct Surface **pfl
     f32 floorHeight = -11000.0f;
 
     // Would normally cause PUs, but dynamic floors unload at that range.
+    #ifndef QOL_FIXES
     s16 x = (s16) xPos;
     s16 y = (s16) yPos;
     s16 z = (s16) zPos;
+    #else
+    s32 x = (s32) xPos;
+    s32 y = (s32) yPos;
+    s32 z = (s32) zPos;
+    #endif
 
     // Each level is split into cells to limit load, find the appropriate cell.
     s16 cellX = ((x + LEVEL_BOUNDARY_MAX) / CELL_SIZE) & 0x0F;
@@ -510,7 +516,11 @@ f32 unused_find_dynamic_floor(f32 xPos, f32 yPos, f32 zPos, struct Surface **pfl
  * Find the highest floor under a given position and return the height.
  */
 f32 find_floor(f32 xPos, f32 yPos, f32 zPos, struct Surface **pfloor) {
+    #ifndef QOL_FIXES
     s16 cellZ, cellX;
+    #else
+    s32 cellZ, cellX;
+    #endif
 
     struct Surface *floor, *dynamicFloor;
     struct SurfaceNode *surfaceList;
@@ -521,9 +531,15 @@ f32 find_floor(f32 xPos, f32 yPos, f32 zPos, struct Surface **pfloor) {
     //! (Parallel Universes) Because position is casted to an s16, reaching higher
     // float locations can return floors despite them not existing there.
     //(Dynamic floors will unload due to the range.)
+    #ifndef QOL_FIXES
     s16 x = (s16) xPos;
     s16 y = (s16) yPos;
     s16 z = (s16) zPos;
+    #else
+    s32 x = (s32) xPos;
+    s32 y = (s32) yPos;
+    s32 z = (s32) zPos;
+    #endif
 
     *pfloor = NULL;
 
@@ -547,7 +563,7 @@ f32 find_floor(f32 xPos, f32 yPos, f32 zPos, struct Surface **pfloor) {
     floor = find_floor_from_list(surfaceList, x, y, z, &height);
 
     // To prevent the Merry-Go-Round room from loading when Mario passes above the hole that leads
-    // there, SURFACE_INTANGIBLE is used. This prevent the wrong room from loading, but can also allow
+    // there, SURFACE_INTANGIBLE is used. This prevents the wrong room from loading, but can also allow
     // Mario to pass through.
     if (!gFindFloorIncludeSurfaceIntangible) {
         //! (BBH Crash) Most NULL checking is done by checking the height of the floor returned
@@ -556,7 +572,13 @@ f32 find_floor(f32 xPos, f32 yPos, f32 zPos, struct Surface **pfloor) {
         //  of the SURFACE_INTANGIBLE floor instead of the typical -11000 returned for a NULL floor.
         if (floor != NULL && floor->type == SURFACE_INTANGIBLE) {
             floor = find_floor_from_list(surfaceList, x, (s32)(height - 200.0f), z, &height);
+        #ifndef QOL_FIXES
         }
+        #else
+        } else if (floor == NULL) {
+            height = -11000.0f;
+        }
+        #endif
     } else {
         // To prevent accidentally leaving the floor tangible, stop checking for it.
         gFindFloorIncludeSurfaceIntangible = FALSE;
