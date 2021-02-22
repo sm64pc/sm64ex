@@ -457,9 +457,11 @@ void draw_face(struct ObjFace *face) {
                 }
             }
         }
+        #ifndef QOL_FIXES
 
         if (FALSE) {
         }
+        #endif
     }
 
     check_tri_display(face->vtxCount);

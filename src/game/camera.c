@@ -3379,7 +3379,11 @@ void init_camera(struct Camera *c) {
     gLakituState.posHSpeed = 0.3f;
     gLakituState.posVSpeed = 0.3f;
     gLakituState.focHSpeed = 0.8f;
+    #ifndef QOL_FIXES
     gLakituState.focHSpeed = 0.3f; // @bug set focHSpeed back-to-back
+    #else
+    gLakituState.focVSpeed = 0.3f;
+    #endif
     gLakituState.roll = 0;
     gLakituState.keyDanceRoll = 0;
     gLakituState.unused = 0;

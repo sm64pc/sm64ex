@@ -337,6 +337,10 @@
 // English, "R" text is different
 #define TEXT_CAMERA_ANGLE_R             _("SET CAMERA ANGLE WITH [R]")
 // French
+#ifdef QOL_FIXES
+#define TEXT_CATCH_FR                   _("CAPTURE")
+#define TEXT_CLEAR_FR                   _("DÉGAGER")
+#endif
 #define TEXT_COURSE_FR                  _("NIVEAU")
 #define TEXT_MY_SCORE_FR                _("MON SCORE")
 #define TEXT_CONTINUE_FR                _("CONTINUER")
@@ -344,6 +348,10 @@
 #define TEXT_EXIT_GAME_FR		_("QUITTER JEU")
 #define TEXT_CAMERA_ANGLE_R_FR          _("RÉGLAGE CAMÉRA AVEC [R]")
 // German
+#ifdef QOL_FIXES
+#define TEXT_CATCH_DE                   _("FANG")
+#define TEXT_CLEAR_DE                   _("KLAR")
+#endif
 #define TEXT_COURSE_DE                  _("KURS")
 #define TEXT_MY_SCORE_DE                _("LEISTUNG")
 #define TEXT_CONTINUE_DE                _("WEITER")

@@ -2220,6 +2220,20 @@ u8 gTextCourseArr[][7] = {
 };
 #endif
 
+#if defined(VERSION_EU) && defined(QOL_FIXES)
+u8 gTextCatchArr[][7] {
+    { TEXT_CATCH },
+    { TEXT_CATCH_FR },
+    { TEXT_CATCH_DE }
+};
+
+u8 gTextClearArr[][7] {
+    { TEXT_CLEAR },
+    { TEXT_CLEAR_FR },
+    { TEXT_CLEAR_DE }
+};
+#endif
+
 #if defined(VERSION_JP) || defined(VERSION_SH)
 #define CRS_NUM_X1 93
 #else
@@ -2871,14 +2885,24 @@ void render_course_complete_lvl_info_and_hud_str(void) {
     u8 textCourse[] = { TEXT_COURSE };
     u8 textCatch[] = { TEXT_CATCH };
     u8 textClear[] = { TEXT_CLEAR };
-#elif defined(VERSION_EU)
+#elif defined(VERSION_EU) && !defined(QOL_FIXES)
     UNUSED u8 textCatch[] = { TEXT_CATCH }; // unused in EU
     u8 textSymStar[] = { GLYPH_STAR, GLYPH_SPACE };
 #define textCourse gTextCourseArr[gInGameLanguage]
-#else
+#elif defined(VERSION_US) && !defined(QOL_FIXES)
     u8 textCourse[] = { TEXT_COURSE };
     UNUSED u8 textCatch[] = { TEXT_CATCH }; // unused in US
     UNUSED u8 textClear[] = { TEXT_CLEAR };
+    u8 textSymStar[] = { GLYPH_STAR, GLYPH_SPACE };
+#elif defined(VERSION_EU) && defined(QOL_FIXES)
+    u8 textSymStar[] = { GLYPH_STAR, GLYPH_SPACE };
+#define textCatch gTextCatchArr[gInGameLanguage]
+#define textCourse gTextCourseArr[gInGameLanguage]
+#define textClear gTextClearArr[gInGameLanguage]
+#else
+    u8 textCourse[] = { TEXT_COURSE };
+    u8 textCatch[] = { TEXT_CATCH };
+    u8 textClear[] = { TEXT_CLEAR };
     u8 textSymStar[] = { GLYPH_STAR, GLYPH_SPACE };
 #endif
 
@@ -2938,10 +2962,14 @@ void render_course_complete_lvl_info_and_hud_str(void) {
         print_generic_string(TXT_NAME_X1, 130, name);
 #ifndef VERSION_EU
         print_generic_string(TXT_CLEAR_X1, 130, textClear);
+#elif QOL_FIXES
+        print_generic_string(TXT_CLEAR_X1, 130, textClear);
 #endif
         gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
         print_generic_string(TXT_NAME_X2, 132, name);
 #ifndef VERSION_EU
+        print_generic_string(TXT_CLEAR_X2, 132, textClear);
+#elif QOL_FIXES
         print_generic_string(TXT_CLEAR_X2, 132, textClear);
 #endif
         gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
@@ -2962,12 +2990,12 @@ void render_course_complete_lvl_info_and_hud_str(void) {
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, gDialogTextAlpha);
     print_generic_string(76, 145, name);
-#if defined(VERSION_JP) || defined(VERSION_SH)
+#if defined(VERSION_JP) || defined(VERSION_SH) || defined(QOL_FIXES)
     print_generic_string(220, 145, textCatch);
 #endif
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
     print_generic_string(74, 147, name);
-#if defined(VERSION_JP) || defined(VERSION_SH)
+#if defined(VERSION_JP) || defined(VERSION_SH) || defined(QOL_FIXES)
     print_generic_string(218, 147, textCatch);
 #endif
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);

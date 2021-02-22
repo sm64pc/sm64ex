@@ -32,7 +32,7 @@
 // --| Shindou Version Nintendo Bug Fixes
 /// Fixes bug where bully could still be interacted with while he dies 
 #define BUGFIX_BULLY_NO_INTERACT_DEATH (0 || VERSION_SH || QOL_FIXES)
-/// Fixes bug where standing on a controllable platform in HMC be invisible while it blinks
+/// Fixes bug where standing on a controllable platform in HMC makes Mario invisible while it blinks
 #define BUGFIX_HMC_VISIBLE_CONTROL_PLATFORM (0 || VERSION_SH || QOL_FIXES)
 /// Fixes bug where the angle speed isn't preserved while in a pole
 #define BUGFIX_PRESERVE_VEL_POLE (0 || VERSION_SH || QOL_FIXES)
@@ -41,7 +41,6 @@
 // --| Misc QoL Fixes (these aren't really covered by QOL_FIXES)
 /// Reenables the unused play state
 #define TWEAK_USE_UNUSED_PLAY_STATE (0 || USE_UNUSED_PLAY_STATE)
-
 
 // Screen Size Defines
 #define SCREEN_WIDTH 320
