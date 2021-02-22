@@ -2960,16 +2960,12 @@ void render_course_complete_lvl_info_and_hud_str(void) {
         centerX = get_str_x_pos_from_center(153, name, 12.0f);
 #endif
         print_generic_string(TXT_NAME_X1, 130, name);
-#ifndef VERSION_EU
-        print_generic_string(TXT_CLEAR_X1, 130, textClear);
-#elif QOL_FIXES
+#if !defined(VERSION_EU) || defined(QOL_FIXES)
         print_generic_string(TXT_CLEAR_X1, 130, textClear);
 #endif
         gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
         print_generic_string(TXT_NAME_X2, 132, name);
-#ifndef VERSION_EU
-        print_generic_string(TXT_CLEAR_X2, 132, textClear);
-#elif QOL_FIXES
+#if !defined(VERSION_EU) || defined(QOL_FIXES)
         print_generic_string(TXT_CLEAR_X2, 132, textClear);
 #endif
         gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
