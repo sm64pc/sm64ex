@@ -3227,6 +3227,9 @@ void update_camera(struct Camera *c) {
                 case CAMERA_MODE_FREE_ROAM:
                     mode_lakitu_camera(c);
                     break;
+                #ifdef QOL_FIXES
+
+                #endif
                 case CAMERA_MODE_BOSS_FIGHT:
                     mode_boss_fight_camera(c);
                     break;
@@ -7183,7 +7186,11 @@ static UNUSED void unused_cutscene_mario_dialog_looking_down(UNUSED struct Camer
 /**
  * Cause Mario to enter the normal dialog state.
  */
+#ifndef TARGET_WEB
 static BAD_RETURN(s32) cutscene_mario_dialog(UNUSED struct Camera *c) {
+#else
+UNUSED static BAD_RETURN(s32) cutscene_mario_dialog(UNUSED struct Camera *c) {
+#endif
     gCutsceneTimer = cutscene_common_set_dialog_state(1);
 }
 
@@ -8438,7 +8445,7 @@ BAD_RETURN(s32) cutscene_star_spawn(struct Camera *c) {
     sStatusFlags |= CAM_FLAG_SMOOTH_MOVEMENT;
 
     if (gObjCutsceneDone) {
-        // Set the timer to CUTSCENE_LOOP, which start the next shot.
+        // Set the timer to CUTSCENE_LOOP, which starts the next shot.
         gCutsceneTimer = CUTSCENE_LOOP;
     }
 }
@@ -8582,7 +8589,7 @@ BAD_RETURN(s32) cutscene_red_coin_star(struct Camera *c) {
     cutscene_event(cutscene_red_coin_star_set_fov, c, 30, -1);
 
     if (gObjCutsceneDone) {
-        // Set the timer to CUTSCENE_LOOP, which start the next shot.
+        // Set the timer to CUTSCENE_LOOP, which starts the next shot.
         gCutsceneTimer = CUTSCENE_LOOP;
     }
 }
@@ -9276,7 +9283,12 @@ BAD_RETURN(s32) cutscene_read_message(struct Camera *c) {
             // This could cause softlocks. If a message starts one frame after another one closes, the
             // cutscene will never end.
             if (get_dialog_id() == -1) {
+                // this attempts to fix the softlock
+                #ifndef QOL_FIXES
                 gCutsceneTimer = CUTSCENE_LOOP;
+                #else
+                gCutsceneTimer = CUTSCENE_STOP;
+                #endif
                 retrieve_info_star(c);
                 transition_next_state(c, 15);
                 sStatusFlags |= CAM_FLAG_UNUSED_CUTSCENE_ACTIVE;
@@ -9286,6 +9298,9 @@ BAD_RETURN(s32) cutscene_read_message(struct Camera *c) {
                 sModeOffsetYaw = sCutsceneVars[1].angle[1];
                 cutscene_unsoften_music(c);
             }
+            #ifdef QOL_FIXES
+            break;
+            #endif
     }
     sStatusFlags |= CAM_FLAG_UNUSED_CUTSCENE_ACTIVE;
 }

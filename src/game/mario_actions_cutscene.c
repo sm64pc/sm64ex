@@ -790,7 +790,11 @@ s32 launch_mario_until_land(struct MarioState *m, s32 endAction, s32 animation, 
 
 s32 act_unlocking_key_door(struct MarioState *m) {
 #ifdef QOL_FIXES
+#ifndef TARGET_WEB
     f32 angle;
+#else
+    f32 angle = 0.0f;
+#endif
 #endif
     m->faceAngle[1] = m->usedObj->oMoveAngleYaw;
 

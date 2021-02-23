@@ -722,6 +722,7 @@ UNUSED static void bhv_cmd_set_int_random_from_table(s32 tableSize) {
 
     // Does not increment gCurBhvCommand or return a bhv status
 }
+
 #else
 // Command 0x??: Sets the specified field to a random entry in the given table, up to size 16.
 // Bytes: ?? FF SS SS V1 V1 V2 V2 V3 V3 V4 V4... ...V15 V15 V16 V16 (no macro exists)

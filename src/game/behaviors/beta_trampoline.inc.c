@@ -97,13 +97,11 @@ void bhv_beta_trampoline_top_loop(void) {
         o->oPosY = o->oHomeY;
         #ifdef QOL_FIXES
         o->oPosY =
-            (o->oPosY > (o->oHomeY - 150.0f + 75.0f)) ?
-            (o->oPosY - 10) :
-            (o->oHomeY - 150.0f + 65.0f);
+            (o->oPosY < (o->oHomeY - 10.0f)) ?
+            (o->oPosY + 10.0f) :
+            o->oHomeY;
 
-        o->oBetaTrampolineAdditiveYVel =
-            ((o->oBehParams2ndByte >> 4) / 2.0f) +
-            ((o->oHomeY - o->oPosY) / ((o->oBehParams2ndByte & 0x0F) / 2.0f));
+        o->oBetaTrampolineAdditiveYVel = 0;
         #endif
     }
 
