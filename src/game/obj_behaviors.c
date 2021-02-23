@@ -288,7 +288,7 @@ void calc_new_obj_vel_and_pos_y(struct Surface *objFloor, f32 objFloorY, f32 obj
     #ifndef QOL_FIXES
     if ((s32) o->oPosY >= (s32) objFloorY && (s32) o->oPosY < (s32) objFloorY + 37) {
     #else
-    if ((u64) o->oPosY >= (u64) objFloorY && (u64) o->oPosY < (u64) objFloorY + 37) {
+    if ((s64) o->oPosY >= (s64) objFloorY && (s64) o->oPosY < (s64) objFloorY + 37) {
     #endif
         obj_orient_graph(o, floor_nX, floor_nY, floor_nZ);
 

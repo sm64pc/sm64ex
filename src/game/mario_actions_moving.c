@@ -814,6 +814,7 @@ void tilt_body_walking(struct MarioState *m, s16 startYaw) {
         if (val00 < 0) {
             val00 = 0;
         }
+
         val0C->torsoAngle[2] = approach_s32(val0C->torsoAngle[2], val02, 0x400, 0x400);
         val0C->torsoAngle[0] = approach_s32(val0C->torsoAngle[0], val00, 0x400, 0x400);
         #ifndef QOL_FIXES

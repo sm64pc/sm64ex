@@ -1764,6 +1764,7 @@ static void cur_obj_update_floor(void) {
             o->oMoveFlags |= OBJ_MOVE_ABOVE_DEATH_BARRIER;
         }
 #endif
+
         o->oFloorType = floor->type;
         o->oFloorRoom = floor->room;
     } else {
