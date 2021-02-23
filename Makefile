@@ -329,7 +329,7 @@ ifeq ($(TARGET_RPI),1)
   endif
 
 # RPi3 or RPi4, in ARM64 (aarch64) mode. NEEDS TESTING 32BIT.
-# DO NOT pass -mfpu stuff here, thats for 32bit ARM only and will fail for 64bit ARM.
+# DO NOT pass -mfpu stuff here, that's for 32bit ARM only and will fail for 64bit ARM.
   ifneq (,$(findstring aarch64,$(machine)))
     model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
     ifneq (,$(findstring 3,$(model)))
