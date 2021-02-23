@@ -14,8 +14,10 @@ int gSplineState;
 
 // These functions have bogus return values.
 // Disable the compiler warning.
+#ifndef TARGET_WEB
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wreturn-local-addr"
+#endif
 
 /// Copy vector 'src' to 'dest'
 void *vec3f_copy(Vec3f dest, Vec3f src) {
@@ -23,7 +25,12 @@ void *vec3f_copy(Vec3f dest, Vec3f src) {
     dest[1] = src[1];
     dest[2] = src[2];
     #ifndef QOL_FIXES
+    #ifndef TARGET_WEB
     return &dest; //! warning: function returns address of local variable
+    #endif
+    #endif
+    #ifdef TARGET_WEB
+    return 0;
     #endif
 }
 
@@ -33,7 +40,12 @@ void *vec3f_set(Vec3f dest, f32 x, f32 y, f32 z) {
     dest[1] = y;
     dest[2] = z;
     #ifndef QOL_FIXES
+    #ifndef TARGET_WEB
     return &dest; //! warning: function returns address of local variable
+    #endif
+    #endif
+    #ifdef TARGET_WEB
+    return 0;
     #endif
 }
 
@@ -43,7 +55,12 @@ void *vec3f_add(Vec3f dest, Vec3f a) {
     dest[1] += a[1];
     dest[2] += a[2];
     #ifndef QOL_FIXES
+    #ifndef TARGET_WEB
     return &dest; //! warning: function returns address of local variable
+    #endif
+    #endif
+    #ifdef TARGET_WEB
+    return 0;
     #endif
 }
 
@@ -53,7 +70,12 @@ void *vec3f_sum(Vec3f dest, Vec3f a, Vec3f b) {
     dest[1] = a[1] + b[1];
     dest[2] = a[2] + b[2];
     #ifndef QOL_FIXES
+    #ifndef TARGET_WEB
     return &dest; //! warning: function returns address of local variable
+    #endif
+    #endif
+    #ifdef TARGET_WEB
+    return 0;
     #endif
 }
 
@@ -64,7 +86,12 @@ void *vec3f_mul(Vec3f dest, f32 a)
     dest[1] *= a;
     dest[2] *= a;
     #ifndef QOL_FIXES
+    #ifndef TARGET_WEB
     return &dest; //! warning: function returns address of local variable
+    #endif
+    #endif
+    #ifdef TARGET_WEB
+    return 0;
     #endif
 }
 
@@ -74,7 +101,12 @@ void *vec3s_copy(Vec3s dest, Vec3s src) {
     dest[1] = src[1];
     dest[2] = src[2];
     #ifndef QOL_FIXES
+    #ifndef TARGET_WEB
     return &dest; //! warning: function returns address of local variable
+    #endif
+    #endif
+    #ifdef TARGET_WEB
+    return 0;
     #endif
 }
 
@@ -84,7 +116,12 @@ void *vec3s_set(Vec3s dest, s16 x, s16 y, s16 z) {
     dest[1] = y;
     dest[2] = z;
     #ifndef QOL_FIXES
+    #ifndef TARGET_WEB
     return &dest; //! warning: function returns address of local variable
+    #endif
+    #endif
+    #ifdef TARGET_WEB
+    return 0;
     #endif
 }
 
@@ -94,7 +131,12 @@ void *vec3s_add(Vec3s dest, Vec3s a) {
     dest[1] += a[1];
     dest[2] += a[2];
     #ifndef QOL_FIXES
+    #ifndef TARGET_WEB
     return &dest; //! warning: function returns address of local variable
+    #endif
+    #endif
+    #ifdef TARGET_WEB
+    return 0;
     #endif
 }
 
@@ -104,7 +146,12 @@ void *vec3s_sum(Vec3s dest, Vec3s a, Vec3s b) {
     dest[1] = a[1] + b[1];
     dest[2] = a[2] + b[2];
     #ifndef QOL_FIXES
+    #ifndef TARGET_WEB
     return &dest; //! warning: function returns address of local variable
+    #endif
+    #endif
+    #ifdef TARGET_WEB
+    return 0;
     #endif
 }
 
@@ -114,7 +161,12 @@ void *vec3f_dif(Vec3f dest, Vec3f a, Vec3f b) {
     dest[1] = a[1] - b[1];
     dest[2] = a[2] - b[2];
     #ifndef QOL_FIXES
+    #ifndef TARGET_WEB
     return &dest; //! warning: function returns address of local variable
+    #endif
+    #endif
+    #ifdef TARGET_WEB
+    return 0;
     #endif
 }
 
@@ -124,7 +176,12 @@ void *vec3s_to_vec3f(Vec3f dest, Vec3s a) {
     dest[1] = a[1];
     dest[2] = a[2];
     #ifndef QOL_FIXES
+    #ifndef TARGET_WEB
     return &dest; //! warning: function returns address of local variable
+    #endif
+    #endif
+    #ifdef TARGET_WEB
+    return 0;
     #endif
 }
 
@@ -138,7 +195,12 @@ void *vec3f_to_vec3s(Vec3s dest, Vec3f a) {
     dest[1] = a[1] + ((a[1] > 0) ? 0.5f : -0.5f);
     dest[2] = a[2] + ((a[2] > 0) ? 0.5f : -0.5f);
     #ifndef QOL_FIXES
+    #ifndef TARGET_WEB
     return &dest; //! warning: function returns address of local variable
+    #endif
+    #endif
+    #ifdef TARGET_WEB
+    return 0;
     #endif
 }
 
@@ -152,7 +214,12 @@ void *find_vector_perpendicular_to_plane(Vec3f dest, Vec3f a, Vec3f b, Vec3f c) 
     dest[1] = (b[2] - a[2]) * (c[0] - b[0]) - (c[2] - b[2]) * (b[0] - a[0]);
     dest[2] = (b[0] - a[0]) * (c[1] - b[1]) - (c[0] - b[0]) * (b[1] - a[1]);
     #ifndef QOL_FIXES
+    #ifndef TARGET_WEB
     return &dest; //! warning: function returns address of local variable
+    #endif
+    #endif
+    #ifdef TARGET_WEB
+    return 0;
     #endif
 }
 
@@ -162,7 +229,12 @@ void *vec3f_cross(Vec3f dest, Vec3f a, Vec3f b) {
     dest[1] = a[2] * b[0] - b[2] * a[0];
     dest[2] = a[0] * b[1] - b[0] * a[1];
     #ifndef QOL_FIXES
+    #ifndef TARGET_WEB
     return &dest; //! warning: function returns address of local variable
+    #endif
+    #endif
+    #ifdef TARGET_WEB
+    return 0;
     #endif
 }
 
@@ -182,7 +254,12 @@ void *vec3f_normalize(Vec3f dest) {
     dest[1] *= invsqrt;
     dest[2] *= invsqrt;
     #ifndef QOL_FIXES
+    #ifndef TARGET_WEB
     return &dest; //! warning: function returns address of local variable
+    #endif
+    #endif
+    #ifdef TARGET_WEB
+    return 0;
     #endif
 }
 
@@ -198,7 +275,9 @@ f32 vec3f_dot(Vec3f a, Vec3f b)
 	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 
+#ifndef TARGET_WEB
 #pragma GCC diagnostic pop
+#endif
 
 /// Copy matrix 'src' to 'dest'
 void mtxf_copy(Mat4 dest, Mat4 src) {

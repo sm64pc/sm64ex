@@ -36,11 +36,15 @@
 
 #include "src/pc/controller/controller_keyboard.h"
 
+#ifdef TARGET_WEB
+#include "macros.h"
+#endif
+
 // TODO: figure out if this shit even works
 #ifdef VERSION_EU
-# define FRAMERATE 25
+    #define FRAMERATE 25
 #else
-# define FRAMERATE 30
+    #define FRAMERATE 30
 #endif
 
 static SDL_Window *wnd;
@@ -268,7 +272,11 @@ static int translate_scancode(int scancode) {
     }
 }
 
+#ifndef TARGET_WEB
 static void gfx_sdl_onkeydown(int scancode) {
+#else
+UNUSED static void gfx_sdl_onkeydown(int scancode) {
+#endif
     if (kb_key_down)
         kb_key_down(translate_scancode(scancode));
 
@@ -280,7 +288,11 @@ static void gfx_sdl_onkeydown(int scancode) {
     }
 }
 
+#ifndef TARGET_WEB
 static void gfx_sdl_onkeyup(int scancode) {
+#else
+UNUSED static void gfx_sdl_onkeyup(int scancode) {
+#endif
     if (kb_key_up)
         kb_key_up(translate_scancode(scancode));
 }

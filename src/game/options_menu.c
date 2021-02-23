@@ -62,7 +62,11 @@ static const u8 menuStr[][32] = {
     { TEXT_OPT_CHEATS },
 };
 
+#ifndef TARGET_WEB
 static const u8 optsCameraStr[][32] = {
+#else
+UNUSED static const u8 optsCameraStr[][32] = {
+#endif
     { TEXT_OPT_CAMX },
     { TEXT_OPT_CAMY },
     { TEXT_OPT_INVERTX },
@@ -134,7 +138,11 @@ static const u8 *filterChoices[] = {
     optsVideoStr[8],
 };
 
+#ifndef TARGET_WEB
 static const u8 *vsyncChoices[] = {
+#else
+UNUSED static const u8 *vsyncChoices[] = {
+#endif
     toggleStr[0],
     toggleStr[1],
     optsVideoStr[6],

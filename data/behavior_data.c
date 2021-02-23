@@ -3144,7 +3144,11 @@ const BehaviorScript bhvUnusedFakeStar[] = {
 };
 
 // What is this?
+#ifndef TARGET_WEB
 static const BehaviorScript unused_1[] = {
+#else
+UNUSED static const BehaviorScript unused_1[] = {
+#endif
     BREAK(),
     BREAK(),
     BREAK(),

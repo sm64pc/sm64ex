@@ -83,6 +83,9 @@ void bhv_bowling_ball_roll_loop(void) {
     #else
     s32 sp18 = 0;
     #endif
+    #ifdef TARGET_WEB
+    sp18 = 0;
+    #endif
 
     bowling_ball_set_waypoints();
     collisionFlags = object_step();
@@ -116,6 +119,9 @@ void bhv_bowling_ball_initializeLoop(void) {
     s32 sp1c;
     #else
     s32 sp1c = 0;
+    #endif
+    #ifdef TARGET_WEB
+    sp1c = 0;
     #endif
 
     bowling_ball_set_waypoints();

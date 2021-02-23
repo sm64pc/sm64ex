@@ -4,6 +4,7 @@
 #include "data.h"
 #include "seqplayer.h"
 #include "synthesis.h"
+#include "heap.h"
 
 #ifdef VERSION_EU
 

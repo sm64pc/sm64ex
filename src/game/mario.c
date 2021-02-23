@@ -1712,7 +1712,11 @@ void mario_update_hitbox_and_cap_model(struct MarioState *m) {
  * An unused and possibly a debug function. Z + another button input
  * sets Mario with a different cap.
  */
+#ifndef TARGET_WEB
 static void debug_update_mario_cap(u16 button, s32 flags, u16 capTimer, u16 capMusic) {
+#else
+UNUSED static void debug_update_mario_cap(u16 button, s32 flags, u16 capTimer, u16 capMusic) {
+#endif
     // This checks for Z_TRIG instead of Z_DOWN flag
     // (which is also what other debug functions do),
     // so likely debug behavior rather than unused behavior.

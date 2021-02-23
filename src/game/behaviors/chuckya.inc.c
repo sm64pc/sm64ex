@@ -71,7 +71,14 @@ s32 approach_forward_vel(f32 *arr, f32 spC, f32 sp10) {
 }
 
 void chuckya_act_0(void) {
+    #ifndef QOL_FIXES
     s32 sp3C;
+    #else
+    s32 sp3C = 0;
+    #endif
+    #ifdef TARGET_WEB
+    sp3C = 0;
+    #endif
     UNUSED u8 pad[16];
     s32 sp28;
     if (o->oTimer == 0)

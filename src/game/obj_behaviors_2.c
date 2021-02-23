@@ -632,8 +632,10 @@ static void obj_die_if_health_non_positive(void) {
         } else {
             obj_spawn_loot_yellow_coins(o, o->oNumLootCoins, 20.0f);
         }
+        #ifndef QOL_FIXES
         // This doesn't do anything
         obj_spawn_loot_yellow_coins(o, o->oNumLootCoins, 20.0f);
+        #endif
 
         if (o->oHealth < 0) {
             cur_obj_hide();
@@ -644,7 +646,11 @@ static void obj_die_if_health_non_positive(void) {
     }
 }
 
+#ifndef TARGET_WEB
 static void obj_unused_die(void) {
+#else
+UNUSED static void obj_unused_die(void) {
+#endif
     o->oHealth = 0;
     obj_die_if_health_non_positive();
 }

@@ -45,7 +45,7 @@ sound_mode = stereo
 ```
 ___
 ## Flags Section - [flags]
-This section contains all main game flags (walkthought milestones).
+This section contains all main game flags (walkthrough milestones).
 > **Note**: The value can be only 0 (False) or 1 (True).
 
 | Flag | Description |
@@ -142,10 +142,10 @@ pss = 10
 ```
 ___
 ## Cap Section - [cap]
-This section contains information about where Mario lost his cap and who take it.
+This section contains information about where Mario lost his cap and who, or what, took it.
 | Flag | Value | Description |
 |---|---|---|
-| type | ground, klepto, ukiki, mrblizzard | The one who or what took the cap from Mario. Default flag is **"ground"**
+| type | ground, klepto, ukiki, mrblizzard | The one that took the cap from Mario. Default flag is **"ground"**
 | level | ssl, sl, ttm, none | Specifies the course where the cap is located. Default flag is **"none"**.
 | area | 1, 2 | Specifies the area in the course.
 

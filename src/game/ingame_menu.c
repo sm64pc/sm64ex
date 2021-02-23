@@ -276,7 +276,7 @@ void render_generic_char(u8 c) {
 
 #ifdef VERSION_EU
 static void alloc_ia4_tex_from_i1(u8 *out, u8 *in, s16 width, s16 height) {
-    u32 size = (u32) width * (u32) height;
+    UNUSED u32 size = (u32) width * (u32) height;
     s32 inPos;
     s16 outPos = 0;
     u8 bitMask;
@@ -2218,20 +2218,20 @@ u8 gTextCourseArr[][7] = {
     { TEXT_COURSE_FR },
     { TEXT_COURSE_DE }
 };
-#endif
 
-#if defined(VERSION_EU) && defined(QOL_FIXES)
-u8 gTextCatchArr[][7] {
+#ifdef QOL_FIXES
+u8 gTextCatchArr[][8] = {
     { TEXT_CATCH },
     { TEXT_CATCH_FR },
     { TEXT_CATCH_DE }
 };
 
-u8 gTextClearArr[][7] {
+u8 gTextClearArr[][8] = {
     { TEXT_CLEAR },
     { TEXT_CLEAR_FR },
     { TEXT_CLEAR_DE }
 };
+#endif
 #endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)

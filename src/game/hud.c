@@ -55,7 +55,11 @@ static struct PowerMeterHUD sPowerMeterHUD = {
 // when the power meter is hidden.
 s32 sPowerMeterVisibleTimer = 0;
 
+#ifndef TARGET_WEB
 static struct UnusedHUDStruct sUnusedHUDValues = { 0x00, 0x0A, 0x00 };
+#else
+UNUSED static struct UnusedHUDStruct sUnusedHUDValues = { 0x00, 0x0A, 0x00 };
+#endif
 
 static struct CameraHUD sCameraHUD = { CAM_STATUS_NONE };
 

@@ -122,19 +122,40 @@ struct Object *spawn_star(struct Object *sp30, f32 sp34, f32 sp38, f32 sp3C) {
 }
 
 void spawn_default_star(f32 sp20, f32 sp24, f32 sp28) {
+    #ifndef QOL_FIXES
     struct Object *sp1C;
+    #else
+    struct Object *sp1C = NULL;
+    #endif
+    #ifdef TARGET_WEB
+    sp1C = NULL;
+    #endif
     sp1C = spawn_star(sp1C, sp20, sp24, sp28);
     sp1C->oBehParams2ndByte = 0;
 }
 
 void spawn_red_coin_cutscene_star(f32 sp20, f32 sp24, f32 sp28) {
+    #ifndef QOL_FIXES
     struct Object *sp1C;
+    #else
+    struct Object *sp1C = NULL;
+    #endif
+    #ifdef TARGET_WEB
+    sp1C = NULL;
+    #endif
     sp1C = spawn_star(sp1C, sp20, sp24, sp28);
     sp1C->oBehParams2ndByte = 1;
 }
 
 void spawn_no_exit_star(f32 sp20, f32 sp24, f32 sp28) {
+    #ifndef QOL_FIXES
     struct Object *sp1C;
+    #else
+    struct Object *sp1C = NULL;
+    #endif
+    #ifdef TARGET_WEB
+    sp1C = NULL;
+    #endif
     sp1C = spawn_star(sp1C, sp20, sp24, sp28);
     sp1C->oBehParams2ndByte = 1;
     sp1C->oInteractionSubtype |= INT_SUBTYPE_NO_EXIT;

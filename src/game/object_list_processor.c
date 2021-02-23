@@ -606,7 +606,11 @@ void unload_deactivated_objects(void) {
 /**
  * Unused profiling function.
  */
+#ifndef TARGET_WEB
 static u16 unused_get_elapsed_time(u64 *cycleCounts, s32 index) {
+#else
+UNUSED static u16 unused_get_elapsed_time(u64 *cycleCounts, s32 index) {
+#endif
     u16 time;
     f64 cycles;
 

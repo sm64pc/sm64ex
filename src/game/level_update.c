@@ -1123,7 +1123,11 @@ s32 play_mode_change_level(void) {
 /**
  * Unused play mode. Doesn't call transition update and doesn't reset transition at the end.
  */
+#ifndef TARGET_WEB
 static s32 play_mode_unused(void) {
+#else
+UNUSED static s32 play_mode_unused(void) {
+#endif
     if (--sTransitionTimer == -1) {
         gHudDisplay.flags = HUD_DISPLAY_NONE;
 

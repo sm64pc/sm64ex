@@ -181,7 +181,11 @@ static struct GfxRenderingAPI *gfx_rapi;
 // 4x4 pink-black checkerboard texture to indicate missing textures
 #define MISSING_W 4
 #define MISSING_H 4
+#ifndef TARGET_WEB
 static const uint8_t missing_texture[MISSING_W * MISSING_H * 4] = {
+#else
+UNUSED static const uint8_t missing_texture[MISSING_W * MISSING_H * 4] = {
+#endif
     0xFF, 0x00, 0xFF, 0xFF,  0xFF, 0x00, 0xFF, 0xFF,  0x00, 0x00, 0x00, 0xFF,  0x00, 0x00, 0x00, 0xFF,
     0xFF, 0x00, 0xFF, 0xFF,  0xFF, 0x00, 0xFF, 0xFF,  0x00, 0x00, 0x00, 0xFF,  0x00, 0x00, 0x00, 0xFF,
     0x00, 0x00, 0x00, 0xFF,  0x00, 0x00, 0x00, 0xFF,  0xFF, 0x00, 0xFF, 0xFF,  0xFF, 0x00, 0xFF, 0xFF,
@@ -197,9 +201,15 @@ static inline size_t string_hash(const uint8_t *str) {
 }
 #endif
 
+#ifndef TARGET_WEB
 static unsigned long get_time(void) {
     return 0;
 }
+#else
+UNUSED static unsigned long get_time(void) {
+    return 0;
+}
+#endif
 
 static void gfx_flush(void) {
     if (buf_vbo_len > 0) {
@@ -305,7 +315,7 @@ static bool gfx_texture_cache_lookup(int tile, struct TextureHashmapNode **n, co
     hash = (hash >> HASH_SHIFT) & HASH_MASK;
 
     struct TextureHashmapNode **node = &gfx_texture_cache.hashmap[hash];
-    while (*node != NULL && *node - gfx_texture_cache.pool < gfx_texture_cache.pool_pos) {
+    while (*node != NULL && *node - gfx_texture_cache.pool < (long)gfx_texture_cache.pool_pos) {
         if (CMPADDR((*node)->texture_addr, orig_addr) && (*node)->fmt == fmt && (*node)->siz == siz) {
             gfx_rapi->select_texture(tile, (*node)->texture_id);
             *n = *node;
@@ -1657,7 +1667,7 @@ static void gfx_run_dl(Gfx* cmd) {
             case G_TEXRECT:
             case G_TEXRECTFLIP:
             {
-                int32_t lrx, lry, tile, ulx, uly;
+                int32_t lrx, lry, tile = 0, ulx, uly;
                 uint32_t uls, ult, dsdx, dtdy;
 #ifdef F3DEX_GBI_2E
                 lrx = (int32_t)(C0(0, 24) << 8) >> 8;

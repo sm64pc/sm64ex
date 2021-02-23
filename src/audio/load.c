@@ -27,7 +27,11 @@ void port_eu_init(void);
 struct Note *gNotes;
 
 #ifdef VERSION_EU
+#ifndef TARGET_WEB
 static u8 pad[4];
+#else
+UNUSED static u8 pad[4];
+#endif
 #endif
 
 struct SequencePlayer gSequencePlayers[SEQUENCE_PLAYERS];
@@ -390,7 +394,11 @@ out2:
 static
 #endif
 
+#ifndef TARGET_WEB
 void patch_sound(UNUSED struct AudioBankSound *sound, UNUSED u8 *memBase, UNUSED u8 *offsetBase) {
+#else
+UNUSED void patch_sound(UNUSED struct AudioBankSound *sound, UNUSED u8 *memBase, UNUSED u8 *offsetBase) {
+#endif
     struct AudioBankSample *sample;
     void *patched;
     UNUSED u8 *mem; // unused on US
@@ -485,11 +493,17 @@ void patch_audio_bank(struct AudioBank *mem, u8 *offset, u32 numInstruments, u32
                 drum = PATCH(patched, mem);
                 mem->drums[i] = drum;
                 if (drum->loaded == 0) {
-#if !defined(VERSION_EU) || !defined(QOL_FIXES)
+#ifndef VERSION_EU
+#ifndef QOL_FIXES
                     //! copt replaces drum with 'patched' for these two lines
                     PATCH_SOUND(&(*(struct Drum *)patched).sound, mem, offset);
                     patched = (*(struct Drum *)patched).envelope;
                     drum->envelope = (void *)((uintptr_t) mem + (uintptr_t) patched);
+#else
+                    patch_sound(&drum->sound, (u8 *) mem, offset);
+                    patched = drum->envelope;
+                    drum->envelope = (void *)((uintptr_t) patched + (uintptr_t) mem);
+#endif
 #else
                     patch_sound(&drum->sound, (u8 *) mem, offset);
                     patched = drum->envelope;
@@ -898,7 +912,11 @@ void audio_init() {
     UNUSED s8 pad[32];
     u8 buf[0x10];
 #endif
+#ifndef TARGET_WEB
     s32 i, j, UNUSED k;
+#else
+    s32 i, j, UNUSED k = 0;
+#endif
     UNUSED s32 lim1; // lim1 unused in EU
 #ifdef VERSION_EU
     u8 buf[0x10];

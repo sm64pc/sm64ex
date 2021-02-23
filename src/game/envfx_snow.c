@@ -272,7 +272,11 @@ void envfx_update_snow_blizzard(s32 snowCylinderX, s32 snowCylinderY, s32 snowCy
  *  find it. The radius of 3000 units is quite large for that though, covering
  *  more than half of the mirror room.
  */
+#ifndef TARGET_WEB
 static s32 is_in_mystery_snow_area(s32 x, UNUSED s32 y, s32 z) {
+#else
+UNUSED static s32 is_in_mystery_snow_area(s32 x, UNUSED s32 y, s32 z) {
+#endif
     if (sqr(x - 3380) + sqr(z + 520) < sqr(3000)) {
         return 1;
     }

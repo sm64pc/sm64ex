@@ -97,7 +97,11 @@ u8 EUpad2[0x64];
 static OSMesg sGdMesgBuf[1]; // @ 801BE944
 u8 EUpad3[0x34];
 static OSMesg D_801BE97C; // msg buf for D_801BE8B0 queue
+#ifndef TARGET_WEB
 static OSIoMesg D_801BE980;
+#else
+UNUSED static OSIoMesg D_801BE980;
+#endif
 static struct ObjView *D_801BE994; // store if View flag 0x40 set
 
 u8 EUpad4[0x88];
@@ -110,10 +114,18 @@ static u8 D_801BAEA0;
 static struct ObjGadget *sTimerGadgets[GD_NUM_TIMERS]; // @ 801BAEA8
 static u32 D_801BAF28;                                 // RAM addr offset?
 static s16 D_801BAF30[13][8];                          // [[s16; 8]; 13]? vert indices?
+#ifndef TARGET_WEB
 static u32 unref_801bb000[3];
+#else
+UNUSED static u32 unref_801bb000[3];
+#endif
 static u8 *sMemBlockPoolBase; // @ 801BB00C
 static u32 sAllocMemory;      // @ 801BB010; malloc-ed bytes
+#ifndef TARGET_WEB
 static u32 unref_801bb014;
+#else
+UNUSED static u32 unref_801bb014;
+#endif
 static s32 D_801BB018;
 static s32 D_801BB01C;
 static void *D_801BB020[0x10];          // texture pointers
@@ -133,11 +145,23 @@ static s32 D_801BB0CC;                  // Vtx start in GD Dl
 static struct ObjView *sCarSceneView;   // @ 801BB0D0
 static s32 sUpdateYoshiScene;           // @ 801BB0D4; update dl Vtx from ObjVertex?
 static s32 sUpdateMarioScene;           // @ 801BB0D8; update dl Vtx from ObjVertex?
+#ifndef TARGET_WEB
 static u32 unref_801bb0dc;
+#else
+UNUSED static u32 unref_801bb0dc;
+#endif
 static s32 sUpdateCarScene; // @ 801BB0E0; guess, not really used
+#ifndef TARGET_WEB
 static u32 unref_801bb0e4;
+#else
+UNUSED static u32 unref_801bb0e4;
+#endif
 static struct GdVec3f D_801BB0E8;
+#ifndef TARGET_WEB
 static u32 unref_801bb0f8[2];
+#else
+UNUSED static u32 unref_801bb0f8[2];
+#endif
 static Mtx sIdnMtx;           // @ 801BB100
 static Mat4f sInitIdnMat4;    // @ 801BB140
 static s8 sVtxCvrtNormBuf[3]; // @ 801BB180
@@ -168,21 +192,45 @@ static LookAt D_801BE7D0[3];
 #ifndef VERSION_EU
 static OSMesgQueue D_801BE830; // controller msg queue
 static OSMesg D_801BE848[10];
+#ifndef TARGET_WEB
 static u32 unref_801be870[16];
+#else
+UNUSED static u32 unref_801be870[16];
+#endif
 static OSMesgQueue D_801BE8B0;
 static OSMesgQueue sGdDMAQueue; // @ 801BE8C8
+#ifndef TARGET_WEB
 static u32 unref_801be8e0[25];
+#else
+UNUSED static u32 unref_801be8e0[25];
+#endif
 static OSMesg sGdMesgBuf[1]; // @ 801BE944
+#ifndef TARGET_WEB
 static u32 unref_801be948[13];
+#else
+UNUSED static u32 unref_801be948[13];
+#endif
 static OSMesg D_801BE97C; // msg buf for D_801BE8B0 queue
+#ifndef TARGET_WEB
 static OSIoMesg D_801BE980;
+#else
+UNUSED static OSIoMesg D_801BE980;
+#endif
 static struct ObjView *D_801BE994; // store if View flag 0x40 set
 #endif
 
 // data
+#ifndef TARGET_WEB
 static u32 unref_801a8670 = 0;
+#else
+UNUSED static u32 unref_801a8670 = 0;
+#endif
 static s32 D_801A8674 = 0;
+#ifndef TARGET_WEB
 static u32 unref_801a8678 = 0;
+#else
+UNUSED static u32 unref_801a8678 = 0;
+#endif
 static s32 D_801A867C = 0;
 static s32 D_801A8680 = 0;
 static f32 sTracked1FrameTime = 0.0f; // @ 801A8684
@@ -197,11 +245,19 @@ static struct GdTimer *D_801A86A4 = NULL; // timer for dlgen, dynamics, or rcp
 static struct GdTimer *D_801A86A8 = NULL; // timer for dlgen, dynamics, or rcp
 static struct GdTimer *D_801A86AC = NULL; // timer for dlgen, dynamics, or rcp
 s32 gGdFrameBuf = 0;                      // @ 801A86B0
+#ifndef TARGET_WEB
 static u32 unref_801a86B4 = 0;
+#else
+UNUSED static u32 unref_801a86B4 = 0;
+#endif
 static struct ObjShape *sHandShape = NULL; // @ 801A86B8
 static s32 D_801A86BC = 1;
 static s32 D_801A86C0 = 0; // gd_dl id for something?
+#ifndef TARGET_WEB
 static u32 unref_801a86C4 = 10;
+#else
+UNUSED static u32 unref_801a86C4 = 10;
+#endif
 static s32 sMtxParamType = G_MTX_PROJECTION;
 static struct GdVec3f D_801A86CC = { 1.0f, 1.0f, 1.0f };
 static struct ObjView *sActiveView = NULL;  // @ 801A86D8 current view? used when drawing dl
@@ -212,10 +268,18 @@ static struct ObjView *sMenuView = NULL; // @ 801A86E8
 static u32 sItemsInMenu = 0;             // @ 801A86EC
 static s32 D_801A86F0 = 0;               // frame buffer idx into D_801BD7A0?
 static s32 sNewZPresses = 0;             // @ 801A86F4; timing activate cool down counter?
+#ifndef TARGET_WEB
 static u32 unref_801a86F8 = 0;
+#else
+UNUSED static u32 unref_801a86F8 = 0;
+#endif
 static struct GdDisplayList *sCurrentGdDl = NULL; // @ 801A86FC
 static u32 sGdDlCount = 0;                        // @ 801A8700
+#ifndef TARGET_WEB
 static struct DynListBankInfo sDynLists[] = {     // @ 801A8704
+#else
+UNUSED static struct DynListBankInfo sDynLists[] = {     // @ 801A8704
+#endif
     { STD_LIST_BANK, dynlist_test_cube },
     { STD_LIST_BANK, dynlist_unused },
     { STD_LIST_BANK, dynlist_mario_master },
@@ -223,7 +287,11 @@ static struct DynListBankInfo sDynLists[] = {     // @ 801A8704
 };
 
 // textures and display list data
+#ifndef TARGET_WEB
 static Gfx gd_texture1_dummy_aligner1[] = { // @ 801A8728
+#else
+UNUSED static Gfx gd_texture1_dummy_aligner1[] = { // @ 801A8728
+#endif
     gsSPEndDisplayList(),
 };
 
@@ -231,7 +299,11 @@ ALIGNED8 static u8 gd_texture_hand_open[] = {
 #include "textures/intro_raw/hand_open.rgba16.inc.c"
 };
 
+#ifndef TARGET_WEB
 static Gfx gd_texture2_dummy_aligner1[] = {
+#else
+UNUSED static Gfx gd_texture2_dummy_aligner1[] = {
+#endif
     gsSPEndDisplayList()
 };
 
@@ -493,7 +565,11 @@ ALIGNED8 static u8 gd_texture_sparkle_4[] = {
 //! No reference to this texture. Two DL's uses the same previous texture
 //  instead of using this texture.
 // Fixed via setting QOL_FIXES to 1.
+#ifndef TARGET_WEB
 ALIGNED8 static u8 gd_texture_sparkle_5[] = {
+#else
+UNUSED ALIGNED8 static u8 gd_texture_sparkle_5[] = {
+#endif
 #include "textures/intro_raw/sparkle_5.rgba16.inc.c"
 };
 
@@ -570,7 +646,7 @@ static Gfx gd_dl_red_sparkle_4[] = {
 };
 
 #ifndef QOL_FIXES
-static Gfx gd_dl_red_sparkle_4_dup[] ={
+static Gfx gd_dl_red_sparkle_4_dup[] = {
     gsDPPipeSync(),
     gsSPDisplayList(gd_dl_sparkle_red_color),
     gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, gd_texture_sparkle_4), // 4 again, correct texture would be 5
@@ -578,7 +654,7 @@ static Gfx gd_dl_red_sparkle_4_dup[] ={
 };
 
 #else
-static Gfx gd_dl_red_sparkle_5[] ={
+static Gfx gd_dl_red_sparkle_5[] = {
     gsDPPipeSync(),
     gsSPDisplayList(gd_dl_sparkle_red_color),
     gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, gd_texture_sparkle_5),
@@ -678,7 +754,11 @@ static Gfx *gd_silver_sparkle_dl_array[] = {
 #endif
 };
 
+#ifndef TARGET_WEB
 static Gfx gd_texture3_dummy_aligner1[] = {
+#else
+UNUSED static Gfx gd_texture3_dummy_aligner1[] = {
+#endif
     gsSPEndDisplayList(),
 };
 
@@ -723,13 +803,25 @@ static Gfx gd_dl_rdp_init[] = {
     gsSPEndDisplayList(),
 };
 
+#ifndef TARGET_WEB
 static u32 gd_unused_pad1 = 0;
+#else
+UNUSED static u32 gd_unused_pad1 = 0;
+#endif
 
 float sGdPerspTimer = 1.0;
 
+#ifndef TARGET_WEB
 static u32 gd_unused_pad2 = 0;
+#else
+UNUSED static u32 gd_unused_pad2 = 0;
+#endif
 
+#ifndef TARGET_WEB
 static Gfx gd_texture4_dummy_aligner1[] = {
+#else
+UNUSED static Gfx gd_texture4_dummy_aligner1[] = {
+#endif
     gsDPPipeSync(),
     gsSPEndDisplayList(),
 };
@@ -746,7 +838,11 @@ static Vtx_t gd_unused_mesh_vertex_group2[] = {
     {{ 3, -7,  0}, 0, {  0,  0}, {  0xFF, 0x00, 0x00, 0xFF}},
 };
 
+#ifndef TARGET_WEB
 static Gfx gd_dl_unused_mesh[] = {
+#else
+UNUSED static Gfx gd_dl_unused_mesh[] = {
+#endif
     gsDPPipeSync(),
     gsDPSetRenderMode(G_RM_OPA_SURF, G_RM_OPA_SURF2),
     gsSPClearGeometryMode(0xFFFFFFFF),
@@ -2762,7 +2858,7 @@ s32 setup_view_buffers(const char *name, struct ObjView *view, UNUSED s32 ulx, U
 //!      doesn't use four of its parameters, this function may have
 //!      had a fair amount of its code commented out. In game, the
 //!      returned value is always 0, so the fix returns that value
-#ifdef AVOID_UB
+#if defined(AVOID_UB) || defined(TARGET_WEB)
     return 0;
 #endif
 }
@@ -2789,6 +2885,9 @@ void func_801A43DC(UNUSED struct GdObj *obj) {
 /* 252BC0 -> 252BE0 */
 void *func_801A43F0(UNUSED const char *menufmt, ...) {
     //! @bug no return; function was stubbed
+    #ifdef TARGET_WEB
+    return 0;
+    #endif
 }
 
 /* 252BE0 -> 252BF0 */

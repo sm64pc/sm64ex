@@ -61,7 +61,9 @@ int run_press_start_demo_timer(s32 timer) {
                 timer = (s8)((struct DemoInput *) gDemo.targetAnim)->timer;
                 gCurrSaveFileNum = 1;
                 gCurrActNum = 1;
+                #ifndef VERSION_JP
                 playMarioGreeting = 1;
+                #endif
             }
         } else { // activity was detected, so reset the demo countdown.
             gDemoCountdown = 0;
@@ -71,8 +73,14 @@ int run_press_start_demo_timer(s32 timer) {
 }
 
 #ifndef QOL_FIXES
+#ifndef TARGET_WEB
 extern int gDemoInputListID_2;
-#else
+#endif
+#endif
+#ifdef QOL_FIXES
+extern unsigned int gDemoInputListID_2;
+#endif
+#ifdef TARGET_WEB
 extern unsigned int gDemoInputListID_2;
 #endif
 extern int gPressedStart;

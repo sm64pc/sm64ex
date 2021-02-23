@@ -71,12 +71,16 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wtype-limits"
 
+    #ifndef TARGET_WEB
     //! Never true
     if (m->actionState == ACT_GROUND_POUND) {
         damageHeight = 600.0f;
     } else {
         damageHeight = 1150.0f;
     }
+    #else
+    damageHeight = 1150.0f;
+    #endif
 
 #pragma GCC diagnostic pop
 

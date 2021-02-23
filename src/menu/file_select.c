@@ -39,7 +39,11 @@
 // the large length difference between options.
 // sSoundTextY unused (EU supports its existence).
 static s16 sSoundTextX;
+#ifndef TARGET_WEB
 static s16 sSoundTextY;
+#else
+UNUSED static s16 sSoundTextY;
+#endif
 #endif
 
 //! @Bug (UB Array Access) For PAL, more buttons were added than the array was extended.
@@ -63,8 +67,13 @@ static struct Object *sMainMenuButtons[NUM_BUTTONS];
 // The current sound mode is automatically centered on US due to
 // the large length difference between options.
 // sSoundTextY is unused
+#ifndef TARGET_WEB
 static s16 sSoundTextX;
 static s16 sSoundTextY;
+#else
+UNUSED static s16 sSoundTextX;
+UNUSED static s16 sSoundTextY;
+#endif
 #endif
 
 // Used to defined yes/no fade colors after a file is selected in the erase menu.

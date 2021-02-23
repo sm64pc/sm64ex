@@ -621,7 +621,7 @@ const char unusedErrorStr2[] = "specchg error\n";
 /**
  * Fade out a sequence player
  */
-#if defined(VERSION_EU)
+#ifdef VERSION_EU
 
 void audio_reset_session_eu(s32 presetId) {
     OSMesg mesg;

@@ -14,11 +14,20 @@
 
 // data
 s32 gGdMoveScene = TRUE; // @ 801A8050
+#ifndef TARGET_WEB
 static s32 sUnref801A8054 = TRUE;
+#else
+UNUSED static s32 sUnref801A8054 = TRUE;
+#endif
 f32 D_801A8058 = -600.0f;
 s32 gGdUseVtxNormal = TRUE; // @ 801A805C; instead of face normals
+#ifndef TARGET_WEB
 static s32 sUnrefScnWidth = 320;
 static s32 sUnrefScnHeight = 240;
+#else
+UNUSED static s32 sUnrefScnWidth = 320;
+UNUSED static s32 sUnrefScnHeight = 240;
+#endif
 
 // bss
 struct GdControl gGdCtrl;     // @ 801B9920; processed controller info

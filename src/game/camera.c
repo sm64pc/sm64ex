@@ -704,6 +704,9 @@ f32 calc_y_to_curr_floor(f32 *posOff, f32 posMul, f32 posBound, f32 *focOff, f32
     if (*focOff < -focBound) {
         *focOff = -focBound;
     }
+    #ifdef TARGET_WEB
+    return 0;
+    #endif
 }
 //Compiler gets mad if I put this any further above. thanks refresh 7
 #ifdef BETTERCAMERA
@@ -1732,9 +1735,16 @@ struct ParallelTrackingPoint sBBHLibraryParTrackPath[] = {
 };
 
 s32 unused_update_mode_5_camera(UNUSED struct Camera *c, UNUSED Vec3f focus, UNUSED Vec3f pos) {
+    #ifdef TARGET_WEB
+    return 0;
+    #endif
 }
 
+#ifndef TARGET_WEB
 static void stub_camera_1(UNUSED s32 unused) {
+#else
+UNUSED static void stub_camera_1(UNUSED s32 unused) {
+#endif
 }
 
 void mode_boss_fight_camera(struct Camera *c) {
@@ -2059,6 +2069,9 @@ void mode_behind_mario_camera(struct Camera *c) {
 }
 
 s32 nop_update_water_camera(UNUSED struct Camera *c, UNUSED Vec3f focus, UNUSED Vec3f pos) {
+    #ifdef TARGET_WEB
+    return 0;
+    #endif
 }
 
 /**
@@ -4958,6 +4971,9 @@ s32 radial_camera_input(struct Camera *c, UNUSED f32 unused) {
     #else
     s16 dummy = 0;
     #endif
+    #ifdef TARGET_WEB
+    dummy = 0;
+    #endif
 
     if ((gCameraMovementFlags & CAM_MOVE_ENTERED_ROTATE_SURFACE) || !(gCameraMovementFlags & CAM_MOVE_ROTATE)) {
 
@@ -5429,7 +5445,11 @@ void set_focus_rel_mario(struct Camera *c, f32 leftRight, f32 yOff, f32 forwBack
  * @param forwBack offset to Mario's front/back, relative to his faceAngle
  * @param yawOff offset to Mario's faceAngle, changes the direction of `leftRight` and `forwBack`
  */
+#ifndef TARGET_WEB
 static void unused_set_pos_rel_mario(struct Camera *c, f32 leftRight, f32 yOff, f32 forwBack, s16 yawOff) {
+#else
+UNUSED static void unused_set_pos_rel_mario(struct Camera *c, f32 leftRight, f32 yOff, f32 forwBack, s16 yawOff) {
+#endif
     u16 yaw = sMarioCamState->faceAngle[1] + yawOff;
 
     c->pos[0] = sMarioCamState->pos[0] + forwBack * sins(yaw) + leftRight * coss(yaw);
@@ -5478,7 +5498,11 @@ void determine_pushing_or_pulling_door(s16 *rotation) {
     if (sMarioCamState->action == ACT_PULLING_DOOR) {
         *rotation = 0;
     } else {
+        #ifndef TARGET_WEB
         *rotation = DEGREES(180);
+        #else
+        *rotation = (s16)DEGREES(180);
+        #endif
     }
 }
 
@@ -7354,7 +7378,11 @@ void cutscene_unsoften_music(UNUSED struct Camera *c) {
     sequence_player_unlower(SEQ_PLAYER_LEVEL, 60);
 }
 
+#ifndef TARGET_WEB
 static void stub_camera_5(UNUSED struct Camera *c) {
+#else
+UNUSED static void stub_camera_5(UNUSED struct Camera *c) {
+#endif
 }
 
 BAD_RETURN(s32) cutscene_unused_start(UNUSED struct Camera *c) {
@@ -7845,7 +7873,11 @@ BAD_RETURN(s32) cutscene_dance_rotate_move_towards_mario(struct Camera *c) {
 /**
  * Speculated to be dance-related due to its proximity to the other dance functions
  */
+#ifndef TARGET_WEB
 static BAD_RETURN(s32) cutscene_dance_unused(UNUSED struct Camera *c) {
+#else
+UNUSED static BAD_RETURN(s32) cutscene_dance_unused(UNUSED struct Camera *c) {
+#endif
 }
 
 /**
@@ -8762,7 +8794,11 @@ BAD_RETURN(s32) cutscene_death_stomach_goto_mario(struct Camera *c) {
 /**
  * Ah, yes
  */
+#ifndef TARGET_WEB
 static void unused_water_death_move_to_side_of_mario(struct Camera *c) {
+#else
+UNUSED static void unused_water_death_move_to_side_of_mario(struct Camera *c) {
+#endif
     water_death_move_to_mario_side(c);
 }
 
@@ -9038,7 +9074,11 @@ BAD_RETURN(s32) cutscene_enter_pyramid_top(struct Camera *c) {
     }
 }
 
+#ifndef TARGET_WEB
 static void unused_cutscene_goto_cvar(struct Camera *c) {
+#else
+UNUSED static void unused_cutscene_goto_cvar(struct Camera *c) {
+#endif
     f32 dist;
 
     dist = calc_abs_dist(sCutsceneVars[3].point, sMarioCamState->pos);
@@ -9199,7 +9239,11 @@ BAD_RETURN(s32) cutscene_read_message_start(struct Camera *c) {
     sCutsceneVars[0].angle[0] = 0;
 }
 
+#ifndef TARGET_WEB
 static void unused_cam_to_mario(struct Camera *c) {
+#else
+UNUSED static void unused_cam_to_mario(struct Camera *c) {
+#endif
     Vec3s dir;
 
     vec3s_set(dir, 0, sMarioCamState->faceAngle[1], 0);
@@ -9674,15 +9718,24 @@ s32 intro_peach_move_camera_start_to_pipe(struct Camera *c, struct CutsceneSplin
 
     // The two splines used by this function are reflected in the horizontal plane for some reason,
     // so they are rotated every frame. Why do this, Nintendo?
+    #ifndef TARGET_WEB
     rotate_in_xz(c->focus, c->focus, DEGREES(180));
     rotate_in_xz(c->pos, c->pos, DEGREES(180));
+    #else
+    rotate_in_xz(c->focus, c->focus, (s16)DEGREES(180));
+    rotate_in_xz(c->pos, c->pos, (s16)DEGREES(180));
+    #endif
 
     vec3f_set(offset, -1328.f, 260.f, 4664.f);
     vec3f_add(c->focus, offset);
     vec3f_add(c->pos, offset);
 
     posReturn += focusReturn; // Unused
+    #ifndef QOL_FIXES
     return focusReturn;
+    #else
+    return posReturn;
+    #endif
 }
 
 /**

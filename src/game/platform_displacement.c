@@ -177,7 +177,16 @@ void apply_mario_platform_displacement(void) {
     }
 }
 
+#ifndef QOL_FIXES
 #ifndef VERSION_JP
+/**
+ * Set Mario's platform to NULL.
+ */
+void clear_mario_platform(void) {
+    gMarioPlatform = NULL;
+}
+#endif
+#else
 /**
  * Set Mario's platform to NULL.
  */

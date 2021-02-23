@@ -1390,7 +1390,11 @@ void cur_obj_move_y(f32 gravity, f32 bounciness, f32 buoyancy) {
     }
 }
 
+#ifndef TARGET_WEB
 static void stub_obj_helpers_1(void) {
+#else
+UNUSED static void stub_obj_helpers_1(void) {
+#endif
 }
 
 static s32 clear_move_flag(u32 *bitSet, s32 flag) {
@@ -1750,7 +1754,7 @@ static void cur_obj_update_floor(void) {
         if (floor->type == SURFACE_BURNING) {
             o->oMoveFlags |= OBJ_MOVE_ABOVE_LAVA;
         }
-#if !defined(VERSION_JP) || defined(QOL_FIXES)
+#ifndef VERSION_JP
         #ifndef QOL_FIXES
         else if (floor->type == SURFACE_DEATH_PLANE) {
             //! This misses SURFACE_VERTICAL_WIND (and maybe SURFACE_WARP)
@@ -2253,7 +2257,11 @@ void bhv_dust_smoke_loop(void) {
     o->oSmokeTimer++;
 }
 
+#ifndef TARGET_WEB
 static void stub_obj_helpers_2(void) {
+#else
+UNUSED static void stub_obj_helpers_2(void) {
+#endif
 }
 
 s32 cur_obj_set_direction_table(s8 *a0) {
@@ -2279,7 +2287,11 @@ s32 cur_obj_progress_direction_table(void) {
     return spF;
 }
 
+#ifndef TARGET_WEB
 void stub_obj_helpers_3(UNUSED s32 sp0, UNUSED s32 sp4) {
+#else
+UNUSED void stub_obj_helpers_3(UNUSED s32 sp0, UNUSED s32 sp4) {
+#endif
 }
 
 void cur_obj_scale_over_time(s32 a0, s32 a1, f32 sp10, f32 sp14) {
@@ -2306,7 +2318,11 @@ void cur_obj_set_pos_to_home_with_debug(void) {
     cur_obj_scale(gDebugInfo[5][3] / 100.0f + 1.0l);
 }
 
+#ifndef TARGET_WEB
 void stub_obj_helpers_4(void) {
+#else
+UNUSED void stub_obj_helpers_4(void) {
+#endif
 }
 
 s32 cur_obj_is_mario_on_platform(void) {
@@ -2401,7 +2417,11 @@ s32 is_item_in_array(s8 item, s8 *array) {
     return FALSE;
 }
 
+#ifndef TARGET_WEB
 static void stub_obj_helpers_5(void) {
+#else
+UNUSED static void stub_obj_helpers_5(void) {
+#endif
 }
 
 void bhv_init_room(void) {

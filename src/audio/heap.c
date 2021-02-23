@@ -302,7 +302,11 @@ void temporary_pools_init(struct PoolSplit *a) {
 }
 
 #ifndef VERSION_EU
+#ifndef TARGET_WEB
 static void unused_803163D4(void) {
+#else
+UNUSED static void unused_803163D4(void) {
+#endif
 }
 #endif
 

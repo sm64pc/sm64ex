@@ -380,7 +380,11 @@ f32 unused_obj_find_floor_height(struct Object *obj) {
  */
 struct FloorGeometry sFloorGeo;
 
+#ifndef TARGET_WEB
 static u8 unused8038BE50[0x40];
+#else
+UNUSED static u8 unused8038BE50[0x40];
+#endif
 
 /**
  * Return the floor height underneath (xPos, yPos, zPos) and populate `floorGeo`

@@ -181,7 +181,11 @@ void bowser_act_intro_walk(void) {
     }
 }
 
+#ifndef TARGET_WEB
 static void bowser_debug_actions(void) // unused
+#else
+UNUSED static void bowser_debug_actions(void)
+#endif
 {
     if (gDebugInfo[5][1] != 0) {
         o->oAction = D_8032F4FC[gDebugInfo[5][2] & 0xf];

@@ -2492,10 +2492,17 @@ ALIGNED8 const u8 texture_waterbox_lava[] = {
 };
 
 // Unreferenced light group
+#ifndef TARGET_WEB
 static const Lights1 segment2_lights_unused = gdSPDefLights1(
     0x40, 0x40, 0x40,
     0xff, 0xff, 0xff, 0x28, 0x28, 0x28
 );
+#else
+UNUSED static const Lights1 segment2_lights_unused = gdSPDefLights1(
+    0x40, 0x40, 0x40,
+    0xff, 0xff, 0xff, 0x28, 0x28, 0x28
+);
+#endif
 
 // 0x02014470 - 0x020144B0
 static const Mtx matrix_identity = {

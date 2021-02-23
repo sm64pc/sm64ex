@@ -23,7 +23,11 @@
 // bss
 static char sMenuStrBuf[0x100];
 static struct GdVec3f sStaticVec;
+#ifndef TARGET_WEB
 static struct GdVec3f unusedVec;
+#else
+UNUSED static struct GdVec3f unusedVec;
+#endif
 static struct ObjGadget *sCurGadgetPtr;
 
 // forward declarations

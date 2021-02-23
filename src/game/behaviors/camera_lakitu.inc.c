@@ -65,8 +65,13 @@ static void camera_lakitu_intro_act_spawn_cloud(void) {
  * Circle down to mario, show the dialog, then fly away.
  */
 static void camera_lakitu_intro_act_show_dialog(void) {
+    #ifndef TARGET_WEB
     s16 targetMovePitch;
     s16 targetMoveYaw;
+    #else
+    s16 targetMovePitch = 0;
+    s16 targetMoveYaw = 0;
+    #endif
 
     cur_obj_play_sound_1(SOUND_AIR_LAKITU_FLY);
 

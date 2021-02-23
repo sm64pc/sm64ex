@@ -273,7 +273,18 @@ u64 *synthesis_execute(u64 *cmdBuf, s32 *writtenCmds, s16 *aiBuf, s32 bufLen) {
     for (i = gAudioBufferParameters.updatesPerFrame; i > 0; i--) {
         if (i == 1) {
             // self-assignment has no affect when added here, could possibly simplify a macro definition
+            #ifndef TARGET_WEB
+            #ifndef QOL_FIXES
+            #pragma GCC diagnostic push
+            #pragma GCC diagnostic ignored "-Wself-assign"
             chunkLen = bufLen; nextVolRampTable = nextVolRampTable; leftVolRamp = gLeftVolRampings[nextVolRampTable]; rightVolRamp = gRightVolRampings[nextVolRampTable & 0xFFFFFFFF];
+            #pragma GCC diagnostic pop
+            #else
+            chunkLen = bufLen; leftVolRamp = gLeftVolRampings[nextVolRampTable]; rightVolRamp = gRightVolRampings[nextVolRampTable & 0xFFFFFFFF];
+            #endif
+            #else
+            chunkLen = bufLen; leftVolRamp = gLeftVolRampings[nextVolRampTable]; rightVolRamp = gRightVolRampings[nextVolRampTable & 0xFFFFFFFF];
+            #endif
         } else {
             if (bufLen / i >= gAudioBufferParameters.samplesPerUpdateMax) {
                 chunkLen = gAudioBufferParameters.samplesPerUpdateMax; nextVolRampTable = 2; leftVolRamp = gLeftVolRampings[2]; rightVolRamp = gRightVolRampings[2];

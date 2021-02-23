@@ -31,7 +31,11 @@
 static u16 gRandomSeed16;
 
 // Unused function that directly jumps to a behavior command and resets the object's stack index.
+#ifndef TARGET_WEB
 static void goto_behavior_unused(const BehaviorScript *bhvAddr) {
+#else
+UNUSED static void goto_behavior_unused(const BehaviorScript *bhvAddr) {
+#endif
     gCurBhvCommand = segmented_to_virtual(bhvAddr);
     gCurrentObject->bhvStackIndex = 0;
 }
@@ -107,7 +111,11 @@ static uintptr_t cur_obj_bhv_stack_pop(void) {
     return bhvAddr;
 }
 
+#ifndef TARGET_WEB
 static void stub_behavior_script_1(void) {
+#else
+UNUSED static void stub_behavior_script_1(void) {
+#endif
     for (;;) {
         ;
     }
@@ -691,11 +699,16 @@ static s32 bhv_cmd_begin(void) {
     return BHV_PROC_CONTINUE;
 }
 
+#ifndef QOL_FIXES
 // An unused, incomplete behavior command that does not have an entry in the lookup table, and so no command number.
 // It cannot be simply re-added to the table, as unlike all other bhv commands it takes a parameter.
 // Theoretically this command would have been of variable size.
 // Included below is a modified/repaired version of this function that would work properly.
+#ifndef TARGET_WEB
 static void bhv_cmd_set_int_random_from_table(s32 tableSize) {
+#else
+UNUSED static void bhv_cmd_set_int_random_from_table(s32 tableSize) {
+#endif
     u8 field = BHV_CMD_GET_2ND_U8(0);
     s32 table[16];
     s32 i;
@@ -709,12 +722,15 @@ static void bhv_cmd_set_int_random_from_table(s32 tableSize) {
 
     // Does not increment gCurBhvCommand or return a bhv status
 }
-
-/**
+#else
 // Command 0x??: Sets the specified field to a random entry in the given table, up to size 16.
 // Bytes: ?? FF SS SS V1 V1 V2 V2 V3 V3 V4 V4... ...V15 V15 V16 V16 (no macro exists)
 // F -> field, S -> table size, V1, V2, etc. -> table entries (up to 16)
+#ifndef TARGET_WEB
 static s32 bhv_cmd_set_int_random_from_table(void) {
+#else
+UNUSED static s32 bhv_cmd_set_int_random_from_table(void) {
+#endif
     u8 field = BHV_CMD_GET_2ND_U8(0);
     // Retrieve tableSize from the bhv command instead of as a parameter.
     s16 tableSize = BHV_CMD_GET_2ND_S16(0); // tableSize should not be greater than 16
@@ -733,7 +749,7 @@ static s32 bhv_cmd_set_int_random_from_table(void) {
     gCurBhvCommand += (tableSize / 2) + 1;
     return BHV_PROC_CONTINUE;
 }
-**/
+#endif
 
 // Command 0x2A: Loads collision data for the object.
 // Usage: LOAD_COLLISION_DATA(collisionData)
@@ -908,7 +924,12 @@ static BhvCommandProc BehaviorCmdTable[] = {
     bhv_cmd_disable_rendering, //35
     bhv_cmd_set_int_unused, //36
     bhv_cmd_spawn_water_droplet, //37
+    #ifndef QOL_FIXES
     bhv_cmd_cylboard //38
+    #else
+    bhv_cmd_cylboard, //38
+    bhv_cmd_set_int_random_from_table //39
+    #endif
 };
 
 // Execute the behavior script of the current object, process the object flags, and other miscellaneous code for updating objects.

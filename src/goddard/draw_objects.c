@@ -61,7 +61,11 @@ static struct GdColour sClrYellow = { 1.0, 1.0, 0.0 };           // @ 801A80DC
 static struct GdColour sLightColours[1] = { { 1.0, 1.0, 0.0 } }; // @ 801A80E8
 static struct GdColour *sSelectedColour = &sClrRed;              // @ 801A80F4
 struct ObjCamera *gViewUpdateCamera = NULL;                      // @ 801A80F8
+#ifndef TARGET_WEB
 static void *sUnref801A80FC = NULL;
+#else
+UNUSED static void *sUnref801A80FC = NULL;
+#endif
 static s32 sUnreadShapeFlag = 0;       // @ 801A8100
 struct GdColour *sColourPalette[5] = { // @ 801A8104
     &sClrWhite, &sClrYellow, &sClrRed, &sClrBlack, &sClrBlack
@@ -71,20 +75,36 @@ struct GdColour *sWhiteBlack[2] = {
     &sClrWhite,
     &sClrBlack,
 };
+#ifndef TARGET_WEB
 static Mat4f sUnref801A8120 = {
+#else
+UNUSED static Mat4f sUnref801A8120 = {
+#endif
     { 1.0, 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0, 0.0 }, { 0.0, 0.0, 1.0, 0.0 }, { 0.0, 0.0, 0.0, 1.0 }
 };
+#ifndef TARGET_WEB
 static Mat4f sUnrefIden801A8160 = {
+#else
+UNUSED static Mat4f sUnrefIden801A8160 = {
+#endif
     { 1.0, 0.0, 0.0, 0.0 }, { 0.0, 1.0, 0.0, 0.0 }, { 0.0, 0.0, 1.0, 0.0 }, { 0.0, 0.0, 0.0, 1.0 }
 };
 static s32 sLightDlCounter = 1; // @ 801A81A0
+#ifndef TARGET_WEB
 static s32 sUnref801A81A4[4] = { 0 };
+#else
+UNUSED static s32 sUnref801A81A4[4] = { 0 };
+#endif
 
 // bss
 u8 gUnref_801B9B30[0x88];
 struct ObjGroup *gGdLightGroup; // @ 801B9BB8; is this the main light group? only light group?
 
+#ifndef TARGET_WEB
 static u8 sUnref_801B9BBC[0x40];
+#else
+UNUSED static u8 sUnref_801B9BBC[0x40];
+#endif
 static enum SceneType sSceneProcessType; // @ 801B9C00
 static s32 sUseSelectedColor;            // @ 801B9C04
 static s16 sPickBuffer[100];             ///< buffer of objects near click

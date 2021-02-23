@@ -219,7 +219,11 @@ s32 geo_switch_peach_eyes(s32 run, struct GraphNode *node, UNUSED s32 a2) {
 }
 
 // unused
+#ifndef TARGET_WEB
 static void stub_is_textbox_active(u16 *a0) {
+#else
+UNUSED static void stub_is_textbox_active(u16 *a0) {
+#endif
     if (get_dialog_id() == -1) {
         *a0 = 0;
     }

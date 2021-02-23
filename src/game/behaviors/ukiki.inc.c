@@ -501,7 +501,11 @@ void ukiki_free_loop(void) {
  *
  * Possibly unused so AnimState could be used for wearing a hat?
  */
+#ifndef TARGET_WEB
 static void ukiki_blink_timer(void) {
+#else
+UNUSED static void ukiki_blink_timer(void) {
+#endif
     if (gGlobalTimer % 50 < 7) {
         o->oAnimState = UKIKI_ANIM_STATE_EYE_CLOSED;
     } else {

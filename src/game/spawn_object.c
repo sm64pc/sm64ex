@@ -162,7 +162,11 @@ void clear_object_lists(struct ObjectNode *objLists) {
 /**
  * Delete the leaf graph nodes under obj and obj's siblings.
  */
+#ifndef TARGET_WEB
 static void unused_delete_leaf_nodes(struct Object *obj) {
+#else
+UNUSED static void unused_delete_leaf_nodes(struct Object *obj) {
+#endif
     struct Object *children;
     struct Object *sibling;
     struct Object *obj0 = obj;

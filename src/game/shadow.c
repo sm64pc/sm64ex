@@ -190,7 +190,7 @@ f32 get_water_level_below_shadow(struct Shadow *s) {
     }
     //! @bug Missing return statement. This compiles to return `waterLevel`
     //! incidentally.
-#ifdef QOL_FIXES
+#if defined(QOL_FIXES) || defined(TARGET_WEB)
     return waterLevel;
 #endif
 }
