@@ -209,7 +209,11 @@ void whomp_act_6(void) {
 
 void whomp_act_8(void) {
     if (o->oBehParams2ndByte != 0) {
+        #ifndef QOL_FIXES
         if (cur_obj_update_dialog_with_cutscene(2, 2, CUTSCENE_DIALOG, DIALOG_115)) {
+        #else
+        if (cur_obj_update_dialog_with_cutscene(3, 2, CUTSCENE_DIALOG, DIALOG_115)) {
+        #endif
             obj_set_angle(o, 0, 0, 0);
             cur_obj_hide();
             cur_obj_become_intangible();

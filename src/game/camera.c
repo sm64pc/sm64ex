@@ -1596,11 +1596,9 @@ s32 update_boss_fight_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
     }
 
     focusDistance = calc_abs_dist(sMarioCamState->pos, secondFocus) * 1.6f;
-    #ifndef QOL_FIXES
     if (focusDistance < 800.f) {
         focusDistance = 800.f;
     }
-    #endif
     if (focusDistance > 5000.f) {
         focusDistance = 5000.f;
     }
@@ -1665,7 +1663,7 @@ s32 update_boss_fight_camera(struct Camera *c, Vec3f focus, Vec3f pos) {
     }
 
     //! Unnecessary conditional, focusDistance is already bounded to 800
-    #ifdef QOL_FIXES
+    #ifndef QOL_FIXES
     if (focusDistance < 400.f) {
         focusDistance = 400.f;
     }

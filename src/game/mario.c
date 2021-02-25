@@ -880,8 +880,8 @@ static u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actio
             if ((m->forwardVel *= 1.5f) > 48.0f) {
                 m->forwardVel = 48.0f;
             #if BUGFIX_BLJ
-            } else if ((m->forwardVel *= 1.5f) < -48.0f) {
-                m->forwardVel = -48.0f;
+            } else if (m->forwardVel < -25.0f) {
+                m->forwardVel = -25.0f;
             }
             #else
             }

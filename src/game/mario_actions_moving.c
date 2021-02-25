@@ -151,7 +151,12 @@ void slide_bonk(struct MarioState *m, u32 fastAction, u32 slowAction) {
 s32 set_triple_jump_action(struct MarioState *m, UNUSED u32 action, UNUSED u32 actionArg) {
     if (m->flags & MARIO_WING_CAP) {
         return set_mario_action(m, ACT_FLYING_TRIPLE_JUMP, 0);
+    #ifndef QOL_FIXES
     } else if (m->forwardVel > 20.0f) {
+    #else
+    } else if (m->forwardVel > 20.0f && ((mario_get_floor_class(m) == SURFACE_CLASS_NOT_SLIPPERY) || (mario_get_floor_class(m) == SURFACE_CLASS_DEFAULT)
+		|| (mario_get_floor_class(m) == SURFACE_HARD_NOT_SLIPPERY && SURFACE_HARD_SLIPPERY))) {
+    #endif
         return set_mario_action(m, ACT_TRIPLE_JUMP, 0);
     } else {
         return set_mario_action(m, ACT_JUMP, 0);
@@ -943,7 +948,16 @@ s32 act_move_punching(struct MarioState *m) {
     }
 
     if (m->actionState == 0 && (m->input & INPUT_A_DOWN)) {
+        #ifndef QOL_FIXES
         return set_mario_action(m, ACT_JUMP_KICK, 0);
+        #else
+		if ((mario_get_floor_class(m) == SURFACE_CLASS_NOT_SLIPPERY) || (mario_get_floor_class(m) == SURFACE_CLASS_DEFAULT)
+		|| (mario_get_floor_class(m) == SURFACE_HARD_NOT_SLIPPERY && SURFACE_HARD_SLIPPERY)) {
+			return set_mario_action(m, ACT_JUMP_KICK, 0);
+		} else {
+			return set_mario_action(m, ACT_DIVE, 0);
+		}
+        #endif
     }
 
     m->actionState = 1;

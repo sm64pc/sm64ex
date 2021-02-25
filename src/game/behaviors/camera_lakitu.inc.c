@@ -28,13 +28,14 @@ void bhv_camera_lakitu_init(void) {
 static void camera_lakitu_intro_act_trigger_cutscene(void) {
     //! These bounds are slightly smaller than the actual bridge bounds, allowing
     //  the RTA speedrunning method of lakitu skip
+    #ifndef QOL_FIXES
     if (gMarioObject->oPosX > -544.0f && gMarioObject->oPosX < 545.0f && gMarioObject->oPosY > 800.0f
+    #else
+    // not anymore :)
+    if (gMarioObject->oPosX > -555.0f && gMarioObject->oPosX < 555.0f && gMarioObject->oPosY > 800.0f
+    #endif
         && gMarioObject->oPosZ > -2000.0f && gMarioObject->oPosZ < -177.0f
-        #ifndef QOL_FIXES
         && gMarioObject->oPosZ < -177.0f) // always double check your conditions
-        #else
-        && gMarioObject->oPosZ > 178.0f)
-        #endif
     {
         if (set_mario_npc_dialog(2) == 1) {
             o->oAction = CAMERA_LAKITU_INTRO_ACT_SPAWN_CLOUD;

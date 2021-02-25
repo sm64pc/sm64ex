@@ -38,6 +38,9 @@ void func_802ad7ec(u32);
 struct SPTask *create_next_audio_frame_task(void) {
     return NULL;
 }
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
+#pragma GCC diagnostic ignored "-Wpointer-to-int-cast"
 void create_next_audio_buffer(s16 *samples, u32 num_samples) {
     s32 writtenCmds;
     OSMesg msg;
@@ -59,6 +62,7 @@ void create_next_audio_buffer(s16 *samples, u32 num_samples) {
     gAudioRandom = ((gAudioRandom + gAudioFrameCount) * gAudioFrameCount);
     gAudioRandom = gAudioRandom + writtenCmds / 8;
 }
+#pragma GCC diagnostic pop
 
 void eu_process_audio_cmd(struct EuAudioCmd *cmd) {
     s32 i;
@@ -165,12 +169,15 @@ void func_802ad770(u32 arg0, s8 arg1) {
     func_802ad6f0(arg0, &sp1C);
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
 void func_802ad7a0(void) {
     osSendMesg(OSMesgQueues[1],
             (OSMesg)(u32)((D_EU_80302014 & 0xff) << 8 | (D_EU_80302010 & 0xff)),
             OS_MESG_NOBLOCK);
     D_EU_80302014 = D_EU_80302010;
 }
+#pragma GCC diagnostic pop
 
 void func_802ad7ec(u32 arg0) {
     struct EuAudioCmd *cmd;
