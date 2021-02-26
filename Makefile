@@ -134,7 +134,7 @@ else ifeq ($(VERSION),eu)
 else ifeq ($(VERSION),sh)
   $(warning Building SH is experimental and is prone to breaking. Try at your own risk.)
   VERSION_DEF := VERSION_SH
-  # TODO: GET RID OF THIS!!! We should mandate assets for Shindou like EU, but we don't have the addresses extracted yet, so we'll just pretend you have everything extracted for now.
+# TODO: GET RID OF THIS!!! We should mandate assets for Shindou like EU, but we don't have the addresses extracted yet, so we'll just pretend you have everything extracted for now.
   NOEXTRACT := 1
 else
   $(error unknown version "$(VERSION)")
@@ -168,6 +168,10 @@ else ifeq ($(GRUCODE),f3dex2e) # Fast3DEX2 Extended (PC default)
   GRUCODE_DEF := F3DEX_GBI_2E
   TARGET := $(TARGET).f3dex2e
   COMPARE := 0
+else ifeq ($(GRUCODE),f3d_old) # Fast3D 2.0D (US, EU, JP)
+  GRUCODE_DEF := F3D_OLD
+  TARGET := $(TARGET).f3d_old
+  COMPARE := 0
 else ifeq ($(GRUCODE),f3d_new) # Fast3D 2.0H (Shindou)
   GRUCODE_DEF := F3D_NEW
   TARGET := $(TARGET).f3d_new
@@ -195,7 +199,7 @@ ifeq ($(TARGET_RPI),1) # Define RPi to change SDL2 title & GLES2 hints
 endif
 
 ifeq ($(OSX_BUILD),1) # Modify GFX & SDL2 for OSX GL
-     VERSION_CFLAGS += -DOSX_BUILD
+      VERSION_CFLAGS += -DOSX_BUILD
 endif
 
 VERSION_ASFLAGS := --defsym AVOID_UB=1
@@ -558,6 +562,7 @@ ifeq ($(BETTERCAMERA),1)
   EXT_OPTIONS_MENU := 1
 endif
 
+# Check for text saves option
 ifeq ($(TEXTSAVES),1)
   CC_CHECK += -DTEXTSAVES
   CFLAGS += -DTEXTSAVES
