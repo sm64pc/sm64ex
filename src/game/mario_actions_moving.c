@@ -952,7 +952,7 @@ s32 act_move_punching(struct MarioState *m) {
         return set_mario_action(m, ACT_JUMP_KICK, 0);
         #else
 		if ((mario_get_floor_class(m) == SURFACE_CLASS_NOT_SLIPPERY) || (mario_get_floor_class(m) == SURFACE_CLASS_DEFAULT)
-		|| (mario_get_floor_class(m) == SURFACE_HARD_NOT_SLIPPERY && SURFACE_HARD_SLIPPERY)) {
+		|| (mario_get_floor_class(m) == SURFACE_HARD_NOT_SLIPPERY) || (mario_get_floor_class(m) == SURFACE_HARD_SLIPPERY)) {
 			return set_mario_action(m, ACT_JUMP_KICK, 0);
 		} else {
 			return set_mario_action(m, ACT_DIVE, 0);

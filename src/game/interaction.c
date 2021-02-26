@@ -1054,7 +1054,11 @@ u32 interact_door(struct MarioState *m, UNUSED u32 interactType, struct Object *
 }
 
 u32 interact_cannon_base(struct MarioState *m, UNUSED u32 interactType, struct Object *o) {
+    #ifndef QOL_FIXES
     if (m->action != ACT_IN_CANNON) {
+    #else
+    if (m->action != ACT_IN_CANNON && m->health >= 0x100) {
+    #endif
         mario_stop_riding_and_holding(m);
         o->oInteractStatus = INT_STATUS_INTERACTED;
         m->interactObj = o;

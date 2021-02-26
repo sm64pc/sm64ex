@@ -35,7 +35,11 @@ void king_bobomb_act_0(void) {
             o->oSubAction++;
             func_8031FFB4(SEQ_PLAYER_LEVEL, 60, 40);
         }
+    #ifndef QOL_FIXES
     } else if (cur_obj_update_dialog_with_cutscene(2, 1, CUTSCENE_DIALOG, DIALOG_017)) {
+    #else
+    } else if (cur_obj_update_dialog_with_cutscene(1, 1, CUTSCENE_DIALOG, DIALOG_017)) {
+    #endif
         o->oAction = 2;
         o->oFlags |= OBJ_FLAG_HOLDABLE;
     }
@@ -151,7 +155,9 @@ void king_bobomb_act_6(void) {
             o->oKingBobombUnk104++;
         if (o->oKingBobombUnk104 > 3) {
             o->oSubAction++;
+            #ifndef QOL_FIXES
             ; // Needed to match
+            #endif
         }
     } else {
         if (o->oSubAction == 1) {
@@ -170,7 +176,11 @@ void king_bobomb_act_6(void) {
 
 void king_bobomb_act_7(void) {
     cur_obj_init_animation_with_sound(2);
+    #ifndef QOL_FIXES
     if (cur_obj_update_dialog_with_cutscene(2, 2, CUTSCENE_DIALOG, DIALOG_116)) {
+    #else
+    if (cur_obj_update_dialog_with_cutscene(1, 2, CUTSCENE_DIALOG, DIALOG_116)) {
+    #endif
         create_sound_spawner(SOUND_OBJ_KING_WHOMP_DEATH);
         cur_obj_hide();
         cur_obj_become_intangible();
