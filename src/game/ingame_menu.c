@@ -2218,8 +2218,8 @@ u8 gTextCourseArr[][7] = {
     { TEXT_COURSE_FR },
     { TEXT_COURSE_DE }
 };
-
 #ifdef QOL_FIXES
+
 u8 gTextCatchArr[][8] = {
     { TEXT_CATCH },
     { TEXT_CATCH_FR },

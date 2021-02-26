@@ -155,7 +155,7 @@ s32 set_triple_jump_action(struct MarioState *m, UNUSED u32 action, UNUSED u32 a
     } else if (m->forwardVel > 20.0f) {
     #else
     } else if (m->forwardVel > 20.0f && ((mario_get_floor_class(m) == SURFACE_CLASS_NOT_SLIPPERY) || (mario_get_floor_class(m) == SURFACE_CLASS_DEFAULT)
-		|| (mario_get_floor_class(m) == SURFACE_HARD_NOT_SLIPPERY && SURFACE_HARD_SLIPPERY))) {
+		|| (mario_get_floor_class(m) == SURFACE_HARD_NOT_SLIPPERY) || (mario_get_floor_class(m) == SURFACE_HARD_SLIPPERY))) {
     #endif
         return set_mario_action(m, ACT_TRIPLE_JUMP, 0);
     } else {
