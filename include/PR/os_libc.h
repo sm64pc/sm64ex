@@ -16,8 +16,8 @@
 #include <string.h>
 #undef bzero
 #undef bcopy
-#define bzero(buf, len) memset((buf), 0, (len))
-#define bcopy(src, dst, len) memmove((dst), (src), (len))
+#define bzero(buf, len) memset(buf, 0, len)
+#define bcopy(src, dst, len) memmove(dst, src, len)
 
 #else
 
