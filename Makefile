@@ -134,7 +134,7 @@ else ifeq ($(VERSION),eu)
 else ifeq ($(VERSION),sh)
   $(warning Building SH is experimental and is prone to breaking. Try at your own risk.)
   VERSION_DEF := VERSION_SH
-# TODO: GET RID OF THIS!!! We should mandate assets for Shindou like EU but we dont have the addresses extracted yet so we'll just pretend you have everything extracted for now.
+  # TODO: GET RID OF THIS!!! We should mandate assets for Shindou like EU, but we don't have the addresses extracted yet, so we'll just pretend you have everything extracted for now.
   NOEXTRACT := 1
 else
   $(error unknown version "$(VERSION)")
