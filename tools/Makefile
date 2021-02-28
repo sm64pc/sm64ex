@@ -38,7 +38,7 @@ skyconv_SOURCES := skyconv.c n64graphics.c utils.c
 
 gen_asset_list_CXX := g++-8
 gen_asset_list_SOURCES := gen_asset_list.cpp
-gen_asset_list_CFLAGS := -std=c++17 -O1 -Wall -Wextra -pedantic
+gen_asset_list_CFLAGS := -std=c++17 -Wall -Wextra -pedantic -O1
 gen_asset_list_LDFLAGS := -lstdc++fs
 
 LIBAUDIOFILE := audiofile/libaudiofile.a
