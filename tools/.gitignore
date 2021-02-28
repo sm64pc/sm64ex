@@ -11,6 +11,7 @@
 /tabledesign
 /textconv
 /vadpcm_enc
+/gen_asset_list
 !/ido5.3_compiler/lib/*.so
 !/ido5.3_compiler/usr/lib/*.so
 !/ido5.3_compiler/usr/lib/*.so.1
