@@ -85,6 +85,12 @@ extern unsigned int gDemoInputListID_2;
 #endif
 extern int gPressedStart;
 
+#ifndef QOL_FIXES
+#ifndef TARGET_WEB
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-compare"
+#endif
+#endif
 int start_demo(int timer)
 {
 	gCurrDemoInput = NULL;
@@ -104,6 +110,11 @@ int start_demo(int timer)
     gCurrActNum = 6;
     return timer;
 }
+#ifndef QOL_FIXES
+#ifndef TARGET_WEB
+#pragma GCC diagnostic pop
+#endif
+#endif
 
 // input loop for the level select menu. updates the selected stage
 // count if an input was received. signals the stage to be started

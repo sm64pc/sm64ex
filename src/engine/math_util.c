@@ -4,6 +4,7 @@
 #include "engine/graph_node.h"
 #include "math_util.h"
 #include "surface_collision.h"
+#include "include/libc/math.h"
 
 #include "trig_tables.inc.c"
 
@@ -246,7 +247,9 @@ void *vec3f_normalize(Vec3f dest) {
     #else
     f32 invsqrt = 1.0f;
     if (sqrtf(dest[0] * dest[0] + dest[1] * dest[1] + dest[2] * dest[2]) != 0) {
-        invsqrt = 1.0f / sqrtf(dest[0] * dest[0] + dest[1] * dest[1] + dest[2] * dest[2]);
+        invsqrt /= sqrtf(dest[0] * dest[0] + dest[1] * dest[1] + dest[2] * dest[2]);
+    } else {
+        invsqrt *= 0.0f;
     }
     #endif
 
