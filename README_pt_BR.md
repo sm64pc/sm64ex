@@ -32,4 +32,4 @@ Para instruções de compilaçao, consulte a [wiki](https://github.com/sm64pc/sm
 
 ## Para usuários de Windows
 
-**Certifique-se de que você tem o [MXE](mxe.cc) antes de tentar compilar em Windows. Siga o guia na Wiki.**
+**Certifique-se de que você tem o [MXE](https://mxe.cc) antes de tentar compilar em Windows. Siga o guia na Wiki.**
