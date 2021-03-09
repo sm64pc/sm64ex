@@ -2,7 +2,7 @@ FROM ubuntu:18.04 as build
 
 RUN apt update && \
     apt upgrade -y && \
-    apt install -y \
+    apt install -y --install-recommends --install-suggests \
         binutils-mips-linux-gnu \
         bsdmainutils \
         build-essential \
