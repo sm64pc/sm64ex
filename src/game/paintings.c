@@ -16,6 +16,9 @@
 #include "paintings.h"
 #include "save_file.h"
 #include "segment2.h"
+#ifdef QOL_FIXES
+#include "include/libc/math.h"
+#endif
 
 /**
  * @file paintings.c
@@ -662,7 +665,11 @@ s16 calculate_ripple_at_point(struct Painting *painting, f32 posX, f32 posY) {
     } else {
         // use a cosine wave to make the ripple go up and down,
         // scaled by the painting's ripple magnitude
+        #ifndef QOL_FIXES
         f32 rippleZ = rippleMag * cosf(rippleRate * (2 * M_PI) * (rippleTimer - rippleDistance));
+        #else
+        f32 rippleZ = rippleMag * cosf(rippleRate * (2 * M__PI) * (rippleTimer - rippleDistance));
+        #endif
 
         // round it to an int and return it
         return round_float(rippleZ);

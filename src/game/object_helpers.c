@@ -2617,7 +2617,8 @@ s32 cur_obj_update_dialog(s32 actionArg, s32 dialogFlags, s32 dialogID, UNUSED s
     UNUSED s32 doneTurning = TRUE;
 
     switch (o->oDialogState) {
-#if (defined(VERSION_JP) && !defined(QOL_FIXES))
+#ifndef QOL_FIXES
+#ifdef VERSION_JP
         case DIALOG_UNK1_ENABLE_TIME_STOP:
             //! We enable time stop even if Mario is not ready to speak. This
             //  allows us to move during time stop as long as Mario never enters
@@ -2628,6 +2629,20 @@ s32 cur_obj_update_dialog(s32 actionArg, s32 dialogFlags, s32 dialogID, UNUSED s
                 o->oDialogState++;
             }
             break;
+#else
+        case DIALOG_UNK1_ENABLE_TIME_STOP:
+            // Patched :(
+            // Wait for Mario to be ready to speak, and then enable time stop
+            if (mario_ready_to_speak() || gMarioState->action == ACT_READING_NPC_DIALOG) {
+                gTimeStopState |= TIME_STOP_ENABLED;
+                o->activeFlags |= ACTIVE_FLAG_INITIATED_TIME_STOP;
+                o->oDialogState++;
+            } else {
+                break;
+            }
+            // Fall through so that Mario's action is interrupted immediately
+            // after time is stopped
+#endif
 #else
         case DIALOG_UNK1_ENABLE_TIME_STOP:
             // Patched :(

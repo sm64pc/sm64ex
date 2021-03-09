@@ -29,4 +29,4 @@ For example `--savepath .` will read saves from the current directory (which not
 
 For building instructions, please refer to the [wiki](https://github.com/sm64pc/sm64ex/wiki).
 
-**Make sure you have [MXE](https://mxe.cc) first before attempting to compile for Windows on Linux and WSL. Follow the guide on the wiki.**
+**Make sure you have [MXE](https://mxe.cc) or mingw-w64 first before attempting to compile for Windows on Linux and WSL. Follow the guide on the wiki.**

@@ -95,7 +95,16 @@ void render_100_coin_star(u8 stars) {
                                                         bhvActSelectorStarType, 370, 24, -300, 0, 0, 0);
         sStarSelectorModels[6]->oStarSelectorSize = 0.8;
         sStarSelectorModels[6]->oStarSelectorType = STAR_SELECTOR_100_COINS;
+    #ifndef QOL_FIXES
     }
+    #else
+    } else if ((sObtainedStars == 6)) {
+        sStarSelectorModels[6] = spawn_object_abs_with_rot(gCurrentObject, 0, MODEL_TRANSPARENT_STAR,
+                                                        bhvActSelectorStarType, 300, 30, -300, 0, 0, 0);
+        sStarSelectorModels[6]->oStarSelectorSize = 0.8;
+        sStarSelectorModels[6]->oStarSelectorType = STAR_SELECTOR_100_COINS;
+    }
+    #endif
 }
 
 /**

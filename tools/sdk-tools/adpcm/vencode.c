@@ -126,7 +126,7 @@ void vencodeframe(FILE *ofile, s16 *inBuffer, s32 *state, s32 ***coefTable, s32 
     max = 0;
     for (i = 0; i < 16; i++)
     {
-        if (fabs(ie[i]) > fabs(max))
+        if (fabs((f32)ie[i]) > fabs((f32)max))
         {
             max = ie[i];
         }

@@ -9281,12 +9281,7 @@ BAD_RETURN(s32) cutscene_read_message(struct Camera *c) {
             // This could cause softlocks. If a message starts one frame after another one closes, the
             // cutscene will never end.
             if (get_dialog_id() == -1) {
-                // this attempts to fix the softlock
-                #ifndef QOL_FIXES
                 gCutsceneTimer = CUTSCENE_LOOP;
-                #else
-                gCutsceneTimer = CUTSCENE_STOP;
-                #endif
                 retrieve_info_star(c);
                 transition_next_state(c, 15);
                 sStatusFlags |= CAM_FLAG_UNUSED_CUTSCENE_ACTIVE;

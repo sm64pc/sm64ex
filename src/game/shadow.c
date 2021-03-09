@@ -1,6 +1,9 @@
 #include <PR/ultratypes.h>
 #include <PR/gbi.h>
 #include <math.h>
+#ifdef QOL_FIXES
+#include "include/libc/math.h"
+#endif
 
 #include "engine/math_util.h"
 #include "engine/surface_collision.h"
@@ -366,8 +369,13 @@ void get_vertex_coords(s8 index, s8 shadowVertexType, s8 *xCoord, s8 *zCoord) {
  */
 void calculate_vertex_xyz(s8 index, struct Shadow s, f32 *xPosVtx, f32 *yPosVtx, f32 *zPosVtx,
                           s8 shadowVertexType) {
+    #ifndef QOL_FIXES
     f32 tiltedScale = cosf(s.floorTilt * M_PI / 180.0) * s.shadowScale;
     f32 downwardAngle = s.floorDownwardAngle * M_PI / 180.0;
+    #else
+    f32 tiltedScale = cosf(s.floorTilt * M__PI / 180.0) * s.shadowScale;
+    f32 downwardAngle = s.floorDownwardAngle * M__PI / 180.0;
+    #endif
     f32 halfScale;
     f32 halfTiltedScale;
     s8 xCoordUnit;
