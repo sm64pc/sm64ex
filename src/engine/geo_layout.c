@@ -113,7 +113,7 @@ void geo_layout_cmd_branch_and_link(void) {
     gGeoLayoutStack[gGeoLayoutStackIndex++] = (gCurGraphNodeIndex << 16) + gGeoLayoutReturnIndex;
     gGeoLayoutReturnIndex = gGeoLayoutStackIndex;
     gGeoLayoutCommand = segmented_to_virtual(cur_geo_cmd_ptr(0x04));
-
+    
 #ifdef GFX_ENABLE_GRAPH_NODE_MODS
     gfx_push_geo_layout(gGeoLayoutCommand);
 #endif
@@ -477,11 +477,11 @@ void geo_layout_cmd_node_translation_rotation(void) {
 
     graphNode = init_graph_node_translation_rotation(gGraphNodePool, NULL, drawingLayer, displayList,
                                                      translation, rotation);
-    
+
 #ifdef GFX_ENABLE_GRAPH_NODE_MODS
     gfx_register_graph_node_layout(graphNode);
 #endif
-    
+
     register_scene_graph_node(&graphNode->node);
 
     gGeoLayoutCommand = (u8 *) cmdPos;
@@ -517,11 +517,11 @@ void geo_layout_cmd_node_translation(void) {
 
     graphNode =
         init_graph_node_translation(gGraphNodePool, NULL, drawingLayer, displayList, translation);
-    
+
 #ifdef GFX_ENABLE_GRAPH_NODE_MODS
     gfx_register_graph_node_layout(graphNode);
 #endif
-    
+
     register_scene_graph_node(&graphNode->node);
 
     gGeoLayoutCommand = (u8 *) cmdPos;
@@ -556,11 +556,11 @@ void geo_layout_cmd_node_rotation(void) {
     }
 
     graphNode = init_graph_node_rotation(gGraphNodePool, NULL, drawingLayer, displayList, sp2c);
-    
+
 #ifdef GFX_ENABLE_GRAPH_NODE_MODS
     gfx_register_graph_node_layout(graphNode);
 #endif
-    
+
     register_scene_graph_node(&graphNode->node);
 
     gGeoLayoutCommand = (u8 *) cmdPos;
@@ -589,11 +589,11 @@ void geo_layout_cmd_node_scale(void) {
     }
 
     graphNode = init_graph_node_scale(gGraphNodePool, NULL, drawingLayer, displayList, scale);
-    
+
 #ifdef GFX_ENABLE_GRAPH_NODE_MODS
     gfx_register_graph_node_layout(graphNode);
 #endif
-    
+
     register_scene_graph_node(&graphNode->node);
 
     gGeoLayoutCommand += 0x08 << CMD_SIZE_SHIFT;
@@ -623,11 +623,11 @@ void geo_layout_cmd_node_animated_part(void) {
 
     graphNode =
         init_graph_node_animated_part(gGraphNodePool, NULL, drawingLayer, displayList, translation);
-    
+
 #ifdef GFX_ENABLE_GRAPH_NODE_MODS
     gfx_register_graph_node_layout(graphNode);
 #endif
-    
+
     register_scene_graph_node(&graphNode->node);
 
     gGeoLayoutCommand += 0x0C << CMD_SIZE_SHIFT;
@@ -660,11 +660,11 @@ void geo_layout_cmd_node_billboard(void) {
     }
 
     graphNode = init_graph_node_billboard(gGraphNodePool, NULL, drawingLayer, displayList, translation);
-    
+
 #ifdef GFX_ENABLE_GRAPH_NODE_MODS
     gfx_register_graph_node_layout(graphNode);
 #endif
-    
+
     register_scene_graph_node(&graphNode->node);
 
     gGeoLayoutCommand = (u8 *) cmdPos;
@@ -681,11 +681,11 @@ void geo_layout_cmd_node_display_list(void) {
     void *displayList = cur_geo_cmd_ptr(0x04);
 
     graphNode = init_graph_node_display_list(gGraphNodePool, NULL, drawingLayer, displayList);
-    
+
 #ifdef GFX_ENABLE_GRAPH_NODE_MODS
     gfx_register_graph_node_layout(graphNode);
 #endif
-    
+
     register_scene_graph_node(&graphNode->node);
 
     gGeoLayoutCommand += 0x08 << CMD_SIZE_SHIFT;
@@ -839,7 +839,7 @@ struct GraphNode *process_geo_layout(struct AllocOnlyPool *pool, void *segptr) {
     gGeoLayoutCommand = segmented_to_virtual(segptr);
 
 #ifdef GFX_ENABLE_GRAPH_NODE_MODS
-    gfx_register_graph_node_layout(gGeoLayoutCommand);
+    gfx_push_geo_layout(gGeoLayoutCommand);
 #endif
 
     gGraphNodePool = pool;
