@@ -839,7 +839,7 @@ struct GraphNode *process_geo_layout(struct AllocOnlyPool *pool, void *segptr) {
     gGeoLayoutCommand = segmented_to_virtual(segptr);
 
 #ifdef GFX_ENABLE_GRAPH_NODE_MODS
-    gfx_register_graph_node_layout(graphNode);
+    gfx_register_graph_node_layout(gGeoLayoutCommand);
 #endif
 
     gGraphNodePool = pool;
