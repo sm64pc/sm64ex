@@ -7,6 +7,8 @@
 #include "types.h"
 #include "game/memory.h"
 
+#include "pc/gfx/gfx_pc.h"
+
 #define GRAPH_RENDER_ACTIVE         (1 << 0)
 #define GRAPH_RENDER_CHILDREN_FIRST (1 << 1)
 #define GRAPH_RENDER_BILLBOARD      (1 << 2)
@@ -117,6 +119,9 @@ struct GraphNodePerspective
  */
 struct DisplayListNode
 {
+#ifdef GFX_ENABLE_GRAPH_NODE_MODS
+    void *graph_node_mod;
+#endif
     Mtx *transform;
     void *displayList;
     struct DisplayListNode *next;

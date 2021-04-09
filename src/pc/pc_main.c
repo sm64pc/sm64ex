@@ -16,6 +16,7 @@
 #include "gfx/gfx_opengl.h"
 #include "gfx/gfx_direct3d11.h"
 #include "gfx/gfx_direct3d12.h"
+#include "gfx/gfx_rt64.h"
 
 #include "gfx/gfx_dxgi.h"
 #include "gfx/gfx_sdl.h"
@@ -210,6 +211,10 @@ void main_func(void) {
     # else
     #  define RAPI_NAME "OpenGL"
     # endif
+    #elif defined(RAPI_RT64)
+    # define RAPI_NAME "RT64"
+    wm_api = &gfx_rt64_wapi;
+    rendering_api = &gfx_rt64_rapi;
     #else
     #error No rendering API!
     #endif

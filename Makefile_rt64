@@ -1,0 +1,19 @@
+# RT64
+# Based off the Makefile for Dynamic Options System (dynos)
+
+RT64_INPUT_DIR := ./rt64
+RT64_OUTPUT_DIR := $(BUILD_DIR)/$(BASEDIR)/rt64
+RT64_COPY_TO_RES := \
+    mkdir -p $(RT64_INPUT_DIR); \
+    mkdir -p $(RT64_OUTPUT_DIR); \
+    for f in $(RT64_INPUT_DIR)/config/*.json; do \
+        [ -f "$$f" ] || continue; \
+        cp -f $$f $(RT64_OUTPUT_DIR)/$$(basename -- $$f); \
+    done;
+
+RT64 := $(shell $(call RT64_COPY_TO_RES))
+
+# Render96 - Compilation macro
+ifeq ($(findstring src/text/libs,$(SRC_DIRS)),src/text/libs)
+INCLUDE_CFLAGS += -DRENDER_96_ALPHA
+endif

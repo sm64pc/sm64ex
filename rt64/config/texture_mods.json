@@ -1,0 +1,139 @@
+{
+    "textures": [
+        {
+            "lightMod": {
+                "attenuationExponent": 2.0,
+                "attenuationRadius": 2000.0,
+                "diffuseColor": [
+                    1.2999999523162842,
+                    1.2999999523162842,
+                    0.20000000298023224
+                ],
+                "flickerIntensity": 0.125,
+                "groupBits": 16,
+                "pointRadius": 25.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 80.0,
+                "specularIntensity": 1.0
+            },
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "actors/amp/amp_body.rgba16"
+        },
+        {
+            "materialMod": {
+                "diffuseColorMix": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "reflectionFactor": 0.800000011920929,
+                "reflectionShineFactor": 1.0
+            },
+            "name": "actors/mario/mario_metal.rgba16"
+        },
+        {
+            "materialMod": {
+                "diffuseColorMix": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "reflectionFactor": 0.800000011920929,
+                "reflectionShineFactor": 1.0
+            },
+            "name": "actors/mario/mario_metal_new.rgba32"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 2.0,
+                "attenuationRadius": 6000.0,
+                "diffuseColor": [
+                    1.2999999523162842,
+                    1.2999999523162842,
+                    0.20000000298023224
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 16,
+                "pointRadius": 200.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 600.0,
+                "specularIntensity": 1.0
+            },
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "actors/star/star_surface.rgba16"
+        },
+        {
+            "materialMod": {
+                "reflectionFactor": 0.10000000149011612
+            },
+            "name": "levels/bitdw/1.rgba16"
+        },
+        {
+            "materialMod": {
+                "reflectionFactor": 0.20000000298023224,
+                "refractionFactor": 0.8999999761581421
+            },
+            "name": "levels/bitdw/3.rgba16"
+        },
+        {
+            "materialMod": {
+                "diffuseColorMix": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.699999988079071
+                ],
+                "normalMapScale": 0.20000000298023224,
+                "reflectionFactor": 0.375,
+                "refractionFactor": 0.949999988079071,
+                "solidAlphaMultiplier": 0.75
+            },
+            "name": "textures/segment2/segment2.11C58.rgba16",
+            "normalMapMod": {
+                "name": "rt64/textures/normal_maps/water_nrm.rgba32"
+            }
+        },
+        {
+            "materialMod": {
+                "diffuseColorMix": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.699999988079071
+                ],
+                "normalMapScale": 0.20000000298023224,
+                "reflectionFactor": 0.375,
+                "refractionFactor": 0.949999988079071,
+                "solidAlphaMultiplier": 0.75
+            },
+            "name": "textures/segment2/segment2.12458.rgba16",
+            "normalMapMod": {
+                "name": "rt64/textures/normal_maps/water_nrm.rgba32"
+            }
+        }
+    ]
+}
