@@ -6,6 +6,14 @@
 #error "RT64 requires EXTERNAL_DATA to be enabled."
 #endif
 
+extern "C" {
+#	include "../../game/area.h"
+#	include "../../game/level_update.h"
+#	include "../fs/fs.h"
+#	include "../pc_main.h"
+#	include "gfx_cc.h"
+}
+
 #include <cassert>
 #include <fstream>
 #include <iomanip>
@@ -21,14 +29,6 @@ using json = nlohmann::json;
 #include "gfx_rt64.h"
 #include "gfx_rt64_geo_map.h"
 #include "rt64/rt64.h"
-
-extern "C" {
-#	include "gfx_cc.h"
-#	include "../fs/fs.h"
-#	include "../pc_main.h"
-#	include "../../game/area.h"
-#	include "../../game/level_update.h"
-}
 
 #ifndef _LANGUAGE_C
 # define _LANGUAGE_C
@@ -1181,7 +1181,7 @@ static void gfx_rt64_rapi_select_texture(int tile, uint32_t texture_id) {
     RT64.currentTextureIds[tile] = texture_id;
 }
 
-static void gfx_rt64_rapi_upload_texture(uint8_t *rgba32_buf, int width, int height) {
+static void gfx_rt64_rapi_upload_texture(const uint8_t *rgba32_buf, int width, int height) {
 	RT64_TEXTURE *texture = RT64.lib.CreateTextureFromRGBA8(RT64.device, rgba32_buf, width, height, 4);
 	uint32_t textureKey = RT64.currentTextureIds[RT64.currentTile];
 	RT64.textures[textureKey].texture = texture;

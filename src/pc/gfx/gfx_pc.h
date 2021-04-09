@@ -1,8 +1,9 @@
 #ifndef GFX_PC_H
 #define GFX_PC_H
 
-#include "gfx_rendering_api.h"
+#include "gfx_rendering_api_config.h"
 
+struct GfxRenderingAPI;
 struct GfxWindowManagerAPI;
 
 struct GfxDimensions {

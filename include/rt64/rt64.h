@@ -202,7 +202,7 @@ typedef void (*DestroyMeshPtr)(RT64_MESH* meshPtr);
 typedef RT64_INSTANCE* (*CreateInstancePtr)(RT64_SCENE* scenePtr);
 typedef void (*SetInstancePtr)(RT64_INSTANCE* instancePtr, RT64_MESH* meshPtr, RT64_MATRIX4 transform, RT64_TEXTURE* diffuseTexture, RT64_TEXTURE* normalTexture, RT64_MATERIAL material);
 typedef void (*DestroyInstancePtr)(RT64_INSTANCE* instancePtr);
-typedef RT64_TEXTURE* (*CreateTextureFromRGBA8Ptr)(RT64_DEVICE* devicePtr, void* bytes, int width, int height, int stride);
+typedef RT64_TEXTURE* (*CreateTextureFromRGBA8Ptr)(RT64_DEVICE* devicePtr, const void* bytes, int width, int height, int stride);
 typedef void(*DestroyTexturePtr)(RT64_TEXTURE* texture);
 typedef RT64_INSPECTOR* (*CreateInspectorPtr)(RT64_DEVICE* devicePtr);
 typedef bool(*HandleMessageInspectorPtr)(RT64_INSPECTOR* inspectorPtr, UINT msg, WPARAM wParam, LPARAM lParam);

@@ -7,7 +7,7 @@
 #include "types.h"
 #include "game/memory.h"
 
-#include "pc/gfx/gfx_pc.h"
+#include "pc/gfx/gfx_rendering_api_config.h"
 
 #define GRAPH_RENDER_ACTIVE         (1 << 0)
 #define GRAPH_RENDER_CHILDREN_FIRST (1 << 1)

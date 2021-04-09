@@ -1,23 +1,11 @@
 #ifndef GFX_RENDERING_API_H
 #define GFX_RENDERING_API_H
 
+#include "gfx_rendering_api_config.h"
+
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
-
-#ifdef RAPI_RT64
-#   define GFX_MAX_BUFFERED                 16384
-#   define GFX_DISABLE_SHADOWS
-#   define GFX_DISABLE_FRUSTUM_CULLING
-#   define GFX_DISABLE_LIGHTING
-#   define GFX_DISABLE_CLIP_REJECT
-#   define GFX_FLUSH_ON_ENDDL
-#   define GFX_OUTPUT_NORMALS_TO_VBO
-#   define GFX_SEPARATE_PROJECTIONS
-#   define GFX_SEPARATE_FOG
-#   define GFX_REQUIRE_TEXTURE_HASH
-#   define GFX_ENABLE_GRAPH_NODE_MODS
-#endif
 
 struct ShaderProgram;
 
