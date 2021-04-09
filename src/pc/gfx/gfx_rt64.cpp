@@ -51,6 +51,7 @@ using json = nlohmann::json;
 #define LIGHT_SAMPLE_PRESETS_FILENAME	FS_BASEDIR "/rt64/light_sample_presets.json"
 #define GEO_LAYOUT_MODS_FILENAME		FS_BASEDIR "/rt64/geo_layout_mods.json"
 #define TEXTURE_MODS_FILENAME			FS_BASEDIR "/rt64/texture_mods.json"
+#define LIGHT_SAMPLE_PRESET_DEFAULT		"Simple"
 
 struct ShaderProgram {
     uint32_t shader_id;
@@ -952,7 +953,7 @@ static void gfx_rt64_wapi_init(const char *window_title) {
 
 	// Load the light sample presets and choose the default preset.
 	gfx_rt64_load_light_sample_presets();
-	RT64.activeLightSamplePreset = RT64.lightSamplePresets["Default"];
+	RT64.activeLightSamplePreset = RT64.lightSamplePresets[LIGHT_SAMPLE_PRESET_DEFAULT];
 	
 	// Load the global lights from a file.
 	gfx_rt64_load_level_lights();

@@ -1,7 +1,11 @@
 {
     "presets" : [
         {
-            "name": "Default",
+            "name": "Simple",
+            "lightSampleSettings": []
+        },
+        {
+            "name": "Soft",
             "lightSampleSettings": [
                 {
                     "groupBits": 1,
