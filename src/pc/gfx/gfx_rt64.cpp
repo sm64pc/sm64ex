@@ -1024,80 +1024,6 @@ static void gfx_rt64_wapi_swap_buffers_begin(void) {
 }
 
 static void gfx_rt64_wapi_swap_buffers_end(void) {
-	// Check instances.
-    while (RT64.instanceAllocCount > RT64.instanceCount) {
-        int instanceIndex = RT64.instanceAllocCount - 1;
-        RT64.lib.DestroyInstance(RT64.instances[instanceIndex]);
-        RT64.instanceAllocCount--;
-    }
-
-    // Set the camera on the view.
-	RT64.lib.SetViewPerspective(RT64.view, RT64.eyePos, RT64.eyeFocus, RT64.eyeUp, RT64.fovRadians, RT64.nearDist, RT64.farDist);
-
-    // Set lights on the scene.
-    RT64.lib.SetSceneLights(RT64.scene, RT64.lights, RT64.lightCount);
-
-    char statsMessage[256] = "";
-    sprintf(statsMessage, "Instances %d Lights %d", RT64.instanceCount, RT64.lightCount);
-    RT64.lib.PrintToInspector(RT64.inspector, statsMessage);
-
-	// Draw frame.
-	LARGE_INTEGER StartTime, EndTime, ElapsedMicroseconds;
-	QueryPerformanceCounter(&StartTime);
-	RT64.lib.DrawDevice(RT64.device, 1);
-	QueryPerformanceCounter(&EndTime);
-	elapsed_time(StartTime, EndTime, RT64.Frequency, ElapsedMicroseconds);
-
-	// Inspector.
-	char message[64];
-	sprintf(message, "RT64: %.3f ms\n", ElapsedMicroseconds.QuadPart / 1000.0);
-	RT64.lib.PrintToInspector(RT64.inspector, message);
-
-	// Mesh key cleanup.
-	auto keyIt = RT64.dynamicMeshKeys.begin();
-	while (keyIt != RT64.dynamicMeshKeys.end()) {
-		if (keyIt->second.seen) {
-			keyIt->second.seen = false;
-		}
-		else if (keyIt->second.counter > 0) {
-			keyIt->second.counter--;
-		}
-		else {
-			keyIt = RT64.dynamicMeshKeys.erase(keyIt);
-			continue;
-		}
-
-		keyIt++;
-	}
-
-	// Mesh cleanup.
-	auto staticMeshIt = RT64.staticMeshes.begin();
-	while (staticMeshIt != RT64.staticMeshes.end()) {
-		if (staticMeshIt->second.lifetime > 0) {
-            staticMeshIt->second.lifetime--;
-			staticMeshIt++;
-        }
-		else {
-			RT64.lib.DestroyMesh(staticMeshIt->second.mesh);
-			staticMeshIt = RT64.staticMeshes.erase(staticMeshIt);
-		}
-	}
-
-	// Dynamic mesh cleanup.
-	auto dynamicMeshIt = RT64.dynamicMeshes.begin();
-	while (dynamicMeshIt != RT64.dynamicMeshes.end()) {
-		if (dynamicMeshIt->second.lifetime > 0) {
-			dynamicMeshIt->second.inUse = false;
-            dynamicMeshIt->second.lifetime--;
-			dynamicMeshIt++;
-        }
-		else {
-			RT64.lib.DestroyMesh(dynamicMeshIt->second.mesh);
-			dynamicMeshIt = RT64.dynamicMeshes.erase(dynamicMeshIt);
-		}
-	}
-
-    RT64.cachedMeshesPerFrame = 0;
 }
 
 double gfx_rt64_wapi_get_time(void) {
@@ -1476,6 +1402,10 @@ static void gfx_rt64_rapi_draw_triangles_persp(float buf_vbo[], size_t buf_vbo_l
 static void gfx_rt64_rapi_init(void) {
 }
 
+static void gfx_rt64_rapi_on_resize(void) {
+
+}
+
 static void gfx_rt64_rapi_shutdown(void) {
 }
 
@@ -1503,6 +1433,87 @@ static void gfx_rt64_rapi_start_frame(void) {
     RT64.lightCount = *lightCount;
 
     RT64.graphNodeMod = nullptr;
+}
+
+static void gfx_rt64_rapi_end_frame(void) {
+	// Check instances.
+    while (RT64.instanceAllocCount > RT64.instanceCount) {
+        int instanceIndex = RT64.instanceAllocCount - 1;
+        RT64.lib.DestroyInstance(RT64.instances[instanceIndex]);
+        RT64.instanceAllocCount--;
+    }
+
+    // Set the camera on the view.
+	RT64.lib.SetViewPerspective(RT64.view, RT64.eyePos, RT64.eyeFocus, RT64.eyeUp, RT64.fovRadians, RT64.nearDist, RT64.farDist);
+
+    // Set lights on the scene.
+    RT64.lib.SetSceneLights(RT64.scene, RT64.lights, RT64.lightCount);
+
+    char statsMessage[256] = "";
+    sprintf(statsMessage, "Instances %d Lights %d", RT64.instanceCount, RT64.lightCount);
+    RT64.lib.PrintToInspector(RT64.inspector, statsMessage);
+
+	// Draw frame.
+	LARGE_INTEGER StartTime, EndTime, ElapsedMicroseconds;
+	QueryPerformanceCounter(&StartTime);
+	RT64.lib.DrawDevice(RT64.device, 1);
+	QueryPerformanceCounter(&EndTime);
+	elapsed_time(StartTime, EndTime, RT64.Frequency, ElapsedMicroseconds);
+
+	// Inspector.
+	char message[64];
+	sprintf(message, "RT64: %.3f ms\n", ElapsedMicroseconds.QuadPart / 1000.0);
+	RT64.lib.PrintToInspector(RT64.inspector, message);
+
+	// Mesh key cleanup.
+	auto keyIt = RT64.dynamicMeshKeys.begin();
+	while (keyIt != RT64.dynamicMeshKeys.end()) {
+		if (keyIt->second.seen) {
+			keyIt->second.seen = false;
+		}
+		else if (keyIt->second.counter > 0) {
+			keyIt->second.counter--;
+		}
+		else {
+			keyIt = RT64.dynamicMeshKeys.erase(keyIt);
+			continue;
+		}
+
+		keyIt++;
+	}
+
+	// Mesh cleanup.
+	auto staticMeshIt = RT64.staticMeshes.begin();
+	while (staticMeshIt != RT64.staticMeshes.end()) {
+		if (staticMeshIt->second.lifetime > 0) {
+            staticMeshIt->second.lifetime--;
+			staticMeshIt++;
+        }
+		else {
+			RT64.lib.DestroyMesh(staticMeshIt->second.mesh);
+			staticMeshIt = RT64.staticMeshes.erase(staticMeshIt);
+		}
+	}
+
+	// Dynamic mesh cleanup.
+	auto dynamicMeshIt = RT64.dynamicMeshes.begin();
+	while (dynamicMeshIt != RT64.dynamicMeshes.end()) {
+		if (dynamicMeshIt->second.lifetime > 0) {
+			dynamicMeshIt->second.inUse = false;
+            dynamicMeshIt->second.lifetime--;
+			dynamicMeshIt++;
+        }
+		else {
+			RT64.lib.DestroyMesh(dynamicMeshIt->second.mesh);
+			dynamicMeshIt = RT64.dynamicMeshes.erase(dynamicMeshIt);
+		}
+	}
+
+    RT64.cachedMeshesPerFrame = 0;
+}
+
+static void gfx_rt64_rapi_finish_render(void) {
+
 }
 
 static void gfx_rt64_rapi_set_camera_config(float fov_degrees, float near_dist, float far_dist) {
@@ -1620,8 +1631,11 @@ struct GfxRenderingAPI gfx_rt64_rapi = {
     gfx_rt64_rapi_get_graph_node_mod,
 	gfx_rt64_rapi_set_graph_node_mod,
     gfx_rt64_rapi_init,
+	gfx_rt64_rapi_on_resize,
     gfx_rt64_rapi_start_frame,
-    gfx_rt64_rapi_shutdown,
+	gfx_rt64_rapi_end_frame,
+	gfx_rt64_rapi_finish_render,
+    gfx_rt64_rapi_shutdown
 };
 
 #else
