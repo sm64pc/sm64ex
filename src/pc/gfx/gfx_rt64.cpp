@@ -1360,21 +1360,32 @@ static void gfx_rt64_rapi_apply_mod(RT64_MATERIAL *material, RT64_TEXTURE **norm
 }
 
 static void gfx_rt64_rapi_draw_triangles_common(RT64_MATRIX4 transform, float buf_vbo[], size_t buf_vbo_len, size_t buf_vbo_num_tris, bool raytrace) {
+	RT64_MATERIAL material;
 	RT64_INSTANCE *instance = gfx_rt64_rapi_add_instance();
 	RT64_MESH *mesh = gfx_rt64_rapi_process_mesh(buf_vbo, buf_vbo_len, buf_vbo_num_tris, raytrace);
-	RecordedTexture &recordedTexture = RT64.textures[RT64.currentTextureIds[RT64.currentTile]];
-	RT64_MATERIAL material = gfx_rt64_rapi_build_material(RT64.shaderProgram, RT64.background, recordedTexture.linearFilter, recordedTexture.cms, recordedTexture.cmt);
+	RT64_TEXTURE *diffuseMapTexture = RT64.blankTexture;
 	RT64_TEXTURE *normalMapTexture = nullptr;
 	if (RT64.graphNodeMod != nullptr) {
 		gfx_rt64_rapi_apply_mod(&material, &normalMapTexture, RT64.graphNodeMod, transform);
 	}
 
-	auto texModIt = RT64.texMods.find(recordedTexture.hash);
-	if (texModIt != RT64.texMods.end()) {
-		gfx_rt64_rapi_apply_mod(&material, &normalMapTexture, texModIt->second, transform);
+	if (RT64.shaderProgram->used_textures[0]) {
+		RecordedTexture &recordedTexture = RT64.textures[RT64.currentTextureIds[RT64.currentTile]];
+		material = gfx_rt64_rapi_build_material(RT64.shaderProgram, RT64.background, recordedTexture.linearFilter, recordedTexture.cms, recordedTexture.cmt);
+		if (recordedTexture.texture != nullptr) {
+			diffuseMapTexture = recordedTexture.texture;
+		}
+
+		auto texModIt = RT64.texMods.find(recordedTexture.hash);
+		if (texModIt != RT64.texMods.end()) {
+			gfx_rt64_rapi_apply_mod(&material, &normalMapTexture, texModIt->second, transform);
+		}
+	}
+	else {
+		material = gfx_rt64_rapi_build_material(RT64.shaderProgram, RT64.background, 0, 0, 0);
 	}
 
-	RT64.lib.SetInstance(instance, mesh, transform, (recordedTexture.texture != NULL) ? recordedTexture.texture : RT64.blankTexture, normalMapTexture, material);
+	RT64.lib.SetInstance(instance, mesh, transform, diffuseMapTexture, normalMapTexture, material);
 }
 
 void gfx_rt64_rapi_set_fog(uint8_t fog_r, uint8_t fog_g, uint8_t fog_b, int16_t fog_mul, int16_t fog_offset) {
