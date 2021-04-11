@@ -43,7 +43,7 @@
                     0.20000000298023224,
                     0.800000011920929
                 ],
-                "flickerIntensity": 0.0,
+                "flickerIntensity": 0.07500000298023224,
                 "groupBits": 64,
                 "pointRadius": 25.0,
                 "position": [
@@ -559,7 +559,7 @@
                     0.20000000298023224,
                     0.0
                 ],
-                "flickerIntensity": 0.0,
+                "flickerIntensity": 0.07500000298023224,
                 "groupBits": 64,
                 "pointRadius": 25.0,
                 "position": [
@@ -630,7 +630,7 @@
                 "attenuationExponent": 2.0,
                 "attenuationRadius": 100.0,
                 "diffuseColor": [
-                    0.80000000298023224,
+                    0.800000011920929,
                     0.800000011920929,
                     0.0
                 ],
@@ -661,7 +661,7 @@
                 "attenuationExponent": 2.0,
                 "attenuationRadius": 100.0,
                 "diffuseColor": [
-                    0.80000000298023224,
+                    0.800000011920929,
                     0.800000011920929,
                     0.0
                 ],

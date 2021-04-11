@@ -2,7 +2,8 @@
     "presets" : [
         {
             "name": "Simple",
-            "lightSampleSettings": []
+            "lightSampleSettings": [
+			]
         },
         {
             "name": "Soft",

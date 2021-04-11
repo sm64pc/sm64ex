@@ -2027,6 +2027,11 @@ void gfx_run(Gfx *commands) {
 }
 
 void gfx_end_frame(void) {
+#ifdef GFX_SEPARATE_PROJECTIONS
+    gd_set_identity_mat4(&matrices.view_matrix);
+    gd_set_identity_mat4(&matrices.inv_view_matrix);
+#endif
+
     if (!dropped_frame) {
         gfx_rapi->finish_render();
         gfx_wapi->swap_buffers_end();
