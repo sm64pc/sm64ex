@@ -18,7 +18,7 @@
                     0.0
                 ],
                 "shadowOffset": 80.0,
-                "specularIntensity": 1.0
+                "specularIntensity": 0.65
             },
             "materialMod": {
                 "lightGroupMaskBits": 0,
@@ -74,7 +74,7 @@
                     0.0
                 ],
                 "shadowOffset": 600.0,
-                "specularIntensity": 1.0
+                "specularIntensity": 0.65
             },
             "materialMod": {
                 "lightGroupMaskBits": 0,

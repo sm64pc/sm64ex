@@ -888,7 +888,7 @@ static void gfx_rt64_wapi_init(const char *window_title) {
     RT64.defaultMaterial.reflectionShineFactor = 0.0f;
 	RT64.defaultMaterial.refractionFactor = 0.0f;
 	RT64.defaultMaterial.specularIntensity = 1.0f;
-	RT64.defaultMaterial.specularExponent = 25.0f;
+	RT64.defaultMaterial.specularExponent = 5.0f;
 	RT64.defaultMaterial.solidAlphaMultiplier = 1.0f;
 	RT64.defaultMaterial.shadowAlphaMultiplier = 1.0f;
 	RT64.defaultMaterial.diffuseColorMix.x = 0.0f;

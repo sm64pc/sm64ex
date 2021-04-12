@@ -52,7 +52,7 @@
                     0.0
                 ],
                 "shadowOffset": 25.0,
-                "specularIntensity": 1.0
+                "specularIntensity": 0.65
             },
             "materialMod": {
                 "ignoreNormalFactor": 1.0,
@@ -481,7 +481,7 @@
                     0.0
                 ],
                 "shadowOffset": 25.0,
-                "specularIntensity": 1.0
+                "specularIntensity": 0.65
             },
             "materialMod": {
                 "ignoreNormalFactor": 1.0,
@@ -568,7 +568,7 @@
                     0.0
                 ],
                 "shadowOffset": 25.0,
-                "specularIntensity": 1.0
+                "specularIntensity": 0.65
             },
             "materialMod": {
                 "ignoreNormalFactor": 1.0,
@@ -643,7 +643,7 @@
                     0.0
                 ],
                 "shadowOffset": 25.0,
-                "specularIntensity": 1.0
+                "specularIntensity": 0.65
             },
             "materialMod": {
                 "ignoreNormalFactor": 1.0,
@@ -674,7 +674,7 @@
                     0.0
                 ],
                 "shadowOffset": 25.0,
-                "specularIntensity": 1.0
+                "specularIntensity": 0.65
             },
             "materialMod": {
                 "ignoreNormalFactor": 1.0,
