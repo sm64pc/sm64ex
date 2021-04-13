@@ -42,6 +42,10 @@
 #define RT64_MESH_RAYTRACE_ENABLED				0x1
 #define RT64_MESH_RAYTRACE_UPDATABLE			0x2
 
+// Instance flags.
+#define RT64_INSTANCE_RASTER_BACKGROUND			0x1
+#define RT64_INSTANCE_DISABLE_BACKFACE_CULLING	0x2
+
 // Light flags.
 #define RT64_LIGHT_GROUP_MASK_ALL				0xFFFFFFFF
 #define RT64_LIGHT_GROUP_DEFAULT				0x1
@@ -71,7 +75,6 @@ typedef struct {
 } RT64_VERTEX;
 
 typedef struct {
-	int background;
 	int filterMode;
 	int diffuseTexIndex;
 	int normalTexIndex;
@@ -92,6 +95,7 @@ typedef struct {
 	RT64_VECTOR4 diffuseColorMix;
 	float fogMul;
 	float fogOffset;
+	int _padA;
 
 	// N64 Color combiner parameters.
 	int c0[4];
@@ -108,7 +112,7 @@ typedef struct {
 	int enabledAttributes;
 
 	// Add padding to line up with the HLSL structure.
-	int _pad;
+	int _padB;
 } RT64_MATERIAL;
 
 // Light
@@ -200,7 +204,7 @@ typedef RT64_MESH* (*CreateMeshPtr)(RT64_DEVICE* devicePtr, int flags);
 typedef void (*SetMeshPtr)(RT64_MESH* meshPtr, RT64_VERTEX* vertexArray, int vertexCount, unsigned int* indexArray, int indexCount);
 typedef void (*DestroyMeshPtr)(RT64_MESH* meshPtr);
 typedef RT64_INSTANCE* (*CreateInstancePtr)(RT64_SCENE* scenePtr);
-typedef void (*SetInstancePtr)(RT64_INSTANCE* instancePtr, RT64_MESH* meshPtr, RT64_MATRIX4 transform, RT64_TEXTURE* diffuseTexture, RT64_TEXTURE* normalTexture, RT64_MATERIAL material);
+typedef void (*SetInstancePtr)(RT64_INSTANCE* instancePtr, RT64_MESH* meshPtr, RT64_MATRIX4 transform, RT64_TEXTURE* diffuseTexture, RT64_TEXTURE* normalTexture, RT64_MATERIAL material, unsigned int flags);
 typedef void (*DestroyInstancePtr)(RT64_INSTANCE* instancePtr);
 typedef RT64_TEXTURE* (*CreateTextureFromRGBA8Ptr)(RT64_DEVICE* devicePtr, const void* bytes, int width, int height, int stride);
 typedef void(*DestroyTexturePtr)(RT64_TEXTURE* texture);

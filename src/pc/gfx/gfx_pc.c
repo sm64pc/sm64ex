@@ -81,7 +81,7 @@ struct LoadedVertex {
 #endif
     float u, v;
     struct RGBA color;
-#ifndef GFX_DISABLE_CLIP_REJECT
+#ifndef GFX_SEPARATE_PROJECTIONS
     uint8_t clip_rej;
 #endif
 };
@@ -222,7 +222,8 @@ static struct Matrices {
     float offset_matrix[4][4];
     bool model_matrix_used;
     bool is_ortho;
-} matrices;
+    bool double_sided;
+} separate_projections;
 
 void gfx_set_camera_config(float fov_degrees, float near_dist, float far_dist) {
     gfx_rapi->set_camera_config(fov_degrees, near_dist, far_dist);
@@ -233,8 +234,8 @@ void gfx_set_camera_vectors(float pos_x, float pos_y, float pos_z, float focus_x
 }
 
 void gfx_set_view_matrix(float mat[4][4]) {
-    memcpy(matrices.view_matrix, mat, sizeof(float) * 4 * 4);
-    gd_inverse_mat4f(&matrices.view_matrix, &matrices.inv_view_matrix);
+    memcpy(separate_projections.view_matrix, mat, sizeof(float) * 4 * 4);
+    gd_inverse_mat4f(&separate_projections.view_matrix, &separate_projections.inv_view_matrix);
 }
 
 void inverse_affine(Mat4f *src, Mat4f *dst) {
@@ -325,12 +326,14 @@ static void gfx_flush(void) {
 #ifndef GFX_SEPARATE_PROJECTIONS
         gfx_rapi->draw_triangles(buf_vbo, buf_vbo_len, buf_vbo_num_tris);
 #else
-        if (matrices.is_ortho) {
-            gfx_rapi->draw_triangles_ortho(buf_vbo, buf_vbo_len, buf_vbo_num_tris);
+        if (separate_projections.is_ortho) {
+            gfx_rapi->draw_triangles_ortho(buf_vbo, buf_vbo_len, buf_vbo_num_tris, separate_projections.double_sided);
         }
         else {
-            gfx_rapi->draw_triangles_persp(buf_vbo, buf_vbo_len, buf_vbo_num_tris, matrices.model_matrix);
+            gfx_rapi->draw_triangles_persp(buf_vbo, buf_vbo_len, buf_vbo_num_tris, separate_projections.model_matrix, separate_projections.double_sided);
         }
+
+        separate_projections.double_sided = false;
 #endif
         buf_vbo_len = 0;
         buf_vbo_num_tris = 0;
@@ -868,8 +871,8 @@ static void gfx_sp_matrix(uint8_t parameters, const int32_t *addr) {
     gfx_matrix_mul(rsp.MP_matrix, rsp.modelview_matrix_stack[rsp.modelview_matrix_stack_size - 1], rsp.P_matrix);
 
 #ifdef GFX_SEPARATE_PROJECTIONS
-    gfx_matrix_mul(matrices.model_matrix, rsp.modelview_matrix_stack[rsp.modelview_matrix_stack_size - 1], matrices.inv_view_matrix);
-    matrices.is_ortho = (rsp.P_matrix[3][3] != 0.0f);
+    gfx_matrix_mul(separate_projections.model_matrix, rsp.modelview_matrix_stack[rsp.modelview_matrix_stack_size - 1], separate_projections.inv_view_matrix);
+    separate_projections.is_ortho = (rsp.P_matrix[3][3] != 0.0f);
 #endif
 }
 
@@ -881,8 +884,8 @@ static void gfx_sp_pop_matrix(uint32_t count) {
                 gfx_matrix_mul(rsp.MP_matrix, rsp.modelview_matrix_stack[rsp.modelview_matrix_stack_size - 1], rsp.P_matrix);
 
 #ifdef GFX_SEPARATE_PROJECTIONS
-                gfx_matrix_mul(matrices.model_matrix, rsp.modelview_matrix_stack[rsp.modelview_matrix_stack_size - 1], matrices.inv_view_matrix);
-                matrices.is_ortho = (rsp.P_matrix[3][3] != 0.0f);
+                gfx_matrix_mul(separate_projections.model_matrix, rsp.modelview_matrix_stack[rsp.modelview_matrix_stack_size - 1], separate_projections.inv_view_matrix);
+                separate_projections.is_ortho = (rsp.P_matrix[3][3] != 0.0f);
 #endif
             }
         }
@@ -895,22 +898,22 @@ static float gfx_adjust_x_for_aspect_ratio(float x) {
 
 static void gfx_sp_vertex(size_t n_vertices, size_t dest_index, const Vtx *vertices) {
 #ifdef GFX_SEPARATE_PROJECTIONS
-    if (!matrices.model_matrix_used) {
+    if (!separate_projections.model_matrix_used) {
         if (dest_index > 0) {
-            inverse_affine(&matrices.model_matrix, &matrices.inv_model_matrix);
-            gfx_matrix_mul(matrices.offset_matrix, matrices.prev_model_matrix, matrices.inv_model_matrix);
+            inverse_affine(&separate_projections.model_matrix, &separate_projections.inv_model_matrix);
+            gfx_matrix_mul(separate_projections.offset_matrix, separate_projections.prev_model_matrix, separate_projections.inv_model_matrix);
 
             for (size_t i = 0; i < dest_index; i++) {
-                transform_loaded_vertex(i, &matrices.offset_matrix);
+                transform_loaded_vertex(i, &separate_projections.offset_matrix);
             }
 
             for (size_t i = dest_index + n_vertices; i < MAX_VERTICES; i++) {
-                transform_loaded_vertex(i, &matrices.offset_matrix);
+                transform_loaded_vertex(i, &separate_projections.offset_matrix);
             }
         }
 
-        memcpy(matrices.prev_model_matrix, matrices.model_matrix, sizeof(float) * 16);
-        matrices.model_matrix_used = true;
+        memcpy(separate_projections.prev_model_matrix, separate_projections.model_matrix, sizeof(float) * 16);
+        separate_projections.model_matrix_used = true;
     }
 #endif
 
@@ -927,7 +930,7 @@ static void gfx_sp_vertex(size_t n_vertices, size_t dest_index, const Vtx *verti
         x = gfx_adjust_x_for_aspect_ratio(x);
 #else
         float x, y, z, w;
-        if (matrices.is_ortho) {
+        if (separate_projections.is_ortho) {
             x = v->ob[0] * rsp.MP_matrix[0][0] + v->ob[1] * rsp.MP_matrix[1][0] + v->ob[2] * rsp.MP_matrix[2][0] + rsp.MP_matrix[3][0];
             y = v->ob[0] * rsp.MP_matrix[0][1] + v->ob[1] * rsp.MP_matrix[1][1] + v->ob[2] * rsp.MP_matrix[2][1] + rsp.MP_matrix[3][1];
             z = v->ob[0] * rsp.MP_matrix[0][2] + v->ob[1] * rsp.MP_matrix[1][2] + v->ob[2] * rsp.MP_matrix[2][2] + rsp.MP_matrix[3][2];
@@ -1015,7 +1018,7 @@ static void gfx_sp_vertex(size_t n_vertices, size_t dest_index, const Vtx *verti
         
         d->u = U;
         d->v = V;
-#ifndef GFX_DISABLE_CLIP_REJECT
+#ifndef GFX_SEPARATE_PROJECTIONS
         // trivial clip rejection
         d->clip_rej = 0;
         if (x < -w) d->clip_rej |= 1;
@@ -1056,13 +1059,38 @@ static void gfx_sp_vertex(size_t n_vertices, size_t dest_index, const Vtx *verti
 }
 
 static void gfx_sp_tri1(uint8_t vtx1_idx, uint8_t vtx2_idx, uint8_t vtx3_idx) {
+#ifdef GFX_SEPARATE_PROJECTIONS
+    uint8_t swap = 0;
+    switch (rsp.geometry_mode & G_CULL_BOTH) {
+        // Ignore this call entirely.
+        case G_CULL_BOTH:
+            return;
+        // Continue as normal.
+        case G_CULL_BACK:
+            break;
+        // Flip order in which the vertices are processed and continue.
+        case G_CULL_FRONT:
+            swap = vtx3_idx;
+            vtx3_idx = vtx1_idx;
+            vtx1_idx = swap;
+            break;
+        // Set the double sided flag, flush if any contents were already processed while the flag was false.
+        default:
+            if (!separate_projections.double_sided) {
+                gfx_flush();
+                separate_projections.double_sided = true;
+            }
+            break;
+    }
+#endif
+
     struct LoadedVertex *v1 = &rsp.loaded_vertices[vtx1_idx];
     struct LoadedVertex *v2 = &rsp.loaded_vertices[vtx2_idx];
     struct LoadedVertex *v3 = &rsp.loaded_vertices[vtx3_idx];
     struct LoadedVertex *v_arr[3] = {v1, v2, v3};
     
     //if (rand()%2) return;
-#ifndef GFX_DISABLE_CLIP_REJECT
+#ifndef GFX_SEPARATE_PROJECTIONS
     if (v1->clip_rej & v2->clip_rej & v3->clip_rej) {
         // The whole triangle lies outside the visible area
         return;
@@ -1198,7 +1226,7 @@ static void gfx_sp_tri1(uint8_t vtx1_idx, uint8_t vtx2_idx, uint8_t vtx3_idx) {
 #ifndef GFX_SEPARATE_PROJECTIONS
     bool z_is_from_0_to_1 = gfx_rapi->z_is_from_0_to_1();    
 #else
-    bool z_is_from_0_to_1 = matrices.is_ortho && gfx_rapi->z_is_from_0_to_1();
+    bool z_is_from_0_to_1 = separate_projections.is_ortho && gfx_rapi->z_is_from_0_to_1();
 #endif
     
     for (int i = 0; i < 3; i++) {
@@ -1282,6 +1310,7 @@ static void gfx_sp_tri1(uint8_t vtx1_idx, uint8_t vtx2_idx, uint8_t vtx3_idx) {
         buf_vbo[buf_vbo_len++] = color->b / 255.0f;
         buf_vbo[buf_vbo_len++] = color->a / 255.0f;*/
     }
+
     if (++buf_vbo_num_tris == MAX_BUFFERED) {
         gfx_flush();
     }
@@ -1782,7 +1811,7 @@ static void gfx_run_dl(Gfx* cmd) {
                 gfx_flush();
 #endif
 #ifdef GFX_SEPARATE_PROJECTIONS
-                matrices.model_matrix_used = false;
+                separate_projections.model_matrix_used = false;
 #endif
                 return;
 #ifdef F3DEX_GBI_2
@@ -2003,6 +2032,14 @@ void gfx_start_frame(void) {
         gfx_current_dimensions.height = 1;
     }
     gfx_current_dimensions.aspect_ratio = (float)gfx_current_dimensions.width / (float)gfx_current_dimensions.height;
+
+#ifdef GFX_SEPARATE_PROJECTIONS
+    gd_set_identity_mat4(&separate_projections.view_matrix);
+    gd_set_identity_mat4(&separate_projections.inv_view_matrix);
+    separate_projections.is_ortho = false;
+    separate_projections.model_matrix_used = false;
+    separate_projections.double_sided = false;
+#endif
 }
 
 void gfx_run(Gfx *commands) {
@@ -2027,11 +2064,6 @@ void gfx_run(Gfx *commands) {
 }
 
 void gfx_end_frame(void) {
-#ifdef GFX_SEPARATE_PROJECTIONS
-    gd_set_identity_mat4(&matrices.view_matrix);
-    gd_set_identity_mat4(&matrices.inv_view_matrix);
-#endif
-
     if (!dropped_frame) {
         gfx_rapi->finish_render();
         gfx_wapi->swap_buffers_end();

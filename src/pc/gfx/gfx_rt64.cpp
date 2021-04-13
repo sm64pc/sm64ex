@@ -878,7 +878,6 @@ static void gfx_rt64_wapi_init(const char *window_title) {
 	}
 
 	// Build a default material.
-    RT64.defaultMaterial.background = 0;
 	RT64.defaultMaterial.filterMode = 1;
 	RT64.defaultMaterial.hAddressMode = 0;
 	RT64.defaultMaterial.vAddressMode = 0;
@@ -1281,11 +1280,8 @@ RT64_INSTANCE *gfx_rt64_rapi_add_instance() {
 	return RT64.instances[instanceIndex];
 }
 
-RT64_MATERIAL gfx_rt64_rapi_build_material(ShaderProgram *prg, bool background, bool linearFilter, uint32_t cms, uint32_t cmt) {
+RT64_MATERIAL gfx_rt64_rapi_build_material(ShaderProgram *prg, bool linearFilter, uint32_t cms, uint32_t cmt) {
 	RT64_MATERIAL mat = RT64.defaultMaterial;
-
-	// Raster.
-	mat.background = background;
 
 	// Sampler.
 	mat.filterMode = linearFilter;
@@ -1359,7 +1355,7 @@ static void gfx_rt64_rapi_apply_mod(RT64_MATERIAL *material, RT64_TEXTURE **norm
 	}
 }
 
-static void gfx_rt64_rapi_draw_triangles_common(RT64_MATRIX4 transform, float buf_vbo[], size_t buf_vbo_len, size_t buf_vbo_num_tris, bool raytrace) {
+static void gfx_rt64_rapi_draw_triangles_common(RT64_MATRIX4 transform, float buf_vbo[], size_t buf_vbo_len, size_t buf_vbo_num_tris, bool double_sided, bool raytrace) {
 	RT64_TEXTURE *diffuseMapTexture = RT64.blankTexture;
 	RT64_TEXTURE *normalMapTexture = nullptr;
 	RecordedMod *textureMod = nullptr;
@@ -1384,7 +1380,7 @@ static void gfx_rt64_rapi_draw_triangles_common(RT64_MATRIX4 transform, float bu
 	}
 
 	// Build material with applied mods.
-	RT64_MATERIAL material = gfx_rt64_rapi_build_material(RT64.shaderProgram, RT64.background, linearFilter, cms, cmt);
+	RT64_MATERIAL material = gfx_rt64_rapi_build_material(RT64.shaderProgram, linearFilter, cms, cmt);
 	if (RT64.graphNodeMod != nullptr) {
 		gfx_rt64_rapi_apply_mod(&material, &normalMapTexture, RT64.graphNodeMod, transform);
 	}
@@ -1396,7 +1392,19 @@ static void gfx_rt64_rapi_draw_triangles_common(RT64_MATRIX4 transform, float bu
 	// Create the instance and process the mesh that corresponds to the VBO.
 	RT64_INSTANCE *instance = gfx_rt64_rapi_add_instance();
 	RT64_MESH *mesh = gfx_rt64_rapi_process_mesh(buf_vbo, buf_vbo_len, buf_vbo_num_tris, raytrace);
-	RT64.lib.SetInstance(instance, mesh, transform, diffuseMapTexture, normalMapTexture, material);
+
+	// Mark the right instance flags.
+	unsigned int instanceFlags = 0;
+	if (RT64.background) {
+		instanceFlags |= RT64_INSTANCE_RASTER_BACKGROUND;
+	}
+
+	if (double_sided) {
+		instanceFlags |= RT64_INSTANCE_DISABLE_BACKFACE_CULLING;
+	}
+
+	// Update the instance.
+	RT64.lib.SetInstance(instance, mesh, transform, diffuseMapTexture, normalMapTexture, material, instanceFlags);
 }
 
 void gfx_rt64_rapi_set_fog(uint8_t fog_r, uint8_t fog_g, uint8_t fog_b, int16_t fog_mul, int16_t fog_offset) {
@@ -1407,11 +1415,11 @@ void gfx_rt64_rapi_set_fog(uint8_t fog_r, uint8_t fog_g, uint8_t fog_b, int16_t 
 	RT64.fogOffset = fog_offset;
 }
 
-static void gfx_rt64_rapi_draw_triangles_ortho(float buf_vbo[], size_t buf_vbo_len, size_t buf_vbo_num_tris) {
-	gfx_rt64_rapi_draw_triangles_common(RT64.identityTransform, buf_vbo, buf_vbo_len, buf_vbo_num_tris, false);
+static void gfx_rt64_rapi_draw_triangles_ortho(float buf_vbo[], size_t buf_vbo_len, size_t buf_vbo_num_tris, bool double_sided) {
+	gfx_rt64_rapi_draw_triangles_common(RT64.identityTransform, buf_vbo, buf_vbo_len, buf_vbo_num_tris, double_sided, false);
 }
 
-static void gfx_rt64_rapi_draw_triangles_persp(float buf_vbo[], size_t buf_vbo_len, size_t buf_vbo_num_tris, float transform_affine[4][4]) {
+static void gfx_rt64_rapi_draw_triangles_persp(float buf_vbo[], size_t buf_vbo_len, size_t buf_vbo_num_tris, float transform_affine[4][4], bool double_sided) {
 	// Stop considering the orthographic projection triangles as background as soon as perspective triangles are drawn.
 	if (RT64.background) {
 		RT64.background = false;
@@ -1419,7 +1427,7 @@ static void gfx_rt64_rapi_draw_triangles_persp(float buf_vbo[], size_t buf_vbo_l
 
 	RT64_MATRIX4 transform;
 	memcpy(transform.m, transform_affine, sizeof(float) * 16);
-	gfx_rt64_rapi_draw_triangles_common(transform, buf_vbo, buf_vbo_len, buf_vbo_num_tris, true);
+	gfx_rt64_rapi_draw_triangles_common(transform, buf_vbo, buf_vbo_len, buf_vbo_num_tris, double_sided, true);
 }
 
 static void gfx_rt64_rapi_init(void) {
