@@ -44,6 +44,7 @@
 #endif
 
 #include "text/text-loader.h"
+#include "moon/moon64.h"
 
 OSMesg D_80339BEC;
 OSMesgQueue gSIEventMesgQueue;
@@ -136,7 +137,6 @@ void game_deinit(void) {
     controller_shutdown();
     audio_shutdown();
     gfx_shutdown();
-    dealloc_dialog_pool();
     inited = false;
 }
 
@@ -181,7 +181,8 @@ static void on_anim_frame(double time) {
 }
 #endif
 
-void main_func(char *argv[]) {
+void main_func(char *argv[]) {    
+
     static u64 pool[0x165000/8 / 4 * sizeof(void *)];
     main_pool_init(pool, pool + sizeof(pool) / sizeof(pool[0]));
     gEffectsMemoryPool = mem_pool_init(0x4000, MEMORY_POOL_LEFT);
@@ -191,7 +192,7 @@ void main_func(char *argv[]) {
     fs_init(sys_ropaths, gamedir, userpath);
     configfile_load(configfile_name());
 
-    alloc_dialog_pool(argv[0], gamedir);
+    moon_init_languages(argv[0], gamedir);
 
     if (gCLIOpts.FullScreen == 1)
         configWindow.fullscreen = true;
@@ -224,7 +225,7 @@ void main_func(char *argv[]) {
     #endif
 
     char window_title[96] =
-    "Super Mario 64 Render96ex (" RAPI_NAME ")"
+    "Super Mario 64 - Moon64 (" RAPI_NAME ")"
     #ifdef NIGHTLY
     " nightly " GIT_HASH
     #else

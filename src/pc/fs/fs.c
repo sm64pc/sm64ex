@@ -105,6 +105,8 @@ bool fs_init(const char **rodirs, const char *gamedir, const char *writepath) {
         scan_path_dir(fs_writepath, fs_gamedir);
     }
 
+    printf("%s\n", fs_writepath);
+
     // as a special case, mount writepath itself
     fs_mount(fs_writepath);
 

@@ -401,7 +401,7 @@ static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
                 choice = get_key_string(opt->choices[*opt->uval]);
                 optmenu_draw_text(x, y-13, choice, sel);
             }else{
-                choice = getTranslatedText(languages[*opt->uval]->name);
+                choice = getTranslatedText(get_language_name(*opt->uval));
                 optmenu_draw_text(x, y-13, choice, sel);
                 free(choice);
             }
@@ -446,7 +446,7 @@ static void optmenu_opt_change(struct Option *opt, s32 val) {
 
         case OPT_CHOICE:
             *opt->uval = wrap_add(*opt->uval, val, 0, strcmp(opt->label, optsGameStr[0]) == 0 ? languagesAmount - 1: opt->numChoices - 1);
-            set_language(languages[configLanguage]);
+            set_language(configLanguage);
             break;
 
         case OPT_SCROLL:

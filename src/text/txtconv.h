@@ -7,6 +7,6 @@ struct Character{
     s32 value[2];
 };
 
-u8 * getTranslatedText(char * txt);
+u8 * getTranslatedText(const char * txt);
 
 #endif

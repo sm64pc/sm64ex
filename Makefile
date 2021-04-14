@@ -131,7 +131,7 @@ endif
 # Release (version) flag defs
 VERSION_DEF := VERSION_US
 
-TARGET := sm64.$(VERSION)
+TARGET := moon64.$(VERSION)
 VERSION_CFLAGS := -D$(VERSION_DEF) -D_LANGUAGE_C
 VERSION_ASFLAGS := --defsym $(VERSION_DEF)=1
 
@@ -257,6 +257,12 @@ LEVEL_DIRS := $(patsubst levels/%,%,$(dir $(wildcard levels/*/header.h)))
 
 # Hi, I'm a PC
 SRC_DIRS := src src/engine src/game src/audio src/menu src/buffers actors levels bin data assets src/text src/text/libs src/pc src/pc/gfx src/pc/audio src/pc/controller src/pc/fs src/pc/fs/packtypes src/nx
+
+# Moon64 SRC Directories
+SRC_DIRS += src/moon src/moon/texts
+
+# RapidJSON Library
+SRC_DIRS += src/moon/libs/rapidjson src/moon/libs/rapidjson/error src/moon/libs/rapidjson/internal src/moon/libs/rapidjson/msinttypes
 
 ifeq ($(DISCORDRPC),1)
   ifneq ($(TARGET_SWITCH)$(TARGET_WEB)$(TARGET_RPI),000)
@@ -606,7 +612,7 @@ else ifeq ($(OSX_BUILD),1)
   LDFLAGS := -lm $(PLATFORM_LDFLAGS) $(BACKEND_LDFLAGS) -lpthread
 
 else ifeq ($(TARGET_SWITCH),1)
-  LDFLAGS := -specs=$(LIBNX)/switch.specs $(NXARCH) $(OPT_FLAGS) -no-pie -L$(LIBNX)/lib $(BACKEND_LDFLAGS) -lstdc++ -lnx -lm
+  LDFLAGS := -specs=$(LIBNX)/switch.specs $(NXARCH) $(OPT_FLAGS) -no-pie -L$(LIBNX)/lib $(BACKEND_LDFLAGS) -lnx -lm
 
 else
   LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm $(BACKEND_LDFLAGS) -no-pie -lpthread
@@ -615,6 +621,8 @@ else
   endif
 
 endif # End of LDFLAGS
+
+LDFLAGS += -lstdc++
 
 # Prevent a crash with -sopt
 export LANG := C

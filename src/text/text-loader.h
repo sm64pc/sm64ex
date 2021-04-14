@@ -4,7 +4,6 @@
 #include "types.h"
 #include "game/ingame_menu.h"
 
-extern char* currentLanguage;
 extern u8 languagesAmount;
 
 extern struct DialogEntry* * dialogPool;
@@ -17,20 +16,9 @@ struct StringTable {
     u8* value;
 };
 
-struct LanguageEntry {
-    char * name;
-    char * logo;
-    struct DialogEntry* * dialogs;
-    struct StringTable* * strings;
-    int num_strings;
-    u8* * courses;
-    u8* * acts;
-};
-
-extern u8* get_key_string(char* id);
-extern struct LanguageEntry* get_language_by_name(char* name);
-extern struct LanguageEntry* get_language();
-extern void set_language(struct LanguageEntry* new_language);
-extern void alloc_dialog_pool(char* exePath, char* gamedir);
-extern void dealloc_dialog_pool(void);
+extern void         alloc_dialog_pool(char* exePath, char* gamedir);
+extern void         dealloc_dialog_pool(void);
+extern const char*  get_language_name(int language);
+extern void         set_language(int new_language);
+extern u8*          get_key_string(char* id);
 #endif

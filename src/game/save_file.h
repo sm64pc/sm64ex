@@ -150,16 +150,4 @@ void disable_warp_checkpoint(void);
 void check_if_should_set_warp_checkpoint(struct WarpNode *warpNode);
 s32 check_warp_checkpoint(struct WarpNode *warpNode);
 
-#ifdef VERSION_EU
-enum EuLanguages {
-    LANGUAGE_ENGLISH,
-    LANGUAGE_FRENCH,
-    LANGUAGE_GERMAN,
-    LANGUAGE_MAX
-};
-
-void eu_set_language(u16 language);
-u16 eu_get_language(void);
-#endif
-
 #endif // SAVE_FILE_H
