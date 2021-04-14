@@ -16,10 +16,10 @@ struct GfxRenderingAPI {
     struct ShaderProgram *(*create_and_load_new_shader)(uint32_t shader_id);
     struct ShaderProgram *(*lookup_shader)(uint32_t shader_id);
     void (*shader_get_info)(struct ShaderProgram *prg, uint8_t *num_inputs, bool used_textures[2]);
-#ifndef GFX_REQUIRE_TEXTURE_HASH
+#ifndef GFX_REQUIRE_TEXTURE_NAME
     uint32_t (*new_texture)(void);
 #else
-    uint32_t (*new_texture)(uint64_t hash);
+    uint32_t (*new_texture)(const char *name);
 #endif
     void (*select_texture)(int tile, uint32_t texture_id);
     void (*upload_texture)(const uint8_t *rgba32_buf, int width, int height);

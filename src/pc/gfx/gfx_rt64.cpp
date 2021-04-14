@@ -137,6 +137,12 @@ struct {
 	RT64_LIGHT levelLights[MAX_LEVELS][MAX_AREAS][MAX_LEVEL_LIGHTS];
 	int levelLightCounts[MAX_LEVELS][MAX_AREAS];
 
+	// Ray picking data.
+	bool pickTextureNextFrame;
+	bool pickTextureHighlight;
+	uint64_t pickedTextureHash;
+	std::unordered_map<RT64_INSTANCE *, uint64_t> lastInstanceTextureHashes;
+
 	// Geo layout mods.
 	void *geoLayoutStack[MAX_GEO_LAYOUT_STACK_SIZE];
 	int geoLayoutStackSize;
@@ -410,6 +416,11 @@ void gfx_rt64_load_material_mod(const json &jmatmod, RT64_MATERIAL *materialMod)
 		materialMod->enabledAttributes |= RT64_ATTRIBUTE_REFLECTION_FACTOR;
 	}
 
+	if (jmatmod.find("reflectionFresnelFactor") != jmatmod.end()) {
+		materialMod->reflectionFresnelFactor = jmatmod["reflectionFresnelFactor"];
+		materialMod->enabledAttributes |= RT64_ATTRIBUTE_REFLECTION_FRESNEL_FACTOR;
+	}
+
 	if (jmatmod.find("reflectionShineFactor") != jmatmod.end()) {
 		materialMod->reflectionShineFactor = jmatmod["reflectionShineFactor"];
 		materialMod->enabledAttributes |= RT64_ATTRIBUTE_REFLECTION_SHINE_FACTOR;
@@ -473,6 +484,10 @@ json gfx_rt64_save_material_mod(RT64_MATERIAL *materialMod) {
 
 	if (materialMod->enabledAttributes & RT64_ATTRIBUTE_REFLECTION_FACTOR) {
 		jmatmod["reflectionFactor"] = materialMod->reflectionFactor;
+	}
+
+	if (materialMod->enabledAttributes & RT64_ATTRIBUTE_REFLECTION_FRESNEL_FACTOR) {
+		jmatmod["reflectionFresnelFactor"] = materialMod->reflectionFresnelFactor;
 	}
 
 	if (materialMod->enabledAttributes & RT64_ATTRIBUTE_REFLECTION_SHINE_FACTOR) {
@@ -737,6 +752,14 @@ LRESULT CALLBACK gfx_rt64_wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 		}
 
         break;
+	case WM_RBUTTONDOWN:
+		RT64.pickedTextureHash = 0;
+		RT64.pickTextureNextFrame = true;
+		RT64.pickTextureHighlight = true;
+		break;
+	case WM_RBUTTONUP:
+		RT64.pickTextureHighlight = false;
+		break;
 	case WM_KEYDOWN:
 		if (wParam == VK_F5) {
 			gfx_rt64_save_geo_layout_mods();
@@ -862,6 +885,9 @@ static void gfx_rt64_wapi_init(const char *window_title) {
 	RT64.fogColor.y = 0.0f;
 	RT64.fogColor.z = 0.0f;
 	RT64.fogMul = RT64.fogOffset = 0;
+	RT64.pickTextureNextFrame = false;
+	RT64.pickTextureHighlight = false;
+	RT64.pickedTextureHash = 0;
 
 	// Preload a blank texture.
 	int blankBytesCount = 256 * 256 * 4;
@@ -884,6 +910,7 @@ static void gfx_rt64_wapi_init(const char *window_title) {
 	RT64.defaultMaterial.ignoreNormalFactor = 0.0f;
     RT64.defaultMaterial.normalMapScale = 1.0f;
 	RT64.defaultMaterial.reflectionFactor = 0.0f;
+	RT64.defaultMaterial.reflectionFresnelFactor = 1.0f;
     RT64.defaultMaterial.reflectionShineFactor = 0.0f;
 	RT64.defaultMaterial.refractionFactor = 0.0f;
 	RT64.defaultMaterial.specularIntensity = 1.0f;
@@ -1089,15 +1116,15 @@ static void gfx_rt64_rapi_shader_get_info(struct ShaderProgram *prg, uint8_t *nu
     used_textures[1] = prg->used_textures[1];
 }
 
-static uint32_t gfx_rt64_rapi_new_texture(uint64_t hash) {
+static uint32_t gfx_rt64_rapi_new_texture(const char *name) {
 	uint32_t textureKey = RT64.textures.size();
 	auto &recordedTexture = RT64.textures[textureKey];
 	recordedTexture.texture = nullptr;
 	recordedTexture.linearFilter = 0;
 	recordedTexture.cms = 0;
 	recordedTexture.cmt = 0;
-	recordedTexture.hash = hash;
-	RT64.textureHashIdMap[hash] = textureKey;
+	recordedTexture.hash = gfx_rt64_get_texture_name_hash(name);
+	RT64.textureHashIdMap[recordedTexture.hash] = textureKey;
     return textureKey;
 }
 
@@ -1361,8 +1388,12 @@ static void gfx_rt64_rapi_draw_triangles_common(RT64_MATRIX4 transform, float bu
 	RecordedMod *textureMod = nullptr;
 	bool linearFilter = false;
 	uint32_t cms = 0, cmt = 0;
+	
+	// Create the instance.
+	RT64_INSTANCE *instance = gfx_rt64_rapi_add_instance();
 
 	// Find all parameters associated to the texture if it's used.
+	bool highlightMaterial = false;
 	if (RT64.shaderProgram->used_textures[0]) {
 		RecordedTexture &recordedTexture = RT64.textures[RT64.currentTextureIds[RT64.currentTile]];
 		linearFilter = recordedTexture.linearFilter; 
@@ -1377,6 +1408,13 @@ static void gfx_rt64_rapi_draw_triangles_common(RT64_MATRIX4 transform, float bu
 		if (texModIt != RT64.texMods.end()) {
 			textureMod = texModIt->second;
 		}
+		
+		// Update data for ray picking.
+		if (RT64.pickTextureHighlight && (recordedTexture.hash == RT64.pickedTextureHash)) {
+			highlightMaterial = true;
+		}
+
+		RT64.lastInstanceTextureHashes[instance] = recordedTexture.hash;
 	}
 
 	// Build material with applied mods.
@@ -1389,8 +1427,13 @@ static void gfx_rt64_rapi_draw_triangles_common(RT64_MATRIX4 transform, float bu
 		gfx_rt64_rapi_apply_mod(&material, &normalMapTexture, textureMod, transform);
 	}
 
-	// Create the instance and process the mesh that corresponds to the VBO.
-	RT64_INSTANCE *instance = gfx_rt64_rapi_add_instance();
+	if (highlightMaterial) {
+		material.diffuseColorMix = { 1.0f, 0.0f, 1.0f, 0.5f };
+		material.selfLight = { 1.0f, 1.0f, 1.0f };
+		material.lightGroupMaskBits = 0;
+	}
+
+	// Process the mesh that corresponds to the VBO.
 	RT64_MESH *mesh = gfx_rt64_rapi_process_mesh(buf_vbo, buf_vbo_len, buf_vbo_num_tris, raytrace);
 
 	// Mark the right instance flags.
@@ -1495,6 +1538,47 @@ static void gfx_rt64_rapi_end_frame(void) {
 	char message[64];
 	sprintf(message, "RT64: %.3f ms\n", ElapsedMicroseconds.QuadPart / 1000.0);
 	RT64.lib.PrintToInspector(RT64.inspector, message);
+
+	// Left click allows to pick a texture for editing from the viewport.
+	if (RT64.pickTextureNextFrame) {
+		POINT cursorPos = {};
+		GetCursorPos(&cursorPos);
+		ScreenToClient(RT64.hwnd, &cursorPos);
+		RT64_INSTANCE *instance = RT64.lib.GetViewRaytracedInstanceAt(RT64.view, cursorPos.x, cursorPos.y);
+		if (instance != nullptr) {
+			auto instIt = RT64.lastInstanceTextureHashes.find(instance);
+			if (instIt != RT64.lastInstanceTextureHashes.end()) {
+				RT64.pickedTextureHash = instIt->second;
+			}
+		}
+		else {
+			RT64.pickedTextureHash = 0;
+		}
+
+		RT64.pickTextureNextFrame = false;
+	}
+
+	RT64.lastInstanceTextureHashes.clear();
+
+	// Edit last picked texture.
+	if (RT64.pickedTextureHash != 0) {
+		const std::string textureName = RT64.texNameMap[RT64.pickedTextureHash];
+		RecordedMod *texMod = RT64.texMods[RT64.pickedTextureHash];
+		if (texMod == nullptr) {
+			texMod = new RecordedMod();
+			texMod->materialMod = nullptr;
+			texMod->lightMod = nullptr;
+			texMod->normalMapHash = 0;
+			RT64.texMods[RT64.pickedTextureHash] = texMod;
+		}
+
+		if (texMod->materialMod == nullptr) {
+			texMod->materialMod = new RT64_MATERIAL();
+			texMod->materialMod->enabledAttributes = RT64_ATTRIBUTE_NONE;
+		}
+
+		RT64.lib.SetMaterialInspector(RT64.inspector, texMod->materialMod, textureName.c_str());
+	}
 
 	// Mesh key cleanup.
 	auto keyIt = RT64.dynamicMeshKeys.begin();

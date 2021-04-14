@@ -446,10 +446,14 @@ static bool gfx_texture_cache_lookup(int tile, struct TextureHashmapNode **n, co
     }
     *node = &gfx_texture_cache.pool[gfx_texture_cache.pool_pos++];
     if ((*node)->texture_addr == NULL) {
-#ifndef GFX_REQUIRE_TEXTURE_HASH
-        (*node)->texture_id = gfx_rapi->new_texture();
+#ifdef GFX_REQUIRE_TEXTURE_NAME
+#   ifdef EXTERNAL_DATA
+        (*node)->texture_id = gfx_rapi->new_texture((const char *)(orig_addr));
+#   else  
+#       error "GFX_REQUIRE_TEXTURE_NAME requires EXTERNAL_DATA to be enabled."
+#   endif
 #else
-        (*node)->texture_id = gfx_rapi->new_texture(string_hash(orig_addr));
+        (*node)->texture_id = gfx_rapi->new_texture();
 #endif
     }
     gfx_rapi->select_texture(tile, (*node)->texture_id);

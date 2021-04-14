@@ -24,19 +24,20 @@
 #define RT64_MATERIAL_CC_SHADER_TEXEL1			7
 
 // Material attributes.
-#define RT64_ATTRIBUTE_NONE						0x0
-#define RT64_ATTRIBUTE_IGNORE_NORMAL_FACTOR		0x1
-#define RT64_ATTRIBUTE_NORMAL_MAP_SCALE			0x2
-#define RT64_ATTRIBUTE_REFLECTION_FACTOR		0x4
-#define RT64_ATTRIBUTE_REFLECTION_SHINE_FACTOR	0x8
-#define RT64_ATTRIBUTE_REFRACTION_FACTOR		0x10
-#define RT64_ATTRIBUTE_SPECULAR_INTENSITY		0x20
-#define RT64_ATTRIBUTE_SPECULAR_EXPONENT		0x40
-#define RT64_ATTRIBUTE_SOLID_ALPHA_MULTIPLIER	0x80
-#define RT64_ATTRIBUTE_SHADOW_ALPHA_MULTIPLIER	0x100
-#define RT64_ATTRIBUTE_SELF_LIGHT				0x200
-#define RT64_ATTRIBUTE_LIGHT_GROUP_MASK_BITS	0x400
-#define RT64_ATTRIBUTE_DIFFUSE_COLOR_MIX		0x800
+#define RT64_ATTRIBUTE_NONE							0x0000
+#define RT64_ATTRIBUTE_IGNORE_NORMAL_FACTOR			0x0001
+#define RT64_ATTRIBUTE_NORMAL_MAP_SCALE				0x0002
+#define RT64_ATTRIBUTE_REFLECTION_FACTOR			0x0004
+#define RT64_ATTRIBUTE_REFLECTION_FRESNEL_FACTOR	0x0008
+#define RT64_ATTRIBUTE_REFLECTION_SHINE_FACTOR		0x0010
+#define RT64_ATTRIBUTE_REFRACTION_FACTOR			0x0020
+#define RT64_ATTRIBUTE_SPECULAR_INTENSITY			0x0040
+#define RT64_ATTRIBUTE_SPECULAR_EXPONENT			0x0080
+#define RT64_ATTRIBUTE_SOLID_ALPHA_MULTIPLIER		0x0100
+#define RT64_ATTRIBUTE_SHADOW_ALPHA_MULTIPLIER		0x0200
+#define RT64_ATTRIBUTE_SELF_LIGHT					0x0400
+#define RT64_ATTRIBUTE_LIGHT_GROUP_MASK_BITS		0x0800
+#define RT64_ATTRIBUTE_DIFFUSE_COLOR_MIX			0x1000
 
 // Mesh flags.
 #define RT64_MESH_RAYTRACE_ENABLED				0x1
@@ -83,6 +84,7 @@ typedef struct {
 	float ignoreNormalFactor;
 	float normalMapScale;
 	float reflectionFactor;
+	float reflectionFresnelFactor;
 	float reflectionShineFactor;
 	float refractionFactor;
 	float specularIntensity;
@@ -95,7 +97,6 @@ typedef struct {
 	RT64_VECTOR4 diffuseColorMix;
 	float fogMul;
 	float fogOffset;
-	int _padA;
 
 	// N64 Color combiner parameters.
 	int c0[4];
@@ -153,6 +154,10 @@ inline void RT64_ApplyMaterialAttributes(RT64_MATERIAL *dst, RT64_MATERIAL *src)
 		dst->reflectionFactor = src->reflectionFactor;
 	}
 
+	if (src->enabledAttributes & RT64_ATTRIBUTE_REFLECTION_FRESNEL_FACTOR) {
+		dst->reflectionFresnelFactor = src->reflectionFresnelFactor;
+	}
+
 	if (src->enabledAttributes & RT64_ATTRIBUTE_REFLECTION_SHINE_FACTOR) {
 		dst->reflectionShineFactor = src->reflectionShineFactor;
 	}
@@ -196,6 +201,7 @@ typedef void(*DrawDevicePtr)(RT64_DEVICE* device, int vsyncInterval);
 typedef void(*DestroyDevicePtr)(RT64_DEVICE* device);
 typedef RT64_VIEW* (*CreateViewPtr)(RT64_SCENE* scenePtr);
 typedef void(*SetViewPerspectivePtr)(RT64_VIEW* viewPtr, RT64_VECTOR3 eyePosition, RT64_VECTOR3 eyeFocus, RT64_VECTOR3 eyeUpDirection, float fovRadians, float nearDist, float farDist);
+typedef RT64_INSTANCE* (*GetViewRaytracedInstanceAtPtr)(RT64_VIEW *viewPtr, int x, int y);
 typedef void(*DestroyViewPtr)(RT64_VIEW* viewPtr);
 typedef RT64_SCENE* (*CreateScenePtr)(RT64_DEVICE* devicePtr);
 typedef void (*SetSceneLightsPtr)(RT64_SCENE* scenePtr, RT64_LIGHT* lightArray, int lightCount);
@@ -210,7 +216,7 @@ typedef RT64_TEXTURE* (*CreateTextureFromRGBA8Ptr)(RT64_DEVICE* devicePtr, const
 typedef void(*DestroyTexturePtr)(RT64_TEXTURE* texture);
 typedef RT64_INSPECTOR* (*CreateInspectorPtr)(RT64_DEVICE* devicePtr);
 typedef bool(*HandleMessageInspectorPtr)(RT64_INSPECTOR* inspectorPtr, UINT msg, WPARAM wParam, LPARAM lParam);
-typedef void (*SetMaterialInspectorPtr)(RT64_INSPECTOR* inspectorPtr, RT64_MATERIAL* material);
+typedef void (*SetMaterialInspectorPtr)(RT64_INSPECTOR* inspectorPtr, RT64_MATERIAL* material, const char *materialName);
 typedef void(*SetLightsInspectorPtr)(RT64_INSPECTOR* inspectorPtr, RT64_LIGHT* lights, int *lightCount, int maxLightCount);
 typedef void(*PrintToInspectorPtr)(RT64_INSPECTOR* inspectorPtr, const char* message);
 typedef void(*DestroyInspectorPtr)(RT64_INSPECTOR* inspectorPtr);
@@ -223,6 +229,7 @@ typedef struct {
 	DestroyDevicePtr DestroyDevice;
 	CreateViewPtr CreateView;
 	SetViewPerspectivePtr SetViewPerspective;
+	GetViewRaytracedInstanceAtPtr GetViewRaytracedInstanceAt;
 	DestroyViewPtr DestroyView;
 	CreateScenePtr CreateScene;
 	SetSceneLightsPtr SetSceneLights;
@@ -258,6 +265,7 @@ inline RT64_LIBRARY RT64_LoadLibrary() {
 		lib.DestroyDevice = (DestroyDevicePtr)(GetProcAddress(lib.handle, "RT64_DestroyDevice"));
 		lib.CreateView = (CreateViewPtr)(GetProcAddress(lib.handle, "RT64_CreateView"));
 		lib.SetViewPerspective = (SetViewPerspectivePtr)(GetProcAddress(lib.handle, "RT64_SetViewPerspective"));
+		lib.GetViewRaytracedInstanceAt = (GetViewRaytracedInstanceAtPtr)(GetProcAddress(lib.handle, "RT64_GetViewRaytracedInstanceAt"));
 		lib.DestroyView = (DestroyViewPtr)(GetProcAddress(lib.handle, "RT64_DestroyView"));
 		lib.CreateScene = (CreateScenePtr)(GetProcAddress(lib.handle, "RT64_CreateScene"));
 		lib.SetSceneLights = (SetSceneLightsPtr)(GetProcAddress(lib.handle, "RT64_SetSceneLights"));
