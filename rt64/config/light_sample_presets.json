@@ -3,6 +3,11 @@
         {
             "name": "Simple",
             "lightSampleSettings": [
+				{
+                    "groupBits": 4,
+                    "minSamples": 4,
+                    "maxSamples": 4
+                }
 			]
         },
         {
