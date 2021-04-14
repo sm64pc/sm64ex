@@ -67,6 +67,7 @@ sm64config.txt
 /sound/**/*.m64
 /sound/**/*.aiff
 !/textures/special/*.png
+!/textures/icons/*.png
 !/levels/**/*custom*.png
 !/levels/**/*custom*/**/*.png
 !/actors/**/*custom*.png
