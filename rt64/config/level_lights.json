@@ -1937,7 +1937,7 @@
                         },
                         {
                             "attenuationExponent": 0.25,
-                            "attenuationRadius": 2800.0,
+                            "attenuationRadius": 3050.0,
                             "diffuseColor": [
                                 0.8999999761581421,
                                 0.800000011920929,
@@ -2142,6 +2142,44 @@
                                 -5577.04443359375
                             ],
                             "shadowOffset": 100.0,
+                            "specularIntensity": 0.6499999761581421
+                        },
+                        {
+                            "attenuationExponent": 1.0,
+                            "attenuationRadius": 1750.0,
+                            "diffuseColor": [
+                                0.30000001192092896,
+                                0.4000000059604645,
+                                0.6000000238418579
+                            ],
+                            "flickerIntensity": 0.0,
+                            "groupBits": 2,
+                            "pointRadius": 10.0,
+                            "position": [
+                                1610.833740234375,
+                                1166.07568359375,
+                                -2424.0576171875
+                            ],
+                            "shadowOffset": 50.0,
+                            "specularIntensity": 0.6499999761581421
+                        },
+                        {
+                            "attenuationExponent": 0.4000000059604645,
+                            "attenuationRadius": 300.0,
+                            "diffuseColor": [
+                                0.800000011920929,
+                                0.30000001192092896,
+                                0.10000000149011612
+                            ],
+                            "flickerIntensity": 0.0,
+                            "groupBits": 2,
+                            "pointRadius": 10.0,
+                            "position": [
+                                1942.439208984375,
+                                811.4649658203125,
+                                -2075.4326171875
+                            ],
+                            "shadowOffset": 312.0,
                             "specularIntensity": 0.6499999761581421
                         }
                     ]
@@ -4421,9 +4459,9 @@
                             "attenuationExponent": 0.0,
                             "attenuationRadius": 0.0,
                             "diffuseColor": [
-                                0.30000001192092896,
                                 0.3499999940395355,
-                                0.44999998807907104
+                                0.3499999940395355,
+                                0.3499999940395355
                             ],
                             "flickerIntensity": 0.0,
                             "groupBits": 0,
@@ -4437,20 +4475,20 @@
                             "specularIntensity": 0.0
                         },
                         {
-                            "attenuationExponent": 0.0,
-                            "attenuationRadius": 99999997952.0,
+                            "attenuationExponent": 1.0,
+                            "attenuationRadius": 100000.0,
                             "diffuseColor": [
-                                0.800000011920929,
-                                0.75,
-                                0.6499999761581421
+                                0.5,
+                                0.6000000238418579,
+                                0.8999999761581421
                             ],
                             "flickerIntensity": 0.0,
                             "groupBits": 1,
-                            "pointRadius": 5000.0,
+                            "pointRadius": 100.0,
                             "position": [
-                                100000.0,
-                                200000.0,
-                                100000.0
+                                -2455.978759765625,
+                                6118.0322265625,
+                                -2362.620361328125
                             ],
                             "shadowOffset": 0.0,
                             "specularIntensity": 0.6499999761581421
@@ -5663,7 +5701,7 @@
                         },
                         {
                             "attenuationExponent": 1.0,
-                            "attenuationRadius": 1500.0,
+                            "attenuationRadius": 2000.0,
                             "diffuseColor": [
                                 1.0,
                                 0.800000011920929,
@@ -5682,7 +5720,7 @@
                         },
                         {
                             "attenuationExponent": 1.0,
-                            "attenuationRadius": 1500.0,
+                            "attenuationRadius": 2000.0,
                             "diffuseColor": [
                                 1.0,
                                 0.800000011920929,
@@ -5701,7 +5739,7 @@
                         },
                         {
                             "attenuationExponent": 1.0,
-                            "attenuationRadius": 1500.0,
+                            "attenuationRadius": 2000.0,
                             "diffuseColor": [
                                 1.0,
                                 0.800000011920929,
@@ -5720,7 +5758,7 @@
                         },
                         {
                             "attenuationExponent": 1.0,
-                            "attenuationRadius": 1500.0,
+                            "attenuationRadius": 2000.0,
                             "diffuseColor": [
                                 1.0,
                                 0.800000011920929,
@@ -5739,7 +5777,7 @@
                         },
                         {
                             "attenuationExponent": 1.0,
-                            "attenuationRadius": 1500.0,
+                            "attenuationRadius": 2000.0,
                             "diffuseColor": [
                                 1.0,
                                 0.800000011920929,
@@ -5758,7 +5796,7 @@
                         },
                         {
                             "attenuationExponent": 1.0,
-                            "attenuationRadius": 1500.0,
+                            "attenuationRadius": 2000.0,
                             "diffuseColor": [
                                 1.0,
                                 0.800000011920929,
@@ -5777,7 +5815,7 @@
                         },
                         {
                             "attenuationExponent": 1.0,
-                            "attenuationRadius": 1500.0,
+                            "attenuationRadius": 2000.0,
                             "diffuseColor": [
                                 1.0,
                                 0.800000011920929,
@@ -5796,7 +5834,7 @@
                         },
                         {
                             "attenuationExponent": 1.0,
-                            "attenuationRadius": 2500.0,
+                            "attenuationRadius": 2000.0,
                             "diffuseColor": [
                                 1.2000000476837158,
                                 1.0,
@@ -5815,7 +5853,7 @@
                         },
                         {
                             "attenuationExponent": 1.0,
-                            "attenuationRadius": 1500.0,
+                            "attenuationRadius": 2000.0,
                             "diffuseColor": [
                                 1.0,
                                 0.800000011920929,
@@ -5834,7 +5872,7 @@
                         },
                         {
                             "attenuationExponent": 1.0,
-                            "attenuationRadius": 1500.0,
+                            "attenuationRadius": 2000.0,
                             "diffuseColor": [
                                 1.0,
                                 0.800000011920929,
@@ -5853,7 +5891,7 @@
                         },
                         {
                             "attenuationExponent": 1.0,
-                            "attenuationRadius": 1500.0,
+                            "attenuationRadius": 2000.0,
                             "diffuseColor": [
                                 1.0,
                                 0.800000011920929,
@@ -5872,7 +5910,7 @@
                         },
                         {
                             "attenuationExponent": 1.0,
-                            "attenuationRadius": 1500.0,
+                            "attenuationRadius": 2000.0,
                             "diffuseColor": [
                                 1.0,
                                 0.800000011920929,
@@ -5891,7 +5929,7 @@
                         },
                         {
                             "attenuationExponent": 1.0,
-                            "attenuationRadius": 1500.0,
+                            "attenuationRadius": 2000.0,
                             "diffuseColor": [
                                 1.0,
                                 0.800000011920929,
@@ -5910,7 +5948,7 @@
                         },
                         {
                             "attenuationExponent": 1.0,
-                            "attenuationRadius": 1500.0,
+                            "attenuationRadius": 2000.0,
                             "diffuseColor": [
                                 1.0,
                                 0.800000011920929,
