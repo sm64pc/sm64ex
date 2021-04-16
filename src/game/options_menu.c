@@ -26,6 +26,7 @@
 
 #include "text/txtconv.h"
 #include "text/text-loader.h"
+#include "gfx_dimensions.h"
 
 u8 optmenu_open = 0;
 
@@ -328,14 +329,24 @@ static struct Option optsMain[] = {
     DEF_OPT_SUBMENU( menuStr[9], &menuCheats )
 };
 
-static struct SubMenu menuMain = DEF_SUBMENU( menuStr[3], optsMain );
+static struct SubMenu mainOptions[] = {
+#ifdef BETTERCAMERA
+    DEF_SUBMENU( menuStr[4], optsCamera ),
+#endif
+    // DEF_SUBMENU( menuStr[10], optsGame ),
+    DEF_SUBMENU( menuStr[5], optsControls ),
+    DEF_SUBMENU( menuStr[6], optsVideo ),
+    DEF_SUBMENU( menuStr[7], optsAudio ),
+    DEF_SUBMENU( menuStr[9], optsCheats )
+};
 
 /* implementation */
 
 static s32 optmenu_option_timer = 0;
 static u8 optmenu_hold_count = 0;
+static u8 current_index = 0;
 
-static struct SubMenu *currentMenu = &menuMain;
+static struct SubMenu *currentMenu;
 
 static inline s32 wrap_add(s32 a, const s32 b, const s32 min, const s32 max) {
     a += b;
@@ -355,7 +366,7 @@ static void uint_to_hex(u32 num, u8 *dst) {
 }
 
 //Displays a box.
-static void optmenu_draw_box(s16 x1, s16 y1, s16 x2, s16 y2, u8 r, u8 g, u8 b) {
+static void optmenu_draw_box(s16 x1, s16 y1, s16 x2, s16 y2, u8 r, u8 g, u8 b, u8 a) {
     gDPPipeSync(gDisplayListHead++);
     gDPSetRenderMode(gDisplayListHead++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
     gDPSetCycleType(gDisplayListHead++, G_CYC_FILL);
@@ -368,6 +379,7 @@ static void optmenu_draw_box(s16 x1, s16 y1, s16 x2, s16 y2, u8 r, u8 g, u8 b) {
 static void optmenu_draw_text(s16 x, s16 y, const u8 *str, u8 col) {
     const u8 textX = get_str_x_pos_from_center(x, (u8*)str, 10.0f);
     gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, 255);
+    
     print_generic_string(textX+1, y-1, str);
     if (col == 0) {
         gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
@@ -377,34 +389,78 @@ static void optmenu_draw_text(s16 x, s16 y, const u8 *str, u8 col) {
     print_generic_string(textX, y, str);
 }
 
-static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
-    u8 buf[32] = { 0 };
-    u8 * choice;    
+static void optmenu_draw_scaled_text(s16 x, s16 y, const u8 *str, int col, float scale) {    
+    gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, 255);
+    print_scaled_generic_string(x + 1, y-1, str, scale);
+    if (col == -1) {
+        gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
+    } else if (col == 0) {
+        gDPSetEnvColor(gDisplayListHead++, 255, 32, 32, 255);
+    } else if (col == 1) {
+        gDPSetEnvColor(gDisplayListHead++, 32, 255, 32, 255);
+    } else {
+        gDPSetEnvColor(gDisplayListHead++, 0, 255, 242, 255);        
+    }
+    print_scaled_generic_string(x, y, str, scale);
+}
 
-    if (opt->type == OPT_SUBMENU || opt->type == OPT_BUTTON)
-        y -= 6;
+#include <stdarg.h>
 
-    optmenu_draw_text(x, y, get_key_string(opt->label), sel);
+u8* concat(u8* a, u8* b) {
+    int a_size = sizeof(a) / sizeof(a[0]);
+    int b_size = sizeof(b) / sizeof(b[0]);;
+
+    u8* tmp = malloc((a_size + b_size + 1) * sizeof(u8));
+    memcpy(tmp,          a, (a_size) * sizeof(u8));
+    memcpy(tmp + b_size, b, b_size * sizeof(u8));
+    tmp[a_size + b_size] = 0xFF;
+    return tmp;
+}
+
+u8* join(u8* a, u8* b, u8* c) {     
+    int a_size = sizeof(a) / sizeof(a[0]);
+    int b_size = sizeof(b) / sizeof(b[0]);
+    int c_size = sizeof(c) / sizeof(c[0]);
+
+    u8* tmp = malloc((a_size + c_size + b_size + 1) * sizeof(u8));
+    memcpy(tmp,                   a, a_size * sizeof(u8));
+    memcpy(tmp + c_size,          c, c_size * sizeof(u8));
+    memcpy(tmp + c_size + b_size, b, b_size * sizeof(u8));
+    tmp[a_size + c_size + b_size] = 0xFF;
+    return tmp;
+}
+
+static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {    
+    u8 * choice;
+
+    u8* base = (u8*)get_key_string(opt->label);        
 
     s16 sx = 0;
     s16 sy = 0;
     s16 sw = 0;
     s16 sh = 0;    
+    u8* lbl;
+
+    int width;
+    u8* tmpText;
+    u8 buf[32] = { 0 };
+    float scale = 0.8f;
+
+    if(opt->type == OPT_TOGGLE || opt->type == OPT_CHOICE) {
+        lbl = base;
+        tmpText = get_key_string( opt->type == OPT_TOGGLE ? toggleStr[(int)*opt->bval] : opt->choices[*opt->uval]);
+
+        width = (getStringWidth(lbl, scale) + 8 + getStringWidth(tmpText, scale)) / 2;
+        optmenu_draw_scaled_text(x - width, y, lbl, -1, scale);
+        optmenu_draw_scaled_text(x - width + 1 + getStringWidth(lbl, scale), y, getTranslatedText(":"), -1, scale);
+        optmenu_draw_scaled_text(x - width + 9 + getStringWidth(lbl, scale), y, tmpText, opt->type & OPT_TOGGLE ? (int)*opt->bval : 2, scale);
+    }    
 
     switch (opt->type) {
-        case OPT_TOGGLE:
-            optmenu_draw_text(x, y-13, get_key_string(toggleStr[(int)*opt->bval]), sel);
-            break;
-
-        case OPT_CHOICE:
-            if(strcmp(opt->label, optsGameStr[0]) != 0){
-                choice = get_key_string(opt->choices[*opt->uval]);
-                optmenu_draw_text(x, y-13, choice, sel);
-            }else{
-                choice = getTranslatedText(get_language_name(*opt->uval));
-                optmenu_draw_text(x, y-13, choice, sel);
-                free(choice);
-            }
+        case OPT_BUTTON:
+            lbl = base;
+            width = getStringWidth(lbl, scale) / 2;
+            optmenu_draw_scaled_text(x - width, y, lbl, -1, scale);
             break;
 
         case OPT_SCROLL:
@@ -413,8 +469,14 @@ static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
             sw = sx + (127.0 * (((*opt->uval * 1.0) + __FLT_MIN__) / (opt->scrMax * 1.0)));
             sh = sy + 7;
 
-            render_hud_rectangle(sx - 1, sy - 1, (sx + 126), sh + 1, 180, 180, 180);
-            render_hud_rectangle(sx, sy, sw - 2, sh, 255, 255, 255);
+            lbl = base;
+            int_to_str(*opt->uval, buf);
+
+            width = (getStringWidth(lbl, scale) + 9 + getStringWidth(buf, scale) + 3) / 2;
+            optmenu_draw_scaled_text(x - width, y, lbl, -1, scale);
+            optmenu_draw_scaled_text(x - width + 1 + getStringWidth(lbl, scale), y, getTranslatedText(":"), -1, scale);
+            optmenu_draw_scaled_text(x - width + 9 + getStringWidth(lbl, scale), y, buf, 2, scale);
+            optmenu_draw_scaled_text(x - width + 9 + getStringWidth(lbl, scale) + getStringWidth(buf, scale) + 1, y, getTranslatedText("%"), 2, scale);
             break;
 
         case OPT_BIND:
@@ -487,48 +549,66 @@ static inline s16 get_hudstr_centered_x(const s16 sx, const u8 *str) {
     return sx - len * 6; // stride is 12
 }
 
+ void PDrintBox(s32 aX, s32 aY, s32 aWidth, s32 aHeight, u32 aColorRGBA, bool aAlignLeft) {
+    if ((aColorRGBA && 0xFF) != 0) {
+        Mtx *_Matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
+        if (!_Matrix) return;
+        if (aAlignLeft) {
+            create_dl_translation_matrix(MENU_MTX_PUSH, aX, aY + aHeight, 0);
+        } else {
+            create_dl_translation_matrix(MENU_MTX_PUSH, aX + aWidth, aY + aHeight, 0);
+        }
+        guScale(_Matrix, (f32) aWidth / 130.f, (f32) aHeight / 80.f, 1.f);
+        gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(_Matrix), G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
+        gDPSetEnvColor(gDisplayListHead++, ((aColorRGBA >> 24) & 0xFF), ((aColorRGBA >> 16) & 0xFF), ((aColorRGBA >> 8) & 0xFF), ((aColorRGBA >> 0) & 0xFF));
+        gSPDisplayList(gDisplayListHead++, dl_draw_text_bg_box);
+        gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
+        gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
+    }
+}
+
 //Options menu
 void optmenu_draw(void) {
     s16 scroll;
-    s16 scrollpos;
+    s16 scrollpos;    
 
     u8* label = get_key_string(currentMenu->label);
 
     const s16 labelX = get_hudstr_centered_x(160, label);
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
+    gDPSetEnvColor(gDisplayListHead++, 30, 30, 30, 255);
+    print_hud_lut_string(HUD_LUT_GLOBAL, labelX, 22, label);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
-    print_hud_lut_string(HUD_LUT_GLOBAL, labelX, 40, label);
+    print_hud_lut_string(HUD_LUT_GLOBAL, labelX, 20, label);
+    optmenu_draw_scaled_text(labelX - 50, SCREEN_HEIGHT - 34, getTranslatedText("<"), -1, 0.6f);
+    optmenu_draw_scaled_text(labelX + 130, SCREEN_HEIGHT - 34, getTranslatedText(">"), -1, 0.6f);
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
 
-    if (currentMenu->numOpts > 4) {
-        optmenu_draw_box(272, 90, 280, 208, 0x80, 0x80, 0x80);
-        scrollpos = 54 * ((f32)currentMenu->scroll / (currentMenu->numOpts-4));
-        optmenu_draw_box(272, 90+scrollpos, 280, 154+scrollpos, 0xFF, 0xFF, 0xFF);
-    }
+    PDrintBox(25, 50, SCREEN_WIDTH - 50, SCREEN_HEIGHT * 0.6, 0x00000080, true);
 
-    gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
-    gDPSetScissor(gDisplayListHead++, G_SC_NON_INTERLACE, 0, 80, SCREEN_WIDTH, SCREEN_HEIGHT);
+    int base = 175;
+    int padding = 15;
     for (u8 i = 0; i < currentMenu->numOpts; i++) {
-        scroll = 140 - 32 * i + currentMenu->scroll * 32;
+        scroll = base - padding * i + currentMenu->scroll * padding;
         // FIXME: just start from the first visible option bruh
-        if (scroll <= 140 && scroll > 32)
-            optmenu_draw_opt(&currentMenu->opts[i], 160, scroll, (currentMenu->select == i));
-    }
+        if (scroll <= base && scroll > padding) {
+            if((currentMenu->select == i))
+                PDrintBox(30, 174 - (15 * i), SCREEN_WIDTH - 60, padding, 0xFFF20040, true);
+            
+            gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
 
-    gDPSetScissor(gDisplayListHead++, G_SC_NON_INTERLACE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
-    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
-    // gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
-    // print_hud_lut_string(HUD_LUT_GLOBAL, 80, 90 + (32 * (currentMenu->select - currentMenu->scroll)), get_key_string(menuStr[0]));
-    // print_hud_lut_string(HUD_LUT_GLOBAL, 224, 90 + (32 * (currentMenu->select - currentMenu->scroll)), get_key_string(menuStr[0]));
-    // gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
+            optmenu_draw_opt(&currentMenu->opts[i], 160, scroll, (currentMenu->select == i));
+            gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
+            gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
+        }
+    }
 }
 
 //This has been separated for interesting reasons. Don't question it.
 void optmenu_draw_prompt(void) {
-    gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
-    optmenu_draw_text(264, 212, get_key_string(menuStr[1 + optmenu_open]), 0);
-    gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
+    //gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
+    //optmenu_draw_text(264, 212, get_key_string(menuStr[1 + optmenu_open]), 0);
+    //gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 }
 
 void optmenu_toggle(void) {
@@ -537,17 +617,18 @@ void optmenu_toggle(void) {
         play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
         #endif
 
+        currentMenu = &mainOptions[current_index];
+
         // HACK: hide the last option in main if cheats are disabled
-        menuMain.numOpts = sizeof(optsMain) / sizeof(optsMain[0]);
+        currentMenu->numOpts = sizeof(optsMain) / sizeof(optsMain[0]);
         if (!Cheats.EnableCheats) {
-            menuMain.numOpts--;
-            if (menuMain.select >= menuMain.numOpts) {
-                menuMain.select = 0; // don't bother
-                menuMain.scroll = 0;
+            currentMenu->numOpts--;
+            if (currentMenu->select >= currentMenu->numOpts) {
+                currentMenu->select = 0; // don't bother
+                currentMenu->scroll = 0;
             }
         }
-
-        currentMenu = &menuMain;
+        
         optmenu_open = 1;
         
         /* Resets l_counter to 0 every time the options menu is open */
@@ -582,6 +663,20 @@ void optmenu_check_buttons(void) {
     if (gPlayer1Controller->buttonPressed & R_TRIG)
         optmenu_toggle();
     
+    if(gPlayer1Controller->buttonPressed & L_CBUTTONS){
+        int s  = sizeof(mainOptions) / sizeof(mainOptions[0]);
+        if(current_index > 0) current_index--;
+        else current_index = s - 1;
+        currentMenu = &mainOptions[current_index];
+    }
+    if(gPlayer1Controller->buttonPressed & R_CBUTTONS){        
+        int s  = sizeof(mainOptions) / sizeof(mainOptions[0]);
+
+        if(current_index < s - 1) current_index++;
+        else current_index = 0;
+        currentMenu = &mainOptions[current_index];
+    }
+
     /* Enables cheats if the user press the L trigger 3 times while in the options menu. Also plays a sound. */
     
     if ((gPlayer1Controller->buttonPressed & L_TRIG) && !Cheats.EnableCheats) {
@@ -625,10 +720,11 @@ void optmenu_check_buttons(void) {
                     currentMenu->select = 0;
             }
 
-            if (currentMenu->select < currentMenu->scroll)
-                currentMenu->scroll = currentMenu->select;
-            else if (currentMenu->select > currentMenu->scroll + 3)
-                currentMenu->scroll = currentMenu->select - 3;
+            //TODO: Fix this thing - Moon64
+            // if (currentMenu->select < currentMenu->scroll)
+            //     currentMenu->scroll = currentMenu->select;
+            // else if (currentMenu->select > currentMenu->scroll + 3)
+            //     currentMenu->scroll = currentMenu->select - 3;
         }
     } else if (ABS(gPlayer1Controller->stickX) > 60) {
         if (allowInput) {

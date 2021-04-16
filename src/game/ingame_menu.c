@@ -31,6 +31,8 @@
 
 #include "text/txtconv.h"
 #include "text/text-loader.h"
+#include <math.h>
+#include "pc/gfx/gfx_pc.h"
 
 u16 gDialogColorFadeTimer;
 s8 gLastDialogLineNum;
@@ -358,66 +360,10 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
     UNUSED s8 mark = DIALOG_MARK_NONE; // unused in EU
     s32 strPos = 0;
     u8 lineNum = 1;
-#ifdef VERSION_EU
-    s16 xCoord = x;
-    s16 yCoord = 240 - y;
-#endif
-
-#ifndef VERSION_EU
     create_dl_translation_matrix(MENU_MTX_PUSH, x, y, 0.0f);
-#endif
 
     while (str[strPos] != DIALOG_CHAR_TERMINATOR) {
         switch (str[strPos]) {
-#ifdef VERSION_EU
-            case DIALOG_CHAR_SPACE:
-                xCoord += 5;
-                break;
-            case DIALOG_CHAR_NEWLINE:
-                yCoord += 16;
-                xCoord = x;
-                lineNum++;
-                break;
-            case DIALOG_CHAR_LOWER_A_GRAVE:
-            case DIALOG_CHAR_LOWER_A_CIRCUMFLEX:
-            case DIALOG_CHAR_LOWER_A_UMLAUT:
-                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('a'), str[strPos] & 0xF);
-                break;
-            case DIALOG_CHAR_UPPER_A_UMLAUT: // @bug grave and circumflex (0x64-0x65) are absent here
-                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('A'), str[strPos] & 0xF);
-                break;
-            case DIALOG_CHAR_LOWER_E_GRAVE:
-            case DIALOG_CHAR_LOWER_E_CIRCUMFLEX:
-            case DIALOG_CHAR_LOWER_E_UMLAUT:
-            case DIALOG_CHAR_LOWER_E_ACUTE:
-                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('e'), str[strPos] & 0xF);
-                break;
-            case DIALOG_CHAR_UPPER_E_GRAVE:
-            case DIALOG_CHAR_UPPER_E_CIRCUMFLEX:
-            case DIALOG_CHAR_UPPER_E_UMLAUT:
-            case DIALOG_CHAR_UPPER_E_ACUTE:
-                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('E'), str[strPos] & 0xF);
-                break;
-            case DIALOG_CHAR_LOWER_U_GRAVE:
-            case DIALOG_CHAR_LOWER_U_CIRCUMFLEX:
-            case DIALOG_CHAR_LOWER_U_UMLAUT:
-                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('u'), str[strPos] & 0xF);
-                break;
-            case DIALOG_CHAR_UPPER_U_UMLAUT: // @bug grave and circumflex (0x84-0x85) are absent here
-                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('U'), str[strPos] & 0xF);
-                break;
-            case DIALOG_CHAR_LOWER_O_CIRCUMFLEX:
-            case DIALOG_CHAR_LOWER_O_UMLAUT:
-                render_lowercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('o'), str[strPos] & 0xF);
-                break;
-            case DIALOG_CHAR_UPPER_O_UMLAUT: // @bug circumflex (0x95) is absent here
-                render_uppercase_diacritic(&xCoord, &yCoord, ASCII_TO_DIALOG('O'), str[strPos] & 0xF);
-                break;
-            case DIALOG_CHAR_LOWER_I_CIRCUMFLEX:
-            case DIALOG_CHAR_LOWER_I_UMLAUT:
-                render_lowercase_diacritic(&xCoord, &yCoord, DIALOG_CHAR_I_NO_DIA, str[strPos] & 0xF);
-                break;
-#else // i.e. not EU
             case DIALOG_CHAR_DAKUTEN:
                 mark = DIALOG_MARK_DAKUTEN;
                 break;
@@ -434,46 +380,19 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
                 render_generic_char(DIALOG_CHAR_PERIOD_OR_HANDAKUTEN);
                 gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
                 break;
-#endif
-#if !defined(VERSION_JP) && !defined(VERSION_SH)
             case DIALOG_CHAR_SLASH:
-#ifdef VERSION_US
                 create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[DIALOG_CHAR_SPACE] * 2), 0.0f, 0.0f);
-#elif defined(VERSION_EU)
-                xCoord += gDialogCharWidths[DIALOG_CHAR_SPACE] * 2;
-#endif
                 break;
             case DIALOG_CHAR_MULTI_THE:
-#ifdef VERSION_EU
-                render_multi_text_string(&xCoord, &yCoord, STRING_THE);
-#else
                 render_multi_text_string(STRING_THE);
-#endif
                 break;
             case DIALOG_CHAR_MULTI_YOU:
-#ifdef VERSION_EU
-                render_multi_text_string(&xCoord, &yCoord, STRING_YOU);
-#else
                 render_multi_text_string(STRING_YOU);
-#endif
                 break;
-#endif
-#ifndef VERSION_EU
             case DIALOG_CHAR_SPACE:
-#if defined(VERSION_JP) || defined(VERSION_SH)
-                create_dl_translation_matrix(MENU_MTX_NOPUSH, 5.0f, 0.0f, 0.0f);
-                break;
-#else
                 create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[DIALOG_CHAR_SPACE]), 0.0f, 0.0f);
-#endif
-#endif
                 break; // ? needed to match
             default:
-#ifdef VERSION_EU
-                render_generic_char_at_pos(xCoord, yCoord, str[strPos]);
-                xCoord += gDialogCharWidths[str[strPos]];
-                break;
-#else
                 render_generic_char(str[strPos]);
                 if (mark != DIALOG_MARK_NONE) {
                     create_dl_translation_matrix(MENU_MTX_PUSH, 5.0f, 5.0f, 0.0f);
@@ -481,22 +400,84 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
                     gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
                     mark = DIALOG_MARK_NONE;
                 }
-
-#if defined(VERSION_JP) || defined(VERSION_SH)
-                create_dl_translation_matrix(MENU_MTX_NOPUSH, 10.0f, 0.0f, 0.0f);
-#else
                 create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[str[strPos]]), 0.0f, 0.0f);
-                break; // what an odd difference. US added a useless break here.
-#endif
-#endif
         }
 
         strPos++;
     }
 
-#ifndef VERSION_EU
     gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
-#endif
+}
+
+void print_scaled_generic_string(s16 x, s16 y, const u8 *str, float scale) {
+    UNUSED s8 mark = DIALOG_MARK_NONE; // unused in EU
+    s32 strPos = 0;
+    u8 lineNum = 1;
+
+    Mtx *_Matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
+    if (!_Matrix) return;
+    create_dl_translation_matrix(MENU_MTX_PUSH, x, y, 0.0f);
+    guScale(_Matrix, scale, scale, 1.f);
+    gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(_Matrix), G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
+
+    while (str[strPos] != DIALOG_CHAR_TERMINATOR) {
+        switch (str[strPos]) {
+            case DIALOG_CHAR_DAKUTEN:
+                mark = DIALOG_MARK_DAKUTEN;
+                break;
+            case DIALOG_CHAR_PERIOD_OR_HANDAKUTEN:
+                mark = DIALOG_MARK_HANDAKUTEN;
+                break;
+            case DIALOG_CHAR_NEWLINE:
+                gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
+                create_dl_translation_matrix(MENU_MTX_PUSH, x, y - (lineNum * MAX_STRING_WIDTH), 0.0f);
+                lineNum++;
+                break;
+            case DIALOG_CHAR_PERIOD:
+                create_dl_translation_matrix(MENU_MTX_PUSH, -2.0f, -5.0f, 0.0f);
+                render_generic_char(DIALOG_CHAR_PERIOD_OR_HANDAKUTEN);
+                gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
+                break;
+            case DIALOG_CHAR_SLASH:
+                create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[DIALOG_CHAR_SPACE] * 2), 0.0f, 0.0f);
+                break;
+            case DIALOG_CHAR_MULTI_THE:
+                render_multi_text_string(STRING_THE);
+                break;
+            case DIALOG_CHAR_MULTI_YOU:
+                render_multi_text_string(STRING_YOU);
+                break;
+            case DIALOG_CHAR_SPACE:
+                create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[DIALOG_CHAR_SPACE]), 0.0f, 0.0f);
+                break; // ? needed to match
+            default:
+                render_generic_char(str[strPos]);
+                if (mark != DIALOG_MARK_NONE) {
+                    create_dl_translation_matrix(MENU_MTX_PUSH, 5.0f, 5.0f, 0.0f);
+                    guScale(gDisplayListHead++, scale, scale, scale);
+                    render_generic_char(mark + 0xEF);
+                    gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
+                    mark = DIALOG_MARK_NONE;
+                }
+                create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[str[strPos]]), 0.0f, 0.0f);
+        }
+
+        strPos++;
+    }
+    
+    create_dl_scale_matrix(MENU_MTX_NOPUSH, 1.0f, 1.0f, 1.0f);
+    gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
+}
+
+f32 getStringWidth(u8* txt, float scale) {
+   f32 size = 0;
+   s32 strPos = 0;
+
+   while (txt[strPos] != DIALOG_CHAR_TERMINATOR) {
+       size += (f32)(gDialogCharWidths[txt[strPos]]) * scale;
+       strPos++;
+   }
+   return size;
 }
 
 #ifdef VERSION_EU
@@ -529,42 +510,14 @@ void print_hud_lut_string(s8 hudLUT, s16 x, s16 y, const u8 *str) {
     if (hudLUT == HUD_LUT_JPMENU) {
         xStride = 16;
     } else { // HUD_LUT_GLOBAL
-#if defined(VERSION_JP)
-        xStride = 14;
-#else
         xStride = 12; //? Shindou uses this.
-#endif
     }
 
     while (str[strPos] != GLOBAR_CHAR_TERMINATOR) {
-#ifdef VERSION_EU
-        switch (str[strPos]) {
-            case GLOBAL_CHAR_SPACE:
-                curX += xStride / 2;
-                break;
-            case HUD_CHAR_A_UMLAUT:
-                print_hud_char_umlaut(curX, curY, ASCII_TO_DIALOG('A'));
-                curX += xStride;
-                break;
-            case HUD_CHAR_O_UMLAUT:
-                print_hud_char_umlaut(curX, curY, ASCII_TO_DIALOG('O'));
-                curX += xStride;
-                break;
-            case HUD_CHAR_U_UMLAUT:
-                print_hud_char_umlaut(curX, curY, ASCII_TO_DIALOG('U'));
-                curX += xStride;
-                break;
-            default:
-#endif
-#if defined(VERSION_US) || defined(VERSION_SH)
         if (str[strPos] == GLOBAL_CHAR_SPACE) {
-            if (0) //! dead code
-            {
-            }
             curX += 8;
-            ; //! useless statement
         } else {
-#endif
+
             gDPPipeSync(gDisplayListHead++);
 
             if (hudLUT == HUD_LUT_JPMENU)
@@ -578,14 +531,8 @@ void print_hud_lut_string(s8 hudLUT, s16 x, s16 y, const u8 *str) {
                                 (curY + 16) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
 
             curX += xStride;
-#ifdef VERSION_EU
-            break;
         }
-#endif
-#if defined(VERSION_US) || defined(VERSION_SH)
-        }
-#endif
-    strPos++;
+        strPos++;
     }
 }
 
@@ -1671,9 +1618,7 @@ void render_dialog_entries(void) {
 
     render_dialog_box_type(dialog, dialog->linesPerBox);
 
-    gDPSetScissor(gDisplayListHead++, G_SC_NON_INTERLACE,
-                  0,
-                  ensure_nonnegative(DIAG_VAL2 - dialog->width),
+    gDPSetScissor(gDisplayListHead++, G_SC_NON_INTERLACE, 0, ensure_nonnegative(DIAG_VAL2 - dialog->width),
 #ifdef VERSION_EU
                   SCREEN_WIDTH,
                   ensure_nonnegative((240 - dialog->width) + ((dialog->linesPerBox * 80) / DIAG_VAL4) / gDialogBoxScale));
@@ -2242,7 +2187,7 @@ void highlight_last_course_complete_stars(void) {
     gDialogLineNum = courseDone;
 }
 
-void print_hud_pause_colorful_str(void) {    
+void print_hud_pause_colorful_str(void) {
 
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
@@ -2374,18 +2319,12 @@ s16 render_pause_courses_and_castle(void) {
             render_pause_my_score_coins();
             render_pause_red_coins();
             
-/* Added support for the "Exit course at any time" cheat */
+            /* Added support for the "Exit course at any time" cheat */
             if ((gMarioStates[0].action & ACT_FLAG_PAUSE_EXIT) || (Cheats.EnableCheats && Cheats.ExitAnywhere)) {
                 render_pause_course_options(99, 93, &gDialogLineNum, 15);
             }
 
-#ifdef VERSION_EU
-            if (gPlayer3Controller->buttonPressed & (A_BUTTON | Z_TRIG | START_BUTTON))
-#else
-            if (gPlayer3Controller->buttonPressed & A_BUTTON
-             || gPlayer3Controller->buttonPressed & START_BUTTON)
-#endif
-            {
+            if (gPlayer3Controller->buttonPressed & (A_BUTTON | START_BUTTON)) {
                 level_set_transition(0, 0);
                 play_sound(SOUND_MENU_PAUSE_2, gDefaultSoundArgs);
                 gDialogBoxState = DIALOG_STATE_OPENING;
@@ -2406,13 +2345,7 @@ s16 render_pause_courses_and_castle(void) {
             render_pause_castle_menu_box(160, 143);
             render_pause_castle_main_strings(104, 60);
 
-#ifdef VERSION_EU
-            if (gPlayer3Controller->buttonPressed & (A_BUTTON | Z_TRIG | START_BUTTON))
-#else
-            if (gPlayer3Controller->buttonPressed & A_BUTTON
-             || gPlayer3Controller->buttonPressed & START_BUTTON)
-#endif
-            {
+            if (gPlayer3Controller->buttonPressed & (A_BUTTON | START_BUTTON)) {
                 level_set_transition(0, 0);
                 play_sound(SOUND_MENU_PAUSE_2, gDefaultSoundArgs);
                 gMenuMode = -1;
@@ -2692,9 +2625,7 @@ s16 render_menus_and_dialogs() {
 
     if (gMenuMode != -1) {
         switch (gMenuMode) {
-            case 0:
-                mode = render_pause_courses_and_castle();
-                break;
+            case 0:                
             case 1:
                 mode = render_pause_courses_and_castle();
                 break;

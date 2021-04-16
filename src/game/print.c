@@ -404,25 +404,9 @@ void render_text_labels(void) {
     for (i = 0; i < sTextLabelsCount; i++) {
         for (j = 0; j < sTextLabels[i]->length; j++) {
             glyphIndex = char_to_glyph_index(sTextLabels[i]->buffer[j]);
-
             if (glyphIndex != GLYPH_SPACE) {
-#ifdef VERSION_EU
-                // Beta Key was removed by EU, so glyph slot reused.
-                // This produces a colorful Ü.
-                if (glyphIndex == GLYPH_BETA_KEY) {
-                    add_glyph_texture(GLYPH_U);
-                    render_textrect(sTextLabels[i]->x, sTextLabels[i]->y, j);
-
-                    add_glyph_texture(GLYPH_UMLAUT);
-                    render_textrect(sTextLabels[i]->x, sTextLabels[i]->y + 3, j);
-                } else {
-                    add_glyph_texture(glyphIndex);
-                    render_textrect(sTextLabels[i]->x, sTextLabels[i]->y, j);
-                }
-#else
                 add_glyph_texture(glyphIndex);
                 render_textrect(sTextLabels[i]->x, sTextLabels[i]->y, j);
-#endif
             }
         }
 

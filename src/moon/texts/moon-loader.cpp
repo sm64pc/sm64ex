@@ -117,7 +117,6 @@ void Moon_LoadLanguage( string path ) {
 
     languages2.push_back(language);
     languagesAmount = languages2.size();
-    printf("Current Size: %d\n", languagesAmount);
 }
 
 u8 *Moon_GetKey(string key) {
