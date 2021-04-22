@@ -34,7 +34,7 @@ struct LanguageEntry {
     std::vector<struct DialogEntry*> dialogs;
 };
 
-extern std::vector<LanguageEntry*> languages2;
+extern std::vector<LanguageEntry*> languages;
 
 void Moon_LoadLanguage( std::string path );
 void Moon_InitLanguages( char *exePath, char *gamedir ) ;

@@ -103,6 +103,40 @@ enum DialogSpecialChars {
     DIALOG_CHAR_TERMINATOR = 0xFF
 };
 
+extern u8 gDialogCharWidths[];
+
+enum DialogBoxState {
+    DIALOG_STATE_OPENING,
+    DIALOG_STATE_VERTICAL,
+    DIALOG_STATE_HORIZONTAL,
+    DIALOG_STATE_CLOSING
+};
+
+enum DialogBoxPageState {
+    DIALOG_PAGE_STATE_NONE,
+    DIALOG_PAGE_STATE_SCROLL,
+    DIALOG_PAGE_STATE_END
+};
+
+enum DialogBoxType {
+    DIALOG_TYPE_ROTATE, // used in NPCs and level messages
+    DIALOG_TYPE_ZOOM    // used in signposts and wall signs and etc
+};
+
+enum DialogMark { DIALOG_MARK_NONE = 0, DIALOG_MARK_DAKUTEN = 1, DIALOG_MARK_HANDAKUTEN = 2 };
+
+#define MAX_STRING_WIDTH 16
+
+struct MultiTextEntry {
+    u8 length;
+    u8 str[4];
+};
+
+#define TEXT_THE_RAW ASCII_TO_DIALOG('t'), ASCII_TO_DIALOG('h'), ASCII_TO_DIALOG('e'), 0x00
+#define TEXT_YOU_RAW ASCII_TO_DIALOG('y'), ASCII_TO_DIALOG('o'), ASCII_TO_DIALOG('u'), 0x00
+
+enum MultiStringIDs { STRING_THE, STRING_YOU };
+
 extern s32 gDialogResponse;
 extern u16 gDialogColorFadeTimer;
 extern s8 gLastDialogLineNum;
@@ -116,7 +150,6 @@ void create_dl_identity_matrix(void);
 void create_dl_translation_matrix(s8 pushOp, f32 x, f32 y, f32 z);
 void create_dl_ortho_matrix(void);
 void print_generic_string(s16 x, s16 y, const u8 *str);
-void print_scaled_generic_string(s16 x, s16 y, const u8 *str, float scale);
 f32 getStringWidth(u8* txt, float scale);
 void print_hud_lut_string(s8 hudLUT, s16 x, s16 y, const u8 *str);
 void print_menu_generic_string(s16 x, s16 y, const u8 *str);

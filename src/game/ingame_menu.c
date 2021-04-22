@@ -49,30 +49,9 @@ s8 gRedCoinsCollected;
 extern u8 gLastCompletedCourseNum;
 extern u8 gLastCompletedStarNum;
 
-enum DialogBoxState {
-    DIALOG_STATE_OPENING,
-    DIALOG_STATE_VERTICAL,
-    DIALOG_STATE_HORIZONTAL,
-    DIALOG_STATE_CLOSING
-};
-
-enum DialogBoxPageState {
-    DIALOG_PAGE_STATE_NONE,
-    DIALOG_PAGE_STATE_SCROLL,
-    DIALOG_PAGE_STATE_END
-};
-
-enum DialogBoxType {
-    DIALOG_TYPE_ROTATE, // used in NPCs and level messages
-    DIALOG_TYPE_ZOOM    // used in signposts and wall signs and etc
-};
-
-enum DialogMark { DIALOG_MARK_NONE = 0, DIALOG_MARK_DAKUTEN = 1, DIALOG_MARK_HANDAKUTEN = 2 };
-
 #define DEFAULT_DIALOG_BOX_ANGLE 90.0f
 #define DEFAULT_DIALOG_BOX_SCALE 19.0f
 
-#if !defined(VERSION_JP) && !defined(VERSION_SH)
 u8 gDialogCharWidths[256] = { // TODO: Is there a way to auto generate this?
     7,  7,  7,  7,  7,  7,  7,  7,  7,  7,  6,  6,  6,  6,  6,  6,
     6,  6,  5,  6,  6,  5,  8,  8,  6,  6,  6,  6,  6,  5,  6,  6,
@@ -80,30 +59,17 @@ u8 gDialogCharWidths[256] = { // TODO: Is there a way to auto generate this?
     7,  5,  5,  5,  6,  5,  5,  5,  5,  5,  7,  7,  5,  5,  4,  4,
     8,  6,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
     8,  8,  8,  8,  7,  7,  6,  7,  7,  0,  0,  0,  0,  0,  0,  0,
-#ifdef VERSION_EU
-    6,  6,  6,  0,  6,  6,  6,  0,  0,  0,  0,  0,  0,  0,  0,  4,
-    5,  5,  5,  5,  6,  6,  6,  6,  0,  0,  0,  0,  0,  0,  0,  0,
-    5,  5,  5,  0,  6,  6,  6,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  5,  5,  0,  0,  6,  6,  0,  0,  0,  0,  0,  0,  0,  5,  6,
-    0,  4,  4,  0,  0,  5,  5,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-#else
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4,
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  5,  6,
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-#endif
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-#ifdef VERSION_EU
-    7,  5, 10,  5,  9,  8,  4,  0,  0,  0,  0,  5,  5,  6,  5,  0,
-#else
     7,  5, 10,  5,  9,  8,  4,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-#endif
     0,  0,  5,  7,  7,  6,  6,  8,  0,  8, 10,  6,  4, 10,  0,  0
 };
-#endif
 
 s8 gDialogBoxState = DIALOG_STATE_OPENING;
 f32 gDialogBoxOpenTimer = DEFAULT_DIALOG_BOX_ANGLE;
@@ -306,17 +272,6 @@ void render_uppercase_diacritic(s16 *xPos, s16 *yPos, u8 letter, u8 diacritic) {
 }
 #endif // VERSION_EU
 
-#if !defined(VERSION_JP) && !defined(VERSION_SH)
-struct MultiTextEntry {
-    u8 length;
-    u8 str[4];
-};
-
-#define TEXT_THE_RAW ASCII_TO_DIALOG('t'), ASCII_TO_DIALOG('h'), ASCII_TO_DIALOG('e'), 0x00
-#define TEXT_YOU_RAW ASCII_TO_DIALOG('y'), ASCII_TO_DIALOG('o'), ASCII_TO_DIALOG('u'), 0x00
-
-enum MultiStringIDs { STRING_THE, STRING_YOU };
-
 /*
  * Place the multi-text string according to the ID passed. (US, EU)
  * 0: 'the'
@@ -344,13 +299,6 @@ void render_multi_text_string(s16 *xPos, s16 *yPos, s8 multiTextID)
 #endif
     }
 }
-#endif
-
-#if defined(VERSION_JP) || defined(VERSION_SH)
-#define MAX_STRING_WIDTH 18
-#else
-#define MAX_STRING_WIDTH 16
-#endif
 
 /**
  * Prints a generic white string.
@@ -409,65 +357,7 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
     gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
 }
 
-void print_scaled_generic_string(s16 x, s16 y, const u8 *str, float scale) {
-    UNUSED s8 mark = DIALOG_MARK_NONE; // unused in EU
-    s32 strPos = 0;
-    u8 lineNum = 1;
 
-    Mtx *_Matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
-    if (!_Matrix) return;
-    create_dl_translation_matrix(MENU_MTX_PUSH, x, y, 0.0f);
-    guScale(_Matrix, scale, scale, 1.f);
-    gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(_Matrix), G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
-
-    while (str[strPos] != DIALOG_CHAR_TERMINATOR) {
-        switch (str[strPos]) {
-            case DIALOG_CHAR_DAKUTEN:
-                mark = DIALOG_MARK_DAKUTEN;
-                break;
-            case DIALOG_CHAR_PERIOD_OR_HANDAKUTEN:
-                mark = DIALOG_MARK_HANDAKUTEN;
-                break;
-            case DIALOG_CHAR_NEWLINE:
-                gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
-                create_dl_translation_matrix(MENU_MTX_PUSH, x, y - (lineNum * MAX_STRING_WIDTH), 0.0f);
-                lineNum++;
-                break;
-            case DIALOG_CHAR_PERIOD:
-                create_dl_translation_matrix(MENU_MTX_PUSH, -2.0f, -5.0f, 0.0f);
-                render_generic_char(DIALOG_CHAR_PERIOD_OR_HANDAKUTEN);
-                gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
-                break;
-            case DIALOG_CHAR_SLASH:
-                create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[DIALOG_CHAR_SPACE] * 2), 0.0f, 0.0f);
-                break;
-            case DIALOG_CHAR_MULTI_THE:
-                render_multi_text_string(STRING_THE);
-                break;
-            case DIALOG_CHAR_MULTI_YOU:
-                render_multi_text_string(STRING_YOU);
-                break;
-            case DIALOG_CHAR_SPACE:
-                create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[DIALOG_CHAR_SPACE]), 0.0f, 0.0f);
-                break; // ? needed to match
-            default:
-                render_generic_char(str[strPos]);
-                if (mark != DIALOG_MARK_NONE) {
-                    create_dl_translation_matrix(MENU_MTX_PUSH, 5.0f, 5.0f, 0.0f);
-                    guScale(gDisplayListHead++, scale, scale, scale);
-                    render_generic_char(mark + 0xEF);
-                    gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
-                    mark = DIALOG_MARK_NONE;
-                }
-                create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[str[strPos]]), 0.0f, 0.0f);
-        }
-
-        strPos++;
-    }
-    
-    create_dl_scale_matrix(MENU_MTX_NOPUSH, 1.0f, 1.0f, 1.0f);
-    gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
-}
 
 f32 getStringWidth(u8* txt, float scale) {
    f32 size = 0;

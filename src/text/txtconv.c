@@ -242,7 +242,7 @@ u8 *getTranslatedText(const char *txt){
                     }
                 }
             } else {
-                printf("Loading File: missing special character found: %s\n", tmpSpecialChar);
+                // printf("Loading File: missing special character found: %s\n", tmpSpecialChar);
             }
             memset(tmpSpecialChar, 0, sizeof(tmpSpecialChar));
         } else {

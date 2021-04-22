@@ -9,7 +9,6 @@ extern u8 languagesAmount;
 extern struct DialogEntry* * dialogPool;
 extern u8* * seg2_course_name_table;
 extern u8* * seg2_act_name_table;
-extern struct LanguageEntry* * languages;
 
 struct StringTable {
     char* key;

@@ -27,6 +27,8 @@
 #include "text/txtconv.h"
 #include "text/text-loader.h"
 #include "gfx_dimensions.h"
+#include "gfx_dimensions.h"
+#include "moon/utils/moon-gfx.h"
 
 u8 optmenu_open = 0;
 
@@ -391,7 +393,7 @@ static void optmenu_draw_text(s16 x, s16 y, const u8 *str, u8 col) {
 
 static void optmenu_draw_scaled_text(s16 x, s16 y, const u8 *str, int col, float scale) {    
     gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, 255);
-    print_scaled_generic_string(x + 1, y-1, str, scale);
+    moon_draw_text(x + 1, y-1, str, scale);
     if (col == -1) {
         gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
     } else if (col == 0) {
@@ -401,7 +403,7 @@ static void optmenu_draw_scaled_text(s16 x, s16 y, const u8 *str, int col, float
     } else {
         gDPSetEnvColor(gDisplayListHead++, 0, 255, 242, 255);        
     }
-    print_scaled_generic_string(x, y, str, scale);
+    moon_draw_text(x, y, str, scale);    
 }
 
 #include <stdarg.h>
@@ -450,16 +452,16 @@ static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
         lbl = base;
         tmpText = get_key_string( opt->type == OPT_TOGGLE ? toggleStr[(int)*opt->bval] : opt->choices[*opt->uval]);
 
-        width = (getStringWidth(lbl, scale) + 8 + getStringWidth(tmpText, scale)) / 2;
+        width = (moon_get_text_width(lbl, scale, FALSE) + 8 + moon_get_text_width(tmpText, scale, FALSE)) / 2;
         optmenu_draw_scaled_text(x - width, y, lbl, -1, scale);
-        optmenu_draw_scaled_text(x - width + 1 + getStringWidth(lbl, scale), y, getTranslatedText(":"), -1, scale);
-        optmenu_draw_scaled_text(x - width + 9 + getStringWidth(lbl, scale), y, tmpText, opt->type & OPT_TOGGLE ? (int)*opt->bval : 2, scale);
+        optmenu_draw_scaled_text(x - width + 1 + moon_get_text_width(lbl, scale, FALSE), y, getTranslatedText(":"), -1, scale);
+        optmenu_draw_scaled_text(x - width + 9 + moon_get_text_width(lbl, scale, FALSE), y, tmpText, opt->type & OPT_TOGGLE ? (int)*opt->bval : 2, scale);
     }    
 
     switch (opt->type) {
         case OPT_BUTTON:
             lbl = base;
-            width = getStringWidth(lbl, scale) / 2;
+            width = moon_get_text_width(lbl, scale, FALSE) / 2;
             optmenu_draw_scaled_text(x - width, y, lbl, -1, scale);
             break;
 
@@ -472,26 +474,37 @@ static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
             lbl = base;
             int_to_str(*opt->uval, buf);
 
-            width = (getStringWidth(lbl, scale) + 9 + getStringWidth(buf, scale) + 3) / 2;
+            width = (moon_get_text_width(lbl, scale, FALSE) + 9 + moon_get_text_width(buf, scale, FALSE) + 3) / 2;
             optmenu_draw_scaled_text(x - width, y, lbl, -1, scale);
-            optmenu_draw_scaled_text(x - width + 1 + getStringWidth(lbl, scale), y, getTranslatedText(":"), -1, scale);
-            optmenu_draw_scaled_text(x - width + 9 + getStringWidth(lbl, scale), y, buf, 2, scale);
-            optmenu_draw_scaled_text(x - width + 9 + getStringWidth(lbl, scale) + getStringWidth(buf, scale) + 1, y, getTranslatedText("%"), 2, scale);
+            optmenu_draw_scaled_text(x - width + 1 + moon_get_text_width(lbl, scale, FALSE), y, getTranslatedText(":"), -1, scale);
+            optmenu_draw_scaled_text(x - width + 9 + moon_get_text_width(lbl, scale, FALSE), y, buf, 2, scale);
+            optmenu_draw_scaled_text(x - width + 9 + moon_get_text_width(lbl, scale, FALSE) + moon_get_text_width(buf, scale, FALSE) + 1, y, getTranslatedText("%"), 2, scale);
             break;
 
         case OPT_BIND:
-            x = 112;
-            for (u8 i = 0; i < MAX_BINDS; ++i, x += 48) {
+            lbl = base;
+            tmpText = getTranslatedText( "Test");
+
+            width = (moon_get_text_width(lbl, scale, FALSE)) / 2;
+            optmenu_draw_scaled_text(x - width, y, lbl, -1, scale);
+            // optmenu_draw_scaled_text(x - width + 1 + moon_get_text_width(lbl, scale), y, getTranslatedText("-"), -1, scale);
+            // optmenu_draw_scaled_text(x - width + 9 + moon_get_text_width(lbl, scale), y, tmpText, opt->type & OPT_TOGGLE ? (int)*opt->bval : 2, scale);
+            
+            int base_width = moon_get_text_width(lbl, scale, FALSE);
+            int padding = 3;
+            u8* txt;
+
+            for (u8 i = 0; i < MAX_BINDS; ++i) {
                 const u8 white = (sel && (optmenu_bind_idx == i));
                 // TODO: button names
                 if (opt->uval[i] == VK_INVALID) {
-                    if (optmenu_binding && white)
-                        optmenu_draw_text(x, y-13, get_key_string(bindStr[1]), 1);
-                    else
-                        optmenu_draw_text(x, y-13, get_key_string(bindStr[0]), white);
-                } else {
-                    uint_to_hex(opt->uval[i], buf);
-                    optmenu_draw_text(x, y-13, buf, white);
+                    txt = get_key_string(bindStr[optmenu_binding && white ? 1 : 0]);
+                    base_width += moon_get_text_width(txt, scale, FALSE) + padding;
+                    optmenu_draw_scaled_text(x - width + base_width, y, txt, -1, scale);
+                } else {                    
+                    u8* txt = getTranslatedText("0000");
+                    base_width += moon_get_text_width(txt, scale, FALSE) + padding;
+                    optmenu_draw_scaled_text(x - width + base_width, y, txt, -1, scale);
                 }
             }
             break;

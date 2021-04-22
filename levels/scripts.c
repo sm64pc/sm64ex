@@ -126,6 +126,10 @@ const LevelScript level_main_scripts_entry[] = {
     JUMP_IF(/*op*/ OP_EQ, /*arg*/ -9, script_L5),
 };
 
+static const LevelScript script_N64[] = {
+    EXIT_AND_EXECUTE(/*seg*/ 0x14, _introSegmentRomStart, _introSegmentRomEnd, level_intro_n64),
+};
+
 static const LevelScript script_L1[] = {
     EXIT_AND_EXECUTE(/*seg*/ 0x14, _introSegmentRomStart, _introSegmentRomEnd, level_intro_entry_1),
 };

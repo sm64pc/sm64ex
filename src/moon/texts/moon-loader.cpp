@@ -10,6 +10,7 @@
 extern "C" {
 #include "text/text-loader.h"
 #include "pc/platform.h"
+#include "pc/configfile.h"
 #include "text/libs/io_utils.h"
 }
 
@@ -19,7 +20,7 @@ using namespace rapidjson;
 typedef GenericDocument<UTF16<>> WDocument;
 typedef GenericValue<UTF16<>> WValue;
 
-vector<LanguageEntry*> languages2;
+vector<LanguageEntry*> languages;
 
 LanguageEntry *current;
 
@@ -115,8 +116,8 @@ void Moon_LoadLanguage( string path ) {
         ));
     }
 
-    languages2.push_back(language);
-    languagesAmount = languages2.size();
+    languages.push_back(language);
+    languagesAmount = languages.size();
 }
 
 u8 *Moon_GetKey(string key) {
@@ -145,7 +146,7 @@ void Moon_InitLanguages( char *exePath, char *gamedir ) {
         closedir(dir);
     }
 
-    Moon_SetLanguage(languages2[0]);    
+    Moon_SetLanguage(languages[configLanguage]);    
 }
 
 void Moon_SetLanguage(LanguageEntry *new_language) {

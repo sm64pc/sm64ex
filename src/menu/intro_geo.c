@@ -8,6 +8,7 @@
 #include "textures.h"
 #include "types.h"
 #include "prevent_bss_reordering.h"
+#include "engine/math_util.h"
 
 #include "gfx_dimensions.h"
 
@@ -31,6 +32,14 @@ s32 gGameOverFrameCounter;
 s32 gGameOverTableIndex;
 s16 gTitleZoomCounter;
 s32 gTitleFadeCounter;
+
+float gGlobalCounter = 0;
+
+s32 gTitlePingPong = 0;
+float gTitlePos = 0;
+float gTitleNewPos = 0;
+
+s32 gTitleRotationCounter = 0;
 
 // intro screen background display lists for each of four 80x20 textures
 const Gfx *introBackgroundDlRows[] = { title_screen_bg_dl_0A000130, title_screen_bg_dl_0A000148,
@@ -69,6 +78,86 @@ s8 gameOverBackgroundTable[] = {
 // order of tiles that are flipped from "Game Over" to "Super Mario 64"
 s8 gameOverBackgroundFlipOrder[] = { 0x00, 0x01, 0x02, 0x03, 0x07, 0x0B,
                                      0x0a, 0x09, 0x08, 0x04, 0x05, 0x06 };
+
+float Clamp01(float value){
+    if (value < 0.0)
+        return 0.0;
+    else if (value > 1.0)
+        return 1.0;
+    else
+        return value;
+}
+
+// Interpolates between /a/ and /b/ by /t/. /t/ is clamped between 0 and 1.
+float Lerp(float a, float b, float t) {
+    return a + (b - a) * Clamp01(t);
+}
+
+Gfx *geo_n64_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context) {
+    struct GraphNode *graphNode; // sp4c
+    Gfx *displayList;            // sp48
+    Gfx *displayListIter;        // sp44
+
+    Mtx *mtxDest;
+    Mtx *scaleMat;
+    Mtx *rotMat;
+    Mtx *transMat;
+
+    f32 *scaleTable1;            // sp3c
+    f32 *scaleTable2;            // sp38
+    f32 scaleX;                  // sp34
+    f32 scaleY;                  // sp30
+    f32 scaleZ;                  // sp2c
+    graphNode = sp54;
+    displayList = NULL;
+    displayListIter = NULL;
+    scaleTable1 = segmented_to_virtual(intro_seg7_table_0700C790);
+    scaleTable2 = segmented_to_virtual(intro_seg7_table_0700C880);
+    graphNode->flags = (graphNode->flags & 0xFF) | 0x100;
+
+    mtxDest = alloc_display_list(3 * sizeof(*mtxDest));
+    scaleMat = alloc_display_list(3 * sizeof(*scaleMat));
+    rotMat = alloc_display_list(3 * sizeof(*rotMat));
+    transMat = alloc_display_list(3 * sizeof(*transMat));
+
+    displayList = alloc_display_list(5 * sizeof(*displayList));
+    displayListIter = displayList;
+    scaleX = 1.0f;
+    scaleY = 1.0f;
+    scaleZ = 1.0f; 
+    guScale(scaleMat, 0, scaleY, scaleZ);
+    guRotate(scaleMat, 10, 1, 0, 0);
+    guRotate(rotMat, gTitleRotationCounter, 0, 1, 0);
+    //guTranslate(transMat, 0, -700 + gTitleTransCounter, 0);
+    guTranslate(transMat, 0, gTitlePos, 0);
+
+    mtxf_mul(mtxDest, scaleMat, rotMat);
+    mtxf_mul(mtxDest, mtxDest, transMat);
+
+    gSPMatrix(displayListIter++, mtxDest, G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
+    gSPDisplayList(displayListIter++, &n64logo_N64_mesh);
+    gSPPopMatrix(displayListIter++, G_MTX_MODELVIEW);
+    gSPEndDisplayList(displayListIter);
+    gGlobalCounter += 1.0f;
+
+    int range = 80;
+    float step = 1;
+
+    if(gTitlePos >= range) 
+        gTitlePingPong = 1;
+    else if (gTitlePos <= -range)
+        gTitlePingPong = 0;
+
+    printf("%d\n", gTitlePingPong);
+
+    gTitleNewPos += step * (gTitlePingPong ? -1 : 1);
+    gTitlePos = Lerp(gTitlePos, gTitleNewPos, (gGlobalCounter / 1000) * 100);
+
+    gTitleRotationCounter += 2;
+
+    return displayList;
+}
+
 
 Gfx *geo_title_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context) {
     struct GraphNode *graphNode; // sp4c

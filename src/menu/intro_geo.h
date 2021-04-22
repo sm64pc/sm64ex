@@ -5,6 +5,9 @@
 #include <PR/gbi.h>
 
 #include "types.h"
+// Moon64 N64 Screen
+Gfx *geo_n64_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context);
+// END
 
 Gfx *geo_title_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context);
 Gfx *geo_fade_transition(s32 sp40, struct GraphNode *sp44, UNUSED void *context);

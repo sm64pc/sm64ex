@@ -16,11 +16,11 @@ u8 * moon_language_get_key( char* key ){
 }
 
 void moon_set_language( int id ) {
-    Moon_SetLanguage(languages2[id]);
+    Moon_SetLanguage(languages[id]);
 }
 
 const char* moon_get_language_name( int id ) {
-    return languages2[id]->name.c_str();
+    return languages[id]->name.c_str();
 }
 
 }
