@@ -421,7 +421,14 @@
             "name": "levels/castle_inside/6.rgba16"
         },
         {
-            "materialMod": null,
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.5,
+                    0.5,
+                    0.5
+                ]
+            },
             "name": "levels/castle_inside/castle_light.ia16"
         },
         {
@@ -740,6 +747,10 @@
         },
         {
             "materialMod": null,
+            "name": "textures/inside/inside_castle_textures.01000.rgba16"
+        },
+        {
+            "materialMod": null,
             "name": "textures/inside/inside_castle_textures.03000.rgba16"
         },
         {
@@ -866,10 +877,11 @@
         },
         {
             "materialMod": {
+                "lightGroupMaskBits": 0,
                 "selfLight": [
-                    0.10000000149011612,
-                    0.10000000149011612,
-                    0.10000000149011612
+                    0.5,
+                    0.5,
+                    0.5
                 ]
             },
             "name": "textures/segment2/segment2.13458.ia16"
