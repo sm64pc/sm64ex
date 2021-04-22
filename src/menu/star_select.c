@@ -18,6 +18,7 @@
 #include "star_select.h"
 #include "prevent_bss_reordering.h"
 #include "text/text-loader.h"
+#include "moon/utils/moon-gfx.h"
 
 /**
  * @file star_select.c
@@ -259,44 +260,15 @@ void print_act_selector_strings(void) {
 
     unsigned char * starNumbers = get_key_string("TEXT_ZERO");
 
-#ifdef VERSION_EU
-    u8 **levelNameTbl;
-    u8 *currLevelName;
-    u8 **actNameTbl;
-#else
     u8 **levelNameTbl = segmented_to_virtual(seg2_course_name_table);
     u8 *currLevelName = segmented_to_virtual(levelNameTbl[gCurrCourseNum - 1]);
     u8 **actNameTbl = segmented_to_virtual(seg2_act_name_table);
-#endif
     u8 *selectedActName;
-#ifndef VERSION_EU
     s16 lvlNameX;
     s16 actNameX;
-#endif
     s8 i;
-#ifdef VERSION_EU
-    s16 language = eu_get_language();
-#endif
 
     create_dl_ortho_matrix();
-
-#ifdef VERSION_EU
-    switch (language) {
-        case LANGUAGE_ENGLISH:
-            actNameTbl = segmented_to_virtual(act_name_table_eu_en);
-            levelNameTbl = segmented_to_virtual(course_name_table_eu_en);
-            break;
-        case LANGUAGE_FRENCH:
-            actNameTbl = segmented_to_virtual(act_name_table_eu_fr);
-            levelNameTbl = segmented_to_virtual(course_name_table_eu_fr);
-            break;
-        case LANGUAGE_GERMAN:
-            actNameTbl = segmented_to_virtual(act_name_table_eu_de);
-            levelNameTbl = segmented_to_virtual(course_name_table_eu_de);
-            break;
-    }
-    currLevelName = segmented_to_virtual(levelNameTbl[gCurrCourseNum - 1]);
-#endif
 
     // Print the coin highscore.
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
@@ -311,39 +283,20 @@ void print_act_selector_strings(void) {
         print_generic_string(102, 118, get_key_string("TEXT_MY_SCORE"));
     }
 
-#ifdef VERSION_EU
-    print_generic_string(get_str_x_pos_from_center(160, currLevelName + 3, 10.0f), 33, currLevelName + 3);
-#elif defined(VERSION_SH)
-    lvlNameX = get_str_x_pos_from_center_scale(160, currLevelName + 3, 10.0f);
-    print_generic_string(lvlNameX, 33, currLevelName + 3);
-#else
     lvlNameX = get_str_x_pos_from_center(160, currLevelName + 3, 10.0f);
     print_generic_string(lvlNameX, 33, currLevelName + 3);
-#endif
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 
-#ifdef VERSION_EU
-    print_course_number((u32)language);
-#else
     print_course_number();
-#endif
 
     gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, 255);
     // Print the name of the selected act.
     if (sVisibleStars != 0) {
         selectedActName = segmented_to_virtual(actNameTbl[(gCurrCourseNum - 1) * 6 + sSelectedActIndex]);
-
-#ifdef VERSION_EU
-        print_menu_generic_string(get_str_x_pos_from_center(ACT_NAME_X, selectedActName, 8.0f), 81, selectedActName);
-#elif defined(VERSION_SH)
-        actNameX = get_str_x_pos_from_center_scale(ACT_NAME_X, selectedActName, 8.0f);
-        print_menu_generic_string(actNameX, 81, selectedActName);
-#else
-        actNameX = get_str_x_pos_from_center(ACT_NAME_X, selectedActName, 8.0f);
-        print_menu_generic_string(actNameX, 81, selectedActName);
-#endif
+        actNameX = SCREEN_WIDTH / 2 - moon_get_text_width(selectedActName, 0.8f, 0) / 2;
+        print_menu_generic_string(actNameX, 151, selectedActName);
     }
 
     // Print the numbers above each star.

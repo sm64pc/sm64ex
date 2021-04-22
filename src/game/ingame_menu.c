@@ -33,6 +33,7 @@
 #include "text/text-loader.h"
 #include <math.h>
 #include "pc/gfx/gfx_pc.h"
+#include "moon/utils/moon-gfx.h"
 
 u16 gDialogColorFadeTimer;
 s8 gLastDialogLineNum;
@@ -426,81 +427,9 @@ void print_hud_lut_string(s8 hudLUT, s16 x, s16 y, const u8 *str) {
     }
 }
 
-#ifdef VERSION_EU
-void print_menu_char_umlaut(s16 x, s16 y, u8 chr) {
-    void **fontLUT = segmented_to_virtual(menu_font_lut);
-
-    gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_IA, G_IM_SIZ_8b, 1, fontLUT[chr]);
-    gDPLoadSync(gDisplayListHead++);
-    gDPLoadBlock(gDisplayListHead++, G_TX_LOADTILE, 0, 0, 8 * 8 - 1, CALC_DXT(8, G_IM_SIZ_8b_BYTES));
-    gSPTextureRectangle(gDisplayListHead++, x << 2, y << 2, (x + 8) << 2, (y + 8) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
-
-    gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_IA, G_IM_SIZ_8b, 1, fontLUT[DIALOG_CHAR_UMLAUT]);
-    gDPLoadSync(gDisplayListHead++);
-    gDPLoadBlock(gDisplayListHead++, G_TX_LOADTILE, 0, 0, 8 * 8 - 1, CALC_DXT(8, G_IM_SIZ_8b_BYTES));
-    gSPTextureRectangle(gDisplayListHead++, x << 2, (y - 4) << 2, (x + 8) << 2, (y + 4) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
-}
-#endif
 
 void print_menu_generic_string(s16 x, s16 y, const u8 *str) {
-    UNUSED s8 mark = DIALOG_MARK_NONE; // unused in EU
-    s32 strPos = 0;
-    s32 curX = x;
-    s32 curY = y;
-    void **fontLUT = segmented_to_virtual(menu_font_lut);
-
-    while (str[strPos] != DIALOG_CHAR_TERMINATOR) {
-        switch (str[strPos]) {
-#ifdef VERSION_EU
-            case DIALOG_CHAR_UPPER_A_UMLAUT:
-                print_menu_char_umlaut(curX, curY, ASCII_TO_DIALOG('A'));
-                curX += gDialogCharWidths[str[strPos]];
-                break;
-            case DIALOG_CHAR_UPPER_U_UMLAUT:
-                print_menu_char_umlaut(curX, curY, ASCII_TO_DIALOG('U'));
-                curX += gDialogCharWidths[str[strPos]];
-                break;
-            case DIALOG_CHAR_UPPER_O_UMLAUT:
-                print_menu_char_umlaut(curX, curY, ASCII_TO_DIALOG('O'));
-                curX += gDialogCharWidths[str[strPos]];
-                break;
-#else
-            case DIALOG_CHAR_DAKUTEN:
-                mark = DIALOG_MARK_DAKUTEN;
-                break;
-            case DIALOG_CHAR_PERIOD_OR_HANDAKUTEN:
-                mark = DIALOG_MARK_HANDAKUTEN;
-                break;
-#endif
-            case DIALOG_CHAR_SPACE:
-                curX += 4;
-                break;
-            default:
-                gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_IA, G_IM_SIZ_8b, 1, fontLUT[str[strPos]]);
-                gDPLoadSync(gDisplayListHead++);
-                gDPLoadBlock(gDisplayListHead++, G_TX_LOADTILE, 0, 0, 8 * 8 - 1, CALC_DXT(8, G_IM_SIZ_8b_BYTES));
-                gSPTextureRectangle(gDisplayListHead++, curX << 2, curY << 2, (curX + 8) << 2,
-                                    (curY + 8) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
-
-#ifndef VERSION_EU
-                if (mark != DIALOG_MARK_NONE) {
-                    gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_IA, G_IM_SIZ_8b, 1, fontLUT[mark + 0xEF]);
-                    gDPLoadSync(gDisplayListHead++);
-                    gDPLoadBlock(gDisplayListHead++, G_TX_LOADTILE, 0, 0, 8 * 8 - 1, CALC_DXT(8, G_IM_SIZ_8b_BYTES));
-                    gSPTextureRectangle(gDisplayListHead++, (curX + 6) << 2, (curY - 7) << 2,
-                                        (curX + 14) << 2, (curY + 1) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
-
-                    mark = DIALOG_MARK_NONE;
-                }
-#endif
-#if defined(VERSION_JP) || defined(VERSION_SH)
-                curX += 9;
-#else
-                curX += gDialogCharWidths[str[strPos]];
-#endif
-        }
-        strPos++;
-    }
+    moon_draw_text(x, y, str, 0.8f);
 }
 
 void print_credits_string(s16 x, s16 y, const u8 *str) {
