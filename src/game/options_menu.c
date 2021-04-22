@@ -452,6 +452,7 @@ static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
         lbl = base;
         tmpText = get_key_string( opt->type == OPT_TOGGLE ? toggleStr[(int)*opt->bval] : opt->choices[*opt->uval]);
 
+
         width = (moon_get_text_width(lbl, scale, FALSE) + 8 + moon_get_text_width(tmpText, scale, FALSE)) / 2;
         optmenu_draw_scaled_text(x - width, y, lbl, -1, scale);
         optmenu_draw_scaled_text(x - width + 1 + moon_get_text_width(lbl, scale, FALSE), y, getTranslatedText(":"), -1, scale);

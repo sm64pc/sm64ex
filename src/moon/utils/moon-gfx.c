@@ -5,8 +5,8 @@
 f32 moon_get_text_width(u8* text, float scale, u8 colored) { 
     f32 size = 0;
     s32 strPos = 0;
-    
-    while (text[strPos] != colored ? GLOBAR_CHAR_TERMINATOR : DIALOG_CHAR_TERMINATOR) {
+
+    while (text[strPos] != (colored ? GLOBAR_CHAR_TERMINATOR : DIALOG_CHAR_TERMINATOR)) {
         if(colored)
             size += (text[strPos] == GLOBAL_CHAR_SPACE ? 8.0 : 12.0) * scale;
         else
