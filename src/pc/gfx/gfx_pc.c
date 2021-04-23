@@ -216,8 +216,10 @@ static unsigned long get_time(void) {
 static struct Matrices {
     float model_matrix[4][4];
     float inv_model_matrix[4][4];
-    float view_matrix[4][4];
-    float inv_view_matrix[4][4];
+    float camera_matrix[4][4];
+    float modified_camera_matrix[4][4];
+    float graph_view_matrix[4][4];
+    float graph_inv_view_matrix[4][4];
     float prev_model_matrix[4][4];
     float offset_matrix[4][4];
     bool model_matrix_used;
@@ -230,11 +232,14 @@ void gfx_set_camera_perspective(float fov_degrees, float near_dist, float far_di
 }
 
 void gfx_set_camera_matrix(float mat[4][4]) {
-    gfx_rapi->set_camera_matrix(mat);
+    // Store camera matrix.
+    memcpy(separate_projections.camera_matrix, mat, sizeof(float) * 16);
+    gfx_rapi->set_camera_matrix(separate_projections.camera_matrix);
 
-    // Store the view matrix and its inverse to reverse its effect on the modelview stack.
-    memcpy(separate_projections.view_matrix, mat, sizeof(float) * 4 * 4);
-    gd_inverse_mat4f(&separate_projections.view_matrix, &separate_projections.inv_view_matrix);
+    // Since this call comes from the graph node, store it so we can reverse its effect 
+    // on the model view matrices later.
+    memcpy(separate_projections.graph_view_matrix, mat, sizeof(float) * 16);
+    gd_inverse_mat4f(&separate_projections.graph_view_matrix, &separate_projections.graph_inv_view_matrix);
 }
 
 void inverse_affine(Mat4f *src, Mat4f *dst) {
@@ -870,11 +875,16 @@ static void gfx_sp_matrix(uint8_t parameters, const int32_t *addr) {
         } else {
             gfx_matrix_mul(rsp.P_matrix, matrix, rsp.P_matrix);
 #ifdef GFX_SEPARATE_PROJECTIONS
-            // Special case for Goddard, which multiplies the projection matrix with the view matrix.
+            // If a view matrix gets pushed into the projection matrix, we multiply and add its effect to
+            // the current camera matrix.
+            //
+            // This is used in two separate instances in the game:
+            // - Goddard uses it to store the entire view matrix in the projection matrix.
+            // - When Mario gets hurt, a camera shake effect is applied by applying an offset that acts as
+            // an additional view matrix in the projection matrix.
             if (!separate_projections.is_ortho && !is_identity(matrix)) {
-                gfx_rapi->set_camera_matrix(matrix);
-                gd_set_identity_mat4(&separate_projections.view_matrix);
-                gd_set_identity_mat4(&separate_projections.inv_view_matrix);
+                gfx_matrix_mul(separate_projections.modified_camera_matrix, separate_projections.camera_matrix, matrix);
+                gfx_rapi->set_camera_matrix(separate_projections.modified_camera_matrix);
             }
 #endif
         }
@@ -893,7 +903,7 @@ static void gfx_sp_matrix(uint8_t parameters, const int32_t *addr) {
     gfx_matrix_mul(rsp.MP_matrix, rsp.modelview_matrix_stack[rsp.modelview_matrix_stack_size - 1], rsp.P_matrix);
 
 #ifdef GFX_SEPARATE_PROJECTIONS
-    gfx_matrix_mul(separate_projections.model_matrix, rsp.modelview_matrix_stack[rsp.modelview_matrix_stack_size - 1], separate_projections.inv_view_matrix);
+    gfx_matrix_mul(separate_projections.model_matrix, rsp.modelview_matrix_stack[rsp.modelview_matrix_stack_size - 1], separate_projections.graph_inv_view_matrix);
 #endif
 }
 
@@ -905,7 +915,7 @@ static void gfx_sp_pop_matrix(uint32_t count) {
                 gfx_matrix_mul(rsp.MP_matrix, rsp.modelview_matrix_stack[rsp.modelview_matrix_stack_size - 1], rsp.P_matrix);
 
 #ifdef GFX_SEPARATE_PROJECTIONS
-                gfx_matrix_mul(separate_projections.model_matrix, rsp.modelview_matrix_stack[rsp.modelview_matrix_stack_size - 1], separate_projections.inv_view_matrix);
+                gfx_matrix_mul(separate_projections.model_matrix, rsp.modelview_matrix_stack[rsp.modelview_matrix_stack_size - 1], separate_projections.graph_inv_view_matrix);
 #endif
             }
         }
@@ -1001,13 +1011,15 @@ static void gfx_sp_vertex(size_t n_vertices, size_t dest_index, const Vtx *verti
                 }
             }
 #else
-            // Simulated flat lighting with arbitrary value of the first light.
+            // Simulated flat lighting with arbitrary value for every light.
             // This can probably be estimated in a more accurate way to get a
             // better color value.
-            float intensity = 0.6f;
-            r += intensity * rsp.current_lights[0].col[0];
-            g += intensity * rsp.current_lights[0].col[1];
-            b += intensity * rsp.current_lights[0].col[2];
+            for (int i = 0; i < rsp.current_num_lights - 1; i++) {
+                float intensity = 0.6f;
+                r += intensity * rsp.current_lights[i].col[0];
+                g += intensity * rsp.current_lights[i].col[1];
+                b += intensity * rsp.current_lights[i].col[2];
+            }
 #endif
             d->color.r = r > 255 ? 255 : r;
             d->color.g = g > 255 ? 255 : g;
@@ -2054,8 +2066,11 @@ void gfx_start_frame(void) {
     gfx_current_dimensions.aspect_ratio = (float)gfx_current_dimensions.width / (float)gfx_current_dimensions.height;
 
 #ifdef GFX_SEPARATE_PROJECTIONS
-    gd_set_identity_mat4(&separate_projections.view_matrix);
-    gd_set_identity_mat4(&separate_projections.inv_view_matrix);
+    gd_set_identity_mat4(&separate_projections.camera_matrix);
+    gfx_rapi->set_camera_matrix(separate_projections.camera_matrix);
+
+    gd_set_identity_mat4(&separate_projections.graph_view_matrix);
+    gd_set_identity_mat4(&separate_projections.graph_inv_view_matrix);
     separate_projections.is_ortho = false;
     separate_projections.model_matrix_used = false;
     separate_projections.double_sided = false;

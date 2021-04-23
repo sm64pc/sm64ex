@@ -1202,10 +1202,20 @@ static RT64_MESH *gfx_rt64_rapi_process_mesh(float buf_vbo[], size_t buf_vbo_len
 	}
 
 	// Calculate hash and use it as key.
-	// NOTE: We limit the max amount of elements that can be hashed to improve performance with model mods that add a lot of mesh data.
-	const unsigned int HashMaxVertexCount = 32;
+	//
+	// NOTE: We limit the max amount of elements that can be hashed to improve performance with
+	// model mods that add a lot of mesh data. To improve this behavior with large models that
+	// only change some of their vertices, like Goddard, we try to sample and skip vertices to
+	// get a hash that represents the entire mesh more accurately.
     XXHash64 hashStream(0);
-    hashStream.add(vertices, sizeof(RT64_VERTEX) * std::min(vertexCount, HashMaxVertexCount));
+	const unsigned int HashMaxVertexCount = 32;
+	const unsigned int vertexStride = std::max(vertexCount / HashMaxVertexCount, (unsigned int)(1));
+	unsigned int vertex = 0;
+	while (vertex < vertexCount) {
+    	hashStream.add(&vertices[vertex], sizeof(RT64_VERTEX));
+		vertex += vertexStride;
+	}
+
     uint64_t key = hashStream.hash();
 
 	// Check for static mesh first.
