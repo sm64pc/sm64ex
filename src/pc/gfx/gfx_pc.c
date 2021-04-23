@@ -1100,11 +1100,8 @@ static void gfx_sp_tri1(uint8_t vtx1_idx, uint8_t vtx2_idx, uint8_t vtx3_idx) {
         // Continue as normal.
         case G_CULL_BACK:
             break;
-        // Flip order in which the vertices are processed and continue.
+        // Continue as normal.
         case G_CULL_FRONT:
-            swap = vtx3_idx;
-            vtx3_idx = vtx1_idx;
-            vtx1_idx = swap;
             break;
         // Set the double sided flag, flush if any contents were already processed while the flag was false.
         default:

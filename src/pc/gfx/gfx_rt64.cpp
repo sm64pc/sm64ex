@@ -11,6 +11,7 @@ extern "C" {
 #	include "../../game/level_update.h"
 #	include "../fs/fs.h"
 #	include "../pc_main.h"
+#	include "../../goddard/gd_math.h"
 #	include "gfx_cc.h"
 }
 
@@ -158,6 +159,7 @@ struct {
 
 	// Camera.
 	RT64_MATRIX4 viewMatrix;
+	RT64_MATRIX4 invViewMatrix;
     float fovRadians;
     float nearDist;
     float farDist;
@@ -1519,6 +1521,30 @@ static void gfx_rt64_rapi_end_frame(void) {
 
 	// Set the camera.
 	RT64.lib.SetViewPerspective(RT64.view, RT64.viewMatrix, RT64.fovRadians, RT64.nearDist, RT64.farDist);
+
+	// Lakitu camera light for Shifting Sand Land Pyramid.
+	int levelIndex = gCurrLevelNum;
+	int areaIndex = gCurrAreaIndex;
+	if ((levelIndex == 8) && (areaIndex == 2)) {
+		// Extract view position from the inverse matrix.
+		gd_inverse_mat4f(&RT64.viewMatrix.m, &RT64.invViewMatrix.m);
+
+		auto &light = RT64.lights[RT64.lightCount++];
+		RT64_VECTOR3 viewPos = { RT64.invViewMatrix.m[3][0], RT64.invViewMatrix.m[3][1], RT64.invViewMatrix.m[3][2] };
+		RT64_VECTOR3 marioPos = { gMarioState->pos[0], gMarioState->pos[1], gMarioState->pos[2] };
+		light.diffuseColor.x = 1.0f;
+		light.diffuseColor.y = 0.9f;
+		light.diffuseColor.z = 0.5f;
+		light.position.x = viewPos.x + (viewPos.x - marioPos.x);
+		light.position.y = viewPos.y + 150.0f;
+		light.position.z = viewPos.z + (viewPos.z - marioPos.z);
+		light.attenuationRadius = 4000.0f;
+		light.attenuationExponent = 1.0f;
+		light.pointRadius = 25.0f;
+		light.specularIntensity = 0.65f;
+		light.shadowOffset = 1000.0f;
+		light.groupBits = RT64_LIGHT_GROUP_DEFAULT;
+	}
 
     // Set lights on the scene.
     RT64.lib.SetSceneLights(RT64.scene, RT64.lights, RT64.lightCount);
