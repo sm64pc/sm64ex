@@ -36,8 +36,8 @@ struct GfxRenderingAPI {
 #ifndef GFX_SEPARATE_PROJECTIONS
     void (*draw_triangles)(float buf_vbo[], size_t buf_vbo_len, size_t buf_vbo_num_tris);
 #else
-    void (*set_camera_config)(float fov_degrees, float near_dist, float far_dist);
-    void (*set_camera_vectors)(float pos_x, float pos_y, float pos_z, float focus_x, float focus_y, float focus_z, float up_x, float up_y, float up_z);
+    void (*set_camera_perspective)(float fov_degrees, float near_dist, float far_dist);
+    void (*set_camera_matrix)(float matrix[4][4]);
     void (*draw_triangles_ortho)(float buf_vbo[], size_t buf_vbo_len, size_t buf_vbo_num_tris, bool double_sided);
     void (*draw_triangles_persp)(float buf_vbo[], size_t buf_vbo_len, size_t buf_vbo_num_tris, float transform_affine[4][4], bool double_sided);
 #endif

@@ -267,7 +267,7 @@ static void geo_process_perspective(struct GraphNodePerspective *node) {
 #endif
 
 #ifdef GFX_SEPARATE_PROJECTIONS
-        gfx_set_camera_config(node->fov, node->near, node->far);
+        gfx_set_camera_perspective(node->fov, node->near, node->far);
 #endif
 
         guPerspective(mtx, &perspNorm, node->fov, aspect, node->near, node->far, 1.0f);
@@ -340,8 +340,7 @@ static void geo_process_camera(struct GraphNodeCamera *node) {
     gMatStackFixed[gMatStackIndex] = mtx;
 
 #ifdef GFX_SEPARATE_PROJECTIONS
-    gfx_set_camera_vectors(node->pos[0], node->pos[1], node->pos[2], node->focus[0], node->focus[1], node->focus[2], 0, 1.0f, 0);
-    gfx_set_view_matrix(mtx->m);
+    gfx_set_camera_matrix(mtx->m);
 #endif
 
     if (node->fnNode.node.children != 0) {

@@ -157,9 +157,7 @@ struct {
 	std::unordered_map<uint64_t, RecordedMod *> texMods;
 
 	// Camera.
-    RT64_VECTOR3 eyePos;
-    RT64_VECTOR3 eyeFocus;
-    RT64_VECTOR3 eyeUp;
+	RT64_MATRIX4 viewMatrix;
     float fovRadians;
     float nearDist;
     float farDist;
@@ -986,15 +984,7 @@ static void gfx_rt64_wapi_init(const char *window_title) {
 	gfx_rt64_set_samples_level_lights();
 
 	// Initialize camera.
-    RT64.eyePos.x = 1.0f;
-    RT64.eyePos.y = 1.0f;
-    RT64.eyePos.z = 1.0f;
-    RT64.eyeFocus.x = 0.0f;
-    RT64.eyeFocus.y = 0.0f;
-    RT64.eyeFocus.z = 0.0f;
-    RT64.eyeUp.x = 0.0f;
-    RT64.eyeUp.y = 1.0f;
-    RT64.eyeUp.x = 0.0f;
+	RT64.viewMatrix = RT64.identityTransform;
     RT64.nearDist = 1.0f;
     RT64.farDist = 1000.0f;
     RT64.fovRadians = 0.75f;
@@ -1517,8 +1507,8 @@ static void gfx_rt64_rapi_end_frame(void) {
         RT64.instanceAllocCount--;
     }
 
-    // Set the camera on the view.
-	RT64.lib.SetViewPerspective(RT64.view, RT64.eyePos, RT64.eyeFocus, RT64.eyeUp, RT64.fovRadians, RT64.nearDist, RT64.farDist);
+	// Set the camera.
+	RT64.lib.SetViewPerspective(RT64.view, RT64.viewMatrix, RT64.fovRadians, RT64.nearDist, RT64.farDist);
 
     // Set lights on the scene.
     RT64.lib.SetSceneLights(RT64.scene, RT64.lights, RT64.lightCount);
@@ -1631,22 +1621,14 @@ static void gfx_rt64_rapi_finish_render(void) {
 
 }
 
-static void gfx_rt64_rapi_set_camera_config(float fov_degrees, float near_dist, float far_dist) {
+static void gfx_rt64_rapi_set_camera_perspective(float fov_degrees, float near_dist, float far_dist) {
     RT64.fovRadians = (fov_degrees / 180.0f) * M_PI;
 	RT64.nearDist = near_dist;
     RT64.farDist = far_dist;
 }
 
-static void gfx_rt64_rapi_set_camera_vectors(float pos_x, float pos_y, float pos_z, float focus_x, float focus_y, float focus_z, float up_x, float up_y, float up_z) {
-	RT64.eyePos.x = pos_x;
-	RT64.eyePos.y = pos_y;
-	RT64.eyePos.z = pos_z;
-    RT64.eyeFocus.x = focus_x;
-	RT64.eyeFocus.y = focus_y;
-	RT64.eyeFocus.z = focus_z;
-    RT64.eyeUp.x = up_x;
-	RT64.eyeUp.y = up_y;
-	RT64.eyeUp.z = up_z;
+static void gfx_rt64_rapi_set_camera_matrix(float matrix[4][4]) {
+	memcpy(&RT64.viewMatrix.m, matrix, sizeof(float) * 16);
 }
 
 static void gfx_rt64_rapi_push_geo_layout(void *geoLayout) {
@@ -1736,8 +1718,8 @@ struct GfxRenderingAPI gfx_rt64_rapi = {
     gfx_rt64_rapi_set_scissor,
     gfx_rt64_rapi_set_use_alpha,
 	gfx_rt64_rapi_set_fog,
-	gfx_rt64_rapi_set_camera_config,
-    gfx_rt64_rapi_set_camera_vectors,
+	gfx_rt64_rapi_set_camera_perspective,
+	gfx_rt64_rapi_set_camera_matrix,
 	gfx_rt64_rapi_draw_triangles_ortho,
     gfx_rt64_rapi_draw_triangles_persp,
 	gfx_rt64_rapi_push_geo_layout,

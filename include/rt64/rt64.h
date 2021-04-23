@@ -200,7 +200,7 @@ typedef RT64_DEVICE* (*CreateDevicePtr)(void *hwnd);
 typedef void(*DrawDevicePtr)(RT64_DEVICE* device, int vsyncInterval);
 typedef void(*DestroyDevicePtr)(RT64_DEVICE* device);
 typedef RT64_VIEW* (*CreateViewPtr)(RT64_SCENE* scenePtr);
-typedef void(*SetViewPerspectivePtr)(RT64_VIEW* viewPtr, RT64_VECTOR3 eyePosition, RT64_VECTOR3 eyeFocus, RT64_VECTOR3 eyeUpDirection, float fovRadians, float nearDist, float farDist);
+typedef void(*SetViewPerspectivePtr)(RT64_VIEW *viewPtr, RT64_MATRIX4 viewMatrix, float fovRadians, float nearDist, float farDist);
 typedef RT64_INSTANCE* (*GetViewRaytracedInstanceAtPtr)(RT64_VIEW *viewPtr, int x, int y);
 typedef void(*DestroyViewPtr)(RT64_VIEW* viewPtr);
 typedef RT64_SCENE* (*CreateScenePtr)(RT64_DEVICE* devicePtr);
@@ -284,6 +284,11 @@ inline RT64_LIBRARY RT64_LoadLibrary() {
 		lib.SetLightsInspector = (SetLightsInspectorPtr)(GetProcAddress(lib.handle, "RT64_SetLightsInspector"));
 		lib.PrintToInspector = (PrintToInspectorPtr)(GetProcAddress(lib.handle, "RT64_PrintToInspector"));
 		lib.DestroyInspector = (DestroyInspectorPtr)(GetProcAddress(lib.handle, "RT64_DestroyInspector"));
+	}
+	else {
+		char errorMessage[256];
+		FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), errorMessage, sizeof(errorMessage), NULL);
+		fprintf(stderr, "Error when loading library: %s\n", errorMessage);
 	}
 
 	return lib;

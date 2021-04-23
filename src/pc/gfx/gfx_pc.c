@@ -225,15 +225,14 @@ static struct Matrices {
     bool double_sided;
 } separate_projections;
 
-void gfx_set_camera_config(float fov_degrees, float near_dist, float far_dist) {
-    gfx_rapi->set_camera_config(fov_degrees, near_dist, far_dist);
+void gfx_set_camera_perspective(float fov_degrees, float near_dist, float far_dist) {
+    gfx_rapi->set_camera_perspective(fov_degrees, near_dist, far_dist);
 }
 
-void gfx_set_camera_vectors(float pos_x, float pos_y, float pos_z, float focus_x, float focus_y, float focus_z, float up_x, float up_y, float up_z) {
-    gfx_rapi->set_camera_vectors(pos_x, pos_y, pos_z, focus_x, focus_y, focus_z, up_x, up_y, up_z);
-}
+void gfx_set_camera_matrix(float mat[4][4]) {
+    gfx_rapi->set_camera_matrix(mat);
 
-void gfx_set_view_matrix(float mat[4][4]) {
+    // Store the view matrix and its inverse to reverse its effect on the modelview stack.
     memcpy(separate_projections.view_matrix, mat, sizeof(float) * 4 * 4);
     gd_inverse_mat4f(&separate_projections.view_matrix, &separate_projections.inv_view_matrix);
 }
@@ -276,6 +275,14 @@ void inverse_affine(Mat4f *src, Mat4f *dst) {
     (*dst)[0][1] = r10; (*dst)[1][1] = r11; (*dst)[2][1] = r12; (*dst)[3][1] = r13;
     (*dst)[0][2] = r20; (*dst)[1][2] = r21; (*dst)[2][2] = r22; (*dst)[3][2] = r23;
     (*dst)[0][3] = 0.0f; (*dst)[1][3] = 0.0f; (*dst)[2][3] = 0.0f; (*dst)[3][3] = 1.0f;
+}
+
+bool is_identity(float mat[4][4]) {
+    return
+        mat[0][0] == 1.0f && mat[1][0] == 0.0f && mat[2][0] == 0.0f && mat[3][0] == 0.0f &&
+        mat[0][1] == 0.0f && mat[1][1] == 1.0f && mat[2][1] == 0.0f && mat[3][1] == 0.0f &&
+        mat[0][2] == 0.0f && mat[1][2] == 0.0f && mat[2][2] == 1.0f && mat[3][2] == 0.0f &&
+        mat[0][3] == 0.0f && mat[1][3] == 0.0f && mat[2][3] == 0.0f && mat[3][3] == 1.0f;
 }
 
 void transform_loaded_vertex(size_t i, Mat4f *src) {
@@ -857,8 +864,19 @@ static void gfx_sp_matrix(uint8_t parameters, const int32_t *addr) {
     if (parameters & G_MTX_PROJECTION) {
         if (parameters & G_MTX_LOAD) {
             memcpy(rsp.P_matrix, matrix, sizeof(matrix));
+#ifdef GFX_SEPARATE_PROJECTIONS
+            separate_projections.is_ortho = (matrix[3][3] != 0.0f);
+#endif
         } else {
             gfx_matrix_mul(rsp.P_matrix, matrix, rsp.P_matrix);
+#ifdef GFX_SEPARATE_PROJECTIONS
+            // Special case for Goddard, which multiplies the projection matrix with the view matrix.
+            if (!separate_projections.is_ortho && !is_identity(matrix)) {
+                gfx_rapi->set_camera_matrix(matrix);
+                gd_set_identity_mat4(&separate_projections.view_matrix);
+                gd_set_identity_mat4(&separate_projections.inv_view_matrix);
+            }
+#endif
         }
     } else { // G_MTX_MODELVIEW
         if ((parameters & G_MTX_PUSH) && rsp.modelview_matrix_stack_size < 11) {
@@ -876,7 +894,6 @@ static void gfx_sp_matrix(uint8_t parameters, const int32_t *addr) {
 
 #ifdef GFX_SEPARATE_PROJECTIONS
     gfx_matrix_mul(separate_projections.model_matrix, rsp.modelview_matrix_stack[rsp.modelview_matrix_stack_size - 1], separate_projections.inv_view_matrix);
-    separate_projections.is_ortho = (rsp.P_matrix[3][3] != 0.0f);
 #endif
 }
 
@@ -889,7 +906,6 @@ static void gfx_sp_pop_matrix(uint32_t count) {
 
 #ifdef GFX_SEPARATE_PROJECTIONS
                 gfx_matrix_mul(separate_projections.model_matrix, rsp.modelview_matrix_stack[rsp.modelview_matrix_stack_size - 1], separate_projections.inv_view_matrix);
-                separate_projections.is_ortho = (rsp.P_matrix[3][3] != 0.0f);
 #endif
             }
         }
