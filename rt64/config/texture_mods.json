@@ -217,7 +217,12 @@
         },
         {
             "materialMod": {
-                "ignoreNormalFactor": 1.0
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.5,
+                    0.5,
+                    0.5
+                ]
             },
             "name": "actors/mist/mist.ia16"
         },
@@ -390,8 +395,15 @@
         },
         {
             "materialMod": {
-                "reflectionFactor": 0.5,
-                "reflectionFresnelFactor": 1.0
+                "diffuseColorMix": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "reflectionFactor": 0.8999999761581421,
+                "reflectionFresnelFactor": 1.0,
+                "reflectionShineFactor": 0.75
             },
             "name": "levels/castle_inside/29.rgba16"
         },
@@ -430,6 +442,34 @@
                 ]
             },
             "name": "levels/castle_inside/castle_light.ia16"
+        },
+        {
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "reflectionFactor": 0.5,
+                "reflectionFresnelFactor": 0.5,
+                "reflectionShineFactor": 1.0,
+                "selfLight": [
+                    0.75,
+                    0.75,
+                    0.75
+                ]
+            },
+            "name": "levels/cotmc/2.rgba16"
+        },
+        {
+            "materialMod": {
+                "diffuseColorMix": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "reflectionFactor": 0.8999999761581421,
+                "reflectionFresnelFactor": 0.8999999761581421,
+                "reflectionShineFactor": 0.75
+            },
+            "name": "levels/hmc/7.rgba16"
         },
         {
             "materialMod": null,
@@ -654,6 +694,19 @@
         {
             "materialMod": null,
             "name": "textures/cave/hmc_textures.0A800.rgba16"
+        },
+        {
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.30000001192092896,
+                    0.25,
+                    0.10000000149011612
+                ],
+                "shadowAlphaMultiplier": 0.0,
+                "solidAlphaMultiplier": 0.5
+            },
+            "name": "textures/cave/hmc_textures.0B800.ia16"
         },
         {
             "materialMod": {
