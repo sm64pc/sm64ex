@@ -429,7 +429,7 @@ void print_hud_lut_string(s8 hudLUT, s16 x, s16 y, const u8 *str) {
 
 
 void print_menu_generic_string(s16 x, s16 y, const u8 *str) {
-    moon_draw_text(x, y, str, 0.8f);
+    moon_draw_text(x, y, str, 0.7f);
 }
 
 void print_credits_string(s16 x, s16 y, const u8 *str) {
