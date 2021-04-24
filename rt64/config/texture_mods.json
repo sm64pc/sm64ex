@@ -121,6 +121,24 @@
             "name": "actors/checkerboard_platform/checkerboard_platform_side.rgba16"
         },
         {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "actors/chuckya/chuckya_body_arm_left_side.rgba16"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "actors/chuckya/chuckya_body_arm_right_side.rgba16"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "actors/chuckya/chuckya_hand_antenna.rgba16"
+        },
+        {
             "materialMod": null,
             "name": "actors/coin/coin_front.ia16"
         },
@@ -333,6 +351,13 @@
             "name": "actors/star/star_surface.rgba16"
         },
         {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0,
+                "specularIntensity": 0.0
+            },
+            "name": "actors/tree/snowy_pine_tree.rgba16"
+        },
+        {
             "materialMod": null,
             "name": "actors/tree/tree_left_side.rgba16"
         },
@@ -342,16 +367,15 @@
         },
         {
             "materialMod": {
-                "reflectionFactor": 0.02500000037252903,
-                "reflectionFresnelFactor": 0.10000000149011612,
-                "specularExponent": 10.0
+                "specularExponent": 5.0,
+                "specularIntensity": 5.0
             },
             "name": "actors/warp_pipe/warp_pipe_side.rgba16"
         },
         {
             "materialMod": {
-                "reflectionFactor": 0.02500000037252903,
-                "reflectionFresnelFactor": 0.10000000149011612
+                "specularExponent": 5.0,
+                "specularIntensity": 5.0
             },
             "name": "actors/warp_pipe/warp_pipe_top.rgba16"
         },
@@ -837,6 +861,18 @@
             "name": "textures/grass/wf_textures.07000.rgba16"
         },
         {
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.5,
+                    0.5,
+                    0.5
+                ],
+                "solidAlphaMultiplier": 0.5
+            },
+            "name": "textures/grass/wf_textures.0B800.ia16"
+        },
+        {
             "materialMod": null,
             "name": "textures/inside/inside_castle_textures.00000.rgba16"
         },
@@ -1046,6 +1082,12 @@
                 "refractionFactor": 0.9750000238418579
             },
             "name": "textures/snow/ccm_textures.00800.rgba16"
+        },
+        {
+            "materialMod": {
+                "specularIntensity": 0.0
+            },
+            "name": "textures/snow/ccm_textures.02000.rgba16"
         },
         {
             "materialMod": {
