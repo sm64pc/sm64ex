@@ -83,6 +83,18 @@
             "name": "actors/bowser/bowser_body.rgba16"
         },
         {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "actors/bubble/bubble.rgba16"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "actors/bubble/mr_i_bubble.rgba16"
+        },
+        {
             "materialMod": null,
             "name": "actors/bully/bully_eye.rgba16"
         },
@@ -148,10 +160,23 @@
         },
         {
             "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "actors/dirt/dirt_particle.rgba16"
+        },
+        {
+            "materialMod": {
                 "reflectionFactor": 0.10000000149011612,
                 "reflectionFresnelFactor": 0.10000000149011612
             },
             "name": "actors/door/door_lock.rgba16"
+        },
+        {
+            "materialMod": {
+                "reflectionFactor": 0.05000000074505806,
+                "reflectionFresnelFactor": 0.10000000149011612
+            },
+            "name": "actors/door/metal_door.rgba16"
         },
         {
             "materialMod": null,
@@ -194,6 +219,10 @@
                 "ignoreNormalFactor": 1.0
             },
             "name": "actors/king_bobomb/king_bob-omb_right_side.rgba16"
+        },
+        {
+            "materialMod": null,
+            "name": "actors/mario/mario_eyes_closed.rgba16"
         },
         {
             "materialMod": null,
@@ -914,6 +943,42 @@
         {
             "materialMod": null,
             "name": "textures/inside/inside_castle_textures.0A000.rgba16"
+        },
+        {
+            "materialMod": null,
+            "name": "textures/machine/ttc_textures.02000.rgba16"
+        },
+        {
+            "materialMod": null,
+            "name": "textures/machine/ttc_textures.02800.rgba16"
+        },
+        {
+            "materialMod": {
+                "reflectionFactor": 0.02500000037252903,
+                "reflectionFresnelFactor": 0.02500000037252903
+            },
+            "name": "textures/machine/ttc_textures.03800.rgba16"
+        },
+        {
+            "materialMod": {
+                "reflectionFactor": 0.02500000037252903,
+                "reflectionFresnelFactor": 0.02500000037252903
+            },
+            "name": "textures/machine/ttc_textures.05000.rgba16"
+        },
+        {
+            "materialMod": {
+                "reflectionFactor": 0.02500000037252903,
+                "reflectionFresnelFactor": 0.02500000037252903
+            },
+            "name": "textures/machine/ttc_textures.06800.rgba16"
+        },
+        {
+            "materialMod": {
+                "reflectionFactor": 0.02500000037252903,
+                "reflectionFresnelFactor": 0.02500000037252903
+            },
+            "name": "textures/machine/ttc_textures.08000.rgba16"
         },
         {
             "materialMod": null,
