@@ -418,6 +418,18 @@
             "materialMod": {
                 "ignoreNormalFactor": 1.0
             },
+            "name": "actors/wiggler/wiggler_segment_left_side.rgba16"
+        },
+		{
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "actors/wiggler/wiggler_segment_right_side.rgba16"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
             "name": "actors/yellow_sphere/yellow_sphere.rgba16"
         },
         {
