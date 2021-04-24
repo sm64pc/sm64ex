@@ -2015,9 +2015,9 @@
                             "attenuationExponent": 0.25,
                             "attenuationRadius": 3050.0,
                             "diffuseColor": [
-                                0.8999999761581421,
-                                0.800000011920929,
-                                0.699999988079071
+                                0.949999988079071,
+                                0.8500000238418579,
+                                0.75
                             ],
                             "flickerIntensity": 0.0,
                             "groupBits": 1,
@@ -4242,9 +4242,9 @@
                             "attenuationExponent": 0.0,
                             "attenuationRadius": 0.0,
                             "diffuseColor": [
-                                0.30000001192092896,
-                                0.30000001192092896,
-                                0.30000001192092896
+                                0.4000000059604645,
+                                0.5,
+                                0.6000000238418579
                             ],
                             "flickerIntensity": 0.0,
                             "groupBits": 0,
@@ -4261,9 +4261,9 @@
                             "attenuationExponent": 0.0,
                             "attenuationRadius": 99999997952.0,
                             "diffuseColor": [
-                                0.800000011920929,
-                                0.75,
-                                0.6499999761581421
+                                0.6000000238418579,
+                                0.5,
+                                0.4000000059604645
                             ],
                             "flickerIntensity": 0.0,
                             "groupBits": 1,
@@ -4302,21 +4302,97 @@
                         },
                         {
                             "attenuationExponent": 0.0,
-                            "attenuationRadius": 99999997952.0,
+                            "attenuationRadius": 0.0,
                             "diffuseColor": [
-                                0.800000011920929,
-                                0.75,
-                                0.6499999761581421
+                                0.0,
+                                0.0,
+                                0.0
                             ],
                             "flickerIntensity": 0.0,
-                            "groupBits": 1,
-                            "pointRadius": 5000.0,
+                            "groupBits": 0,
+                            "pointRadius": 0.0,
                             "position": [
-                                100000.0,
-                                200000.0,
-                                100000.0
+                                0.0,
+                                0.0,
+                                0.0
                             ],
                             "shadowOffset": 0.0,
+                            "specularIntensity": 0.0
+                        },
+                        {
+                            "attenuationExponent": 0.75,
+                            "attenuationRadius": 2000.0,
+                            "diffuseColor": [
+                                0.05000000074505806,
+                                0.10000000149011612,
+                                0.25
+                            ],
+                            "flickerIntensity": 0.0,
+                            "groupBits": 4,
+                            "pointRadius": 50.0,
+                            "position": [
+                                1696.055419921875,
+                                497.4290466308594,
+                                -1687.99658203125
+                            ],
+                            "shadowOffset": 50.0,
+                            "specularIntensity": 0.6499999761581421
+                        },
+                        {
+                            "attenuationExponent": 0.75,
+                            "attenuationRadius": 2000.0,
+                            "diffuseColor": [
+                                0.05000000074505806,
+                                0.10000000149011612,
+                                0.25
+                            ],
+                            "flickerIntensity": 0.0,
+                            "groupBits": 4,
+                            "pointRadius": 50.0,
+                            "position": [
+                                1120.0,
+                                543.1005859375,
+                                2196.552490234375
+                            ],
+                            "shadowOffset": 50.0,
+                            "specularIntensity": 0.6499999761581421
+                        },
+                        {
+                            "attenuationExponent": 0.75,
+                            "attenuationRadius": 2000.0,
+                            "diffuseColor": [
+                                0.05000000074505806,
+                                0.10000000149011612,
+                                0.25
+                            ],
+                            "flickerIntensity": 0.0,
+                            "groupBits": 4,
+                            "pointRadius": 50.0,
+                            "position": [
+                                -731.7526245117188,
+                                559.8494262695313,
+                                -1709.2872314453125
+                            ],
+                            "shadowOffset": 50.0,
+                            "specularIntensity": 0.6499999761581421
+                        },
+                        {
+                            "attenuationExponent": 0.75,
+                            "attenuationRadius": 2000.0,
+                            "diffuseColor": [
+                                0.05000000074505806,
+                                0.10000000149011612,
+                                0.25
+                            ],
+                            "flickerIntensity": 0.0,
+                            "groupBits": 4,
+                            "pointRadius": 50.0,
+                            "position": [
+                                -1503.017578125,
+                                543.0977783203125,
+                                1644.0377197265625
+                            ],
+                            "shadowOffset": 50.0,
                             "specularIntensity": 0.6499999761581421
                         }
                     ]

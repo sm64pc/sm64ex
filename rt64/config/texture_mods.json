@@ -285,6 +285,24 @@
             "name": "actors/skeeter/skeeter_eye.rgba16"
         },
         {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "actors/snowman/mr_blizzard_left_side.rgba16"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "actors/snowman/mr_blizzard_right_side.rgba16"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "actors/spindrift/spindrift_head.rgba16"
+        },
+        {
             "lightMod": {
                 "attenuationExponent": 2.0,
                 "attenuationRadius": 6000.0,
@@ -612,6 +630,10 @@
                 "ignoreNormalFactor": 1.0
             },
             "name": "levels/rr/quarter_flying_carpet.rgba16"
+        },
+        {
+            "materialMod": null,
+            "name": "levels/sl/4.rgba16"
         },
         {
             "materialMod": {
@@ -1019,6 +1041,8 @@
         },
         {
             "materialMod": {
+                "reflectionFactor": 0.25,
+                "reflectionFresnelFactor": 0.25,
                 "refractionFactor": 0.9750000238418579
             },
             "name": "textures/snow/ccm_textures.00800.rgba16"
