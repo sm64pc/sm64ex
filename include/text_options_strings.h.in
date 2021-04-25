@@ -86,6 +86,13 @@
 #define TEXT_OPT_CHEAT8    _("HUGE MARIO")
 #define TEXT_OPT_CHEAT9    _("TINY MARIO")
 
+#define TEXT_OPT_RT64      _("RAYTRACING")
+#define TEXT_OPT_RESSCALE  _("Resolution Scale")
+#define TEXT_OPT_SPHEREL   _("Sphere Lights")
+#define TEXT_OPT_GI        _("Global Illumination")
+#define TEXT_OPT_GIWEIGHT  _("GI Intensity")
+#define TEXT_OPT_DENOISER  _("Denoiser")
+
 #else // VERSION
 
 // Markers
@@ -149,6 +156,13 @@
 #define TEXT_OPT_CHEAT7    _("Exit course at any time")
 #define TEXT_OPT_CHEAT8    _("Huge Mario")
 #define TEXT_OPT_CHEAT9    _("Tiny Mario")
+
+#define TEXT_OPT_RT64      _("RAYTRACING")
+#define TEXT_OPT_RESSCALE  _("Resolution Scale")
+#define TEXT_OPT_SPHEREL   _("Sphere Lights")
+#define TEXT_OPT_GI        _("Global Illumination")
+#define TEXT_OPT_GIWEIGHT  _("GI Intensity")
+#define TEXT_OPT_DENOISER  _("Denoiser")
 
 #endif // VERSION
 
