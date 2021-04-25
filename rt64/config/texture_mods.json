@@ -969,6 +969,17 @@
             "name": "textures/inside/inside_castle_textures.0A000.rgba16"
         },
         {
+            "materialMod": {
+                "diffuseColorMix": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    -1.0
+                ]
+            },
+            "name": "textures/intro_raw/mario_face_shine.ia8"
+        },
+        {
             "materialMod": null,
             "name": "textures/machine/ttc_textures.02000.rgba16"
         },
