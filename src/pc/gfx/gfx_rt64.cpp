@@ -400,6 +400,16 @@ void elapsed_time(const LARGE_INTEGER &start, const LARGE_INTEGER &end, const LA
 	elapsed.QuadPart /= frequency.QuadPart;
 }
 
+void gfx_rt64_toggle_inspector() {
+	if (RT64.inspector != nullptr) {
+		RT64.lib.DestroyInspector(RT64.inspector);
+		RT64.inspector = nullptr;
+	}
+	else {
+		RT64.inspector = RT64.lib.CreateInspector(RT64.device);
+	}
+}
+
 void gfx_rt64_load_material_mod(const json &jmatmod, RT64_MATERIAL *materialMod) {
 	if (jmatmod.find("ignoreNormalFactor") != jmatmod.end()) {
 		materialMod->ignoreNormalFactor = jmatmod["ignoreNormalFactor"];
@@ -753,18 +763,30 @@ LRESULT CALLBACK gfx_rt64_wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 
         break;
 	case WM_RBUTTONDOWN:
-		RT64.pickedTextureHash = 0;
-		RT64.pickTextureNextFrame = true;
-		RT64.pickTextureHighlight = true;
+		if (RT64.inspector != nullptr) {
+			RT64.pickedTextureHash = 0;
+			RT64.pickTextureNextFrame = true;
+			RT64.pickTextureHighlight = true;
+		}
+
 		break;
 	case WM_RBUTTONUP:
-		RT64.pickTextureHighlight = false;
+		if (RT64.inspector != nullptr) {
+			RT64.pickTextureHighlight = false;
+		}
+
 		break;
 	case WM_KEYDOWN:
-		if (wParam == VK_F5) {
-			gfx_rt64_save_geo_layout_mods();
-			gfx_rt64_save_texture_mods();
-			gfx_rt64_save_level_lights();
+		if (wParam == VK_F1) {
+			gfx_rt64_toggle_inspector();
+		}
+		
+		if (RT64.inspector != nullptr) {
+			if (wParam == VK_F5) {
+				gfx_rt64_save_geo_layout_mods();
+				gfx_rt64_save_texture_mods();
+				gfx_rt64_save_level_lights();
+			}
 		}
 
 		onkeydown(wParam, lParam);
@@ -782,9 +804,11 @@ LRESULT CALLBACK gfx_rt64_wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARA
     		RT64.run_one_game_iter();
 			QueryPerformanceCounter(&EndTime);
 			elapsed_time(StartTime, EndTime, RT64.Frequency, ElapsedMicroseconds);
-			char message[64];
-			sprintf(message, "FRAMETIME: %.3f ms\n", ElapsedMicroseconds.QuadPart / 1000.0);
-			RT64.lib.PrintToInspector(RT64.inspector, message);
+			if (RT64.inspector != nullptr) {
+				char message[64];
+				sprintf(message, "FRAMETIME: %.3f ms\n", ElapsedMicroseconds.QuadPart / 1000.0);
+				RT64.lib.PrintToInspector(RT64.inspector, message);
+			}
 		}
 
 		// Try to maintain the fixed framerate.
@@ -862,7 +886,7 @@ static void gfx_rt64_wapi_init(const char *window_title) {
 	}
 
 	// Setup inspector.
-	RT64.inspector = RT64.lib.CreateInspector(RT64.device);
+	RT64.inspector = nullptr;
 
 	// Setup scene and view.
 	RT64.scene = RT64.lib.CreateScene(RT64.device);
@@ -1488,27 +1512,29 @@ static void gfx_rt64_rapi_shutdown(void) {
 static void gfx_rt64_rapi_start_frame(void) {
 	RT64.background = true;
     RT64.instanceCount = 0;
+    RT64.graphNodeMod = nullptr;
 
+	// Level lights.
 	int levelIndex = gCurrLevelNum;
 	int courseIndex = gCurrCourseNum;
 	int areaIndex = gCurrAreaIndex;
-	char marioMessage[256] = "";
-    char levelMessage[256] = "";
-    sprintf(marioMessage, "Mario pos: %.1f %.1f %.1f", gMarioState->pos[0], gMarioState->pos[1], gMarioState->pos[2]);
-    sprintf(levelMessage, "Level #%d Course #%d Area #%d", levelIndex, courseIndex, areaIndex);
-    RT64.lib.PrintToInspector(RT64.inspector, marioMessage);
-    RT64.lib.PrintToInspector(RT64.inspector, levelMessage);
-    RT64.lib.PrintToInspector(RT64.inspector, "F5: Save all configuration");
-
-	// Level lights editor.
     RT64_LIGHT *lights = RT64.levelLights[levelIndex][areaIndex];
     int *lightCount = &RT64.levelLightCounts[levelIndex][areaIndex];
-    RT64.lib.SetLightsInspector(RT64.inspector, lights, lightCount, MAX_LEVEL_LIGHTS);
+	if (RT64.inspector != nullptr) {
+		char marioMessage[256] = "";
+		char levelMessage[256] = "";
+		sprintf(marioMessage, "Mario pos: %.1f %.1f %.1f", gMarioState->pos[0], gMarioState->pos[1], gMarioState->pos[2]);
+		sprintf(levelMessage, "Level #%d Course #%d Area #%d", levelIndex, courseIndex, areaIndex);
+		RT64.lib.PrintToInspector(RT64.inspector, marioMessage);
+		RT64.lib.PrintToInspector(RT64.inspector, levelMessage);
+		RT64.lib.PrintToInspector(RT64.inspector, "F1: Toggle inspectors");
+		RT64.lib.PrintToInspector(RT64.inspector, "F5: Save all configuration");
+    	RT64.lib.SetLightsInspector(RT64.inspector, lights, lightCount, MAX_LEVEL_LIGHTS);
+	}
+
 	gfx_rt64_set_samples_level_lights();
     memcpy(RT64.lights, lights, sizeof(RT64_LIGHT) * (*lightCount));
     RT64.lightCount = *lightCount;
-
-    RT64.graphNodeMod = nullptr;
 }
 
 static void gfx_rt64_rapi_end_frame(void) {
@@ -1549,10 +1575,6 @@ static void gfx_rt64_rapi_end_frame(void) {
     // Set lights on the scene.
     RT64.lib.SetSceneLights(RT64.scene, RT64.lights, RT64.lightCount);
 
-    char statsMessage[256] = "";
-    sprintf(statsMessage, "Instances %d Lights %d", RT64.instanceCount, RT64.lightCount);
-    RT64.lib.PrintToInspector(RT64.inspector, statsMessage);
-
 	// Draw frame.
 	LARGE_INTEGER StartTime, EndTime, ElapsedMicroseconds;
 	QueryPerformanceCounter(&StartTime);
@@ -1560,10 +1582,15 @@ static void gfx_rt64_rapi_end_frame(void) {
 	QueryPerformanceCounter(&EndTime);
 	elapsed_time(StartTime, EndTime, RT64.Frequency, ElapsedMicroseconds);
 
-	// Inspector.
-	char message[64];
-	sprintf(message, "RT64: %.3f ms\n", ElapsedMicroseconds.QuadPart / 1000.0);
-	RT64.lib.PrintToInspector(RT64.inspector, message);
+	if (RT64.inspector != nullptr) {
+		char statsMessage[256] = "";
+    	sprintf(statsMessage, "Instances %d Lights %d", RT64.instanceCount, RT64.lightCount);
+    	RT64.lib.PrintToInspector(RT64.inspector, statsMessage);
+
+		char message[64];
+		sprintf(message, "RT64: %.3f ms\n", ElapsedMicroseconds.QuadPart / 1000.0);
+		RT64.lib.PrintToInspector(RT64.inspector, message);
+	}
 
 	// Left click allows to pick a texture for editing from the viewport.
 	if (RT64.pickTextureNextFrame) {
@@ -1603,7 +1630,9 @@ static void gfx_rt64_rapi_end_frame(void) {
 			texMod->materialMod->enabledAttributes = RT64_ATTRIBUTE_NONE;
 		}
 
-		RT64.lib.SetMaterialInspector(RT64.inspector, texMod->materialMod, textureName.c_str());
+		if (RT64.inspector != nullptr) {
+			RT64.lib.SetMaterialInspector(RT64.inspector, texMod->materialMod, textureName.c_str());
+		}
 	}
 
 	// Mesh key cleanup.
