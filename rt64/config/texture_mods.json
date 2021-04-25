@@ -1178,6 +1178,7 @@
         {
             "materialMod": {
                 "lightGroupMaskBits": 0,
+                "reflectionFactor": 0.15000000596046448,
                 "reflectionFresnelFactor": 0.25,
                 "refractionFactor": 0.9750000238418579,
                 "selfLight": [
