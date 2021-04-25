@@ -127,10 +127,15 @@ typedef struct {
 	float attenuationExponent;
 	float flickerIntensity;
 	unsigned int groupBits;
-	unsigned int minSamples;
-	unsigned int maxSamples;
 } RT64_LIGHT;
 
+typedef struct {
+	float resolutionScale;
+	unsigned int softLightSamples;
+	unsigned int giBounces;
+	float ambGiMixWeight;
+	bool denoiserEnabled;
+} RT64_VIEW_CONFIG;
 
 // Forward declaration of types.
 typedef struct RT64_DEVICE RT64_DEVICE;
@@ -201,6 +206,7 @@ typedef void(*DrawDevicePtr)(RT64_DEVICE* device, int vsyncInterval);
 typedef void(*DestroyDevicePtr)(RT64_DEVICE* device);
 typedef RT64_VIEW* (*CreateViewPtr)(RT64_SCENE* scenePtr);
 typedef void(*SetViewPerspectivePtr)(RT64_VIEW *viewPtr, RT64_MATRIX4 viewMatrix, float fovRadians, float nearDist, float farDist);
+typedef void(*SetViewConfigurationPtr)(RT64_VIEW *viewPtr, RT64_VIEW_CONFIG viewConfig);
 typedef RT64_INSTANCE* (*GetViewRaytracedInstanceAtPtr)(RT64_VIEW *viewPtr, int x, int y);
 typedef void(*DestroyViewPtr)(RT64_VIEW* viewPtr);
 typedef RT64_SCENE* (*CreateScenePtr)(RT64_DEVICE* devicePtr);
@@ -229,6 +235,7 @@ typedef struct {
 	DestroyDevicePtr DestroyDevice;
 	CreateViewPtr CreateView;
 	SetViewPerspectivePtr SetViewPerspective;
+	SetViewConfigurationPtr SetViewConfiguration;
 	GetViewRaytracedInstanceAtPtr GetViewRaytracedInstanceAt;
 	DestroyViewPtr DestroyView;
 	CreateScenePtr CreateScene;
@@ -265,6 +272,7 @@ inline RT64_LIBRARY RT64_LoadLibrary() {
 		lib.DestroyDevice = (DestroyDevicePtr)(GetProcAddress(lib.handle, "RT64_DestroyDevice"));
 		lib.CreateView = (CreateViewPtr)(GetProcAddress(lib.handle, "RT64_CreateView"));
 		lib.SetViewPerspective = (SetViewPerspectivePtr)(GetProcAddress(lib.handle, "RT64_SetViewPerspective"));
+		lib.SetViewConfiguration = (SetViewConfigurationPtr)(GetProcAddress(lib.handle, "RT64_SetViewConfiguration"));
 		lib.GetViewRaytracedInstanceAt = (GetViewRaytracedInstanceAtPtr)(GetProcAddress(lib.handle, "RT64_GetViewRaytracedInstanceAt"));
 		lib.DestroyView = (DestroyViewPtr)(GetProcAddress(lib.handle, "RT64_DestroyView"));
 		lib.CreateScene = (CreateScenePtr)(GetProcAddress(lib.handle, "RT64_CreateScene"));

@@ -55,6 +55,7 @@ static const u8 optSmallStr[][32] = {
 static const u8 menuStr[][32] = {
     { TEXT_OPT_OPTIONS },
     { TEXT_OPT_CAMERA },
+    { TEXT_OPT_RT64 },
     { TEXT_OPT_CONTROLS },
     { TEXT_OPT_VIDEO },
     { TEXT_OPT_AUDIO },
@@ -74,6 +75,16 @@ static const u8 optsCameraStr[][32] = {
     { TEXT_OPT_CAMD },
     { TEXT_OPT_CAMON },
 };
+
+#ifdef RAPI_RT64
+static const u8 optsRT64Str[][32] = {
+    { TEXT_OPT_RESSCALE },
+    { TEXT_OPT_SPHEREL },
+    { TEXT_OPT_GI },
+    { TEXT_OPT_GIWEIGHT },
+    { TEXT_OPT_DENOISER },
+};
+#endif
 
 static const u8 optsVideoStr[][32] = {
     { TEXT_OPT_FSCREEN },
@@ -235,6 +246,17 @@ static struct Option optsCamera[] = {
 };
 #endif
 
+#ifdef RAPI_RT64
+static struct Option optsRT64[] = {
+    DEF_OPT_SCROLL( optsRT64Str[0], &configRT64ResScale, 10, 200, 1 ),
+    DEF_OPT_TOGGLE( optsRT64Str[1], &configRT64SphereLights ),
+    DEF_OPT_TOGGLE( optsRT64Str[2], &configRT64GI ),
+    DEF_OPT_SCROLL( optsRT64Str[3], &configRT64GIStrength, 5, 95, 1 ),
+    DEF_OPT_TOGGLE( optsRT64Str[4], &configRT64Denoiser ),
+    DEF_OPT_BUTTON( optsVideoStr[9], optvideo_apply ),
+};
+#endif
+
 static struct Option optsControls[] = {
     DEF_OPT_BIND( bindStr[ 2], configKeyA ),
     DEF_OPT_BIND( bindStr[ 3], configKeyB ),
@@ -290,10 +312,13 @@ static struct Option optsCheats[] = {
 #ifdef BETTERCAMERA
 static struct SubMenu menuCamera   = DEF_SUBMENU( menuStr[1], optsCamera );
 #endif
-static struct SubMenu menuControls = DEF_SUBMENU( menuStr[2], optsControls );
-static struct SubMenu menuVideo    = DEF_SUBMENU( menuStr[3], optsVideo );
-static struct SubMenu menuAudio    = DEF_SUBMENU( menuStr[4], optsAudio );
-static struct SubMenu menuCheats   = DEF_SUBMENU( menuStr[6], optsCheats );
+#ifdef RAPI_RT64
+static struct SubMenu menuRT64   = DEF_SUBMENU( menuStr[2], optsRT64 );
+#endif
+static struct SubMenu menuControls = DEF_SUBMENU( menuStr[3], optsControls );
+static struct SubMenu menuVideo    = DEF_SUBMENU( menuStr[4], optsVideo );
+static struct SubMenu menuAudio    = DEF_SUBMENU( menuStr[5], optsAudio );
+static struct SubMenu menuCheats   = DEF_SUBMENU( menuStr[7], optsCheats );
 
 /* main options menu definition */
 
@@ -301,12 +326,15 @@ static struct Option optsMain[] = {
 #ifdef BETTERCAMERA
     DEF_OPT_SUBMENU( menuStr[1], &menuCamera ),
 #endif
-    DEF_OPT_SUBMENU( menuStr[2], &menuControls ),
-    DEF_OPT_SUBMENU( menuStr[3], &menuVideo ),
-    DEF_OPT_SUBMENU( menuStr[4], &menuAudio ),
-    DEF_OPT_BUTTON ( menuStr[5], optmenu_act_exit ),
+#ifdef RAPI_RT64
+    DEF_OPT_SUBMENU( menuStr[2], &menuRT64 ),
+#endif
+    DEF_OPT_SUBMENU( menuStr[3], &menuControls ),
+    DEF_OPT_SUBMENU( menuStr[4], &menuVideo ),
+    DEF_OPT_SUBMENU( menuStr[5], &menuAudio ),
+    DEF_OPT_BUTTON ( menuStr[6], optmenu_act_exit ),
     // NOTE: always keep cheats the last option here because of the half-assed way I toggle them
-    DEF_OPT_SUBMENU( menuStr[6], &menuCheats )
+    DEF_OPT_SUBMENU( menuStr[7], &menuCheats )
 };
 
 static struct SubMenu menuMain = DEF_SUBMENU( menuStr[0], optsMain );

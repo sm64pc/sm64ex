@@ -7,6 +7,7 @@
 #endif
 
 extern "C" {
+#	include "../configfile.h"
 #	include "../../game/area.h"
 #	include "../../game/level_update.h"
 #	include "../fs/fs.h"
@@ -49,10 +50,8 @@ using json = nlohmann::json;
 #define MAX_AREAS						3
 #define MAX_LEVEL_LIGHTS				128
 #define LEVEL_LIGHTS_FILENAME			FS_BASEDIR "/rt64/level_lights.json"
-#define LIGHT_SAMPLE_PRESETS_FILENAME	FS_BASEDIR "/rt64/light_sample_presets.json"
 #define GEO_LAYOUT_MODS_FILENAME		FS_BASEDIR "/rt64/geo_layout_mods.json"
 #define TEXTURE_MODS_FILENAME			FS_BASEDIR "/rt64/texture_mods.json"
-#define LIGHT_SAMPLE_PRESET_DEFAULT		"Simple"
 
 struct ShaderProgram {
     uint32_t shader_id;
@@ -90,7 +89,6 @@ struct RecordedMod {
 };
 
 //	Convention of bits for different lights.
-//	The tiers allow more detailed control over the performance of areas of the game that are more demanding than others.
 //		1 	- Directional Tier A
 //		2 	- Directional Tier B
 //		4 	- Stage Tier A 
@@ -99,16 +97,6 @@ struct RecordedMod {
 //		32 	- Objects Tier B
 //		64 	- Particles Tier A
 //		128 - Particles Tier B
-
-struct LightSampleSetting {
-	unsigned int groupBits;
-	unsigned int minSamples;
-	unsigned int maxSamples;
-};
-
-struct LightSamplePreset {
-	std::vector<LightSampleSetting> settings;
-};
 
 struct {
 	HWND hwnd;
@@ -130,8 +118,6 @@ struct {
 	std::unordered_map<uint64_t, RecordedMesh> dynamicMeshes;
 	std::unordered_map<uint64_t, RecordedMeshKey> dynamicMeshKeys;
 	std::unordered_map<uint32_t, ShaderProgram *> shaderPrograms;
-	LightSamplePreset activeLightSamplePreset;
-	std::map<std::string, LightSamplePreset> lightSamplePresets;
 	int cachedMeshesPerFrame;
 	RT64_LIGHT lights[MAX_LIGHTS];
     unsigned int lightCount;
@@ -219,49 +205,6 @@ void gfx_rt64_load_light(const json &jlight, RT64_LIGHT *light) {
 	light->groupBits = jlight["groupBits"];
 }
 
-void gfx_rt64_set_light_samples(RT64_LIGHT *light) {
-	unsigned int minSamples = 1;
-	unsigned int maxSamples = 1;
-	for (const auto &it : RT64.activeLightSamplePreset.settings) {
-		if (it.groupBits & light->groupBits) {
-			minSamples = std::max(minSamples, it.minSamples);
-			maxSamples = std::max(maxSamples, it.maxSamples);
-		}
-	}
-
-	light->minSamples = minSamples;
-	light->maxSamples = std::max(minSamples, maxSamples);
-}
-
-LightSamplePreset gfx_rt64_load_light_sample_preset(const json &jpreset) {
-	LightSamplePreset preset;
-	for (const json &jsetting : jpreset["lightSampleSettings"]) {
-		LightSampleSetting setting;
-		setting.groupBits = jsetting["groupBits"];
-		setting.minSamples =jsetting["minSamples"];
-		setting.maxSamples =jsetting["maxSamples"];
-		preset.settings.push_back(setting);
-	}
-
-	return preset;
-}
-
-void gfx_rt64_load_light_sample_presets() {
-	std::ifstream i(LIGHT_SAMPLE_PRESETS_FILENAME);
-	if (i.is_open()) {
-		json j;
-		i >> j;
-
-		for (const json &jpreset : j["presets"]) {
-			const std::string name = jpreset["name"];
-			RT64.lightSamplePresets[name] = gfx_rt64_load_light_sample_preset(jpreset);
-		}
-	}
-	else {
-		fprintf(stderr, "Unable to load " LIGHT_SAMPLE_PRESETS_FILENAME ". Defaulting to hard shadows only.\n");
-	}
-}
-
 uint64_t gfx_rt64_load_normal_map_mod(const json &jnormal) {
 	return gfx_rt64_get_texture_name_hash(jnormal["name"]);
 }
@@ -330,16 +273,6 @@ void gfx_rt64_load_level_lights() {
 	}
 	else {
 		fprintf(stderr, "Unable to load " LEVEL_LIGHTS_FILENAME ". Using default lighting.\n");
-	}
-}
-
-void gfx_rt64_set_samples_level_lights() {
-	for (int l = 0; l < MAX_LEVELS; l++) {
-        for (int a = 0; a < MAX_AREAS; a++) {
-			for (int i = 0; i < RT64.levelLightCounts[l][a]; i++) {
-				gfx_rt64_set_light_samples(&RT64.levelLights[l][a][i]);
-			}
-		}
 	}
 }
 
@@ -746,6 +679,16 @@ static void onkeyup(WPARAM w_param, LPARAM l_param) {
     }
 }
 
+void gfx_rt64_apply_config() {
+	RT64_VIEW_CONFIG config;
+	config.resolutionScale = configRT64ResScale / 100.0f;
+	config.softLightSamples = configRT64SphereLights ? 1 : 0;
+	config.giBounces = configRT64GI ? 1 : 0;
+	config.ambGiMixWeight = configRT64GIStrength / 100.0f;
+	config.denoiserEnabled = configRT64Denoiser;
+	RT64.lib.SetViewConfiguration(RT64.view, config);
+}
+
 LRESULT CALLBACK gfx_rt64_wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	if ((RT64.inspector != nullptr) && RT64.lib.HandleMessageInspector(RT64.inspector, message, wParam, lParam)) {
 		return true;
@@ -795,6 +738,11 @@ LRESULT CALLBACK gfx_rt64_wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 		onkeyup(wParam, lParam);
 		break;
 	case WM_PAINT: {
+    	if (configWindow.settings_changed) {
+			gfx_rt64_apply_config();
+			configWindow.settings_changed = false;
+		}
+
 		LARGE_INTEGER ElapsedMicroseconds;
 		
 		// Run one game iteration.
@@ -864,7 +812,7 @@ static void gfx_rt64_wapi_init(const char *window_title) {
 	wc.lpfnWndProc = gfx_rt64_wnd_proc;
 	wc.hInstance = GetModuleHandle(0);
 	wc.hbrBackground = (HBRUSH)(COLOR_BACKGROUND);
-	wc.lpszClassName = "RT64Sample";
+	wc.lpszClassName = "RT64";
 	RegisterClass(&wc);
 
 	// Create window.
@@ -1001,13 +949,8 @@ static void gfx_rt64_wapi_init(const char *window_title) {
         }
     }
 
-	// Load the light sample presets and choose the default preset.
-	gfx_rt64_load_light_sample_presets();
-	RT64.activeLightSamplePreset = RT64.lightSamplePresets[LIGHT_SAMPLE_PRESET_DEFAULT];
-	
 	// Load the global lights from a file.
 	gfx_rt64_load_level_lights();
-	gfx_rt64_set_samples_level_lights();
 
 	// Initialize camera.
 	RT64.viewMatrix = RT64.identityTransform;
@@ -1020,6 +963,9 @@ static void gfx_rt64_wapi_init(const char *window_title) {
 
 	// Load the texture mods from a file.
 	gfx_rt64_load_texture_mods();
+
+	// Apply loaded configuration.
+	gfx_rt64_apply_config();
 }
 
 static void gfx_rt64_wapi_shutdown(void) {
@@ -1376,8 +1322,6 @@ static void gfx_rt64_add_light(RT64_LIGHT *lightMod, RT64_MATRIX4 transform) {
 	auto &light = RT64.lights[RT64.lightCount++];
     light = *lightMod;
 
-	gfx_rt64_set_light_samples(&light);
-
     light.position = transform_position_affine(transform, lightMod->position);
 
 	// Use a vector that points in all three axes in case the node uses non-uniform scaling to get an estimate.
@@ -1532,7 +1476,6 @@ static void gfx_rt64_rapi_start_frame(void) {
     	RT64.lib.SetLightsInspector(RT64.inspector, lights, lightCount, MAX_LEVEL_LIGHTS);
 	}
 
-	gfx_rt64_set_samples_level_lights();
     memcpy(RT64.lights, lights, sizeof(RT64_LIGHT) * (*lightCount));
     RT64.lightCount = *lightCount;
 }
