@@ -5426,9 +5426,9 @@
                             "attenuationExponent": 0.0,
                             "attenuationRadius": 99999997952.0,
                             "diffuseColor": [
-                                0.800000011920929,
-                                0.699999988079071,
-                                0.6000000238418579
+                                0.75,
+                                0.6499999761581421,
+                                0.550000011920929
                             ],
                             "flickerIntensity": 0.0,
                             "groupBits": 1,
