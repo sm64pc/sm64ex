@@ -410,6 +410,12 @@
         },
         {
             "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "actors/white_particle/snow_particle.rgba16"
+        },
+        {
+            "materialMod": {
                 "ignoreNormalFactor": 0.25
             },
             "name": "actors/whomp/whomp_hand.rgba16"
