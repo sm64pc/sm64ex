@@ -1177,9 +1177,14 @@
         },
         {
             "materialMod": {
-                "reflectionFactor": 0.25,
+                "lightGroupMaskBits": 0,
                 "reflectionFresnelFactor": 0.25,
-                "refractionFactor": 0.9750000238418579
+                "refractionFactor": 0.9750000238418579,
+                "selfLight": [
+                    0.25,
+                    0.25,
+                    0.25
+                ]
             },
             "name": "textures/snow/ccm_textures.00800.rgba16"
         },
