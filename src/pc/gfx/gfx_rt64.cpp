@@ -991,11 +991,9 @@ static void gfx_rt64_wapi_main_loop(void (*run_one_game_iter)(void)) {
 
 static void gfx_rt64_wapi_get_dimensions(uint32_t *width, uint32_t *height) {
 	RECT rect;
-	GetWindowRect(RT64.hwnd, &rect);
-	int rectWidth = rect.right - rect.left;
-	int rectHeight = rect.bottom - rect.top;
-	*width = rectWidth;
-	*height = rectHeight;
+	GetClientRect(RT64.hwnd, &rect);
+	*width = rect.right - rect.left;
+	*height = rect.bottom - rect.top;
 }
 
 static void gfx_rt64_wapi_handle_events(void) {
