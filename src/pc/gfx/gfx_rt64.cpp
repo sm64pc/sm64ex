@@ -159,6 +159,7 @@ struct {
 	ShaderProgram *shaderProgram;
 	bool background;
 	RT64_VECTOR3 fogColor;
+	RT64_RECT scissorRect;
 	int16_t fogMul;
 	int16_t fogOffset;
 	RecordedMod *graphNodeMod;
@@ -680,13 +681,13 @@ static void onkeyup(WPARAM w_param, LPARAM l_param) {
 }
 
 void gfx_rt64_apply_config() {
-	RT64_VIEW_CONFIG config;
-	config.resolutionScale = configRT64ResScale / 100.0f;
-	config.softLightSamples = configRT64SphereLights ? 1 : 0;
-	config.giBounces = configRT64GI ? 1 : 0;
-	config.ambGiMixWeight = configRT64GIStrength / 100.0f;
-	config.denoiserEnabled = configRT64Denoiser;
-	RT64.lib.SetViewConfiguration(RT64.view, config);
+	RT64_VIEW_DESC desc;
+	desc.resolutionScale = configRT64ResScale / 100.0f;
+	desc.softLightSamples = configRT64SphereLights ? 1 : 0;
+	desc.giBounces = configRT64GI ? 1 : 0;
+	desc.ambGiMixWeight = configRT64GIStrength / 100.0f;
+	desc.denoiserEnabled = configRT64Denoiser;
+	RT64.lib.SetViewDescription(RT64.view, desc);
 }
 
 LRESULT CALLBACK gfx_rt64_wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -846,6 +847,7 @@ static void gfx_rt64_wapi_init(const char *window_title) {
 	RT64.dropNextFrame = false;
 
 	// Initialize other attributes.
+	RT64.scissorRect = { 0, 0, 0, 0 };
 	RT64.instanceCount = 0;
 	RT64.instanceAllocCount = 0;
 	RT64.geoLayoutStackSize = 0;
@@ -1120,9 +1122,11 @@ static void gfx_rt64_rapi_set_zmode_decal(bool zmode_decal) {
 }
 
 static void gfx_rt64_rapi_set_viewport(int x, int y, int width, int height) {
+	//printf("gfx_rt64_rapi_set_viewport %d %d %d %d\n", x, y, width, height);
 }
 
 static void gfx_rt64_rapi_set_scissor(int x, int y, int width, int height) {
+	RT64.scissorRect = { x, y, width, height };
 }
 
 static void gfx_rt64_rapi_set_use_alpha(bool use_alpha) {
@@ -1353,14 +1357,19 @@ static void gfx_rt64_rapi_apply_mod(RT64_MATERIAL *material, RT64_TEXTURE **norm
 }
 
 static void gfx_rt64_rapi_draw_triangles_common(RT64_MATRIX4 transform, float buf_vbo[], size_t buf_vbo_len, size_t buf_vbo_num_tris, bool double_sided, bool raytrace) {
-	RT64_TEXTURE *diffuseMapTexture = RT64.blankTexture;
-	RT64_TEXTURE *normalMapTexture = nullptr;
 	RecordedMod *textureMod = nullptr;
 	bool linearFilter = false;
 	uint32_t cms = 0, cmt = 0;
 	
 	// Create the instance.
 	RT64_INSTANCE *instance = gfx_rt64_rapi_add_instance();
+
+	// Describe the instance.
+	RT64_INSTANCE_DESC instDesc;
+	instDesc.transform = transform;
+	instDesc.diffuseTexture = RT64.blankTexture;
+	instDesc.normalTexture = nullptr;
+	instDesc.scissorRect = RT64.scissorRect;
 
 	// Find all parameters associated to the texture if it's used.
 	bool highlightMaterial = false;
@@ -1371,7 +1380,7 @@ static void gfx_rt64_rapi_draw_triangles_common(RT64_MATRIX4 transform, float bu
 		cmt = recordedTexture.cmt;
 
 		if (recordedTexture.texture != nullptr) {
-			diffuseMapTexture = recordedTexture.texture;
+			instDesc.diffuseTexture = recordedTexture.texture;
 		}
 
 		auto texModIt = RT64.texMods.find(recordedTexture.hash);
@@ -1388,36 +1397,39 @@ static void gfx_rt64_rapi_draw_triangles_common(RT64_MATRIX4 transform, float bu
 	}
 
 	// Build material with applied mods.
-	RT64_MATERIAL material = gfx_rt64_rapi_build_material(RT64.shaderProgram, linearFilter, cms, cmt);
+	instDesc.material = gfx_rt64_rapi_build_material(RT64.shaderProgram, linearFilter, cms, cmt);
 	if (RT64.graphNodeMod != nullptr) {
-		gfx_rt64_rapi_apply_mod(&material, &normalMapTexture, RT64.graphNodeMod, transform);
+		gfx_rt64_rapi_apply_mod(&instDesc.material, &instDesc.normalTexture, RT64.graphNodeMod, transform);
 	}
 
 	if (textureMod != nullptr) {
-		gfx_rt64_rapi_apply_mod(&material, &normalMapTexture, textureMod, transform);
+		gfx_rt64_rapi_apply_mod(&instDesc.material, &instDesc.normalTexture, textureMod, transform);
 	}
 
 	if (highlightMaterial) {
-		material.diffuseColorMix = { 1.0f, 0.0f, 1.0f, 0.5f };
-		material.selfLight = { 1.0f, 1.0f, 1.0f };
-		material.lightGroupMaskBits = 0;
+		instDesc.material.diffuseColorMix = { 1.0f, 0.0f, 1.0f, 0.5f };
+		instDesc.material.selfLight = { 1.0f, 1.0f, 1.0f };
+		instDesc.material.lightGroupMaskBits = 0;
 	}
 
 	// Process the mesh that corresponds to the VBO.
-	RT64_MESH *mesh = gfx_rt64_rapi_process_mesh(buf_vbo, buf_vbo_len, buf_vbo_num_tris, raytrace);
+	instDesc.mesh = gfx_rt64_rapi_process_mesh(buf_vbo, buf_vbo_len, buf_vbo_num_tris, raytrace);
 
 	// Mark the right instance flags.
-	unsigned int instanceFlags = 0;
+	instDesc.flags = 0;
 	if (RT64.background) {
-		instanceFlags |= RT64_INSTANCE_RASTER_BACKGROUND;
+		instDesc.flags |= RT64_INSTANCE_RASTER_BACKGROUND;
 	}
 
 	if (double_sided) {
-		instanceFlags |= RT64_INSTANCE_DISABLE_BACKFACE_CULLING;
+		instDesc.flags |= RT64_INSTANCE_DISABLE_BACKFACE_CULLING;
 	}
 
-	// Update the instance.
-	RT64.lib.SetInstance(instance, mesh, transform, diffuseMapTexture, normalMapTexture, material, instanceFlags);
+	if (!raytrace) {
+		instDesc.flags |= RT64_INSTANCE_RASTER_USE_SCISSOR_RECT;
+	}
+
+	RT64.lib.SetInstanceDescription(instance, instDesc);
 }
 
 void gfx_rt64_rapi_set_fog(uint8_t fog_r, uint8_t fog_g, uint8_t fog_b, int16_t fog_mul, int16_t fog_offset) {

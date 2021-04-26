@@ -45,12 +45,22 @@
 
 // Instance flags.
 #define RT64_INSTANCE_RASTER_BACKGROUND			0x1
-#define RT64_INSTANCE_DISABLE_BACKFACE_CULLING	0x2
+#define RT64_INSTANCE_RASTER_USE_SCISSOR_RECT	0x2
+#define RT64_INSTANCE_DISABLE_BACKFACE_CULLING	0x4
 
 // Light flags.
 #define RT64_LIGHT_GROUP_MASK_ALL				0xFFFFFFFF
 #define RT64_LIGHT_GROUP_DEFAULT				0x1
 #define RT64_LIGHT_MAX_SAMPLES					128
+
+// Forward declaration of types.
+typedef struct RT64_DEVICE RT64_DEVICE;
+typedef struct RT64_VIEW RT64_VIEW;
+typedef struct RT64_SCENE RT64_SCENE;
+typedef struct RT64_INSTANCE RT64_INSTANCE;
+typedef struct RT64_MESH RT64_MESH;
+typedef struct RT64_TEXTURE RT64_TEXTURE;
+typedef struct RT64_INSPECTOR RT64_INSPECTOR;
 
 typedef struct {
 	float x, y;
@@ -74,6 +84,10 @@ typedef struct {
 	RT64_VECTOR2 uv;
 	RT64_VECTOR4 inputs[4];
 } RT64_VERTEX;
+
+typedef struct {
+	int x, y, w, h;
+} RT64_RECT;
 
 typedef struct {
 	int filterMode;
@@ -135,16 +149,17 @@ typedef struct {
 	unsigned int giBounces;
 	float ambGiMixWeight;
 	bool denoiserEnabled;
-} RT64_VIEW_CONFIG;
+} RT64_VIEW_DESC;
 
-// Forward declaration of types.
-typedef struct RT64_DEVICE RT64_DEVICE;
-typedef struct RT64_VIEW RT64_VIEW;
-typedef struct RT64_SCENE RT64_SCENE;
-typedef struct RT64_INSTANCE RT64_INSTANCE;
-typedef struct RT64_MESH RT64_MESH;
-typedef struct RT64_TEXTURE RT64_TEXTURE;
-typedef struct RT64_INSPECTOR RT64_INSPECTOR;
+typedef struct {
+	RT64_MESH *mesh;
+	RT64_MATRIX4 transform;
+	RT64_TEXTURE *diffuseTexture;
+	RT64_TEXTURE *normalTexture;
+	RT64_MATERIAL material;
+	RT64_RECT scissorRect;
+	unsigned int flags;
+} RT64_INSTANCE_DESC;
 
 inline void RT64_ApplyMaterialAttributes(RT64_MATERIAL *dst, RT64_MATERIAL *src) {
 	if (src->enabledAttributes & RT64_ATTRIBUTE_IGNORE_NORMAL_FACTOR) {
@@ -206,7 +221,7 @@ typedef void(*DrawDevicePtr)(RT64_DEVICE* device, int vsyncInterval);
 typedef void(*DestroyDevicePtr)(RT64_DEVICE* device);
 typedef RT64_VIEW* (*CreateViewPtr)(RT64_SCENE* scenePtr);
 typedef void(*SetViewPerspectivePtr)(RT64_VIEW *viewPtr, RT64_MATRIX4 viewMatrix, float fovRadians, float nearDist, float farDist);
-typedef void(*SetViewConfigurationPtr)(RT64_VIEW *viewPtr, RT64_VIEW_CONFIG viewConfig);
+typedef void(*SetViewDescriptionPtr)(RT64_VIEW *viewPtr, RT64_VIEW_DESC viewDesc);
 typedef RT64_INSTANCE* (*GetViewRaytracedInstanceAtPtr)(RT64_VIEW *viewPtr, int x, int y);
 typedef void(*DestroyViewPtr)(RT64_VIEW* viewPtr);
 typedef RT64_SCENE* (*CreateScenePtr)(RT64_DEVICE* devicePtr);
@@ -216,7 +231,7 @@ typedef RT64_MESH* (*CreateMeshPtr)(RT64_DEVICE* devicePtr, int flags);
 typedef void (*SetMeshPtr)(RT64_MESH* meshPtr, RT64_VERTEX* vertexArray, int vertexCount, unsigned int* indexArray, int indexCount);
 typedef void (*DestroyMeshPtr)(RT64_MESH* meshPtr);
 typedef RT64_INSTANCE* (*CreateInstancePtr)(RT64_SCENE* scenePtr);
-typedef void (*SetInstancePtr)(RT64_INSTANCE* instancePtr, RT64_MESH* meshPtr, RT64_MATRIX4 transform, RT64_TEXTURE* diffuseTexture, RT64_TEXTURE* normalTexture, RT64_MATERIAL material, unsigned int flags);
+typedef void (*SetInstanceDescriptionPtr)(RT64_INSTANCE* instancePtr, RT64_INSTANCE_DESC instanceDesc);
 typedef void (*DestroyInstancePtr)(RT64_INSTANCE* instancePtr);
 typedef RT64_TEXTURE* (*CreateTextureFromRGBA8Ptr)(RT64_DEVICE* devicePtr, const void* bytes, int width, int height, int stride);
 typedef void(*DestroyTexturePtr)(RT64_TEXTURE* texture);
@@ -235,7 +250,7 @@ typedef struct {
 	DestroyDevicePtr DestroyDevice;
 	CreateViewPtr CreateView;
 	SetViewPerspectivePtr SetViewPerspective;
-	SetViewConfigurationPtr SetViewConfiguration;
+	SetViewDescriptionPtr SetViewDescription;
 	GetViewRaytracedInstanceAtPtr GetViewRaytracedInstanceAt;
 	DestroyViewPtr DestroyView;
 	CreateScenePtr CreateScene;
@@ -245,7 +260,7 @@ typedef struct {
 	SetMeshPtr SetMesh;
 	DestroyMeshPtr DestroyMesh;
 	CreateInstancePtr CreateInstance;
-	SetInstancePtr SetInstance;
+	SetInstanceDescriptionPtr SetInstanceDescription;
 	DestroyInstancePtr DestroyInstance;
 	CreateTextureFromRGBA8Ptr CreateTextureFromRGBA8;
 	DestroyTexturePtr DestroyTexture;
@@ -272,7 +287,7 @@ inline RT64_LIBRARY RT64_LoadLibrary() {
 		lib.DestroyDevice = (DestroyDevicePtr)(GetProcAddress(lib.handle, "RT64_DestroyDevice"));
 		lib.CreateView = (CreateViewPtr)(GetProcAddress(lib.handle, "RT64_CreateView"));
 		lib.SetViewPerspective = (SetViewPerspectivePtr)(GetProcAddress(lib.handle, "RT64_SetViewPerspective"));
-		lib.SetViewConfiguration = (SetViewConfigurationPtr)(GetProcAddress(lib.handle, "RT64_SetViewConfiguration"));
+		lib.SetViewDescription = (SetViewDescriptionPtr)(GetProcAddress(lib.handle, "RT64_SetViewDescription"));
 		lib.GetViewRaytracedInstanceAt = (GetViewRaytracedInstanceAtPtr)(GetProcAddress(lib.handle, "RT64_GetViewRaytracedInstanceAt"));
 		lib.DestroyView = (DestroyViewPtr)(GetProcAddress(lib.handle, "RT64_DestroyView"));
 		lib.CreateScene = (CreateScenePtr)(GetProcAddress(lib.handle, "RT64_CreateScene"));
@@ -282,7 +297,7 @@ inline RT64_LIBRARY RT64_LoadLibrary() {
 		lib.SetMesh = (SetMeshPtr)(GetProcAddress(lib.handle, "RT64_SetMesh"));
 		lib.DestroyMesh = (DestroyMeshPtr)(GetProcAddress(lib.handle, "RT64_DestroyMesh"));
 		lib.CreateInstance = (CreateInstancePtr)(GetProcAddress(lib.handle, "RT64_CreateInstance"));
-		lib.SetInstance = (SetInstancePtr)(GetProcAddress(lib.handle, "RT64_SetInstance"));
+		lib.SetInstanceDescription = (SetInstanceDescriptionPtr)(GetProcAddress(lib.handle, "RT64_SetInstanceDescription"));
 		lib.DestroyInstance = (DestroyInstancePtr)(GetProcAddress(lib.handle, "RT64_DestroyInstance"));
 		lib.CreateTextureFromRGBA8 = (CreateTextureFromRGBA8Ptr)(GetProcAddress(lib.handle, "RT64_CreateTextureFromRGBA8"));
 		lib.DestroyTexture = (DestroyTexturePtr)(GetProcAddress(lib.handle, "RT64_DestroyTexture"));
