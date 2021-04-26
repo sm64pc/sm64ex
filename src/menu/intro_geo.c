@@ -9,6 +9,7 @@
 #include "types.h"
 #include "prevent_bss_reordering.h"
 #include "engine/math_util.h"
+#include "moon/utils/moon-math.h"
 
 #include "gfx_dimensions.h"
 
@@ -79,19 +80,7 @@ s8 gameOverBackgroundTable[] = {
 s8 gameOverBackgroundFlipOrder[] = { 0x00, 0x01, 0x02, 0x03, 0x07, 0x0B,
                                      0x0a, 0x09, 0x08, 0x04, 0x05, 0x06 };
 
-float Clamp01(float value){
-    if (value < 0.0)
-        return 0.0;
-    else if (value > 1.0)
-        return 1.0;
-    else
-        return value;
-}
 
-// Interpolates between /a/ and /b/ by /t/. /t/ is clamped between 0 and 1.
-float Lerp(float a, float b, float t) {
-    return a + (b - a) * Clamp01(t);
-}
 
 Gfx *geo_n64_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context) {
     struct GraphNode *graphNode; // sp4c
@@ -148,10 +137,8 @@ Gfx *geo_n64_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context) {
     else if (gTitlePos <= -range)
         gTitlePingPong = 0;
 
-    printf("%d\n", gTitlePingPong);
-
     gTitleNewPos += step * (gTitlePingPong ? -1 : 1);
-    gTitlePos = Lerp(gTitlePos, gTitleNewPos, (gGlobalCounter / 1000) * 100);
+    gTitlePos = lerp(gTitlePos, gTitleNewPos, (gGlobalCounter / 1000) * 100);
 
     gTitleRotationCounter += 2;
 
@@ -201,7 +188,7 @@ Gfx *geo_title_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context) {
         }
         guScale(scaleMat, scaleX, scaleY, scaleZ);
         gSPMatrix(displayListIter++, scaleMat, G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
-        gSPDisplayList(displayListIter++, &titletest_test_mesh);
+        gSPDisplayList(displayListIter++, &intro_seg7_dl_0700B3A0);
         gSPPopMatrix(displayListIter++, G_MTX_MODELVIEW);
         gSPEndDisplayList(displayListIter);
         gTitleZoomCounter++;
@@ -231,7 +218,7 @@ Gfx *geo_fade_transition(s32 sp40, struct GraphNode *sp44, UNUSED void *context)
             if (0) {
             }
         }
-        //gSPDisplayList(displayListIter++, &intro_seg7_dl_0700C6A0);
+        gSPDisplayList(displayListIter++, &intro_seg7_dl_0700C6A0);
         gSPEndDisplayList(displayListIter);
         if (gTitleZoomCounter >= 0x13) {
             gTitleFadeCounter += 0x1a;

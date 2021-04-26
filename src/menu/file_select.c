@@ -21,6 +21,7 @@
 #include "sm64.h"
 #include "text/text-loader.h"
 #include <string.h>
+#include "moon/utils/moon-gfx.h"
 
 /**
  * @file file_select.c
@@ -1519,8 +1520,8 @@ void print_save_file_star_count(s8 fileIndex, s16 x, s16 y) {
 #define SELECT_FILE_X 93
 #define SCORE_X 52
 #define COPY_X 117
-#define ERASE_X 177
-#define SOUNDMODE_X1 sSoundTextX
+#define ERASE_X 192
+#define SOUNDMODE_X1 254
 #define SAVEFILE_X1 92
 #define SAVEFILE_X2 209
 #define MARIOTEXT_X1 92
@@ -1539,10 +1540,15 @@ void print_main_menu_strings(void) {
         get_key_string("TEXT_MONO"),
         get_key_string("TEXT_HEADSET")
     };
-    // Print "SELECT FILE" text    
+
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
-    print_hud_lut_string(HUD_LUT_DIFF, SELECT_FILE_X, 35, get_key_string("TEXT_SELECT_FILE"));
+
+    // Print "SELECT FILE" text        
+    u8* txt = get_key_string("TEXT_SELECT_FILE");
+    float x = moon_get_text_width(txt, 1.0, TRUE) / 2;
+    print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH / 2 - x, 35, txt);
+
     // Print file star counts
     print_save_file_star_count(SAVE_FILE_A, SAVEFILE_X1, 78);
     print_save_file_star_count(SAVE_FILE_B, SAVEFILE_X2, 78);
@@ -1551,12 +1557,25 @@ void print_main_menu_strings(void) {
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
     // Print menu names
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
-    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
-    print_generic_string(SCORE_X, 39, get_key_string("TEXT_SCORE"));
-    print_generic_string(COPY_X, 39, get_key_string("TEXT_COPY"));
-    print_generic_string(ERASE_X, 39, get_key_string("TEXT_ERASE"));
-    sSoundTextX = get_str_x_pos_from_center(254, textSoundModes[sSoundMode], 10.0f);
-    print_generic_string(SOUNDMODE_X1, 39, textSoundModes[sSoundMode]);
+    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);    
+    //Change Copy X
+
+    txt = get_key_string("TEXT_SCORE");
+    x = moon_get_text_width(txt, 1.0, FALSE) / 2;
+    moon_draw_text(70 - x, 39, txt, 1.0);
+
+    txt = get_key_string("TEXT_COPY");
+    x = moon_get_text_width(txt, 1.0, FALSE) / 2;
+    moon_draw_text(129.5f - x, 39, txt, 1.0);
+
+    txt = get_key_string("TEXT_ERASE");
+    x = moon_get_text_width(txt, 1.0, FALSE) / 2;
+    moon_draw_text(ERASE_X - x, 39, txt, 1.0);
+    
+    txt = textSoundModes[sSoundMode];
+    x = moon_get_text_width(txt, 1.0, FALSE) / 2 + 0.5;
+    moon_draw_text(SOUNDMODE_X1 - x, 39, txt, 1.0);
+
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
     // Print file names
     gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_begin);
@@ -1575,9 +1594,16 @@ void print_main_menu_strings(void) {
  * Defines IDs for the top message of the score menu and displays it if the ID is called in messageID.
  */
 void score_menu_display_message(s8 messageID) {
+    u8* txt;
+    float x;
     switch (messageID) {
         case SCORE_MSG_CHECK_FILE:
-            print_hud_lut_string_fade(HUD_LUT_DIFF, CHECK_FILE_X, 35, get_key_string("TEXT_CHECK_FILE"));
+            gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_begin);
+            gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+            txt = get_key_string("TEXT_CHECK_FILE");
+            x = moon_get_text_width(txt, 1.0, TRUE) / 2;
+            print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH / 2 - x, 35, txt);
+            gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_end);
             break;
         case SCORE_MSG_NOSAVE_DATA:
             print_generic_string_fade(NOSAVE_DATA_X1, 190, get_key_string("TEXT_NO_SAVED_DATA_EXISTS"));
@@ -1647,12 +1673,19 @@ void print_score_menu_strings(void) {
  * Defines IDs for the top message of the copy menu and displays it if the ID is called in messageID.
  */
 void copy_menu_display_message(s8 messageID) {
+    u8* txt;
+    float x;
     switch (messageID) {
         case COPY_MSG_MAIN_TEXT:
             if (sAllFilesExist == TRUE) {
                 print_generic_string_fade(NOFILE_COPY_X, 190, get_key_string("TEXT_NO_FILE_TO_COPY_FROM"));
             } else {
-                print_hud_lut_string_fade(HUD_LUT_DIFF, COPY_FILE_X, 35, get_key_string("TEXT_COPY_FILE"));
+                gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_begin);
+                gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+                txt = get_key_string("TEXT_COPY_FILE");
+                x = moon_get_text_width(txt, 1.0, TRUE) / 2;
+                print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH / 2 - x, 35, txt);
+                gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_end);
             }
             break;
         case COPY_MSG_COPY_WHERE:
@@ -1837,10 +1870,16 @@ void print_erase_menu_prompt(s16 x, s16 y) {
  */
 void erase_menu_display_message(s8 messageID) {
     u8 textMarioAJustErased[] = { get_key_string("TEXT_FILE_MARIO_A_JUST_ERASED") };
-
+    u8* txt;
+    float x;
     switch (messageID) {
         case ERASE_MSG_MAIN_TEXT:
-            print_hud_lut_string_fade(HUD_LUT_DIFF, ERASE_FILE_X, 35, get_key_string("TEXT_ERASE_FILE"));
+            gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_begin);
+            gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+            txt = get_key_string("TEXT_ERASE_FILE");
+            x = moon_get_text_width(txt, 1.0, TRUE) / 2;
+            print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH / 2 - x, 35, txt);
+            gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_end);
             break;
         case ERASE_MSG_PROMPT:
             print_generic_string_fade(90, 190, get_key_string("TEXT_SURE"));
@@ -1961,8 +2000,11 @@ void print_sound_mode_menu_strings(void) {
     // Print "SOUND SELECT" text
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+    u8* txt = get_key_string("TEXT_SOUND_SELECT");
+    float x = moon_get_text_width(txt, 1.0, TRUE) / 2;
+    print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH / 2 - x, 35, txt);
 
-    print_hud_lut_string(HUD_LUT_DIFF, SOUND_HUD_X, 35, get_key_string("TEXT_SOUND_SELECT"));
+    // print_hud_lut_string(HUD_LUT_DIFF, SOUND_HUD_X, 35, get_key_string("TEXT_SOUND_SELECT"));
 
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
 

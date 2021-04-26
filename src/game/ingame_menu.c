@@ -429,7 +429,43 @@ void print_hud_lut_string(s8 hudLUT, s16 x, s16 y, const u8 *str) {
 
 
 void print_menu_generic_string(s16 x, s16 y, const u8 *str) {
-    moon_draw_text(x, y, str, 0.7f);
+    UNUSED s8 mark = DIALOG_MARK_NONE; // unused in EU
+    s32 strPos = 0;
+    s32 curX = x;
+    s32 curY = y;
+    void **fontLUT = segmented_to_virtual(menu_font_lut);
+
+    while (str[strPos] != DIALOG_CHAR_TERMINATOR) {
+        switch (str[strPos]) {
+            case DIALOG_CHAR_DAKUTEN:
+                mark = DIALOG_MARK_DAKUTEN;
+                break;
+            case DIALOG_CHAR_PERIOD_OR_HANDAKUTEN:
+                mark = DIALOG_MARK_HANDAKUTEN;
+                break;
+            case DIALOG_CHAR_SPACE:
+                curX += 4;
+                break;
+            default:
+                gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_IA, G_IM_SIZ_8b, 1, fontLUT[str[strPos]]);
+                gDPLoadSync(gDisplayListHead++);
+                gDPLoadBlock(gDisplayListHead++, G_TX_LOADTILE, 0, 0, 8 * 8 - 1, CALC_DXT(8, G_IM_SIZ_8b_BYTES));
+                gSPTextureRectangle(gDisplayListHead++, curX << 2, curY << 2, (curX + 8) << 2,
+                                    (curY + 8) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
+
+                if (mark != DIALOG_MARK_NONE) {
+                    gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_IA, G_IM_SIZ_8b, 1, fontLUT[mark + 0xEF]);
+                    gDPLoadSync(gDisplayListHead++);
+                    gDPLoadBlock(gDisplayListHead++, G_TX_LOADTILE, 0, 0, 8 * 8 - 1, CALC_DXT(8, G_IM_SIZ_8b_BYTES));
+                    gSPTextureRectangle(gDisplayListHead++, (curX + 6) << 2, (curY - 7) << 2,
+                                        (curX + 14) << 2, (curY + 1) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
+
+                    mark = DIALOG_MARK_NONE;
+                }
+                curX += gDialogCharWidths[str[strPos]];
+        }
+        strPos++;
+    }
 }
 
 void print_credits_string(s16 x, s16 y, const u8 *str) {
@@ -2190,15 +2226,9 @@ s16 render_pause_courses_and_castle(void) {
     return 0;
 }
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
-#define TXT_HISCORE_X 112
-#define TXT_HISCORE_Y 48
-#define TXT_CONGRATS_X 60
-#else
 #define TXT_HISCORE_X 109
 #define TXT_HISCORE_Y 36
 #define TXT_CONGRATS_X 70
-#endif
 
 #define HUD_PRINT_HISCORE         0
 #define HUD_PRINT_CONGRATULATIONS 1
@@ -2209,11 +2239,9 @@ void print_hud_course_complete_string(s8 str) {
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, colorFade, colorFade, colorFade, 255);
 
-    if (str == HUD_PRINT_HISCORE) {
-        print_hud_lut_string(HUD_LUT_GLOBAL, TXT_HISCORE_X, TXT_HISCORE_Y, get_key_string("TEXT_HUD_HI_SCORE"));
-    } else { // HUD_PRINT_CONGRATULATIONS
-        print_hud_lut_string(HUD_LUT_GLOBAL, TXT_CONGRATS_X, 67, get_key_string("TEXT_HUD_CONGRATULATIONS"));
-    }
+    u8* txt = get_key_string(str == HUD_PRINT_HISCORE ? "TEXT_HUD_HI_SCORE" : "TEXT_HUD_CONGRATULATIONS");
+    float x = moon_get_text_width(txt, 1.0, TRUE) / 2;
+    print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH / 2 - x, TXT_HISCORE_Y, txt);    
 
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
 }

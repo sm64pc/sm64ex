@@ -29,6 +29,7 @@
 #include "gfx_dimensions.h"
 #include "gfx_dimensions.h"
 #include "moon/utils/moon-gfx.h"
+#include "moon/utils/moon-math.h"
 
 u8 optmenu_open = 0;
 
@@ -391,7 +392,7 @@ static void optmenu_draw_text(s16 x, s16 y, const u8 *str, u8 col) {
     print_generic_string(textX, y, str);
 }
 
-static void optmenu_draw_scaled_text(s16 x, s16 y, const u8 *str, int col, float scale) {    
+static void optmenu_draw_scaled_text(f32 x, f32 y, const u8 *str, int col, float scale) {    
     gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, 255);
     moon_draw_text(x + 1, y-1, str, scale);
     if (col == -1) {
@@ -581,21 +582,42 @@ static inline s16 get_hudstr_centered_x(const s16 sx, const u8 *str) {
     }
 }
 
+float gSwitchValue = 0;
+float gSwitchNewValue = 0;
+float gGlobal = 0;
+
+#define _POSIX_C_SOURCE 199309L
+#include <sys/time.h>
+
 //Options menu
 void optmenu_draw(void) {
+    gGlobal += 1.0f;
     s16 scroll;
     s16 scrollpos;    
 
-    u8* label = get_key_string(currentMenu->label);
+    float range = 0.5f;
+    float step = 0.1f;
 
-    const s16 labelX = get_hudstr_centered_x(160, label);
+    if(gSwitchValue >= range) 
+        gSwitchNewValue -= step;
+    else if (gSwitchValue <= -range)
+        gSwitchNewValue += step;
+    
+    gSwitchValue = lerp(gSwitchValue, gSwitchNewValue, 0.01f);
+
+    u8* label = get_key_string(currentMenu->label);
+    float txtW = moon_get_text_width(label, 1.0, TRUE);
+
+    const s16 labelX = SCREEN_WIDTH / 2 - txtW / 2;
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 30, 30, 30, 255);
     print_hud_lut_string(HUD_LUT_GLOBAL, labelX, 22, label);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
     print_hud_lut_string(HUD_LUT_GLOBAL, labelX, 20, label);
-    optmenu_draw_scaled_text(labelX - 50, SCREEN_HEIGHT - 34, getTranslatedText("<"), -1, 0.6f);
-    optmenu_draw_scaled_text(labelX + 130, SCREEN_HEIGHT - 34, getTranslatedText(">"), -1, 0.6f);
+
+    optmenu_draw_scaled_text(labelX - 50 - gSwitchValue, SCREEN_HEIGHT - 34, getTranslatedText("<"), -1, 0.6f);
+    optmenu_draw_scaled_text(labelX + txtW + 50 + gSwitchValue, SCREEN_HEIGHT - 34, getTranslatedText(">"), -1, 0.6f);
+    
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
 
     PDrintBox(25, 50, SCREEN_WIDTH - 50, SCREEN_HEIGHT * 0.6, 0x00000080, true);

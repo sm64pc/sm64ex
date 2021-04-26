@@ -100,7 +100,7 @@ void Moon_LoadLanguage( string path ) {
         courseId++;
     }
 
-    language->courses = tmpCourses;
+    language->courses.insert(language->courses.end(), &tmpCourses[0], &tmpCourses[course_name_table_size]);
 
     for (WValue::ConstMemberIterator option = options.MemberBegin(); option != options.MemberEnd(); ++option) {
         language->strings.insert(pair<string, u8*>(
@@ -114,7 +114,7 @@ void Moon_LoadLanguage( string path ) {
             narrow(item->name.GetString()), 
             getTranslatedText(narrow(item->value.GetString()).c_str())
         ));
-    }
+    }    
 
     languages.push_back(language);
     languagesAmount = languages.size();
@@ -151,7 +151,7 @@ void Moon_InitLanguages( char *exePath, char *gamedir ) {
 
 void Moon_SetLanguage(LanguageEntry *new_language) {
     current = new_language;
-    dialogPool = new_language->dialogs.data();
-    seg2_act_name_table = new_language->acts.data();
-    seg2_course_name_table = new_language->courses;
+    dialogPool = current->dialogs.data();
+    seg2_act_name_table = current->acts.data();
+    seg2_course_name_table = current->courses.data();
 }

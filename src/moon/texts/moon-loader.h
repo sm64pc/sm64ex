@@ -27,11 +27,11 @@ inline std::string narrow (const std::wstring& str) {
 
 struct LanguageEntry {
     std::string name;
-    std::string logo;
-    u8* * courses;
-    std::map<std::string, u8*> strings;    
+    std::string logo;    
+    std::map<std::string, u8*> strings;
     std::vector<u8*> acts;
     std::vector<struct DialogEntry*> dialogs;
+    std::vector<u8*> courses;
 };
 
 extern std::vector<LanguageEntry*> languages;
