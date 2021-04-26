@@ -410,6 +410,21 @@
         },
         {
             "materialMod": {
+                "diffuseColorMix": [
+                    0.25,
+                    0.25,
+                    0.25,
+                    1.0
+                ],
+                "reflectionFactor": 0.6000000238418579,
+                "reflectionFresnelFactor": 1.0,
+                "reflectionShineFactor": 0.5,
+                "refractionFactor": 0.8999999761581421
+            },
+            "name": "actors/water_bubble/water_bubble.rgba16"
+        },
+        {
+            "materialMod": {
                 "ignoreNormalFactor": 1.0
             },
             "name": "actors/white_particle/snow_particle.rgba16"
