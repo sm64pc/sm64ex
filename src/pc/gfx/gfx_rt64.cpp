@@ -160,6 +160,7 @@ struct {
 	bool background;
 	RT64_VECTOR3 fogColor;
 	RT64_RECT scissorRect;
+	RT64_RECT viewportRect;
 	int16_t fogMul;
 	int16_t fogOffset;
 	RecordedMod *graphNodeMod;
@@ -168,6 +169,7 @@ struct {
 	LARGE_INTEGER StartingTime, EndingTime;
 	LARGE_INTEGER Frequency;
 	bool dropNextFrame;
+	bool turboMode;
 
 	// Function pointers for game.
     void (*run_one_game_iter)(void);
@@ -724,6 +726,10 @@ LRESULT CALLBACK gfx_rt64_wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 		if (wParam == VK_F1) {
 			gfx_rt64_toggle_inspector();
 		}
+
+		if (wParam == VK_F4) {
+			RT64.turboMode = !RT64.turboMode;
+		}
 		
 		if (RT64.inspector != nullptr) {
 			if (wParam == VK_F5) {
@@ -760,31 +766,34 @@ LRESULT CALLBACK gfx_rt64_wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 			}
 		}
 
-		// Try to maintain the fixed framerate.
-		const int FixedFramerate = 30;
-		const int FramerateMicroseconds = 1000000 / FixedFramerate;
-		int cyclesWaited = 0;
+		if (!RT64.turboMode) {
+			// Try to maintain the fixed framerate.
+			const int FixedFramerate = 30;
+			const int FramerateMicroseconds = 1000000 / FixedFramerate;
+			int cyclesWaited = 0;
 
-		// Sleep if possible to avoid busy waiting too much.
-		QueryPerformanceCounter(&RT64.EndingTime);
-		elapsed_time(RT64.StartingTime, RT64.EndingTime, RT64.Frequency, ElapsedMicroseconds);
-		int SleepMs = ((FramerateMicroseconds - ElapsedMicroseconds.QuadPart) - 500) / 1000;
-		if (SleepMs > 0) {
-			Sleep(SleepMs);
-			cyclesWaited++;
-		}
-
-		// Busy wait to reach the desired framerate.
-		do {
+			// Sleep if possible to avoid busy waiting too much.
 			QueryPerformanceCounter(&RT64.EndingTime);
 			elapsed_time(RT64.StartingTime, RT64.EndingTime, RT64.Frequency, ElapsedMicroseconds);
-			cyclesWaited++;
-		} while (ElapsedMicroseconds.QuadPart < FramerateMicroseconds);
+			int SleepMs = ((FramerateMicroseconds - ElapsedMicroseconds.QuadPart) - 500) / 1000;
+			if (SleepMs > 0) {
+				Sleep(SleepMs);
+				cyclesWaited++;
+			}
 
-		RT64.StartingTime = RT64.EndingTime;
+			// Busy wait to reach the desired framerate.
+			do {
+				QueryPerformanceCounter(&RT64.EndingTime);
+				elapsed_time(RT64.StartingTime, RT64.EndingTime, RT64.Frequency, ElapsedMicroseconds);
+				cyclesWaited++;
+			} while (ElapsedMicroseconds.QuadPart < FramerateMicroseconds);
 
-		// Drop the next frame if we didn't wait any cycles.
-		RT64.dropNextFrame = (cyclesWaited == 1);
+			RT64.StartingTime = RT64.EndingTime;
+
+			// Drop the next frame if we didn't wait any cycles.
+			RT64.dropNextFrame = (cyclesWaited == 1);
+		}
+
 		break;
 	}
 	default:
@@ -845,9 +854,11 @@ static void gfx_rt64_wapi_init(const char *window_title) {
 	QueryPerformanceFrequency(&RT64.Frequency);
 	QueryPerformanceCounter(&RT64.StartingTime);
 	RT64.dropNextFrame = false;
+	RT64.turboMode = false;
 
 	// Initialize other attributes.
 	RT64.scissorRect = { 0, 0, 0, 0 };
+	RT64.viewportRect = { 0, 0, 0, 0 };
 	RT64.instanceCount = 0;
 	RT64.instanceAllocCount = 0;
 	RT64.geoLayoutStackSize = 0;
@@ -1120,7 +1131,7 @@ static void gfx_rt64_rapi_set_zmode_decal(bool zmode_decal) {
 }
 
 static void gfx_rt64_rapi_set_viewport(int x, int y, int width, int height) {
-	//printf("gfx_rt64_rapi_set_viewport %d %d %d %d\n", x, y, width, height);
+	RT64.viewportRect = { x, y, width, height };
 }
 
 static void gfx_rt64_rapi_set_scissor(int x, int y, int width, int height) {
@@ -1368,6 +1379,7 @@ static void gfx_rt64_rapi_draw_triangles_common(RT64_MATRIX4 transform, float bu
 	instDesc.diffuseTexture = RT64.blankTexture;
 	instDesc.normalTexture = nullptr;
 	instDesc.scissorRect = RT64.scissorRect;
+	instDesc.viewportRect = RT64.viewportRect;
 
 	// Find all parameters associated to the texture if it's used.
 	bool highlightMaterial = false;
@@ -1421,10 +1433,6 @@ static void gfx_rt64_rapi_draw_triangles_common(RT64_MATRIX4 transform, float bu
 
 	if (double_sided) {
 		instDesc.flags |= RT64_INSTANCE_DISABLE_BACKFACE_CULLING;
-	}
-
-	if (!raytrace) {
-		instDesc.flags |= RT64_INSTANCE_RASTER_USE_SCISSOR_RECT;
 	}
 
 	RT64.lib.SetInstanceDescription(instance, instDesc);
@@ -1531,7 +1539,7 @@ static void gfx_rt64_rapi_end_frame(void) {
 	// Draw frame.
 	LARGE_INTEGER StartTime, EndTime, ElapsedMicroseconds;
 	QueryPerformanceCounter(&StartTime);
-	RT64.lib.DrawDevice(RT64.device, 1);
+	RT64.lib.DrawDevice(RT64.device, RT64.turboMode ? 0 : 1);
 	QueryPerformanceCounter(&EndTime);
 	elapsed_time(StartTime, EndTime, RT64.Frequency, ElapsedMicroseconds);
 

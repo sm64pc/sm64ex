@@ -45,8 +45,7 @@
 
 // Instance flags.
 #define RT64_INSTANCE_RASTER_BACKGROUND			0x1
-#define RT64_INSTANCE_RASTER_USE_SCISSOR_RECT	0x2
-#define RT64_INSTANCE_DISABLE_BACKFACE_CULLING	0x4
+#define RT64_INSTANCE_DISABLE_BACKFACE_CULLING	0x2
 
 // Light flags.
 #define RT64_LIGHT_GROUP_MASK_ALL				0xFFFFFFFF
@@ -158,6 +157,7 @@ typedef struct {
 	RT64_TEXTURE *normalTexture;
 	RT64_MATERIAL material;
 	RT64_RECT scissorRect;
+	RT64_RECT viewportRect;
 	unsigned int flags;
 } RT64_INSTANCE_DESC;
 
