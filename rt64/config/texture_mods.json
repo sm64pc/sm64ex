@@ -852,6 +852,12 @@
         },
         {
             "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    1.0,
+                    0.5,
+                    0.5
+                ],
                 "solidAlphaMultiplier": 0.5
             },
             "name": "textures/cave/hmc_textures.0C000.ia16"
