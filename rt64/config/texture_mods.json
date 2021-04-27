@@ -387,11 +387,15 @@
             "name": "actors/tree/snowy_pine_tree.rgba16"
         },
         {
-            "materialMod": null,
+            "materialMod": {
+                "shadowRayBias": 2.5
+            },
             "name": "actors/tree/tree_left_side.rgba16"
         },
         {
-            "materialMod": null,
+            "materialMod": {
+                "shadowRayBias": 2.5
+            },
             "name": "actors/tree/tree_right_side.rgba16"
         },
         {
@@ -1151,7 +1155,7 @@
                 "depthBias": 25.0,
                 "lightGroupMaskBits": 0,
                 "shadowAlphaMultiplier": 0.0,
-                "solidAlphaMultiplier": 0.8
+                "solidAlphaMultiplier": 0.800000011920929
             },
             "name": "textures/segment2/shadow_quarter_circle.ia8"
         },
