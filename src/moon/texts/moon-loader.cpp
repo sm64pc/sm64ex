@@ -124,7 +124,7 @@ u8 *Moon_GetKey(string key) {
     return current->strings[key];
 }
 
-void Moon_InitLanguages( char *exePath, char *gamedir ) {    
+void Moon_InitLanguages( char *exePath, char *gamedir ) {
     
     string l_path(exePath);
 

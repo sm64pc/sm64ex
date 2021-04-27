@@ -264,7 +264,7 @@ LEVEL_DIRS := $(patsubst levels/%,%,$(dir $(wildcard levels/*/header.h)))
 SRC_DIRS := src src/engine src/game src/audio src/menu src/buffers actors levels bin data assets src/text src/text/libs src/pc src/pc/gfx src/pc/audio src/pc/controller src/pc/fs src/pc/fs/packtypes src/nx
 
 # Moon64 SRC Directories
-SRC_DIRS += src/moon src/moon/texts src/moon/utils
+SRC_DIRS += src/moon src/moon/texts src/moon/utils src/moon/network
 
 # RapidJSON Library
 SRC_DIRS += src/moon/libs/rapidjson src/moon/libs/rapidjson/error src/moon/libs/rapidjson/internal src/moon/libs/rapidjson/msinttypes
@@ -602,7 +602,7 @@ ifeq ($(TARGET_WEB),1)
 LDFLAGS := -lm -lGL -lSDL2 -no-pie -s TOTAL_MEMORY=20MB -g4 --source-map-base http://localhost:8080/ -s "EXTRA_EXPORTED_RUNTIME_METHODS=['callMain']"
 
 else ifeq ($(WINDOWS_BUILD),1)
-  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread $(BACKEND_LDFLAGS) -static
+  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -Llib -lpthread $(BACKEND_LDFLAGS) -static -lcurl
   ifeq ($(CROSS),)
     LDFLAGS += -no-pie
   endif
@@ -611,16 +611,16 @@ else ifeq ($(WINDOWS_BUILD),1)
   endif
 
 else ifeq ($(TARGET_RPI),1)
-  LDFLAGS := $(OPT_FLAGS) -lm $(BACKEND_LDFLAGS) -no-pie
+  LDFLAGS := $(OPT_FLAGS) -lm $(BACKEND_LDFLAGS) -no-pie -lcurl
 
 else ifeq ($(OSX_BUILD),1)
-  LDFLAGS := -lm $(PLATFORM_LDFLAGS) $(BACKEND_LDFLAGS) -lpthread
+  LDFLAGS := -lm $(PLATFORM_LDFLAGS) $(BACKEND_LDFLAGS) -lpthread -lcurl
 
 else ifeq ($(TARGET_SWITCH),1)
-  LDFLAGS := -specs=$(LIBNX)/switch.specs $(NXARCH) $(OPT_FLAGS) -no-pie -L$(LIBNX)/lib $(BACKEND_LDFLAGS) -lnx -lm
+  LDFLAGS := -specs=$(LIBNX)/switch.specs $(NXARCH) $(OPT_FLAGS) -no-pie -L$(LIBNX)/lib $(BACKEND_LDFLAGS) -lnx -lm `curl-config --libs`
 
 else
-  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm $(BACKEND_LDFLAGS) -no-pie -lpthread
+  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm $(BACKEND_LDFLAGS) -no-pie -lpthread -lcurl
   ifeq ($(DISCORDRPC),1)
     LDFLAGS += -ldl -Wl,-rpath .
   endif
