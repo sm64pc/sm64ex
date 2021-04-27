@@ -3,7 +3,7 @@
 
 #ifdef RAPI_RT64
 #   define GFX_MAX_BUFFERED                 16384
-#   define GFX_DISABLE_SHADOWS
+#   define GFX_DIM_SHADOWS_CLOSE_TO_GROUND
 #   define GFX_DISABLE_FRUSTUM_CULLING
 #   define GFX_DISABLE_LIGHTING
 #   define GFX_FLUSH_ON_ENDDL

@@ -240,6 +240,13 @@ s8 init_shadow(struct Shadow *s, f32 xPos, f32 yPos, f32 zPos, s16 shadowScale, 
         s->solidity = dim_shadow_with_distance(overwriteSolidity, yPos - s->floorHeight);
     }
 
+#ifdef GFX_DIM_SHADOWS_CLOSE_TO_GROUND
+    const f32 blendOff = 100.0f;
+    const f32 blendDist = 200.0f; 
+    int newSolidity = s->solidity * ((yPos - s->floorHeight - blendOff) / blendDist);
+    s->solidity = min(max(newSolidity, 0), s->solidity);
+#endif
+
     s->shadowScale = scale_shadow_with_distance(shadowScale, yPos - s->floorHeight);
 
     s->floorDownwardAngle = atan2_deg(s->floorNormalZ, s->floorNormalX);

@@ -696,7 +696,6 @@ void geo_set_animation_globals(struct GraphNodeObject_sub *node, s32 hasAnimatio
  * the floor below it.
  */
 static void geo_process_shadow(struct GraphNodeShadow *node) {
-#ifndef GFX_DISABLE_SHADOWS
     Gfx *shadowList;
     Mat4 mtxf;
     Vec3f shadowPos;
@@ -774,7 +773,6 @@ static void geo_process_shadow(struct GraphNodeShadow *node) {
             gMatStackIndex--;
         }
     }
-#endif
 
     if (node->node.children != NULL) {
         geo_process_node_and_siblings(node->node.children);

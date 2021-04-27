@@ -1147,6 +1147,24 @@
             "name": "textures/segment2/segment2.13C58.rgba16"
         },
         {
+            "materialMod": {
+                "depthBias": 25.0,
+                "lightGroupMaskBits": 0,
+                "shadowAlphaMultiplier": 0.0,
+                "solidAlphaMultiplier": 0.8
+            },
+            "name": "textures/segment2/shadow_quarter_circle.ia8"
+        },
+        {
+            "materialMod": {
+                "depthBias": 5.0,
+                "lightGroupMaskBits": 0,
+                "shadowAlphaMultiplier": 0.0,
+                "solidAlphaMultiplier": 0.5
+            },
+            "name": "textures/segment2/shadow_quarter_square.ia8"
+        },
+        {
             "materialMod": null,
             "name": "textures/sky/rr_textures.00000.rgba16"
         },
