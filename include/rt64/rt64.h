@@ -35,9 +35,11 @@
 #define RT64_ATTRIBUTE_SPECULAR_EXPONENT			0x0080
 #define RT64_ATTRIBUTE_SOLID_ALPHA_MULTIPLIER		0x0100
 #define RT64_ATTRIBUTE_SHADOW_ALPHA_MULTIPLIER		0x0200
-#define RT64_ATTRIBUTE_SELF_LIGHT					0x0400
-#define RT64_ATTRIBUTE_LIGHT_GROUP_MASK_BITS		0x0800
-#define RT64_ATTRIBUTE_DIFFUSE_COLOR_MIX			0x1000
+#define RT64_ATTRIBUTE_DEPTH_BIAS					0x0400
+#define RT64_ATTRIBUTE_SHADOW_RAY_BIAS				0x0800
+#define RT64_ATTRIBUTE_SELF_LIGHT					0x1000
+#define RT64_ATTRIBUTE_LIGHT_GROUP_MASK_BITS		0x2000
+#define RT64_ATTRIBUTE_DIFFUSE_COLOR_MIX			0x4000
 
 // Mesh flags.
 #define RT64_MESH_RAYTRACE_ENABLED				0x1
@@ -104,12 +106,15 @@ typedef struct {
 	float specularExponent;
 	float solidAlphaMultiplier;
 	float shadowAlphaMultiplier;
+	float depthBias;
+	float shadowRayBias;
 	RT64_VECTOR3 selfLight;
 	unsigned int lightGroupMaskBits;
 	RT64_VECTOR3 fogColor;
 	RT64_VECTOR4 diffuseColorMix;
 	float fogMul;
 	float fogOffset;
+	int _padA[2];
 
 	// N64 Color combiner parameters.
 	int c0[4];
@@ -200,6 +205,14 @@ inline void RT64_ApplyMaterialAttributes(RT64_MATERIAL *dst, RT64_MATERIAL *src)
 
 	if (src->enabledAttributes & RT64_ATTRIBUTE_SHADOW_ALPHA_MULTIPLIER) {
 		dst->shadowAlphaMultiplier = src->shadowAlphaMultiplier;
+	}
+
+	if (src->enabledAttributes & RT64_ATTRIBUTE_DEPTH_BIAS) {
+		dst->depthBias = src->depthBias;
+	}
+
+	if (src->enabledAttributes & RT64_ATTRIBUTE_SHADOW_RAY_BIAS) {
+		dst->shadowRayBias = src->shadowRayBias;
 	}
 
 	if (src->enabledAttributes & RT64_ATTRIBUTE_SELF_LIGHT) {

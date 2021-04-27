@@ -346,132 +346,98 @@ void gfx_rt64_toggle_inspector() {
 	}
 }
 
+void gfx_rt64_load_material_mod_uint(const json &jmatmod, RT64_MATERIAL *materialMod, const char *name, int flag, unsigned int *dstValue, int *dstAttributes) {
+	if (jmatmod.find(name) != jmatmod.end()) {
+		*dstValue = jmatmod[name];
+		*dstAttributes = (*dstAttributes) | flag;
+	}
+}
+
+void gfx_rt64_load_material_mod_float(const json &jmatmod, RT64_MATERIAL *materialMod, const char *name, int flag, float *dstValue, int *dstAttributes) {
+	if (jmatmod.find(name) != jmatmod.end()) {
+		*dstValue = jmatmod[name];
+		*dstAttributes = (*dstAttributes) | flag;
+	}
+}
+
+void gfx_rt64_load_material_mod_vector3(const json &jmatmod, RT64_MATERIAL *materialMod, const char *name, int flag, RT64_VECTOR3 *dstValue, int *dstAttributes) {
+	if (jmatmod.find(name) != jmatmod.end()) {
+		dstValue->x = jmatmod[name][0];
+		dstValue->y = jmatmod[name][1];
+		dstValue->z = jmatmod[name][2];
+		*dstAttributes = (*dstAttributes) | flag;
+	}
+}
+
+void gfx_rt64_load_material_mod_vector4(const json &jmatmod, RT64_MATERIAL *materialMod, const char *name, int flag, RT64_VECTOR4 *dstValue, int *dstAttributes) {
+	if (jmatmod.find(name) != jmatmod.end()) {
+		dstValue->x = jmatmod[name][0];
+		dstValue->y = jmatmod[name][1];
+		dstValue->z = jmatmod[name][2];
+		dstValue->w = jmatmod[name][3];
+		*dstAttributes = (*dstAttributes) | flag;
+	}
+}
+
 void gfx_rt64_load_material_mod(const json &jmatmod, RT64_MATERIAL *materialMod) {
-	if (jmatmod.find("ignoreNormalFactor") != jmatmod.end()) {
-		materialMod->ignoreNormalFactor = jmatmod["ignoreNormalFactor"];
-		materialMod->enabledAttributes |= RT64_ATTRIBUTE_IGNORE_NORMAL_FACTOR;
-	}
+	gfx_rt64_load_material_mod_float(jmatmod, materialMod, "ignoreNormalFactor", RT64_ATTRIBUTE_IGNORE_NORMAL_FACTOR, &materialMod->ignoreNormalFactor, &materialMod->enabledAttributes);
+	gfx_rt64_load_material_mod_float(jmatmod, materialMod, "normalMapScale", RT64_ATTRIBUTE_NORMAL_MAP_SCALE, &materialMod->normalMapScale, &materialMod->enabledAttributes);
+	gfx_rt64_load_material_mod_float(jmatmod, materialMod, "reflectionFactor", RT64_ATTRIBUTE_REFLECTION_FACTOR, &materialMod->reflectionFactor, &materialMod->enabledAttributes);
+	gfx_rt64_load_material_mod_float(jmatmod, materialMod, "reflectionFresnelFactor", RT64_ATTRIBUTE_REFLECTION_FRESNEL_FACTOR, &materialMod->reflectionFresnelFactor, &materialMod->enabledAttributes);
+	gfx_rt64_load_material_mod_float(jmatmod, materialMod, "reflectionShineFactor", RT64_ATTRIBUTE_REFLECTION_SHINE_FACTOR, &materialMod->reflectionShineFactor, &materialMod->enabledAttributes);
+	gfx_rt64_load_material_mod_float(jmatmod, materialMod, "refractionFactor", RT64_ATTRIBUTE_REFRACTION_FACTOR, &materialMod->refractionFactor, &materialMod->enabledAttributes);
+	gfx_rt64_load_material_mod_float(jmatmod, materialMod, "specularIntensity", RT64_ATTRIBUTE_SPECULAR_INTENSITY, &materialMod->specularIntensity, &materialMod->enabledAttributes);
+	gfx_rt64_load_material_mod_float(jmatmod, materialMod, "specularExponent", RT64_ATTRIBUTE_SPECULAR_EXPONENT, &materialMod->specularExponent, &materialMod->enabledAttributes);
+	gfx_rt64_load_material_mod_float(jmatmod, materialMod, "solidAlphaMultiplier", RT64_ATTRIBUTE_SOLID_ALPHA_MULTIPLIER, &materialMod->solidAlphaMultiplier, &materialMod->enabledAttributes);
+	gfx_rt64_load_material_mod_float(jmatmod, materialMod, "shadowAlphaMultiplier", RT64_ATTRIBUTE_SHADOW_ALPHA_MULTIPLIER, &materialMod->shadowAlphaMultiplier, &materialMod->enabledAttributes);
+	gfx_rt64_load_material_mod_float(jmatmod, materialMod, "depthBias", RT64_ATTRIBUTE_DEPTH_BIAS, &materialMod->depthBias, &materialMod->enabledAttributes);
+	gfx_rt64_load_material_mod_float(jmatmod, materialMod, "shadowRayBias", RT64_ATTRIBUTE_SHADOW_RAY_BIAS, &materialMod->shadowRayBias, &materialMod->enabledAttributes);
+	gfx_rt64_load_material_mod_vector3(jmatmod, materialMod, "selfLight", RT64_ATTRIBUTE_SELF_LIGHT, &materialMod->selfLight, &materialMod->enabledAttributes);
+	gfx_rt64_load_material_mod_uint(jmatmod, materialMod, "lightGroupMaskBits", RT64_ATTRIBUTE_LIGHT_GROUP_MASK_BITS, &materialMod->lightGroupMaskBits, &materialMod->enabledAttributes);
+	gfx_rt64_load_material_mod_vector4(jmatmod, materialMod, "diffuseColorMix", RT64_ATTRIBUTE_DIFFUSE_COLOR_MIX, &materialMod->diffuseColorMix, &materialMod->enabledAttributes);
+}
 
-	if (jmatmod.find("normalMapScale") != jmatmod.end()) {
-		materialMod->normalMapScale = jmatmod["normalMapScale"];
-		materialMod->enabledAttributes |= RT64_ATTRIBUTE_NORMAL_MAP_SCALE;
+void gfx_rt64_save_material_mod_uint(json &jmatmod, RT64_MATERIAL *materialMod, int flag, const char *name, const unsigned int value) {
+	if (materialMod->enabledAttributes & flag) {
+		jmatmod[name] = value;
 	}
+}
 
-	if (jmatmod.find("reflectionFactor") != jmatmod.end()) {
-		materialMod->reflectionFactor = jmatmod["reflectionFactor"];
-		materialMod->enabledAttributes |= RT64_ATTRIBUTE_REFLECTION_FACTOR;
+void gfx_rt64_save_material_mod_float(json &jmatmod, RT64_MATERIAL *materialMod, int flag, const char *name, const float value) {
+	if (materialMod->enabledAttributes & flag) {
+		jmatmod[name] = value;
 	}
+}
 
-	if (jmatmod.find("reflectionFresnelFactor") != jmatmod.end()) {
-		materialMod->reflectionFresnelFactor = jmatmod["reflectionFresnelFactor"];
-		materialMod->enabledAttributes |= RT64_ATTRIBUTE_REFLECTION_FRESNEL_FACTOR;
+void gfx_rt64_save_material_mod_vector3(json &jmatmod, RT64_MATERIAL *materialMod, int flag, const char *name, const RT64_VECTOR3 &value) {
+	if (materialMod->enabledAttributes & flag) {
+		jmatmod[name] = { value.x, value.y, value.z };
 	}
+}
 
-	if (jmatmod.find("reflectionShineFactor") != jmatmod.end()) {
-		materialMod->reflectionShineFactor = jmatmod["reflectionShineFactor"];
-		materialMod->enabledAttributes |= RT64_ATTRIBUTE_REFLECTION_SHINE_FACTOR;
-	}
-
-	if (jmatmod.find("refractionFactor") != jmatmod.end()) {
-		materialMod->refractionFactor = jmatmod["refractionFactor"];
-		materialMod->enabledAttributes |= RT64_ATTRIBUTE_REFRACTION_FACTOR;
-	}
-
-	if (jmatmod.find("specularIntensity") != jmatmod.end()) {
-		materialMod->specularIntensity = jmatmod["specularIntensity"];
-		materialMod->enabledAttributes |= RT64_ATTRIBUTE_SPECULAR_INTENSITY;
-	}
-
-	if (jmatmod.find("specularExponent") != jmatmod.end()) {
-		materialMod->specularExponent = jmatmod["specularExponent"];
-		materialMod->enabledAttributes |= RT64_ATTRIBUTE_SPECULAR_EXPONENT;
-	}
-
-	if (jmatmod.find("solidAlphaMultiplier") != jmatmod.end()) {
-		materialMod->solidAlphaMultiplier = jmatmod["solidAlphaMultiplier"];
-		materialMod->enabledAttributes |= RT64_ATTRIBUTE_SOLID_ALPHA_MULTIPLIER;
-	}
-
-	if (jmatmod.find("shadowAlphaMultiplier") != jmatmod.end()) {
-		materialMod->shadowAlphaMultiplier = jmatmod["shadowAlphaMultiplier"];
-		materialMod->enabledAttributes |= RT64_ATTRIBUTE_SHADOW_ALPHA_MULTIPLIER;
-	}
-	
-	if (jmatmod.find("selfLight") != jmatmod.end()) {
-		materialMod->selfLight.x = jmatmod["selfLight"][0];
-		materialMod->selfLight.y = jmatmod["selfLight"][1];
-		materialMod->selfLight.z = jmatmod["selfLight"][2];
-		materialMod->enabledAttributes |= RT64_ATTRIBUTE_SELF_LIGHT;
-	}
-
-	if (jmatmod.find("lightGroupMaskBits") != jmatmod.end()) {
-		materialMod->lightGroupMaskBits = jmatmod["lightGroupMaskBits"];
-		materialMod->enabledAttributes |= RT64_ATTRIBUTE_LIGHT_GROUP_MASK_BITS;
-	}
-	
-	if (jmatmod.find("diffuseColorMix") != jmatmod.end()) {
-		materialMod->diffuseColorMix.x = jmatmod["diffuseColorMix"][0];
-		materialMod->diffuseColorMix.y = jmatmod["diffuseColorMix"][1];
-		materialMod->diffuseColorMix.z = jmatmod["diffuseColorMix"][2];
-		materialMod->diffuseColorMix.w = jmatmod["diffuseColorMix"][3];
-		materialMod->enabledAttributes |= RT64_ATTRIBUTE_DIFFUSE_COLOR_MIX;
+void gfx_rt64_save_material_mod_vector4(json &jmatmod, RT64_MATERIAL *materialMod, int flag, const char *name, const RT64_VECTOR4 &value) {
+	if (materialMod->enabledAttributes & flag) {
+		jmatmod[name] = { value.x, value.y, value.z, value.w };
 	}
 }
 
 json gfx_rt64_save_material_mod(RT64_MATERIAL *materialMod) {
 	json jmatmod;
-	if (materialMod->enabledAttributes & RT64_ATTRIBUTE_IGNORE_NORMAL_FACTOR) {
-		jmatmod["ignoreNormalFactor"] = materialMod->ignoreNormalFactor;
-	}
-
-	if (materialMod->enabledAttributes & RT64_ATTRIBUTE_NORMAL_MAP_SCALE) {
-		jmatmod["normalMapScale"] = materialMod->normalMapScale;
-	}
-
-	if (materialMod->enabledAttributes & RT64_ATTRIBUTE_REFLECTION_FACTOR) {
-		jmatmod["reflectionFactor"] = materialMod->reflectionFactor;
-	}
-
-	if (materialMod->enabledAttributes & RT64_ATTRIBUTE_REFLECTION_FRESNEL_FACTOR) {
-		jmatmod["reflectionFresnelFactor"] = materialMod->reflectionFresnelFactor;
-	}
-
-	if (materialMod->enabledAttributes & RT64_ATTRIBUTE_REFLECTION_SHINE_FACTOR) {
-		jmatmod["reflectionShineFactor"] = materialMod->reflectionShineFactor;
-	}
-
-	if (materialMod->enabledAttributes & RT64_ATTRIBUTE_REFRACTION_FACTOR) {
-		jmatmod["refractionFactor"] = materialMod->refractionFactor;
-	}
-
-	if (materialMod->enabledAttributes & RT64_ATTRIBUTE_SPECULAR_INTENSITY) {
-		jmatmod["specularIntensity"] = materialMod->specularIntensity;
-	}
-
-	if (materialMod->enabledAttributes & RT64_ATTRIBUTE_SPECULAR_EXPONENT) {
-		jmatmod["specularExponent"] = materialMod->specularExponent;
-	}
-
-	if (materialMod->enabledAttributes & RT64_ATTRIBUTE_SOLID_ALPHA_MULTIPLIER) {
-		jmatmod["solidAlphaMultiplier"] = materialMod->solidAlphaMultiplier;
-	}
-
-	if (materialMod->enabledAttributes & RT64_ATTRIBUTE_SHADOW_ALPHA_MULTIPLIER) {
-		jmatmod["shadowAlphaMultiplier"] = materialMod->shadowAlphaMultiplier;
-	}
-
-	if (materialMod->enabledAttributes & RT64_ATTRIBUTE_SELF_LIGHT) {
-		jmatmod["selfLight"] = { materialMod->selfLight.x, materialMod->selfLight.y, materialMod->selfLight.z };
-	}
-
-	if (materialMod->enabledAttributes & RT64_ATTRIBUTE_LIGHT_GROUP_MASK_BITS) {
-		jmatmod["lightGroupMaskBits"] = materialMod->lightGroupMaskBits;
-	}
-
-	if (materialMod->enabledAttributes & RT64_ATTRIBUTE_DIFFUSE_COLOR_MIX) {
-		jmatmod["diffuseColorMix"] = { materialMod->diffuseColorMix.x, materialMod->diffuseColorMix.y, materialMod->diffuseColorMix.z, materialMod->diffuseColorMix.w };
-	}
-
+	gfx_rt64_save_material_mod_float(jmatmod, materialMod, RT64_ATTRIBUTE_IGNORE_NORMAL_FACTOR, "ignoreNormalFactor", materialMod->ignoreNormalFactor);
+	gfx_rt64_save_material_mod_float(jmatmod, materialMod, RT64_ATTRIBUTE_NORMAL_MAP_SCALE, "normalMapScale", materialMod->normalMapScale);
+	gfx_rt64_save_material_mod_float(jmatmod, materialMod, RT64_ATTRIBUTE_REFLECTION_FACTOR, "reflectionFactor", materialMod->reflectionFactor);
+	gfx_rt64_save_material_mod_float(jmatmod, materialMod, RT64_ATTRIBUTE_REFLECTION_FRESNEL_FACTOR, "reflectionFresnelFactor", materialMod->reflectionFresnelFactor);
+	gfx_rt64_save_material_mod_float(jmatmod, materialMod, RT64_ATTRIBUTE_REFLECTION_SHINE_FACTOR, "reflectionShineFactor", materialMod->reflectionShineFactor);
+	gfx_rt64_save_material_mod_float(jmatmod, materialMod, RT64_ATTRIBUTE_REFRACTION_FACTOR, "refractionFactor", materialMod->refractionFactor);
+	gfx_rt64_save_material_mod_float(jmatmod, materialMod, RT64_ATTRIBUTE_SPECULAR_INTENSITY, "specularIntensity", materialMod->specularIntensity);
+	gfx_rt64_save_material_mod_float(jmatmod, materialMod, RT64_ATTRIBUTE_SPECULAR_EXPONENT, "specularExponent", materialMod->specularExponent);
+	gfx_rt64_save_material_mod_float(jmatmod, materialMod, RT64_ATTRIBUTE_SOLID_ALPHA_MULTIPLIER, "solidAlphaMultiplier", materialMod->solidAlphaMultiplier);
+	gfx_rt64_save_material_mod_float(jmatmod, materialMod, RT64_ATTRIBUTE_SHADOW_ALPHA_MULTIPLIER, "shadowAlphaMultiplier", materialMod->shadowAlphaMultiplier);
+	gfx_rt64_save_material_mod_float(jmatmod, materialMod, RT64_ATTRIBUTE_DEPTH_BIAS, "depthBias", materialMod->depthBias);
+	gfx_rt64_save_material_mod_float(jmatmod, materialMod, RT64_ATTRIBUTE_SHADOW_RAY_BIAS, "shadowRayBias", materialMod->shadowRayBias);
+	gfx_rt64_save_material_mod_vector3(jmatmod, materialMod, RT64_ATTRIBUTE_SELF_LIGHT, "selfLight", materialMod->selfLight);
+	gfx_rt64_save_material_mod_uint(jmatmod, materialMod, RT64_ATTRIBUTE_LIGHT_GROUP_MASK_BITS, "lightGroupMaskBits", materialMod->lightGroupMaskBits);
+	gfx_rt64_save_material_mod_vector4(jmatmod, materialMod, RT64_ATTRIBUTE_DIFFUSE_COLOR_MIX, "diffuseColorMix", materialMod->diffuseColorMix);
 	return jmatmod;
 }
 
@@ -906,6 +872,8 @@ static void gfx_rt64_wapi_init(const char *window_title) {
     RT64.defaultMaterial.diffuseColorMix.y = 0.0f;
     RT64.defaultMaterial.diffuseColorMix.z = 0.0f;
     RT64.defaultMaterial.diffuseColorMix.w = 0.0f;
+	RT64.defaultMaterial.depthBias = 0.0f;
+	RT64.defaultMaterial.shadowRayBias = 0.0f;
 	RT64.defaultMaterial.selfLight.x = 0.0f;
     RT64.defaultMaterial.selfLight.y = 0.0f;
     RT64.defaultMaterial.selfLight.z = 0.0f;
