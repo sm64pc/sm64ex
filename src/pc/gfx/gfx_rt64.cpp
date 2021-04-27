@@ -903,6 +903,7 @@ static void gfx_rt64_wapi_init(const char *window_title) {
 	RT64.defaultMaterial.opt_alpha = 0;
 	RT64.defaultMaterial.opt_fog = 1;
 	RT64.defaultMaterial.opt_texture_edge = 0;
+	RT64.defaultMaterial.opt_noise = 0;
 
 	// Initialize the global lights to their default values.
 	memset(RT64.levelLights, 0, sizeof(RT64.levelLights));
@@ -1293,7 +1294,7 @@ RT64_MATERIAL gfx_rt64_rapi_build_material(ShaderProgram *prg, bool linearFilter
 	mat.opt_alpha = (shader_id & SHADER_OPT_ALPHA) != 0;
 	mat.opt_fog = (shader_id & SHADER_OPT_FOG) != 0;
 	mat.opt_texture_edge = (shader_id & SHADER_OPT_TEXTURE_EDGE) != 0;
-	//mat.opt_noise = (shader_id & SHADER_OPT_NOISE) != 0;
+	mat.opt_noise = (shader_id & SHADER_OPT_NOISE) != 0;
 
 	return mat;
 }

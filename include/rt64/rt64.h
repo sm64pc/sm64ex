@@ -126,12 +126,10 @@ typedef struct {
 	int opt_alpha;
 	int opt_fog;
 	int opt_texture_edge;
+	int opt_noise;
 
 	// Flag containing all attributes that are actually used by this material.
 	int enabledAttributes;
-
-	// Add padding to line up with the HLSL structure.
-	int _padB;
 } RT64_MATERIAL;
 
 // Light
