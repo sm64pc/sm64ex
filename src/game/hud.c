@@ -425,16 +425,20 @@ void render_hud_camera_status(void) {
 }
 
 #ifdef TARGET_SWITCH
+
 void render_nx_hud(void){
-    s16 x = GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(40);
+    s16 x = 40;
     s16 y = 212;
     s16 w = x + 12;
     s16 h = y + 4;
-
-    moon_draw_rectangle(x - 1, y - 1, w + 1, h + 1, 57, 57, 57);
-    moon_draw_rectangle(w, y, w + 2, y + 4, 57, 57, 57);
-    moon_draw_rectangle(x, y, w, h, 194, 194, 194);
-    moon_draw_rectangle(x, y, x + (s16)(12 * getBatteryPercentage()), h, 76, 235, 52);
+    struct Color color;
+    //color = { .r = 57, .g = 57, .b = 57, .a = 255 }
+    //moon_draw_rectangle(x - 1, y - 1, w + 1, h + 1, COLOR(57, 57, 57, 255));    
+    //moon_draw_rectangle(w, y, w + 2, y + 4, color);
+    //color = { .r = 57, .g = 57, .b = 57, .a = 255 }    
+    //moon_draw_rectangle(x, y, w, h, COLOR(194, 194, 194, 255));
+    //color = { .r = 57, .g = 57, .b = 57, .a = 255 }
+    //moon_draw_rectangle(x, y, x + (s16)(12 * getBatteryPercentage()), h, COLOR(78, 235, 52, 255));
 
     x = GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(20);
     y = 207;    

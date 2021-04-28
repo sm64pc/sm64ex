@@ -2,6 +2,9 @@
 #include "game/ingame_menu.h"
 #include "game/game_init.h"
 #include "game/segment2.h"
+#include "gfx_dimensions.h"
+#include "config.h"
+#include "game/geo_misc.h"
 
 f32 moon_get_text_width(u8* text, float scale, u8 colored) { 
     f32 size = 0;
@@ -95,6 +98,19 @@ void moon_draw_text(f32 x, f32 y, const u8 *str, float scale) {
     gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
 }
 
+Vtx *make_rect_verts(float w, float h) {
+    Vtx *verts = alloc_display_list(4 * sizeof(*verts));
+
+    if (verts != NULL) {
+        make_vertex(verts, 0, 0, -h, -1, 0, 0, 255, 255, 255, 255);
+        make_vertex(verts, 1, w, -h, -1, 0, 0, 255, 255, 255, 255);
+        make_vertex(verts, 2, w,  0, -1, 0, 0, 255, 255, 255, 255);
+        make_vertex(verts, 3, 0,  0, -1, 0, 0, 255, 255, 255, 255);
+    }
+
+    return verts;
+}
+
 void moon_draw_texture(s32 x, s32 y, u32 w, u32 h, u8 *texture) {
     gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);    
     gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 0, 0, G_TX_LOADTILE, 0, G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD);
@@ -109,12 +125,29 @@ void moon_draw_texture(s32 x, s32 y, u32 w, u32 h, u8 *texture) {
     gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
 }
 
-void moon_draw_rectangle(s16 x1, s16 y1, s16 x2, s16 y2, u8 r, u8 g, u8 b) {
-    gDPPipeSync(gDisplayListHead++);
-    gDPSetRenderMode(gDisplayListHead++, G_RM_OPA_SURF, G_RM_OPA_SURF2);
-    gDPSetCycleType(gDisplayListHead++, G_CYC_FILL);
-    gDPSetFillColor(gDisplayListHead++, GPACK_RGBA5551(r, g, b, 255));
-    gDPFillRectangle(gDisplayListHead++, x1, y1, x2 + 1, y2 + 1);
-    gDPPipeSync(gDisplayListHead++);
-    gDPSetCycleType(gDisplayListHead++, G_CYC_1CYCLE);
+void moon_draw_rectangle(f32 x, f32 y, f32 w, f32 h, struct Color c, u8 u4_3) {
+    Mtx *_Matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
+    if (!_Matrix) return;
+    if(!u4_3){
+        x = GFX_DIMENSIONS_FROM_LEFT_EDGE(x);
+        y = SCREEN_HEIGHT - y;
+    } else
+        y += h;
+
+    create_dl_translation_matrix(MENU_MTX_PUSH, x, y, 0);
+    guScale(_Matrix, 1, 1, 1);    
+    Vtx *vertices = make_rect_verts(w, h);
+
+    gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(_Matrix), G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
+    gDPSetEnvColor(gDisplayListHead++, c.r, c.g, c.b, c.a);
+    
+    gSPClearGeometryMode(gDisplayListHead++, G_LIGHTING)
+    gDPSetCombineMode(gDisplayListHead++, G_CC_FADE, G_CC_FADE);
+    gDPSetRenderMode(gDisplayListHead++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
+    gSPVertex(gDisplayListHead++, vertices, 4, 0);
+    gSP2Triangles(gDisplayListHead++, 0,  1,  2, 0x0,  0,  2,  3, 0x0);    
+
+    gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
+    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
+
 }

@@ -1779,8 +1779,7 @@ void shade_screen(void) {
     // This is a bit weird. It reuses the dialog text box (width 130, height -80),
     // so scale to at least fit the screen.
 
-    create_dl_scale_matrix(MENU_MTX_NOPUSH,
-                           GFX_DIMENSIONS_ASPECT_RATIO * SCREEN_HEIGHT / 130.0f, 3.0f, 1.0f);
+    create_dl_scale_matrix(MENU_MTX_NOPUSH, GFX_DIMENSIONS_ASPECT_RATIO * SCREEN_HEIGHT / 130.0f, 3.0f, 1.0f);
 
     gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, 110);
     gSPDisplayList(gDisplayListHead++, dl_draw_text_bg_box);
@@ -2151,78 +2150,71 @@ s8 gHudFlash = 0;
 s16 render_pause_courses_and_castle(void) {
     s16 num;
 
-#ifdef EXT_OPTIONS_MENU
-    if (optmenu_open == 0) {
-#endif
-    switch (gDialogBoxState) {
-        case DIALOG_STATE_OPENING:
-            gDialogLineNum = 1;
-            gDialogTextAlpha = 0;
-            level_set_transition(-1, 0);
-            play_sound(SOUND_MENU_PAUSE_HIGHPRIO, gDefaultSoundArgs);
+    if (moon_ui_open() == 0) {
+        switch (gDialogBoxState) {
+            case DIALOG_STATE_OPENING:
+                gDialogLineNum = 1;
+                gDialogTextAlpha = 0;
+                level_set_transition(-1, 0);
+                play_sound(SOUND_MENU_PAUSE_HIGHPRIO, gDefaultSoundArgs);
 
-            if (gCurrCourseNum >= COURSE_MIN && gCurrCourseNum <= COURSE_MAX) {
-                change_dialog_camera_angle();
-                gDialogBoxState = DIALOG_STATE_VERTICAL;
-            } else {
-                highlight_last_course_complete_stars();
-                gDialogBoxState = DIALOG_STATE_HORIZONTAL;
-            }
-            break;
-        case DIALOG_STATE_VERTICAL:
-            shade_screen();
-            render_pause_my_score_coins();
-            render_pause_red_coins();
-            
-            /* Added support for the "Exit course at any time" cheat */
-            if ((gMarioStates[0].action & ACT_FLAG_PAUSE_EXIT) || (Cheats.EnableCheats && Cheats.ExitAnywhere)) {
-                render_pause_course_options(99, 93, &gDialogLineNum, 15);
-            }
-
-            if (gPlayer3Controller->buttonPressed & (A_BUTTON | START_BUTTON)) {
-                level_set_transition(0, 0);
-                play_sound(SOUND_MENU_PAUSE_2, gDefaultSoundArgs);
-                gDialogBoxState = DIALOG_STATE_OPENING;
-                gMenuMode = -1;
-
-                if (gDialogLineNum == 2) {
-                    num = gDialogLineNum;
+                if (gCurrCourseNum >= COURSE_MIN && gCurrCourseNum <= COURSE_MAX) {
+                    change_dialog_camera_angle();
+                    gDialogBoxState = DIALOG_STATE_VERTICAL;
                 } else {
-                    num = 1;
+                    highlight_last_course_complete_stars();
+                    gDialogBoxState = DIALOG_STATE_HORIZONTAL;
+                }
+                break;
+            case DIALOG_STATE_VERTICAL:
+                shade_screen();
+                render_pause_my_score_coins();
+                render_pause_red_coins();
+                
+                /* Added support for the "Exit course at any time" cheat */
+                if ((gMarioStates[0].action & ACT_FLAG_PAUSE_EXIT) || (Cheats.EnableCheats && Cheats.ExitAnywhere)) {
+                    render_pause_course_options(99, 93, &gDialogLineNum, 15);
                 }
 
-                return num;
-            }
-            break;
-        case DIALOG_STATE_HORIZONTAL:
-            shade_screen();
-            print_hud_pause_colorful_str();
-            render_pause_castle_menu_box(160, 143);
-            render_pause_castle_main_strings(104, 60);
+                if (gPlayer3Controller->buttonPressed & (A_BUTTON | START_BUTTON)) {
+                    level_set_transition(0, 0);
+                    play_sound(SOUND_MENU_PAUSE_2, gDefaultSoundArgs);
+                    gDialogBoxState = DIALOG_STATE_OPENING;
+                    gMenuMode = -1;
 
-            if (gPlayer3Controller->buttonPressed & (A_BUTTON | START_BUTTON)) {
-                level_set_transition(0, 0);
-                play_sound(SOUND_MENU_PAUSE_2, gDefaultSoundArgs);
-                gMenuMode = -1;
-                gDialogBoxState = DIALOG_STATE_OPENING;
+                    if (gDialogLineNum == 2) {
+                        num = gDialogLineNum;
+                    } else {
+                        num = 1;
+                    }
 
-                return 1;
-            }
-            break;
-    }
+                    return num;
+                }
+                break;
+            case DIALOG_STATE_HORIZONTAL:
+                shade_screen();
+                print_hud_pause_colorful_str();
+                render_pause_castle_menu_box(160, 143);
+                render_pause_castle_main_strings(104, 60);
 
-    if (gDialogTextAlpha < 250) {
-        gDialogTextAlpha += 25;
-    }
-#ifdef EXT_OPTIONS_MENU
+                if (gPlayer3Controller->buttonPressed & (A_BUTTON | START_BUTTON)) {
+                    level_set_transition(0, 0);
+                    play_sound(SOUND_MENU_PAUSE_2, gDefaultSoundArgs);
+                    gMenuMode = -1;
+                    gDialogBoxState = DIALOG_STATE_OPENING;
+
+                    return 1;
+                }
+                break;
+        }
+
+        if (gDialogTextAlpha < 250) {
+            gDialogTextAlpha += 25;
+        }
     } else {
-        shade_screen();
-        optmenu_draw();
+        moon_draw_ui();
     }
-    optmenu_check_buttons();
-    optmenu_draw_prompt();
-#endif
-
+    moon_ui_toggle();
     return 0;
 }
 
