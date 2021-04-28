@@ -57,7 +57,7 @@ build/*
 *.sav
 .assets-local.txt
 sm64_save_file.bin
-sm64config.txt
+moon64config.txt
 
 # Assets. Generally ignored, but ones with "custom" in the name are fine.
 /levels/**/*.png

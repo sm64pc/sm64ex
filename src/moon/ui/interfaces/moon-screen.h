@@ -15,8 +15,11 @@ enum MoonButtons {
 };
 
 class MoonScreen {
-private:
+protected:
     std::vector<MoonWidget*> widgets;
+    MoonWidget* selected;
+    bool enabledWidgets = true;
+    int  scrollIndex = 0;    
 public:
     virtual void Init();
     virtual void Mount();
@@ -25,7 +28,7 @@ public:
     virtual void Dispose();
     bool IsPressed(MoonButtons button);
     bool IsDown(MoonButtons button);
-    float GetValue(MoonButtons button);
+    float GetValue(MoonButtons button, bool absolute);
     float screenWidth;
     float screenHeight;
 };

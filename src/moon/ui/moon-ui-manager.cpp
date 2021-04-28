@@ -23,8 +23,8 @@ void MoonInitUI() {
     if(screens.empty())
         screens.push_back(new MoonTest());
 
-    screens[currentScreen]->Init();
     screens[currentScreen]->Mount();
+    screens[currentScreen]->Init();    
 }
 
 void MoonDrawUI() {
@@ -45,8 +45,8 @@ void MoonChangeUI(int index){
     }
     if(!(isOpen && isRunning)) return;
     currentScreen = index;
-    screens[currentScreen]->Init();
     screens[currentScreen]->Mount();
+    screens[currentScreen]->Init();    
 }
 
 void MoonHandleToggle(){

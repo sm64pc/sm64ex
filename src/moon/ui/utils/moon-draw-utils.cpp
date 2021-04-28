@@ -1,22 +1,23 @@
 #include "moon-draw-utils.h"
 #include <algorithm>
+#include "gfx_dimensions.h"
+
+float MoonGetTextWidth(std::string text, float scale, bool colored) {
+    return (float)moon_get_text_width(getTranslatedText(text.c_str()), scale, colored);
+}
 
 void MoonDrawText(float x, float y, std::string text, float scale, struct Color color, bool u4_3){
-    if(!u4_3){
-        x = GFX_DIMENSIONS_FROM_LEFT_EDGE(x);
-        y = SCREEN_HEIGHT - y;
-    }
+    if(!u4_3) x = GFX_DIMENSIONS_FROM_LEFT_EDGE(x);
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, color.r, color.g, color.b, color.a);
-    moon_draw_text(x, y, getTranslatedText(text.c_str()), scale);
+    moon_draw_text(x, SCREEN_HEIGHT - y, getTranslatedText(text.c_str()), scale);
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
 }
 
 void MoonDrawColoredText(float x, float y, std::string text, float scale, struct Color color, bool u4_3){
-    if(!u4_3){
-        x = GFX_DIMENSIONS_FROM_LEFT_EDGE(x);        
-    }
+    if(!u4_3) x = GFX_DIMENSIONS_FROM_LEFT_EDGE(x);
+
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, color.r, color.g, color.b, color.a);
     std::transform(text.begin(), text.end(), text.begin(), ::toupper);

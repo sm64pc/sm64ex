@@ -6,6 +6,7 @@ class MoonTest : public MoonScreen {
 public:
     void Init();
     void Draw();
+    void Mount();
 };
 
 
