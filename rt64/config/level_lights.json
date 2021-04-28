@@ -28,20 +28,20 @@
                             "attenuationExponent": 0.0,
                             "attenuationRadius": 99999997952.0,
                             "diffuseColor": [
-                                0.800000011920929,
-                                0.75,
-                                0.6499999761581421
+                                0.6499999761581421,
+                                0.6000000238418579,
+                                0.5
                             ],
                             "flickerIntensity": 0.0,
                             "groupBits": 1,
-                            "pointRadius": 5000.0,
+                            "pointRadius": 350.0,
                             "position": [
-                                100000.0,
-                                200000.0,
-                                100000.0
+                                10000.0,
+                                20000.0,
+                                10000.0
                             ],
                             "shadowOffset": 0.0,
-                            "specularIntensity": 0.6499999761581421
+                            "specularIntensity": 0.6000000238418579
                         }
                     ]
                 },

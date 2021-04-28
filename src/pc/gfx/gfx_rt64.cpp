@@ -1449,13 +1449,23 @@ static void gfx_rt64_rapi_start_frame(void) {
 	int levelIndex = gCurrLevelNum;
 	int courseIndex = gCurrCourseNum;
 	int areaIndex = gCurrAreaIndex;
+	int spawnAreaIndex = gPlayerSpawnInfos[0].areaIndex;
+
+	// Do not use these values if the area does not have a valid player spawn.
+	// This means the game is on a non-playable level, like a menu.
+	if (spawnAreaIndex < 0) {
+		levelIndex = 0;
+		courseIndex = 0;
+		areaIndex = 0;
+	}
+
     RT64_LIGHT *lights = RT64.levelLights[levelIndex][areaIndex];
     int *lightCount = &RT64.levelLightCounts[levelIndex][areaIndex];
 	if (RT64.inspector != nullptr) {
 		char marioMessage[256] = "";
 		char levelMessage[256] = "";
 		sprintf(marioMessage, "Mario pos: %.1f %.1f %.1f", gMarioState->pos[0], gMarioState->pos[1], gMarioState->pos[2]);
-		sprintf(levelMessage, "Level #%d Course #%d Area #%d", levelIndex, courseIndex, areaIndex);
+		sprintf(levelMessage, "Level #%d Course #%d Area #%d Spawn #%d", levelIndex, courseIndex, areaIndex, spawnAreaIndex);
 		RT64.lib.PrintToInspector(RT64.inspector, marioMessage);
 		RT64.lib.PrintToInspector(RT64.inspector, levelMessage);
 		RT64.lib.PrintToInspector(RT64.inspector, "F1: Toggle inspectors");

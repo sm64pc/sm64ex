@@ -718,8 +718,36 @@
             "name": "levels/lll/9.rgba16"
         },
         {
+            "materialMod": {
+                "specularIntensity": 0.25
+            },
+            "name": "levels/menu/main_menu_seg7.01018.rgba16"
+        },
+        {
             "materialMod": null,
+            "name": "levels/menu/main_menu_seg7.02018.rgba16"
+        },
+        {
+            "materialMod": null,
+            "name": "levels/menu/main_menu_seg7.03468.rgba16"
+        },
+        {
+            "materialMod": null,
+            "name": "levels/menu/main_menu_seg7.03C68.rgba16"
+        },
+        {
+            "materialMod": {
+                "specularIntensity": 0.25
+            },
             "name": "levels/menu/main_menu_seg7.04468.rgba16"
+        },
+        {
+            "materialMod": null,
+            "name": "levels/menu/main_menu_seg7.04C68.rgba16"
+        },
+        {
+            "materialMod": null,
+            "name": "levels/menu/main_menu_seg7.05468.rgba16"
         },
         {
             "materialMod": {
@@ -1014,9 +1042,497 @@
                     0.0,
                     0.0,
                     -1.0
-                ]
+                ],
+                "selfLight": [
+                    0.05000000074505806,
+                    0.05000000074505806,
+                    0.05000000074505806
+                ],
+                "shadowRayBias": 30.0,
+                "specularExponent": 5.0,
+                "specularIntensity": 1.5
             },
             "name": "textures/intro_raw/mario_face_shine.ia8"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 1.0,
+                "attenuationRadius": 900.0,
+                "diffuseColor": [
+                    1.25,
+                    0.25,
+                    0.25
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 16,
+                "pointRadius": 50.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 50.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "textures/intro_raw/red_star_0.rgba16"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 1.0,
+                "attenuationRadius": 900.0,
+                "diffuseColor": [
+                    1.25,
+                    0.25,
+                    0.25
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 16,
+                "pointRadius": 50.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 50.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "textures/intro_raw/red_star_1.rgba16"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 1.0,
+                "attenuationRadius": 900.0,
+                "diffuseColor": [
+                    1.25,
+                    0.25,
+                    0.25
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 16,
+                "pointRadius": 50.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 50.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "textures/intro_raw/red_star_2.rgba16"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 1.0,
+                "attenuationRadius": 900.0,
+                "diffuseColor": [
+                    1.25,
+                    0.25,
+                    0.25
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 16,
+                "pointRadius": 50.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 50.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "textures/intro_raw/red_star_3.rgba16"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 1.0,
+                "attenuationRadius": 900.0,
+                "diffuseColor": [
+                    1.25,
+                    0.25,
+                    0.25
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 16,
+                "pointRadius": 50.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 50.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "textures/intro_raw/red_star_4.rgba16"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 1.0,
+                "attenuationRadius": 900.0,
+                "diffuseColor": [
+                    1.25,
+                    0.25,
+                    0.25
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 16,
+                "pointRadius": 50.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 50.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "textures/intro_raw/red_star_5.rgba16"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 1.0,
+                "attenuationRadius": 900.0,
+                "diffuseColor": [
+                    1.25,
+                    0.25,
+                    0.25
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 16,
+                "pointRadius": 50.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 50.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "textures/intro_raw/red_star_6.rgba16"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 1.0,
+                "attenuationRadius": 900.0,
+                "diffuseColor": [
+                    1.25,
+                    0.25,
+                    0.25
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 16,
+                "pointRadius": 50.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 50.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "textures/intro_raw/red_star_7.rgba16"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 1.0,
+                "attenuationRadius": 900.0,
+                "diffuseColor": [
+                    1.25,
+                    1.25,
+                    1.25
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 16,
+                "pointRadius": 50.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 50.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "textures/intro_raw/white_star_0.rgba16"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 1.0,
+                "attenuationRadius": 900.0,
+                "diffuseColor": [
+                    1.25,
+                    1.25,
+                    1.25
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 16,
+                "pointRadius": 50.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 50.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "textures/intro_raw/white_star_1.rgba16"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 1.0,
+                "attenuationRadius": 900.0,
+                "diffuseColor": [
+                    1.25,
+                    1.25,
+                    1.25
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 16,
+                "pointRadius": 50.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 50.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "textures/intro_raw/white_star_2.rgba16"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 1.0,
+                "attenuationRadius": 900.0,
+                "diffuseColor": [
+                    1.25,
+                    1.25,
+                    1.25
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 16,
+                "pointRadius": 50.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 50.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "textures/intro_raw/white_star_3.rgba16"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 1.0,
+                "attenuationRadius": 900.0,
+                "diffuseColor": [
+                    1.25,
+                    1.25,
+                    1.25
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 16,
+                "pointRadius": 50.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 50.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "textures/intro_raw/white_star_4.rgba16"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 1.0,
+                "attenuationRadius": 900.0,
+                "diffuseColor": [
+                    1.25,
+                    1.25,
+                    1.25
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 16,
+                "pointRadius": 50.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 50.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "textures/intro_raw/white_star_5.rgba16"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 1.0,
+                "attenuationRadius": 900.0,
+                "diffuseColor": [
+                    1.25,
+                    1.25,
+                    1.25
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 16,
+                "pointRadius": 50.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 50.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "textures/intro_raw/white_star_6.rgba16"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 1.0,
+                "attenuationRadius": 900.0,
+                "diffuseColor": [
+                    1.25,
+                    1.25,
+                    1.25
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 16,
+                "pointRadius": 50.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 50.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "textures/intro_raw/white_star_7.rgba16"
         },
         {
             "materialMod": null,
@@ -1347,486 +1863,6 @@
         {
             "materialMod": null,
             "name": "textures/water/jrb_textures.0B800.rgba16"
-        },
-		{
-            "lightMod": {
-                "attenuationExponent": 1.0,
-                "attenuationRadius": 900.0,
-                "diffuseColor": [
-                    1.25,
-                    1.25,
-                    1.25
-                ],
-                "flickerIntensity": 0.0,
-                "groupBits": 16,
-                "pointRadius": 50.0,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "shadowOffset": 50.0,
-                "specularIntensity": 0.6499999761581421
-            },
-            "materialMod": {
-                "lightGroupMaskBits": 0,
-                "selfLight": [
-                    0.699999988079071,
-                    0.699999988079071,
-                    0.699999988079071
-                ]
-            },
-            "name": "textures/intro_raw/white_star_0.rgba16"
-        },
-		{
-            "lightMod": {
-                "attenuationExponent": 1.0,
-                "attenuationRadius": 900.0,
-                "diffuseColor": [
-                    1.25,
-                    1.25,
-                    1.25
-                ],
-                "flickerIntensity": 0.0,
-                "groupBits": 16,
-                "pointRadius": 50.0,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "shadowOffset": 50.0,
-                "specularIntensity": 0.6499999761581421
-            },
-            "materialMod": {
-                "lightGroupMaskBits": 0,
-                "selfLight": [
-                    0.699999988079071,
-                    0.699999988079071,
-                    0.699999988079071
-                ]
-            },
-            "name": "textures/intro_raw/white_star_1.rgba16"
-        },
-		{
-            "lightMod": {
-                "attenuationExponent": 1.0,
-                "attenuationRadius": 900.0,
-                "diffuseColor": [
-                    1.25,
-                    1.25,
-                    1.25
-                ],
-                "flickerIntensity": 0.0,
-                "groupBits": 16,
-                "pointRadius": 50.0,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "shadowOffset": 50.0,
-                "specularIntensity": 0.6499999761581421
-            },
-            "materialMod": {
-                "lightGroupMaskBits": 0,
-                "selfLight": [
-                    0.699999988079071,
-                    0.699999988079071,
-                    0.699999988079071
-                ]
-            },
-            "name": "textures/intro_raw/white_star_2.rgba16"
-        },
-		{
-            "lightMod": {
-                "attenuationExponent": 1.0,
-                "attenuationRadius": 900.0,
-                "diffuseColor": [
-                    1.25,
-                    1.25,
-                    1.25
-                ],
-                "flickerIntensity": 0.0,
-                "groupBits": 16,
-                "pointRadius": 50.0,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "shadowOffset": 50.0,
-                "specularIntensity": 0.6499999761581421
-            },
-            "materialMod": {
-                "lightGroupMaskBits": 0,
-                "selfLight": [
-                    0.699999988079071,
-                    0.699999988079071,
-                    0.699999988079071
-                ]
-            },
-            "name": "textures/intro_raw/white_star_3.rgba16"
-        },
-		{
-            "lightMod": {
-                "attenuationExponent": 1.0,
-                "attenuationRadius": 900.0,
-                "diffuseColor": [
-                    1.25,
-                    1.25,
-                    1.25
-                ],
-                "flickerIntensity": 0.0,
-                "groupBits": 16,
-                "pointRadius": 50.0,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "shadowOffset": 50.0,
-                "specularIntensity": 0.6499999761581421
-            },
-            "materialMod": {
-                "lightGroupMaskBits": 0,
-                "selfLight": [
-                    0.699999988079071,
-                    0.699999988079071,
-                    0.699999988079071
-                ]
-            },
-            "name": "textures/intro_raw/white_star_4.rgba16"
-        },
-		{
-            "lightMod": {
-                "attenuationExponent": 1.0,
-                "attenuationRadius": 900.0,
-                "diffuseColor": [
-                    1.25,
-                    1.25,
-                    1.25
-                ],
-                "flickerIntensity": 0.0,
-                "groupBits": 16,
-                "pointRadius": 50.0,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "shadowOffset": 50.0,
-                "specularIntensity": 0.6499999761581421
-            },
-            "materialMod": {
-                "lightGroupMaskBits": 0,
-                "selfLight": [
-                    0.699999988079071,
-                    0.699999988079071,
-                    0.699999988079071
-                ]
-            },
-            "name": "textures/intro_raw/white_star_5.rgba16"
-        },
-		{
-            "lightMod": {
-                "attenuationExponent": 1.0,
-                "attenuationRadius": 900.0,
-                "diffuseColor": [
-                    1.25,
-                    1.25,
-                    1.25
-                ],
-                "flickerIntensity": 0.0,
-                "groupBits": 16,
-                "pointRadius": 50.0,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "shadowOffset": 50.0,
-                "specularIntensity": 0.6499999761581421
-            },
-            "materialMod": {
-                "lightGroupMaskBits": 0,
-                "selfLight": [
-                    0.699999988079071,
-                    0.699999988079071,
-                    0.699999988079071
-                ]
-            },
-            "name": "textures/intro_raw/white_star_6.rgba16"
-        },
-		{
-            "lightMod": {
-                "attenuationExponent": 1.0,
-                "attenuationRadius": 900.0,
-                "diffuseColor": [
-                    1.25,
-                    1.25,
-                    1.25
-                ],
-                "flickerIntensity": 0.0,
-                "groupBits": 16,
-                "pointRadius": 50.0,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "shadowOffset": 50.0,
-                "specularIntensity": 0.6499999761581421
-            },
-            "materialMod": {
-                "lightGroupMaskBits": 0,
-                "selfLight": [
-                    0.699999988079071,
-                    0.699999988079071,
-                    0.699999988079071
-                ]
-            },
-            "name": "textures/intro_raw/white_star_7.rgba16"
-        },
-		{
-            "lightMod": {
-                "attenuationExponent": 1.0,
-                "attenuationRadius": 900.0,
-                "diffuseColor": [
-                    1.25,
-                    0.25,
-                    0.25
-                ],
-                "flickerIntensity": 0.0,
-                "groupBits": 16,
-                "pointRadius": 50.0,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "shadowOffset": 50.0,
-                "specularIntensity": 0.6499999761581421
-            },
-            "materialMod": {
-                "lightGroupMaskBits": 0,
-                "selfLight": [
-                    0.699999988079071,
-                    0.699999988079071,
-                    0.699999988079071
-                ]
-            },
-            "name": "textures/intro_raw/red_star_0.rgba16"
-        },
-		{
-            "lightMod": {
-                "attenuationExponent": 1.0,
-                "attenuationRadius": 900.0,
-                "diffuseColor": [
-                    1.25,
-                    0.25,
-                    0.25
-                ],
-                "flickerIntensity": 0.0,
-                "groupBits": 16,
-                "pointRadius": 50.0,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "shadowOffset": 50.0,
-                "specularIntensity": 0.6499999761581421
-            },
-            "materialMod": {
-                "lightGroupMaskBits": 0,
-                "selfLight": [
-                    0.699999988079071,
-                    0.699999988079071,
-                    0.699999988079071
-                ]
-            },
-            "name": "textures/intro_raw/red_star_1.rgba16"
-        },
-		{
-            "lightMod": {
-                "attenuationExponent": 1.0,
-                "attenuationRadius": 900.0,
-                "diffuseColor": [
-                    1.25,
-                    0.25,
-                    0.25
-                ],
-                "flickerIntensity": 0.0,
-                "groupBits": 16,
-                "pointRadius": 50.0,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "shadowOffset": 50.0,
-                "specularIntensity": 0.6499999761581421
-            },
-            "materialMod": {
-                "lightGroupMaskBits": 0,
-                "selfLight": [
-                    0.699999988079071,
-                    0.699999988079071,
-                    0.699999988079071
-                ]
-            },
-            "name": "textures/intro_raw/red_star_2.rgba16"
-        },
-		{
-            "lightMod": {
-                "attenuationExponent": 1.0,
-                "attenuationRadius": 900.0,
-                "diffuseColor": [
-                    1.25,
-                    0.25,
-                    0.25
-                ],
-                "flickerIntensity": 0.0,
-                "groupBits": 16,
-                "pointRadius": 50.0,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "shadowOffset": 50.0,
-                "specularIntensity": 0.6499999761581421
-            },
-            "materialMod": {
-                "lightGroupMaskBits": 0,
-                "selfLight": [
-                    0.699999988079071,
-                    0.699999988079071,
-                    0.699999988079071
-                ]
-            },
-            "name": "textures/intro_raw/red_star_3.rgba16"
-        },
-		{
-            "lightMod": {
-                "attenuationExponent": 1.0,
-                "attenuationRadius": 900.0,
-                "diffuseColor": [
-                    1.25,
-                    0.25,
-                    0.25
-                ],
-                "flickerIntensity": 0.0,
-                "groupBits": 16,
-                "pointRadius": 50.0,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "shadowOffset": 50.0,
-                "specularIntensity": 0.6499999761581421
-            },
-            "materialMod": {
-                "lightGroupMaskBits": 0,
-                "selfLight": [
-                    0.699999988079071,
-                    0.699999988079071,
-                    0.699999988079071
-                ]
-            },
-            "name": "textures/intro_raw/red_star_4.rgba16"
-        },
-		{
-            "lightMod": {
-                "attenuationExponent": 1.0,
-                "attenuationRadius": 900.0,
-                "diffuseColor": [
-                    1.25,
-                    0.25,
-                    0.25
-                ],
-                "flickerIntensity": 0.0,
-                "groupBits": 16,
-                "pointRadius": 50.0,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "shadowOffset": 50.0,
-                "specularIntensity": 0.6499999761581421
-            },
-            "materialMod": {
-                "lightGroupMaskBits": 0,
-                "selfLight": [
-                    0.699999988079071,
-                    0.699999988079071,
-                    0.699999988079071
-                ]
-            },
-            "name": "textures/intro_raw/red_star_5.rgba16"
-        },
-		{
-            "lightMod": {
-                "attenuationExponent": 1.0,
-                "attenuationRadius": 900.0,
-                "diffuseColor": [
-                    1.25,
-                    0.25,
-                    0.25
-                ],
-                "flickerIntensity": 0.0,
-                "groupBits": 16,
-                "pointRadius": 50.0,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "shadowOffset": 50.0,
-                "specularIntensity": 0.6499999761581421
-            },
-            "materialMod": {
-                "lightGroupMaskBits": 0,
-                "selfLight": [
-                    0.699999988079071,
-                    0.699999988079071,
-                    0.699999988079071
-                ]
-            },
-            "name": "textures/intro_raw/red_star_6.rgba16"
-        },
-		{
-            "lightMod": {
-                "attenuationExponent": 1.0,
-                "attenuationRadius": 900.0,
-                "diffuseColor": [
-                    1.25,
-                    0.25,
-                    0.25
-                ],
-                "flickerIntensity": 0.0,
-                "groupBits": 16,
-                "pointRadius": 50.0,
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "shadowOffset": 50.0,
-                "specularIntensity": 0.6499999761581421
-            },
-            "materialMod": {
-                "lightGroupMaskBits": 0,
-                "selfLight": [
-                    0.699999988079071,
-                    0.699999988079071,
-                    0.699999988079071
-                ]
-            },
-            "name": "textures/intro_raw/red_star_7.rgba16"
         }
     ]
 }
