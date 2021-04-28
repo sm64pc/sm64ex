@@ -216,8 +216,8 @@ static unsigned long get_time(void) {
 static struct Matrices {
     float model_matrix[4][4];
     float inv_model_matrix[4][4];
+    float extra_model_matrix[4][4];
     float camera_matrix[4][4];
-    float modified_camera_matrix[4][4];
     float graph_view_matrix[4][4];
     float graph_inv_view_matrix[4][4];
     float prev_model_matrix[4][4];
@@ -870,21 +870,21 @@ static void gfx_sp_matrix(uint8_t parameters, const int32_t *addr) {
         if (parameters & G_MTX_LOAD) {
             memcpy(rsp.P_matrix, matrix, sizeof(matrix));
 #ifdef GFX_SEPARATE_PROJECTIONS
+            gd_set_identity_mat4(&separate_projections.extra_model_matrix);
             separate_projections.is_ortho = (matrix[3][3] != 0.0f);
 #endif
         } else {
             gfx_matrix_mul(rsp.P_matrix, matrix, rsp.P_matrix);
 #ifdef GFX_SEPARATE_PROJECTIONS
             // If a view matrix gets pushed into the projection matrix, we multiply and add its effect to
-            // the current camera matrix.
+            // the model matrices that get used afterwards.
             //
             // This is used in two separate instances in the game:
             // - Goddard uses it to store the entire view matrix in the projection matrix.
             // - When Mario gets hurt, a camera shake effect is applied by applying an offset that acts as
             // an additional view matrix in the projection matrix.
             if (!separate_projections.is_ortho && !is_identity(matrix)) {
-                gfx_matrix_mul(separate_projections.modified_camera_matrix, separate_projections.camera_matrix, matrix);
-                gfx_rapi->set_camera_matrix(separate_projections.modified_camera_matrix);
+                gfx_matrix_mul(separate_projections.extra_model_matrix, separate_projections.extra_model_matrix, matrix);
             }
 #endif
         }
@@ -904,6 +904,7 @@ static void gfx_sp_matrix(uint8_t parameters, const int32_t *addr) {
 
 #ifdef GFX_SEPARATE_PROJECTIONS
     gfx_matrix_mul(separate_projections.model_matrix, rsp.modelview_matrix_stack[rsp.modelview_matrix_stack_size - 1], separate_projections.graph_inv_view_matrix);
+    gfx_matrix_mul(separate_projections.model_matrix, separate_projections.model_matrix, separate_projections.extra_model_matrix);
 #endif
 }
 
@@ -916,6 +917,7 @@ static void gfx_sp_pop_matrix(uint32_t count) {
 
 #ifdef GFX_SEPARATE_PROJECTIONS
                 gfx_matrix_mul(separate_projections.model_matrix, rsp.modelview_matrix_stack[rsp.modelview_matrix_stack_size - 1], separate_projections.graph_inv_view_matrix);
+                gfx_matrix_mul(separate_projections.model_matrix, separate_projections.model_matrix, separate_projections.extra_model_matrix);
 #endif
             }
         }
@@ -2067,6 +2069,7 @@ void gfx_start_frame(void) {
     gfx_current_dimensions.aspect_ratio = (float)gfx_current_dimensions.width / (float)gfx_current_dimensions.height;
 
 #ifdef GFX_SEPARATE_PROJECTIONS
+    gd_set_identity_mat4(&separate_projections.extra_model_matrix);
     gd_set_identity_mat4(&separate_projections.camera_matrix);
     gfx_rapi->set_camera_matrix(separate_projections.camera_matrix);
 
