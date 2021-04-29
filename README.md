@@ -8,7 +8,7 @@ Fork of [sm64pc/sm64ex](https://github.com/sm64pc/sm64ex) that adds support for 
 
 ## Technical Preview
 
-This mod is currently a technical preview and should only be used by those willing to tolerate problems such as visual glitches and performance problems. This project is subject to have major changes in the future in anything from the architecture, design, aesthetic and its performance. Any help towards solving these issues is welcome.
+This mod is currently a technical preview and should only be used by those willing to tolerate problems such as visual glitches and performance problems. This project is subject to have major changes in the future in anything from its architecture, design, aesthetic and performance. Any help towards solving these issues is welcome.
 
 Please do not report issues that don't provide new information. Remember to check if your problem has already been reported on the issue tracker.
 
