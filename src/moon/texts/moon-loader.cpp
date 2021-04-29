@@ -103,16 +103,16 @@ void Moon_LoadLanguage( string path ) {
     language->courses.insert(language->courses.end(), &tmpCourses[0], &tmpCourses[course_name_table_size]);
 
     for (WValue::ConstMemberIterator option = options.MemberBegin(); option != options.MemberEnd(); ++option) {
-        language->strings.insert(pair<string, u8*>(
+        language->strings.insert(pair<string, string>(
             narrow(option->name.GetString()), 
-            getTranslatedText(narrow(option->value.GetString()).c_str())
+            narrow(option->value.GetString())
         ));
     }
 
     for (WValue::ConstMemberIterator item = strings.MemberBegin(); item != strings.MemberEnd(); ++item) {
-        language->strings.insert(pair<string, u8*>(
+        language->strings.insert(pair<string, string>(
             narrow(item->name.GetString()), 
-            getTranslatedText(narrow(item->value.GetString()).c_str())
+            narrow(item->value.GetString())
         ));
     }    
 
@@ -120,7 +120,7 @@ void Moon_LoadLanguage( string path ) {
     languagesAmount = languages.size();
 }
 
-u8 *Moon_GetKey(string key) {
+string Moon_GetKey(string key) {
     return current->strings[key];
 }
 

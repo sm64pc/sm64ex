@@ -13,8 +13,8 @@ extern "C" {
 #include "text/txtconv.h"
 }
 float MoonGetTextWidth  (std::string text, float scale, bool colored);
-void MoonDrawText       (float x, float y, std::string text, float scale, struct Color color, bool u4_3);
-void MoonDrawColoredText(float x, float y, std::string text, float scale, struct Color color, bool u4_3);
+void MoonDrawText       (float x, float y, std::string text, float scale, struct Color color, bool dropShadow, bool u4_3);
+void MoonDrawColoredText(float x, float y, std::string text, float scale, struct Color color, bool dropShadow, bool u4_3);
 void MoonDrawRectangle  (float x, float y, float w, float h, struct Color c, bool u4_3);
 
 #endif

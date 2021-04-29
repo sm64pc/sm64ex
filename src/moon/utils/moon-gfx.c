@@ -21,17 +21,20 @@ f32 moon_get_text_width(u8* text, float scale, u8 colored) {
     return size;
 }
 
-void moon_draw_colored_text(f32 x, f32 y, const u8 *str, float scale) {    
+void moon_draw_colored_text(f32 x, f32 y, const u8 *str, float scale, struct Color c) {    
     void **hudLUT2 = segmented_to_virtual(main_hud_lut);
     u32 xStride = round(12 * scale);
     s32 strPos  = 0;
     s32 w       = round(16 * scale);    
+    gDPSetEnvColor(gDisplayListHead++, c.r, c.g, c.b, c.a);
 
     while (str[strPos] != GLOBAR_CHAR_TERMINATOR) {
         if (str[strPos] == GLOBAL_CHAR_SPACE) {
             x += round(8 * scale);
         } else {
-            moon_draw_texture(x, y, w, w, hudLUT2[str[strPos]]);
+            gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, hudLUT2[str[strPos]]);
+            gSPDisplayList(gDisplayListHead++, dl_rgba16_load_tex_block);
+            gSPTextureRectangle(gDisplayListHead++, (u32)x << 2, (u32)y << 2, ((u32)x + 16) << 2, ((u32)y + 16) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
             x += xStride;
         }
         strPos++;
@@ -46,7 +49,7 @@ void moon_draw_text(f32 x, f32 y, const u8 *str, float scale) {
     Mtx *_Matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
     if (!_Matrix) return;    
     guScale(_Matrix, scale, scale - 0.1f, 1.f);
-    create_dl_translation_matrix(MENU_MTX_PUSH, x, y, 0.0f);
+    create_dl_translation_matrix(MENU_MTX_PUSH, x, y - 15, 0.0f);
     gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(_Matrix), G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 
     while (str[strPos] != DIALOG_CHAR_TERMINATOR) {
@@ -128,11 +131,12 @@ void moon_draw_texture(s32 x, s32 y, u32 w, u32 h, u8 *texture) {
 void moon_draw_rectangle(f32 x, f32 y, f32 w, f32 h, struct Color c, u8 u4_3) {
     Mtx *_Matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
     if (!_Matrix) return;
+
+    y = SCREEN_HEIGHT - y;
+
     if(!u4_3){
         x = GFX_DIMENSIONS_FROM_LEFT_EDGE(x);
-        y = SCREEN_HEIGHT - y;
-    } else
-        y += h;
+    }
 
     create_dl_translation_matrix(MENU_MTX_PUSH, x, y, 0);
     guScale(_Matrix, 1, 1, 1);    

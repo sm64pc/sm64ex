@@ -447,7 +447,7 @@ static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
     int width;
     u8* tmpText;
     u8 buf[32] = { 0 };
-    float scale = 0.8f;
+    float scale = 0.9f;
 
     if(opt->type == OPT_TOGGLE || opt->type == OPT_CHOICE) {
         lbl = base;

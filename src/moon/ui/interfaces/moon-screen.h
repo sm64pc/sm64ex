@@ -26,11 +26,13 @@ public:
     virtual void Draw();
     virtual void Update();
     virtual void Dispose();
-    bool IsPressed(MoonButtons button);
-    bool IsDown(MoonButtons button);
-    float GetValue(MoonButtons button, bool absolute);
-    float screenWidth;
-    float screenHeight;
 };
+
+bool IsBtnPressed(MoonButtons button);
+bool IsBtnDown(MoonButtons button);
+float GetStickValue(MoonButtons button, bool absolute);
+
+float GetScreenWidth(bool u4_3);
+float GetScreenHeight();
 
 #endif

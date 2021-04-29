@@ -18,7 +18,7 @@ void moon_init_languages(char *executable, char *gamedir) {
 }
 
 u8 * moon_language_get_key( char* key ){
-    return Moon_GetKey(std::string(key));
+    return getTranslatedText(Moon_GetKey(std::string(key)).c_str());
 }
 
 void moon_set_language( int id ) {

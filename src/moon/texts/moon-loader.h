@@ -28,7 +28,7 @@ inline std::string narrow (const std::wstring& str) {
 struct LanguageEntry {
     std::string name;
     std::string logo;    
-    std::map<std::string, u8*> strings;
+    std::map<std::string, std::string> strings;
     std::vector<u8*> acts;
     std::vector<struct DialogEntry*> dialogs;
     std::vector<u8*> courses;
@@ -38,7 +38,7 @@ extern std::vector<LanguageEntry*> languages;
 
 void Moon_LoadLanguage( std::string path );
 void Moon_InitLanguages( char *exePath, char *gamedir ) ;
-u8 * Moon_GetKey(std::string key);
+std::string Moon_GetKey(std::string key);
 void Moon_SetLanguage(LanguageEntry *new_language);
 
 #endif

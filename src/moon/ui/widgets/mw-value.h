@@ -2,16 +2,20 @@
 #define MoonWidgetValue
 
 #include "moon/ui/interfaces/moon-widget.h"
+#include <string>
 
-enum MWValueType{
-    INT, FLOAT, BOOL
+struct MWValueBind{
+    float *fvar;
+    bool  *bvar;
+    int   *ivar;
 };
 
 class MWValue : public MoonWidget {
     private:
-        void* value;
+        MWValueBind bind;
+        std::string title;
     public:
-        MWValue(void* ptr, float x, float y, MWValueType type);
+        MWValue(MWValueBind bind, std::string title, float x, float y);
         void Init();
         void Draw();
         void Update();

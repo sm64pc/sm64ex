@@ -3,7 +3,7 @@
 #include "moon/ui/utils/moon-draw-utils.h"
 #include "moon/ui/moon-ui-manager.h"
 #include "moon/network/moon-consumer.h"
-
+#include "moon/texts/moon-loader.h"
 #include "moon/ui/widgets/mw-value.h"
 
 using namespace std;
@@ -25,47 +25,28 @@ void MoonTest::Init(){
     //printf("%s\n", res.body.c_str());
     MoonScreen::Init();
 }
+bool b = true;
+bool c = true;
+bool d = true;
 
 void MoonTest::Mount(){
-    this->widgets.clear();
-    int a = 25;    
-    this->widgets.push_back(new MWValue(&a, 0, 20, MWValueType::INT));
-    this->widgets.push_back(new MWValue(&a, 0, 40, MWValueType::INT));
-    this->widgets.push_back(new MWValue(&a, 0, 60, MWValueType::INT));
-    this->widgets.push_back(new MWValue(&a, 0, 80, MWValueType::INT));
-
+    this->widgets.clear();    
+    this->widgets.push_back(new MWValue({.bvar = &b}, "Toggle owo", 25, 50));
+    this->widgets.push_back(new MWValue({.bvar = &c}, "Toggle 2 owo", 25, 70));
     MoonScreen::Mount();
 }
 
 int x = 0;
-int y = 30;
+int y = 20;
 
 void MoonTest::Draw(){
 
-    //if(this->IsDown(MoonButtons::L_CBTN)){
-    //    x -= 1;
-    //}
+    MoonDrawText(0, 0, "Test text", 1.0, {255, 255, 255, 255}, true, false);
 
-    //if(this->IsDown(MoonButtons::R_CBTN)){
-    //    x += 1;
-    //}
-    //
-    //if(this->IsDown(MoonButtons::U_CBTN)){
-    //    y -= 1;
-    //}
-
-    //if(this->IsDown(MoonButtons::D_CBTN)){
-    //    y += 1;
-    //}
-
-    string test = "Placeholder";
-    float txtWidth = MoonGetTextWidth(test, 1.0, false);
-    MoonDrawRectangle(0, 0, this->screenWidth, this->screenHeight, {0, 0, 0, 255}, false);    
-    MoonDrawText(this->screenWidth / 2 - txtWidth / 2, y, test, 1.0, {255, 255, 255, 255}, false);
-    // MoonDrawText(0, 40, test, 1.0, {255, 255, 255, 255}, false);    
-    //MoonDrawColoredText(0, 50, "This is a test owo", 1.0, {255, 255, 255, 255}, false);    
-
-    // std::cout << this->screenWidth << " : " << GFX_DIMENSIONS_ASPECT_RATIO << std::endl;
-
+    string menuTitle = "Placeholder";
+    float txtWidth = MoonGetTextWidth(menuTitle, 1.0, true);
+    MoonDrawRectangle(0, 0, GetScreenWidth(false), GetScreenHeight(), {0, 0, 0, 100}, false);
+    MoonDrawColoredText(SCREEN_WIDTH / 2 - txtWidth / 2, 20, menuTitle, 1.0, {255, 255, 255, 255}, true, true);
+    MoonDrawRectangle(25, 50, SCREEN_WIDTH - 50, GetScreenHeight() * 0.6, {0, 0, 0, 100}, true);
     MoonScreen::Draw();
 }

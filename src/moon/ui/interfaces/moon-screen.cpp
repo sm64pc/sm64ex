@@ -36,12 +36,9 @@ void MoonScreen::Draw(){
 bool stickExecuted;
 
 void MoonScreen::Update(){
-    this->screenWidth  = GFX_DIMENSIONS_ASPECT_RATIO > 1 ? SCREEN_WIDTH + abs(GFX_DIMENSIONS_FROM_LEFT_EDGE(0)) * 2 : SCREEN_WIDTH;
-    this->screenHeight = SCREEN_HEIGHT;
     if(this->enabledWidgets) {
-        
-        float xStick = this->GetValue(MoonButtons::L_STICK, false);
-        float yStick = this->GetValue(MoonButtons::U_STICK, false);
+                
+        float yStick = GetStickValue(MoonButtons::U_STICK, false);
         
         if(!this->widgets.empty()){
             if(yStick > 0) {
@@ -68,12 +65,12 @@ void MoonScreen::Update(){
             }
             if(!yStick)
                 stickExecuted = false;
-            if(this->IsPressed(MoonButtons::A_BTN)) {
+            if(IsBtnPressed(MoonButtons::A_BTN)) {
                 this->selected = this->widgets[this->scrollIndex];
                 this->selected->selected = false;
                 this->selected->focused = true;
             } 
-            if(this->IsPressed(MoonButtons::B_BTN)) {
+            if(IsBtnPressed(MoonButtons::B_BTN)) {
                 if(this->selected != NULL){
                     this->selected->selected = true;
                     this->selected->focused = false;
@@ -92,15 +89,15 @@ void MoonScreen::Dispose(){
             widgets[i]->Dispose();
 }
 
-bool MoonScreen::IsPressed(MoonButtons button){
+bool IsBtnPressed(MoonButtons button){
     return gPlayer1Controller->buttonPressed & button;
 }
 
-bool MoonScreen::IsDown(MoonButtons button){
+bool IsBtnDown(MoonButtons button){
     return gPlayer1Controller->buttonDown & button;
 }
 
-float MoonScreen::GetValue(MoonButtons button, bool absolute){
+float GetStickValue(MoonButtons button, bool absolute){
     switch(button){
         case MoonButtons::L_STICK:
         case MoonButtons::R_STICK:
@@ -111,4 +108,12 @@ float MoonScreen::GetValue(MoonButtons button, bool absolute){
         default:
             return 0.f;
     }
+}
+
+float GetScreenWidth(bool u4_3){
+    return GFX_DIMENSIONS_ASPECT_RATIO > 1 || u4_3 ? SCREEN_WIDTH + abs(GFX_DIMENSIONS_FROM_LEFT_EDGE(0)) * 2 : SCREEN_WIDTH;    
+}
+
+float GetScreenHeight() {
+    return SCREEN_HEIGHT;
 }
