@@ -10,7 +10,7 @@ Fork of [sm64pc/sm64ex](https://github.com/sm64pc/sm64ex) that adds support for 
 
 This mod is currently a technical preview and should only be used by those willing to tolerate problems such as visual glitches and performance problems. This project is subject to have major changes in the future in anything from the architecture, design, aesthetic and its performance. Any help towards solving these issues is welcome.
 
-Please do not report issues that don't provide helpful information. Remember to check if your problem has already been reported on the issue tracker.
+Please do not report issues that don't provide new information. Remember to check if your problem has already been reported on the issue tracker.
 
 Performance is the first thing that will be worked on and it has plenty of room for optimization at the moment. If you cannot reach the target framerate, it's recommended to lower the resolution with the internal scaler, as it has the biggest impact in performance out of all the options.
 
