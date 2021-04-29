@@ -23,9 +23,8 @@ Performance is the first thing that will be worked on and it has plenty of room 
 * Custom level lighting for all stages.
 * Dynamic sphere lights for objects and particles.
 * Classic Phong shading.
+* Custom material properties based on texture names or geometry layouts.
 * Normal map support.
-* Custom material properties based on texture names.
-* Custom material properties based on geometry layouts.
 * Real-time raytraced shadows, reflections, refractions and global illumination.
 * Real-time denoiser (experimental).
 
