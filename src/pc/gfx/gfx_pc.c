@@ -218,6 +218,7 @@ static struct Matrices {
     float inv_model_matrix[4][4];
     float extra_model_matrix[4][4];
     float camera_matrix[4][4];
+    float modified_camera_matrix[4][4];
     float graph_view_matrix[4][4];
     float graph_inv_view_matrix[4][4];
     float prev_model_matrix[4][4];
@@ -225,6 +226,7 @@ static struct Matrices {
     bool model_matrix_used;
     bool is_ortho;
     bool double_sided;
+    bool persp_triangles_drawn;
 } separate_projections;
 
 void gfx_set_camera_perspective(float fov_degrees, float near_dist, float far_dist) {
@@ -240,6 +242,10 @@ void gfx_set_camera_matrix(float mat[4][4]) {
     // on the model view matrices later.
     memcpy(separate_projections.graph_view_matrix, mat, sizeof(float) * 16);
     gd_inverse_mat4f(&separate_projections.graph_view_matrix, &separate_projections.graph_inv_view_matrix);
+}
+
+bool is_affine(float mat[4][4]) {
+    return (mat[0][3] == 0.0f) && (mat[1][3] == 0.0f) && (mat[2][3] == 0.0f) && (mat[3][3] == 1.0f);
 }
 
 void inverse_affine(Mat4f *src, Mat4f *dst) {
@@ -343,6 +349,7 @@ static void gfx_flush(void) {
         }
         else {
             gfx_rapi->draw_triangles_persp(buf_vbo, buf_vbo_len, buf_vbo_num_tris, separate_projections.model_matrix, separate_projections.double_sided);
+            separate_projections.persp_triangles_drawn = true;
         }
 
         separate_projections.double_sided = false;
@@ -875,16 +882,35 @@ static void gfx_sp_matrix(uint8_t parameters, const int32_t *addr) {
 #endif
         } else {
             gfx_matrix_mul(rsp.P_matrix, matrix, rsp.P_matrix);
+
 #ifdef GFX_SEPARATE_PROJECTIONS
-            // If a view matrix gets pushed into the projection matrix, we multiply and add its effect to
+            // If a view/model matrix (affine) gets pushed into the projection matrix, we multiply and add its effect to
             // the model matrices that get used afterwards.
             //
-            // This is used in two separate instances in the game:
-            // - Goddard uses it to store the entire view matrix in the projection matrix.
-            // - When Mario gets hurt, a camera shake effect is applied by applying an offset that acts as
-            // an additional view matrix in the projection matrix.
-            if (!separate_projections.is_ortho && !is_identity(matrix)) {
-                gfx_matrix_mul(separate_projections.extra_model_matrix, separate_projections.extra_model_matrix, matrix);
+            // This is used in three separate instances in the game:
+            // - Goddard uses it to store the model matrix in the projection matrix, probably due to the dynamic light sources.
+            // - When Mario gets hurt an offset is applied to the view matrix.
+            // - One of the camera shots when Mario collects a key from Bowser rotates the view matrix.
+            //
+            // However, an additional condition is checked to know if any triangles have already been drawn as
+            // part of the perspective view. This is because parts of the game can add a slight offset to the camera
+            // by modifying this matrix without actually affecting the camera matrix that is first used, since the
+            // offset is not part of the modelview stack.
+            //
+            // Effectively, this means the game can use this to either correct a model into position (like the Goddard head),
+            // or to move the camera without moving its node. This condition could break at any moment if the game chooses to
+            // do something more elaborate, but it avoids having to add a lot of extra logic that would be needed to handle 
+            // multiple types of perspectives being rendered in the same frame.
+            if (!separate_projections.is_ortho && is_affine(matrix) && !is_identity(matrix)) {
+                // Fixes Goddard by adding the offset to the model matrix.
+                if (separate_projections.persp_triangles_drawn) {
+                    gfx_matrix_mul(separate_projections.extra_model_matrix, separate_projections.extra_model_matrix, matrix);
+                }
+                // Fixes Lakitu camera shake and Bowser key cutscene by adding the offset to the camera matrix.
+                else {
+                    gfx_matrix_mul(separate_projections.modified_camera_matrix, separate_projections.camera_matrix, matrix);
+                    gfx_rapi->set_camera_matrix(separate_projections.modified_camera_matrix);
+                }
             }
 #endif
         }
@@ -2078,6 +2104,7 @@ void gfx_start_frame(void) {
     separate_projections.is_ortho = false;
     separate_projections.model_matrix_used = false;
     separate_projections.double_sided = false;
+    separate_projections.persp_triangles_drawn = false;
 #endif
 }
 
