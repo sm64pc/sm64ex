@@ -20,15 +20,13 @@ Performance is the first thing that will be worked on and it has plenty of room 
 
 ## Features
 * Fully path-traced renderer.
-* Custom level lights for all stages.
+* Custom level lighting for all stages.
 * Dynamic sphere lights for objects and particles.
 * Classic Phong shading.
 * Normal map support.
 * Custom material properties based on texture names.
 * Custom material properties based on geometry layouts.
-* Real-time raytraced reflections.
-* Real-time raytraced refractions.
-* Real-time raytraced global illumination.
+* Real-time raytraced shadows, reflections, refractions and global illumination.
 * Real-time denoiser (experimental).
 
 ## Building
