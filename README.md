@@ -4,7 +4,7 @@
 
 ## NOTE: The main dependency of sm64rt, RT64, is currently private until its first public release. For now, this repository only contains the changes required to make the game compatible with it.
 
-Fork of [sm64pc/sm64ex](https://github.com/sm64pc/sm64ex) that adds support for [RT64](https://github.com/DarioSamo/RT64), a hardware-accelerated real-time raytracer.
+Fork of [sm64pc/sm64ex](https://github.com/sm64pc/sm64ex) that adds support for [RT64](https://github.com/DarioSamo/RT64), a hardware-accelerated real-time path tracer.
 
 ## Technical Preview
 
