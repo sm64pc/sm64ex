@@ -39,3 +39,5 @@ For building instructions, please refer to the [sm64ex wiki](https://github.com/
 * EXTERNAL_DATA=1 (Required for associating textures to the renderer's material properties)
 
 * NODRAWINGDISTANCE=1 (Optional, but gives good results and prevents pop-in, which can cause issues with objects that cast shadows or appear in reflections)
+
+The repository already comes with a prebuilt binary and the compatible header file for RT64 to make the build process easier. If you wish to build this module yourself, you can do it from the [RT64 repository](https://github.com/DarioSamo/RT64) instead.
