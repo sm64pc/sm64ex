@@ -30,7 +30,6 @@ Performance is the first thing that will be worked on and it has plenty of room 
 * Real-time raytraced refractions.
 * Real-time raytraced global illumination.
 * Real-time denoiser (experimental).
-* All preconfigured for a full playthrough.
 
 ## Building
 For building instructions, please refer to the [sm64ex wiki](https://github.com/sm64pc/sm64ex/wiki) and follow the process as normal with these additional build flags:
