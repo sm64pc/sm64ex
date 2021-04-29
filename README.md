@@ -6,6 +6,32 @@
 
 Fork of [sm64pc/sm64ex](https://github.com/sm64pc/sm64ex) that adds support for [RT64](https://github.com/DarioSamo/RT64), a hardware-accelerated real-time raytracer.
 
+## Technical Preview
+
+This mod is currently a technical preview and should only be used by those willing to tolerate problems such as visual glitches and performance problems. This project is subject to have major changes in the future in anything from the architecture, design, aesthetic and its performance.
+
+Please do not report issues that don't provide helpful information. Remember to check if your problem has already been reported on the issue tracker.
+
+Performance is the first thing that will be worked on and it has plenty of room for optimization at the moment. If you cannot reach the target framerate, it's recommended to lower the resolution with the internal scaler, as it has the biggest impact in performance out of all the options.
+
+## Requirements
+* Windows 10 (due to RT64 dependency)
+* GPU with DXR support (make sure your drivers are up to date!)
+
+## Features
+* Fully path-traced renderer.
+* Custom level lights for all stages.
+* Dynamic sphere lights for objects and particles.
+* Classic Phong shading.
+* Normal map support.
+* Custom material properties based on texture names.
+* Custom material properties based on geometry layouts.
+* Real-time raytraced reflections.
+* Real-time raytraced refractions.
+* Real-time raytraced global illumination.
+* Real-time denoiser (experimental).
+* All preconfigured for a full playthrough.
+
 ## Building
 For building instructions, please refer to the [sm64ex wiki](https://github.com/sm64pc/sm64ex/wiki) and follow the process as normal with these additional build flags:
 
