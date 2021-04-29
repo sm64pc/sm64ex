@@ -28,11 +28,16 @@ void MoonTest::Init(){
 bool b = true;
 bool c = true;
 bool d = true;
+float  e = 0;
+
+int bIndex = 0;
+vector<string> test = {"Val zero", "Val uwo", "Val owu"};
 
 void MoonTest::Mount(){
-    this->widgets.clear();    
-    this->widgets.push_back(new MWValue({.bvar = &b}, "Toggle owo", 25, 50));
-    this->widgets.push_back(new MWValue({.bvar = &c}, "Toggle 2 owo", 25, 70));
+    this->widgets.clear();
+    this->widgets.push_back(new MWValue({.index = &bIndex, .values = &test}, "Toggle 3 owo", 25, 95));
+    this->widgets.push_back(new MWValue({.bvar = &b}, "Toggle owo", 25, 55));
+    this->widgets.push_back(new MWValue({.fvar = &e, .max = 10, .min = 0, .step = 0.1f}, "Toggle 2 owo", 25, 75));    
     MoonScreen::Mount();
 }
 
@@ -40,7 +45,6 @@ int x = 0;
 int y = 20;
 
 void MoonTest::Draw(){
-
     MoonDrawText(0, 0, "Test text", 1.0, {255, 255, 255, 255}, true, false);
 
     string menuTitle = "Placeholder";

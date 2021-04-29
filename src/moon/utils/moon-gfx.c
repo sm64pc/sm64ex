@@ -42,14 +42,15 @@ void moon_draw_colored_text(f32 x, f32 y, const u8 *str, float scale, struct Col
 }
 
 void moon_draw_text(f32 x, f32 y, const u8 *str, float scale) {
-    UNUSED s8 mark = DIALOG_MARK_NONE; // unused in EU
+    UNUSED s8 mark = DIALOG_MARK_NONE;
     s32 strPos = 0;
     u8 lineNum = 1;
-    
+    y -= 16;
+
     Mtx *_Matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
     if (!_Matrix) return;    
-    guScale(_Matrix, scale, scale - 0.1f, 1.f);
-    create_dl_translation_matrix(MENU_MTX_PUSH, x, y - 15, 0.0f);
+    guScale(_Matrix, scale, scale, 1.f);
+    create_dl_translation_matrix(MENU_MTX_PUSH, x, y, 0.0f);
     gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(_Matrix), G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 
     while (str[strPos] != DIALOG_CHAR_TERMINATOR) {
@@ -81,7 +82,7 @@ void moon_draw_text(f32 x, f32 y, const u8 *str, float scale) {
                 break;
             case DIALOG_CHAR_SPACE:
                 create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[DIALOG_CHAR_SPACE]), 0.0f, 0.0f);
-                break; // ? needed to match
+                break;
             default:
                 render_generic_char(str[strPos]);
                 if (mark != DIALOG_MARK_NONE) {

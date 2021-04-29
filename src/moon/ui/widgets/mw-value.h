@@ -3,11 +3,19 @@
 
 #include "moon/ui/interfaces/moon-widget.h"
 #include <string>
+#include <vector>
 
 struct MWValueBind{
-    float *fvar;
     bool  *bvar;
+
+    float *fvar;    
     int   *ivar;
+    float max;
+    float min;
+    float step;
+
+    int   *index;
+    std::vector<std::string>* values;
 };
 
 class MWValue : public MoonWidget {
