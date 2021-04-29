@@ -227,6 +227,7 @@ static struct Matrices {
     bool is_ortho;
     bool double_sided;
     bool persp_triangles_drawn;
+    bool camera_matrix_set;
 } separate_projections;
 
 void gfx_set_camera_perspective(float fov_degrees, float near_dist, float far_dist) {
@@ -242,6 +243,8 @@ void gfx_set_camera_matrix(float mat[4][4]) {
     // on the model view matrices later.
     memcpy(separate_projections.graph_view_matrix, mat, sizeof(float) * 16);
     gd_inverse_mat4f(&separate_projections.graph_view_matrix, &separate_projections.graph_inv_view_matrix);
+
+    separate_projections.camera_matrix_set = true;
 }
 
 bool is_affine(float mat[4][4]) {
@@ -872,7 +875,7 @@ static void gfx_sp_matrix(uint8_t parameters, const int32_t *addr) {
 #else
     memcpy(matrix, addr, sizeof(matrix));
 #endif
-    
+
     if (parameters & G_MTX_PROJECTION) {
         if (parameters & G_MTX_LOAD) {
             memcpy(rsp.P_matrix, matrix, sizeof(matrix));
@@ -902,14 +905,14 @@ static void gfx_sp_matrix(uint8_t parameters, const int32_t *addr) {
             // do something more elaborate, but it avoids having to add a lot of extra logic that would be needed to handle 
             // multiple types of perspectives being rendered in the same frame.
             if (!separate_projections.is_ortho && is_affine(matrix) && !is_identity(matrix)) {
-                // Fixes Goddard by adding the offset to the model matrix.
-                if (separate_projections.persp_triangles_drawn) {
-                    gfx_matrix_mul(separate_projections.extra_model_matrix, separate_projections.extra_model_matrix, matrix);
-                }
                 // Fixes Lakitu camera shake and Bowser key cutscene by adding the offset to the camera matrix.
-                else {
+                if (separate_projections.camera_matrix_set && !separate_projections.persp_triangles_drawn) {
                     gfx_matrix_mul(separate_projections.modified_camera_matrix, separate_projections.camera_matrix, matrix);
                     gfx_rapi->set_camera_matrix(separate_projections.modified_camera_matrix);
+                }
+                // Fixes Goddard by adding the offset to the model matrix.
+                else {
+                    gfx_matrix_mul(separate_projections.extra_model_matrix, separate_projections.extra_model_matrix, matrix);
                 }
             }
 #endif
@@ -2098,6 +2101,7 @@ void gfx_start_frame(void) {
     gd_set_identity_mat4(&separate_projections.extra_model_matrix);
     gd_set_identity_mat4(&separate_projections.camera_matrix);
     gfx_rapi->set_camera_matrix(separate_projections.camera_matrix);
+    separate_projections.camera_matrix_set = false;
 
     gd_set_identity_mat4(&separate_projections.graph_view_matrix);
     gd_set_identity_mat4(&separate_projections.graph_inv_view_matrix);
