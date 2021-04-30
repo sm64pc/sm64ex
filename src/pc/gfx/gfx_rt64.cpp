@@ -169,6 +169,7 @@ struct {
 	LARGE_INTEGER StartingTime, EndingTime;
 	LARGE_INTEGER Frequency;
 	bool dropNextFrame;
+	bool pauseMode;
 	bool turboMode;
 
 	// Function pointers for game.
@@ -693,6 +694,10 @@ LRESULT CALLBACK gfx_rt64_wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 			gfx_rt64_toggle_inspector();
 		}
 
+		if (wParam == VK_F2) {
+			RT64.pauseMode = !RT64.pauseMode;
+		}
+
 		if (wParam == VK_F4) {
 			RT64.turboMode = !RT64.turboMode;
 		}
@@ -718,8 +723,12 @@ LRESULT CALLBACK gfx_rt64_wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 
 		LARGE_INTEGER ElapsedMicroseconds;
 		
+		// Just draw the current frame while paused.
+		if (RT64.pauseMode) {
+			RT64.lib.DrawDevice(RT64.device, RT64.turboMode ? 0 : 1);
+		}
 		// Run one game iteration.
-		if (RT64.run_one_game_iter != nullptr) {
+		else if (RT64.run_one_game_iter != nullptr) {
 			LARGE_INTEGER StartTime, EndTime;
 			QueryPerformanceCounter(&StartTime);
     		RT64.run_one_game_iter();
@@ -820,6 +829,7 @@ static void gfx_rt64_wapi_init(const char *window_title) {
 	QueryPerformanceFrequency(&RT64.Frequency);
 	QueryPerformanceCounter(&RT64.StartingTime);
 	RT64.dropNextFrame = false;
+	RT64.pauseMode = false;
 	RT64.turboMode = false;
 
 	// Initialize other attributes.
