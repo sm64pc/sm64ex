@@ -1451,6 +1451,51 @@ static void gfx_rt64_rapi_shutdown(void) {
 }
 
 static void gfx_rt64_rapi_start_frame(void) {
+	// Mesh key cleanup.
+	auto keyIt = RT64.dynamicMeshKeys.begin();
+	while (keyIt != RT64.dynamicMeshKeys.end()) {
+		if (keyIt->second.seen) {
+			keyIt->second.seen = false;
+		}
+		else if (keyIt->second.counter > 0) {
+			keyIt->second.counter--;
+		}
+		else {
+			keyIt = RT64.dynamicMeshKeys.erase(keyIt);
+			continue;
+		}
+
+		keyIt++;
+	}
+
+	// Mesh cleanup.
+	auto staticMeshIt = RT64.staticMeshes.begin();
+	while (staticMeshIt != RT64.staticMeshes.end()) {
+		if (staticMeshIt->second.lifetime > 0) {
+            staticMeshIt->second.lifetime--;
+			staticMeshIt++;
+        }
+		else {
+			RT64.lib.DestroyMesh(staticMeshIt->second.mesh);
+			staticMeshIt = RT64.staticMeshes.erase(staticMeshIt);
+		}
+	}
+
+	// Dynamic mesh cleanup.
+	auto dynamicMeshIt = RT64.dynamicMeshes.begin();
+	while (dynamicMeshIt != RT64.dynamicMeshes.end()) {
+		if (dynamicMeshIt->second.lifetime > 0) {
+			dynamicMeshIt->second.inUse = false;
+            dynamicMeshIt->second.lifetime--;
+			dynamicMeshIt++;
+        }
+		else {
+			RT64.lib.DestroyMesh(dynamicMeshIt->second.mesh);
+			dynamicMeshIt = RT64.dynamicMeshes.erase(dynamicMeshIt);
+		}
+	}
+
+    RT64.cachedMeshesPerFrame = 0;
 	RT64.background = true;
     RT64.instanceCount = 0;
     RT64.graphNodeMod = nullptr;
@@ -1584,52 +1629,6 @@ static void gfx_rt64_rapi_end_frame(void) {
 			RT64.lib.SetMaterialInspector(RT64.inspector, texMod->materialMod, textureName.c_str());
 		}
 	}
-
-	// Mesh key cleanup.
-	auto keyIt = RT64.dynamicMeshKeys.begin();
-	while (keyIt != RT64.dynamicMeshKeys.end()) {
-		if (keyIt->second.seen) {
-			keyIt->second.seen = false;
-		}
-		else if (keyIt->second.counter > 0) {
-			keyIt->second.counter--;
-		}
-		else {
-			keyIt = RT64.dynamicMeshKeys.erase(keyIt);
-			continue;
-		}
-
-		keyIt++;
-	}
-
-	// Mesh cleanup.
-	auto staticMeshIt = RT64.staticMeshes.begin();
-	while (staticMeshIt != RT64.staticMeshes.end()) {
-		if (staticMeshIt->second.lifetime > 0) {
-            staticMeshIt->second.lifetime--;
-			staticMeshIt++;
-        }
-		else {
-			RT64.lib.DestroyMesh(staticMeshIt->second.mesh);
-			staticMeshIt = RT64.staticMeshes.erase(staticMeshIt);
-		}
-	}
-
-	// Dynamic mesh cleanup.
-	auto dynamicMeshIt = RT64.dynamicMeshes.begin();
-	while (dynamicMeshIt != RT64.dynamicMeshes.end()) {
-		if (dynamicMeshIt->second.lifetime > 0) {
-			dynamicMeshIt->second.inUse = false;
-            dynamicMeshIt->second.lifetime--;
-			dynamicMeshIt++;
-        }
-		else {
-			RT64.lib.DestroyMesh(dynamicMeshIt->second.mesh);
-			dynamicMeshIt = RT64.dynamicMeshes.erase(dynamicMeshIt);
-		}
-	}
-
-    RT64.cachedMeshesPerFrame = 0;
 }
 
 static void gfx_rt64_rapi_finish_render(void) {
