@@ -263,8 +263,11 @@ LEVEL_DIRS := $(patsubst levels/%,%,$(dir $(wildcard levels/*/header.h)))
 # Hi, I'm a PC
 SRC_DIRS := src src/engine src/game src/audio src/menu src/buffers actors levels bin data assets src/text src/text/libs src/pc src/pc/gfx src/pc/audio src/pc/controller src/pc/fs src/pc/fs/packtypes src/nx
 
-# Moon64 SRC Directories
-SRC_DIRS += src/moon src/moon/texts src/moon/utils src/moon/network src/moon/ui src/moon/ui/interfaces src/moon/ui/screens src/moon/ui/utils src/moon/ui/widgets
+# Moon64 SRC [Main] Directories
+SRC_DIRS += src/moon src/moon/texts src/moon/utils src/moon/network
+
+# Moon64 SRC [View] Directories
+SRC_DIRS += src/moon/ui src/moon/ui/interfaces src/moon/ui/screens src/moon/ui/screens/options src/moon/ui/screens/options/categories src/moon/ui/utils src/moon/ui/widgets
 
 # RapidJSON Library
 SRC_DIRS += src/moon/libs/rapidjson src/moon/libs/rapidjson/error src/moon/libs/rapidjson/internal src/moon/libs/rapidjson/msinttypes

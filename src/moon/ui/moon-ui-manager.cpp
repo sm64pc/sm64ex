@@ -1,7 +1,7 @@
 #include <vector>
 #include <iostream>
 #include "interfaces/moon-screen.h"
-#include "screens/moon-test.h"
+#include "screens/options/main-view.h"
 
 extern "C" {
 #include "game/game_init.h"
@@ -21,10 +21,10 @@ void MoonUpdateStatus();
 void MoonInitUI() {
 
     if(screens.empty())
-        screens.push_back(new MoonTest());
+        screens.push_back(new MoonOptMain());
 
     screens[currentScreen]->Mount();
-    screens[currentScreen]->Init();    
+    screens[currentScreen]->Init();
 }
 
 void MoonDrawUI() {
@@ -40,13 +40,13 @@ void MoonDisposeUI() {
 
 void MoonChangeUI(int index){
     if(index == -1){
-        isOpen = false;        
+        isOpen = false;
         return;
     }
     if(!(isOpen && isRunning)) return;
     currentScreen = index;
     screens[currentScreen]->Mount();
-    screens[currentScreen]->Init();    
+    screens[currentScreen]->Init();
 }
 
 void MoonHandleToggle(){
@@ -60,7 +60,7 @@ void MoonUpdateStatus() {
     if(!isOpen) {
         if(isRunning) MoonDisposeUI();
         return;
-    }    
+    }
     if(!isRunning) {
         MoonInitUI();
         isRunning = true;

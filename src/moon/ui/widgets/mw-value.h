@@ -8,7 +8,7 @@
 struct MWValueBind{
     bool  *bvar;
 
-    float *fvar;    
+    float *fvar;
     int   *ivar;
     float max;
     float min;
@@ -17,6 +17,8 @@ struct MWValueBind{
 
     int   *index;
     std::vector<std::string>* values;
+
+    void (*callback)();
 };
 
 class MWValue : public MoonWidget {
