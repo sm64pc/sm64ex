@@ -25,19 +25,30 @@ void MoonTest::Init(){
     //printf("%s\n", res.body.c_str());
     MoonScreen::Init();
 }
-bool b = true;
-bool c = true;
-bool d = true;
-float  e = 0;
 
+bool  b = true;
+float e = 0;
 int bIndex = 0;
+
+int rIndex = 0;
+
 vector<string> test = {"Val zero", "Val uwo", "Val owu"};
+vector<string> randomize = {"owo", "awa", "uwu", "wololo", "idk"};
+
+MWValue * testBtn;
+
+void testF(){
+    rIndex = rand() % randomize.size();
+    testBtn->title = randomize[rIndex];
+    cout << rIndex << endl;
+}
 
 void MoonTest::Mount(){
-    this->widgets.clear();
-    this->widgets.push_back(new MWValue({.index = &bIndex, .values = &test}, "Toggle 3 owo", 25, 95));
-    this->widgets.push_back(new MWValue({.bvar = &b}, "Toggle owo", 25, 55));
-    this->widgets.push_back(new MWValue({.fvar = &e, .max = 10, .min = 0, .step = 0.1f}, "Toggle 2 owo", 25, 75));    
+    this->widgets.clear();    
+    this->widgets.push_back(new MWValue(22, 57,  "Bool:",   {.bvar = &b}));
+    this->widgets.push_back(new MWValue(22, 74,  "Number:", {.fvar = &e, .max = 10, .min = 0, .step = 0.1f}));    
+    this->widgets.push_back(new MWValue(22, 91, "Array:", {.index = &bIndex, .values = &test}));
+    this->widgets.push_back(testBtn = new MWValue(22, 108, "Randomize", {.btn = testF}));
     MoonScreen::Mount();
 }
 
@@ -45,7 +56,7 @@ int x = 0;
 int y = 20;
 
 void MoonTest::Draw(){
-    MoonDrawText(0, 0, "Test text", 1.0, {255, 255, 255, 255}, true, false);
+    MoonDrawText(0, 0, "Hi uwu", 0.5, {255, 255, 255, 255}, true, false);
 
     string menuTitle = "Placeholder";
     float txtWidth = MoonGetTextWidth(menuTitle, 1.0, true);

@@ -9,26 +9,40 @@ using namespace std;
 
 bool mwvStickExecuted;
 
-MWValue::MWValue(MWValueBind bind, std::string title, float x, float y){
+MWValue::MWValue(float x, float y, std::string title, MWValueBind bind){
     this->x = x;
     this->y = y;
     this->bind = bind;
     this->title = title;
 }
 
+int focusAnimRange = 80;
+float focusAnimation = focusAnimRange / 2;
+int focusAnimationPingPong;
+
 void MWValue::Init(){
     mwvStickExecuted = false;
 }
+
 void MWValue::Draw(){
+    
+    float step = 0.6;
+
+    if(focusAnimation >= focusAnimRange) 
+        focusAnimationPingPong = 1;
+    else if (focusAnimation <= focusAnimRange / 2)
+        focusAnimationPingPong = 0;
+
+    focusAnimation += step * (focusAnimationPingPong ? -1 : 1);
+
     float scale = 1;
     float titleWidth = MoonGetTextWidth(this->title + " ", scale, false);
-    int barWidth = SCREEN_WIDTH - 50 - 20;
+    int barWidth = SCREEN_WIDTH - 50 - 14;
     float tmpWidth = titleWidth;
-    
 
     Color focusColors[] = { 
-        {255, 255, 255, 80},
-        {255, 247, 0, 80},
+        {255, 255, 255, 40 + focusAnimation / 2},
+        {255, 247, 0,   40 + focusAnimation / 2},
         {0, 0, 0, 0},
     };
     
@@ -39,9 +53,9 @@ void MWValue::Draw(){
 
     if(this->bind.bvar != NULL){
         bool status = *this->bind.bvar;
-        Color toggleColors[] = {
-            {32, 255, 3, 255},
-            {255, 32, 3, 255}            
+        Color toggleColors[] = {            
+            {61, 255, 113, 255},
+            {255, 61, 61, 255}
         };
         string statusText = status ? Moon_GetKey("TEXT_OPT_ENABLED") : Moon_GetKey("TEXT_OPT_DISABLED");
 
@@ -53,17 +67,20 @@ void MWValue::Draw(){
         string text = (*this->bind.values)[index];
 
         tmpWidth += MoonGetTextWidth(text, scale, false);
-        MoonDrawText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2 + titleWidth, this->y, text, scale, {100, 100, 255, 255}, true, true);
+        MoonDrawText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2 + titleWidth, this->y, text, scale, {58, 249, 252, 255}, true, true);
     } else if(isFloat || isInt){
         float value = isFloat ? *this->bind.fvar : *this->bind.ivar;
         float max   = this->bind.max;
         
-        string text = to_string((int)(100 * (value / max))) + " %";
+        string text = to_string((int)(100 * (value / max))) + "%";
 
         tmpWidth += MoonGetTextWidth(text, scale, false);
-        MoonDrawText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2 + titleWidth, this->y, text, scale, {100, 100, 255, 255}, true, true);
+        MoonDrawText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2 + titleWidth, this->y, text, scale, {58, 249, 252, 255}, true, true);
     }
     
+    if(this->bind.btn != NULL)
+        tmpWidth = titleWidth;
+
     MoonDrawText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2, this->y, this->title, scale, {255, 255, 255, 255}, true, true);
 }
 
@@ -71,24 +88,27 @@ void MWValue::Update(){
     if(!this->focused) return;
 
     float xStick = GetStickValue(MoonButtons::L_STICK, false);
-    bool isBool  = this->bind.bvar != NULL;
+    bool isBool  = this->bind.bvar   != NULL;
     bool isArray = this->bind.values != NULL && this->bind.index != NULL;
-
-    bool isFloat = this->bind.fvar != NULL;
-    bool isInt   = this->bind.ivar != NULL;
+    bool isFloat = this->bind.fvar   != NULL;
+    bool isInt   = this->bind.ivar   != NULL;
+    bool isBtn   = this->bind.btn    != NULL;
 
     float maxValue = isArray ? (*this->bind.values).size() - 1 : this->bind.max;
     float minValue = isArray ? 0 : this->bind.min;
     float step     = isArray ? 1 : this->bind.step;
 
+    if(isBtn && IsBtnPressed(MoonButtons::A_BTN)){
+        this->bind.btn();
+        return;
+    }
+
     if(xStick < 0) {
         if(mwvStickExecuted) return;
         if(isBool) {
             *this->bind.bvar = !*this->bind.bvar;
-            std::cout << "Executed" << std::endl;
         } else if(isArray || isFloat || isInt) {
-            float cIndex = isArray ? (int) *this->bind.index : isFloat ? *this->bind.fvar : *this->bind.ivar;
-            cout << "Test" << endl;
+            float cIndex = isArray ? (int) *this->bind.index : isFloat ? *this->bind.fvar : *this->bind.ivar;            
             if(cIndex > minValue){
                 if(isArray) *this->bind.index -= (int)step;
                 if(isFloat) *this->bind.fvar  -= step; 
@@ -97,8 +117,7 @@ void MWValue::Update(){
                 if(isArray) *this->bind.index = (int)maxValue;
                 if(isFloat) *this->bind.fvar  = maxValue; 
                 if(isInt)   *this->bind.ivar  = (int)maxValue;
-            }                
-            std::cout << "Executed x2" << std::endl;
+            }
         }
         mwvStickExecuted = true;
     } 
@@ -118,7 +137,6 @@ void MWValue::Update(){
                 if(isFloat) *this->bind.fvar  = minValue; 
                 if(isInt)   *this->bind.ivar  = (int)minValue;
             }
-            std::cout << "Executed x3" << std::endl;
         }
         mwvStickExecuted = true;
     }

@@ -45,7 +45,7 @@ void moon_draw_text(f32 x, f32 y, const u8 *str, float scale) {
     UNUSED s8 mark = DIALOG_MARK_NONE;
     s32 strPos = 0;
     u8 lineNum = 1;
-    y -= 16;
+    y -= 16 * scale;
 
     Mtx *_Matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
     if (!_Matrix) return;    

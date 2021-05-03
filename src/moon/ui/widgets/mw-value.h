@@ -13,17 +13,17 @@ struct MWValueBind{
     float max;
     float min;
     float step;
+    void (*btn)();
 
     int   *index;
     std::vector<std::string>* values;
 };
 
 class MWValue : public MoonWidget {
-    private:
+    public:
         MWValueBind bind;
         std::string title;
-    public:
-        MWValue(MWValueBind bind, std::string title, float x, float y);
+        MWValue(float x, float y, std::string title, MWValueBind bind);
         void Init();
         void Draw();
         void Update();

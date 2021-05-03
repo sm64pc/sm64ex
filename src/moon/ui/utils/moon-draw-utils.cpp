@@ -11,7 +11,7 @@ void MoonDrawText(float x, float y, std::string text, float scale, struct Color 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     if(dropShadow){
         gDPSetEnvColor(gDisplayListHead++, 10, 10, 10, 255);
-        moon_draw_text(x, SCREEN_HEIGHT - y - 1, getTranslatedText(text.c_str()), scale);
+        moon_draw_text(x, SCREEN_HEIGHT - y - 1 * scale, getTranslatedText(text.c_str()), scale);
         gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
     }
     gDPSetEnvColor(gDisplayListHead++, color.r, color.g, color.b, color.a);
