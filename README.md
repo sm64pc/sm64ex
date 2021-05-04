@@ -38,3 +38,6 @@ For building instructions, please refer to the [sm64ex wiki](https://github.com/
 * NODRAWINGDISTANCE=1 (Optional, but gives good results and prevents pop-in, which can cause issues with objects that cast shadows or appear in reflections)
 
 The repository already comes with a prebuilt binary and the compatible header file for RT64 to make the build process easier. If you wish to build this module yourself, you can do it from the [RT64 repository](https://github.com/DarioSamo/RT64) instead.
+
+## Render96 Support
+A native version of sm64rt will be integrated into the Render96 project in the future as an optional feature. Keep an eye out on their social media channels to know when this update goes live.
