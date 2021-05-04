@@ -183,7 +183,7 @@ static void set_state(void) {
         // when exiting a stage the act doesn't get reset
         if (gCurrActNum && gCurrCourseNum) {
             // any stage over 19 is a special stage without acts
-            if (gCurrCourseNum < 19) {
+            if (gCurrCourseNum < COURSE_STAGES_MAX) {
                 void **actNameTbl;
 #ifndef VERSION_EU
                 actNameTbl = segmented_to_virtual(seg2_act_name_table);
@@ -207,7 +207,7 @@ static void set_state(void) {
                 act[0] = '\0';
                 gCurrActNum = 0;
             }
-        } else { 
+        } else {
             act[0] = '\0';
         }
 
@@ -218,7 +218,7 @@ static void set_state(void) {
 void set_logo(void) {
     if (lastCourseNum)
         snprintf(largeImageKey, sizeof(largeImageKey), "%d", lastCourseNum);
-    else 
+    else
         strcpy(largeImageKey, "0");
 
     /*

@@ -1,6 +1,6 @@
 #include "mouse-io.h"
 
-#ifdef WAPI_SDL2
+#ifndef WAPI_SDL2
 #include <SDL2/SDL.h>
 #endif
 
@@ -29,10 +29,10 @@ void MouseIO::update(){
     state = SDL_GetMouseState(&this->xLocalPos, &this->yLocalPos);
     SDL_GetGlobalMouseState(&this->xGlobalPos, &this->yGlobalPos);
 #elif defined(WAPI_DXGI)
-
+    //TODO: Implement directx hook
 #endif
 }
 
 bool MouseIO::isBtnPressed(MouseBtn btn){
-    return (state & (btn == 0 ? SDL_BUTTON_LMASK : SDL_BUTTON_RMASK));
+    return state & (int) btn;
 }
