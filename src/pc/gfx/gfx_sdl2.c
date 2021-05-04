@@ -32,6 +32,7 @@
 #include "../pc_main.h"
 #include "../configfile.h"
 #include "../cliopts.h"
+#include "moon/moon64.h"
 
 #include "src/pc/controller/controller_keyboard.h"
 
@@ -243,6 +244,7 @@ static void gfx_sdl_init(const char *window_title) {
         SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
     );
     ctx = SDL_GL_CreateContext(wnd);
+    moon_update_window(wnd);
 
     gfx_sdl_set_vsync(configWindow.vsync);
 

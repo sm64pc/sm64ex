@@ -19,6 +19,7 @@ protected:
     std::vector<MoonWidget*> widgets;
     MoonWidget* selected;
     bool enabledWidgets = true;
+    bool useMouseInstead = false; // unused
     int  scrollIndex = 0;
 public:
     virtual void Init();

@@ -43,6 +43,27 @@ bool stickExecuted;
 
 void MoonScreen::Update(){
     if(this->enabledWidgets && !this->widgets.empty()) {
+        if(this->useMouseInstead){
+            // MouseIO* tmp = GetIOModule<MouseIO>();
+            // if(tmp != NULL){
+            //     int mouseX = tmp->xLocalPos;
+            //     int mouseY = tmp->yLocalPos;
+            //     int baseY = 119;
+            //     int optionSize = 16;
+            //     if(mouseX >= 22 && mouseY > baseY){
+            //         int currentId = ((mouseY - baseY) / (optionSize * 2));
+            //         if(currentId < widgets.size()){
+            //             for(int i = 0; i < widgets.size(); i++) {
+            //                 widgets[i]->selected = false;
+            //                 widgets[i]->focused = false;
+            //             }
+            //             this->widgets[currentId]->selected = false;
+            //             this->widgets[currentId]->focused = true;
+            //         }
+            //     }
+            // }
+            // return;
+        }
         float yStick = GetStickValue(MoonButtons::U_STICK, false);
         if(yStick > 0) {
             if(stickExecuted) return;

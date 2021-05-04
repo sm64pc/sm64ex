@@ -91,6 +91,7 @@ void send_display_list(struct SPTask *spTask) {
 #endif
 
 void produce_one_frame(void) {
+    moon_modules_update();
     gfx_start_frame();
 
     const f32 master_mod = (f32)configMasterVolume / 127.0f;
@@ -181,14 +182,14 @@ static void on_anim_frame(double time) {
 }
 #endif
 
-void main_func(char *argv[]) {    
+void main_func(char *argv[]) {
 
     static u64 pool[0x165000/8 / 4 * sizeof(void *)];
     main_pool_init(pool, pool + sizeof(pool) / sizeof(pool[0]));
     gEffectsMemoryPool = mem_pool_init(0x4000, MEMORY_POOL_LEFT);
 
     const char *gamedir = gCLIOpts.GameDir[0] ? gCLIOpts.GameDir : FS_BASEDIR;
-    const char *userpath = gCLIOpts.SavePath[0] ? gCLIOpts.SavePath : sys_user_path();    
+    const char *userpath = gCLIOpts.SavePath[0] ? gCLIOpts.SavePath : sys_user_path();
     fs_init(sys_ropaths, gamedir, userpath);
     configfile_load(configfile_name());
 
@@ -233,10 +234,11 @@ void main_func(char *argv[]) {
     #endif
     ;
 
+    moon_modules_init();
     gfx_init(wm_api, rendering_api, window_title);
     wm_api->set_keyboard_callbacks(keyboard_on_key_down, keyboard_on_key_up, keyboard_on_all_keys_up);
 
-    if (audio_api == NULL && audio_sdl.init()) 
+    if (audio_api == NULL && audio_sdl.init())
         audio_api = &audio_sdl;
 
     if (audio_api == NULL) {
@@ -246,7 +248,7 @@ void main_func(char *argv[]) {
     audio_init();
     sound_init();
 
-    thread5_game_loop(NULL);    
+    thread5_game_loop(NULL);
     inited = true;
 
     // precache data if needed

@@ -75,7 +75,7 @@ void MWValue::Draw(){
     } else if(this->bind.values != NULL && this->bind.index != NULL){
         int index = *this->bind.index;
 
-        string text = (*this->bind.values)[index];
+        string text = this->bind.valueKeys ? Moon_GetKey((*this->bind.values)[index]) : (*this->bind.values)[index];
 
         tmpWidth += MoonGetTextWidth(text, scale, false);
         MoonDrawText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2 + titleWidth, this->y, text, scale, {58, 249, 252, 255}, true, true);

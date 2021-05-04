@@ -15,6 +15,9 @@
 #include "moon/ui/screens/options/categories/mcamera.h"
 #endif
 
+#include "moon/io/moon-io.h"
+#include "moon/io/modules/mouse-io.h"
+
 using namespace std;
 
 extern "C" {
@@ -31,6 +34,10 @@ void MoonOptMain::setCategory(int index){
     MoonCategory *cat = categories[index];
     this->widgets = cat->catOptions;
     MoonScreen::Mount();
+}
+
+void MoonOptMain::Init(){
+    this->useMouseInstead = true;
 }
 
 void MoonOptMain::Mount(){
@@ -75,9 +82,11 @@ void MoonOptMain::Update(){
 
 void MoonOptMain::Draw(){
     string curTitle = Moon_GetKey(categories[categoryIndex]->categoryName);
+
     float txtWidth = MoonGetTextWidth(curTitle, 1.0, true);
     MoonDrawRectangle(0, 0, GetScreenWidth(false), GetScreenHeight(), {0, 0, 0, 100}, false);
     MoonDrawColoredText(SCREEN_WIDTH / 2 - txtWidth / 2, 20, curTitle, 1.0, {255, 255, 255, 255}, true, true);
     MoonDrawRectangle(25, 50, SCREEN_WIDTH - 50, GetScreenHeight() * 0.6, {0, 0, 0, 100}, true);
+
     MoonScreen::Draw();
 }

@@ -17,6 +17,7 @@ struct MWValueBind{
 
     int   *index;
     std::vector<std::string>* values;
+    bool valueKeys;
 
     void (*callback)();
 };

@@ -1,6 +1,10 @@
 #include "moon/texts/moon-loader.h"
 #include "moon/ui/moon-ui-manager.h"
+#include "moon/io/moon-io.h"
 #include <iostream>
+
+#include "moon/io/moon-io.h"
+#include "moon/io/modules/mouse-io.h"
 
 extern "C" {
 
@@ -49,6 +53,23 @@ void moon_change_ui(int index){
 
 u8 moon_ui_open(){
     return isOpen;
+}
+
+/*
+#######################
+        Moon IO
+#######################
+*/
+
+void moon_modules_init(){
+    InitIOModules();
+}
+void moon_modules_update(){
+    UpdateIOModules();
+}
+void moon_update_window(void* window){
+    MouseIO* tmp = GetIOModule<MouseIO>();
+    if(tmp != NULL) tmp->window = window;
 }
 
 }

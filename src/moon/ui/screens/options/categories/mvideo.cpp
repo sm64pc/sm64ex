@@ -10,25 +10,20 @@ extern "C" {
 #include "pc/configfile.h"
 }
 
-int texIdx;
-vector<string> texNames;
+vector<string> filters = {
+    "TEXT_OPT_NEAREST",
+    "TEXT_OPT_LINEAR",
+    "TEXT_OPT_THREEPT"
+};
 
 MVideoCategory::MVideoCategory() : MoonCategory("TEXT_OPT_VIDEO"){
-    string filters[] = {
-        "TEXT_OPT_NEAREST",
-        "TEXT_OPT_LINEAR",
-        "TEXT_OPT_THREEPT"
-    };
-    for (auto &tex : filters) {
-        texNames.push_back(Moon_GetKey(tex));
-    }
     #ifndef TARGET_SWITCH
     this->catOptions.push_back(new MWValue(22, 57,  "TEXT_OPT_FSCREEN",   {.bvar = &configWindow.fullscreen}, true));
     this->catOptions.push_back(new MWValue(22, 74,  "TEXT_OPT_VSYNC",     {.bvar = &configWindow.vsync}, true));
     #endif
-    this->catOptions.push_back(new MWValue(22, 91,  "TEXT_OPT_TEXFILTER", {.index = (int*)&configFiltering, .values = &texNames}, true));
+    this->catOptions.push_back(new MWValue(22, 91,  "TEXT_OPT_TEXFILTER", {.index = (int*)&configFiltering, .values = &filters, .valueKeys = true}, true));
     this->catOptions.push_back(new MWValue(22, 108, "TEXT_OPT_HUD",       {.bvar = &configHUD}, true));
-    #ifndef TARGET_SWITCH
+#ifndef TARGET_SWITCH
     this->catOptions.push_back(new MWValue(22, 125, "TEXT_OPT_RESETWND",  {.btn = [](){
         configWindow.reset = true;
         configWindow.settings_changed = true;
@@ -36,5 +31,5 @@ MVideoCategory::MVideoCategory() : MoonCategory("TEXT_OPT_VIDEO"){
     this->catOptions.push_back(new MWValue(22, 142, "TEXT_OPT_APPLY",     {.btn = [](){
         configWindow.settings_changed = true;
     }}, true));
-    #endif
+#endif
 }

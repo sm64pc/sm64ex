@@ -269,6 +269,9 @@ SRC_DIRS += src/moon src/moon/texts src/moon/utils src/moon/network
 # Moon64 SRC [View] Directories
 SRC_DIRS += src/moon/ui src/moon/ui/interfaces src/moon/ui/screens src/moon/ui/screens/options src/moon/ui/screens/options/categories src/moon/ui/utils src/moon/ui/widgets
 
+# Moon64 SRC [IO] Directories
+SRC_DIRS += src/moon/io src/moon/io/modules
+
 # RapidJSON Library
 SRC_DIRS += src/moon/libs/rapidjson src/moon/libs/rapidjson/error src/moon/libs/rapidjson/internal src/moon/libs/rapidjson/msinttypes
 

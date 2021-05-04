@@ -4,6 +4,7 @@
 
 class MoonOptMain : public MoonScreen {
 public:
+    void Init();
     void Update();
     void Draw();
     void Mount();

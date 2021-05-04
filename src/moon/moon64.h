@@ -13,5 +13,10 @@ void moon_draw_ui();
 void moon_change_ui(int index);
 u8   moon_ui_open();
 void moon_ui_toggle();
+
+void moon_modules_init();
+void moon_modules_update();
+void moon_update_window(void* window);
+
 #endif
 #endif
