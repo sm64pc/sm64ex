@@ -1606,7 +1606,27 @@
             "name": "textures/outside/castle_grounds_textures.01000.rgba16"
         },
         {
-            "materialMod": null,
+            "materialMod": {
+                "specularIntensity": 0.5
+            },
+            "name": "textures/outside/castle_grounds_textures.03800.rgba16"
+        },
+        {
+            "materialMod": {
+                "specularIntensity": 0.5
+            },
+            "name": "textures/outside/castle_grounds_textures.04000.rgba16"
+        },
+        {
+            "materialMod": {
+                "specularIntensity": 0.5
+            },
+            "name": "textures/outside/castle_grounds_textures.04800.rgba16"
+        },
+        {
+            "materialMod": {
+                "specularIntensity": 0.5
+            },
             "name": "textures/outside/castle_grounds_textures.08000.rgba16"
         },
         {
