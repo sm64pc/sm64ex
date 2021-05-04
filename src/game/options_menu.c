@@ -52,18 +52,30 @@ static const u8 toggleStr[][20] = {
 };
 
 static const u8 menuStr[][32] = {
-    "TEXT_OPT_HIGHLIGHT",
-    "TEXT_OPT_BUTTON1",
-    "TEXT_OPT_BUTTON2",
-    "TEXT_OPT_OPTIONS",
-    "TEXT_OPT_CAMERA",
-    "TEXT_OPT_CONTROLS",
-    "TEXT_OPT_VIDEO",
-    "TEXT_OPT_AUDIO",
-    "TEXT_EXIT_GAME",
-    "TEXT_OPT_CHEATS",
-    "TEXT_OPT_GAME"
+    "TEXT_OPT_HIGHLIGHT",  //
+    "TEXT_OPT_BUTTON1",    //
+    "TEXT_OPT_BUTTON2",    //
+    "TEXT_OPT_OPTIONS",    //
+    "TEXT_OPT_CAMERA",     //
+    "TEXT_OPT_CONTROLS",   //
+    "TEXT_OPT_VIDEO",      // *
+    "TEXT_OPT_AUDIO",      // *
+    "TEXT_EXIT_GAME",      //
+    "TEXT_OPT_CHEATS",     //
+    "TEXT_OPT_GAME"        // *
 };
+
+// optsCameraStr[9],
+// optsCameraStr[6],
+// optsCameraStr[7],
+// optsCameraStr[2],
+// optsCameraStr[3],
+
+// optsCameraStr[0],
+// optsCameraStr[1],
+// optsCameraStr[4],
+// optsCameraStr[5],
+// optsCameraStr[8],
 
 static const u8 optsCameraStr[][32] = {
     "TEXT_OPT_CAMX",
@@ -231,15 +243,15 @@ static void optvideo_apply(UNUSED struct Option *self, s32 arg) {
 
 #ifdef BETTERCAMERA
 static struct Option optsCamera[] = {
-    DEF_OPT_TOGGLE( optsCameraStr[9], &configEnableCamera ),
-    DEF_OPT_TOGGLE( optsCameraStr[6], &configCameraAnalog ),
-    DEF_OPT_TOGGLE( optsCameraStr[7], &configCameraMouse ),
+    DEF_OPT_TOGGLE( optsCameraStr[9], &configEnableCamera  ),
+    DEF_OPT_TOGGLE( optsCameraStr[6], &configCameraAnalog  ),
+    DEF_OPT_TOGGLE( optsCameraStr[7], &configCameraMouse   ),
     DEF_OPT_TOGGLE( optsCameraStr[2], &configCameraInvertX ),
     DEF_OPT_TOGGLE( optsCameraStr[3], &configCameraInvertY ),
-    DEF_OPT_SCROLL( optsCameraStr[0], &configCameraXSens, 1, 100, 1 ),
-    DEF_OPT_SCROLL( optsCameraStr[1], &configCameraYSens, 1, 100, 1 ),
-    DEF_OPT_SCROLL( optsCameraStr[4], &configCameraAggr, 0, 100, 1 ),
-    DEF_OPT_SCROLL( optsCameraStr[5], &configCameraPan, 0, 100, 1 ),
+    DEF_OPT_SCROLL( optsCameraStr[0], &configCameraXSens,   1, 100, 1 ),
+    DEF_OPT_SCROLL( optsCameraStr[1], &configCameraYSens,   1, 100, 1 ),
+    DEF_OPT_SCROLL( optsCameraStr[4], &configCameraAggr,    0, 100, 1 ),
+    DEF_OPT_SCROLL( optsCameraStr[5], &configCameraPan,     0, 100, 1 ),
     DEF_OPT_SCROLL( optsCameraStr[8], &configCameraDegrade, 0, 100, 1 ),
 };
 #endif
@@ -265,7 +277,7 @@ static struct Option optsControls[] = {
     DEF_OPT_SCROLL( bindStr[17], &configRumbleStrength, 0, 100, 1)
 };
 
-static struct Option optsVideo[] = {
+static struct Option optsVideo[] = {  // *
     #ifndef TARGET_SWITCH
     DEF_OPT_TOGGLE( optsVideoStr[0], &configWindow.fullscreen ),
     DEF_OPT_TOGGLE( optsVideoStr[5], &configWindow.vsync ),
@@ -278,7 +290,7 @@ static struct Option optsVideo[] = {
     #endif
 };
 
-static struct Option optsGame[] = {
+static struct Option optsGame[] = { // *
     DEF_OPT_CHOICE( optsGameStr[0], &configLanguage, NULL ),
     DEF_OPT_TOGGLE( optsGameStr[1], &configPrecacheRes ),
     #ifdef TARGET_SWITCH
@@ -286,7 +298,7 @@ static struct Option optsGame[] = {
     #endif
 };
 
-static struct Option optsAudio[] = {
+static struct Option optsAudio[] = { // *
     DEF_OPT_SCROLL( optsAudioStr[0], &configMasterVolume, 0, MAX_VOLUME, 1 ),
     DEF_OPT_SCROLL( optsAudioStr[1], &configMusicVolume, 0, MAX_VOLUME, 1),
     DEF_OPT_SCROLL( optsAudioStr[2], &configSfxVolume, 0, MAX_VOLUME, 1),
@@ -320,27 +332,14 @@ static struct SubMenu menuCheats   = DEF_SUBMENU( menuStr[9], optsCheats );
 /* main options menu definition */
 
 static struct Option optsMain[] = {
-    DEF_OPT_SUBMENU( menuStr[10], &menuGame ),
-#ifdef BETTERCAMERA
-    DEF_OPT_SUBMENU( menuStr[4], &menuCamera ),
-#endif
     DEF_OPT_SUBMENU( menuStr[5], &menuControls ),
-    DEF_OPT_SUBMENU( menuStr[6], &menuVideo ),
-    DEF_OPT_SUBMENU( menuStr[7], &menuAudio ),
-    DEF_OPT_BUTTON ( menuStr[8], optmenu_act_exit ),
-    // NOTE: always keep cheats the last option here because of the half-assed way I toggle them
-    DEF_OPT_SUBMENU( menuStr[9], &menuCheats )
 };
 
 static struct SubMenu mainOptions[] = {
 #ifdef BETTERCAMERA
     DEF_SUBMENU( menuStr[4], optsCamera ),
 #endif
-    // DEF_SUBMENU( menuStr[10], optsGame ),
     DEF_SUBMENU( menuStr[5], optsControls ),
-    DEF_SUBMENU( menuStr[6], optsVideo ),
-    DEF_SUBMENU( menuStr[7], optsAudio ),
-    DEF_SUBMENU( menuStr[9], optsCheats )
 };
 
 /* implementation */
@@ -382,7 +381,7 @@ static void optmenu_draw_box(s16 x1, s16 y1, s16 x2, s16 y2, u8 r, u8 g, u8 b, u
 static void optmenu_draw_text(s16 x, s16 y, const u8 *str, u8 col) {
     const u8 textX = get_str_x_pos_from_center(x, (u8*)str, 10.0f);
     gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, 255);
-    
+
     print_generic_string(textX+1, y-1, str);
     if (col == 0) {
         gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
@@ -392,7 +391,7 @@ static void optmenu_draw_text(s16 x, s16 y, const u8 *str, u8 col) {
     print_generic_string(textX, y, str);
 }
 
-static void optmenu_draw_scaled_text(f32 x, f32 y, const u8 *str, int col, float scale) {    
+static void optmenu_draw_scaled_text(f32 x, f32 y, const u8 *str, int col, float scale) {
     gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, 255);
     moon_draw_text(x + 1, y-1, str, scale);
     if (col == -1) {
@@ -402,9 +401,9 @@ static void optmenu_draw_scaled_text(f32 x, f32 y, const u8 *str, int col, float
     } else if (col == 1) {
         gDPSetEnvColor(gDisplayListHead++, 32, 255, 32, 255);
     } else {
-        gDPSetEnvColor(gDisplayListHead++, 0, 255, 242, 255);        
+        gDPSetEnvColor(gDisplayListHead++, 0, 255, 242, 255);
     }
-    moon_draw_text(x, y, str, scale);    
+    moon_draw_text(x, y, str, scale);
 }
 
 #include <stdarg.h>
@@ -420,7 +419,7 @@ u8* concat(u8* a, u8* b) {
     return tmp;
 }
 
-u8* join(u8* a, u8* b, u8* c) {     
+u8* join(u8* a, u8* b, u8* c) {
     int a_size = sizeof(a) / sizeof(a[0]);
     int b_size = sizeof(b) / sizeof(b[0]);
     int c_size = sizeof(c) / sizeof(c[0]);
@@ -433,15 +432,15 @@ u8* join(u8* a, u8* b, u8* c) {
     return tmp;
 }
 
-static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {    
+static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
     u8 * choice;
 
-    u8* base = (u8*)get_key_string(opt->label);        
+    u8* base = (u8*)get_key_string(opt->label);
 
     s16 sx = 0;
     s16 sy = 0;
     s16 sw = 0;
-    s16 sh = 0;    
+    s16 sh = 0;
     u8* lbl;
 
     int width;
@@ -458,7 +457,7 @@ static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
         optmenu_draw_scaled_text(x - width, y, lbl, -1, scale);
         optmenu_draw_scaled_text(x - width + 1 + moon_get_text_width(lbl, scale, FALSE), y, getTranslatedText(":"), -1, scale);
         optmenu_draw_scaled_text(x - width + 9 + moon_get_text_width(lbl, scale, FALSE), y, tmpText, opt->type & OPT_TOGGLE ? (int)*opt->bval : 2, scale);
-    }    
+    }
 
     switch (opt->type) {
         case OPT_BUTTON:
@@ -469,7 +468,7 @@ static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
 
         case OPT_SCROLL:
             sx = x - 127 / 2;
-            sy = 209 - (y - 35);            
+            sy = 209 - (y - 35);
             sw = sx + (127.0 * (((*opt->uval * 1.0) + __FLT_MIN__) / (opt->scrMax * 1.0)));
             sh = sy + 7;
 
@@ -491,7 +490,7 @@ static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
             optmenu_draw_scaled_text(x - width, y, lbl, -1, scale);
             // optmenu_draw_scaled_text(x - width + 1 + moon_get_text_width(lbl, scale), y, getTranslatedText("-"), -1, scale);
             // optmenu_draw_scaled_text(x - width + 9 + moon_get_text_width(lbl, scale), y, tmpText, opt->type & OPT_TOGGLE ? (int)*opt->bval : 2, scale);
-            
+
             int base_width = moon_get_text_width(lbl, scale, FALSE);
             int padding = 3;
             u8* txt;
@@ -503,7 +502,7 @@ static void optmenu_draw_opt(const struct Option *opt, s16 x, s16 y, u8 sel) {
                     txt = get_key_string(bindStr[optmenu_binding && white ? 1 : 0]);
                     base_width += moon_get_text_width(txt, scale, FALSE) + padding;
                     optmenu_draw_scaled_text(x - width + base_width, y, txt, -1, scale);
-                } else {                    
+                } else {
                     u8* txt = getTranslatedText("0000");
                     base_width += moon_get_text_width(txt, scale, FALSE) + padding;
                     optmenu_draw_scaled_text(x - width + base_width, y, txt, -1, scale);
@@ -593,16 +592,16 @@ float gGlobal = 0;
 void optmenu_draw(void) {
     gGlobal += 1.0f;
     s16 scroll;
-    s16 scrollpos;    
+    s16 scrollpos;
 
     float range = 0.5f;
     float step = 0.1f;
 
-    if(gSwitchValue >= range) 
+    if(gSwitchValue >= range)
         gSwitchNewValue -= step;
     else if (gSwitchValue <= -range)
         gSwitchNewValue += step;
-    
+
     gSwitchValue = lerp(gSwitchValue, gSwitchNewValue, 0.01f);
 
     u8* label = get_key_string(currentMenu->label);
@@ -617,7 +616,7 @@ void optmenu_draw(void) {
 
     optmenu_draw_scaled_text(labelX - 50 - gSwitchValue, SCREEN_HEIGHT - 34, getTranslatedText("<"), -1, 0.6f);
     optmenu_draw_scaled_text(labelX + txtW + 50 + gSwitchValue, SCREEN_HEIGHT - 34, getTranslatedText(">"), -1, 0.6f);
-    
+
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
 
     PDrintBox(25, 50, SCREEN_WIDTH - 50, SCREEN_HEIGHT * 0.6, 0x00000080, true);
@@ -630,7 +629,7 @@ void optmenu_draw(void) {
         if (scroll <= base && scroll > padding) {
             if((currentMenu->select == i))
                 PDrintBox(30, 174 - (15 * i), SCREEN_WIDTH - 60, padding, 0xFFF20040, true);
-            
+
             gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
 
             optmenu_draw_opt(&currentMenu->opts[i], 160, scroll, (currentMenu->select == i));
@@ -664,9 +663,9 @@ void optmenu_toggle(void) {
                 currentMenu->scroll = 0;
             }
         }
-        
+
         optmenu_open = 1;
-        
+
         /* Resets l_counter to 0 every time the options menu is open */
         l_counter = 0;
     } else {
@@ -698,14 +697,14 @@ void optmenu_check_buttons(void) {
 
     if (gPlayer1Controller->buttonPressed & R_TRIG)
         optmenu_toggle();
-    
+
     if(gPlayer1Controller->buttonPressed & L_CBUTTONS){
         int s  = sizeof(mainOptions) / sizeof(mainOptions[0]);
         if(current_index > 0) current_index--;
         else current_index = s - 1;
         currentMenu = &mainOptions[current_index];
     }
-    if(gPlayer1Controller->buttonPressed & R_CBUTTONS){        
+    if(gPlayer1Controller->buttonPressed & R_CBUTTONS){
         int s  = sizeof(mainOptions) / sizeof(mainOptions[0]);
 
         if(current_index < s - 1) current_index++;
@@ -714,7 +713,7 @@ void optmenu_check_buttons(void) {
     }
 
     /* Enables cheats if the user press the L trigger 3 times while in the options menu. Also plays a sound. */
-    
+
     if ((gPlayer1Controller->buttonPressed & L_TRIG) && !Cheats.EnableCheats) {
         if (l_counter == 2) {
                 Cheats.EnableCheats = true;
@@ -724,7 +723,7 @@ void optmenu_check_buttons(void) {
             l_counter++;
         }
     }
-    
+
     if (!optmenu_open) return;
 
     u8 allowInput = 0;
