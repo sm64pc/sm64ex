@@ -22,10 +22,13 @@ struct MWValueBind{
 };
 
 class MWValue : public MoonWidget {
+    protected:
+        bool titleKey;
     public:
         MWValueBind bind;
         std::string title;
         MWValue(float x, float y, std::string title, MWValueBind bind);
+        MWValue(float x, float y, std::string title, MWValueBind bind, bool titleKey);
         void Init();
         void Draw();
         void Update();

@@ -21,9 +21,15 @@ void MoonScreen::Init(){
 
 void MoonScreen::Mount(){
     if(!this->widgets.empty()){
-        this->selected = this->widgets[0];
-        this->selected->selected = true;
-        this->selected->focused = false;
+        this->scrollIndex = 0;
+        this->selected  = NULL;
+        for(int i = 0; i < widgets.size(); i++) {
+            widgets[i]->selected = false;
+            widgets[i]->focused = false;
+        }
+        MoonWidget* sel = this->widgets[this->scrollIndex];
+        sel->selected = true;
+        sel->focused = false;
     }
 }
 
@@ -36,46 +42,42 @@ void MoonScreen::Draw(){
 bool stickExecuted;
 
 void MoonScreen::Update(){
-    if(this->enabledWidgets) {
-                
+    if(this->enabledWidgets && !this->widgets.empty()) {
         float yStick = GetStickValue(MoonButtons::U_STICK, false);
-        
-        if(!this->widgets.empty()){
-            if(yStick > 0) {
-                if(stickExecuted) return;
-                if(this->selected != NULL) return;
-                this->widgets[this->scrollIndex]->selected = false;
-                if(this->scrollIndex > 0)
-                    this->scrollIndex--;
-                else
-                    this->scrollIndex = this->widgets.size() - 1;
-                this->widgets[this->scrollIndex]->selected = true;
-                stickExecuted = true;
-            } 
-            if(yStick < 0) {
-                if(stickExecuted) return;
-                if(this->selected != NULL) return;
-                this->widgets[this->scrollIndex]->selected = false;
-                if(this->scrollIndex < this->widgets.size() - 1)
-                    this->scrollIndex++;
-                else
-                    this->scrollIndex = 0;
-                this->widgets[this->scrollIndex]->selected = true;
-                stickExecuted = true;
-            }
-            if(!yStick)
-                stickExecuted = false;
-            if(IsBtnPressed(MoonButtons::A_BTN)) {
-                this->selected = this->widgets[this->scrollIndex];
-                this->selected->selected = false;
-                this->selected->focused = true;
-            } 
-            if(IsBtnPressed(MoonButtons::B_BTN)) {
-                if(this->selected != NULL){
-                    this->selected->selected = true;
-                    this->selected->focused = false;
-                    this->selected = NULL;
-                }
+        if(yStick > 0) {
+            if(stickExecuted) return;
+            if(this->selected != NULL) return;
+            this->widgets[this->scrollIndex]->selected = false;
+            if(this->scrollIndex > 0)
+                this->scrollIndex--;
+            else
+                this->scrollIndex = this->widgets.size() - 1;
+            this->widgets[this->scrollIndex]->selected = true;
+            stickExecuted = true;
+        }
+        if(yStick < 0) {
+            if(stickExecuted) return;
+            if(this->selected != NULL) return;
+            this->widgets[this->scrollIndex]->selected = false;
+            if(this->scrollIndex < this->widgets.size() - 1)
+                this->scrollIndex++;
+            else
+                this->scrollIndex = 0;
+            this->widgets[this->scrollIndex]->selected = true;
+            stickExecuted = true;
+        }
+        if(!yStick)
+            stickExecuted = false;
+        if(IsBtnPressed(MoonButtons::A_BTN)) {
+            this->selected = this->widgets[this->scrollIndex];
+            this->selected->selected = false;
+            this->selected->focused = true;
+        }
+        if(IsBtnPressed(MoonButtons::B_BTN)) {
+            if(this->selected != NULL){
+                this->selected->selected = true;
+                this->selected->focused = false;
+                this->selected = NULL;
             }
         }
         for(int i = 0; i < widgets.size(); i++)
@@ -111,7 +113,7 @@ float GetStickValue(MoonButtons button, bool absolute){
 }
 
 float GetScreenWidth(bool u4_3){
-    return GFX_DIMENSIONS_ASPECT_RATIO > 1 || u4_3 ? SCREEN_WIDTH + abs(GFX_DIMENSIONS_FROM_LEFT_EDGE(0)) * 2 : SCREEN_WIDTH;    
+    return GFX_DIMENSIONS_ASPECT_RATIO > 1 || u4_3 ? SCREEN_WIDTH + abs(GFX_DIMENSIONS_FROM_LEFT_EDGE(0)) * 2 : SCREEN_WIDTH;
 }
 
 float GetScreenHeight() {

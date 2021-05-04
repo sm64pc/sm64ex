@@ -5,12 +5,12 @@
 #include <vector>
 
 enum MoonButtons {
-    A_BTN   = 0x8000, B_BTN   = 0x4000, 
+    A_BTN   = 0x8000, B_BTN   = 0x4000,
     L_BTN   = 0x0020, R_BTN   = 0x0010,
     Z_BTN   = 0x2000, START   = 0x1000,
-    U_STICK = 0x0800, D_STICK = 0x0400, 
-    L_STICK = 0x0200, R_STICK = 0x0100, 
-    U_CBTN  = 0x0008, D_CBTN  = 0x0004, 
+    U_STICK = 0x0800, D_STICK = 0x0400,
+    L_STICK = 0x0200, R_STICK = 0x0100,
+    U_CBTN  = 0x0008, D_CBTN  = 0x0004,
     L_CBTN  = 0x0002, R_CBTN  = 0x0001
 };
 
@@ -19,7 +19,7 @@ protected:
     std::vector<MoonWidget*> widgets;
     MoonWidget* selected;
     bool enabledWidgets = true;
-    int  scrollIndex = 0;    
+    int  scrollIndex = 0;
 public:
     virtual void Init();
     virtual void Mount();

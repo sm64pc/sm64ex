@@ -14,8 +14,18 @@ MWValue::MWValue(float x, float y, std::string title, MWValueBind bind){
     this->y = y;
     this->bind = bind;
     this->title = title;
+    this->titleKey = false;
 }
 
+MWValue::MWValue(float x, float y, std::string title, MWValueBind bind, bool titleKey){
+    this->x = x;
+    this->y = y;
+    this->bind = bind;
+    this->title = title;
+    this->titleKey = titleKey;
+}
+
+int frameCounter = 0;
 int focusAnimRange = 80;
 float focusAnimation = focusAnimRange / 2;
 int focusAnimationPingPong;
@@ -35,8 +45,9 @@ void MWValue::Draw(){
 
     focusAnimation += step * (focusAnimationPingPong ? -1 : 1);
 
+    string rawTitle = this->titleKey ? Moon_GetKey(this->title) : this->title;
     float scale = 1;
-    float titleWidth = MoonGetTextWidth(this->title + " ", scale, false);
+    float titleWidth = MoonGetTextWidth(rawTitle + " ", scale, false);
     int barWidth = SCREEN_WIDTH - 50 - 14;
     float tmpWidth = titleWidth;
 
@@ -81,7 +92,7 @@ void MWValue::Draw(){
     if(this->bind.btn != NULL)
         tmpWidth = titleWidth;
 
-    MoonDrawText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2, this->y, this->title, scale, {255, 255, 255, 255}, true, true);
+    MoonDrawText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2, this->y, rawTitle, scale, {255, 255, 255, 255}, true, true);
 }
 
 void MWValue::Update(){
@@ -104,7 +115,13 @@ void MWValue::Update(){
     }
 
     if(xStick < 0) {
-        if(mwvStickExecuted) return;
+        if(mwvStickExecuted) {
+            if(isBtn || isBool) return;
+            if(frameCounter <= 20){
+                frameCounter++;
+                return;
+            }
+        }
         if(isBool) {
             *this->bind.bvar = !*this->bind.bvar;
         } else if(isArray || isFloat || isInt) {
@@ -123,7 +140,13 @@ void MWValue::Update(){
         mwvStickExecuted = true;
     }
     if(xStick > 0) {
-        if(mwvStickExecuted) return;
+        if(mwvStickExecuted) {
+            if(isBtn || isBool) return;
+            if(frameCounter <= 20){
+                frameCounter++;
+                return;
+            }
+        }
         if(isBool) {
             *this->bind.bvar = !*this->bind.bvar;
         } else if(isArray || isFloat || isInt) {
@@ -142,7 +165,9 @@ void MWValue::Update(){
         if(this->bind.callback != NULL) this->bind.callback();
         mwvStickExecuted = true;
     }
-    if(!xStick)
+    if(!xStick){
         mwvStickExecuted = false;
+        frameCounter = 0;
+    }
 }
 void MWValue::Dispose(){}

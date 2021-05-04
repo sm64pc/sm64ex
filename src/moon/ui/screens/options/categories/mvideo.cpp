@@ -22,15 +22,19 @@ MVideoCategory::MVideoCategory() : MoonCategory("TEXT_OPT_VIDEO"){
     for (auto &tex : filters) {
         texNames.push_back(Moon_GetKey(tex));
     }
-    this->catOptions.push_back(new MWValue(22, 57,  Moon_GetKey("TEXT_OPT_FSCREEN"),   {.bvar = &configWindow.fullscreen}));
-    this->catOptions.push_back(new MWValue(22, 74,  Moon_GetKey("TEXT_OPT_VSYNC"),     {.bvar = &configWindow.vsync}));
-    this->catOptions.push_back(new MWValue(22, 91,  Moon_GetKey("TEXT_OPT_TEXFILTER"), {.index = (int*)&configFiltering, .values = &texNames}));
-    this->catOptions.push_back(new MWValue(22, 108, Moon_GetKey("TEXT_OPT_HUD"),       {.bvar = &configHUD}));
-    this->catOptions.push_back(new MWValue(22, 125, Moon_GetKey("TEXT_OPT_RESETWND"),  {.btn = [](){
+    #ifndef TARGET_SWITCH
+    this->catOptions.push_back(new MWValue(22, 57,  "TEXT_OPT_FSCREEN",   {.bvar = &configWindow.fullscreen}, true));
+    this->catOptions.push_back(new MWValue(22, 74,  "TEXT_OPT_VSYNC",     {.bvar = &configWindow.vsync}, true));
+    #endif
+    this->catOptions.push_back(new MWValue(22, 91,  "TEXT_OPT_TEXFILTER", {.index = (int*)&configFiltering, .values = &texNames}, true));
+    this->catOptions.push_back(new MWValue(22, 108, "TEXT_OPT_HUD",       {.bvar = &configHUD}, true));
+    #ifndef TARGET_SWITCH
+    this->catOptions.push_back(new MWValue(22, 125, "TEXT_OPT_RESETWND",  {.btn = [](){
         configWindow.reset = true;
         configWindow.settings_changed = true;
-    }}));
-    this->catOptions.push_back(new MWValue(22, 142, Moon_GetKey("TEXT_OPT_APPLY"),     {.btn = [](){
+    }}, true));
+    this->catOptions.push_back(new MWValue(22, 142, "TEXT_OPT_APPLY",     {.btn = [](){
         configWindow.settings_changed = true;
-    }}));
+    }}, true));
+    #endif
 }

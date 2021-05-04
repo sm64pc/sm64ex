@@ -9,6 +9,12 @@
 
 #include "moon/ui/screens/options/categories/mgame.h"
 #include "moon/ui/screens/options/categories/mvideo.h"
+#include "moon/ui/screens/options/categories/maudio.h"
+#include "moon/ui/screens/options/categories/mcheats.h"
+#ifdef BETTERCAMERA
+#include "moon/ui/screens/options/categories/mcamera.h"
+#endif
+
 using namespace std;
 
 extern "C" {
@@ -20,26 +26,28 @@ extern "C" {
 vector<MoonCategory*> categories;
 bool cswStickExecuted;
 int categoryIndex = 0;
-string curTitle;
 
 void MoonOptMain::setCategory(int index){
-    this->widgets.clear();
     MoonCategory *cat = categories[index];
-    vector<MoonWidget*> tmp = cat->catOptions;
-    copy(tmp.begin(), tmp.end(), back_inserter(this->widgets));
-    curTitle = Moon_GetKey(cat->categoryName);
+    this->widgets = cat->catOptions;
     MoonScreen::Mount();
 }
 
 void MoonOptMain::Mount(){
     this->widgets.clear();
     categories.push_back(new MGameCategory());
+#ifdef BETTERCAMERA
+    categories.push_back(new MCameraCategory());
+#endif
     categories.push_back(new MVideoCategory());
+    categories.push_back(new MAudioCategory());
+    categories.push_back(new MCheatsCategory());
     this->setCategory(categoryIndex);
+    MoonScreen::Mount();
 }
 
 void MoonOptMain::Update(){
-    if(this->selected->focused){
+    if(this->selected == NULL) {
         float xStick = GetStickValue(MoonButtons::L_STICK, false);
         if(xStick < 0) {
             if(cswStickExecuted) return;
@@ -52,7 +60,7 @@ void MoonOptMain::Update(){
         }
         if(xStick > 0) {
             if(cswStickExecuted) return;
-            if(categoryIndex < categories.size())
+            if(categoryIndex < categories.size() - 1)
                 categoryIndex += 1;
             else
                 categoryIndex = 0;
@@ -66,6 +74,7 @@ void MoonOptMain::Update(){
 }
 
 void MoonOptMain::Draw(){
+    string curTitle = Moon_GetKey(categories[categoryIndex]->categoryName);
     float txtWidth = MoonGetTextWidth(curTitle, 1.0, true);
     MoonDrawRectangle(0, 0, GetScreenWidth(false), GetScreenHeight(), {0, 0, 0, 100}, false);
     MoonDrawColoredText(SCREEN_WIDTH / 2 - txtWidth / 2, 20, curTitle, 1.0, {255, 255, 255, 255}, true, true);
