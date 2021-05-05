@@ -1,16 +1,12 @@
 # sm64rt
 
-## UNDER CONSTRUCTION
-
-## NOTE: The main dependency of sm64rt, RT64, is currently private until its first public release. For now, this repository only contains the changes required to make the game compatible with it.
-
 Fork of [sm64pc/sm64ex](https://github.com/sm64pc/sm64ex) that adds support for [RT64](https://github.com/DarioSamo/RT64), a hardware-accelerated real-time path tracer.
 
 ## Technical Preview
 
 **At the moment, this mod is a technical preview and should only be used by those willing to tolerate problems such as visual glitches and performance problems**. This project is subject to have major changes in the future in anything from its architecture, design, aesthetic and performance. Any help towards solving these issues is welcome.
 
-Please do not report issues that don't provide new information. Remember to check if your problem has already been reported on the issue tracker.
+Please do not report issues that don't provide new information. Remember to check if your problem has already been reported on the [issue tracker](https://github.com/DarioSamo/sm64rt/issues).
 
 Performance is the first thing that will be worked on and it has plenty of room for optimization at the moment. If you cannot reach the target framerate, it's recommended to lower the resolution with the internal scaler, as it has the biggest impact in performance out of all the options.
 
@@ -38,3 +34,6 @@ For building instructions, please refer to the [sm64ex wiki](https://github.com/
 * NODRAWINGDISTANCE=1 (Optional, but gives good results and prevents pop-in, which can cause issues with objects that cast shadows or appear in reflections)
 
 The repository already comes with a prebuilt binary and the compatible header file for RT64 to make the build process easier. If you wish to build this module yourself, you can do it from the [RT64 repository](https://github.com/DarioSamo/RT64) instead.
+
+## Render96 Support
+A native version of sm64rt will be integrated into the Render96 project in the future as an optional feature. Keep an eye out on their social media channels to know when this update goes live.
