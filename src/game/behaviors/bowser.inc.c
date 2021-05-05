@@ -106,7 +106,7 @@ s32 bowser_spawn_shockwave(void) {
 }
 
 void bowser_bounce(s32 *a) {
-    if (o->oMoveFlags & 1) {
+    if (o->oMoveFlags & OBJ_MOVE_LANDED) {
         a[0]++;
         if (a[0] < 4) {
             cur_obj_start_cam_event(o, CAM_EVENT_BOWSER_THROW_BOUNCE);
@@ -160,7 +160,7 @@ void bowser_initialize_action(void) {
         o->oAction = 0;
 }
 
-void bowser_act_text_wait() // not much
+void bowser_act_text_wait(void) // not much
 {
     o->oForwardVel = 0.0f;
     cur_obj_init_animation_with_sound(12);
@@ -295,13 +295,13 @@ void bowser_reset_fallen_off_stage(void) {
 }
 #endif
 
-void bowser_act_unused_slow_walk() // unused?
+void bowser_act_unused_slow_walk(void) // unused?
 {
     if (cur_obj_init_animation_and_check_if_near_end(12))
         o->oAction = 0;
 }
 
-void bowser_act_default() // only lasts one frame
+void bowser_act_default(void) // only lasts one frame
 {
     o->oBowserEyesShut = 0;
     cur_obj_init_animation_with_sound(12);
@@ -326,7 +326,7 @@ void bowser_act_breath_fire(void) {
         o->oAction = 0;
 }
 
-void bowser_act_walk_to_mario() // turn towards Mario
+void bowser_act_walk_to_mario(void) // turn towards Mario
 {
     UNUSED s32 facing; // is Bowser facing Mario?
     s16 turnSpeed;
@@ -453,7 +453,7 @@ s32 bowser_set_anim_in_air(void) {
 }
 
 s32 bowser_land(void) {
-    if (o->oMoveFlags & 1) {
+    if (o->oMoveFlags & OBJ_MOVE_LANDED) {
         o->oForwardVel = 0;
         o->oVelY = 0;
         spawn_mist_particles_variable(0, 0, 60.0f);
@@ -627,7 +627,7 @@ void bowser_act_charge_mario(void) {
             cur_obj_extend_animation_if_at_end();
             break;
     }
-    if (o->oMoveFlags & 0x400)
+    if (o->oMoveFlags & OBJ_MOVE_HIT_EDGE)
         o->oAction = 10;
 }
 
@@ -650,7 +650,7 @@ void bowser_act_thrown_dropped(void)
     if (o->oSubAction == 0) {
         cur_obj_init_animation_with_sound(2);
         bowser_bounce(&o->oBowserUnkF8);
-        if (o->oMoveFlags & 2) {
+        if (o->oMoveFlags & OBJ_MOVE_ON_GROUND) {
             o->oForwardVel = 0.0f;
             o->oSubAction++;
         }
@@ -780,9 +780,9 @@ void bowser_fly_back_dead(void) {
 void bowser_dead_bounce(void) {
     o->oBowserEyesShut = 1;
     bowser_bounce(&o->oBowserUnkF8);
-    if (o->oMoveFlags & 1)
+    if (o->oMoveFlags & OBJ_MOVE_LANDED)
         cur_obj_play_sound_2(SOUND_OBJ_BOWSER_WALK);
-    if (o->oMoveFlags & 2) {
+    if (o->oMoveFlags & OBJ_MOVE_ON_GROUND) {
         o->oForwardVel = 0.0f;
         o->oSubAction++;
     }
@@ -892,7 +892,7 @@ void bowser_act_dead(void) {
                 if (BITS)
                     o->oSubAction = 10;
                 else {
-                    o->activeFlags |= 0x80;
+                    o->activeFlags |= ACTIVE_FLAG_DITHERED_ALPHA;
                     o->oSubAction++;
                 }
             }
@@ -962,7 +962,7 @@ s32 bowser_check_fallen_off_stage(void) // bowser off stage?
     if (o->oAction != 2 && o->oAction != 19) {
         if (o->oPosY < o->oHomeY - 1000.0f)
             return 1;
-        if (o->oMoveFlags & 1) {
+        if (o->oMoveFlags & OBJ_MOVE_LANDED) {
             if (o->oFloorType == 1)
                 return 1;
             if (o->oFloorType == 10)
@@ -1168,7 +1168,7 @@ Gfx *geo_update_body_rot_from_parent(s32 run, UNUSED struct GraphNode *node, Mat
     if (run == TRUE) {
         sp1C = (struct Object *) gCurGraphNodeObject;
         if (sp1C->prevObj != NULL) {
-            create_transformation_from_matrices(sp20, mtx, gCurGraphNodeCamera->matrixPtr);
+            create_transformation_from_matrices(sp20, mtx, *gCurGraphNodeCamera->matrixPtr);
             obj_update_pos_from_parent_transformation(sp20, sp1C->prevObj);
             obj_set_gfx_pos_from_pos(sp1C->prevObj);
         }
@@ -1258,13 +1258,13 @@ Gfx *geo_switch_bowser_eyes(s32 run, struct GraphNode *node, UNUSED Mat4 *mtx) {
     return NULL;
 }
 
-Gfx *geo_bits_bowser_coloring(s32 a0, struct GraphNode *node, UNUSED s32 a2) {
+Gfx *geo_bits_bowser_coloring(s32 run, struct GraphNode *node, UNUSED s32 a2) {
     Gfx *sp2C = NULL;
     Gfx *sp28;
     struct Object *sp24;
     struct GraphNodeGenerated *sp20;
 
-    if (a0 == 1) {
+    if (run == 1) {
         sp24 = (struct Object *) gCurGraphNodeObject;
         sp20 = (struct GraphNodeGenerated *) node;
         if (gCurGraphNodeHeldObject != 0)
@@ -1379,8 +1379,8 @@ void bowser_flame_despawn(void) {
         spawn_object(o, MODEL_YELLOW_COIN, bhvTemporaryYellowCoin);
 }
 
-s32 bowser_flame_should_despawn(s32 a0) {
-    if (a0 < o->oTimer)
+s32 bowser_flame_should_despawn(s32 maxTime) {
+    if (maxTime < o->oTimer)
         return 1;
     if (o->oFloorType == 1)
         return 1;
@@ -1424,7 +1424,7 @@ void bhv_flame_bowser_loop(void) {
     if (o->oAction == 0) {
         cur_obj_become_intangible();
         bowser_flame_move();
-        if (o->oMoveFlags & 1) {
+        if (o->oMoveFlags & OBJ_MOVE_LANDED) {
             o->oAction++;
             if (cur_obj_has_behavior(bhvFlameLargeBurningOut))
                 o->oFlameUnkF4 = 8.0f;
@@ -1494,7 +1494,7 @@ void bhv_flame_floating_landing_loop(void) {
         obj_mark_for_deletion(o);
     if (o->oVelY < D_8032F748[o->oBehParams2ndByte])
         o->oVelY = D_8032F748[o->oBehParams2ndByte];
-    if (o->oMoveFlags & 1) {
+    if (o->oMoveFlags & OBJ_MOVE_LANDED) {
         if (o->oBehParams2ndByte == 0)
             spawn_object(o, MODEL_RED_FLAME, bhvFlameLargeBurningOut);
         else

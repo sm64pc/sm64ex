@@ -1,17 +1,18 @@
-#include <ultra64.h>
+#include <PR/ultratypes.h>
 
-#include "sm64.h"
+#include "behavior_data.h"
+#include "debug.h"
 #include "engine/behavior_script.h"
-#include "object_helpers.h"
-#include "audio/external.h"
-#include "print.h"
 #include "engine/surface_collision.h"
-#include "mario.h"
 #include "game_init.h"
 #include "main.h"
-#include "debug.h"
+#include "object_constants.h"
+#include "object_fields.h"
+#include "object_helpers.h"
 #include "object_list_processor.h"
-#include "behavior_data.h"
+#include "print.h"
+#include "sm64.h"
+#include "types.h"
 
 #define DEBUG_INFO_NOFLAGS (0 << 0)
 #define DEBUG_INFO_FLAG_DPRINT (1 << 0)
@@ -553,7 +554,7 @@ void debug_print_obj_move_flags(void) {
     if (gCurrentObject->oMoveFlags & OBJ_MOVE_IN_AIR) {
         print_debug_top_down_objectinfo("SKY     %x", gCurrentObject->oMoveFlags);
     }
-    if (gCurrentObject->oMoveFlags & OBJ_MOVE_8) {
+    if (gCurrentObject->oMoveFlags & OBJ_MOVE_OUT_SCOPE) {
         print_debug_top_down_objectinfo("OUT SCOPE %x", gCurrentObject->oMoveFlags);
     }
 #endif

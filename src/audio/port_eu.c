@@ -34,6 +34,31 @@ void decrease_sample_dma_ttls(void);
 s32 audio_shut_down_and_reset_step(void);
 void func_802ad7ec(u32);
 
+struct SPTask *create_next_audio_frame_task(void) {
+    return NULL;
+}
+void create_next_audio_buffer(s16 *samples, u32 num_samples) {
+    s32 writtenCmds;
+    OSMesg msg;
+    gAudioFrameCount++;
+    decrease_sample_dma_ttls();
+    if (osRecvMesg(OSMesgQueues[2], &msg, 0) != -1) {
+        gAudioResetPresetIdToLoad = (u8) (s32) msg;
+        gAudioResetStatus = 5;
+    }
+
+    if (gAudioResetStatus != 0) {
+        audio_reset_session();
+        gAudioResetStatus = 0;
+    }
+    if (osRecvMesg(OSMesgQueues[1], &msg, OS_MESG_NOBLOCK) != -1) {
+        func_802ad7ec((u32) msg);
+    }
+    synthesis_execute(gAudioCmdBuffers[0], &writtenCmds, samples, num_samples);
+    gAudioRandom = ((gAudioRandom + gAudioFrameCount) * gAudioFrameCount);
+    gAudioRandom = gAudioRandom + writtenCmds / 8;
+}
+
 void eu_process_audio_cmd(struct EuAudioCmd *cmd) {
     s32 i;
 

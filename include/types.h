@@ -31,6 +31,8 @@ struct Controller
   /*0x14*/ OSContStatus *statusData;
   /*0x18*/ OSContPad *controllerData;
   /*0x1C*/ int port;
+  /*ext */ s16 extStickX;       // additional (right) stick values
+  /*ext */ s16 extStickY;
 };
 
 typedef f32 Vec2f[2];
@@ -129,7 +131,7 @@ struct GraphNodeObject
     /*0x2C*/ Vec3f scale;
     /*0x38*/ struct GraphNodeObject_sub unk38;
     /*0x4C*/ struct SpawnInfo *unk4C;
-    /*0x50*/ void *throwMatrix; // matrix ptr
+    /*0x50*/ Mat4 *throwMatrix; // matrix ptr
     /*0x54*/ Vec3f cameraToObject;
 };
 
@@ -338,10 +340,10 @@ struct MarioState
     /*0xB4*/ u8 squishTimer;
     /*0xB5*/ u8 fadeWarpOpacity;
     /*0xB6*/ u16 capTimer;
-    /*0xB8*/ s16 unkB8;
+    /*0xB8*/ s16 prevNumStarsForDialog;
     /*0xBC*/ f32 peakHeight;
     /*0xC0*/ f32 quicksandDepth;
     /*0xC4*/ f32 unkC4;
 };
 
-#endif
+#endif // _SM64_TYPES_H_

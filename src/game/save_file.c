@@ -342,6 +342,9 @@ static void save_file_bswap(struct SaveBuffer *buf) {
 }
 
 void save_file_do_save(s32 fileIndex) {
+    if (fileIndex < 0 || fileIndex >= NUM_SAVE_FILES)
+        return;
+
     if (gSaveFileModified)
 #ifdef TEXTSAVES
     {
@@ -370,6 +373,9 @@ void save_file_do_save(s32 fileIndex) {
 }
 
 void save_file_erase(s32 fileIndex) {
+    if (fileIndex < 0 || fileIndex >= NUM_SAVE_FILES)
+        return;
+
     touch_high_score_ages(fileIndex);
     bzero(&gSaveBuffer.files[fileIndex][0], sizeof(gSaveBuffer.files[fileIndex][0]));
 
@@ -379,7 +385,8 @@ void save_file_erase(s32 fileIndex) {
 
 //! Needs to be s32 to match on -O2, despite no return value.
 BAD_RETURN(s32) save_file_copy(s32 srcFileIndex, s32 destFileIndex) {
-    UNUSED s32 pad;
+    if (srcFileIndex < 0 || srcFileIndex >= NUM_SAVE_FILES || destFileIndex < 0 || destFileIndex >= NUM_SAVE_FILES)
+        return;
 
     touch_high_score_ages(destFileIndex);
     bcopy(&gSaveBuffer.files[srcFileIndex][0], &gSaveBuffer.files[destFileIndex][0],
@@ -608,10 +615,16 @@ u32 save_file_get_star_flags(s32 fileIndex, s32 courseIndex) {
 
     return starFlags;
 }
+u32 save_file_get_cannon_flags(s32 fileIndex, s32 courseIndex) {
+    
+    if (gSaveBuffer.files[fileIndex][0].courseStars[courseIndex+1] & 0x80){return 1;}
+
+    return 0;
+}
 
 /**
  * Add to the bitset of obtained stars in the specified course.
- * If course is -1, add ot the bitset of obtained castle secret stars.
+ * If course is -1, add to the bitset of obtained castle secret stars.
  */
 void save_file_set_star_flags(s32 fileIndex, s32 courseIndex, u32 starFlags) {
     if (courseIndex == -1) {
@@ -702,6 +715,9 @@ void eu_set_language(u16 language) {
 }
 
 u16 eu_get_language(void) {
+    // check if the language is in range, in case we loaded a US save with garbage padding or something
+    if (gSaveBuffer.menuData[0].language >= LANGUAGE_MAX)
+        eu_set_language(LANGUAGE_ENGLISH); // reset it to english if not
     return gSaveBuffer.menuData[0].language;
 }
 #endif
@@ -743,7 +759,7 @@ s32 check_warp_checkpoint(struct WarpNode *warpNode) {
         warpNode->destNode = gWarpCheckpoint.warpNode;
         isWarpCheckpointActive = TRUE;
     } else {
-        // Disable the warp checkpoint just incase the other 2 conditions failed?
+        // Disable the warp checkpoint just in case the other 2 conditions failed?
         gWarpCheckpoint.courseNum = COURSE_NONE;
     }
 

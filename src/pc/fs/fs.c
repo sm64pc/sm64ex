@@ -441,3 +441,30 @@ bool fs_sys_mkdir(const char *name) {
     return mkdir(name, 0777) == 0;
     #endif
 }
+
+bool fs_sys_copy_file(const char *oldname, const char *newname) {
+    uint8_t buf[2048];
+
+    FILE *fin = fopen(oldname, "rb");
+    if (!fin) return false;
+
+    FILE *fout = fopen(newname, "wb");
+    if (!fout) {
+        fclose(fin);
+        return false;
+    }
+
+    bool ret = true;
+    size_t rx;
+    while ((rx = fread(buf, 1, sizeof(buf), fin)) > 0) {
+        if (!fwrite(buf, rx, 1, fout)) {
+            ret = false;
+            break;
+        }
+    }
+
+    fclose(fout);
+    fclose(fin);
+
+    return ret;
+}

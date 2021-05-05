@@ -1,30 +1,39 @@
-# sm64ex
-Fork of [sm64-port/sm64-port](https://github.com/sm64-port/sm64-port) with additional features. 
+# sm64rt
 
-Feel free to report bugs and contribute, but remember, there must be **no upload of any copyrighted asset**. 
-Run `./extract_assets.py --clean && make clean` or `make distclean` to remove ROM-originated content.
+Fork of [sm64pc/sm64ex](https://github.com/sm64pc/sm64ex) that adds support for [RT64](https://github.com/DarioSamo/RT64), a hardware-accelerated real-time path tracer.
 
-Please contribute **first** to the [nightly branch](https://github.com/sm64pc/sm64ex/tree/nightly/). New functionality will be merged to master once they're considered to be well-tested.
+## Technical Preview
 
-*Read this in other languages: [Español](README_es_ES.md), [Português](README_pt_BR.md) or [简体中文](README_zh_CN.md).*
+**At the moment, this mod is a technical preview and should only be used by those willing to tolerate problems such as visual glitches and performance problems**. This project is subject to have major changes in the future in anything from its architecture, design, aesthetic and performance. Any help towards solving these issues is welcome.
 
-## New features
+Please do not report issues that don't provide new information. Remember to check if your problem has already been reported on the [issue tracker](https://github.com/DarioSamo/sm64rt/issues).
 
- * Options menu with various settings, including button remapping.
- * Optional external data loading (so far only textures and assembled soundbanks), providing support for custom texture packs.
- * Optional analog camera and mouse look (using [Puppycam](https://github.com/FazanaJ/puppycam)).
- * Optional OpenGL1.3-based renderer for older machines, as well as the original GL2.1, D3D11 and D3D12 renderers from Emill's [n64-fast3d-engine](https://github.com/Emill/n64-fast3d-engine/).
- * Option to disable drawing distances.
- * Optional model and texture fixes (e.g. the smoke texture).
- * Skip introductory Peach & Lakitu cutscenes with the `--skip-intro` CLI option
- * Cheats menu in Options (activate with `--cheats` or by pressing L thrice in the pause menu).
- * Support for both little-endian and big-endian save files (meaning you can use save files from both sm64-port and most emulators), as well as an optional text-based save format.
+Performance is the first thing that will be worked on and it has plenty of room for optimization at the moment. If you cannot reach the target framerate, it's recommended to lower the resolution with the internal scaler, as it has the biggest impact in performance out of all the options.
 
-Recent changes in Nightly have moved the save and configuration file path to `%HOMEPATH%\AppData\Roaming\sm64pc` on Windows and `$HOME/.local/share/sm64pc` on Linux. This behaviour can be changed with the `--savepath` CLI option.
-For example `--savepath .` will read saves from the current directory (which not always matches the exe directory, but most of the time it does);
-   `--savepath '!'` will read saves from the executable directory.
+## Requirements
+* Windows 10 (due to RT64 dependency)
+* GPU with DXR support (make sure your drivers are up to date!)
+
+## Features
+* Fully path-traced renderer.
+* Custom level lighting for all stages.
+* Dynamic sphere lights for objects and particles.
+* Classic Phong shading.
+* Custom material properties based on texture names or geometry layouts.
+* Normal map support.
+* Real-time raytraced shadows, reflections, refractions and global illumination.
+* Real-time denoiser (experimental).
 
 ## Building
-For building instructions, please refer to the [wiki](https://github.com/sm64pc/sm64ex/wiki).
+For building instructions, please refer to the [sm64ex wiki](https://github.com/sm64pc/sm64ex/wiki) and follow the process as normal with these additional build flags:
 
-**Make sure you have MXE first before attempting to compile for Windows on Linux and WSL. Follow the guide on the wiki.**
+* RENDER_API=RT64 (Required to use RT64 as the renderer)
+
+* EXTERNAL_DATA=1 (Required for associating textures to the renderer's material properties)
+
+* NODRAWINGDISTANCE=1 (Optional, but gives good results and prevents pop-in, which can cause issues with objects that cast shadows or appear in reflections)
+
+The repository already comes with a prebuilt binary and the compatible header file for RT64 to make the build process easier. If you wish to build this module yourself, you can do it from the [RT64 repository](https://github.com/DarioSamo/RT64) instead.
+
+## Render96 Support
+A native version of sm64rt will be integrated into the Render96 project in the future as an optional feature. Keep an eye out on their social media channels to know when this update goes live.

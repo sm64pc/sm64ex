@@ -1,5 +1,4 @@
 #include <ultra64.h>
-#include <macros.h>
 
 #include "heap.h"
 #include "data.h"
@@ -303,7 +302,7 @@ void temporary_pools_init(struct PoolSplit *a) {
 }
 
 #ifndef VERSION_EU
-static void unused_803163D4() {
+static void unused_803163D4(void) {
 }
 #endif
 
@@ -649,9 +648,8 @@ s32 audio_shut_down_and_reset_step(void) {
 /**
  * Waits until a specified number of audio frames have been created
  */
-void wait_for_audio_frames(s32 frames) {
+void wait_for_audio_frames(UNUSED s32 frames) {
     gAudioFrameCount = 0;
-
 }
 #endif
 

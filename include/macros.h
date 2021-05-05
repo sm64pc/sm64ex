@@ -1,5 +1,5 @@
-#ifndef _MACROS_H_
-#define _MACROS_H_
+#ifndef MACROS_H
+#define MACROS_H
 
 #include "platform_info.h"
 
@@ -23,6 +23,13 @@
 #define UNUSED __attribute__((unused))
 #else
 #define UNUSED
+#endif
+
+// Avoid undefined behaviour for non-returning functions
+#ifdef __GNUC__
+#define NORETURN __attribute__((noreturn))
+#else
+#define NORETURN
 #endif
 
 // Static assertions
@@ -70,4 +77,4 @@
 # define LE_TO_HOST32(x) (x)
 #endif
 
-#endif
+#endif // MACROS_H

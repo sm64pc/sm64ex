@@ -10,7 +10,7 @@
 
 typedef struct {
     unsigned int x, y, w, h;
-    unsigned int vsync;
+    bool vsync;
     bool reset;
     bool fullscreen;
     bool exiting_fullscreen;
@@ -52,10 +52,19 @@ extern bool         configCameraInvertX;
 extern bool         configCameraInvertY;
 extern bool         configEnableCamera;
 extern bool         configCameraMouse;
+extern bool         configCameraAnalog;
 #endif
 extern bool         configHUD;
+extern bool         configSkipIntro;
 #ifdef DISCORDRPC
 extern bool         configDiscordRPC;
+#endif
+#ifdef RAPI_RT64
+extern unsigned int configRT64ResScale;
+extern bool         configRT64SphereLights;
+extern bool         configRT64GI;
+extern unsigned int configRT64GIStrength;
+extern bool         configRT64Denoiser;
 #endif
 
 void configfile_load(const char *filename);

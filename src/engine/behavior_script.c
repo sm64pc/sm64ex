@@ -1,16 +1,18 @@
 #include <ultra64.h>
 
 #include "sm64.h"
+#include "behavior_data.h"
 #include "behavior_script.h"
+#include "game/area.h"
+#include "game/behavior_actions.h"
+#include "game/game_init.h"
+#include "game/mario.h"
 #include "game/memory.h"
+#include "game/obj_behaviors_2.h"
+#include "game/object_helpers.h"
+#include "game/object_list_processor.h"
 #include "graph_node.h"
 #include "surface_collision.h"
-#include "game/object_helpers.h"
-#include "game/mario.h"
-#include "game/game_init.h"
-#include "game/obj_behaviors_2.h"
-#include "behavior_data.h"
-#include "game/object_list_processor.h"
 
 // Macros for retrieving arguments from behavior scripts.
 #define BHV_CMD_GET_1ST_U8(index)  (u8)((gCurBhvCommand[index] >> 24) & 0xFF) // unused
@@ -63,7 +65,7 @@ u16 random_u16(void) {
     return gRandomSeed16;
 }
 
-// Generate a pseudorandom float from 0 to 1.
+// Generate a pseudorandom float in the range [0, 1).
 f32 random_float(void) {
     f32 rnd = random_u16();
     return rnd / (double) 0x10000;
@@ -203,7 +205,7 @@ static s32 bhv_cmd_spawn_child_with_param(void) {
 // Command 0x1D: Exits the behavior script and despawns the object.
 // Usage: DEACTIVATE()
 static s32 bhv_cmd_deactivate(void) {
-    gCurrentObject->activeFlags = 0;
+    gCurrentObject->activeFlags = ACTIVE_FLAG_DEACTIVATED;
     return BHV_PROC_BREAK;
 }
 

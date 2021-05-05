@@ -20,6 +20,8 @@
 #define FS_TEXTUREDIR "gfx"
 #define FS_SOUNDDIR "sound"
 
+#define SAVE_FILENAME "sm64_save_file.bin"
+
 extern char fs_gamedir[];
 extern char fs_writepath[];
 
@@ -131,5 +133,6 @@ fs_pathlist_t fs_sys_enumerate(const char *base, const bool recur);
 bool fs_sys_file_exists(const char *name);
 bool fs_sys_dir_exists(const char *name);
 bool fs_sys_mkdir(const char *name); // creates with 0777 by default
+bool fs_sys_copy_file(const char *oldname, const char *newname);
 
 #endif // _SM64_FS_H_

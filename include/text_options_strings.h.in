@@ -14,7 +14,8 @@
 
 // Markers
 
-#define TEXT_OPT_HIGHLIGHT _("O")
+#define TEXT_OPT_L_HIGHLIGHT _(">")
+#define TEXT_OPT_R_HIGHLIGHT _("<")
 #define TEXT_OPT_UNBOUND   _("NONE")
 
 // Language specific strings
@@ -40,6 +41,7 @@
 #define TEXT_OPT_CAMC      _("CAMERA CENTRE AGGRESSION")
 #define TEXT_OPT_CAMP      _("CAMERA PAN LEVEL")
 #define TEXT_OPT_CAMD      _("CAMERA DECELERATION")
+#define TEXT_OPT_CAMON     _("FREE CAMERA")
 #define TEXT_OPT_ANALOGUE  _("ANALOGUE CAMERA")
 #define TEXT_OPT_MOUSE     _("MOUSE LOOK")
 #define TEXT_OPT_TEXFILTER _("TEXTURE FILTERING")
@@ -51,7 +53,7 @@
 #define TEXT_OPT_SFXVOLUME _("SFX VOLUME")
 #define TEXT_OPT_ENVVOLUME _("ENV VOLUME")
 #define TEXT_OPT_VSYNC     _("VERTICAL SYNC")
-#define TEXT_OPT_DOUBLE    _("DOUBLE")
+#define TEXT_OPT_AUTO      _("AUTO")
 #define TEXT_OPT_HUD       _("HUD")
 #define TEXT_OPT_THREEPT   _("THREE POINT")
 #define TEXT_OPT_APPLY     _("APPLY")
@@ -84,6 +86,13 @@
 #define TEXT_OPT_CHEAT8    _("HUGE MARIO")
 #define TEXT_OPT_CHEAT9    _("TINY MARIO")
 
+#define TEXT_OPT_RT64      _("RAYTRACING")
+#define TEXT_OPT_RESSCALE  _("Resolution Scale")
+#define TEXT_OPT_SPHEREL   _("Sphere Lights")
+#define TEXT_OPT_GI        _("Global Illumination")
+#define TEXT_OPT_GIWEIGHT  _("GI Intensity")
+#define TEXT_OPT_DENOISER  _("Denoiser")
+
 #else // VERSION
 
 // Markers
@@ -103,6 +112,7 @@
 #define TEXT_OPT_CAMC      _("Camera Centre Aggression")
 #define TEXT_OPT_CAMP      _("Camera Pan Level")
 #define TEXT_OPT_CAMD      _("Camera Deceleration")
+#define TEXT_OPT_CAMON     _("Free Camera")
 #define TEXT_OPT_ANALOGUE  _("Analogue Camera")
 #define TEXT_OPT_MOUSE     _("Mouse Look")
 #define TEXT_OPT_TEXFILTER _("Texture Filtering")
@@ -114,7 +124,7 @@
 #define TEXT_OPT_SFXVOLUME _("Sfx Volume")
 #define TEXT_OPT_ENVVOLUME _("Env Volume")
 #define TEXT_OPT_VSYNC     _("Vertical Sync")
-#define TEXT_OPT_DOUBLE    _("Double")
+#define TEXT_OPT_AUTO      _("Auto")
 #define TEXT_OPT_HUD       _("HUD")
 #define TEXT_OPT_THREEPT   _("Three-point")
 #define TEXT_OPT_APPLY     _("Apply")
@@ -146,6 +156,13 @@
 #define TEXT_OPT_CHEAT7    _("Exit course at any time")
 #define TEXT_OPT_CHEAT8    _("Huge Mario")
 #define TEXT_OPT_CHEAT9    _("Tiny Mario")
+
+#define TEXT_OPT_RT64      _("RAYTRACING")
+#define TEXT_OPT_RESSCALE  _("Resolution Scale")
+#define TEXT_OPT_SPHEREL   _("Sphere Lights")
+#define TEXT_OPT_GI        _("Global Illumination")
+#define TEXT_OPT_GIWEIGHT  _("GI Intensity")
+#define TEXT_OPT_DENOISER  _("Denoiser")
 
 #endif // VERSION
 

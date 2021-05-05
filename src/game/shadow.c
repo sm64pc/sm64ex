@@ -1,22 +1,20 @@
-#include <ultra64.h>
+#include <PR/ultratypes.h>
+#include <PR/gbi.h>
 #include <math.h>
 
-#include "sm64.h"
-#include "shadow.h"
-
-#include "area.h"
-#include "engine/graph_node.h"
 #include "engine/math_util.h"
 #include "engine/surface_collision.h"
-#include "mario_animation_ids.h"
-#include "mario.h"
-#include "memory.h"
-#include "rendering_graph_node.h"
-#include "object_list_processor.h"
-#include "segment2.h"
-#include "save_file.h"
 #include "geo_misc.h"
 #include "level_table.h"
+#include "memory.h"
+#include "object_list_processor.h"
+#include "rendering_graph_node.h"
+#include "segment2.h"
+#include "shadow.h"
+#include "sm64.h"
+
+// Avoid Z-fighting
+#define find_floor_height_and_data 0.4 + find_floor_height_and_data
 
 /**
  * @file shadow.c
@@ -241,6 +239,13 @@ s8 init_shadow(struct Shadow *s, f32 xPos, f32 yPos, f32 zPos, s16 shadowScale, 
     if (overwriteSolidity) {
         s->solidity = dim_shadow_with_distance(overwriteSolidity, yPos - s->floorHeight);
     }
+
+#ifdef GFX_DIM_SHADOWS_CLOSE_TO_GROUND
+    const f32 blendOff = 100.0f;
+    const f32 blendDist = 200.0f; 
+    int newSolidity = s->solidity * ((yPos - s->floorHeight - blendOff) / blendDist);
+    s->solidity = min(max(newSolidity, 0), s->solidity);
+#endif
 
     s->shadowScale = scale_shadow_with_distance(shadowScale, yPos - s->floorHeight);
 

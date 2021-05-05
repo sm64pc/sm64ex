@@ -44,24 +44,17 @@ const LevelScript level_intro_entry_2[] = {
     INIT_LEVEL(),
     BLACKOUT(/*active*/ TRUE),
     FIXED_LOAD(/*loadAddr*/ _goddardSegmentStart, /*romStart*/ _goddardSegmentRomStart, /*romEnd*/ _goddardSegmentRomEnd),
-    //LOAD_MARIO_HEAD(/*loadHeadID*/ REGULAR_FACE),
     LOAD_MARIO_HEAD(/*loadHeadID*/ REGULAR_FACE),
     LOAD_RAW(/*seg*/ 0x13, _behaviorSegmentRomStart, _behaviorSegmentRomEnd),
     LOAD_MIO0_TEXTURE(/*seg*/ 0x0A, _title_screen_bg_mio0SegmentRomStart, _title_screen_bg_mio0SegmentRomEnd),
     ALLOC_LEVEL_POOL(),
 
-    //AREA(/*index*/ 1, intro_geo_00035C),
-    //END_AREA(),
     AREA(/*index*/ 1, intro_geo_00035C),
     END_AREA(),
 
     FREE_LEVEL_POOL(),
     SLEEP(/*frames*/ 2),
     BLACKOUT(/*active*/ FALSE),
-    //LOAD_AREA(/*area*/ 1),
-    CLEAR_DEMO_PTR(), // we need to do this or else file select will be tainted with inputs
-    GET_OR_SET(/*op*/ OP_GET, /*var*/ 5),
-    JUMP_IF(/*op*/ OP_EQ, /*arg*/ 1, script_intro_L1), // was start pressed when demo ended last time?
     LOAD_AREA(/*area*/ 1),
     SET_MENU_MUSIC(/*seq*/ 0x0002),
     TRANSITION(/*transType*/ WARP_TRANSITION_FADE_FROM_STAR, /*time*/ 20, /*color*/ 0x00, 0x00, 0x00),

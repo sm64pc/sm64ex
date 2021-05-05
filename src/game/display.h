@@ -2,8 +2,7 @@
 #define _DISPLAY_H
 
 #include "types.h"
-
-#define GFX_POOL_SIZE 64000
+#include "memory.h"
 
 extern u16 frameBufferIndex;
 extern u32 gGlobalTimer;

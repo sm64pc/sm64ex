@@ -7,6 +7,7 @@
 
 #include "cliopts.h"
 #include "fs/fs.h"
+#include "configfile.h"
 
 /* NULL terminated list of platform specific read-only data paths */
 /* priority is top first */
@@ -84,20 +85,56 @@ void sys_fatal(const char *fmt, ...) {
 // we can just ask SDL for most of this shit if we have it
 #include <SDL2/SDL.h>
 
+// TEMPORARY: check the old save folder and copy contents to the new path
+// this will be removed after a while
+static inline bool copy_userdata(const char *userdir) {
+    char oldpath[SYS_MAX_PATH] = { 0 };
+    char path[SYS_MAX_PATH] = { 0 };
+
+    // check if a save already exists in the new folder
+    snprintf(path, sizeof(path), "%s/" SAVE_FILENAME, userdir);
+    if (fs_sys_file_exists(path)) return false;
+
+    // check if a save exists in the old folder ('pc' instead of 'ex')
+    strncpy(oldpath, path, sizeof(oldpath));
+    const unsigned int len = strlen(userdir);
+    oldpath[len - 2] = 'p'; oldpath[len - 1] = 'c';
+    if (!fs_sys_file_exists(oldpath)) return false;
+
+    printf("old save detected at '%s', copying to '%s'\n", oldpath, path);
+
+    bool ret = fs_sys_copy_file(oldpath, path);
+
+    // also try to copy the config
+    path[len] = oldpath[len] = 0;
+    strncat(path, "/" CONFIGFILE_DEFAULT, sizeof(path) - 1);
+    strncat(oldpath, "/" CONFIGFILE_DEFAULT, sizeof(oldpath) - 1);
+    fs_sys_copy_file(oldpath, path);
+
+    return ret;
+}
+
 const char *sys_user_path(void) {
     static char path[SYS_MAX_PATH] = { 0 };
-    // get it from SDL
-    char *sdlpath = SDL_GetPrefPath("", "sm64pc");
+
+    // get the new pref path from SDL
+    char *sdlpath = SDL_GetPrefPath("", "sm64ex");
     if (sdlpath) {
         const unsigned int len = strlen(sdlpath);
         strncpy(path, sdlpath, sizeof(path));
         path[sizeof(path)-1] = 0;
+
         SDL_free(sdlpath);
+
         if (path[len-1] == '/' || path[len-1] == '\\')
             path[len-1] = 0; // strip the trailing separator
+
         if (!fs_sys_dir_exists(path) && !fs_sys_mkdir(path))
-            path[0] = 0;
+            path[0] = 0; // somehow failed, we got no user path
+        else
+            copy_userdata(path); // TEMPORARY: try to copy old saves, if any
     }
+
     return path;
 }
 

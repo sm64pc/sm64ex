@@ -1,0 +1,871 @@
+{
+    "geoLayouts": [
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "amp_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "birds_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "black_bobomb_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "blargg_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "blue_coin_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "blue_coin_no_shadow_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "blue_coin_switch_geo"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 2.0,
+                "attenuationRadius": 300.0,
+                "diffuseColor": [
+                    0.0,
+                    0.20000000298023224,
+                    0.800000011920929
+                ],
+                "flickerIntensity": 0.07500000298023224,
+                "groupBits": 64,
+                "pointRadius": 25.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 25.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "ignoreNormalFactor": 1.0,
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "blue_flame_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "bobomb_buddy_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "boo_castle_geo"
+        },
+        {
+            "materialMod": {
+                "refractionFactor": 0.9750000238418579
+            },
+            "name": "boo_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "bookend_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "bookend_part_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "bowling_ball_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "bowling_ball_track_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "bowser2_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "bowser_1_yellow_sphere_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "bowser_bomb_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "bowser_flames_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "bowser_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "bowser_impact_smoke_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "bowser_key_cutscene_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "bowser_key_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "breakable_box_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "breakable_box_small_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "bub_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "bubba_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "bubble_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "bubbly_tree_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "bullet_bill_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "bully_boss_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "bully_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "burn_smoke_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "butterfly_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "cabin_door_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "cannon_barrel_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "cannon_base_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "cap_switch_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "cartoon_star_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "castle_door_0_star_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "castle_door_1_star_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "castle_door_3_stars_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "castle_door_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "chain_chomp_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "checkerboard_platform_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "chilly_chief_big_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "chilly_chief_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "chuckya_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "clam_shell_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "cyan_fish_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "dirt_animation_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "dorrie_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "enemy_lakitu_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "exclamation_box_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "exclamation_box_outline_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "explosion_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "eyerok_left_hand_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "eyerok_right_hand_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "fish_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "fish_shadow_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "flyguy_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "fwoosh_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "goomba_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "haunted_cage_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "haunted_chair_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "haunted_door_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "hazy_maze_door_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "heart_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "heave_ho_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "hoot_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "idle_water_wave_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "invisible_bowser_accessory_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "key_door_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "king_bobomb_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "klepto_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "koopa_flag_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "koopa_shell2_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "koopa_shell3_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "koopa_shell_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "koopa_with_shell_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "koopa_without_shell_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "lakitu_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "leaves_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "mad_piano_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "manta_seg5_geo_05008D14"
+        },
+        {
+            "materialMod": null,
+            "name": "mario_TODO_geo_0000E0"
+        },
+        {
+            "materialMod": null,
+            "name": "mario_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "marios_cap_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "marios_metal_cap_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "marios_wing_cap_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "marios_winged_metal_cap_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "metal_box_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "metal_door_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "metallic_ball_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "mips_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "mist_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "moneybag_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "monty_mole_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "mr_blizzard_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "mr_blizzard_hidden_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "mr_i_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "mr_i_iris_geo"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 2.0,
+                "attenuationRadius": 500.0,
+                "diffuseColor": [
+                    0.20000000298023224,
+                    0.800000011920929,
+                    0.0
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 16,
+                "pointRadius": 25.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 25.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "ignoreNormalFactor": 1.0,
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "mushroom_1up_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "number_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "palm_tree_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "peach_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "penguin_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "piranha_plant_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "pokey_body_part_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "pokey_head_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "purple_marble_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "purple_switch_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "red_coin_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "red_coin_no_shadow_geo"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 2.0,
+                "attenuationRadius": 300.0,
+                "diffuseColor": [
+                    0.800000011920929,
+                    0.20000000298023224,
+                    0.0
+                ],
+                "flickerIntensity": 0.07500000298023224,
+                "groupBits": 64,
+                "pointRadius": 25.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 25.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "ignoreNormalFactor": 1.0,
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "red_flame_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "red_flame_shadow_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "scuttlebug_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "seaweed_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "skeeter_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "small_key_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "small_water_splash_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "smoke_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "snow_tree_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "snufit_geo"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 2.0,
+                "attenuationRadius": 100.0,
+                "diffuseColor": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.0
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 128,
+                "pointRadius": 25.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 25.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "ignoreNormalFactor": 1.0,
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "sparkles_animation_geo"
+        },
+        {
+            "lightMod": {
+                "attenuationExponent": 2.0,
+                "attenuationRadius": 100.0,
+                "diffuseColor": [
+                    0.800000011920929,
+                    0.800000011920929,
+                    0.0
+                ],
+                "flickerIntensity": 0.0,
+                "groupBits": 128,
+                "pointRadius": 25.0,
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "shadowOffset": 25.0,
+                "specularIntensity": 0.6499999761581421
+            },
+            "materialMod": {
+                "ignoreNormalFactor": 1.0,
+                "lightGroupMaskBits": 0,
+                "selfLight": [
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "name": "sparkles_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "spiky_tree1_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "spiky_tree_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "spindrift_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "spiny_ball_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "spiny_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "springboard_bottom_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "springboard_spring_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "springboard_top_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "star_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "sushi_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "swoop_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "thwomp_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "toad_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "transparent_star_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "treasure_chest_base_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "treasure_chest_lid_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "tweester_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "ukiki_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "unagi_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "warp_pipe_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "water_bomb_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "water_bomb_shadow_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "water_mine_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "water_ring_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "water_splash_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "wave_trail_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "white_particle_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "white_puff_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "whomp_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "wiggler_body_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "wiggler_head_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "wooden_door2_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "wooden_door_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "wooden_post_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "wooden_signpost_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "yellow_coin_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "yellow_coin_no_shadow_geo"
+        },
+        {
+            "materialMod": {
+                "ignoreNormalFactor": 1.0
+            },
+            "name": "yellow_sphere_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "yoshi_egg_geo"
+        },
+        {
+            "materialMod": null,
+            "name": "yoshi_geo"
+        }
+    ]
+}

@@ -1,7 +1,7 @@
 #ifdef EXT_OPTIONS_MENU
 
 #include "sm64.h"
-#include "include/text_strings.h"
+#include "text_strings.h"
 #include "engine/math_util.h"
 #include "audio/external.h"
 #include "game/camera.h"
@@ -45,18 +45,22 @@ static const u8 toggleStr[][16] = {
     { TEXT_OPT_ENABLED },
 };
 
-static const u8 menuStr[][32] = {
-    { TEXT_OPT_HIGHLIGHT },
+static const u8 optSmallStr[][32] = {
     { TEXT_OPT_BUTTON1 },
     { TEXT_OPT_BUTTON2 },
+    { TEXT_OPT_L_HIGHLIGHT },
+    { TEXT_OPT_R_HIGHLIGHT },
+};
+
+static const u8 menuStr[][32] = {
     { TEXT_OPT_OPTIONS },
     { TEXT_OPT_CAMERA },
+    { TEXT_OPT_RT64 },
     { TEXT_OPT_CONTROLS },
     { TEXT_OPT_VIDEO },
     { TEXT_OPT_AUDIO },
     { TEXT_EXIT_GAME },
     { TEXT_OPT_CHEATS },
-
 };
 
 static const u8 optsCameraStr[][32] = {
@@ -69,7 +73,18 @@ static const u8 optsCameraStr[][32] = {
     { TEXT_OPT_ANALOGUE },
     { TEXT_OPT_MOUSE },
     { TEXT_OPT_CAMD },
+    { TEXT_OPT_CAMON },
 };
+
+#ifdef RAPI_RT64
+static const u8 optsRT64Str[][32] = {
+    { TEXT_OPT_RESSCALE },
+    { TEXT_OPT_SPHEREL },
+    { TEXT_OPT_GI },
+    { TEXT_OPT_GIWEIGHT },
+    { TEXT_OPT_DENOISER },
+};
+#endif
 
 static const u8 optsVideoStr[][32] = {
     { TEXT_OPT_FSCREEN },
@@ -78,7 +93,7 @@ static const u8 optsVideoStr[][32] = {
     { TEXT_OPT_LINEAR },
     { TEXT_OPT_RESETWND },
     { TEXT_OPT_VSYNC },
-    { TEXT_OPT_DOUBLE },
+    { TEXT_OPT_AUTO },
     { TEXT_OPT_HUD },
     { TEXT_OPT_THREEPT },
     { TEXT_OPT_APPLY },
@@ -121,7 +136,7 @@ static const u8 bindStr[][32] = {
     { TEXT_BIND_LEFT },
     { TEXT_BIND_RIGHT },
     { TEXT_OPT_DEADZONE },
-    { TEXT_OPT_RUMBLE }
+    { TEXT_OPT_RUMBLE },
 };
 
 static const u8 *filterChoices[] = {
@@ -218,15 +233,27 @@ static void optvideo_apply(UNUSED struct Option *self, s32 arg) {
 
 #ifdef BETTERCAMERA
 static struct Option optsCamera[] = {
-    DEF_OPT_TOGGLE( optsCameraStr[6], &configEnableCamera ),
+    DEF_OPT_TOGGLE( optsCameraStr[9], &configEnableCamera ),
+    DEF_OPT_TOGGLE( optsCameraStr[6], &configCameraAnalog ),
     DEF_OPT_TOGGLE( optsCameraStr[7], &configCameraMouse ),
     DEF_OPT_TOGGLE( optsCameraStr[2], &configCameraInvertX ),
     DEF_OPT_TOGGLE( optsCameraStr[3], &configCameraInvertY ),
-    DEF_OPT_SCROLL( optsCameraStr[0], &configCameraXSens, 10, 250, 1 ),
-    DEF_OPT_SCROLL( optsCameraStr[1], &configCameraYSens, 10, 250, 1 ),
+    DEF_OPT_SCROLL( optsCameraStr[0], &configCameraXSens, 1, 100, 1 ),
+    DEF_OPT_SCROLL( optsCameraStr[1], &configCameraYSens, 1, 100, 1 ),
     DEF_OPT_SCROLL( optsCameraStr[4], &configCameraAggr, 0, 100, 1 ),
     DEF_OPT_SCROLL( optsCameraStr[5], &configCameraPan, 0, 100, 1 ),
     DEF_OPT_SCROLL( optsCameraStr[8], &configCameraDegrade, 0, 100, 1 ),
+};
+#endif
+
+#ifdef RAPI_RT64
+static struct Option optsRT64[] = {
+    DEF_OPT_SCROLL( optsRT64Str[0], &configRT64ResScale, 10, 200, 1 ),
+    DEF_OPT_TOGGLE( optsRT64Str[1], &configRT64SphereLights ),
+    DEF_OPT_TOGGLE( optsRT64Str[2], &configRT64GI ),
+    DEF_OPT_SCROLL( optsRT64Str[3], &configRT64GIStrength, 5, 95, 1 ),
+    DEF_OPT_TOGGLE( optsRT64Str[4], &configRT64Denoiser ),
+    DEF_OPT_BUTTON( optsVideoStr[9], optvideo_apply ),
 };
 #endif
 
@@ -253,7 +280,7 @@ static struct Option optsControls[] = {
 
 static struct Option optsVideo[] = {
     DEF_OPT_TOGGLE( optsVideoStr[0], &configWindow.fullscreen ),
-    DEF_OPT_CHOICE( optsVideoStr[5], &configWindow.vsync, vsyncChoices ),
+    DEF_OPT_TOGGLE( optsVideoStr[5], &configWindow.vsync ),
     DEF_OPT_CHOICE( optsVideoStr[1], &configFiltering, filterChoices ),
     DEF_OPT_TOGGLE( optsVideoStr[7], &configHUD ),
     DEF_OPT_BUTTON( optsVideoStr[4], optvideo_reset_window ),
@@ -283,28 +310,34 @@ static struct Option optsCheats[] = {
 /* submenu definitions */
 
 #ifdef BETTERCAMERA
-static struct SubMenu menuCamera   = DEF_SUBMENU( menuStr[4], optsCamera );
+static struct SubMenu menuCamera   = DEF_SUBMENU( menuStr[1], optsCamera );
 #endif
-static struct SubMenu menuControls = DEF_SUBMENU( menuStr[5], optsControls );
-static struct SubMenu menuVideo    = DEF_SUBMENU( menuStr[6], optsVideo );
-static struct SubMenu menuAudio    = DEF_SUBMENU( menuStr[7], optsAudio );
-static struct SubMenu menuCheats   = DEF_SUBMENU( menuStr[9], optsCheats );
+#ifdef RAPI_RT64
+static struct SubMenu menuRT64   = DEF_SUBMENU( menuStr[2], optsRT64 );
+#endif
+static struct SubMenu menuControls = DEF_SUBMENU( menuStr[3], optsControls );
+static struct SubMenu menuVideo    = DEF_SUBMENU( menuStr[4], optsVideo );
+static struct SubMenu menuAudio    = DEF_SUBMENU( menuStr[5], optsAudio );
+static struct SubMenu menuCheats   = DEF_SUBMENU( menuStr[7], optsCheats );
 
 /* main options menu definition */
 
 static struct Option optsMain[] = {
 #ifdef BETTERCAMERA
-    DEF_OPT_SUBMENU( menuStr[4], &menuCamera ),
+    DEF_OPT_SUBMENU( menuStr[1], &menuCamera ),
 #endif
-    DEF_OPT_SUBMENU( menuStr[5], &menuControls ),
-    DEF_OPT_SUBMENU( menuStr[6], &menuVideo ),
-    DEF_OPT_SUBMENU( menuStr[7], &menuAudio ),
-    DEF_OPT_BUTTON ( menuStr[8], optmenu_act_exit ),
+#ifdef RAPI_RT64
+    DEF_OPT_SUBMENU( menuStr[2], &menuRT64 ),
+#endif
+    DEF_OPT_SUBMENU( menuStr[3], &menuControls ),
+    DEF_OPT_SUBMENU( menuStr[4], &menuVideo ),
+    DEF_OPT_SUBMENU( menuStr[5], &menuAudio ),
+    DEF_OPT_BUTTON ( menuStr[6], optmenu_act_exit ),
     // NOTE: always keep cheats the last option here because of the half-assed way I toggle them
-    DEF_OPT_SUBMENU( menuStr[9], &menuCheats )
+    DEF_OPT_SUBMENU( menuStr[7], &menuCheats )
 };
 
-static struct SubMenu menuMain = DEF_SUBMENU( menuStr[3], optsMain );
+static struct SubMenu menuMain = DEF_SUBMENU( menuStr[0], optsMain );
 
 /* implementation */
 
@@ -463,6 +496,7 @@ void optmenu_draw(void) {
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetScissor(gDisplayListHead++, G_SC_NON_INTERLACE, 0, 80, SCREEN_WIDTH, SCREEN_HEIGHT);
+    
     for (u8 i = 0; i < currentMenu->numOpts; i++) {
         scroll = 140 - 32 * i + currentMenu->scroll * 32;
         // FIXME: just start from the first visible option bruh
@@ -471,18 +505,16 @@ void optmenu_draw(void) {
     }
 
     gDPSetScissor(gDisplayListHead++, G_SC_NON_INTERLACE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
-    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
-    print_hud_lut_string(HUD_LUT_GLOBAL, 80, 90 + (32 * (currentMenu->select - currentMenu->scroll)), menuStr[0]);
-    print_hud_lut_string(HUD_LUT_GLOBAL, 224, 90 + (32 * (currentMenu->select - currentMenu->scroll)), menuStr[0]);
-    gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
+    print_generic_string(72, 132 - (32 * (currentMenu->select - currentMenu->scroll)), optSmallStr[2]);
+    print_generic_string(232, 132 - (32 * (currentMenu->select - currentMenu->scroll)), optSmallStr[3]);
+    gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 }
 
 //This has been separated for interesting reasons. Don't question it.
 void optmenu_draw_prompt(void) {
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
-    optmenu_draw_text(264, 212, menuStr[1 + optmenu_open], 0);
+    optmenu_draw_text(264, 212, optSmallStr[optmenu_open], 0);
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 }
 
@@ -504,7 +536,6 @@ void optmenu_toggle(void) {
 
         currentMenu = &menuMain;
         optmenu_open = 1;
-        
         /* Resets l_counter to 0 every time the options menu is open */
         l_counter = 0;
     } else {
@@ -536,7 +567,7 @@ void optmenu_check_buttons(void) {
 
     if (gPlayer1Controller->buttonPressed & R_TRIG)
         optmenu_toggle();
-    
+
     /* Enables cheats if the user press the L trigger 3 times while in the options menu. Also plays a sound. */
     
     if ((gPlayer1Controller->buttonPressed & L_TRIG) && !Cheats.EnableCheats) {

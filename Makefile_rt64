@@ -1,0 +1,35 @@
+# RT64
+# Based off the Makefile for Dynamic Options System (DynOS)
+
+# Copy the required resources to run RT64
+RT64_IN_RES_DIR := ./rt64
+RT64_OUT_RES_DIR := $(BUILD_DIR)/$(BASEDIR)/rt64
+RT64_COPY_RES := \
+    mkdir -p $(RT64_IN_RES_DIR); \
+    mkdir -p $(RT64_OUT_RES_DIR); \
+    for f in $(RT64_IN_RES_DIR)/config/*.json; do \
+        [ -f "$$f" ] || continue; \
+        cp -f $$f $(RT64_OUT_RES_DIR)/$$(basename -- $$f); \
+    done;
+
+RT64_BUILD_RES := $(shell $(call RT64_COPY_RES))
+
+# Copy the required DLLs for Windows build
+ifeq ($(WINDOWS_BUILD),1)
+    RT64_IN_LIB_DIR := ./lib/rt64
+    RT64_OUT_LIB_DIR := $(BUILD_DIR)
+    RT64_COPY_LIB := \
+	    mkdir -p $(RT64_IN_LIB_DIR); \
+        mkdir -p $(RT64_OUT_LIB_DIR); \
+        for f in $(RT64_IN_LIB_DIR)/*.dll; do \
+            [ -f "$$f" ] || continue; \
+            cp -f $$f $(RT64_OUT_LIB_DIR)/$$(basename -- $$f); \
+        done;
+	
+    RT64_BUILD_BIN := $(shell $(call RT64_COPY_LIB))
+endif
+
+# Render96 - Compilation macro
+ifeq ($(findstring src/text/libs,$(SRC_DIRS)),src/text/libs)
+    INCLUDE_CFLAGS += -DRENDER_96_ALPHA
+endif
