@@ -17,12 +17,17 @@ vector<string> filters = {
 };
 
 MVideoCategory::MVideoCategory() : MoonCategory("TEXT_OPT_VIDEO"){
-    #ifndef TARGET_SWITCH
+    int texY = 91;
+    int hudY = 108;
+#ifndef TARGET_SWITCH
     this->catOptions.push_back(new MWValue(22, 57,  "TEXT_OPT_FSCREEN",   {.bvar = &configWindow.fullscreen}, true));
     this->catOptions.push_back(new MWValue(22, 74,  "TEXT_OPT_VSYNC",     {.bvar = &configWindow.vsync}, true));
-    #endif
-    this->catOptions.push_back(new MWValue(22, 91,  "TEXT_OPT_TEXFILTER", {.index = (int*)&configFiltering, .values = &filters, .valueKeys = true}, true));
-    this->catOptions.push_back(new MWValue(22, 108, "TEXT_OPT_HUD",       {.bvar = &configHUD}, true));
+#else
+    texY = 57;
+    hudY = 74;
+#endif
+    this->catOptions.push_back(new MWValue(22, texY, "TEXT_OPT_TEXFILTER", {.index = (int*)&configFiltering, .values = &filters, .valueKeys = true}, true));
+    this->catOptions.push_back(new MWValue(22, hudY, "TEXT_OPT_HUD",       {.bvar = &configHUD}, true));
 #ifndef TARGET_SWITCH
     this->catOptions.push_back(new MWValue(22, 125, "TEXT_OPT_RESETWND",  {.btn = [](){
         configWindow.reset = true;

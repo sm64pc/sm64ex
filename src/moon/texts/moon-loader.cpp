@@ -28,7 +28,7 @@ LanguageEntry *current;
 
 void Moon_LoadLanguage( string path ) {
 
-    LanguageEntry * language = new LanguageEntry(); 
+    LanguageEntry * language = new LanguageEntry();
     FILE* fp = fopen(path.c_str(), "r");
     char readBuffer[65536];
     FileReadStream is(fp, readBuffer, sizeof(readBuffer));
@@ -38,18 +38,18 @@ void Moon_LoadLanguage( string path ) {
     raw.ParseStream<0, AutoUTF<unsigned>>(eis);
 
     WValue manifest, dialogs, courses, secrets, options, strings;
-    
+
     manifest = raw[L"manifest"];
     dialogs  = raw[L"dialogs"];
     courses  = raw[L"courses"];
     secrets  = raw[L"secrets"];
     options  = raw[L"options"];
     strings  = raw[L"strings"];
-    
+
     language->name = narrow(manifest[L"langName"].GetString());
     language->logo = narrow(manifest[L"langLogo"].GetString());
 
-    for (WValue& dialog : dialogs.GetArray()) {        
+    for (WValue& dialog : dialogs.GetArray()) {
         int linesPerBox = dialog[L"linesPerBox"].GetInt();
         int leftOffset  = dialog[L"leftOffset"].GetInt();
         int width       = dialog[L"width"].GetInt();
@@ -67,19 +67,19 @@ void Moon_LoadLanguage( string path ) {
             base += line.GetString();
             base += L"\n";
         }
-        
+
         entry->str         = getTranslatedText(narrow(base).c_str());
         language->dialogs.push_back(entry);
     }
-    
-    int course_name_table_size = courses.Size() + secrets.Size();    
+
+    int course_name_table_size = courses.Size() + secrets.Size();
     int courseId = 0;
     int padding = 0;
 
     u8* tmpCourses[course_name_table_size];
 
     for (WValue& course : courses.GetArray()){
-        
+
         if(courseId + 1 <= courses.Size() - 1) {
             tmpCourses[courseId] = getTranslatedText(narrow(course[L"course"].GetString()).c_str());
             courseId++;
@@ -87,7 +87,7 @@ void Moon_LoadLanguage( string path ) {
 
         for (WValue& act : course[L"acts"].GetArray()){
             language->acts.push_back(getTranslatedText(narrow(act.GetString()).c_str()));
-        }   
+        }
     }
 
     for (WValue& secret : secrets.GetArray()){
@@ -104,17 +104,17 @@ void Moon_LoadLanguage( string path ) {
 
     for (WValue::ConstMemberIterator option = options.MemberBegin(); option != options.MemberEnd(); ++option) {
         language->strings.insert(pair<string, string>(
-            narrow(option->name.GetString()), 
+            narrow(option->name.GetString()),
             narrow(option->value.GetString())
         ));
     }
 
     for (WValue::ConstMemberIterator item = strings.MemberBegin(); item != strings.MemberEnd(); ++item) {
         language->strings.insert(pair<string, string>(
-            narrow(item->name.GetString()), 
+            narrow(item->name.GetString()),
             narrow(item->value.GetString())
         ));
-    }    
+    }
 
     languages.push_back(language);
     languagesAmount = languages.size();
@@ -125,7 +125,7 @@ string Moon_GetKey(string key) {
 }
 
 void Moon_InitLanguages( char *exePath, char *gamedir ) {
-    
+
     string l_path(exePath);
 
     string languages_dir = l_path.substr(0, l_path.find_last_of("/\\")) + "/" + gamedir + "/texts/";
@@ -146,7 +146,7 @@ void Moon_InitLanguages( char *exePath, char *gamedir ) {
         closedir(dir);
     }
 
-    Moon_SetLanguage(languages[configLanguage]);    
+    Moon_SetLanguage(languages[configLanguage]);
 }
 
 void Moon_SetLanguage(LanguageEntry *new_language) {

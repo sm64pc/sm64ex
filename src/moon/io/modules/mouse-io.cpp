@@ -1,6 +1,6 @@
 #include "mouse-io.h"
 
-#ifndef WAPI_SDL2
+#ifdef WAPI_SDL2
 #include <SDL2/SDL.h>
 #endif
 

@@ -25,9 +25,6 @@
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif
-#ifdef EXT_OPTIONS_MENU
-#include "options_menu.h"
-#endif
 
 #include "text/txtconv.h"
 #include "text/text-loader.h"
@@ -1374,7 +1371,7 @@ s8 gDialogCourseActNum = 1;
 #endif
 
 void render_dialog_entries(void) {
-    
+
     struct DialogEntry * dialog;
     dialog = segmented_to_virtual(dialogPool[gDialogID]);
     s8 lowerBound;
@@ -2090,7 +2087,7 @@ void render_pause_castle_course_stars(s16 x, s16 y, s16 fileNum, s16 courseNum) 
 }
 
 void render_pause_castle_main_strings(s16 x, s16 y) {
-    void **courseNameTbl = segmented_to_virtual(seg2_course_name_table);    
+    void **courseNameTbl = segmented_to_virtual(seg2_course_name_table);
 
     void *courseName;
 
@@ -2131,7 +2128,7 @@ void render_pause_castle_main_strings(s16 x, s16 y) {
         print_generic_string(x + 34, y - 5, get_key_string("TEXT_COIN_X"));
         int_to_str(save_file_get_course_coin_score(gCurrSaveFileNum - 1, gDialogLineNum), strVal);
         print_generic_string(x + 54, y - 5, strVal);
-    } else {        
+    } else {
         courseName = segmented_to_virtual(courseNameTbl[COURSE_MAX]);
         print_generic_string(x + 40, y + 13, get_key_string("TEXT_STAR_X"));
         int_to_str(save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_BONUS_STAGES - 1, COURSE_MAX - 1), strVal);
@@ -2170,7 +2167,7 @@ s16 render_pause_courses_and_castle(void) {
                 shade_screen();
                 render_pause_my_score_coins();
                 render_pause_red_coins();
-                
+
                 /* Added support for the "Exit course at any time" cheat */
                 if ((gMarioStates[0].action & ACT_FLAG_PAUSE_EXIT) || (Cheats.EnableCheats && Cheats.ExitAnywhere)) {
                     render_pause_course_options(99, 93, &gDialogLineNum, 15);
@@ -2233,7 +2230,7 @@ void print_hud_course_complete_string(s8 str) {
 
     u8* txt = get_key_string(str == HUD_PRINT_HISCORE ? "TEXT_HUD_HI_SCORE" : "TEXT_HUD_CONGRATULATIONS");
     float x = moon_get_text_width(txt, 1.0, TRUE) / 2;
-    print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH / 2 - x, TXT_HISCORE_Y, txt);    
+    print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH / 2 - x, TXT_HISCORE_Y, txt);
 
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
 }
@@ -2380,7 +2377,7 @@ void render_course_complete_lvl_info_and_hud_str(void) {
 #define X_VAL9 x
 
 void render_save_confirmation(s16 x, s16 y, s8 *index, s16 sp6e) {
-    handle_menu_scrolling(MENU_SCROLL_VERTICAL, index, 1, 4); // Increased to '4' to handle Exit Game 
+    handle_menu_scrolling(MENU_SCROLL_VERTICAL, index, 1, 4); // Increased to '4' to handle Exit Game
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
@@ -2464,7 +2461,7 @@ s16 render_menus_and_dialogs() {
 
     if (gMenuMode != -1) {
         switch (gMenuMode) {
-            case 0:                
+            case 0:
             case 1:
                 mode = render_pause_courses_and_castle();
                 break;

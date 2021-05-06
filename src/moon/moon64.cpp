@@ -3,8 +3,12 @@
 #include "moon/io/moon-io.h"
 #include <iostream>
 
+#include "moon/mod-engine/engine.h"
 #include "moon/io/moon-io.h"
 #include "moon/io/modules/mouse-io.h"
+#include "moon/mod-engine/test.h"
+#include "moon/libs/nlohmann/json.hpp"
+using json = nlohmann::json;
 
 extern "C" {
 
@@ -19,6 +23,8 @@ extern "C" {
 
 void moon_init_languages(char *executable, char *gamedir) {
     Moon_InitLanguages(executable, gamedir);
+    // Moon_InitModEngine();
+    // exit(0);
 }
 
 u8 * moon_language_get_key( char* key ){

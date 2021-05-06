@@ -37,8 +37,6 @@ BETTERCAMERA ?= 0
 NODRAWINGDISTANCE ?= 0
 # Disable texture fixes by default (helps with them purists)
 TEXTURE_FIX ?= 0
-# Enable extended options menu by default
-EXT_OPTIONS_MENU ?= 1
 # Enable Discord Rich Presence
 DISCORDRPC ?= 0
 # Various workarounds for weird toolchains
@@ -158,7 +156,7 @@ ifeq ($(TARGET_RPI),1) # Define RPi to change SDL2 title & GLES2 hints
 endif
 
 ifeq ($(TARGET_SWITCH),1)
-      VERSION_CFLAGS += -DUSE_GLES -DTARGET_SWITCH
+      VERSION_CFLAGS += -DUSE_GLES -DTARGET_SWITCH -DLUA_USE_LINUX
 endif
 ifeq ($(OSX_BUILD),1) # Modify GFX & SDL2 for OSX GL
   VERSION_CFLAGS += -DOSX_BUILD
@@ -263,20 +261,38 @@ LEVEL_DIRS := $(patsubst levels/%,%,$(dir $(wildcard levels/*/header.h)))
 # Hi, I'm a PC
 SRC_DIRS := src src/engine src/game src/audio src/menu src/buffers actors levels bin data assets src/text src/text/libs src/pc src/pc/gfx src/pc/audio src/pc/controller src/pc/fs src/pc/fs/packtypes src/nx
 
-# Moon64 SRC [Main] Directories
+################################
+#      Moon64 Source Code      #
+################################
+
+# Moon64 SRC [Main]
 SRC_DIRS += src/moon src/moon/texts src/moon/utils src/moon/network
 
-# Moon64 SRC [View] Directories
+# Moon64 SRC [View]
 SRC_DIRS += src/moon/ui src/moon/ui/interfaces src/moon/ui/screens src/moon/ui/screens/options src/moon/ui/screens/options/categories src/moon/ui/utils src/moon/ui/widgets
 
-# Moon64 SRC [IO] Directories
+# Moon64 SRC [IO]
 SRC_DIRS += src/moon/io src/moon/io/modules
 
-# Moon64 SRC [Entity] Directories
+# Moon64 SRC [Entity]
 SRC_DIRS += src/moon/entity src/moon/entity/interfaces
 
-# RapidJSON Library
+# Moon64 SRC [Mod-Engine]
+SRC_DIRS += src/moon/mod-engine src/moon/mod-engine/modules
+
+# Moon64 LIB [RapidJSON]
 SRC_DIRS += src/moon/libs/rapidjson src/moon/libs/rapidjson/error src/moon/libs/rapidjson/internal src/moon/libs/rapidjson/msinttypes
+
+# Moon64 LIB [Lua]
+SRC_DIRS += src/moon/libs/lua
+
+# Moon64 LIB [Miniz]
+SRC_DIRS += src/moon/libs/miniz
+
+# Moon64 LIB [nlohmann json]
+SRC_DIRS += src/moon/libs/nlohmann
+
+################################
 
 ifeq ($(DISCORDRPC),1)
   ifneq ($(TARGET_SWITCH)$(TARGET_WEB)$(TARGET_RPI),000)
@@ -554,7 +570,6 @@ endif
 ifeq ($(BETTERCAMERA),1)
   CC_CHECK += -DBETTERCAMERA
   CFLAGS += -DBETTERCAMERA
-  EXT_OPTIONS_MENU := 1
 endif
 
 # Check for no drawing distance option
@@ -573,12 +588,6 @@ endif
 ifeq ($(TEXTURE_FIX),1)
   CC_CHECK += -DTEXTURE_FIX
   CFLAGS += -DTEXTURE_FIX
-endif
-
-# Check for extended options menu option
-ifeq ($(EXT_OPTIONS_MENU),1)
-  CC_CHECK += -DEXT_OPTIONS_MENU
-  CFLAGS += -DEXT_OPTIONS_MENU
 endif
 
 # Check for no bzero/bcopy workaround option
