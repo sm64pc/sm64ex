@@ -78,4 +78,28 @@ void moon_update_window(void* window){
     if(tmp != NULL) tmp->window = window;
 }
 
+void moon_mod_engine_preinit(){
+    Moon_PreInitModEngine();
+}
+
+void moon_mod_engine_init(){
+    Moon_InitModEngine();
+}
+
+void moon_engine_save_texture(struct TextureData* data, char* tex){
+    Moon_SaveTexture(data, string(tex));
+}
+
+struct TextureData* moon_engine_get_texture(char* tex){
+    return Moon_GetTexture(string(tex));
+}
+
+struct TextureData* moon_engine_init_texture(){
+    return new TextureData();
+}
+
+void moon_load_base_texture(char* data, long size, char* texture){
+    Moon_LoadBaseTexture(data, size, string(texture));
+}
+
 }

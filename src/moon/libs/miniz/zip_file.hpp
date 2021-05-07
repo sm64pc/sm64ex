@@ -32,6 +32,7 @@
 #include <cstring>
 #include <time.h>
 #include <vector>
+#include "moon/mod-engine/interfaces/file-entry.h"
 
 /* miniz.c v1.15 - public domain deflate/inflate, zlib-subset, ZIP reading/writing/appending, PNG writing
    See "unlicense" statement at the end of this file.
@@ -5454,6 +5455,21 @@ class zip_file
     std::string extracted(data, data + size);
     mz_free(data);
     return extracted;
+  }
+
+  void read_texture(const zip_info &info, TextureFileEntry** entry) {
+    std::size_t size;
+    char *data = static_cast<char *>(mz_zip_reader_extract_file_to_heap(archive_.get(), info.filename.c_str(), &size, 0));
+    if(data == nullptr)
+    {
+      throw std::runtime_error("file couldn't be read");
+    }
+    (*entry)->data = data;
+    (*entry)->size = size;
+  }
+
+  void read_texture(const std::string &name, TextureFileEntry** entry){
+    read_texture(getinfo(name), entry);
   }
 
   std::string read(const std::string &name)

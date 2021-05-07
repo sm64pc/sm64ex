@@ -192,7 +192,6 @@ void main_func(char *argv[]) {
     const char *userpath = gCLIOpts.SavePath[0] ? gCLIOpts.SavePath : sys_user_path();
     fs_init(sys_ropaths, gamedir, userpath);
     configfile_load(configfile_name());
-
     moon_init_languages(argv[0], gamedir);
 
     if (gCLIOpts.FullScreen == 1)
@@ -251,12 +250,11 @@ void main_func(char *argv[]) {
     thread5_game_loop(NULL);
     inited = true;
 
-    // precache data if needed
-    if (configPrecacheRes) {
-        fprintf(stdout, "precaching data\n");
-        fflush(stdout);
-        gfx_precache_textures();
-    }
+    fprintf(stdout, "precaching data\n");
+    fflush(stdout);
+    gfx_precache_textures();
+    moon_mod_engine_preinit();
+    moon_mod_engine_init();
 
 #ifdef DISCORDRPC
     discord_init();
