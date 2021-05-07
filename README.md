@@ -11,8 +11,9 @@ Please do not report issues that don't provide new information. Remember to chec
 Performance is the first thing that will be worked on and it has plenty of room for optimization at the moment. If you cannot reach the target framerate, it's recommended to lower the resolution with the internal scaler, as it has the biggest impact in performance out of all the options.
 
 ## Requirements
-* Windows 10 (due to RT64 dependency)
-* GPU with DXR support (make sure your drivers are up to date!)
+* Windows 10 (2004 or newer)
+* [Microsoft Visual C++ Redistributable for Visual Studio 2019](https://aka.ms/vs/16/release/vc_redist.x64.exe)
+* GPU with DXR support (NVIDIA Drivers version 465 or newer for OptiX denoiser support)
 
 ## Features
 * Fully path-traced renderer.
