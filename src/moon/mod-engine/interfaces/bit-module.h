@@ -21,6 +21,7 @@ public:
     std::map<std::string, TextureFileEntry*> textures;
     // GFXTextureCache* textureCache;
     bool readOnly;
+    bool enabled;
 };
 
 #endif

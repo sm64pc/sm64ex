@@ -1,6 +1,6 @@
+#include "engine.h"
 #include "moon/mod-engine/interfaces/mod-module.h"
 #include "moon/mod-engine/modules/test-module.h"
-#include "moon/mod-engine/interfaces/bit-module.h"
 #include "interfaces/file-entry.h"
 
 #include "moon/wrapper.h"
@@ -14,7 +14,6 @@ using json = nlohmann::json;
 #include <limits.h>
 #include <stdlib.h>
 #include <dirent.h>
-#include <vector>
 #include <map>
 
 using namespace std;
@@ -45,7 +44,6 @@ void Moon_LoadDefaultAddon(){
     Moon_LoadAddonTextures(bit);
 }
 
-
 void Moon_LoadAddon(string path){
     miniz_cpp::zip_file file(path);
 
@@ -66,6 +64,15 @@ void Moon_LoadAddon(string path){
 
             if(file.has_file(bit->main)){
                 std::cout << file.read(bit->main) << std::endl;
+            }
+
+            if(file.has_file(bit->icon)){
+                vector<string> allowedTextures = {"png", "jpg", "jpeg"};
+                if(std::count(allowedTextures.begin(), allowedTextures.end(), string(get_filename_ext(bit->icon.c_str())))){
+                    TextureFileEntry *entry = new TextureFileEntry();
+                    file.read_texture(bit->icon, &entry);
+                    bit->textures.insert(pair<string, TextureFileEntry*>("mod-icons://"+bit->name, entry));
+                }
             }
 
             if(file.has_file("assets/")){
@@ -159,10 +166,42 @@ TextureData* Moon_GetTexture(string texture){
     return textureMap.find(texture) != textureMap.end() ? textureMap.find(texture)->second : nullptr;
 }
 
+void Moon_TextFlyLoad(int id){
+    switch(id){
+        case 0:
+            Moon_LoadDefaultAddon();
+            break;
+        case 1:
+            Moon_LoadDefaultAddon();
+            Moon_LoadAddon("/home/alex/Downloads/packs/converted/mc.bit");
+
+            Moon_LoadAddon("/home/alex/Downloads/packs/converted/beta-hud.bit");
+            Moon_LoadAddon("/home/alex/Downloads/packs/converted/moon64-demo.bit");
+            break;
+        case 2:
+            Moon_LoadDefaultAddon();
+            Moon_LoadAddon("/home/alex/Downloads/packs/converted/owo.bit");
+
+            Moon_LoadAddon("/home/alex/Downloads/packs/converted/beta-hud.bit");
+            Moon_LoadAddon("/home/alex/Downloads/packs/converted/moon64-demo.bit");
+            break;
+        case 3:
+            Moon_LoadDefaultAddon();
+            Moon_LoadAddon("/home/alex/Downloads/packs/converted/r96-hd.bit");
+
+            Moon_LoadAddon("/home/alex/Downloads/packs/converted/beta-hud.bit");
+            Moon_LoadAddon("/home/alex/Downloads/packs/converted/moon64-demo.bit");
+            break;
+    }
+}
+
 void Moon_PreInitModEngine(){
     Moon_LoadDefaultAddon();
-    // Moon_LoadAddon("/home/alex/disks/uwu/Projects/UnderVolt/example.bit");
     Moon_LoadAddon("/home/alex/Downloads/packs/converted/mc.bit");
+    Moon_LoadAddon("/home/alex/Downloads/packs/converted/owo.bit");
+    Moon_LoadAddon("/home/alex/Downloads/packs/converted/r96-hd.bit");
+    Moon_LoadAddon("/home/alex/Downloads/packs/converted/beta-hud.bit");
+    Moon_LoadAddon("/home/alex/Downloads/packs/converted/moon64-demo.bit");
 }
 
 void Moon_InitModEngine(){
