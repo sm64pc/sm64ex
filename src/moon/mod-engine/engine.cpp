@@ -80,7 +80,7 @@ void Moon_LoadAddon(string path){
                             string rawname = texName.substr(0, texName.find_last_of("."));
                             TextureFileEntry *entry = new TextureFileEntry();
                             file.read_texture(name, &entry);
-                            bit->textures.insert(pair<string, TextureFileEntry*>(texName, entry));
+                            bit->textures.insert(pair<string, TextureFileEntry*>(rawname, entry));
                         }
                     }
                     if(!name.rfind(textsPath, 0)){
@@ -134,7 +134,7 @@ void Moon_LoadAddonTextures(BitModule* module){
         texIt = textureMap.find(entry->first);
 
         if(texIt != textureMap.end()){
-            cout << "Erasing: " << entry->first << endl;
+            // cout << "Reloading: " << entry->first << endl;
             textureMap.erase(texIt);
         }
 
@@ -146,13 +146,12 @@ void Moon_LoadAddonTextures(BitModule* module){
 }
 
 void Moon_SaveTexture(TextureData* data, string tex){
-    cout << "Saving: " << tex << endl;
     textureMap.insert(pair<string, TextureData*>(tex, data));
 }
 
 void Moon_LoadBaseTexture(char* data, long size, string texture){
     if(baseGameTextures.find(texture) == baseGameTextures.end()){
-        baseGameTextures.insert(pair<string, TextureFileEntry*>(texture.substr(4), new TextureFileEntry({.size = size, .data = data})));
+        baseGameTextures.insert(pair<string, TextureFileEntry*>(texture, new TextureFileEntry({.size = size, .data = data})));
     }
 }
 
@@ -161,9 +160,9 @@ TextureData* Moon_GetTexture(string texture){
 }
 
 void Moon_PreInitModEngine(){
-    // Moon_LoadDefaultAddon();
-    Moon_LoadAddon("/home/alex/disks/uwu/Projects/UnderVolt/example.bit");
-    Moon_LoadAddon("/home/alex/disks/uwu/Projects/UnderVolt/owo.bit");
+    Moon_LoadDefaultAddon();
+    // Moon_LoadAddon("/home/alex/disks/uwu/Projects/UnderVolt/example.bit");
+    Moon_LoadAddon("/home/alex/Downloads/packs/converted/mc.bit");
 }
 
 void Moon_InitModEngine(){

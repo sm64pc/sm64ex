@@ -282,12 +282,26 @@ static bool gfx_texture_cache_lookup(int tile, struct TextureData **n, const uin
     return false;
 }
 
-static inline void preload_base_texture(const char *fullpath) {
+static bool preload_base_texture(void* user, const char *fullpath) {
     int w, h;
     u64 imgsize = 0;
 
     u8 *imgdata = fs_load_file(fullpath, &imgsize);
-    if (imgdata) moon_load_base_texture(imgdata, imgsize, fullpath);
+    if (imgdata) {
+        char texname[SYS_MAX_PATH];
+        strncpy(texname, fullpath, sizeof(texname));
+        texname[sizeof(texname)-1] = 0;
+        char *dot = strrchr(texname, '.');
+        if (dot) *dot = 0;
+
+        char *actualname = texname;
+        if (!strncmp(FS_TEXTUREDIR "/", actualname, 4)) actualname += 4;
+        actualname = sys_strdup(actualname);
+        assert(actualname);
+
+        moon_load_base_texture(imgdata, imgsize, actualname);
+    }
+    return true;
 }
 
 static inline void load_texture(const char *fullpath) {
@@ -365,48 +379,16 @@ static bool texname_to_texformat(const char *name, u8 *fmt, u8 *siz) {
     return false;
 }
 
-// calls import_texture() on every texture in the res folder
-// we can get the format and size from the texture files
-// and then cache them using gfx_texture_cache_lookup
-static bool preload_texture(void *user, const char *path) {
-    // strip off the extension
-    char texname[SYS_MAX_PATH];
-    strncpy(texname, path, sizeof(texname));
-    texname[sizeof(texname)-1] = 0;
-    char *dot = strrchr(texname, '.');
-    if (dot) *dot = 0;
-
-    // get the format and size from filename
-    u8 fmt, siz;
-    if (!texname_to_texformat(texname, &fmt, &siz)) {
-        fprintf(stderr, "unknown texture format: `%s`, skipping\n", texname);
-        return true; // just skip it, might be a stray skybox or something
-    }
-
-    char *actualname = texname;
-    // strip off the prefix // TODO: make a fs_ function for this shit
-    if (!strncmp(FS_TEXTUREDIR "/", actualname, 4)) actualname += 4;
-    // this will be stored in the hashtable, so make a copy
-    actualname = sys_strdup(actualname);
-    assert(actualname);
-
-    preload_base_texture(path);
-
-    return true;
-}
-
 void overload_memory_texture(void* data, long size, const char *path) {
     // strip off the extension
     char texname[SYS_MAX_PATH];
     strncpy(texname, path, sizeof(texname));
     texname[sizeof(texname)-1] = 0;
-    char *dot = strrchr(texname, '.');
-    if (dot) *dot = 0;
 
     // get the format and size from filename
     u8 fmt, siz;
     if (!texname_to_texformat(texname, &fmt, &siz)) {
-        fprintf(stderr, "unknown texture format: `%s`, skipping\n", texname);
+        // fprintf(stderr, "unknown texture format: `%s`, skipping\n", texname);
         return true; // just skip it, might be a stray skybox or something
     }
 
@@ -1540,7 +1522,7 @@ void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi, co
 
 void gfx_precache_textures(void) {
     // preload all textures
-    fs_walk(FS_TEXTUREDIR, preload_texture, NULL, true);
+    fs_walk(FS_TEXTUREDIR, preload_base_texture, NULL, true);
 }
 
 struct GfxRenderingAPI *gfx_get_current_rendering_api(void) {
