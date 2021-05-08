@@ -20,7 +20,7 @@ void moon_modules_update();
 void moon_update_window(void* window);
 
 void moon_mod_engine_preinit();
-void moon_mod_engine_init();
+void moon_mod_engine_init(char *executable, char *gamedir);
 
 void moon_engine_save_texture(struct TextureData* data, char* tex);
 struct TextureData* moon_engine_get_texture(char* tex);

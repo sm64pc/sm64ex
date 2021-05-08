@@ -23,14 +23,14 @@ map<string, TextureData*> textureMap;
 
 map<string, TextureFileEntry*> baseGameTextures;
 
+map<string, TextureFileEntry*> textureCache;
+
 extern "C" {
 #include "moon/libs/lua/lualib.h"
 #include "moon/libs/lua/lauxlib.h"
 #include "moon/libs/lua/lua.h"
 #include "text/libs/io_utils.h"
 }
-
-void Moon_LoadAddonTextures(BitModule* module);
 
 void Moon_LoadDefaultAddon(){
     BitModule* bit = new BitModule();
@@ -41,7 +41,6 @@ void Moon_LoadDefaultAddon(){
     bit->readOnly    = true;
     bit->textures    = baseGameTextures;
     addons.push_back(bit);
-    Moon_LoadAddonTextures(bit);
 }
 
 void Moon_LoadAddon(string path){
@@ -98,15 +97,43 @@ void Moon_LoadAddon(string path){
                 }
             }
 
-            if(!bit->textures.empty())
-                Moon_LoadAddonTextures(bit);
-
             addons.push_back(bit);
         }
     } else {
         std::cout << "Failed to load addon: [" << file.get_filename() << "]" << std::endl;
         std::cout << "Missing properties.json" << std::endl;
     }
+}
+
+void Moon_BakeTextureCache(){
+    textureMap.clear();
+
+    for(auto &addon : addons){
+        // BitModule *addon = addons[order[i]];
+
+        for (map<string, TextureFileEntry*>::iterator entry = addon->textures.begin(); entry != addon->textures.end(); ++entry) {
+            map<string, TextureFileEntry*>::iterator texIt = textureCache.find(entry->first);
+            if(texIt != textureCache.end()) textureCache.erase(texIt);
+
+            TextureFileEntry* texEntry = entry->second;
+            if(texEntry->data != nullptr)
+                textureCache.insert(pair<string, TextureFileEntry*>(entry->first, texEntry));
+        }
+    }
+
+    //for(auto &addon: addons){
+    //}
+}
+
+void Moon_UploadCacheToGPU(){
+    for (map<string, TextureFileEntry*>::iterator entry = textureCache.begin(); entry != textureCache.end(); ++entry) {
+        TextureFileEntry* texEntry = entry->second;
+        if(texEntry->data != nullptr) {
+            overload_memory_texture(texEntry->data, texEntry->size, entry->first.c_str());
+            // free(entry->second);
+        }
+    }
+    textureCache.clear();
 }
 
 void Moon_ScanAddonsDirectory( char *exePath, char *gamedir ){
@@ -128,27 +155,6 @@ void Moon_ScanAddonsDirectory( char *exePath, char *gamedir ){
             }
         }
         closedir(dir);
-    }
-}
-
-void Moon_LoadAddonTextures(BitModule* module){
-    if(module->textures.empty()) return;
-    cout << "Loading from " << module->name << " " << to_string(module->textures.size()) << " textures " << endl;
-
-    for (map<string, TextureFileEntry*>::iterator entry = module->textures.begin(); entry != module->textures.end(); ++entry) {
-
-        map<string, TextureData*>::iterator texIt;
-        texIt = textureMap.find(entry->first);
-
-        if(texIt != textureMap.end()){
-            // cout << "Reloading: " << entry->first << endl;
-            textureMap.erase(texIt);
-        }
-
-        TextureFileEntry* texEntry = entry->second;
-        if(texEntry->data != nullptr) {
-            overload_memory_texture(texEntry->data, texEntry->size, entry->first.c_str());
-        }
     }
 }
 
@@ -197,13 +203,14 @@ void Moon_TextFlyLoad(int id){
 
 void Moon_PreInitModEngine(){
     Moon_LoadDefaultAddon();
-    Moon_LoadAddon("/home/alex/Downloads/packs/converted/mc.bit");
-    Moon_LoadAddon("/home/alex/Downloads/packs/converted/owo.bit");
-    Moon_LoadAddon("/home/alex/Downloads/packs/converted/r96-hd.bit");
-    Moon_LoadAddon("/home/alex/Downloads/packs/converted/beta-hud.bit");
-    Moon_LoadAddon("/home/alex/Downloads/packs/converted/moon64-demo.bit");
 }
 
-void Moon_InitModEngine(){
+void Moon_TestRebuildOrder(vector<int> order){
 
+}
+
+void Moon_InitModEngine( char *exePath, char *gamedir ){
+    Moon_ScanAddonsDirectory(exePath, gamedir);
+    Moon_BakeTextureCache();
+    Moon_UploadCacheToGPU();
 }

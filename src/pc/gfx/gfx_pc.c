@@ -329,18 +329,14 @@ static inline void load_memory_texture(void *imgdata, long size) {
     int w, h;
 
     if (imgdata) {
-        // TODO: implement stbi_callbacks or some shit instead of loading the whole texture
         u8 *data = stbi_load_from_memory(imgdata, size, &w, &h, NULL, 4);
-        // free(imgdata);
         if (data) {
             gfx_rapi->upload_texture(data, w, h);
-            stbi_image_free(data); // don't need this anymore
+            // stbi_image_free(data); // don't need this anymore
             return;
         }
     }
 
-    // fprintf(stderr, "could not load memory texture\n");
-    // replace with missing texture
     gfx_rapi->upload_texture(missing_texture, MISSING_W, MISSING_H);
 }
 
@@ -417,7 +413,7 @@ static void import_texture(int tile) {
         return;
     }
 
-// the "texture data" is actually a C string with the path to our texture in it
+    // the "texture data" is actually a C string with the path to our texture in it
     // load it from an external image in our data path
     char texname[SYS_MAX_PATH];
     snprintf(texname, sizeof(texname), FS_TEXTUREDIR "/%s.png", (const char*)rdp.loaded_texture[tile].addr);

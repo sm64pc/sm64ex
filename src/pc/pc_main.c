@@ -254,7 +254,7 @@ void main_func(char *argv[]) {
     fflush(stdout);
     gfx_precache_textures();
     moon_mod_engine_preinit();
-    moon_mod_engine_init();
+    moon_mod_engine_init(argv[0], gamedir);
 
 #ifdef DISCORDRPC
     discord_init();

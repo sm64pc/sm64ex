@@ -82,8 +82,8 @@ void moon_mod_engine_preinit(){
     Moon_PreInitModEngine();
 }
 
-void moon_mod_engine_init(){
-    Moon_InitModEngine();
+void moon_mod_engine_init(char *executable, char *gamedir){
+    Moon_InitModEngine(executable, gamedir);
 }
 
 void moon_engine_save_texture(struct TextureData* data, char* tex){
