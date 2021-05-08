@@ -13,7 +13,8 @@ Performance is the first thing that will be worked on and it has plenty of room 
 ## Requirements
 * Windows 10 (2004 or newer)
 * [Microsoft Visual C++ Redistributable for Visual Studio 2019](https://aka.ms/vs/16/release/vc_redist.x64.exe)
-* GPU with DXR support (NVIDIA Drivers version 465 or newer for OptiX denoiser support)
+* GPU with DXR support (NVIDIA Drivers version 465 or newer **required** for OptiX denoiser support)
+  - Unsure if you can run the mod? [Download and run the RT64 sample instead!](https://github.com/DarioSamo/RT64/releases/download/test-sample-v1/rt64sample-v1.zip)
 
 ## Features
 * Fully path-traced renderer.
