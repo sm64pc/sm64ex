@@ -814,9 +814,9 @@
                 "ignoreNormalFactor": 1.0,
                 "lightGroupMaskBits": 0,
                 "selfLight": [
-                    1.0,
-                    1.0,
-                    1.0
+                    0.699999988079071,
+                    0.699999988079071,
+                    0.699999988079071
                 ]
             },
             "name": "levels/totwc/3.ia16"

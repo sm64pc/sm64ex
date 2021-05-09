@@ -252,6 +252,7 @@ typedef void (*SetMaterialInspectorPtr)(RT64_INSPECTOR* inspectorPtr, RT64_MATER
 typedef void(*SetLightsInspectorPtr)(RT64_INSPECTOR* inspectorPtr, RT64_LIGHT* lights, int *lightCount, int maxLightCount);
 typedef void(*PrintToInspectorPtr)(RT64_INSPECTOR* inspectorPtr, const char* message);
 typedef void(*DestroyInspectorPtr)(RT64_INSPECTOR* inspectorPtr);
+typedef const char *(*GetLastErrorPtr)();
 
 // Stores all the function pointers used in the RT64 library.
 typedef struct {
@@ -281,6 +282,7 @@ typedef struct {
 	SetMaterialInspectorPtr SetMaterialInspector;
 	SetLightsInspectorPtr SetLightsInspector;
 	DestroyInspectorPtr DestroyInspector;
+	GetLastErrorPtr GetLastError;
 } RT64_LIBRARY;
 
 
@@ -318,6 +320,7 @@ inline RT64_LIBRARY RT64_LoadLibrary() {
 		lib.SetLightsInspector = (SetLightsInspectorPtr)(GetProcAddress(lib.handle, "RT64_SetLightsInspector"));
 		lib.PrintToInspector = (PrintToInspectorPtr)(GetProcAddress(lib.handle, "RT64_PrintToInspector"));
 		lib.DestroyInspector = (DestroyInspectorPtr)(GetProcAddress(lib.handle, "RT64_DestroyInspector"));
+		lib.GetLastError = (GetLastErrorPtr)(GetProcAddress(lib.handle, "RT64_GetLastError"));
 	}
 	else {
 		char errorMessage[256];

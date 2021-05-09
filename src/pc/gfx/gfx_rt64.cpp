@@ -103,10 +103,10 @@ struct {
 	
 	// Library data.
 	RT64_LIBRARY lib;
-	RT64_DEVICE *device;
-	RT64_INSPECTOR *inspector;
-	RT64_SCENE *scene;
-	RT64_VIEW *view;
+	RT64_DEVICE *device = nullptr;
+	RT64_INSPECTOR *inspector = nullptr;
+	RT64_SCENE *scene = nullptr;
+	RT64_VIEW *view = nullptr;
 	RT64_MATERIAL defaultMaterial;
 	RT64_TEXTURE *blankTexture;
 	RT64_INSTANCE *instances[MAX_INSTANCES];
@@ -716,60 +716,65 @@ LRESULT CALLBACK gfx_rt64_wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 		onkeyup(wParam, lParam);
 		break;
 	case WM_PAINT: {
-    	if (configWindow.settings_changed) {
-			gfx_rt64_apply_config();
-			configWindow.settings_changed = false;
-		}
-
-		LARGE_INTEGER ElapsedMicroseconds;
-		
-		// Just draw the current frame while paused.
-		if (RT64.pauseMode) {
-			RT64.lib.DrawDevice(RT64.device, RT64.turboMode ? 0 : 1);
-		}
-		// Run one game iteration.
-		else if (RT64.run_one_game_iter != nullptr) {
-			LARGE_INTEGER StartTime, EndTime;
-			QueryPerformanceCounter(&StartTime);
-    		RT64.run_one_game_iter();
-			QueryPerformanceCounter(&EndTime);
-			elapsed_time(StartTime, EndTime, RT64.Frequency, ElapsedMicroseconds);
-			if (RT64.inspector != nullptr) {
-				char message[64];
-				sprintf(message, "FRAMETIME: %.3f ms\n", ElapsedMicroseconds.QuadPart / 1000.0);
-				RT64.lib.PrintToInspector(RT64.inspector, message);
-			}
-		}
-
-		if (!RT64.turboMode) {
-			// Try to maintain the fixed framerate.
-			const int FixedFramerate = 30;
-			const int FramerateMicroseconds = 1000000 / FixedFramerate;
-			int cyclesWaited = 0;
-
-			// Sleep if possible to avoid busy waiting too much.
-			QueryPerformanceCounter(&RT64.EndingTime);
-			elapsed_time(RT64.StartingTime, RT64.EndingTime, RT64.Frequency, ElapsedMicroseconds);
-			int SleepMs = ((FramerateMicroseconds - ElapsedMicroseconds.QuadPart) - 500) / 1000;
-			if (SleepMs > 0) {
-				Sleep(SleepMs);
-				cyclesWaited++;
+		if (RT64.view != nullptr) {
+			if (configWindow.settings_changed) {
+				gfx_rt64_apply_config();
+				configWindow.settings_changed = false;
 			}
 
-			// Busy wait to reach the desired framerate.
-			do {
+			LARGE_INTEGER ElapsedMicroseconds;
+			
+			// Just draw the current frame while paused.
+			if (RT64.pauseMode) {
+				RT64.lib.DrawDevice(RT64.device, RT64.turboMode ? 0 : 1);
+			}
+			// Run one game iteration.
+			else if (RT64.run_one_game_iter != nullptr) {
+				LARGE_INTEGER StartTime, EndTime;
+				QueryPerformanceCounter(&StartTime);
+				RT64.run_one_game_iter();
+				QueryPerformanceCounter(&EndTime);
+				elapsed_time(StartTime, EndTime, RT64.Frequency, ElapsedMicroseconds);
+				if (RT64.inspector != nullptr) {
+					char message[64];
+					sprintf(message, "FRAMETIME: %.3f ms\n", ElapsedMicroseconds.QuadPart / 1000.0);
+					RT64.lib.PrintToInspector(RT64.inspector, message);
+				}
+			}
+
+			if (!RT64.turboMode) {
+				// Try to maintain the fixed framerate.
+				const int FixedFramerate = 30;
+				const int FramerateMicroseconds = 1000000 / FixedFramerate;
+				int cyclesWaited = 0;
+
+				// Sleep if possible to avoid busy waiting too much.
 				QueryPerformanceCounter(&RT64.EndingTime);
 				elapsed_time(RT64.StartingTime, RT64.EndingTime, RT64.Frequency, ElapsedMicroseconds);
-				cyclesWaited++;
-			} while (ElapsedMicroseconds.QuadPart < FramerateMicroseconds);
+				int SleepMs = ((FramerateMicroseconds - ElapsedMicroseconds.QuadPart) - 500) / 1000;
+				if (SleepMs > 0) {
+					Sleep(SleepMs);
+					cyclesWaited++;
+				}
 
-			RT64.StartingTime = RT64.EndingTime;
+				// Busy wait to reach the desired framerate.
+				do {
+					QueryPerformanceCounter(&RT64.EndingTime);
+					elapsed_time(RT64.StartingTime, RT64.EndingTime, RT64.Frequency, ElapsedMicroseconds);
+					cyclesWaited++;
+				} while (ElapsedMicroseconds.QuadPart < FramerateMicroseconds);
 
-			// Drop the next frame if we didn't wait any cycles.
-			RT64.dropNextFrame = (cyclesWaited == 1);
+				RT64.StartingTime = RT64.EndingTime;
+
+				// Drop the next frame if we didn't wait any cycles.
+				RT64.dropNextFrame = (cyclesWaited == 1);
+			}
+
+			return 0;
 		}
-
-		break;
+		else {
+			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
 	}
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
@@ -778,17 +783,16 @@ LRESULT CALLBACK gfx_rt64_wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 	return 0;
 }
 
-static void gfx_rt64_fatal(const char *window_title, const char *error_message) {
-	fprintf(stderr, "%s\n", error_message);
+static void gfx_rt64_error_message(const char *window_title, const char *error_message) {
 	MessageBox(NULL, error_message, window_title, MB_OK | MB_ICONEXCLAMATION);
-	abort();
 }
 
 static void gfx_rt64_wapi_init(const char *window_title) {
 	// Setup library.
 	RT64.lib = RT64_LoadLibrary();
 	if (RT64.lib.handle == 0) {
-		gfx_rt64_fatal(window_title, "Failed to load library. Please make sure rt64.dll and dxil.dll are placed next to the game's executable and are up to date.");
+		gfx_rt64_error_message(window_title, "Failed to load library. Please make sure rt64.dll and dxil.dll are placed next to the game's executable and are up to date.");
+		abort();
 	}
 
 	// Register window class.
@@ -815,7 +819,14 @@ static void gfx_rt64_wapi_init(const char *window_title) {
 	// Setup device.
 	RT64.device = RT64.lib.CreateDevice(RT64.hwnd);
 	if (RT64.device == nullptr) {
-		gfx_rt64_fatal(window_title, "Failed to create device. Please make sure you have D3D12 and DXR compatible hardware.");
+		gfx_rt64_error_message(window_title, RT64.lib.GetLastError());
+		gfx_rt64_error_message(window_title, 
+			"Failed to initialize RT64.\n\n"
+			"Please make sure your GPU drivers are up to date and the Direct3D 12.1 feature level is supported.\n\n"
+			"Windows 10 version 2004 or newer is also required for this feature level to work properly.\n\n"
+			"If you're a mobile user, make sure that the high performance device is selected for this application on your system's settings.");
+		
+		abort();
 	}
 
 	// Setup inspector.
