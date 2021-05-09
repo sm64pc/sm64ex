@@ -6,9 +6,6 @@
 #include <stdbool.h>
 #include <assert.h>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
-
 #ifndef _LANGUAGE_C
 #define _LANGUAGE_C
 #endif
@@ -278,7 +275,7 @@ static bool gfx_texture_cache_lookup(int tile, struct TextureData **n, const uin
     node->fmt = fmt;
     node->siz = siz;
     moon_engine_save_texture(node, orig_addr);
-
+    if(n != NULL) *n = node;
     return false;
 }
 
@@ -302,27 +299,6 @@ static bool preload_base_texture(void* user, const char *fullpath) {
         moon_load_base_texture(imgdata, imgsize, actualname);
     }
     return true;
-}
-
-static inline void load_texture(const char *fullpath) {
-    int w, h;
-    u64 imgsize = 0;
-
-    u8 *imgdata = fs_load_file(fullpath, &imgsize);
-    if (imgdata) {
-        // TODO: implement stbi_callbacks or some shit instead of loading the whole texture
-        u8 *data = stbi_load_from_memory(imgdata, imgsize, &w, &h, NULL, 4);
-        free(imgdata);
-        if (data) {
-            gfx_rapi->upload_texture(data, w, h);
-            stbi_image_free(data); // don't need this anymore
-            return;
-        }
-    }
-
-    fprintf(stderr, "could not load texture: `%s`\n", fullpath);
-    // replace with missing texture
-    gfx_rapi->upload_texture(missing_texture, MISSING_W, MISSING_H);
 }
 
 static inline void load_memory_texture(void *imgdata, long size) {
@@ -417,7 +393,7 @@ static void import_texture(int tile) {
     // load it from an external image in our data path
     char texname[SYS_MAX_PATH];
     snprintf(texname, sizeof(texname), FS_TEXTUREDIR "/%s.png", (const char*)rdp.loaded_texture[tile].addr);
-    load_texture(texname);
+    moon_load_texture(tile, texname, gfx_rapi);
 }
 
 static void gfx_normalize_vector(float v[3]) {

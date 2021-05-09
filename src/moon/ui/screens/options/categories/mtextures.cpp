@@ -12,9 +12,7 @@ extern "C" {
 #include "pc/configfile.h"
 }
 
-std::vector<int> order = {
-    0, 2, 1
-};
+std::vector<int> order = {1, 0, 2, 3};
 
 MWValue *tmpButton;
 

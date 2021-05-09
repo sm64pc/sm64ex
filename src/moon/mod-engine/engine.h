@@ -21,5 +21,6 @@ void Moon_LoadBaseTexture(char* data, long size, std::string texture);
 // TESTS
 void Moon_TextFlyLoad(int id);
 void Moon_TestRebuildOrder(std::vector<int> order);
+void Moon_LoadTexture(int tile, const char *fullpath, struct GfxRenderingAPI *gfx_rapi);
 
 #endif

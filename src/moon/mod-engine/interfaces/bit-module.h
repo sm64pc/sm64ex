@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 
+class zip_file;
+
 extern "C" {
 #include "pc/gfx/gfx_pc.h"
 }
@@ -18,8 +20,8 @@ public:
     std::string website;
     std::string icon;
     std::string main;
+    std::string path;
     std::map<std::string, TextureFileEntry*> textures;
-    // GFXTextureCache* textureCache;
     bool readOnly;
     bool enabled;
 };

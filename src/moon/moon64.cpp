@@ -102,4 +102,8 @@ void moon_load_base_texture(char* data, long size, char* texture){
     Moon_LoadBaseTexture(data, size, string(texture));
 }
 
+void moon_load_texture(int tile, const char *fullpath, struct GfxRenderingAPI *gfx_rapi){
+    Moon_LoadTexture(tile, fullpath, gfx_rapi);
+}
+
 }

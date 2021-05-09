@@ -26,6 +26,7 @@ void moon_engine_save_texture(struct TextureData* data, char* tex);
 struct TextureData* moon_engine_get_texture(char* tex);
 struct TextureData* moon_engine_init_texture();
 void moon_load_base_texture(char* data, long size, char* texture);
+void moon_load_texture(int tile, const char *fullpath, struct GfxRenderingAPI *gfx_rapi);
 
 #endif
 #endif
