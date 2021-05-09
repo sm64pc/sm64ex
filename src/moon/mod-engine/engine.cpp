@@ -16,6 +16,7 @@ using json = nlohmann::json;
 #include <dirent.h>
 #include <map>
 #include <chrono>
+#include "missing.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
@@ -180,14 +181,7 @@ void Moon_LoadTexture(int tile, const char *fullpath, struct GfxRenderingAPI *gf
         cout << "Failed to load texture" << endl;
     }
 
-    int missingW = 2;
-    int missingH = 2;
-    vector<uint8_t> missingTexture = {
-        0x00, 0x00, 0xFF, 0xFF,
-        0xFF, 0xFF, 0x00, 0x00,
-    };
-
-    gfx_rapi->upload_texture(missingTexture.data(), missingW, missingH);
+    gfx_rapi->upload_texture(missing_image.pixel_data, missing_image.width, missing_image.height);
 }
 
 void Moon_ScanAddonsDirectory( char *exePath, char *gamedir ){
@@ -242,10 +236,10 @@ using namespace std::chrono;
 void Moon_InitModEngine( char *exePath, char *gamedir ){
 
     milliseconds start_ms = duration_cast< milliseconds >( system_clock::now().time_since_epoch() );
-    Moon_LoadAddon("/home/alex/Music/Moon64-Packs/converted/minecraft.bit");
-    Moon_LoadAddon("/home/alex/Music/Moon64-Packs/converted/beta-hud.bit");
-    Moon_LoadAddon("/home/alex/disks/uwu/Projects/UnderVolt/Moon64-Packs/converted/owo.bit");
-    Moon_BakeTextureCache({1, 0, 2, 3});
+    // Moon_LoadAddon("/home/alex/Music/Moon64-Packs/converted/beta-hud.bit");
+    // Moon_LoadAddon("/home/alex/disks/uwu/Projects/UnderVolt/Moon64-Packs/converted/owo.bit");
+    // Moon_LoadAddon("/home/alex/Music/Moon64-Packs/converted/minecraft.bit");
+    // Moon_BakeTextureCache({1, 0, 2, 3});
     milliseconds end_ms = duration_cast< milliseconds >( system_clock::now().time_since_epoch() );
 
     std::cout << "Finised loading in " << ((end_ms.count() - start_ms.count()) / 1000) << " seconds" << std::endl;

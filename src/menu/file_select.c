@@ -22,6 +22,7 @@
 #include "text/text-loader.h"
 #include <string.h>
 #include "moon/utils/moon-gfx.h"
+#include "gfx_dimensions.h"
 
 /**
  * @file file_select.c
@@ -1544,7 +1545,7 @@ void print_main_menu_strings(void) {
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
 
-    // Print "SELECT FILE" text        
+    // Print "SELECT FILE" text
     u8* txt = get_key_string("TEXT_SELECT_FILE");
     float x = moon_get_text_width(txt, 1.0, TRUE) / 2;
     print_hud_lut_string(HUD_LUT_GLOBAL, SCREEN_WIDTH / 2 - x, 35, txt);
@@ -1557,7 +1558,7 @@ void print_main_menu_strings(void) {
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
     // Print menu names
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
-    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);    
+    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
     //Change Copy X
 
     txt = get_key_string("TEXT_SCORE");
@@ -1571,7 +1572,7 @@ void print_main_menu_strings(void) {
     txt = get_key_string("TEXT_ERASE");
     x = moon_get_text_width(txt, 1.0, FALSE) / 2;
     moon_draw_text(ERASE_X - x, 39, txt, 1.0);
-    
+
     txt = textSoundModes[sSoundMode];
     x = moon_get_text_width(txt, 1.0, FALSE) / 2 + 0.5;
     moon_draw_text(SOUNDMODE_X1 - x, 39, txt, 1.0);
@@ -2047,13 +2048,13 @@ void print_score_file_course_coin_score(s8 fileIndex, s16 courseIndex, s16 x, s1
     unsigned char coinScoreText[20];
     unsigned char * fileNames[8] = {
         get_key_string("TEXT_4DASHES"),
-        get_key_string("TEXT_SCORE_MARIO_A"), 
-        get_key_string("TEXT_SCORE_MARIO_B"), 
-        get_key_string("TEXT_SCORE_MARIO_C"), 
+        get_key_string("TEXT_SCORE_MARIO_A"),
+        get_key_string("TEXT_SCORE_MARIO_B"),
+        get_key_string("TEXT_SCORE_MARIO_C"),
         get_key_string("TEXT_SCORE_MARIO_D")
     };
     u8 stars = save_file_get_star_flags(fileIndex, courseIndex);
-    
+
     // MYSCORE
     if (sScoreFileCoinScoreMode == 0) {
         // Print "[coin] x"
@@ -2224,6 +2225,17 @@ static void print_file_select_strings(void) {
     if (sMainMenuTimer < 1000) {
         sMainMenuTimer += 1;
     }
+
+    gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_begin);
+    u8 *txt = getTranslatedText("Moon64 - (x) loaded addons");
+    float scale = 0.5f;
+    gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, sTextBaseAlpha);
+    moon_draw_text(GFX_DIMENSIONS_FROM_LEFT_EDGE(2), 15 * scale, txt, scale);
+    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+    moon_draw_text(GFX_DIMENSIONS_FROM_LEFT_EDGE(2), 16 * scale, txt, scale);
+
+    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+    gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_end);
 }
 
 /**
@@ -2278,7 +2290,7 @@ s32 lvl_init_menu_values_and_cursor_pos(UNUSED s32 arg, UNUSED s32 unused) {
     sMainMenuTimer = 0;
     sEraseYesNoHoverState = MENU_ERASE_HOVER_NONE;
     sSoundMode = save_file_get_sound_mode();
-    
+
     return 0;
 }
 
