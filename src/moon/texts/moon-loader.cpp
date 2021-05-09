@@ -6,6 +6,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <dirent.h>
+#include <algorithm>
 
 extern "C" {
 #include "text/text-loader.h"
@@ -28,7 +29,6 @@ LanguageEntry *current;
 
 void Moon_LoadLanguage( string path ) {
 
-    LanguageEntry * language = new LanguageEntry();
     FILE* fp = fopen(path.c_str(), "r");
     char readBuffer[65536];
     FileReadStream is(fp, readBuffer, sizeof(readBuffer));
@@ -39,84 +39,118 @@ void Moon_LoadLanguage( string path ) {
 
     WValue manifest, dialogs, courses, secrets, options, strings;
 
-    manifest = raw[L"manifest"];
-    dialogs  = raw[L"dialogs"];
-    courses  = raw[L"courses"];
-    secrets  = raw[L"secrets"];
-    options  = raw[L"options"];
-    strings  = raw[L"strings"];
-
-    language->name = narrow(manifest[L"langName"].GetString());
-    language->logo = narrow(manifest[L"langLogo"].GetString());
-
-    for (WValue& dialog : dialogs.GetArray()) {
-        int linesPerBox = dialog[L"linesPerBox"].GetInt();
-        int leftOffset  = dialog[L"leftOffset"].GetInt();
-        int width       = dialog[L"width"].GetInt();
-        int id          = dialog[L"ID"].GetInt();
-
-        DialogEntry *entry = new DialogEntry();
-        entry->linesPerBox = linesPerBox;
-        entry->leftOffset  = leftOffset;
-        entry->width       = width;
-        entry->unused      = 1;
-
-        wstring base;
-
-        for (WValue& line : dialog[L"lines"].GetArray()){
-            base += line.GetString();
-            base += L"\n";
-        }
-
-        entry->str         = getTranslatedText(narrow(base).c_str());
-        language->dialogs.push_back(entry);
+    if(!raw.HasMember(L"manifest")) {
+        cout << "Failed to load language" << endl;
+        cout << "Missing manifest" << endl;
+        return;
     }
 
-    int course_name_table_size = courses.Size() + secrets.Size();
-    int courseId = 0;
-    int padding = 0;
+    manifest = raw[L"manifest"];
 
-    u8* tmpCourses[course_name_table_size];
+    bool isChild = manifest.HasMember(L"parent");
 
-    for (WValue& course : courses.GetArray()){
+    LanguageEntry * language;
 
-        if(courseId + 1 <= courses.Size() - 1) {
-            tmpCourses[courseId] = getTranslatedText(narrow(course[L"course"].GetString()).c_str());
+    if(!isChild){
+        language = new LanguageEntry();
+    } else {
+        isChild = false;
+        string parentName = narrow(manifest[L"langLogo"].GetString());
+        for(auto &lng : languages){
+            if(lng->name == parentName){
+                language = lng;
+                isChild = true;
+                break;
+            }
+        }
+    }
+
+    if(!isChild){
+        language->name = narrow(manifest[L"langName"].GetString());
+        language->logo = narrow(manifest[L"langLogo"].GetString());
+    }
+
+    if(raw.HasMember(L"dialogs")){
+        dialogs = raw[L"dialogs"];
+        for (WValue& dialog : dialogs.GetArray()) {
+            int linesPerBox = dialog[L"linesPerBox"].GetInt();
+            int leftOffset  = dialog[L"leftOffset"].GetInt();
+            int width       = dialog[L"width"].GetInt();
+            int id          = dialog[L"ID"].GetInt();
+
+            DialogEntry *entry = new DialogEntry();
+            entry->linesPerBox = linesPerBox;
+            entry->leftOffset  = leftOffset;
+            entry->width       = width;
+            entry->unused      = 1;
+
+            wstring base;
+
+            for (WValue& line : dialog[L"lines"].GetArray()){
+                base += line.GetString();
+                base += L"\n";
+            }
+
+            entry->str         = getTranslatedText(narrow(base).c_str());
+            language->dialogs.push_back(entry);
+        }
+    }
+
+    if(raw.HasMember(L"courses") && raw.HasMember(L"secrets")){
+        courses = raw[L"courses"];
+        secrets = raw[L"secrets"];
+        int course_name_table_size = courses.Size() + secrets.Size();
+        int courseId = 0;
+        int padding = 0;
+
+        u8* tmpCourses[course_name_table_size];
+
+        for (WValue& course : courses.GetArray()){
+
+            if(courseId + 1 <= courses.Size() - 1) {
+                tmpCourses[courseId] = getTranslatedText(narrow(course[L"course"].GetString()).c_str());
+                courseId++;
+            }
+
+            for (WValue& act : course[L"acts"].GetArray()){
+                language->acts.push_back(getTranslatedText(narrow(act.GetString()).c_str()));
+            }
+        }
+
+        for (WValue& secret : secrets.GetArray()){
+            if(courseId == SECRET_NULL) {
+                tmpCourses[courseId] = getTranslatedText(0);
+                padding++;
+            }
+
+            tmpCourses[courseId + padding] = getTranslatedText(narrow(secret.GetString()).c_str());
             courseId++;
         }
 
-        for (WValue& act : course[L"acts"].GetArray()){
-            language->acts.push_back(getTranslatedText(narrow(act.GetString()).c_str()));
+        language->courses.insert(language->courses.end(), &tmpCourses[0], &tmpCourses[course_name_table_size]);
+    }
+
+    if(raw.HasMember(L"options")){
+        options = raw[L"options"];
+        for (WValue::ConstMemberIterator option = options.MemberBegin(); option != options.MemberEnd(); ++option) {
+            language->strings.insert(pair<string, string>(
+                narrow(option->name.GetString()),
+                narrow(option->value.GetString())
+            ));
         }
     }
 
-    for (WValue& secret : secrets.GetArray()){
-        if(courseId == SECRET_NULL) {
-            tmpCourses[courseId] = getTranslatedText(0);
-            padding++;
+    if(raw.HasMember(L"secrets")){
+        strings = raw[L"strings"];
+        for (WValue::ConstMemberIterator item = strings.MemberBegin(); item != strings.MemberEnd(); ++item) {
+            language->strings.insert(pair<string, string>(
+                narrow(item->name.GetString()),
+                narrow(item->value.GetString())
+            ));
         }
-
-        tmpCourses[courseId + padding] = getTranslatedText(narrow(secret.GetString()).c_str());
-        courseId++;
     }
 
-    language->courses.insert(language->courses.end(), &tmpCourses[0], &tmpCourses[course_name_table_size]);
-
-    for (WValue::ConstMemberIterator option = options.MemberBegin(); option != options.MemberEnd(); ++option) {
-        language->strings.insert(pair<string, string>(
-            narrow(option->name.GetString()),
-            narrow(option->value.GetString())
-        ));
-    }
-
-    for (WValue::ConstMemberIterator item = strings.MemberBegin(); item != strings.MemberEnd(); ++item) {
-        language->strings.insert(pair<string, string>(
-            narrow(item->name.GetString()),
-            narrow(item->value.GetString())
-        ));
-    }
-
-    languages.push_back(language);
+    if(!isChild) languages.push_back(language);
     languagesAmount = languages.size();
 }
 

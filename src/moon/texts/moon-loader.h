@@ -27,7 +27,7 @@ inline std::string narrow (const std::wstring& str) {
 
 struct LanguageEntry {
     std::string name;
-    std::string logo;    
+    std::string logo;
     std::map<std::string, std::string> strings;
     std::vector<u8*> acts;
     std::vector<struct DialogEntry*> dialogs;
