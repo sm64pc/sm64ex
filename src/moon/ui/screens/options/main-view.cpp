@@ -2,7 +2,6 @@
 #include <iostream>
 #include "moon/ui/utils/moon-draw-utils.h"
 #include "moon/ui/moon-ui-manager.h"
-#include "moon/network/moon-consumer.h"
 #include "moon/texts/moon-loader.h"
 #include "moon/ui/widgets/mw-value.h"
 #include "moon/ui/screens/options/categories/mcategory.h"

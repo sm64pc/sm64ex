@@ -1,6 +1,5 @@
 #include "mvideo.h"
 
-#include "moon/network/moon-consumer.h"
 #include "moon/texts/moon-loader.h"
 #include "moon/ui/widgets/mw-value.h"
 

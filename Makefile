@@ -261,6 +261,10 @@ LEVEL_DIRS := $(patsubst levels/%,%,$(dir $(wildcard levels/*/header.h)))
 # Hi, I'm a PC
 SRC_DIRS := src src/engine src/game src/audio src/menu src/buffers actors levels bin data assets src/text src/text/libs src/pc src/pc/gfx src/pc/audio src/pc/controller src/pc/fs src/pc/fs/packtypes src/nx
 
+ifeq ($(WINDOWS_BUILD),1)
+  VERSION_CFLAGS += -DDISABLE_CURL_SUPPORT
+endif
+
 ################################
 #      Moon64 Source Code      #
 ################################

@@ -1,3 +1,4 @@
+#ifndef DISABLE_CURL_SUPPORT
 #ifndef MoonCURL
 #define MoonCURL
 
@@ -5,7 +6,7 @@
 #include <string>
 #include <vector>
 
-struct MoonRequest {    
+struct MoonRequest {
     std::string url;
     std::string body;
     std::vector<std::string> headers;
@@ -31,4 +32,5 @@ public:
     void Get(MoonRequest request, MoonResponse* response);
 };
 
+#endif
 #endif

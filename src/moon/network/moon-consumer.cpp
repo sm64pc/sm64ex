@@ -1,3 +1,4 @@
+#ifndef DISABLE_CURL_SUPPORT
 #include "moon-consumer.h"
 
 using namespace std;
@@ -8,7 +9,7 @@ void MoonConsumer::Init(){
 
     if(!this->curl) {
         this->curl = NULL;
-        curl_global_cleanup();   
+        curl_global_cleanup();
     }
 }
 
@@ -51,7 +52,7 @@ void MoonConsumer::Post(MoonRequest request, MoonResponse* response){
         curl_slist_append(chunk, request.headers[i].c_str());
     }
 
-    curl_easy_setopt(this->curl, CURLOPT_HTTPHEADER, chunk);       
+    curl_easy_setopt(this->curl, CURLOPT_HTTPHEADER, chunk);
     CURLcode res;
 
     try {
@@ -66,7 +67,7 @@ void MoonConsumer::Post(MoonRequest request, MoonResponse* response){
         response->code = 510;
         response->error = curl_easy_strerror(res);
     }
-    
+
     if(isFile) fclose(tmp);
     curl_easy_cleanup(this->curl);
 }
@@ -84,7 +85,7 @@ void MoonConsumer::Get(MoonRequest request, MoonResponse* response){
     curl_easy_setopt(this->curl, CURLOPT_URL,           request.url.c_str());
     curl_easy_setopt(this->curl, CURLOPT_NOBODY,        false);
     curl_easy_setopt(this->curl, CURLOPT_VERBOSE,       false);
-    
+
     if(isFile){
         tmp = fopen(request.file.c_str(), "wb");
         curl_easy_setopt(this->curl, CURLOPT_WRITEDATA,     tmp);
@@ -117,3 +118,4 @@ void MoonConsumer::Get(MoonRequest request, MoonResponse* response){
     if(isFile) fclose(tmp);
     curl_easy_cleanup(this->curl);
 }
+#endif
