@@ -43,9 +43,9 @@ struct GfxRenderingAPI {
 #endif
 #ifdef GFX_ENABLE_GRAPH_NODE_MODS
     void (*push_geo_layout)(void *geo_layout);
-    void (*register_graph_node_layout)(void *graph_node);
+    void (*register_graph_node_layout)(void *graph_node, int graph_node_index);
     void (*pop_geo_layout)(void);
-    void *(*get_graph_node_mod)(void *graph_node);
+    void *(*build_graph_node_mod)(void *graph_node, float matrix[4][4]);
     void (*set_graph_node_mod)(void *graph_node_mod);
 #endif
     void (*init)(void);

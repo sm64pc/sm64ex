@@ -326,16 +326,16 @@ void gfx_push_geo_layout(void *geo_layout) {
     gfx_rapi->push_geo_layout(geo_layout);
 }
 
-void gfx_register_graph_node_layout(void *graph_node) {
-    gfx_rapi->register_graph_node_layout(graph_node);
+void gfx_register_graph_node_layout(void *graph_node, int graph_node_index) {
+    gfx_rapi->register_graph_node_layout(graph_node, graph_node_index);
 }
 
 void gfx_pop_geo_layout(void) {
     gfx_rapi->pop_geo_layout();
 }
 
-void *gfx_get_graph_node_mod(void *graph_node) {
-    return gfx_rapi->get_graph_node_mod(graph_node);
+void *gfx_build_graph_node_mod(void *graph_node, float modelview_matrix[4][4]) {
+    return gfx_rapi->build_graph_node_mod(graph_node, modelview_matrix);
 }
 
 #endif
