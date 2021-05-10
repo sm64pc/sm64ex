@@ -236,10 +236,10 @@ using namespace std::chrono;
 void Moon_InitModEngine( char *exePath, char *gamedir ){
 
     milliseconds start_ms = duration_cast< milliseconds >( system_clock::now().time_since_epoch() );
-    // Moon_LoadAddon("/home/alex/Music/Moon64-Packs/converted/beta-hud.bit");
-    // Moon_LoadAddon("/home/alex/disks/uwu/Projects/UnderVolt/Moon64-Packs/converted/owo.bit");
-    // Moon_LoadAddon("/home/alex/Music/Moon64-Packs/converted/minecraft.bit");
-    // Moon_BakeTextureCache({1, 0, 2, 3});
+    Moon_ScanAddonsDirectory( exePath, gamedir );
+    vector<int> order;
+    for(int i = 0; i < addons.size(); i++) order.push_back(i);
+    Moon_BakeTextureCache(order);
     milliseconds end_ms = duration_cast< milliseconds >( system_clock::now().time_since_epoch() );
 
     std::cout << "Finised loading in " << ((end_ms.count() - start_ms.count()) / 1000) << " seconds" << std::endl;

@@ -11,7 +11,9 @@ class MoonCategory {
 public:
     MoonCategory(string categoryName){
         this->categoryName = categoryName;
+        this->titleKey = true;
     };
+    bool titleKey = false;
     string categoryName;
     std::vector<MoonWidget*> catOptions;
 };

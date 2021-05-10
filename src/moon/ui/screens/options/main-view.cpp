@@ -83,7 +83,7 @@ void MoonOptMain::Update(){
 }
 
 void MoonOptMain::Draw(){
-    string curTitle = Moon_GetKey(categories[categoryIndex]->categoryName);
+    string curTitle = categories[categoryIndex]->titleKey ? Moon_GetKey(categories[categoryIndex]->categoryName) : categories[categoryIndex]->categoryName;
 
     float txtWidth = MoonGetTextWidth(curTitle, 1.0, true);
     MoonDrawRectangle(0, 0, GetScreenWidth(false), GetScreenHeight(), {0, 0, 0, 100}, false);
