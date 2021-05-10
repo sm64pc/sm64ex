@@ -26,6 +26,7 @@ namespace Moon {
 
     void loadAddon(string addonPath){
         StrawFile file(addonPath);
+        file.open();
 
         cout << "Loading addon: " << addonPath << endl;
 

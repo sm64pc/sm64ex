@@ -69,6 +69,7 @@ namespace MoonInternal {
                 if(fileEntry->data != NULL) data = fileEntry;
                 else if(!fileEntry->path.empty()){
                     StrawFile file(addon->path);
+                    file.open();
                     TextureFileEntry *newData = new TextureFileEntry();
                     file.read(fileEntry->path, newData);
                     data = newData;
