@@ -2226,16 +2226,15 @@ static void print_file_select_strings(void) {
         sMainMenuTimer += 1;
     }
 
-    gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_begin);
-    u8 *txt = getTranslatedText("Moon64 - (x) loaded addons");
-    float scale = 0.5f;
-    gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, sTextBaseAlpha);
-    moon_draw_text(GFX_DIMENSIONS_FROM_LEFT_EDGE(2), 15 * scale, txt, scale);
-    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
-    moon_draw_text(GFX_DIMENSIONS_FROM_LEFT_EDGE(2), 16 * scale, txt, scale);
-
-    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
-    gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_end);
+    // gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_begin);
+    // u8 *txt = getTranslatedText("Moon64 - (x) loaded addons");
+    // float scale = 0.5f;
+    // gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, sTextBaseAlpha);
+    // moon_draw_text(GFX_DIMENSIONS_FROM_LEFT_EDGE(2), 15 * scale, txt, scale);
+    // gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+    // moon_draw_text(GFX_DIMENSIONS_FROM_LEFT_EDGE(2), 16 * scale, txt, scale);
+    // gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+    // gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_end);
 }
 
 /**
