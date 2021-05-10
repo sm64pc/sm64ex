@@ -45,7 +45,7 @@ void MWValue::Draw(){
 
     focusAnimation += step * (focusAnimationPingPong ? -1 : 1);
 
-    string rawTitle = this->titleKey ? Moon_GetKey(this->title) : this->title;
+    string rawTitle = this->titleKey ? Moon::getLanguageKey(this->title) : this->title;
     float scale = 1;
     float titleWidth = MoonGetTextWidth(rawTitle + " ", scale, false);
     int barWidth = SCREEN_WIDTH - 50 - 14;
@@ -68,14 +68,14 @@ void MWValue::Draw(){
             {61, 255, 113, 255},
             {255, 61, 61, 255}
         };
-        string statusText = status ? Moon_GetKey("TEXT_OPT_ENABLED") : Moon_GetKey("TEXT_OPT_DISABLED");
+        string statusText = status ? Moon::getLanguageKey("TEXT_OPT_ENABLED") : Moon::getLanguageKey("TEXT_OPT_DISABLED");
 
         tmpWidth += MoonGetTextWidth(statusText, scale, false);
         MoonDrawText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2 + titleWidth, this->y, statusText, scale, toggleColors[status ? 0 : 1] , true, true);
     } else if(this->bind.values != NULL && this->bind.index != NULL){
         int index = *this->bind.index;
 
-        string text = this->bind.valueKeys ? Moon_GetKey((*this->bind.values)[index]) : (*this->bind.values)[index];
+        string text = this->bind.valueKeys ? Moon::getLanguageKey((*this->bind.values)[index]) : (*this->bind.values)[index];
 
         tmpWidth += MoonGetTextWidth(text, scale, false);
         MoonDrawText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2 + titleWidth, this->y, text, scale, {58, 249, 252, 255}, true, true);

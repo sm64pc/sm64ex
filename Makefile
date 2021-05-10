@@ -284,6 +284,9 @@ SRC_DIRS += src/moon/entity src/moon/entity/interfaces
 # Moon64 SRC [Mod-Engine]
 SRC_DIRS += src/moon/mod-engine src/moon/mod-engine/modules
 
+# Moon64 SRC [Mod-Engine - Texture Module]
+SRC_DIRS += src/moon/mod-engine/textures src/moon/mod-engine/textures/assets
+
 # Moon64 LIB [RapidJSON]
 SRC_DIRS += src/moon/libs/rapidjson src/moon/libs/rapidjson/error src/moon/libs/rapidjson/internal src/moon/libs/rapidjson/msinttypes
 
@@ -295,6 +298,9 @@ SRC_DIRS += src/moon/libs/miniz
 
 # Moon64 LIB [nlohmann json]
 SRC_DIRS += src/moon/libs/nlohmann
+
+# Moon64 LIB [Miniz-Wrapper]
+SRC_DIRS += src/moon/zip
 
 ################################
 

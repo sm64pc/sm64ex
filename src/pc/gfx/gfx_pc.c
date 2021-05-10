@@ -255,13 +255,13 @@ static struct ColorCombiner *gfx_lookup_or_create_color_combiner(uint32_t cc_id)
 }
 
 static bool gfx_texture_cache_lookup(int tile, struct TextureData **n, const uint8_t *orig_addr, uint32_t fmt, uint32_t siz) {
-    struct TextureData *node = moon_engine_get_texture(orig_addr);
+    struct TextureData *node = moon_get_texture(orig_addr);
 
     if(node != NULL){
         gfx_rapi->select_texture(tile, node->texture_id);
         if(n != NULL) *n = node;
         return true;
-    } else node = moon_engine_init_texture();
+    } else node = moon_create_texture();
 
     if (node->texture_addr == NULL)
         node->texture_id = gfx_rapi->new_texture();
@@ -274,7 +274,7 @@ static bool gfx_texture_cache_lookup(int tile, struct TextureData **n, const uin
     node->texture_addr = orig_addr;
     node->fmt = fmt;
     node->siz = siz;
-    moon_engine_save_texture(node, orig_addr);
+    moon_save_texture(node, orig_addr);
     if(n != NULL) *n = node;
     return false;
 }
@@ -349,30 +349,6 @@ static bool texname_to_texformat(const char *name, u8 *fmt, u8 *siz) {
     }
 
     return false;
-}
-
-void overload_memory_texture(void* data, long size, const char *path) {
-    // strip off the extension
-    char texname[SYS_MAX_PATH];
-    strncpy(texname, path, sizeof(texname));
-    texname[sizeof(texname)-1] = 0;
-
-    // get the format and size from filename
-    u8 fmt, siz;
-    if (!texname_to_texformat(texname, &fmt, &siz)) {
-        // fprintf(stderr, "unknown texture format: `%s`, skipping\n", texname);
-        return true; // just skip it, might be a stray skybox or something
-    }
-
-    char *actualname = texname;
-    if (!strncmp(FS_TEXTUREDIR "/", actualname, 4)) actualname += 4;
-    actualname = sys_strdup(actualname);
-    assert(actualname);
-
-    if (!gfx_texture_cache_lookup(0, NULL, actualname, fmt, siz))
-        load_memory_texture(data, size);
-
-    return true;
 }
 
 static void import_texture(int tile) {

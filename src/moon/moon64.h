@@ -1,30 +1,51 @@
 #ifndef MOON_WRAPPER
 #define MOON_WRAPPER
+
 #ifndef __cplusplus
 
 #include "types.h"
 #include "pc/gfx/gfx_pc.h"
 
-void moon_init_languages(char *executable, char *gamedir);
-u8 * moon_language_get_key( char* key );
-void moon_set_language( int id );
-const char* moon_get_language_name( int id );
+void moon_setup(char *state);
+
+void moon_environment_save(char* key, char* value);
+
+/*
+#######################
+    Moon Languagues
+#######################
+*/
+
+u8 *moon_language_get_key( char* key );
+
+/*
+#######################
+        Moon UI
+#######################
+*/
 
 void moon_draw_ui();
-void moon_change_ui(int index);
-u8   moon_ui_open();
 void moon_ui_toggle();
+void moon_change_ui(int index);
+u8 moon_ui_open();
 
-void moon_modules_init();
-void moon_modules_update();
+/*
+#######################
+        Moon IO
+#######################
+*/
+
 void moon_update_window(void* window);
 
-void moon_mod_engine_preinit();
-void moon_mod_engine_init(char *executable, char *gamedir);
+/*
+######################
+    Moon Texture
+######################
+*/
 
-void moon_engine_save_texture(struct TextureData* data, char* tex);
-struct TextureData* moon_engine_get_texture(char* tex);
-struct TextureData* moon_engine_init_texture();
+void moon_save_texture(struct TextureData* data, char* tex);
+struct TextureData* moon_get_texture(char* tex);
+struct TextureData* moon_create_texture();
 void moon_load_base_texture(char* data, long size, char* texture);
 void moon_load_texture(int tile, const char *fullpath, struct GfxRenderingAPI *gfx_rapi);
 

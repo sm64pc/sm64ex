@@ -2,13 +2,25 @@
 #include "moon/io/io-module.h"
 #include "moon/io/modules/mouse-io.h"
 
-vector<MIOModule*> modules;
+using namespace std;
 
-void InitIOModules(){
-    modules.push_back(new MouseIO());
-    for(auto &module : modules) module->init();
+namespace Moon {
+    vector<MIOModule*> modules;
 }
 
-void UpdateIOModules(){
-    for(auto &module : modules) module->update();
+namespace MoonInternal {
+    void setupIOModuleEngine( string state ){
+        if(state == "PreInit"){
+            Moon::modules.push_back(new MouseIO());
+            return;
+        }
+        if(state == "Init"){
+            for(auto &module : Moon::modules) module->init();
+            return;
+        }
+        if(state == "Update"){
+            for(auto &module : Moon::modules) module->update();
+            return;
+        }
+    }
 }

@@ -17,7 +17,5 @@ struct StringTable {
 
 extern void         alloc_dialog_pool(char* exePath, char* gamedir);
 extern void         dealloc_dialog_pool(void);
-extern const char*  get_language_name(int language);
-extern void         set_language(int new_language);
 extern u8*          get_key_string(char* id);
 #endif

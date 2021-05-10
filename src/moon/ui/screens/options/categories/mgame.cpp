@@ -14,11 +14,11 @@ int languageIdx;
 vector<string> lngNames;
 
 MGameCategory::MGameCategory() : MoonCategory("TEXT_OPT_GAME"){
-    for (auto &lng : languages) {
+    for (auto &lng : Moon::languages) {
         lngNames.push_back(lng->name);
     }
     this->catOptions.push_back(new MWValue(22, 57, "TEXT_OPT_LANGUAGE",   {.index = &languageIdx, .values = &lngNames, .callback = [](){
-        Moon_SetLanguage(languages[languageIdx]);
+        Moon::setCurrentLanguage(Moon::languages[languageIdx]);
     }}, true));
     this->catOptions.push_back(new MWValue(22, 74, "TEXT_OPT_PRECACHE",   {.bvar = &configPrecacheRes}, true));
     int exitY;

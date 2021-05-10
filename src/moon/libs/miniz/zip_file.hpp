@@ -5457,7 +5457,7 @@ class zip_file
     return extracted;
   }
 
-  void read_texture(const zip_info &info, TextureFileEntry** entry) {
+  void _read_texture(const zip_info &info, TextureFileEntry** entry) {
     std::size_t size;
     char *data = static_cast<char *>(mz_zip_reader_extract_file_to_heap(archive_.get(), info.filename.c_str(), &size, 0));
     if(data == nullptr)
@@ -5469,7 +5469,7 @@ class zip_file
   }
 
   void read_texture(const std::string &name, TextureFileEntry** entry){
-    read_texture(getinfo(name), entry);
+    _read_texture(getinfo(name), entry);
   }
 
   std::string read(const std::string &name)

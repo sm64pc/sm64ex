@@ -1,6 +1,6 @@
 #ifndef MOON_TEXT_LOADER
 #define MOON_TEXT_LOADER
-#ifdef __cplusplus
+
 #include <vector>
 #include <list>
 #include <map>
@@ -34,12 +34,18 @@ struct LanguageEntry {
     std::vector<u8*> courses;
 };
 
-extern std::vector<LanguageEntry*> languages;
+namespace Moon {
+    extern std::vector<LanguageEntry*> languages;
+    extern LanguageEntry *current;
 
-void Moon_LoadLanguage( std::string path );
-void Moon_InitLanguages( char *exePath, char *gamedir ) ;
-std::string Moon_GetKey(std::string key);
-void Moon_SetLanguage(LanguageEntry *new_language);
+    void loadLanguage(std::string path);
+    void setCurrentLanguage(LanguageEntry *new_language);
+    std::string getLanguageKey(std::string key);
+}
 
-#endif
+namespace MoonInternal {
+    void scanLanguagesDirectory();
+    void setupLanguageEngine( std::string state );
+}
+
 #endif

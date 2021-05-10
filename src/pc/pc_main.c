@@ -91,7 +91,7 @@ void send_display_list(struct SPTask *spTask) {
 #endif
 
 void produce_one_frame(void) {
-    moon_modules_update();
+    moon_setup("Update");
     gfx_start_frame();
 
     const f32 master_mod = (f32)configMasterVolume / 127.0f;
@@ -192,8 +192,8 @@ void main_func(char *argv[]) {
     const char *userpath = gCLIOpts.SavePath[0] ? gCLIOpts.SavePath : sys_user_path();
     fs_init(sys_ropaths, gamedir, userpath);
     configfile_load(configfile_name());
-    moon_init_languages(argv[0], gamedir);
-
+    moon_environment_save("MOON_CWD",   argv[0]);
+    moon_environment_save("ASSETS_DIR", gamedir);
     if (gCLIOpts.FullScreen == 1)
         configWindow.fullscreen = true;
     else if (gCLIOpts.FullScreen == 2)
@@ -233,7 +233,6 @@ void main_func(char *argv[]) {
     #endif
     ;
 
-    moon_modules_init();
     gfx_init(wm_api, rendering_api, window_title);
     wm_api->set_keyboard_callbacks(keyboard_on_key_down, keyboard_on_key_up, keyboard_on_all_keys_up);
 
@@ -253,8 +252,8 @@ void main_func(char *argv[]) {
     fprintf(stdout, "precaching data\n");
     fflush(stdout);
     gfx_precache_textures();
-    moon_mod_engine_preinit();
-    moon_mod_engine_init(argv[0], gamedir);
+    moon_setup("PreInit");
+    moon_setup("Init");
 
 #ifdef DISCORDRPC
     discord_init();
