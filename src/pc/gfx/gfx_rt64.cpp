@@ -1667,6 +1667,16 @@ static void gfx_rt64_rapi_push_geo_layout(void *geoLayout) {
 
 static void gfx_rt64_rapi_register_graph_node_layout(void *graphNode, int graphNodeIndex) {
     if (graphNode != nullptr) {
+		// Delete the previous graph node mod if it exists already.
+		// Graph node addresses can be reused, so it's important to remove any previous mods
+		// and only keep the most up to date version of them.
+		auto graphNodeIt = RT64.graphNodeMods.find(graphNode);
+		if (graphNodeIt != RT64.graphNodeMods.end()) {
+			delete graphNodeIt->second;
+			RT64.graphNodeMods.erase(graphNodeIt);
+		}
+
+		// Apply the current geo layout stack to the graph node.
 		for (int s = 0; s < RT64.geoLayoutStackSize; s++) {
 			void *geo = RT64.geoLayoutStack[s];
 			auto it = RT64.geoLayoutMods.find(geo);
