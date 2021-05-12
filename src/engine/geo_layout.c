@@ -252,10 +252,6 @@ void geo_layout_cmd_node_root(void) {
         gGeoViews[i] = NULL;
     }
 
-#ifdef GFX_ENABLE_GRAPH_NODE_MODS
-    gfx_register_graph_node_layout(graphNode, gCurGraphNodeIndex);
-#endif
-
     register_scene_graph_node(&graphNode->node);
 
     gGeoLayoutCommand += 0x0C << CMD_SIZE_SHIFT;
@@ -270,10 +266,6 @@ void geo_layout_cmd_node_ortho_projection(void) {
     f32 scale = (f32) cur_geo_cmd_s16(0x02) / 100.0f;
 
     graphNode = init_graph_node_ortho_projection(gGraphNodePool, NULL, scale);
-
-#ifdef GFX_ENABLE_GRAPH_NODE_MODS
-    gfx_register_graph_node_layout(graphNode, gCurGraphNodeIndex);
-#endif
 
     register_scene_graph_node(&graphNode->node);
 
@@ -302,10 +294,6 @@ void geo_layout_cmd_node_perspective(void) {
     }
 
     graphNode = init_graph_node_perspective(gGraphNodePool, NULL, (f32) fov, near, far, frustumFunc, 0);
-
-#ifdef GFX_ENABLE_GRAPH_NODE_MODS
-    gfx_register_graph_node_layout(graphNode, gCurGraphNodeIndex);
-#endif
 
     register_scene_graph_node(&graphNode->fnNode.node);
 
@@ -344,10 +332,6 @@ void geo_layout_cmd_node_master_list(void) {
 
     graphNode = init_graph_node_master_list(gGraphNodePool, NULL, cur_geo_cmd_u8(0x01));
 
-#ifdef GFX_ENABLE_GRAPH_NODE_MODS
-    gfx_register_graph_node_layout(graphNode, gCurGraphNodeIndex);
-#endif
-
     register_scene_graph_node(&graphNode->node);
 
     gGeoLayoutCommand += 0x04 << CMD_SIZE_SHIFT;
@@ -365,10 +349,6 @@ void geo_layout_cmd_node_level_of_detail(void) {
     s16 maxDistance = cur_geo_cmd_s16(0x06);
 
     graphNode = init_graph_node_render_range(gGraphNodePool, NULL, minDistance, maxDistance);
-
-#ifdef GFX_ENABLE_GRAPH_NODE_MODS
-    gfx_register_graph_node_layout(graphNode, gCurGraphNodeIndex);
-#endif
 
     register_scene_graph_node(&graphNode->node);
 
@@ -424,10 +404,6 @@ void geo_layout_cmd_node_camera(void) {
 
     graphNode = init_graph_node_camera(gGraphNodePool, NULL, pos, focus,
                                        (GraphNodeFunc) cur_geo_cmd_ptr(0x10), cur_geo_cmd_s16(0x02));
-
-#ifdef GFX_ENABLE_GRAPH_NODE_MODS
-    gfx_register_graph_node_layout(graphNode, gCurGraphNodeIndex);
-#endif
 
     register_scene_graph_node(&graphNode->fnNode.node);
 
@@ -737,10 +713,6 @@ void geo_layout_cmd_node_shadow(void) {
 
     graphNode = init_graph_node_shadow(gGraphNodePool, NULL, shadowScale, shadowSolidity, shadowType);
 
-#ifdef GFX_ENABLE_GRAPH_NODE_MODS
-    gfx_register_graph_node_layout(graphNode, gCurGraphNodeIndex);
-#endif
-
     register_scene_graph_node(&graphNode->node);
 
     gGeoLayoutCommand += 0x08 << CMD_SIZE_SHIFT;
@@ -795,10 +767,6 @@ void geo_layout_cmd_node_background(void) {
         cur_geo_cmd_s16(0x02), // background ID, or RGBA5551 color if asm function is null
         (GraphNodeFunc) cur_geo_cmd_ptr(0x04), // asm function
         0);
-
-#ifdef GFX_ENABLE_GRAPH_NODE_MODS
-    gfx_register_graph_node_layout(graphNode, gCurGraphNodeIndex);
-#endif
 
     register_scene_graph_node(&graphNode->fnNode.node);
 

@@ -94,7 +94,9 @@
             "name": "bobomb_buddy_geo"
         },
         {
-            "materialMod": null,
+            "materialMod": {
+                "refractionFactor": 0.9750000238418579
+            },
             "name": "boo_castle_geo"
         },
         {
