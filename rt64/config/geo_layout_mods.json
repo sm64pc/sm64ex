@@ -3,7 +3,7 @@
         {
             "lightMod": {
                 "attenuationExponent": 1.0,
-                "attenuationRadius": 6000.0,
+                "attenuationRadius": 1500.0,
                 "diffuseColor": [
                     1.2999999523162842,
                     1.2999999523162842,
@@ -11,13 +11,13 @@
                 ],
                 "flickerIntensity": 0.125,
                 "groupBits": 16,
-                "pointRadius": 100.0,
+                "pointRadius": 25.0,
                 "position": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "shadowOffset": 320.0,
+                "shadowOffset": 80.0,
                 "specularIntensity": 0.6499999761581421
             },
             "materialMod": {
@@ -754,7 +754,7 @@
         {
             "lightMod": {
                 "attenuationExponent": 1.0,
-                "attenuationRadius": 4500.0,
+                "attenuationRadius": 1125.0,
                 "diffuseColor": [
                     1.2999999523162842,
                     1.2999999523162842,
@@ -762,13 +762,13 @@
                 ],
                 "flickerIntensity": 0.0,
                 "groupBits": 16,
-                "pointRadius": 200.0,
+                "pointRadius": 50.0,
                 "position": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "shadowOffset": 600.0,
+                "shadowOffset": 150.0,
                 "specularIntensity": 0.6499999761581421
             },
             "materialMod": {
