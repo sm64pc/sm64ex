@@ -1012,11 +1012,13 @@ static void gfx_rt64_wapi_get_dimensions(uint32_t *width, uint32_t *height) {
 static void gfx_rt64_wapi_handle_events(void) {
 }
 
-static bool gfx_rt64_wapi_start_frame(void) {
-	// Reset the parameters that are modified during the logic frame.
+static void gfx_rt64_reset_logic_frame(void) {
 	RT64.dynamicLightCount = 0;
+}
 
+static bool gfx_rt64_wapi_start_frame(void) {
     if (RT64.dropNextFrame) {
+		gfx_rt64_reset_logic_frame();
 		RT64.dropNextFrame = false;
 		return false;
 	}
@@ -1644,6 +1646,8 @@ static void gfx_rt64_rapi_end_frame(void) {
 			RT64.lib.SetMaterialInspector(RT64.inspector, texMod->materialMod, textureName.c_str());
 		}
 	}
+
+	gfx_rt64_reset_logic_frame();
 }
 
 static void gfx_rt64_rapi_finish_render(void) {
