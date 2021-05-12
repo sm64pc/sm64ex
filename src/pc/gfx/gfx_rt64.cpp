@@ -1013,6 +1013,9 @@ static void gfx_rt64_wapi_handle_events(void) {
 }
 
 static bool gfx_rt64_wapi_start_frame(void) {
+	// Reset the parameters that are modified during the logic frame.
+	RT64.dynamicLightCount = 0;
+
     if (RT64.dropNextFrame) {
 		RT64.dropNextFrame = false;
 		return false;
@@ -1641,8 +1644,6 @@ static void gfx_rt64_rapi_end_frame(void) {
 			RT64.lib.SetMaterialInspector(RT64.inspector, texMod->materialMod, textureName.c_str());
 		}
 	}
-	
-	RT64.dynamicLightCount = 0;
 }
 
 static void gfx_rt64_rapi_finish_render(void) {
