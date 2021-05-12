@@ -4,6 +4,12 @@
 
 #include "graph_node.h"
 
+#include "pc/gfx/gfx_pc.h"
+
+#ifdef GFX_ENABLE_GRAPH_NODE_MODS
+extern void *gCurGeoLayout;
+#endif
+
 #if IS_64_BIT
 static s16 next_s16_in_geo_script(s16 **src) {
     s16 ret;
@@ -63,10 +69,15 @@ s16 *read_vec3s_angle(Vec3s dst, s16 *src) {
 void register_scene_graph_node(struct GraphNode *graphNode) {
     if (graphNode != NULL) {
         gCurGraphNodeList[gCurGraphNodeIndex] = graphNode;
-
+#ifdef GFX_ENABLE_GRAPH_NODE_MODS
+        gfx_register_layout_graph_node(NULL, graphNode);
+#endif
         if (gCurGraphNodeIndex == 0) {
             if (gCurRootGraphNode == NULL) {
                 gCurRootGraphNode = graphNode;
+#ifdef GFX_ENABLE_GRAPH_NODE_MODS
+                gfx_register_layout_graph_node(gCurGeoLayout, graphNode);
+#endif
             }
         } else {
             if (gCurGraphNodeList[gCurGraphNodeIndex - 1]->type == GRAPH_NODE_TYPE_OBJECT_PARENT) {

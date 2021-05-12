@@ -31,9 +31,7 @@ void gfx_set_camera_matrix(float mat[4][4]);
 #endif
 
 #ifdef GFX_ENABLE_GRAPH_NODE_MODS
-void gfx_push_geo_layout(void *geo_layout);
-void gfx_register_graph_node_layout(void *graph_node, int graph_node_index);
-void gfx_pop_geo_layout(void);
+void gfx_register_layout_graph_node(void *geo_layout, void *graph_node);
 void *gfx_build_graph_node_mod(void *graph_node, float modelview_matrix[4][4]);
 #endif
 

@@ -134,8 +134,6 @@ struct {
 	std::unordered_map<RT64_INSTANCE *, uint64_t> lastInstanceTextureHashes;
 
 	// Geo layout mods.
-	void *geoLayoutStack[MAX_GEO_LAYOUT_STACK_SIZE];
-	int geoLayoutStackSize;
 	std::unordered_map<void *, std::string> geoLayoutNameMap;
 	std::map<std::string, void *> nameGeoLayoutMap;
 	std::unordered_map<void *, RecordedMod *> geoLayoutMods;
@@ -859,7 +857,6 @@ static void gfx_rt64_wapi_init(const char *window_title) {
 	RT64.viewportRect = { 0, 0, 0, 0 };
 	RT64.instanceCount = 0;
 	RT64.instanceAllocCount = 0;
-	RT64.geoLayoutStackSize = 0;
 	RT64.dynamicLightCount = 0;
 	RT64.cachedMeshesPerFrame = 0;
 	RT64.currentTile = 0;
@@ -1665,13 +1662,8 @@ static void gfx_rt64_rapi_set_camera_matrix(float matrix[4][4]) {
 	gd_inverse_mat4f(&RT64.viewMatrix.m, &RT64.invViewMatrix.m);
 }
 
-static void gfx_rt64_rapi_push_geo_layout(void *geoLayout) {
-    assert(RT64.geoLayoutStackSize < MAX_GEO_LAYOUT_STACK_SIZE);
-	RT64.geoLayoutStack[RT64.geoLayoutStackSize++] = geoLayout;
-}
-
-static void gfx_rt64_rapi_register_graph_node_layout(void *graphNode, int graphNodeIndex) {
-    if (graphNode != nullptr) {
+static void gfx_rt64_rapi_register_layout_graph_node(void *geoLayout, void *graphNode) {
+	if (graphNode != nullptr) {
 		// Delete the previous graph node mod if it exists already.
 		// Graph node addresses can be reused, so it's important to remove any previous mods
 		// and only keep the most up to date version of them.
@@ -1680,47 +1672,40 @@ static void gfx_rt64_rapi_register_graph_node_layout(void *graphNode, int graphN
 			delete graphNodeIt->second;
 			RT64.graphNodeMods.erase(graphNodeIt);
 		}
+	}
 
-		// Apply the current geo layout stack to the graph node.
-		for (int s = 0; s < RT64.geoLayoutStackSize; s++) {
-			void *geo = RT64.geoLayoutStack[s];
-			auto it = RT64.geoLayoutMods.find(geo);
-			RecordedMod *geoMod = (it != RT64.geoLayoutMods.end()) ? it->second : nullptr;
-			if (geoMod != nullptr) {
-				RecordedMod *graphMod = RT64.graphNodeMods[graphNode];
-				if (graphMod == nullptr) {
-					graphMod = new RecordedMod();
-					graphMod->materialMod = nullptr;
-					graphMod->lightMod = nullptr;
-					RT64.graphNodeMods[graphNode] = graphMod;
+    if ((geoLayout != nullptr) && (graphNode != nullptr)) {
+		// Find the mod for the specified geoLayout.
+		auto it = RT64.geoLayoutMods.find(geoLayout);
+		RecordedMod *geoMod = (it != RT64.geoLayoutMods.end()) ? it->second : nullptr;
+		if (geoMod != nullptr) {
+			RecordedMod *graphMod = RT64.graphNodeMods[graphNode];
+			if (graphMod == nullptr) {
+				graphMod = new RecordedMod();
+				graphMod->materialMod = nullptr;
+				graphMod->lightMod = nullptr;
+				RT64.graphNodeMods[graphNode] = graphMod;
+			}
+
+			if (geoMod->materialMod != nullptr) {
+				if (graphMod->materialMod == nullptr) {
+					graphMod->materialMod = new RT64_MATERIAL();
+					graphMod->materialMod->enabledAttributes = RT64_ATTRIBUTE_NONE;
 				}
 
-				if (geoMod->materialMod != nullptr) {
-					if (graphMod->materialMod == nullptr) {
-						graphMod->materialMod = new RT64_MATERIAL();
-						graphMod->materialMod->enabledAttributes = RT64_ATTRIBUTE_NONE;
-					}
+				RT64_ApplyMaterialAttributes(graphMod->materialMod, geoMod->materialMod);
+				graphMod->materialMod->enabledAttributes |= geoMod->materialMod->enabledAttributes;
+			}
 
-					RT64_ApplyMaterialAttributes(graphMod->materialMod, geoMod->materialMod);
-					graphMod->materialMod->enabledAttributes |= geoMod->materialMod->enabledAttributes;
+			if (geoMod->lightMod != nullptr) {
+				if (graphMod->lightMod == nullptr) {
+					graphMod->lightMod = new RT64_LIGHT();
 				}
 
-				// Light mods are only applied to the first nodes in the graph for the geo layout.
-				if ((graphNodeIndex == 1) && geoMod->lightMod != nullptr) {
-					if (graphMod->lightMod == nullptr) {
-						graphMod->lightMod = new RT64_LIGHT();
-					}
-
-					memcpy(graphMod->lightMod, geoMod->lightMod, sizeof(RT64_LIGHT));
-				}
+				memcpy(graphMod->lightMod, geoMod->lightMod, sizeof(RT64_LIGHT));
 			}
 		}
 	}
-}
-
-static void gfx_rt64_rapi_pop_geo_layout() {
-    assert(RT64.geoLayoutStackSize > 0);
-	RT64.geoLayoutStackSize--;
 }
 
 static void *gfx_rt64_rapi_build_graph_node_mod(void *graphNode, float modelview_matrix[4][4]) {
@@ -1780,9 +1765,7 @@ struct GfxRenderingAPI gfx_rt64_rapi = {
 	gfx_rt64_rapi_set_camera_matrix,
 	gfx_rt64_rapi_draw_triangles_ortho,
     gfx_rt64_rapi_draw_triangles_persp,
-	gfx_rt64_rapi_push_geo_layout,
-    gfx_rt64_rapi_register_graph_node_layout,
-    gfx_rt64_rapi_pop_geo_layout,
+    gfx_rt64_rapi_register_layout_graph_node,
     gfx_rt64_rapi_build_graph_node_mod,
 	gfx_rt64_rapi_set_graph_node_mod,
     gfx_rt64_rapi_init,

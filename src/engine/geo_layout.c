@@ -50,6 +50,10 @@ struct GraphNode gObjParentGraphNode;
 struct AllocOnlyPool *gGraphNodePool;
 struct GraphNode *gCurRootGraphNode;
 
+#ifdef GFX_ENABLE_GRAPH_NODE_MODS
+void *gCurGeoLayout;
+#endif
+
 UNUSED s32 D_8038BCA8;
 
 /* The gGeoViews array is a mysterious one. Some background:
@@ -784,6 +788,10 @@ struct GraphNode *process_geo_layout(struct AllocOnlyPool *pool, void *segptr) {
 
     gGeoLayoutCommand = segmented_to_virtual(segptr);
 
+#ifdef GFX_ENABLE_GRAPH_NODE_MODS
+    gCurGeoLayout = gGeoLayoutCommand;
+#endif
+
     gGraphNodePool = pool;
 
     gGeoLayoutStack[0] = 0;
@@ -792,14 +800,6 @@ struct GraphNode *process_geo_layout(struct AllocOnlyPool *pool, void *segptr) {
     while (gGeoLayoutCommand != NULL) {
         GeoLayoutJumpTable[gGeoLayoutCommand[0x00]]();
     }
-
-#ifdef GFX_ENABLE_GRAPH_NODE_MODS
-    if (gCurRootGraphNode != NULL) {
-        gfx_push_geo_layout(segmented_to_virtual(segptr));
-        gfx_register_graph_node_layout(gCurRootGraphNode, 1);
-        gfx_pop_geo_layout();
-    }
-#endif
 
     return gCurRootGraphNode;
 }
