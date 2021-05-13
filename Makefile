@@ -285,7 +285,10 @@ SRC_DIRS += src/moon/entity src/moon/entity/interfaces
 SRC_DIRS += src/moon/mod-engine src/moon/mod-engine/modules
 
 # Moon64 SRC [Mod-Engine - Texture Module]
-SRC_DIRS += src/moon/mod-engine/textures src/moon/mod-engine/textures/assets
+SRC_DIRS += src/moon/mod-engine/textures src/moon/mod-engine/textures/assets src/moon/mod-engine/textures/modifiers
+
+# Moon64 SRC [Mod-Engine - Hook Module]
+SRC_DIRS += src/moon/mod-engine/hooks
 
 # Moon64 LIB [RapidJSON]
 SRC_DIRS += src/moon/libs/rapidjson src/moon/libs/rapidjson/error src/moon/libs/rapidjson/internal src/moon/libs/rapidjson/msinttypes
@@ -453,10 +456,10 @@ ifeq ($(TARGET_SWITCH),1)
   CXX := $(CROSS)g++
   STRIP := $(CROSS)strip
   NXARCH := -march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIC -ftls-model=local-exec
-  APP_TITLE := Render96ex
-  APP_AUTHOR := Nintendo, n64decomp team, Render96 team
-  APP_VERSION := $(GIT_BRANCH) - $(GIT_HASH)
-  APP_ICON := $(CURDIR)/textures/logo/r96-logo.jpg
+  APP_TITLE := Moon64 - [$(GIT_BRANCH)]
+  APP_AUTHOR := Nintendo, n64decomp team, UnderVolt team
+  APP_VERSION := $(GIT_HASH)
+  APP_ICON := $(CURDIR)/textures/logo/moon64-logo.jpg
   INCLUDE_CFLAGS += -isystem$(LIBNX)/include -I$(PORTLIBS)/include
   OPT_FLAGS := -O2
 endif

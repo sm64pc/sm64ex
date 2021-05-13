@@ -59,18 +59,32 @@ namespace Moon {
 
                 if(file.exists("assets/")){
                     for(auto &name : file.entries()){
-                        string graphicsPath = "assets/graphics/";
+                        string texturePaths[] = {
+                            "assets/graphics/",
+                            "assets/models/"
+                        };
+
                         string textsPath = "assets/texts/";
 
-                        if(!name.rfind(graphicsPath, 0)){
-                            vector<string> allowedTextures = {"png", "jpg", "jpeg"};
-                            if(std::count(allowedTextures.begin(), allowedTextures.end(), string(get_filename_ext(name.c_str())))){
-                                string texName = name.substr(graphicsPath.length());
-                                string rawname = texName.substr(0, texName.find_last_of("."));
+                        for(auto &path : texturePaths){
+                            if(!name.rfind(path, 0)){
+                                vector<string> allowedTextures = {"png", "jpg", "jpeg"};
+                                if(std::count(allowedTextures.begin(), allowedTextures.end(), string(get_filename_ext(name.c_str())))){
+                                    string texName = name.substr(path.length());
+                                    string rawname = texName.substr(0, texName.find_last_of("."));
 
-                                TextureFileEntry *entry = new TextureFileEntry();
-                                file.read(name, entry);
-                                Moon::saveAddonTexture(bit, rawname, entry);
+                                    TextureFileEntry *entry = new TextureFileEntry();
+                                    file.read(name, entry);
+                                    Moon::saveAddonTexture(bit, rawname, entry);
+                                }
+                                if(!string(get_filename_ext(name.c_str())).compare("json")){
+                                    string modName = name.substr(path.length());
+                                    cout << "Found animated texture " << modName << endl;
+                                    json mods = json::parse(file.read(name));
+                                    for (json::iterator entry = mods.begin(); entry != mods.end(); ++entry) {
+                                        Moon::bindTextureModifier(modName.substr(0, modName.find_last_of(".")), entry.key(), entry.value());
+                                    }
+                                }
                             }
                         }
                         if(!name.rfind(textsPath, 0)){
@@ -110,10 +124,8 @@ namespace MoonInternal {
     }
 
     void setupModEngine( string state ){
-        if(state == "PreInit"){
-            MoonInternal::buildDefaultAddon();
-            return;
-        }
+        MoonInternal::setupTextureEngine(state);
+
         if(state == "Init"){
             MoonInternal::scanAddonsDirectory();
             vector<int> order;

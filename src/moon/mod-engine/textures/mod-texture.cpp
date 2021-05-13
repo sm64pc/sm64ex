@@ -3,6 +3,9 @@
 #include "moon/zip/straw.h"
 #include "moon/libs/nlohmann/json.hpp"
 #include "moon/mod-engine/engine.h"
+#include "moon/mod-engine/hooks/hook.h"
+#include "modifiers/tmod.h"
+#include "modifiers/animated.h"
 #include "assets/missing.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -26,9 +29,16 @@ std::map<std::string, TextureFileEntry*> baseGameTextures;
 map<string, TextureData*> textureMap;
 map<string, BitModule*> textureCache;
 
+map<string, TextureModifier*> textureMods;
+
 namespace Moon {
     void saveAddonTexture(BitModule *addon, std::string texturePath, TextureFileEntry* data){
         addon->textures.insert(pair<string, TextureFileEntry*>(texturePath, data));
+    }
+
+    void bindTextureModifier(std::string texture, std::string modName, json data){
+        if(textureMods.find(modName) != textureMods.end())
+            textureMods[modName]->onLoad(texture, data);
     }
 
     void precacheBaseTexture(char* data, long size, std::string texturePath){
@@ -38,6 +48,7 @@ namespace Moon {
                 new TextureFileEntry({.path = "", .size = size, .data = data}))
             );
     }
+
     TextureData *getCachedTexture(string texturePath){
         return textureMap.find(texturePath) != textureMap.end() ? textureMap.find(texturePath)->second : nullptr;
     }
@@ -95,9 +106,9 @@ namespace MoonInternal {
                 cout << "Failed to convert texture" << endl;
                 std::cout << stbi_failure_reason() << std::endl;
             }
-        } else {
-            cout << "Failed to load texture" << endl;
         }
+
+        cout << "Failed to load texture" << endl;
 
         gfx_rapi->upload_texture(missing_image.pixel_data, missing_image.width, missing_image.height);
     }
@@ -131,6 +142,29 @@ namespace MoonInternal {
         bit->readOnly    = true;
         bit->textures    = baseGameTextures;
         Moon::addons.push_back(bit);
+    }
+
+    void bindTextureModifiers(){
+        TextureModifier* modifiers[] = {
+            new AnimatedModifier()
+        };
+
+        for(auto &mod : modifiers){
+            textureMods[mod->getKey()] = mod;
+            mod->onInit();
+        }
+    }
+
+    void setupTextureEngine( string state ){
+        if(state == "PreInit"){
+            MoonInternal::buildDefaultAddon();
+            MoonInternal::bindTextureModifiers();
+            return;
+        }
+        // TODO: Implement garbage collector
+        if(state == "Exit"){
+
+        }
     }
 
 }

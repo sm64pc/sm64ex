@@ -11,7 +11,7 @@ namespace Moon {
 namespace MoonInternal {
     void setupIOModuleEngine( string state ){
         if(state == "PreInit"){
-            Moon::modules.push_back(new MouseIO());
+            // Moon::modules.push_back(new MouseIO());
             return;
         }
         if(state == "Init"){

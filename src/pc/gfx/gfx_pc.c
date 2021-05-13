@@ -23,6 +23,7 @@
 #include "../configfile.h"
 #include "../fs/fs.h"
 #include "moon/moon64.h"
+#include "moon/mod-engine/hooks/hook.h"
 
 #define SUPPORT_CHECK(x) assert(x)
 
@@ -878,8 +879,19 @@ static void gfx_dp_set_scissor(uint32_t mode, uint32_t ulx, uint32_t uly, uint32
 }
 
 static void gfx_dp_set_texture_image(uint32_t format, uint32_t size, uint32_t width, const void* addr) {
-    rdp.texture_to_load.addr = addr;
-    rdp.texture_to_load.siz = size;
+    moon_bind_hook(TEXTURE_BIND);
+    moon_init_hook(2,
+        (struct HookParameter){ .name = "texture", .parameter = &addr },
+        (struct HookParameter){ .name = "size",    .parameter = &size }
+    );
+    bool cancelled = moon_call_hook(2,
+        (struct HookParameter){ .name = "texture", .parameter = &rdp.texture_to_load.addr },
+        (struct HookParameter){ .name = "size",    .parameter = &rdp.texture_to_load.siz }
+    );
+    if(!cancelled){
+        rdp.texture_to_load.addr = addr;
+        rdp.texture_to_load.siz = size;
+    }
 }
 
 static void gfx_dp_set_tile(uint8_t fmt, uint32_t siz, uint32_t line, uint32_t tmem, uint8_t tile, uint32_t palette, uint32_t cmt, uint32_t maskt, uint32_t shiftt, uint32_t cms, uint32_t masks, uint32_t shifts) {
