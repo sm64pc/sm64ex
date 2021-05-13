@@ -1,5 +1,3 @@
-#include "pc/gfx/gfx_rendering_api_config.h"
-#ifndef GFX_DISABLE_BAKED_SHADOWS
 // 0x0700C2A0 - 0x0700C2E0
 static const Vtx castle_grounds_seg7_vertex_0700C2A0[] = {
     {{{   268,    803,  -3206}, 0, {   990,    328}, {0xc4, 0xc4, 0xd0, 0xff}}},
@@ -10,18 +8,18 @@ static const Vtx castle_grounds_seg7_vertex_0700C2A0[] = {
 
 // 0x0700C2E0 - 0x0700C3A0
 static const Vtx castle_grounds_seg7_vertex_0700C2E0[] = {
-    {{{   205,   1110,  -3104}, 0, { -4534,      0}, {0x9c, 0x9c, 0xae, 0xff}}},
-    {{{   154,    803,  -3104}, 0, {  1596,    990}, {0x9c, 0x9c, 0xae, 0xff}}},
-    {{{   205,    803,  -3104}, 0, {  1596,      0}, {0x9c, 0x9c, 0xae, 0xff}}},
-    {{{   154,   1059,  -3104}, 0, { -3512,    990}, {0x9c, 0x9c, 0xae, 0xff}}},
-    {{{   205,   1110,  -3104}, 0, {  6610,      0}, {0x9c, 0x9c, 0xae, 0xff}}},
-    {{{  -153,   1059,  -3104}, 0, {  -542,    990}, {0x9c, 0x9c, 0xae, 0xff}}},
-    {{{   154,   1059,  -3104}, 0, {  5588,    990}, {0x9c, 0x9c, 0xae, 0xff}}},
-    {{{  -204,   1110,  -3104}, 0, { -1564,      0}, {0x9c, 0x9c, 0xae, 0xff}}},
-    {{{  -153,   1059,  -3104}, 0, {  4564,    990}, {0x9c, 0x9c, 0xae, 0xff}}},
-    {{{  -204,    803,  -3104}, 0, {  -544,      0}, {0x9c, 0x9c, 0xae, 0xff}}},
-    {{{  -153,    803,  -3104}, 0, {  -544,    990}, {0x9c, 0x9c, 0xae, 0xff}}},
-    {{{  -204,   1110,  -3104}, 0, {  5586,      0}, {0x9c, 0x9c, 0xae, 0xff}}},
+    {{{   205,   1110,  -3104}, 0, { -4534,      0}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{   154,    803,  -3104}, 0, {  1596,    990}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{   205,    803,  -3104}, 0, {  1596,      0}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{   154,   1059,  -3104}, 0, { -3512,    990}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{   205,   1110,  -3104}, 0, {  6610,      0}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  -153,   1059,  -3104}, 0, {  -542,    990}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{   154,   1059,  -3104}, 0, {  5588,    990}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  -204,   1110,  -3104}, 0, { -1564,      0}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  -153,   1059,  -3104}, 0, {  4564,    990}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  -204,    803,  -3104}, 0, {  -544,      0}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  -153,    803,  -3104}, 0, {  -544,    990}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  -204,   1110,  -3104}, 0, {  5586,      0}, {0xff, 0xff, 0xff, 0xff}}},
 };
 
 // 0x0700C3A0 - 0x0700C3D8
@@ -67,6 +65,3 @@ const Gfx castle_grounds_seg7_dl_0700C430[] = {
     gsSPSetGeometryMode(G_LIGHTING),
     gsSPEndDisplayList(),
 };
-#else
-#include "model.inc.nobake.c"
-#endif

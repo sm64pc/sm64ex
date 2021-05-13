@@ -1,5 +1,3 @@
-#include "pc/gfx/gfx_rendering_api_config.h"
-#ifndef GFX_DISABLE_BAKED_SHADOWS
 // 0x07006ED8 - 0x07006EF0
 static const Lights1 castle_grounds_seg7_lights_07006ED8 = gdSPDefLights1(
     0x66, 0x66, 0x66,
@@ -14,8 +12,8 @@ static const Lights1 castle_grounds_seg7_lights_07006EF0 = gdSPDefLights1(
 
 // 0x07006F08 - 0x07006F20
 static const Lights1 castle_grounds_seg7_lights_07006F08 = gdSPDefLights1(
-    0x36, 0x36, 0x37,
-    0x89, 0x89, 0x8a, 0x28, 0x28, 0x28
+    0x66, 0x66, 0x66,
+    0xff, 0xff, 0xff, 0x28, 0x28, 0x28
 );
 
 // 0x07006F20 - 0x07006F38
@@ -26,20 +24,20 @@ static const Lights1 castle_grounds_seg7_lights_07006F20 = gdSPDefLights1(
 
 // 0x07006F38 - 0x07006F50
 static const Lights1 castle_grounds_seg7_lights_07006F38 = gdSPDefLights1(
-    0x29, 0x29, 0x2a,
-    0x67, 0x67, 0x69, 0x28, 0x28, 0x28
+    0x66, 0x66, 0x66,
+    0xff, 0xff, 0xff, 0x28, 0x28, 0x28
 );
 
 // 0x07006F50 - 0x07006F68
 static const Lights1 castle_grounds_seg7_lights_07006F50 = gdSPDefLights1(
-    0x56, 0x56, 0x56,
-    0xd8, 0xd8, 0xd8, 0x28, 0x28, 0x28
+    0x66, 0x66, 0x66,
+    0xff, 0xff, 0xff, 0x28, 0x28, 0x28
 );
 
 // 0x07006F68 - 0x07006F80
 static const Lights1 castle_grounds_seg7_lights_07006F68 = gdSPDefLights1(
-    0x23, 0x23, 0x27,
-    0x58, 0x58, 0x62, 0x28, 0x28, 0x28
+    0x66, 0x66, 0x66,
+    0xff, 0xff, 0xff, 0x28, 0x28, 0x28
 );
 
 // 0x07006F80 - 0x07006F98
@@ -321,19 +319,19 @@ static const Vtx castle_grounds_seg7_vertex_07007B38[] = {
 
 // 0x07007BC8 - 0x07007C98
 static const Vtx castle_grounds_seg7_vertex_07007BC8[] = {
-    {{{  7245,   -702,   4780}, 0, {  1496,   1008}, {0xb6, 0x55, 0xc7, 0xff}}},
-    {{{  5882,  -1330,   5370}, 0, {   552,   1788}, {0xd9, 0x3d, 0x99, 0xff}}},
-    {{{  6045,   -554,   5617}, 0, {   604,    740}, {0xe0, 0x44, 0x9b, 0xff}}},
-    {{{  6659,  -1330,   4236}, 0, {  1544,   1888}, {0xa8, 0x5a, 0xf7, 0xff}}},
-    {{{  2816,   -511,   5376}, 0, {  8900,    704}, {0x4d, 0x3c, 0xb0, 0xff}}},
-    {{{  2630,   -448,   4746}, 0, {  8568,    676}, {0x68, 0x36, 0xd2, 0xff}}},
-    {{{  2048,    236,   4760}, 0, {  8402,   -232}, {0x58, 0x4d, 0xd0, 0xff}}},
-    {{{  2967,  -1330,   5005}, 0, {  8830,   1820}, {0x62, 0x3f, 0xcf, 0xff}}},
-    {{{  1713,     -7,   3720}, 0, {  7880,    180}, {0x4f, 0x62, 0xf6, 0xff}}},
-    {{{  3784,  -1330,    590}, 0, {   528,   1824}, {0x7b, 0x19, 0xf3, 0xff}}},
-    {{{  3362,   -665,   -567}, 0, {  1986,   1436}, {0x77, 0x00, 0xd5, 0xff}}},
-    {{{  3556,    405,    -36}, 0, {  1142,      8}, {0x46, 0x61, 0x28, 0xff}}},
-    {{{  3363,    343,   -566}, 0, {  1864,    332}, {0x2b, 0xb6, 0xa3, 0xff}}},
+    {{{  7245,   -702,   4780}, 0, {  1496,   1008}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  5882,  -1330,   5370}, 0, {   552,   1788}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  6045,   -554,   5617}, 0, {   604,    740}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  6659,  -1330,   4236}, 0, {  1544,   1888}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  2816,   -511,   5376}, 0, {  8900,    704}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  2630,   -448,   4746}, 0, {  8568,    676}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  2048,    236,   4760}, 0, {  8402,   -232}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  2967,  -1330,   5005}, 0, {  8830,   1820}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  1713,     -7,   3720}, 0, {  7880,    180}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  3784,  -1330,    590}, 0, {   528,   1824}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  3362,   -665,   -567}, 0, {  1986,   1436}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  3556,    405,    -36}, 0, {  1142,      8}, {0xff, 0xff, 0xff, 0xff}}},
+    {{{  3363,    343,   -566}, 0, {  1864,    332}, {0xff, 0xff, 0xff, 0xff}}},
 };
 
 // 0x07007C98 - 0x07007D58
@@ -955,6 +953,3 @@ const Gfx castle_grounds_seg7_dl_070095F0[] = {
     gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
     gsSPEndDisplayList(),
 };
-#else
-#include "model.inc.nobake.c"
-#endif 

@@ -1,3 +1,5 @@
+#include "pc/gfx/gfx_rendering_api_config.h"
+#ifndef GFX_DISABLE_BAKED_SHADOWS
 // 0x07005708 - 0x070057F8
 static const Vtx castle_courtyard_seg7_vertex_07005708[] = {
     {{{   205,   1741,    502}, 0, {   990,      0}, {0xa2, 0xa2, 0xc1, 0xff}}},
@@ -66,3 +68,6 @@ const Gfx castle_courtyard_seg7_dl_07005938[] = {
     gsSPSetGeometryMode(G_LIGHTING),
     gsSPEndDisplayList(),
 };
+#else
+#include "model.inc.nobake.c"
+#endif
