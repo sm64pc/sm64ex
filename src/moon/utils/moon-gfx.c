@@ -6,7 +6,7 @@
 #include "config.h"
 #include "game/geo_misc.h"
 
-f32 moon_get_text_width(u8* text, float scale, u8 colored) { 
+f32 moon_get_text_width(u8* text, float scale, u8 colored) {
     f32 size = 0;
     s32 strPos = 0;
 
@@ -14,18 +14,18 @@ f32 moon_get_text_width(u8* text, float scale, u8 colored) {
         if(colored)
             size += (text[strPos] == GLOBAL_CHAR_SPACE ? 8.0 : 12.0) * scale;
         else
-            size += (f32)(gDialogCharWidths[text[strPos]]) * scale;            
+            size += (f32)(gDialogCharWidths[text[strPos]]) * scale;
         strPos++;
     }
 
     return size;
 }
 
-void moon_draw_colored_text(f32 x, f32 y, const u8 *str, float scale, struct Color c) {    
+void moon_draw_colored_text(f32 x, f32 y, const u8 *str, float scale, struct Color c) {
     void **hudLUT2 = segmented_to_virtual(main_hud_lut);
     u32 xStride = round(12 * scale);
     s32 strPos  = 0;
-    s32 w       = round(16 * scale);    
+    s32 w       = round(16 * scale);
     gDPSetEnvColor(gDisplayListHead++, c.r, c.g, c.b, c.a);
 
     while (str[strPos] != GLOBAR_CHAR_TERMINATOR) {
@@ -48,7 +48,7 @@ void moon_draw_text(f32 x, f32 y, const u8 *str, float scale) {
     y -= 16 * scale;
 
     Mtx *_Matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
-    if (!_Matrix) return;    
+    if (!_Matrix) return;
     guScale(_Matrix, scale, scale, 1.f);
     create_dl_translation_matrix(MENU_MTX_PUSH, x, y, 0.0f);
     gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(_Matrix), G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
@@ -97,7 +97,7 @@ void moon_draw_text(f32 x, f32 y, const u8 *str, float scale) {
 
         strPos++;
     }
-    
+
     create_dl_scale_matrix(MENU_MTX_NOPUSH, 1.0f, 1.0f, 1.0f);
     gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
 }
@@ -116,7 +116,7 @@ Vtx *make_rect_verts(float w, float h) {
 }
 
 void moon_draw_texture(s32 x, s32 y, u32 w, u32 h, u8 *texture) {
-    gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);    
+    gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
     gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 0, 0, G_TX_LOADTILE, 0, G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD);
     gDPTileSync(gDisplayListHead++);
     gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 2, 0, G_TX_RENDERTILE, 0, G_TX_NOMIRROR, 3, G_TX_NOLOD, G_TX_NOMIRROR, 3, G_TX_NOLOD);
@@ -140,17 +140,17 @@ void moon_draw_rectangle(f32 x, f32 y, f32 w, f32 h, struct Color c, u8 u4_3) {
     }
 
     create_dl_translation_matrix(MENU_MTX_PUSH, x, y, 0);
-    guScale(_Matrix, 1, 1, 1);    
+    guScale(_Matrix, 1, 1, 1);
     Vtx *vertices = make_rect_verts(w, h);
 
     gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(_Matrix), G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
     gDPSetEnvColor(gDisplayListHead++, c.r, c.g, c.b, c.a);
-    
+
     gSPClearGeometryMode(gDisplayListHead++, G_LIGHTING)
     gDPSetCombineMode(gDisplayListHead++, G_CC_FADE, G_CC_FADE);
     gDPSetRenderMode(gDisplayListHead++, G_RM_XLU_SURF, G_RM_XLU_SURF2);
     gSPVertex(gDisplayListHead++, vertices, 4, 0);
-    gSP2Triangles(gDisplayListHead++, 0,  1,  2, 0x0,  0,  2,  3, 0x0);    
+    gSP2Triangles(gDisplayListHead++, 0,  1,  2, 0x0,  0,  2,  3, 0x0);
 
     gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);

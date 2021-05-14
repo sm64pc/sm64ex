@@ -2,6 +2,7 @@
 #include <iostream>
 #include "interfaces/moon-screen.h"
 #include "screens/options/main-view.h"
+#include "screens/addons/addons-view.h"
 
 extern "C" {
 #include "game/game_init.h"
@@ -20,8 +21,10 @@ void MoonUpdateStatus();
 
 void MoonInitUI() {
 
-    if(screens.empty())
+    if(screens.empty()){
         screens.push_back(new MoonOptMain());
+        screens.push_back(new MoonAddonsScreen());
+    }
 
     screens[currentScreen]->Mount();
     screens[currentScreen]->Init();
@@ -51,6 +54,7 @@ void MoonChangeUI(int index){
 
 void MoonHandleToggle(){
     if(gPlayer1Controller->buttonPressed & toggle){
+        currentScreen = 0;
         isOpen = !isOpen;
         if(isOpen) isRunning = false;
     }

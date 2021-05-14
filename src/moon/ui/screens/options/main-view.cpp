@@ -13,7 +13,6 @@
 #ifdef BETTERCAMERA
 #include "moon/ui/screens/options/categories/mcamera.h"
 #endif
-#include "moon/ui/screens/options/categories/mtextures.h"
 
 #include "moon/io/moon-io.h"
 #include "moon/io/modules/mouse-io.h"
@@ -49,13 +48,16 @@ void MoonOptMain::Mount(){
     categories.push_back(new MVideoCategory());
     categories.push_back(new MAudioCategory());
     categories.push_back(new MCheatsCategory());
-    categories.push_back(new MTexturesCategory());
+    // categories.push_back(new MTexturesCategory());
     this->setCategory(categoryIndex);
     MoonScreen::Mount();
 }
 
 void MoonOptMain::Update(){
     if(this->selected == NULL) {
+        if(IsBtnPressed(MoonButtons::B_BTN)){
+            isOpen = false;
+        }
         float xStick = GetStickValue(MoonButtons::L_STICK, false);
         if(xStick < 0) {
             if(cswStickExecuted) return;

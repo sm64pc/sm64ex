@@ -4,10 +4,10 @@
 #include "types.h"
 
 struct Color {
-    u8 r;
-    u8 g;
-    u8 b;
-    u8 a;
+    int r;
+    int g;
+    int b;
+    int a;
 };
 
 f32 moon_get_text_width(u8* text, float scale, u8 colored);

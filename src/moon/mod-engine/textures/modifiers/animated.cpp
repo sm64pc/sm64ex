@@ -14,7 +14,7 @@ map<string, AnimatedEntry*> textures;
 long long getMilliseconds(){
     struct timeval te;
     gettimeofday(&te, NULL);
-    return te.tv_sec*1000LL + te.tv_usec/1000;
+    return te.tv_sec * 1000LL + te.tv_usec / 1000;
 }
 
 void AnimatedModifier::onInit(){
@@ -23,10 +23,11 @@ void AnimatedModifier::onInit(){
         string texName = string(*hookTexture);
         if(textures.find(texName) != textures.end()){
             AnimatedEntry* entry = textures[texName];
+            Frame *frame = entry->frames[entry->lastFrame];
 
-            if(getMilliseconds() >= entry->lastTime + entry->delay){
+            if(getMilliseconds() >= entry->lastTime + frame->delay){
                 int maxFrames = entry->frames.size() - 1;
-                bool reachMax = (entry->lastFrame < entry->frames.size() - 1);
+                bool reachMax = (entry->lastFrame < maxFrames);
                 if(entry->bounce){
                     if(entry->lastFrame >= maxFrames)
                         entry->lastBounce = true;
@@ -36,9 +37,10 @@ void AnimatedModifier::onInit(){
 
                 entry->lastFrame += entry->bounce ? entry->lastBounce ? -1 : 1 : (reachMax ? 1 : -entry->lastFrame);
                 entry->lastTime = getMilliseconds();
+                frame = entry->frames[entry->lastFrame];
             }
 
-            (*hookTexture) = const_cast<char*>(entry->frames[entry->lastFrame].c_str());
+            (*hookTexture) = const_cast<char*>(frame->path.c_str());
         }
         return false;
     }});
@@ -46,14 +48,19 @@ void AnimatedModifier::onInit(){
 
 void AnimatedModifier::onLoad(std::string texture, json data){
     if(textures.find(texture) == textures.end()){
-        cout << data.contains("frames") << " " << data.contains("delay") << " " << data.contains("bounce") << endl;
         if(!(data.contains("frames") && data.contains("delay") && data.contains("bounce"))) return;
         cout << "Found animated entry: " << texture << " with " << data["frames"].size() << " length" << endl;
-        textures[texture] = new AnimatedEntry({
-            .frames = data["frames"],
-            .delay = data["delay"],
-            .bounce = data["bounce"]
-        });
+        AnimatedEntry *entry = new AnimatedEntry();
+        entry->advancedMode = data.contains("advancedMode") ? (bool) data["advancedMode"] : false;
+
+        entry->bounce = data["bounce"];
+        for(auto &frame : data["frames"]){
+            if(!entry->advancedMode)
+                entry->frames.push_back( new Frame({.delay = data["delay"], .path = frame}));
+            else
+                entry->frames.push_back( new Frame({.delay = frame["delay"], .path = frame["path"]}));
+        }
+        textures[texture] = entry;
     }
 }
 

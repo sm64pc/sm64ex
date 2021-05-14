@@ -2,6 +2,7 @@
 
 #include "moon/texts/moon-loader.h"
 #include "moon/ui/widgets/mw-value.h"
+#include "moon/ui/moon-ui-manager.h"
 
 using namespace std;
 
@@ -28,5 +29,8 @@ MGameCategory::MGameCategory() : MoonCategory("TEXT_OPT_GAME"){
 #else
     exitY = 91;
 #endif
-    this->catOptions.push_back(new MWValue(22, exitY, "TEXT_EXIT_GAME",   { .btn = game_exit}, true));
+    this->catOptions.push_back(new MWValue(22, exitY, "Texture Packs",   { .btn = [](){
+        MoonChangeUI(1);
+    }}, false));
+    this->catOptions.push_back(new MWValue(22, exitY + 17, "TEXT_EXIT_GAME",   { .btn = game_exit}, true));
 }

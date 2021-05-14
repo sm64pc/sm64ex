@@ -273,7 +273,7 @@ endif
 SRC_DIRS += src/moon src/moon/texts src/moon/utils src/moon/network
 
 # Moon64 SRC [View]
-SRC_DIRS += src/moon/ui src/moon/ui/interfaces src/moon/ui/screens src/moon/ui/screens/options src/moon/ui/screens/options/categories src/moon/ui/utils src/moon/ui/widgets
+SRC_DIRS += src/moon/ui src/moon/ui/interfaces src/moon/ui/screens src/moon/ui/screens/options src/moon/ui/screens/options/categories src/moon/ui/utils src/moon/ui/widgets src/moon/ui/screens/addons
 
 # Moon64 SRC [IO]
 SRC_DIRS += src/moon/io src/moon/io/modules

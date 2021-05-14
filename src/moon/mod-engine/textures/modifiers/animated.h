@@ -6,10 +6,15 @@
 #include <vector>
 #include <string>
 
-struct AnimatedEntry {
-    std::vector<std::string> frames;
+struct Frame {
     long delay;
+    std::string path;
+};
+
+struct AnimatedEntry {
+    std::vector<Frame*> frames;
     bool bounce;
+    bool advancedMode;
 
     int lastFrame;
     bool lastBounce;
