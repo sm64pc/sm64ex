@@ -37,12 +37,14 @@ namespace Moon {
             if(j.contains("bit") && j["bit"].contains("name")){
                 BitModule* bit = new BitModule();
                 bit->name        = j["bit"]["name"];
-                bit->description = j["bit"]["description"];
-                bit->author      = j["bit"]["author"];
+
+                bit->description = j["bit"].contains("icon")    ? j["bit"]["description"] : "None";
+                bit->author      = j["bit"].contains("author")  ? j["bit"]["author"]      : "None";
+                bit->website     = j["bit"].contains("website") ? j["bit"]["website"]     : "None";
+                bit->icon        = j["bit"].contains("icon")    ? j["bit"]["icon"]        : "None";
+                bit->main        = j["bit"].contains("main")    ? j["bit"]["main"]        : "None";
                 bit->version     = j["bit"]["version"];
-                bit->website     = j["bit"]["website"];
-                bit->icon        = j["bit"]["icon"];
-                bit->main        = j["bit"]["main"];
+
                 bit->path        = addonPath;
                 bit->readOnly    = false;
 
@@ -53,7 +55,18 @@ namespace Moon {
                 if(file.exists(bit->icon)){
                     vector<string> allowedTextures = {"png", "jpg", "jpeg"};
                     if(std::count(allowedTextures.begin(), allowedTextures.end(), string(get_filename_ext(bit->icon.c_str())))){
-                        Moon::saveAddonTexture(bit, "mod-icons://"+bit->name, new TextureFileEntry({.path = bit->icon}));
+                        TextureFileEntry *entry = new TextureFileEntry();
+                        file.read(bit->icon, entry);
+                        cout << "Found icon " << bit->icon << std::endl;
+                        Moon::saveAddonTexture(bit, "mod-icons://"+bit->name, entry);
+                    }
+                    if(!string(get_filename_ext(bit->icon.c_str())).compare("json")){
+                        string modName = bit->icon.substr(bit->icon.length());
+                        cout << "Found animated icon texture " << modName << endl;
+                        json mods = json::parse(file.read(bit->icon));
+                        for (json::iterator entry = mods.begin(); entry != mods.end(); ++entry) {
+                            Moon::bindTextureModifier("mod-icons://"+bit->name, entry.key(), entry.value());
+                        }
                     }
                 }
 
@@ -98,7 +111,7 @@ namespace Moon {
                 addons.push_back(bit);
             }
         } else {
-            std::cout << "Failed to load addon: [" << file.getPath() << "]" << std::endl;
+            std::cout << "addon: [" << file.getPath() << "]" << std::endl;
             std::cout << "Missing properties.json" << std::endl;
         }
     }
