@@ -8,6 +8,8 @@ public:
     void Update();
     void Draw();
     void Mount();
+private:
+    void changeScroll(int idx);
 };
 
 

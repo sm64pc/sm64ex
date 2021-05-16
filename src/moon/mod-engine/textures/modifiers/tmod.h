@@ -6,10 +6,10 @@
 
 class TextureModifier {
 public:
-    virtual void onInit(){}
-    virtual void onLoad(std::string texture, nlohmann::json data){}
-    // virtual void onRelease(){}
-    virtual std::string getKey(){}
+    virtual void onInit() = 0;
+    virtual void onLoad(std::string texture, nlohmann::json data) = 0;
+    // virtual void onRelease() = 0;
+    virtual std::string getKey() = 0;
 };
 
 #endif

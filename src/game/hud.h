@@ -24,5 +24,6 @@ enum CameraHUDLut {
 // Functions
 void set_hud_camera_status(s16 status);
 void render_hud(void);
+void render_hud_texture(s32 x, s32 y, u32 w, u32 h, u8 *texture);
 
 #endif // HUD_H

@@ -115,7 +115,7 @@ Vtx *make_rect_verts(float w, float h) {
     return verts;
 }
 
-void moon_draw_texture(s32 x, s32 y, u32 w, u32 h, u8 *texture) {
+void moon_draw_texture(s32 x, s32 y, u32 w, u32 h, char *texture) {
     gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
     gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 0, 0, G_TX_LOADTILE, 0, G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD);
     gDPTileSync(gDisplayListHead++);

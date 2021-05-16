@@ -7,6 +7,7 @@
 #include "modifiers/tmod.h"
 #include "modifiers/animated.h"
 #include "assets/missing.h"
+#include "assets/logo.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
@@ -95,6 +96,11 @@ namespace MoonInternal {
         int w, h;
         u64 imgsize = 0;
 
+        if(!strcmp(fullpath, "gfx/mod-icons://Moon64.png")){
+            gfx_rapi->upload_texture(moon64_logo.pixel_data, moon64_logo.width, moon64_logo.height);
+            return;
+        }
+
         TextureFileEntry * imgdata = getTextureData(fullpath);
         if (imgdata) {
             u8 *data = stbi_load_from_memory(reinterpret_cast<const stbi_uc *>(imgdata->data), imgdata->size, &w, &h, NULL, 4);
@@ -109,6 +115,7 @@ namespace MoonInternal {
         }
 
         cout << "Failed to load texture" << endl;
+        cout << fullpath << endl;
 
         gfx_rapi->upload_texture(missing_image.pixel_data, missing_image.width, missing_image.height);
     }
@@ -137,7 +144,7 @@ namespace MoonInternal {
         BitModule* bit = new BitModule();
         bit->name        = "Moon64";
         bit->description = "SM64 Original Textures";
-        bit->author      = "Nintendo";
+        bit->authors     = (vector<string>){ "Nintendo" };
         bit->version     = 1.0f;
         bit->readOnly    = true;
         bit->textures    = baseGameTextures;

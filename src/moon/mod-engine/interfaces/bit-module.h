@@ -11,11 +11,10 @@ class zip_file;
 extern "C" {
 #include "pc/gfx/gfx_pc.h"
 }
-class BitModule{
-public:
+struct BitModule{
     std::string name;
     std::string description;
-    std::string author;
+    std::vector<std::string> authors;
     double version;
     std::string website;
     std::string icon;

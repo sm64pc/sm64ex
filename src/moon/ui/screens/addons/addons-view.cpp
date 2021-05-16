@@ -17,6 +17,8 @@ extern "C" {
 BitModule* currentPack;
 vector<BitModule*> texturePackList;
 
+int scrollModifier = 0;
+
 int currentSubItem = 0;
 int focusFlag;
 int focusRange = 80;
@@ -31,6 +33,7 @@ enum ItemButtons{
 void MoonAddonsScreen::Init(){
     texturePackList.clear();
     this->scrollIndex = 0;
+    scrollModifier = 0;
     currentPack = NULL;
     copy(Moon::addons.begin(), Moon::addons.end(), back_inserter(texturePackList));
     reverse(texturePackList.begin(), texturePackList.end());
@@ -52,6 +55,27 @@ void rebuildTextureCache(){
     MoonInternal::buildTextureCache(order);
 }
 
+void MoonAddonsScreen::changeScroll(int idx){
+    if(idx < 0){
+        if(this->scrollIndex > 0){
+            if(scrollModifier > 0 && this->scrollIndex == scrollModifier)
+                scrollModifier--;
+            this->scrollIndex--;
+            return;
+        }
+        this->scrollIndex = texturePackList.size() - 1;
+        scrollModifier = this->scrollIndex - 4;
+        return;
+    }
+    if(this->scrollIndex < texturePackList.size() - 1){
+        if(this->scrollIndex > 3 && !((this->scrollIndex - scrollModifier) % 4)) scrollModifier++;
+        this->scrollIndex++;
+        return;
+    }
+    this->scrollIndex = 0;
+    scrollModifier = 0;
+}
+
 void MoonAddonsScreen::Update(){
     float yStick = GetStickValue(MoonButtons::U_STICK, false);
     if(yStick > 0) {
@@ -64,10 +88,7 @@ void MoonAddonsScreen::Update(){
             dispatched = true;
             return;
         }
-        if(this->scrollIndex > 0)
-            this->scrollIndex--;
-        else
-            this->scrollIndex = texturePackList.size() - 1;
+        MoonAddonsScreen::changeScroll(-1);
         dispatched = true;
     }
     if(yStick < 0) {
@@ -80,10 +101,7 @@ void MoonAddonsScreen::Update(){
             dispatched = true;
             return;
         }
-        if(this->scrollIndex < texturePackList.size() - 1)
-            this->scrollIndex++;
-        else
-            this->scrollIndex = 0;
+        MoonAddonsScreen::changeScroll(1);
         dispatched = true;
     }
     if(!yStick)
@@ -95,14 +113,16 @@ void MoonAddonsScreen::Update(){
                 case ItemButtons::UP:
                     if(this->scrollIndex > 0){
                         std::swap(texturePackList[this->scrollIndex], texturePackList[this->scrollIndex - 1]);
-                        currentPack = texturePackList[this->scrollIndex--];
+                        MoonAddonsScreen::changeScroll(-1);
+                        currentPack = texturePackList[this->scrollIndex];
                         rebuildTextureCache();
                     }
                     break;
                 case ItemButtons::DOWN:
                     if(this->scrollIndex < texturePackList.size() - 1){
                         std::swap(texturePackList[this->scrollIndex], texturePackList[this->scrollIndex + 1]);
-                        currentPack = texturePackList[this->scrollIndex++];
+                        MoonAddonsScreen::changeScroll(1);
+                        currentPack = texturePackList[this->scrollIndex];
                         rebuildTextureCache();
                     }
                     break;
@@ -124,6 +144,13 @@ void MoonAddonsScreen::Update(){
     MoonScreen::Update();
 }
 
+static std::string cropTxt(string txt, int length){
+    int currLngt = min((int) txt.length(), length);
+    string desc = txt.substr(0, currLngt);
+    desc.erase(find_if(desc.rbegin(), desc.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), desc.end());
+    return currLngt >= length ? desc + " ..." : desc;
+}
+
 char *strdup(const char *src_str) noexcept {
     char *new_str = new char[std::strlen(src_str) + 1];
     std::strcpy(new_str, src_str);
@@ -132,7 +159,6 @@ char *strdup(const char *src_str) noexcept {
 
 void MoonAddonsScreen::Draw(){
     string curTitle = "Texture packs";
-
     float step = 1.5;
 
     if(focusAnim >= focusRange)
@@ -153,22 +179,46 @@ void MoonAddonsScreen::Draw(){
 
     Color focusColor = {255, 255, 255, 40 + focusAnim};
 
-    int i = 0;
-    for(auto &addon : texturePackList){
-        bool selected = i == this->scrollIndex && currentPack != NULL;
+    int packAmount = texturePackList.size();
+    int maxPacks = 5;
+    int iMod = scrollModifier;
+
+    for(int i = 0; i < min(packAmount, maxPacks); i++){
+        int index = i + iMod;
+
+        if(index > packAmount - 1){
+            this->scrollIndex = 0;
+            scrollModifier = 0;
+            cout << "Triggered overflow, coming back to 0" << endl;
+            return;
+        }
+
+        auto &addon = texturePackList[index];
+
+        if(addon == NULL) return;
+
+        bool selected = (i + iMod) == this->scrollIndex && currentPack != NULL;
         int itemWidth = boxWidth - (selected ? 15 : 0);
 
-        MoonDrawRectangle(35, 45 + (i * 35), itemWidth - 20, 31, i == this->scrollIndex && !selected ? focusColor : (Color){0, 0, 0, 100}, true);
-        string iconPath = "mod-icons://"+addon->name;
-        MoonDrawTexture(35, 45 + (i * 35), 30, 30, strdup(iconPath.c_str()));
-        MoonDrawText(70, 45 + (i * 35) + 3, addon->name, 0.8, {255, 255, 255, 255}, true, true);
-        MoonDrawText(70, 45 + (i * 35) + 16, addon->description, 0.8, {255, 255, 255, 255}, true, true);
+        MoonDrawRectangle(35, 45 + (i * 35), itemWidth - 20, 31, (i + iMod) == this->scrollIndex && !selected ? focusColor : (Color){0, 0, 0, 100}, true);
+        string pathPrefix = "mod-icons://";
+        string iconPath = pathPrefix.append(addon->name);
+        char* parsed = strdup(iconPath.c_str());
+        if(parsed != nullptr)
+            MoonDrawTexture(35, 45 + (i * 35), 30, 30, parsed);
+        MoonDrawText(35 + 26, 46 + (i * 35), to_string(i + iMod), 0.5, {255, 255, 255, 255}, true, true);
+
+        MoonDrawText(70, 45 + (i * 35) + 3, cropTxt(addon->name, 37), 0.8, {255, 255, 255, 255}, true, true);
+
+        int maxDesc = 37;
+        int currLngt = min((int) addon->description.length(), maxDesc);
+        MoonDrawText(70, 45 + (i * 35) + 16, cropTxt(addon->description, 37), 0.8, {255, 255, 255, 255}, true, true);
 
         string rawVer = to_string(addon->version);
         string version = "v"+rawVer.substr(0, rawVer.find(".")+2);
 
         MoonDrawText(itemWidth + 13 - MoonGetTextWidth(version, 0.5, false),       45 + (i * 35) + 2,      version,       0.5, {255, 255, 255, 255}, true, true);
-        MoonDrawText(itemWidth + 13 - MoonGetTextWidth(addon->author, 0.5, false), 45 + (i * 35) + 22, addon->author, 0.5, {255, 255, 255, 255}, true, true);
+        MoonDrawText(itemWidth + 13 - MoonGetTextWidth(addon->authors[0], 0.5, false), 45 + (i * 35) + 22, addon->authors[0], 0.5, {255, 255, 255, 255}, true, true);
 
         if(selected){
             MoonDrawRectangle(itemWidth + 16, 45 + (i * 35),        13, 9.3, currentSubItem == ItemButtons::UP ? focusColor : (Color){0, 0, 0, 100}, true);
@@ -180,7 +230,6 @@ void MoonAddonsScreen::Draw(){
             MoonDrawRectangle(itemWidth + 16, 45 + (i * 35) + 21.7, 13, 9.3, currentSubItem == ItemButtons::TOGGLE ? focusColor : (Color){0, 0, 0, 100}, true);
             MoonDrawTexture  (itemWidth + 18, 46 + (i * 35) + 21.7, 8, 8, "textures/special/remove.rgba16");
         }
-        i++;
     }
 
     MoonScreen::Draw();

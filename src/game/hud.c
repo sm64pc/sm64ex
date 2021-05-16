@@ -67,6 +67,20 @@ static struct UnusedHUDStruct sUnusedHUDValues = { 0x00, 0x0A, 0x00 };
 
 static struct CameraHUD sCameraHUD = { CAM_STATUS_NONE };
 
+void render_hud_texture(s32 x, s32 y, u32 w, u32 h, u8 *texture) {
+    gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
+    gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 0, 0, G_TX_LOADTILE, 0, G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD);
+    gDPTileSync(gDisplayListHead++);
+    gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 2, 0, G_TX_RENDERTILE, 0, G_TX_NOMIRROR, 3, G_TX_NOLOD, G_TX_NOMIRROR, 3, G_TX_NOLOD);
+    gDPSetTileSize(gDisplayListHead++, G_TX_RENDERTILE, 0, 0, w << G_TEXTURE_IMAGE_FRAC, h << G_TEXTURE_IMAGE_FRAC);
+    gDPPipeSync(gDisplayListHead++);
+    gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 1, texture);
+    gDPLoadSync(gDisplayListHead++);
+    gDPLoadBlock(gDisplayListHead++, G_TX_LOADTILE, 0, 0, w * h - 1, CALC_DXT(w, G_IM_SIZ_32b_BYTES));
+    gSPTextureRectangle(gDisplayListHead++, x << 2, y << 2, (x + w) << 2, (y + h) << 2, G_TX_RENDERTILE, 0, 0, 4 << 10, 1 << 10);
+    gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
+}
+
 /**
  * Renders a rgba16 16x16 glyph texture from a table list.
  */
@@ -433,15 +447,15 @@ void render_nx_hud(void){
     s16 h = y + 4;
     struct Color color;
     //color = { .r = 57, .g = 57, .b = 57, .a = 255 }
-    //moon_draw_rectangle(x - 1, y - 1, w + 1, h + 1, COLOR(57, 57, 57, 255));    
+    //moon_draw_rectangle(x - 1, y - 1, w + 1, h + 1, COLOR(57, 57, 57, 255));
     //moon_draw_rectangle(w, y, w + 2, y + 4, color);
-    //color = { .r = 57, .g = 57, .b = 57, .a = 255 }    
+    //color = { .r = 57, .g = 57, .b = 57, .a = 255 }
     //moon_draw_rectangle(x, y, w, h, COLOR(194, 194, 194, 255));
     //color = { .r = 57, .g = 57, .b = 57, .a = 255 }
     //moon_draw_rectangle(x, y, x + (s16)(12 * getBatteryPercentage()), h, COLOR(78, 235, 52, 255));
 
     x = GFX_DIMENSIONS_RECT_FROM_LEFT_EDGE(20);
-    y = 207;    
+    y = 207;
 
     struct NXController controller;
 
@@ -449,7 +463,7 @@ void render_nx_hud(void){
 
     gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
     render_hud_tex_lut(x, y, controller.icon);
-    gSPDisplayList(gDisplayListHead++, dl_hud_img_end);    
+    gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
 
 }
 #endif
@@ -494,14 +508,14 @@ void render_hud(void) {
         if (hudDisplayFlags & HUD_DISPLAY_FLAG_TIMER && configHUD) {
             render_hud_timer();
         }
-    
+
         if( configHUD ) {
 
         #ifdef TARGET_SWITCH
             if ( configSwitchHud )
                 render_nx_hud();
         #endif
-        
+
         }
     }
 }

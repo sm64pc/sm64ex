@@ -35,22 +35,19 @@ namespace Moon {
 
             json j = json::parse(tjson);
             if(j.contains("bit") && j["bit"].contains("name")){
-                BitModule* bit = new BitModule();
-                bit->name        = j["bit"]["name"];
+                BitModule* bit = new BitModule({
+                    .name        = j["bit"]["name"],
+                    .description = j["bit"].contains("icon") ? j["bit"]["description"] : "None",
+                    .authors     = j["bit"]["authors"],
+                    .version     = j["bit"]["version"],
+                    .website     = j["bit"].contains("website") ? j["bit"]["website"]  : "None",
+                    .icon        = j["bit"].contains("icon")    ? j["bit"]["icon"]     : "None"
+                });
 
-                bit->description = j["bit"].contains("icon")    ? j["bit"]["description"] : "None";
-                bit->author      = j["bit"].contains("author")  ? j["bit"]["author"]      : "None";
-                bit->website     = j["bit"].contains("website") ? j["bit"]["website"]     : "None";
-                bit->icon        = j["bit"].contains("icon")    ? j["bit"]["icon"]        : "None";
-                bit->main        = j["bit"].contains("main")    ? j["bit"]["main"]        : "None";
-                bit->version     = j["bit"]["version"];
+                if(j["bit"].contains("main")) bit->main = j["bit"]["main"];
 
                 bit->path        = addonPath;
                 bit->readOnly    = false;
-
-                if(file.exists(bit->main)){
-                    std::cout << file.read(bit->main) << std::endl;
-                }
 
                 if(file.exists(bit->icon)){
                     vector<string> allowedTextures = {"png", "jpg", "jpeg"};
