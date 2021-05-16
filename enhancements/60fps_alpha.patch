@@ -19,7 +19,7 @@ index b3dc27e2..c46bdf01 100644
      /*0x2C*/ Vec3f scale;
 +    Vec3f prevScale;
 +    u32 prevScaleTimestamp;
-     /*0x38*/ struct GraphNodeObject_sub unk38;
+     /*0x38*/ struct GraphNodeObject_sub curAnim;
 @@ -134,3 +145,7 @@ struct GraphNodeObject
      /*0x50*/ Mat4 *throwMatrix; // matrix ptr
 +    Mat4 prevThrowMatrix;
