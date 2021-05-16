@@ -1563,19 +1563,19 @@ void print_main_menu_strings(void) {
 
     txt = get_key_string("TEXT_SCORE");
     x = moon_get_text_width(txt, 1.0, FALSE) / 2;
-    moon_draw_text(70 - x, 39, txt, 1.0);
+    moon_draw_text(70 - x, 52, txt, 1.0);
 
     txt = get_key_string("TEXT_COPY");
     x = moon_get_text_width(txt, 1.0, FALSE) / 2;
-    moon_draw_text(129.5f - x, 39, txt, 1.0);
+    moon_draw_text(129.5f - x, 52, txt, 1.0);
 
     txt = get_key_string("TEXT_ERASE");
     x = moon_get_text_width(txt, 1.0, FALSE) / 2;
-    moon_draw_text(ERASE_X - x, 39, txt, 1.0);
+    moon_draw_text(ERASE_X - x, 52, txt, 1.0);
 
     txt = textSoundModes[sSoundMode];
     x = moon_get_text_width(txt, 1.0, FALSE) / 2 + 0.5;
-    moon_draw_text(SOUNDMODE_X1 - x, 39, txt, 1.0);
+    moon_draw_text(SOUNDMODE_X1 - x, 52, txt, 1.0);
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
     // Print file names

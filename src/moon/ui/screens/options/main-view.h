@@ -8,6 +8,7 @@ public:
     void Update();
     void Draw();
     void Mount();
+    void Dispose();
 private:
     void setCategory(int index);
 };

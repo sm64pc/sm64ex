@@ -170,7 +170,10 @@ namespace MoonInternal {
         }
         // TODO: Implement garbage collector
         if(state == "Exit"){
-
+            textureMods.clear();
+            for(auto &addon : Moon::addons){
+                addon->textures.clear();
+            }
         }
     }
 

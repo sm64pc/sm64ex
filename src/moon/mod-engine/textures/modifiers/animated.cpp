@@ -64,6 +64,10 @@ void AnimatedModifier::onLoad(std::string texture, json data){
     }
 }
 
+void AnimatedModifier::onRelease(){
+    textures.clear();
+}
+
 std::string AnimatedModifier::getKey(){
     return "animated";
 }

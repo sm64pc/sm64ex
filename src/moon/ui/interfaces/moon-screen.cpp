@@ -8,6 +8,7 @@ extern "C" {
 #include "game/game_init.h"
 #include "gfx_dimensions.h"
 #include "game/mario_misc.h"
+#include "audio/external.h"
 }
 
 void MoonScreen::Init(){

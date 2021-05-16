@@ -138,7 +138,11 @@ void game_deinit(void) {
     controller_shutdown();
     audio_shutdown();
     gfx_shutdown();
+    moon_setup("Exit");
     inited = false;
+#ifdef TARGET_SWITCH
+    exitNX();
+#endif
 }
 
 void game_exit(void) {
@@ -278,8 +282,5 @@ int main(int argc, char *argv[]) {
 #endif
     parse_cli_opts(argc, argv);
     main_func(argv);
-#ifdef TARGET_SWITCH
-    exitNX();
-#endif
     return 0;
 }

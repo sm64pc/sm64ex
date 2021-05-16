@@ -89,9 +89,12 @@ namespace Moon {
 
                 wstring base;
 
+                int lId = 0;
                 for (WValue& line : dialog[L"lines"].GetArray()){
                     base += line.GetString();
-                    base += L"\n";
+                    if(lId < dialog[L"lines"].Size() - 1)
+                        base += L"\n";
+                    lId++;
                 }
 
                 entry->str         = getTranslatedText(narrow(base).c_str());

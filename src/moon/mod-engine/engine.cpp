@@ -54,7 +54,6 @@ namespace Moon {
                     if(std::count(allowedTextures.begin(), allowedTextures.end(), string(get_filename_ext(bit->icon.c_str())))){
                         TextureFileEntry *entry = new TextureFileEntry();
                         file.read(bit->icon, entry);
-                        cout << "Found icon " << bit->icon << std::endl;
                         Moon::saveAddonTexture(bit, "mod-icons://"+bit->name, entry);
                     }
                     if(!string(get_filename_ext(bit->icon.c_str())).compare("json")){
@@ -141,6 +140,10 @@ namespace MoonInternal {
             vector<int> order;
             for(int i = 0; i < Moon::addons.size(); i++) order.push_back(i);
             MoonInternal::buildTextureCache(order);
+            return;
+        }
+        if(state == "Exit"){
+            Moon::addons.clear();
             return;
         }
     }

@@ -23,6 +23,7 @@ extern "C" {
 #include "sm64.h"
 #include "gfx_dimensions.h"
 #include "pc/configfile.h"
+#include "audio/external.h"
 }
 
 vector<MoonCategory*> categories;
@@ -32,11 +33,13 @@ int categoryIndex = 0;
 void MoonOptMain::setCategory(int index){
     MoonCategory *cat = categories[index];
     this->widgets = cat->catOptions;
+    play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
     MoonScreen::Mount();
 }
 
 void MoonOptMain::Init(){
     this->useMouseInstead = true;
+    play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
 }
 
 void MoonOptMain::Mount(){
@@ -48,7 +51,6 @@ void MoonOptMain::Mount(){
     categories.push_back(new MVideoCategory());
     categories.push_back(new MAudioCategory());
     categories.push_back(new MCheatsCategory());
-    // categories.push_back(new MTexturesCategory());
     this->setCategory(categoryIndex);
     MoonScreen::Mount();
 }
@@ -92,4 +94,9 @@ void MoonOptMain::Draw(){
     MoonDrawRectangle(25, 50, SCREEN_WIDTH - 50, GetScreenHeight() * 0.6, {0, 0, 0, 100}, true);
 
     MoonScreen::Draw();
+}
+
+void MoonOptMain::Dispose(){
+    configfile_save(configfile_name());
+    play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
 }

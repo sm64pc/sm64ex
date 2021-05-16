@@ -296,13 +296,13 @@ void print_act_selector_strings(void) {
     if (sVisibleStars != 0) {
         selectedActName = segmented_to_virtual(actNameTbl[(gCurrCourseNum - 1) * 6 + sSelectedActIndex]);
         actNameX = SCREEN_WIDTH / 2 - moon_get_text_width(selectedActName, 0.8f, 0) / 2;
-        moon_draw_text(actNameX, 147, selectedActName, 0.8f);
+        moon_draw_text(actNameX, 160, selectedActName, 0.8f);
     }
 
     // Print the numbers above each star.
     for (i = 1; i <= sVisibleStars; i++) {
         starNumbers[0] = i;
-        moon_draw_text(i * 35 - sVisibleStars * 17 + 139, 190, starNumbers, 0.8f);
+        moon_draw_text(i * 35 - sVisibleStars * 17 + 139, 203, starNumbers, 0.8f);
     }
 
     gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_end);

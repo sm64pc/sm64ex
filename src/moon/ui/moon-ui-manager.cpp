@@ -31,7 +31,6 @@ void MoonInitUI() {
 }
 
 void MoonDrawUI() {
-    MoonUpdateStatus();
     screens[currentScreen]->Update();
     screens[currentScreen]->Draw();
 }
@@ -56,7 +55,7 @@ void MoonHandleToggle(){
     if(gPlayer1Controller->buttonPressed & toggle){
         currentScreen = 0;
         isOpen = !isOpen;
-        if(isOpen) isRunning = false;
+        MoonUpdateStatus();
     }
 }
 
