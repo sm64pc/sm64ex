@@ -206,7 +206,7 @@ void MoonAddonsScreen::Draw(){
         char* parsed = strdup(iconPath.c_str());
         if(parsed != nullptr)
             MoonDrawTexture(35, 45 + (i * 35), 30, 30, parsed);
-        MoonDrawText(35 + 26, 46 + (i * 35), to_string(i + iMod), 0.5, {255, 255, 255, 255}, true, true);
+        MoonDrawText(35 + 26, 46 + (i * 35), to_string(i + iMod + 1), 0.5, {255, 255, 255, 255}, true, true);
 
         MoonDrawText(70, 45 + (i * 35) + 3, cropTxt(addon->name, 37), 0.8, {255, 255, 255, 255}, true, true);
 
