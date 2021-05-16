@@ -31,12 +31,14 @@ enum ItemButtons{
 };
 
 void MoonAddonsScreen::Init(){
-    texturePackList.clear();
+    if(texturePackList.empty()){
+        texturePackList.clear();
+        copy(Moon::addons.begin(), Moon::addons.end(), back_inserter(texturePackList));
+        reverse(texturePackList.begin(), texturePackList.end());
+    }
     this->scrollIndex = 0;
     scrollModifier = 0;
     currentPack = NULL;
-    copy(Moon::addons.begin(), Moon::addons.end(), back_inserter(texturePackList));
-    reverse(texturePackList.begin(), texturePackList.end());
 }
 
 void MoonAddonsScreen::Mount(){
