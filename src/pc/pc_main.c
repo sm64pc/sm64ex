@@ -198,6 +198,9 @@ void main_func(char *argv[]) {
     configfile_load(configfile_name());
     moon_environment_save("MOON_CWD",   argv[0]);
     moon_environment_save("ASSETS_DIR", gamedir);
+
+    moon_setup("PreStartup");
+
     if (gCLIOpts.FullScreen == 1)
         configWindow.fullscreen = true;
     else if (gCLIOpts.FullScreen == 2)
@@ -229,13 +232,7 @@ void main_func(char *argv[]) {
     #endif
 
     char window_title[96] =
-    "Super Mario 64 - Moon64 (" RAPI_NAME ")"
-    #ifdef NIGHTLY
-    " nightly " GIT_HASH
-    #else
-    " " GIT_HASH
-    #endif
-    ;
+    "Super Mario 64 - Moon64 (" RAPI_NAME ")";
 
     gfx_init(wm_api, rendering_api, window_title);
     wm_api->set_keyboard_callbacks(keyboard_on_key_down, keyboard_on_key_up, keyboard_on_all_keys_up);

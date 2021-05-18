@@ -3,6 +3,7 @@
 #include "moon/utils/moon-env.h"
 #include "interfaces/file-entry.h"
 #include "textures/mod-texture.h"
+#include "shaders/mod-shaders.h"
 
 #include "moon/zip/straw.h"
 #include "moon/libs/nlohmann/json.hpp"
@@ -73,12 +74,14 @@ namespace Moon {
                             "assets/models/"
                         };
 
+                        string shadersPath = "assets/shaders/";
                         string textsPath = "assets/texts/";
+                        string fileExtension = string(get_filename_ext(name.c_str()));
 
                         for(auto &path : texturePaths){
                             if(!name.rfind(path, 0)){
                                 vector<string> allowedTextures = {"png", "jpg", "jpeg"};
-                                if(std::count(allowedTextures.begin(), allowedTextures.end(), string(get_filename_ext(name.c_str())))){
+                                if(std::count(allowedTextures.begin(), allowedTextures.end(), fileExtension)){
                                     string texName = name.substr(path.length());
                                     string rawname = texName.substr(0, texName.find_last_of("."));
 
@@ -86,14 +89,24 @@ namespace Moon {
                                     file.read(name, entry);
                                     Moon::saveAddonTexture(bit, rawname, entry);
                                 }
-                                if(!string(get_filename_ext(name.c_str())).compare("json")){
+                                if(!fileExtension.compare("json")){
                                     string modName = name.substr(path.length());
                                     cout << "Found animated texture " << modName << endl;
                                     json mods = json::parse(file.read(name));
                                     for (json::iterator entry = mods.begin(); entry != mods.end(); ++entry) {
+                                    cout << "Binding " << entry.key() << endl;
                                         Moon::bindTextureModifier(modName.substr(0, modName.find_last_of(".")), entry.key(), entry.value());
                                     }
                                 }
+                            }
+                        }
+                        if(!name.rfind(shadersPath, 0)){
+                            vector<string> shaderExts = { "vs", "fs" };
+                            if(std::count(shaderExts.begin(), shaderExts.end(), fileExtension)){
+                                string path = name.substr(shadersPath.length());
+                                string raw = path.substr(0, path.find_last_of("."));
+                                cout << "Found shader source: " << raw << endl;
+                                // Moon::saveAddonShader(bit, raw, file.read(name), !fileExtension.compare("vs") ? ShaderType::VERTEX : ShaderType::FRAGMENT);
                             }
                         }
                         if(!name.rfind(textsPath, 0)){
@@ -135,8 +148,11 @@ namespace MoonInternal {
     void setupModEngine( string state ){
         MoonInternal::setupTextureEngine(state);
 
-        if(state == "Init"){
+        if(state == "PreStartup"){
             MoonInternal::scanAddonsDirectory();
+            return;
+        }
+        if(state == "PreInit"){
             vector<int> order;
             for(int i = 0; i < Moon::addons.size(); i++) order.push_back(i);
             MoonInternal::buildTextureCache(order);

@@ -47,15 +47,18 @@ void AnimatedModifier::onInit(){
 }
 
 void AnimatedModifier::onLoad(std::string texture, json data){
+    cout << "Called on load" << endl;
     if(textures.find(texture) == textures.end()){
-        if(!(data.contains("frames") && data.contains("delay") && data.contains("bounce"))) return;
+        if(!(data.contains("frames") && data.contains("bounce"))) return;
         cout << "Found animated entry: " << texture << " with " << data["frames"].size() << " length" << endl;
         AnimatedEntry *entry = new AnimatedEntry();
         entry->advancedMode = data.contains("advancedMode") ? (bool) data["advancedMode"] : false;
 
         entry->bounce = data["bounce"];
+        cout << "Registered animated frames " << data["frames"].size() << endl;
+        // cout << "File " << frame["path"] << " Time " << frame["delay"];
         for(auto &frame : data["frames"]){
-            if(!entry->advancedMode)
+            if(!entry->advancedMode && data.contains("delay"))
                 entry->frames.push_back( new Frame({.delay = data["delay"], .path = frame}));
             else
                 entry->frames.push_back( new Frame({.delay = frame["delay"], .path = frame["path"]}));

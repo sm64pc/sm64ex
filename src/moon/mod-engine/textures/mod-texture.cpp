@@ -115,6 +115,7 @@ namespace MoonInternal {
         }
 
         cout << "Failed to load texture" << endl;
+        cout << fullpath << endl;
 
         gfx_rapi->upload_texture(missing_image.pixel_data, missing_image.width, missing_image.height);
     }
@@ -162,9 +163,12 @@ namespace MoonInternal {
     }
 
     void setupTextureEngine( string state ){
+        if(state == "PreStartup"){
+            MoonInternal::bindTextureModifiers();
+            return;
+        }
         if(state == "PreInit"){
             MoonInternal::buildDefaultAddon();
-            MoonInternal::bindTextureModifiers();
             return;
         }
         if(state == "Exit"){
