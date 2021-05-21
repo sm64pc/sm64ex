@@ -1829,10 +1829,10 @@ void sequence_player_process_sequence(struct SequencePlayer *seqPlayer) {
                         temp = m64_read_u8(state);
                         switch (seqPlayer->state) {
                             case SEQUENCE_PLAYER_STATE_2:
-                                if (seqPlayer->fadeTimer != 0) {
+                                if (seqPlayer->fadeRemainingFrames != 0) {
                                     f32 targetVolume = FLOAT_CAST(temp) / US_FLOAT(127.0);
                                     seqPlayer->fadeVelocity = (targetVolume - seqPlayer->fadeVolume)
-                                                              / FLOAT_CAST(seqPlayer->fadeTimer);
+                                                              / FLOAT_CAST(seqPlayer->fadeRemainingFrames);
                                     break;
                                 }
                                 // fallthrough
@@ -2017,7 +2017,7 @@ void init_sequence_player(u32 player) {
 #else
     seqPlayer->state = SEQUENCE_PLAYER_STATE_0;
 #endif
-    seqPlayer->fadeTimer = 0;
+    seqPlayer->fadeRemainingFrames = 0;
 #ifdef VERSION_EU
     seqPlayer->fadeTimerUnkEu = 0;
 #endif
@@ -2083,7 +2083,7 @@ void init_sequence_players(void) {
         gSequencePlayers[i].seqDmaInProgress = FALSE;
 
         // only set this once at the start so it doesn't spike later
-        gSequencePlayers[i].volumeScale = 1.0f;
+        gSequencePlayers[i].volume = 1.0f;
 
         init_note_lists(&gSequencePlayers[i].notePool);
         init_sequence_player(i);

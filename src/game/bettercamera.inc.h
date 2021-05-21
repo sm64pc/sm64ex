@@ -9,7 +9,7 @@
 #include "engine/surface_collision.h"
 #include "pc/configfile.h"
 #include "pc/controller/controller_mouse.h"
-#if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR) 
+#if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
 //quick and dirty fix for some older MinGW.org mingwrt
 #else
 #include <stdio.h>
@@ -265,7 +265,7 @@ static void newcam_rotate_button(void) {
         //8 directional camera rotation input for buttons.
         if ((gPlayer1Controller->buttonPressed & L_CBUTTONS) && newcam_analogue == 0) {
             #ifndef nosound
-            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
+            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
             #endif
             if (newcam_modeflags & NC_FLAG_8D)
                 newcam_yaw_target = newcam_yaw_target+(ivrt(newcam_invertX)*0x2000);
@@ -274,7 +274,7 @@ static void newcam_rotate_button(void) {
             newcam_centering = 1;
         } else if ((gPlayer1Controller->buttonPressed & R_CBUTTONS) && newcam_analogue == 0) {
             #ifndef nosound
-            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
+            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
             #endif
             if (newcam_modeflags & NC_FLAG_8D)
                 newcam_yaw_target = newcam_yaw_target-(ivrt(newcam_invertX)*0x2000);
@@ -316,7 +316,7 @@ static void newcam_rotate_button(void) {
             newcam_yaw_target = newcam_yaw+(ivrt(newcam_invertX)*0x3000);
             newcam_centering = 1;
             #ifndef nosound
-            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
+            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
             #endif
         }
         newcam_framessincec[0] = 0;
@@ -326,7 +326,7 @@ static void newcam_rotate_button(void) {
             newcam_yaw_target = newcam_yaw-(ivrt(newcam_invertX)*0x3000);
             newcam_centering = 1;
             #ifndef nosound
-            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
+            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
             #endif
         }
         newcam_framessincec[1] = 0;
@@ -345,7 +345,7 @@ static void newcam_rotate_button(void) {
                     newcam_cstick_down = 1;
                     newcam_centering = 1;
                     #ifndef nosound
-                    play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
+                    play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
                     #endif
                     if (newcam_stick2[0] > 20) {
                         if (newcam_modeflags & NC_FLAG_8D)
@@ -399,7 +399,7 @@ static void newcam_zoom_button(void) {
     } else if (gPlayer1Controller->buttonPressed & R_TRIG && newcam_modeflags & NC_FLAG_XTURN) {
         //Each time the player presses R, but NOT L the camera zooms out more, until it hits the limit and resets back to close view.
         #ifndef nosound
-        play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gDefaultSoundArgs);
+        play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
         #endif
 
         if (newcam_distance_target == newcam_distance_values[0])

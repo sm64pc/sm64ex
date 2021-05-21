@@ -174,7 +174,7 @@ void envfx_update_lava(Vec3s centerPos) {
     }
 
     if ((chance = (s32)(random_float() * 16.0f)) == 8) {
-        play_sound(SOUND_GENERAL_QUIET_BUBBLE2, gDefaultSoundArgs);
+        play_sound(SOUND_GENERAL_QUIET_BUBBLE2, gGlobalSoundSource);
     }
 }
 

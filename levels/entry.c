@@ -13,7 +13,7 @@ const LevelScript level_script_entry[] = {
 #ifdef TOGGLE_GAME_DEBUG
     EXECUTE(/*seg*/ 0x14, /*script*/ _introSegmentRomStart, /*scriptEnd*/ _introSegmentRomEnd, /*entry*/ level_intro_entry_4),
 #else
-    EXECUTE(/*seg*/ 0x14, /*script*/ _introSegmentRomStart, /*scriptEnd*/ _introSegmentRomEnd, /*entry*/ level_intro_n64),
+    EXECUTE(/*seg*/ 0x14, /*script*/ _introSegmentRomStart, /*scriptEnd*/ _introSegmentRomEnd, /*entry*/ script_intro_L1),
 #endif
     JUMP(/*target*/ level_script_entry),
 };

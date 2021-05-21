@@ -82,10 +82,10 @@ void lower_background_noise(s32 a) // Soften volume
 {
     switch (a) {
         case 1:
-            set_sound_disabled(TRUE);
+            set_audio_muted(TRUE);
             break;
         case 2:
-            func_8031FFB4(SEQ_PLAYER_LEVEL, 60, 40); // soften music
+            seq_player_lower_volume(SEQ_PLAYER_LEVEL, 60, 40); // soften music
             break;
     }
     D_8032C6C0 |= a;
@@ -95,10 +95,10 @@ void raise_background_noise(s32 a) // harden volume
 {
     switch (a) {
         case 1:
-            set_sound_disabled(FALSE);
+            set_audio_muted(FALSE);
             break;
         case 2:
-            sequence_player_unlower(SEQ_PLAYER_LEVEL, 60);
+            seq_player_unlower_volume(SEQ_PLAYER_LEVEL, 60);
             break;
     }
     D_8032C6C0 &= ~a;
@@ -133,27 +133,27 @@ void set_sound_mode(u16 soundMode) {
 void play_menu_sounds(s16 soundMenuFlags) {
 
     if (soundMenuFlags & SOUND_MENU_FLAG_HANDAPPEAR) {
-        play_sound(SOUND_MENU_HAND_APPEAR, gDefaultSoundArgs);
+        play_sound(SOUND_MENU_HAND_APPEAR, gGlobalSoundSource);
     } else if (soundMenuFlags & SOUND_MENU_FLAG_HANDISAPPEAR) {
-        play_sound(SOUND_MENU_HAND_DISAPPEAR, gDefaultSoundArgs);
+        play_sound(SOUND_MENU_HAND_DISAPPEAR, gGlobalSoundSource);
     } else if (soundMenuFlags & SOUND_MENU_FLAG_UNKNOWN1) {
-        play_sound(SOUND_MENU_UNK0C, gDefaultSoundArgs);
+        play_sound(SOUND_MENU_UNK0C, gGlobalSoundSource);
     } else if (soundMenuFlags & SOUND_MENU_FLAG_PINCHMARIOFACE) {
-        play_sound(SOUND_MENU_PINCH_MARIO_FACE, gDefaultSoundArgs);
+        play_sound(SOUND_MENU_PINCH_MARIO_FACE, gGlobalSoundSource);
     } else if (soundMenuFlags & SOUND_MENU_FLAG_PINCHMARIOFACE2) {
-        play_sound(SOUND_MENU_PINCH_MARIO_FACE, gDefaultSoundArgs);
+        play_sound(SOUND_MENU_PINCH_MARIO_FACE, gGlobalSoundSource);
     } else if (soundMenuFlags & SOUND_MENU_FLAG_LETGOMARIOFACE) {
-        play_sound(SOUND_MENU_LET_GO_MARIO_FACE, gDefaultSoundArgs);
+        play_sound(SOUND_MENU_LET_GO_MARIO_FACE, gGlobalSoundSource);
     } else if (soundMenuFlags & SOUND_MENU_FLAG_CAMERAZOOMIN) {
-        play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
+        play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
     } else if (soundMenuFlags & SOUND_MENU_FLAG_CAMERAZOOMOUT) {
-        play_sound(SOUND_MENU_CAMERA_ZOOM_OUT, gDefaultSoundArgs);
+        play_sound(SOUND_MENU_CAMERA_ZOOM_OUT, gGlobalSoundSource);
     }
 
     if (soundMenuFlags & 0x100) {
         play_menu_sounds_extra(20, NULL);
     }
-    
+
     if ((soundMenuFlags & 0x20) != 0) {
         queue_rumble_data(10, 60);
     }
@@ -220,7 +220,7 @@ void fadeout_music(s16 fadeOutTime) {
 }
 
 void fadeout_level_music(s16 fadeTimer) {
-    sequence_player_fade_out(0, fadeTimer);
+    seq_player_fade_out(0, fadeTimer);
     sCurrentMusic = MUSIC_NONE;
     sCurrentShellMusic = MUSIC_NONE;
     sCurrentCapMusic = MUSIC_NONE;

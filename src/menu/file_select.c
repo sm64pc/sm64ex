@@ -377,7 +377,7 @@ void exit_score_file_to_score_menu(struct Object *scoreFileButton, s8 scoreButto
     // Begin exit
     if (scoreFileButton->oMenuButtonState == MENU_BUTTON_STATE_FULLSCREEN
         && sCursorClickingTimer == 2) {
-        play_sound(SOUND_MENU_CAMERA_ZOOM_OUT, gDefaultSoundArgs);
+        play_sound(SOUND_MENU_CAMERA_ZOOM_OUT, gGlobalSoundSource);
         scoreFileButton->oMenuButtonState = MENU_BUTTON_STATE_SHRINKING;
     }
     // End exit
@@ -469,7 +469,7 @@ void check_score_menu_clicked_buttons(struct Object *scoreButton) {
                 // If menu button clicked, select it
                 if (buttonID == MENU_BUTTON_SCORE_RETURN || buttonID == MENU_BUTTON_SCORE_COPY_FILE
                     || buttonID == MENU_BUTTON_SCORE_ERASE_FILE) {
-                    play_sound(SOUND_MENU_CLICK_FILE_SELECT, gDefaultSoundArgs);
+                    play_sound(SOUND_MENU_CLICK_FILE_SELECT, gGlobalSoundSource);
                     sMainMenuButtons[buttonID]->oMenuButtonState = MENU_BUTTON_STATE_ZOOM_IN_OUT;
                     sSelectedButtonID = buttonID;
                 }
@@ -477,13 +477,13 @@ void check_score_menu_clicked_buttons(struct Object *scoreButton) {
                     if (sMainMenuTimer >= SCORE_TIMER) {
                         // If clicked in a existing save file, select it too see it's score
                         if (save_file_exists(buttonID - MENU_BUTTON_SCORE_MIN) == TRUE) {
-                            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
+                            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
                             sMainMenuButtons[buttonID]->oMenuButtonState = MENU_BUTTON_STATE_GROWING;
                             sSelectedButtonID = buttonID;
                         }
                         else {
                             // If clicked in a non-existing save file, play buzz sound
-                            play_sound(SOUND_MENU_CAMERA_BUZZ, gDefaultSoundArgs);
+                            play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource);
                             sMainMenuButtons[buttonID]->oMenuButtonState =
                                 MENU_BUTTON_STATE_ZOOM_IN_OUT;
                             if (sMainMenuTimer >= SCORE_TIMER) {
@@ -576,7 +576,7 @@ void copy_action_file_button(struct Object *copyButton, s32 copyFileButtonID) {
             }
             if (save_file_exists(copyFileButtonID - MENU_BUTTON_COPY_MIN) == TRUE) {
                 // If clicked in a existing save file, ask where it wants to copy
-                play_sound(SOUND_MENU_CLICK_FILE_SELECT, gDefaultSoundArgs);
+                play_sound(SOUND_MENU_CLICK_FILE_SELECT, gGlobalSoundSource);
                 sMainMenuButtons[copyFileButtonID]->oMenuButtonState = MENU_BUTTON_STATE_ZOOM_IN;
                 sSelectedFileIndex = copyFileButtonID - MENU_BUTTON_COPY_MIN;
                 copyButton->oMenuButtonActionPhase = COPY_PHASE_COPY_WHERE;
@@ -584,7 +584,7 @@ void copy_action_file_button(struct Object *copyButton, s32 copyFileButtonID) {
                 sMainMenuTimer = 0;
             } else {
                 // If clicked in a non-existing save file, play buzz sound
-                play_sound(SOUND_MENU_CAMERA_BUZZ, gDefaultSoundArgs);
+                play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource);
                 sMainMenuButtons[copyFileButtonID]->oMenuButtonState = MENU_BUTTON_STATE_ZOOM_IN_OUT;
                 if (sMainMenuTimer >= BUZZ_TIMER) {
                     sFadeOutText = TRUE;
@@ -596,7 +596,7 @@ void copy_action_file_button(struct Object *copyButton, s32 copyFileButtonID) {
             sMainMenuButtons[copyFileButtonID]->oMenuButtonState = MENU_BUTTON_STATE_ZOOM_IN_OUT;
             if (save_file_exists(copyFileButtonID - MENU_BUTTON_COPY_MIN) == FALSE) {
                 // If clicked in a non-existing save file, copy the file
-                play_sound(SOUND_MENU_STAR_SOUND, gDefaultSoundArgs);
+                play_sound(SOUND_MENU_STAR_SOUND, gGlobalSoundSource);
                 copyButton->oMenuButtonActionPhase = COPY_PHASE_COPY_COMPLETE;
                 sFadeOutText = TRUE;
                 sMainMenuTimer = 0;
@@ -608,7 +608,7 @@ void copy_action_file_button(struct Object *copyButton, s32 copyFileButtonID) {
             } else {
                 // If clicked in a existing save file, play buzz sound
                 if (MENU_BUTTON_COPY_FILE_A + sSelectedFileIndex == copyFileButtonID) {
-                    play_sound(SOUND_MENU_CAMERA_BUZZ, gDefaultSoundArgs);
+                    play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource);
                     sMainMenuButtons[MENU_BUTTON_COPY_FILE_A + sSelectedFileIndex]->oMenuButtonState =
                         MENU_BUTTON_STATE_ZOOM_OUT;
                     copyButton->oMenuButtonActionPhase = COPY_PHASE_MAIN;
@@ -648,7 +648,7 @@ void check_copy_menu_clicked_buttons(struct Object *copyButton) {
                 if (buttonID == MENU_BUTTON_COPY_RETURN || buttonID == MENU_BUTTON_COPY_CHECK_SCORE
                     || buttonID == MENU_BUTTON_COPY_ERASE_FILE) {
                     if (copyButton->oMenuButtonActionPhase == COPY_PHASE_MAIN) {
-                        play_sound(SOUND_MENU_CLICK_FILE_SELECT, gDefaultSoundArgs);
+                        play_sound(SOUND_MENU_CLICK_FILE_SELECT, gGlobalSoundSource);
                         sMainMenuButtons[buttonID]->oMenuButtonState = MENU_BUTTON_STATE_ZOOM_IN_OUT;
                         sSelectedButtonID = buttonID;
                     }
@@ -743,7 +743,7 @@ void erase_action_file_button(struct Object *eraseButton, s32 eraseFileButtonID)
         case ERASE_PHASE_MAIN: // Erase Menu Main Phase
             if (save_file_exists(eraseFileButtonID - MENU_BUTTON_ERASE_MIN) == TRUE) {
                 // If clicked in a existing save file, ask if it wants to delete it
-                play_sound(SOUND_MENU_CLICK_FILE_SELECT, gDefaultSoundArgs);
+                play_sound(SOUND_MENU_CLICK_FILE_SELECT, gGlobalSoundSource);
                 sMainMenuButtons[eraseFileButtonID]->oMenuButtonState = MENU_BUTTON_STATE_ZOOM_IN;
                 sSelectedFileIndex = eraseFileButtonID - MENU_BUTTON_ERASE_MIN;
                 eraseButton->oMenuButtonActionPhase = ERASE_PHASE_PROMPT;
@@ -751,7 +751,7 @@ void erase_action_file_button(struct Object *eraseButton, s32 eraseFileButtonID)
                 sMainMenuTimer = 0;
             } else {
                 // If clicked in a non-existing save file, play buzz sound
-                play_sound(SOUND_MENU_CAMERA_BUZZ, gDefaultSoundArgs);
+                play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource);
                 sMainMenuButtons[eraseFileButtonID]->oMenuButtonState = MENU_BUTTON_STATE_ZOOM_IN_OUT;
 
                 if (sMainMenuTimer >= BUZZ_TIMER) {
@@ -765,7 +765,7 @@ void erase_action_file_button(struct Object *eraseButton, s32 eraseFileButtonID)
                 // If clicked in a existing save file, play click sound and zoom out button
                 // Note: The prompt functions are actually called when the ERASE_MSG_PROMPT
                 // message is displayed with print_erase_menu_prompt
-                play_sound(SOUND_MENU_CLICK_FILE_SELECT, gDefaultSoundArgs);
+                play_sound(SOUND_MENU_CLICK_FILE_SELECT, gGlobalSoundSource);
                 sMainMenuButtons[MENU_BUTTON_ERASE_MIN + sSelectedFileIndex]->oMenuButtonState =
                     MENU_BUTTON_STATE_ZOOM_OUT;
                 eraseButton->oMenuButtonActionPhase = ERASE_PHASE_MAIN;
@@ -792,7 +792,7 @@ void check_erase_menu_clicked_buttons(struct Object *eraseButton) {
                 if (buttonID == MENU_BUTTON_ERASE_RETURN || buttonID == MENU_BUTTON_ERASE_CHECK_SCORE
                     || buttonID == MENU_BUTTON_ERASE_COPY_FILE) {
                     if (eraseButton->oMenuButtonActionPhase == ERASE_PHASE_MAIN) {
-                        play_sound(SOUND_MENU_CLICK_FILE_SELECT, gDefaultSoundArgs);
+                        play_sound(SOUND_MENU_CLICK_FILE_SELECT, gGlobalSoundSource);
                         sMainMenuButtons[buttonID]->oMenuButtonState = MENU_BUTTON_STATE_ZOOM_IN_OUT;
                         sSelectedButtonID = buttonID;
                     }
@@ -884,7 +884,7 @@ void check_sound_mode_menu_clicked_buttons(struct Object *soundModeButton) {
                 if (buttonID == MENU_BUTTON_STEREO || buttonID == MENU_BUTTON_MONO
                     || buttonID == MENU_BUTTON_HEADSET) {
                     if (soundModeButton->oMenuButtonActionPhase == SOUND_MODE_PHASE_MAIN) {
-                        play_sound(SOUND_MENU_CLICK_FILE_SELECT, gDefaultSoundArgs);
+                        play_sound(SOUND_MENU_CLICK_FILE_SELECT, gGlobalSoundSource);
                         sMainMenuButtons[buttonID]->oMenuButtonState = MENU_BUTTON_STATE_ZOOM_IN_OUT;
                         // Sound menu buttons don't return to Main Menu in EU
                         // because they don't have a case in bhv_menu_button_manager_loop
@@ -922,7 +922,7 @@ void return_to_main_menu(s16 prevMenuButtonID, struct Object *sourceButton) {
     // play zoom out sound and shrink previous menu
     if (sourceButton->oMenuButtonState == MENU_BUTTON_STATE_DEFAULT
         && sMainMenuButtons[prevMenuButtonID]->oMenuButtonState == MENU_BUTTON_STATE_FULLSCREEN) {
-        play_sound(SOUND_MENU_CAMERA_ZOOM_OUT, gDefaultSoundArgs);
+        play_sound(SOUND_MENU_CAMERA_ZOOM_OUT, gGlobalSoundSource);
         sMainMenuButtons[prevMenuButtonID]->oMenuButtonState = MENU_BUTTON_STATE_SHRINKING;
         sCurrentMenuLevel = MENU_LAYER_MAIN;
     }
@@ -962,7 +962,7 @@ void load_score_menu_from_submenu(s16 prevMenuButtonID, struct Object *sourceBut
     // play zoom out sound and shrink previous menu
     if (sourceButton->oMenuButtonState == MENU_BUTTON_STATE_DEFAULT
         && sMainMenuButtons[prevMenuButtonID]->oMenuButtonState == MENU_BUTTON_STATE_FULLSCREEN) {
-        play_sound(SOUND_MENU_CAMERA_ZOOM_OUT, gDefaultSoundArgs);
+        play_sound(SOUND_MENU_CAMERA_ZOOM_OUT, gGlobalSoundSource);
         sMainMenuButtons[prevMenuButtonID]->oMenuButtonState = MENU_BUTTON_STATE_SHRINKING;
         sCurrentMenuLevel = MENU_LAYER_MAIN;
     }
@@ -988,7 +988,7 @@ void load_score_menu_from_submenu(s16 prevMenuButtonID, struct Object *sourceBut
         }
         // Play zoom in sound, select score menu and render it's buttons
         sSelectedButtonID = MENU_BUTTON_SCORE;
-        play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
+        play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
         sMainMenuButtons[MENU_BUTTON_SCORE]->oMenuButtonState = MENU_BUTTON_STATE_GROWING;
         render_score_menu_buttons(sMainMenuButtons[MENU_BUTTON_SCORE]);
     }
@@ -1003,7 +1003,7 @@ void load_copy_menu_from_submenu(s16 prevMenuButtonID, struct Object *sourceButt
     // play zoom out sound and shrink previous menu
     if (sourceButton->oMenuButtonState == MENU_BUTTON_STATE_DEFAULT
         && sMainMenuButtons[prevMenuButtonID]->oMenuButtonState == MENU_BUTTON_STATE_FULLSCREEN) {
-        play_sound(SOUND_MENU_CAMERA_ZOOM_OUT, gDefaultSoundArgs);
+        play_sound(SOUND_MENU_CAMERA_ZOOM_OUT, gGlobalSoundSource);
         sMainMenuButtons[prevMenuButtonID]->oMenuButtonState = MENU_BUTTON_STATE_SHRINKING;
         sCurrentMenuLevel = MENU_LAYER_MAIN;
     }
@@ -1029,7 +1029,7 @@ void load_copy_menu_from_submenu(s16 prevMenuButtonID, struct Object *sourceButt
         }
         // Play zoom in sound, select copy menu and render it's buttons
         sSelectedButtonID = MENU_BUTTON_COPY;
-        play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
+        play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
         sMainMenuButtons[MENU_BUTTON_COPY]->oMenuButtonState = MENU_BUTTON_STATE_GROWING;
         render_copy_menu_buttons(sMainMenuButtons[MENU_BUTTON_COPY]);
     }
@@ -1044,7 +1044,7 @@ void load_erase_menu_from_submenu(s16 prevMenuButtonID, struct Object *sourceBut
     // play zoom out sound and shrink previous menu
     if (sourceButton->oMenuButtonState == MENU_BUTTON_STATE_DEFAULT
         && sMainMenuButtons[prevMenuButtonID]->oMenuButtonState == MENU_BUTTON_STATE_FULLSCREEN) {
-        play_sound(SOUND_MENU_CAMERA_ZOOM_OUT, gDefaultSoundArgs);
+        play_sound(SOUND_MENU_CAMERA_ZOOM_OUT, gGlobalSoundSource);
         sMainMenuButtons[prevMenuButtonID]->oMenuButtonState = MENU_BUTTON_STATE_SHRINKING;
         sCurrentMenuLevel = MENU_LAYER_MAIN;
     }
@@ -1070,7 +1070,7 @@ void load_erase_menu_from_submenu(s16 prevMenuButtonID, struct Object *sourceBut
         }
         // Play zoom in sound, select erase menu and render it's buttons
         sSelectedButtonID = MENU_BUTTON_ERASE;
-        play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
+        play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
         sMainMenuButtons[MENU_BUTTON_ERASE]->oMenuButtonState = MENU_BUTTON_STATE_GROWING;
         render_erase_menu_buttons(sMainMenuButtons[MENU_BUTTON_ERASE]);
     }
@@ -1193,32 +1193,32 @@ void check_main_menu_clicked_buttons(void) {
         // Play sound of the save file clicked
         switch (sSelectedButtonID) {
             case MENU_BUTTON_PLAY_FILE_A:
-                play_sound(SAVE_FILE_SOUND, gDefaultSoundArgs);
+                play_sound(SAVE_FILE_SOUND, gGlobalSoundSource);
                 break;
             case MENU_BUTTON_PLAY_FILE_B:
-                play_sound(SAVE_FILE_SOUND, gDefaultSoundArgs);
+                play_sound(SAVE_FILE_SOUND, gGlobalSoundSource);
                 break;
             case MENU_BUTTON_PLAY_FILE_C:
-                play_sound(SAVE_FILE_SOUND, gDefaultSoundArgs);
+                play_sound(SAVE_FILE_SOUND, gGlobalSoundSource);
                 break;
             case MENU_BUTTON_PLAY_FILE_D:
-                play_sound(SAVE_FILE_SOUND, gDefaultSoundArgs);
+                play_sound(SAVE_FILE_SOUND, gGlobalSoundSource);
                 break;
             // Play sound of the button clicked and render buttons of that menu.
             case MENU_BUTTON_SCORE:
-                play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
+                play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
                 render_score_menu_buttons(sMainMenuButtons[MENU_BUTTON_SCORE]);
                 break;
             case MENU_BUTTON_COPY:
-                play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
+                play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
                 render_copy_menu_buttons(sMainMenuButtons[MENU_BUTTON_COPY]);
                 break;
             case MENU_BUTTON_ERASE:
-                play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
+                play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
                 render_erase_menu_buttons(sMainMenuButtons[MENU_BUTTON_ERASE]);
                 break;
             case MENU_BUTTON_SOUND_MODE:
-                play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
+                play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
                 render_sound_mode_menu_buttons(sMainMenuButtons[MENU_BUTTON_SOUND_MODE]);
                 break;
         }
@@ -1372,7 +1372,7 @@ void handle_cursor_button_input(void) {
             sCursorClickingTimer = 1;
         } else if (gPlayer3Controller->buttonPressed & A_BUTTON) {
             sScoreFileCoinScoreMode = 1 - sScoreFileCoinScoreMode;
-            play_sound(SOUND_MENU_CLICK_FILE_SELECT, gDefaultSoundArgs);
+            play_sound(SOUND_MENU_CLICK_FILE_SELECT, gGlobalSoundSource);
         }
     } else { // If cursor is clicked
         if (gPlayer3Controller->buttonPressed
@@ -1825,7 +1825,7 @@ void print_erase_menu_prompt(s16 x, s16 y) {
     if (sCursorClickingTimer == 2) {
         // ..and is hovering "YES", delete file
         if (sEraseYesNoHoverState == MENU_ERASE_HOVER_YES) {
-            play_sound(SOUND_MARIO_WAAAOOOW, gDefaultSoundArgs);
+            play_sound(SOUND_MARIO_WAAAOOOW, gGlobalSoundSource);
             sMainMenuButtons[MENU_BUTTON_ERASE]->oMenuButtonActionPhase = ERASE_PHASE_MARIO_ERASED;
             sFadeOutText = TRUE;
             sMainMenuTimer = 0;
@@ -1837,7 +1837,7 @@ void print_erase_menu_prompt(s16 x, s16 y) {
             sEraseYesNoHoverState = MENU_ERASE_HOVER_NONE;
             // ..and is hovering "NO", return back to main phase
         } else if (sEraseYesNoHoverState == MENU_ERASE_HOVER_NO) {
-            play_sound(SOUND_MENU_CLICK_FILE_SELECT, gDefaultSoundArgs);
+            play_sound(SOUND_MENU_CLICK_FILE_SELECT, gGlobalSoundSource);
             sMainMenuButtons[MENU_BUTTON_ERASE_MIN + sSelectedFileIndex]->oMenuButtonState =
                 MENU_BUTTON_STATE_ZOOM_OUT;
             sMainMenuButtons[MENU_BUTTON_ERASE]->oMenuButtonActionPhase = ERASE_PHASE_MAIN;

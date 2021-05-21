@@ -160,7 +160,7 @@ extern void func_sh_802F69CC(void);
 void handle_nmi_request(void) {
     gResetTimer = 1;
     D_8032C648 = 0;
-    func_80320890();
+    stop_sounds_in_continuous_banks();
     sound_banks_disable(2, 0x037A);
     fadeout_music(90);
 #ifdef VERSION_SH

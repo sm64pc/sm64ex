@@ -639,7 +639,7 @@ static void level_cmd_load_area(void) {
     s16 areaIndex = CMD_GET(u8, 2);
     UNUSED void *unused = (u8 *) sCurrentCmd + 4;
 
-    func_80320890();
+    stop_sounds_in_continuous_banks();
     load_area(areaIndex);
 
     sCurrentCmd = CMD_NEXT;
@@ -731,8 +731,8 @@ static void level_cmd_get_or_set_var(void) {
             case 4:
                 gCurrAreaIndex = sRegister;
                 break;
-            case 5: 
-                gPressedStart = sRegister; 
+            case 5:
+                gPressedStart = sRegister;
                 break;
         }
     } else {
@@ -752,8 +752,8 @@ static void level_cmd_get_or_set_var(void) {
             case 4:
                 sRegister = gCurrAreaIndex;
                 break;
-            case 5: 
-                sRegister = gPressedStart; 
+            case 5:
+                sRegister = gPressedStart;
                 break;
         }
     }

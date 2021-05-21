@@ -4864,23 +4864,23 @@ void play_camera_buzz_if_c_sideways(void) {
 }
 
 void play_sound_cbutton_up(void) {
-    play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gDefaultSoundArgs);
+    play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
 }
 
 void play_sound_cbutton_down(void) {
-    play_sound(SOUND_MENU_CAMERA_ZOOM_OUT, gDefaultSoundArgs);
+    play_sound(SOUND_MENU_CAMERA_ZOOM_OUT, gGlobalSoundSource);
 }
 
 void play_sound_cbutton_side(void) {
-    play_sound(SOUND_MENU_CAMERA_TURN, gDefaultSoundArgs);
+    play_sound(SOUND_MENU_CAMERA_TURN, gGlobalSoundSource);
 }
 
 void play_sound_button_change_blocked(void) {
-    play_sound(SOUND_MENU_CAMERA_BUZZ, gDefaultSoundArgs);
+    play_sound(SOUND_MENU_CAMERA_BUZZ, gGlobalSoundSource);
 }
 
 void play_sound_rbutton_changed(void) {
-    play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gDefaultSoundArgs);
+    play_sound(SOUND_MENU_CLICK_CHANGE_VIEW, gGlobalSoundSource);
 }
 
 void play_sound_if_cam_switched_to_lakitu_or_mario(void) {
@@ -7083,7 +7083,7 @@ static UNUSED void unused_cutscene_mario_dialog_looking_up(UNUSED struct Camera 
  */
 BAD_RETURN(s32) cutscene_intro_peach_start_letter_music(UNUSED struct Camera *c) {
 #if defined(VERSION_US) || defined(VERSION_SH)
-    func_8031FFB4(SEQ_PLAYER_LEVEL, 60, 40);
+    seq_player_lower_volume(SEQ_PLAYER_LEVEL, 60, 40);
 #endif
     cutscene_intro_peach_play_message_music();
 }
@@ -7093,7 +7093,7 @@ BAD_RETURN(s32) cutscene_intro_peach_start_letter_music(UNUSED struct Camera *c)
  */
 BAD_RETURN(s32) cutscene_intro_peach_start_flying_music(UNUSED struct Camera *c) {
 #ifndef VERSION_JP
-    sequence_player_unlower(SEQ_PLAYER_LEVEL, 60);
+    seq_player_unlower_volume(SEQ_PLAYER_LEVEL, 60);
 #endif
     cutscene_intro_peach_play_lakitu_flying_music();
 }
@@ -7104,7 +7104,7 @@ BAD_RETURN(s32) cutscene_intro_peach_start_flying_music(UNUSED struct Camera *c)
  * starts.
  */
 BAD_RETURN(s32) cutscene_intro_peach_eu_lower_volume(UNUSED struct Camera *c) {
-    func_8031FFB4(SEQ_PLAYER_LEVEL, 60, 40);
+    seq_player_lower_volume(SEQ_PLAYER_LEVEL, 60, 40);
 }
 #endif
 
@@ -7257,11 +7257,11 @@ void set_flag_post_door(struct Camera *c) {
 }
 
 void cutscene_soften_music(UNUSED struct Camera *c) {
-    func_8031FFB4(SEQ_PLAYER_LEVEL, 60, 40);
+    seq_player_lower_volume(SEQ_PLAYER_LEVEL, 60, 40);
 }
 
 void cutscene_unsoften_music(UNUSED struct Camera *c) {
-    sequence_player_unlower(SEQ_PLAYER_LEVEL, 60);
+    seq_player_unlower_volume(SEQ_PLAYER_LEVEL, 60);
 }
 
 static void stub_camera_5(UNUSED struct Camera *c) {
@@ -9588,7 +9588,7 @@ BAD_RETURN(s32) peach_letter_text(UNUSED struct Camera *c) {
 
 #ifndef VERSION_JP
 BAD_RETURN(s32) play_sound_peach_reading_letter(UNUSED struct Camera *c) {
-    play_sound(SOUND_PEACH_DEAR_MARIO, gDefaultSoundArgs);
+    play_sound(SOUND_PEACH_DEAR_MARIO, gGlobalSoundSource);
 }
 #endif
 

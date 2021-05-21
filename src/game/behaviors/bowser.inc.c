@@ -830,14 +830,14 @@ s32 bowser_dead_not_bits_end(void) {
     s32 ret = 0;
     if (o->oBowserUnkF8 < 2) {
         if (o->oBowserUnkF8 == 0) {
-            func_8031FFB4(SEQ_PLAYER_LEVEL, 60, 40);
+            seq_player_lower_volume(SEQ_PLAYER_LEVEL, 60, 40);
             o->oBowserUnkF8++;
         }
         if (cur_obj_update_dialog(2, 18, sBowserDefeatedDialogText[o->oBehParams2ndByte], 0)) {
             o->oBowserUnkF8++;
             cur_obj_play_sound_2(SOUND_GENERAL2_BOWSER_EXPLODE);
-            sequence_player_unlower(SEQ_PLAYER_LEVEL, 60);
-            sequence_player_fade_out(0, 1);
+            seq_player_unlower_volume(SEQ_PLAYER_LEVEL, 60);
+            seq_player_fade_out(0, 1);
         }
     } else if (bowser_dead_twirl_into_trophy()) {
         bowser_dead_hide();
@@ -859,13 +859,13 @@ s32 bowser_dead_bits_end(void) {
         else
             dialogID = DIALOG_163;
         if (o->oBowserUnkF8 == 0) {
-            func_8031FFB4(SEQ_PLAYER_LEVEL, 60, 40);
+            seq_player_lower_volume(SEQ_PLAYER_LEVEL, 60, 40);
             o->oBowserUnkF8++;
         }
         if (cur_obj_update_dialog(2, 18, dialogID, 0)) {
             cur_obj_set_model(MODEL_BOWSER2);
-            sequence_player_unlower(SEQ_PLAYER_LEVEL, 60);
-            sequence_player_fade_out(0, 1);
+            seq_player_unlower_volume(SEQ_PLAYER_LEVEL, 60);
+            seq_player_fade_out(0, 1);
             bowser_spawn_grand_star_key();
             o->oBowserUnkF8++;
         }

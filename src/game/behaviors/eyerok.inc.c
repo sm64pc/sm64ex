@@ -43,7 +43,7 @@ static void eyerok_boss_act_wake_up(void) {
     if (o->oEyerokBossNumHands == 2) {
         if (o->oTimer > 5) {
             if (o->oSubAction == 0) {
-                func_8031FFB4(SEQ_PLAYER_LEVEL, 60, 40);
+                seq_player_lower_volume(SEQ_PLAYER_LEVEL, 60, 40);
                 o->oSubAction += 1;
             }
 

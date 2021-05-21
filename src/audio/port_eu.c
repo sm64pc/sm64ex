@@ -24,7 +24,7 @@ extern OSMesgQueue *OSMesgQueues[];
 extern struct EuAudioCmd sAudioCmd[0x100];
 
 void func_8031D690(s32 player, FadeT fadeInTime);
-void sequence_player_fade_out_internal(s32 player, FadeT fadeOutTime);
+void seq_player_fade_out_internal(s32 player, FadeT fadeOutTime);
 void port_eu_init_queues(void);
 void decrease_sample_dma_ttls(void);
 s32 audio_shut_down_and_reset_step(void);
@@ -76,7 +76,7 @@ void eu_process_audio_cmd(struct EuAudioCmd *cmd) {
                 sequence_player_disable(&gSequencePlayers[cmd->u.s.arg1]);
             }
             else {
-                sequence_player_fade_out_internal(cmd->u.s.arg1, cmd->u2.as_s32);
+                seq_player_fade_out_internal(cmd->u.s.arg1, cmd->u2.as_s32);
             }
         }
         break;
@@ -111,7 +111,7 @@ extern OSMesg OSMesg1;
 extern OSMesg OSMesg2;
 extern OSMesg OSMesg3;
 
-void sequence_player_fade_out_internal(s32 player, FadeT fadeOutTime) {
+void seq_player_fade_out_internal(s32 player, FadeT fadeOutTime) {
     if (fadeOutTime == 0) {
         fadeOutTime = 1;
     }

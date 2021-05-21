@@ -33,13 +33,13 @@ int categoryIndex = 0;
 void MoonOptMain::setCategory(int index){
     MoonCategory *cat = categories[index];
     this->widgets = cat->catOptions;
-    play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
+    play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     MoonScreen::Mount();
 }
 
 void MoonOptMain::Init(){
     this->useMouseInstead = true;
-    play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
+    play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
 }
 
 void MoonOptMain::Mount(){
@@ -98,5 +98,5 @@ void MoonOptMain::Draw(){
 
 void MoonOptMain::Dispose(){
     configfile_save(configfile_name());
-    play_sound(SOUND_MENU_CHANGE_SELECT, gDefaultSoundArgs);
+    play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
 }
