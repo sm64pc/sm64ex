@@ -10,12 +10,7 @@ using namespace std;
 using namespace miniz_cpp;
 
 bool isDirectory;
-
-#ifdef __MINGW32__
-#define SEPARATOR "\\"
-#else
 #define SEPARATOR "/"
-#endif
 
 zip_file zipFile;
 
@@ -32,11 +27,8 @@ vector<string> StrawFile::entries(){
     if(isDirectory) {
         vector<string> fileList;
         for (auto & entry : fs::recursive_directory_iterator(this->path)){
-        #ifndef TARGET_SWITCH
-            fileList.push_back(fs::relative(entry, this->path).string());
-        #else
-            fileList.push_back(entry.path().string());
-        #endif
+            string path = entry.path().string();
+            fileList.push_back(path.substr(path.find(this->path) + this->path.length() + 1));
         }
         return fileList;
     }

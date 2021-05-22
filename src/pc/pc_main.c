@@ -250,7 +250,6 @@ void main_func(char *argv[]) {
     thread5_game_loop(NULL);
     inited = true;
 
-    fprintf(stdout, "precaching data\n");
     fflush(stdout);
     gfx_precache_textures();
     moon_setup("PreInit");
