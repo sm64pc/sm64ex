@@ -580,6 +580,20 @@ else
 
 endif
 
+################################
+#     Moon64 Custom Flags      #
+################################
+
+# Moon64 Enable filesystem library and C++17
+CXXFLAGS := -std=c++17
+LDFLAGS += -lstdc++fs
+
+# ifeq ($(TOGGLE_GAME_DEBUG),1)
+#  VERSION_CFLAGS += -DTOGGLE_GAME_DEBUG
+# endif
+
+################################
+
 # Check for enhancement options
 
 # Check for Puppycam option
@@ -826,8 +840,8 @@ $(GLOBAL_ASM_DEP).$(NON_MATCHING):
 	touch $@
 
 $(BUILD_DIR)/%.o: %.cpp
-	@$(CXX) -fsyntax-only $(CFLAGS) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
-	$(CXX) -c $(CFLAGS) -o $@ $<
+	@$(CXX) -fsyntax-only $(CFLAGS) $(CXXFLAGS) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
+	$(CXX) -c $(CFLAGS) $(CXXFLAGS) -o $@ $<
 
 $(BUILD_DIR)/%.o: %.c
 	@$(CC_CHECK) $(CC_CHECK_CFLAGS) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<

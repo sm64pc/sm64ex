@@ -19,6 +19,7 @@ extern "C" {
 #include "text/libs/io_utils.h"
 #include "pc/platform.h"
 #include "pc/fs/fs.h"
+#include "pc/configfile.h"
 }
 
 namespace Moon {
@@ -84,9 +85,11 @@ namespace Moon {
                                 if(std::count(allowedTextures.begin(), allowedTextures.end(), fileExtension)){
                                     string texName = name.substr(path.length());
                                     string rawname = texName.substr(0, texName.find_last_of("."));
-
-                                    TextureFileEntry *entry = new TextureFileEntry();
-                                    file.read(name, entry);
+                                    TextureFileEntry *entry;
+                                    if(configPrecacheRes)
+                                        file.read(name, entry = new TextureFileEntry());
+                                    else
+                                        entry = new TextureFileEntry({.path = name});
                                     Moon::saveAddonTexture(bit, rawname, entry);
                                 }
                                 if(!fileExtension.compare("json")){
@@ -135,8 +138,7 @@ namespace MoonInternal {
         if (dir) {
             struct dirent *de;
             while ((de = readdir(dir)) != NULL) {
-                string extension = string(get_filename_ext(de->d_name));
-                if (extension.compare("bit") == 0) {
+                if (de->d_name[0] != '.') {
                     string file = addonsDir + de->d_name;
                     Moon::loadAddon(file);
                 }
