@@ -6,26 +6,28 @@
 #include <algorithm>
 #include <filesystem>
 
-namespace fs = std::filesystem;
 using namespace std;
 using namespace miniz_cpp;
+namespace fs = std::filesystem;
 
 bool isDirectory;
-
-string normalize(string path){
-    replace(path.begin(), path.end(), '\\', '/');
-    return path;
-}
-
-string joinPath(string base, string file){
-    return normalize((fs::path(base) / fs::path(file)).string());
-}
+zip_file zipFile;
 
 StrawFile::StrawFile(string path){
-    this->path = normalize(path);
+    this->path = MoonFS::normalize(path);
 }
 
-zip_file zipFile;
+namespace MoonFS {
+    string normalize(string path){
+        replace(path.begin(), path.end(), '\\', '/');
+        return path;
+    }
+
+    string joinPath(string base, string file){
+        return normalize((fs::path(base) / fs::path(file)).string());
+    }
+}
+
 
 void StrawFile::open(){
     if(!(isDirectory = fs::is_directory(this->path)))
@@ -33,14 +35,14 @@ void StrawFile::open(){
 }
 
 bool StrawFile::exists(string path){
-    return isDirectory ? fs::exists(joinPath(this->path, path)) : zipFile.has_file(path);
+    return isDirectory ? fs::exists(MoonFS::joinPath(this->path, path)) : zipFile.has_file(path);
 }
 
 vector<string> StrawFile::entries(){
     if(isDirectory) {
         vector<string> fileList;
         for (auto & entry : fs::recursive_directory_iterator(this->path)){
-            string path = normalize(entry.path().string());
+            string path = MoonFS::normalize(entry.path().string());
             fileList.push_back(path.substr(path.find(this->path) + this->path.length() + 1));
         }
         return fileList;
@@ -51,7 +53,7 @@ vector<string> StrawFile::entries(){
 
 string StrawFile::read(string file){
     if(isDirectory){
-        std::ifstream in(joinPath(this->path, file), std::ios::in | std::ios::binary);
+        std::ifstream in(MoonFS::joinPath(this->path, file), std::ios::in | std::ios::binary);
         if (in)
             return(std::string((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>()));
     }
@@ -63,7 +65,7 @@ void StrawFile::read(string file, TextureFileEntry *entry){
     if(isDirectory){
         char *data;
         long size;
-        FILE* f = fopen(joinPath(this->path, file).c_str(), "rb");
+        FILE* f = fopen(MoonFS::joinPath(this->path, file).c_str(), "rb");
 
         fseek(f, 0, SEEK_END);
         size = ftell(f);

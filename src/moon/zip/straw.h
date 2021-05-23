@@ -5,6 +5,11 @@
 #include <vector>
 #include <string>
 
+namespace MoonFS {
+    std::string normalize(std::string path);
+    std::string joinPath(std::string base, std::string file);
+}
+
 class StrawFile {
 public:
     StrawFile(std::string path);
