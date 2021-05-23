@@ -7,9 +7,7 @@
 
 class StrawFile {
 public:
-    StrawFile(std::string path){
-        this->path = path;
-    }
+    StrawFile(std::string path);
     void open();
     bool exists(std::string path);
     std::vector<std::string> entries();

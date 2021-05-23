@@ -3,6 +3,7 @@
 #include "moon/libs/miniz/zip_file.hpp"
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <algorithm>
 #include <filesystem>
 
 namespace fs = std::filesystem;
@@ -10,7 +11,19 @@ using namespace std;
 using namespace miniz_cpp;
 
 bool isDirectory;
-#define SEPARATOR "/"
+
+string normalize(string path){
+    replace(path.begin(), path.end(), '\\', '/');
+    return path;
+}
+
+string joinPath(string base, string file){
+    return normalize((fs::path(base) / fs::path(file)).string());
+}
+
+StrawFile::StrawFile(string path){
+    this->path = normalize(path);
+}
 
 zip_file zipFile;
 
@@ -20,14 +33,14 @@ void StrawFile::open(){
 }
 
 bool StrawFile::exists(string path){
-    return isDirectory ? fs::exists(this->path + SEPARATOR + path) : zipFile.has_file(path);
+    return isDirectory ? fs::exists(joinPath(this->path, path)) : zipFile.has_file(path);
 }
 
 vector<string> StrawFile::entries(){
     if(isDirectory) {
         vector<string> fileList;
         for (auto & entry : fs::recursive_directory_iterator(this->path)){
-            string path = entry.path().string();
+            string path = normalize(entry.path().string());
             fileList.push_back(path.substr(path.find(this->path) + this->path.length() + 1));
         }
         return fileList;
@@ -38,7 +51,7 @@ vector<string> StrawFile::entries(){
 
 string StrawFile::read(string file){
     if(isDirectory){
-        std::ifstream in(this->path + SEPARATOR + file, std::ios::in | std::ios::binary);
+        std::ifstream in(joinPath(this->path, file), std::ios::in | std::ios::binary);
         if (in)
             return(std::string((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>()));
     }
@@ -50,7 +63,7 @@ void StrawFile::read(string file, TextureFileEntry *entry){
     if(isDirectory){
         char *data;
         long size;
-        FILE* f = fopen((this->path + SEPARATOR + file).c_str(), "r");
+        FILE* f = fopen(joinPath(this->path, file).c_str(), "rb");
 
         fseek(f, 0, SEEK_END);
         size = ftell(f);
