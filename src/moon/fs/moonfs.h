@@ -1,18 +1,23 @@
-#ifndef StrawZipLoader
-#define StrawZipLoader
+#ifndef MoonFSAPI
+#define MoonFSAPI
 
 #include "moon/mod-engine/interfaces/file-entry.h"
 #include <vector>
 #include <string>
 
-namespace MoonFS {
+namespace FSUtils {
     std::string normalize(std::string path);
     std::string joinPath(std::string base, std::string file);
 }
 
-class StrawFile {
+enum FileType {
+    ZIP,
+    DIRECTORY
+};
+
+class MoonFS {
 public:
-    StrawFile(std::string path);
+    MoonFS(std::string path);
     void open();
     bool exists(std::string path);
     std::vector<std::string> entries();
@@ -22,6 +27,7 @@ public:
     void close();
 protected:
     std::string path;
+    FileType type;
 };
 
 #endif

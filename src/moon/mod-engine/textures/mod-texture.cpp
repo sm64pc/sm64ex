@@ -1,6 +1,6 @@
 #include "mod-texture.h"
 
-#include "moon/zip/straw.h"
+#include "moon/fs/moonfs.h"
 #include "moon/libs/nlohmann/json.hpp"
 #include "moon/mod-engine/engine.h"
 #include "moon/mod-engine/hooks/hook.h"
@@ -80,7 +80,7 @@ namespace MoonInternal {
             if(fileEntry != NULL){
                 if(fileEntry->data != NULL) data = fileEntry;
                 else if(!fileEntry->path.empty()){
-                    StrawFile file(addon->path);
+                    MoonFS file(addon->path);
                     file.open();
                     TextureFileEntry *newData = new TextureFileEntry();
                     file.read(fileEntry->path, newData);

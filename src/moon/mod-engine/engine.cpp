@@ -5,7 +5,7 @@
 #include "textures/mod-texture.h"
 #include "shaders/mod-shaders.h"
 
-#include "moon/zip/straw.h"
+#include "moon/fs/moonfs.h"
 #include "moon/libs/nlohmann/json.hpp"
 using json = nlohmann::json;
 using namespace std;
@@ -27,7 +27,7 @@ namespace Moon {
     vector<BitModule*> addons;
 
     void loadAddon(string addonPath){
-        StrawFile file(addonPath);
+        MoonFS file(addonPath);
         file.open();
 
         cout << "Loading addon: " << addonPath << endl;

@@ -305,8 +305,8 @@ SRC_DIRS += src/moon/libs/miniz
 # Moon64 LIB [nlohmann json]
 SRC_DIRS += src/moon/libs/nlohmann
 
-# Moon64 LIB [Miniz-Wrapper]
-SRC_DIRS += src/moon/zip
+# Moon64 LIB [MoonFS API]
+SRC_DIRS += src/moon/fs
 
 ################################
 
