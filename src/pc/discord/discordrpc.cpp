@@ -249,17 +249,10 @@ void discord_init(void) {
             return;
         }
 
-    #if defined(_WIN32)
-        discordInit = (Discord_Initialize) dlsym(handle, "Discord_Initialize");
-        discordShutdown = (Discord_Shutdown) dlsym(handle, "Discord_Shutdown");
-        discordClearPresence = (Discord_ClearPresence) dlsym(handle, "Discord_ClearPresence");
-        discordUpdatePresence = (Discord_UpdatePresence) dlsym(handle, "Discord_UpdatePresence");
-    #else
         discordInit =           (Discord_Initialize)     dlsym(handle, "Discord_Initialize");
         discordShutdown =       (Discord_Shutdown)       dlsym(handle, "Discord_Shutdown");
         discordClearPresence =  (Discord_ClearPresence)  dlsym(handle, "Discord_ClearPresence");
         discordUpdatePresence = (Discord_UpdatePresence) dlsym(handle, "Discord_UpdatePresence");
-    #endif
         init_discord();
 
         discordRichPresence.details = stage;
