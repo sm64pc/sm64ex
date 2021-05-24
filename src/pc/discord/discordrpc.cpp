@@ -62,8 +62,6 @@ Discord_UpdatePresence discordUpdatePresence;
 
 static s16 lastCourseNum = -1;
 static s16 lastActNum = -1;
-static int64_t timestamp;
-
 bool reloadRPC = false;
 static char stage[188];
 static char act[188];
@@ -159,9 +157,7 @@ static void init_discord(void) {
 
 static void set_time(void){
     if (lastCourseNum != gCurrCourseNum) {
-        timestamp = 0;
         discordRichPresence.startTimestamp = time(0);
-        lastCourseNum = gCurrCourseNum;
     }
 }
 
