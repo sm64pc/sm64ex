@@ -22,8 +22,8 @@
 # define DISCORDLIBEXT ".dll"
 # define dlopen(lib, flag) LoadLibrary(TEXT(lib))
 # define dlerror() ""
-# define dlsym(handle, func) (void *)GetProcAddress(handle, func)
-# define dlclose(handle) FreeLibrary(handle)
+# define dlsym(handle, func) (void *)GetProcAddress(reinterpret_cast<HMODULE>(handle), func);
+# define dlclose(handle) FreeLibrary(reinterpret_cast<HMODULE>(handle))
 #elif defined(__APPLE__)
 # include <dlfcn.h>
 # define DISCORDLIBEXT ".dylib"
@@ -241,11 +241,17 @@ void discord_init(void) {
             return;
         }
 
+    #if defined(_WIN32)
         discordInit = (Discord_Initialize) dlsym(handle, "Discord_Initialize");
         discordShutdown = (Discord_Shutdown) dlsym(handle, "Discord_Shutdown");
         discordClearPresence = (Discord_ClearPresence) dlsym(handle, "Discord_ClearPresence");
         discordUpdatePresence = (Discord_UpdatePresence) dlsym(handle, "Discord_UpdatePresence");
-
+    #else
+        discordInit =           (Discord_Initialize)     dlsym(handle, "Discord_Initialize");
+        discordShutdown =       (Discord_Shutdown)       dlsym(handle, "Discord_Shutdown");
+        discordClearPresence =  (Discord_ClearPresence)  dlsym(handle, "Discord_ClearPresence");
+        discordUpdatePresence = (Discord_UpdatePresence) dlsym(handle, "Discord_UpdatePresence");
+    #endif
         init_discord();
 
         discordRichPresence.details = stage;

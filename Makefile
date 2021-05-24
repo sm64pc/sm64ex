@@ -38,7 +38,7 @@ NODRAWINGDISTANCE ?= 0
 # Disable texture fixes by default (helps with them purists)
 TEXTURE_FIX ?= 0
 # Enable Discord Rich Presence
-DISCORDRPC ?= 0
+DISCORDRPC ?= 1
 # Various workarounds for weird toolchains
 NO_BZERO_BCOPY ?= 0
 NO_LDIV ?= 0
