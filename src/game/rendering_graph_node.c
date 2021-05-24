@@ -10,6 +10,7 @@
 #include "rendering_graph_node.h"
 #include "shadow.h"
 #include "sm64.h"
+#include "pc/configfile.h"
 
 /**
  * This file contains the code that processes the scene graph for rendering.
@@ -271,6 +272,11 @@ static void geo_process_level_of_detail(struct GraphNodeLevelOfDetail *node) {
     // shorts for the integer parts followed by 16 shorts for the fraction parts
     Mtx *mtx = gMatStackFixed[gMatStackIndex];
     s16 distanceFromCam = (s32) -mtx->m[3][2]; // z-component of the translation column
+
+    if(configLODMode == 1)
+        distanceFromCam = 30000;
+    if(configLODMode == 2)
+        distanceFromCam = 0;
 
     if (node->minDistance <= distanceFromCam && distanceFromCam < node->maxDistance) {
         if (node->node.children != 0) {

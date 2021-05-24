@@ -1,15 +1,18 @@
 #ifndef MoonWidgetInterface
 #define MoonWidgetInterface
 
-class MoonWidget {    
+class MoonScreen;
+class MoonWidget {
 public:
     float x;
     float y;
+    float mY;
     bool enabled = true;
     bool centered = true;
     bool selectable = true;
     bool selected = false;
     bool focused = false;
+    MoonScreen *parent;
     virtual void Init(){}
     virtual void Draw(){}
     virtual void Update(){}

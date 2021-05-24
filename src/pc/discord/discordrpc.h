@@ -40,10 +40,14 @@ typedef struct DiscordEventHandlers {
 #define DISCORD_REPLY_NO 0
 #define DISCORD_REPLY_YES 1
 #define DISCORD_REPLY_IGNORE 2
-
-void discord_update_rich_presence(void);
-void discord_shutdown(void);
-void discord_init(void);
 void discord_reset(void);
 
-#endif // DISCORDRPC_H 
+#ifndef __cplusplus
+void discord_update_rich_presence(bool force);
+void discord_shutdown(void);
+void discord_init(void);
+#else
+void DiscordUpdatePresence(bool force);
+#endif
+
+#endif // DISCORDRPC_H

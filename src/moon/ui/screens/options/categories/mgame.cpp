@@ -11,15 +11,18 @@ extern "C" {
 #include "pc/pc_main.h"
 }
 
-int languageIdx;
 vector<string> lngNames;
+vector<string> modes = {
+    "Auto", "Low", "Disabled"
+};
 
 MGameCategory::MGameCategory() : MoonCategory("TEXT_OPT_GAME"){
     for (auto &lng : Moon::languages) {
         lngNames.push_back(lng->name);
     }
-    this->catOptions.push_back(new MWValue(22, 57, "TEXT_OPT_LANGUAGE",   {.index = &languageIdx, .values = &lngNames, .callback = [](){
-        Moon::setCurrentLanguage(Moon::languages[languageIdx]);
+
+    this->catOptions.push_back(new MWValue(22, 57, "TEXT_OPT_LANGUAGE",   {.index = reinterpret_cast<int*>(&configLanguage), .values = &lngNames, .callback = [](){
+        Moon::setCurrentLanguage(Moon::languages[configLanguage]);
     }}, true));
     this->catOptions.push_back(new MWValue(22, 74, "TEXT_OPT_PRECACHE",   {.bvar = &configPrecacheRes}, true));
     int exitY;
@@ -29,8 +32,9 @@ MGameCategory::MGameCategory() : MoonCategory("TEXT_OPT_GAME"){
 #else
     exitY = 91;
 #endif
-    this->catOptions.push_back(new MWValue(22, exitY, "Texture Packs",   { .btn = [](){
+    this->catOptions.push_back(new MWValue(22, exitY, "Level of detail",  {.index = reinterpret_cast<int*>(&configLODMode), .values = &modes }, false));
+    this->catOptions.push_back(new MWValue(22, exitY + 17, "Texture Packs",   { .btn = [](){
         MoonChangeUI(1);
     }}, false));
-    this->catOptions.push_back(new MWValue(22, exitY + 17, "TEXT_EXIT_GAME",   { .btn = game_exit}, true));
+    this->catOptions.push_back(new MWValue(22, exitY + 34, "TEXT_EXIT_GAME",   { .btn = game_exit}, true));
 }

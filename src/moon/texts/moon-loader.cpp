@@ -2,6 +2,9 @@
 #include <iostream>
 
 #include "moon/utils/moon-env.h"
+#ifdef DISCORDRPC
+#include "pc/discord/discordrpc.h"
+#endif
 
 #include <unistd.h>
 #include <stdio.h>
@@ -165,6 +168,9 @@ namespace Moon {
         dialogPool = current->dialogs.data();
         seg2_act_name_table = current->acts.data();
         seg2_course_name_table = current->courses.data();
+    #ifdef DISCORDRPC
+        DiscordUpdatePresence(true);
+    #endif
     }
 
     string getLanguageKey(string key){

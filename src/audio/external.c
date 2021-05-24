@@ -1851,7 +1851,7 @@ void play_dialog_sound(u8 dialogID) {
 }
 
 void set_sequence_player_volume(s32 player, f32 volume) {
-    gSequencePlayers[player].volumeScale = volume;
+    gSequencePlayers[player].volumeScale = pow(volume, 2);
 }
 
 /**

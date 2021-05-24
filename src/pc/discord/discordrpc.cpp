@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
+#include <string>
+#include <iostream>
 
 #include "macros.h"
 #include "PR/ultratypes.h"
@@ -9,7 +11,9 @@
 #include "game/save_file.h"
 #include "pc/configfile.h"
 #include "discordrpc.h"
-#include "text/text-loader.h"
+#include "moon/texts/moon-loader.h"
+#include "moon/utils/moon-env.h"
+
 #define DISCORDLIBFILE "libdiscord-rpc"
 
 // Thanks Microsoft for being non posix compliant
@@ -34,10 +38,10 @@
 #define DISCORD_APP_ID  "709083908708237342"
 #define DISCORD_UPDATE_RATE 5
 
+using namespace std;
+
 extern s16 gCurrCourseNum;
 extern s16 gCurrActNum;
-extern u8 seg2_course_name_table[];
-extern u8 seg2_act_name_table[];
 
 static time_t lastUpdatedTime;
 
@@ -46,14 +50,20 @@ static bool initd = false;
 
 static void* handle;
 
-void (*Discord_Initialize)(const char *, DiscordEventHandlers *, int, const char *);
-void (*Discord_Shutdown)(void);
-void (*Discord_ClearPresence)(void);
-void (*Discord_UpdatePresence)(DiscordRichPresence *);
+typedef void (*Discord_Initialize)(const char *, DiscordEventHandlers *, int, const char *);
+typedef void (*Discord_Shutdown)(void);
+typedef void (*Discord_ClearPresence)(void);
+typedef void (*Discord_UpdatePresence)(DiscordRichPresence *);
+
+Discord_Initialize discordInit;
+Discord_Shutdown discordShutdown;
+Discord_ClearPresence discordClearPresence;
+Discord_UpdatePresence discordUpdatePresence;
 
 static s16 lastCourseNum = -1;
 static s16 lastActNum = -1;
 
+bool reloadRPC = false;
 static char stage[188];
 static char act[188];
 
@@ -141,33 +151,16 @@ static void init_discord(void) {
     memset(&handlers, 0, sizeof(handlers));
     handlers.ready = on_ready;
 
-    Discord_Initialize(DISCORD_APP_ID, &handlers, false, "");
+    discordInit(DISCORD_APP_ID, &handlers, false, "");
 
     initd = true;
 }
 
 static void set_details(void) {
-    if (lastCourseNum != gCurrCourseNum) {
+    if (lastCourseNum != gCurrCourseNum || reloadRPC) {
         // If we are in in Course 0 we are in the castle which doesn't have a string
         if (gCurrCourseNum) {
-            void **courseNameTbl;
-
-#ifndef VERSION_EU
-            courseNameTbl = segmented_to_virtual(seg2_course_name_table);
-#else
-            switch (gInGameLanguage) {
-                case LANGUAGE_ENGLISH:
-                    courseNameTbl = segmented_to_virtual(course_name_table_eu_en);
-                    break;
-                case LANGUAGE_FRENCH:
-                    courseNameTbl = segmented_to_virtual(course_name_table_eu_fr);
-                    break;
-                case LANGUAGE_GERMAN:
-                    courseNameTbl = segmented_to_virtual(course_name_table_eu_de);
-                    break;
-            }
-#endif
-            u8 *courseName = segmented_to_virtual(courseNameTbl[gCurrCourseNum - 1]);
+            u8 *courseName = Moon::current->courses[gCurrCourseNum - 1];
 
             convertstring(&courseName[3], stage);
         } else {
@@ -179,28 +172,12 @@ static void set_details(void) {
 }
 
 static void set_state(void) {
-    if (lastActNum != gCurrActNum || lastCourseNum != gCurrCourseNum) {
+    if (lastActNum != gCurrActNum || lastCourseNum != gCurrCourseNum || reloadRPC) {
         // when exiting a stage the act doesn't get reset
         if (gCurrActNum && gCurrCourseNum) {
             // any stage over 19 is a special stage without acts
             if (gCurrCourseNum < COURSE_STAGES_MAX) {
-                void **actNameTbl;
-#ifndef VERSION_EU
-                actNameTbl = segmented_to_virtual(seg2_act_name_table);
-#else
-                switch (gInGameLanguage) {
-                    case LANGUAGE_ENGLISH:
-                        actNameTbl = segmented_to_virtual(act_name_table_eu_en);
-                        break;
-                    case LANGUAGE_FRENCH:
-                        actNameTbl = segmented_to_virtual(act_name_table_eu_fr);
-                        break;
-                    case LANGUAGE_GERMAN:
-                        actNameTbl = segmented_to_virtual(act_name_table_eu_de);
-                        break;
-                }
-#endif
-                u8 *actName = actName = segmented_to_virtual(actNameTbl[(gCurrCourseNum - 1) * 6 + gCurrActNum - 1]);
+                u8 *actName = actName = Moon::current->acts[(gCurrCourseNum - 1) * 6 + gCurrActNum - 1];
 
                 convertstring(actName, act);
             } else {
@@ -221,51 +198,53 @@ void set_logo(void) {
     else
         strcpy(largeImageKey, "0");
 
-    /*
-    if (lastActNum)
-        snprintf(smallImageKey, sizeof(largeImageKey), "%d", lastActNum);
-    else
-        smallImageKey[0] = '\0';
-    */
-
     discordRichPresence.largeImageKey = largeImageKey;
-    //discordRichPresence.largeImageText = "";
-    //discordRichPresence.smallImageKey = smallImageKey;
-    //discordRichPresence.smallImageText = "";
 }
 
-void discord_update_rich_presence(void) {
+void DiscordUpdatePresence(bool force){
+    if(force)
+        reloadRPC = true;
     if (!configDiscordRPC || !initd) return;
     if (time(NULL) < lastUpdatedTime + DISCORD_UPDATE_RATE) return;
 
     lastUpdatedTime = time(NULL);
-
     set_state();
     set_details();
     set_logo();
-    Discord_UpdatePresence(&discordRichPresence);
+    discordUpdatePresence(&discordRichPresence);
+    reloadRPC = false;
+}
+
+extern "C" {
+void discord_update_rich_presence(bool force) {
+    DiscordUpdatePresence(force);
 }
 
 void discord_shutdown(void) {
     if (handle) {
-        Discord_ClearPresence();
-        Discord_Shutdown();
+        discordClearPresence();
+        discordShutdown();
         dlclose(handle);
     }
 }
 
 void discord_init(void) {
     if (configDiscordRPC) {
-        handle = dlopen(DISCORDLIB, RTLD_LAZY);
+        string cwd = MoonInternal::getEnvironmentVar("MOON_CWD");
+        string libPath = cwd.substr(0, cwd.find_last_of("/\\")) + "/lib/discord/" + DISCORDLIB;
+
+        cout << "Loading discord lib from " << libPath << endl;
+
+        handle = dlopen(libPath.c_str(), RTLD_LAZY);
         if (!handle) {
             fprintf(stderr, "Unable to load Discord\n%s\n", dlerror());
             return;
         }
 
-        Discord_Initialize = dlsym(handle, "Discord_Initialize");
-        Discord_Shutdown = dlsym(handle, "Discord_Shutdown");
-        Discord_ClearPresence = dlsym(handle, "Discord_ClearPresence");
-        Discord_UpdatePresence = dlsym(handle, "Discord_UpdatePresence");
+        discordInit = (Discord_Initialize) dlsym(handle, "Discord_Initialize");
+        discordShutdown = (Discord_Shutdown) dlsym(handle, "Discord_Shutdown");
+        discordClearPresence = (Discord_ClearPresence) dlsym(handle, "Discord_ClearPresence");
+        discordUpdatePresence = (Discord_UpdatePresence) dlsym(handle, "Discord_UpdatePresence");
 
         init_discord();
 
@@ -275,6 +254,7 @@ void discord_init(void) {
         lastUpdatedTime = 0;
     }
 }
+}
 
 void discord_reset(void) {
     memset( &discordRichPresence, 0, sizeof( discordRichPresence ) );
@@ -282,5 +262,5 @@ void discord_reset(void) {
     set_state();
     set_details();
     set_logo();
-    Discord_UpdatePresence(&discordRichPresence);
+    discordUpdatePresence(&discordRichPresence);
 }

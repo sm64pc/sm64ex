@@ -62,6 +62,8 @@ extern bool         configSkipIntro;
 extern bool         configDiscordRPC;
 #endif
 
+extern unsigned int configLODMode;
+
 void configfile_load(const char *filename);
 void configfile_save(const char *filename);
 const char *configfile_name(void);

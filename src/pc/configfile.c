@@ -100,6 +100,14 @@ bool         configHUD           = true;
 bool         configDiscordRPC    = true;
 #endif
 
+/*
+################################
+#     Moon64 Configuration     #
+################################
+*/
+
+unsigned int configLODMode = 0;
+
 static const struct ConfigOption options[] = {
     {.name = "fullscreen",           .type = CONFIG_TYPE_BOOL, .boolValue = &configWindow.fullscreen},
     {.name = "window_x",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.x},
@@ -148,7 +156,8 @@ static const struct ConfigOption options[] = {
     {.name = "skip_intro",           .type = CONFIG_TYPE_BOOL, .boolValue = &configSkipIntro},
     #ifdef DISCORDRPC
     {.name = "discordrpc_enable",    .type = CONFIG_TYPE_BOOL, .boolValue = &configDiscordRPC},
-    #endif 
+    #endif
+    {.name = "lodMode",              .type = CONFIG_TYPE_UINT, .uintValue = &configLODMode},
 };
 
 // Reads an entire line from a file (excluding the newline character) and returns an allocated string

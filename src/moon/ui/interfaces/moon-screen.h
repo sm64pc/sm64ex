@@ -16,17 +16,19 @@ enum MoonButtons {
 
 class MoonScreen {
 protected:
-    std::vector<MoonWidget*> widgets;
-    MoonWidget* selected;
     bool enabledWidgets = true;
     bool useMouseInstead = false; // unused
-    int  scrollIndex = 0;
 public:
+    std::vector<MoonWidget*> widgets;
+    MoonWidget* selected;
+    int  scrollIndex = 0;
     virtual void Init();
     virtual void Mount();
     virtual void Draw();
     virtual void Update();
     virtual void Dispose();
+private:
+    void changeScroll(int idx);
 };
 
 bool IsBtnPressed(MoonButtons button);
