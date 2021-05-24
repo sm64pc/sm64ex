@@ -1,3 +1,5 @@
+// DATA C
+
 #include <ultra64.h>
 
 #include "data.h"
@@ -7,35 +9,6 @@ extern struct OSMesgQueue OSMesgQueue0;
 extern struct OSMesgQueue OSMesgQueue1;
 extern struct OSMesgQueue OSMesgQueue2;
 extern struct OSMesgQueue OSMesgQueue3;
-
-#ifdef VERSION_EU
-struct ReverbSettingsEU sReverbSettings[] = {
-    { 0x04, 0x0c, 0x2fff },
-    { 0x04, 0x0a, 0x47ff },
-    { 0x04, 0x10, 0x2fff },
-    { 0x04, 0x0e, 0x3fff },
-    { 0x04, 0x0c, 0x4fff },
-    { 0x04, 0x0a, 0x37ff }
-};
-struct AudioSessionSettingsEU gAudioSessionPresets[] = {
-    { 0x00007d00, 0x01, 0x10, 0x01, 0x00, &sReverbSettings[0], 0x7fff, 0x0000, 0x00003a40, 0x00006d00,
-      0x00004400, 0x00002a00 },
-    { 0x00007d00, 0x01, 0x10, 0x01, 0x00, &sReverbSettings[1], 0x7fff, 0x0000, 0x00003a40, 0x00006d00,
-      0x00004400, 0x00002a00 },
-    { 0x00007d00, 0x01, 0x10, 0x01, 0x00, &sReverbSettings[2], 0x7fff, 0x0000, 0x00003a40, 0x00006d00,
-      0x00004400, 0x00002a00 },
-    { 0x00007d00, 0x01, 0x10, 0x01, 0x00, &sReverbSettings[3], 0x7fff, 0x0000, 0x00003a40, 0x00006d00,
-      0x00004400, 0x00002a00 },
-    { 0x00007d00, 0x01, 0x10, 0x01, 0x00, &sReverbSettings[4], 0x7fff, 0x0000, 0x00003a40, 0x00006d00,
-      0x00004400, 0x00002a00 },
-    { 0x00007d00, 0x01, 0x10, 0x01, 0x00, &sReverbSettings[0], 0x7fff, 0x0000, 0x00004000, 0x00006e00,
-      0x00003f00, 0x00002a00 },
-    { 0x00007d00, 0x01, 0x10, 0x01, 0x00, &sReverbSettings[1], 0x7fff, 0x0000, 0x00004100, 0x00006e00,
-      0x00004400, 0x00002a80 },
-    { 0x00007d00, 0x01, 0x14, 0x01, 0x00, &sReverbSettings[5], 0x7fff, 0x0000, 0x00003500, 0x00006280,
-      0x00004000, 0x00001b00 }
-};
-#endif
 
 // Format:
 // - frequency
@@ -584,17 +557,9 @@ f32 gVolRampingRhs128[128] = {
 s16 gTatumsPerBeat = TATUMS_PER_BEAT;
 s8 gUnusedCount80333EE8 = UNUSED_COUNT_80333EE8;
 s32 gAudioHeapSize = DOUBLE_SIZE_ON_64_BIT(AUDIO_HEAP_SIZE);
-s32 D_80333EF0 = DOUBLE_SIZE_ON_64_BIT(D_80333EF0_VAL);
+s32 gAudioInitPoolSize = DOUBLE_SIZE_ON_64_BIT(AUDIO_INIT_POOL_SIZE);
 volatile s32 gAudioLoadLock = AUDIO_LOCK_UNINITIALIZED;
-
-#ifdef VERSION_EU
-u8 bufferDelete2[12] = { 0 };
-u8 D_EU_80302010 = 0;
-u8 D_EU_80302014 = 0;
-struct OSMesgQueue *OSMesgQueues[4] = { &OSMesgQueue0, &OSMesgQueue1, &OSMesgQueue2, &OSMesgQueue3 };
-#else
 s8 sUnused8033EF8 = 24;
-#endif
 
 // .bss
 
@@ -615,18 +580,11 @@ u64 *gAudioCmd;
 struct SPTask *gAudioTask;
 struct SPTask gAudioTasks[2];
 
-#ifdef VERSION_EU
-f32 D_EU_802298D0;
-s32 gRefreshRate;
-#endif
-
 s16 *gAiBuffers[NUMAIBUFFERS];
 s16 gAiBufferLengths[NUMAIBUFFERS];
 
-#ifndef VERSION_EU
 u32 gUnused80226E58[0x10];
 u16 gUnused80226E98[0x10];
-#endif
 
 u32 gAudioRandom;
 
