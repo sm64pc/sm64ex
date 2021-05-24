@@ -743,7 +743,8 @@ distclean:
 	./extract_assets.py --clean
 
 $(BUILD_DIR)/$(RPC_LIBS):
-	@$(CP) -f $(RPC_LIBS) $(BUILD_DIR)
+	mkdir -p $(@D)
+	cp $(RPC_LIBS) $(@D)
 
 libultra: $(BUILD_DIR)/libultra.a
 
