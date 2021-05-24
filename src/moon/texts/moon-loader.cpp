@@ -169,7 +169,7 @@ namespace Moon {
         seg2_act_name_table = current->acts.data();
         seg2_course_name_table = current->courses.data();
     #ifdef DISCORDRPC
-        DiscordUpdatePresence(true);
+        DiscordReloadPresence();
     #endif
     }
 

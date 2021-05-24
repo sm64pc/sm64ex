@@ -62,6 +62,7 @@ Discord_UpdatePresence discordUpdatePresence;
 
 static s16 lastCourseNum = -1;
 static s16 lastActNum = -1;
+static int64_t timestamp;
 
 bool reloadRPC = false;
 static char stage[188];
@@ -156,6 +157,14 @@ static void init_discord(void) {
     initd = true;
 }
 
+static void set_time(void){
+    if (lastCourseNum != gCurrCourseNum) {
+        timestamp = 0;
+        discordRichPresence.startTimestamp = time(0);
+        lastCourseNum = gCurrCourseNum;
+    }
+}
+
 static void set_details(void) {
     if (lastCourseNum != gCurrCourseNum || reloadRPC) {
         // If we are in in Course 0 we are in the castle which doesn't have a string
@@ -201,13 +210,16 @@ void set_logo(void) {
     discordRichPresence.largeImageKey = largeImageKey;
 }
 
-void DiscordUpdatePresence(bool force){
-    if(force)
-        reloadRPC = true;
+void DiscordReloadPresence() {
+    reloadRPC = true;
+}
+
+void DiscordUpdatePresence(){
     if (!configDiscordRPC || !initd) return;
     if (time(NULL) < lastUpdatedTime + DISCORD_UPDATE_RATE) return;
 
     lastUpdatedTime = time(NULL);
+    set_time();
     set_state();
     set_details();
     set_logo();
@@ -216,8 +228,8 @@ void DiscordUpdatePresence(bool force){
 }
 
 extern "C" {
-void discord_update_rich_presence(bool force) {
-    DiscordUpdatePresence(force);
+void discord_update_rich_presence() {
+    DiscordUpdatePresence();
 }
 
 void discord_shutdown(void) {

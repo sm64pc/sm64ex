@@ -43,11 +43,12 @@ typedef struct DiscordEventHandlers {
 void discord_reset(void);
 
 #ifndef __cplusplus
-void discord_update_rich_presence(bool force);
+void discord_update_rich_presence();
 void discord_shutdown(void);
 void discord_init(void);
 #else
-void DiscordUpdatePresence(bool force);
+void DiscordReloadPresence();
+void DiscordUpdatePresence();
 #endif
 
 #endif // DISCORDRPC_H

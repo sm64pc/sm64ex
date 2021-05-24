@@ -266,7 +266,7 @@ void main_func(char *argv[]) {
     while (true) {
         wm_api->main_loop(produce_one_frame);
 #ifdef DISCORDRPC
-        discord_update_rich_presence(0);
+        discord_update_rich_presence();
 #endif
     }
 #endif
