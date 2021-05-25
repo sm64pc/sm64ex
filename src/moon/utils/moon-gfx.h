@@ -10,6 +10,7 @@ struct Color {
     int a;
 };
 
+long long moon_get_milliseconds();
 f32 moon_get_text_width(u8* text, float scale, u8 colored);
 void moon_draw_colored_text(f32 x, f32 y, const u8 *str, float scale, struct Color c);
 void moon_draw_text(f32 x, f32 y, const u8 *str, float scale);

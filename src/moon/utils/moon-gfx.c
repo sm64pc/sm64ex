@@ -5,6 +5,13 @@
 #include "gfx_dimensions.h"
 #include "config.h"
 #include "game/geo_misc.h"
+#include <sys/time.h>
+
+long long moon_get_milliseconds(){
+    struct timeval te;
+    gettimeofday(&te, NULL);
+    return te.tv_sec * 1000LL + te.tv_usec / 1000;
+}
 
 f32 moon_get_text_width(u8* text, float scale, u8 colored) {
     f32 size = 0;

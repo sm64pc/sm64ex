@@ -7,6 +7,7 @@
 #include "moon/ui/screens/options/categories/mcategory.h"
 
 #include "moon/ui/screens/options/categories/mgame.h"
+#include "moon/ui/screens/options/categories/mdebug.h"
 #include "moon/ui/screens/options/categories/mvideo.h"
 #include "moon/ui/screens/options/categories/maudio.h"
 #include "moon/ui/screens/options/categories/mcheats.h"
@@ -47,6 +48,9 @@ void MoonOptMain::Init(){
 void MoonOptMain::Mount(){
     this->widgets.clear();
     categories.push_back(new MGameCategory());
+#ifdef GAME_DEBUG
+    categories.push_back(new MDebugCategory());
+#endif
 #ifdef BETTERCAMERA
     categories.push_back(new MCameraCategory());
 #endif

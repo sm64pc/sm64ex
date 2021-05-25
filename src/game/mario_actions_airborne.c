@@ -14,6 +14,7 @@
 #include "mario_step.h"
 #include "save_file.h"
 #include "thread6.h"
+#include "moon/achievements/achievements.h"
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif
@@ -489,6 +490,8 @@ s32 act_triple_jump(struct MarioState *m) {
 #else
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_YAHOO);
 #endif
+
+    show_achievement("achievement.doATripleJump");
 
     common_air_action_step(m, ACT_TRIPLE_JUMP_LAND, MARIO_ANIM_TRIPLE_JUMP, 0);
     if (m->action == ACT_TRIPLE_JUMP_LAND) {
@@ -985,7 +988,7 @@ s32 act_burning_jump(struct MarioState *m) {
     if (m->health < 0x100) {
         m->health = 0xFF;
     }
-    
+
     reset_rumble_timers();
     return FALSE;
 }

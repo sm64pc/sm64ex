@@ -591,9 +591,10 @@ endif
 CXXFLAGS := -std=c++17
 LDFLAGS += -lstdc++fs
 
-# ifeq ($(TOGGLE_GAME_DEBUG),1)
-#  VERSION_CFLAGS += -DTOGGLE_GAME_DEBUG
-# endif
+ifeq ($(DEBUG),1)
+  CC_CHECK += -DGAME_DEBUG
+  CFLAGS += -DGAME_DEBUG
+endif
 
 ################################
 

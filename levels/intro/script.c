@@ -32,7 +32,7 @@ const LevelScript level_intro_n64[] = {
     // SLEEP(/*frames*/ 500),
     LOAD_AREA(/*area*/ 1),
     TRANSITION(/*transType*/ WARP_TRANSITION_FADE_FROM_COLOR, /*time*/ 20, /*color*/ 0x00, 0x00, 0x00),
-    SLEEP(/*frames*/ 90),    
+    SLEEP(/*frames*/ 90),
     TRANSITION(/*transType*/ WARP_TRANSITION_FADE_INTO_COLOR, /*time*/ 20, /*color*/ 0x00, 0x00, 0x00),
     SLEEP(/*frames*/ 21),
     CMD2A(/*unk2*/ 1),

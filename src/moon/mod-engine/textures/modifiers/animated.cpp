@@ -1,21 +1,18 @@
 #include "animated.h"
 #include "moon/mod-engine/hooks/hook.h"
-#include <sys/time.h>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <map>
 
+extern "C" {
+#include "moon/utils/moon-gfx.h"
+}
+
 using json = nlohmann::json;
 using namespace std;
 
 map<string, AnimatedEntry*> textures;
-
-long long getMilliseconds(){
-    struct timeval te;
-    gettimeofday(&te, NULL);
-    return te.tv_sec * 1000LL + te.tv_usec / 1000;
-}
 
 void AnimatedModifier::onInit(){
     Moon::registerHookListener({.hookName = TEXTURE_BIND, .callback = [](HookCall call){
@@ -25,7 +22,7 @@ void AnimatedModifier::onInit(){
             AnimatedEntry* entry = textures[texName];
             Frame *frame = entry->frames[entry->lastFrame];
 
-            if(getMilliseconds() >= entry->lastTime + frame->delay){
+            if(moon_get_milliseconds() >= entry->lastTime + frame->delay){
                 int maxFrames = entry->frames.size() - 1;
                 bool reachMax = (entry->lastFrame < maxFrames);
                 if(entry->bounce){
@@ -36,7 +33,7 @@ void AnimatedModifier::onInit(){
                 }
 
                 entry->lastFrame += entry->bounce ? entry->lastBounce ? -1 : 1 : (reachMax ? 1 : -entry->lastFrame);
-                entry->lastTime = getMilliseconds();
+                entry->lastTime = moon_get_milliseconds();
                 frame = entry->frames[entry->lastFrame];
             }
 
