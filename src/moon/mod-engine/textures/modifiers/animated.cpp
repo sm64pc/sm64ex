@@ -42,7 +42,6 @@ void AnimatedModifier::onInit(){
 
             (*hookTexture) = const_cast<char*>(frame->path.c_str());
         }
-        return false;
     }});
 }
 

@@ -293,6 +293,9 @@ SRC_DIRS += src/moon/mod-engine/hooks
 # Moon64 SRC [Mod-Engine - Shaders Module]
 SRC_DIRS += src/moon/mod-engine/shaders
 
+# Moon64 SRC [Achievements]
+SRC_DIRS += src/moon/achievements
+
 # Moon64 LIB [RapidJSON]
 SRC_DIRS += src/moon/libs/rapidjson src/moon/libs/rapidjson/error src/moon/libs/rapidjson/internal src/moon/libs/rapidjson/msinttypes
 

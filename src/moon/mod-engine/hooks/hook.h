@@ -6,7 +6,10 @@ struct HookParameter {
     void* parameter;
 };
 
-#define TEXTURE_BIND "TextureBind"
+#define TEXTURE_BIND  "TextureBind"
+#define PRE_HUD_DRAW  "PreHudDraw"
+#define HUD_DRAW      "HudDraw"
+#define POST_HUD_DRAW "PostHudDraw"
 
 #ifdef __cplusplus
 
@@ -17,9 +20,10 @@ struct HookCall {
     std::string name;
     std::map<std::string, void*> baseArgs;
     std::map<std::string, void*> hookedArgs;
+    bool cancelled = false;
 };
 
-typedef bool HookFunc(HookCall call);
+typedef void HookFunc(HookCall call);
 struct HookListener {
     std::string hookName;
     HookFunc *callback;

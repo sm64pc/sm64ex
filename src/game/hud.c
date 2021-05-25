@@ -15,6 +15,7 @@
 #include "save_file.h"
 #include "print.h"
 #include "pc/configfile.h"
+#include "moon/mod-engine/hooks/hook.h"
 
 #ifdef TARGET_SWITCH
 #define AVOID_UTYPES
@@ -473,6 +474,11 @@ void render_nx_hud(void){
  * excluding the cannon reticle which detects a camera preset for it.
  */
 void render_hud(void) {
+    moon_bind_hook(PRE_HUD_DRAW);
+    moon_init_hook(0);
+    if(moon_call_hook(0)){
+        return;
+    }
     s16 hudDisplayFlags;
 
     hudDisplayFlags = gHudDisplay.flags;
@@ -483,6 +489,12 @@ void render_hud(void) {
         sPowerMeterVisibleTimer = 0;
     } else {
         create_dl_ortho_matrix();
+
+        moon_bind_hook(HUD_DRAW);
+        moon_init_hook(0);
+        if(moon_call_hook(0)){
+            return;
+        }
 
         if (gCurrentArea != NULL && gCurrentArea->camera->mode == CAMERA_MODE_INSIDE_CANNON) {
             render_hud_cannon_reticle();
@@ -518,4 +530,8 @@ void render_hud(void) {
 
         }
     }
+
+    moon_bind_hook(POST_HUD_DRAW);
+    moon_init_hook(0);
+    moon_call_hook(0);
 }

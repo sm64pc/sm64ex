@@ -4,6 +4,7 @@
 #include "interfaces/file-entry.h"
 #include "textures/mod-texture.h"
 #include "shaders/mod-shaders.h"
+#include "moon/achievements/achievements.h"
 
 #include "moon/fs/moonfs.h"
 #include "moon/libs/nlohmann/json.hpp"
@@ -149,6 +150,7 @@ namespace MoonInternal {
 
     void setupModEngine( string state ){
         MoonInternal::setupTextureEngine(state);
+        MoonInternal::setupAchievementEngine(state);
 
         if(state == "PreStartup"){
             MoonInternal::scanAddonsDirectory();
