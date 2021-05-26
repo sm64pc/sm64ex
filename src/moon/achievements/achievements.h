@@ -26,6 +26,7 @@ public:
 
 namespace Moon {
     void showAchievement(Achievement* achievement);
+    void showAchievementById(std::string id);
 }
 
 namespace MoonInternal{
