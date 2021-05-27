@@ -26,12 +26,12 @@ std::map<Achievement*, AchievementEntry*> entries;
 
 namespace AchievementList {
     /* Star achievements */
-    Achievement* GET_1_STAR         = MoonAchievements::bind(new Achievement("achievement.get1Stars",   "textures/segment2/segment2.05C00.rgba16", "Your journey begins!", "Get one star",  0, 5, nullptr));
-    Achievement* GET_30_STARS       = MoonAchievements::bind(new Achievement("achievement.get12Stars",  "textures/segment2/segment2.05C00.rgba16", "Cursed Power",         "Get 8 stars",   0, 5, GET_12_STARS));
-    Achievement* GET_60_STARS       = MoonAchievements::bind(new Achievement("achievement.get50Stars",  "textures/segment2/segment2.05C00.rgba16", "Lucky Eight",          "Get 30 stars",  0, 5, GET_50_STARS));
-    Achievement* GET_60_STARS       = MoonAchievements::bind(new Achievement("achievement.get50Stars",  "textures/segment2/segment2.05C00.rgba16", "Lucky Eight",          "Get 50 stars",  0, 5, GET_50_STARS));
-    Achievement* GET_90_STARS       = MoonAchievements::bind(new Achievement("achievement.get70Stars",  "textures/segment2/segment2.05C00.rgba16", "Halfway done!",        "Get 70 stars",  0, 5, GET_70_STARS));
-    Achievement* GET_120_STARS      = MoonAchievements::bind(new Achievement("achievement.get120Stars", "textures/segment2/segment2.05C00.rgba16", "The Completionist",    "Get 120 stars", 0, 5, GET_120_STARS));
+    Achievement* GET_1_STAR         = MoonAchievements::bind(new Achievement("achievement.get1Stars",   "textures/segment2/segment2.05C00.rgba16", "Your journey begins!",    "Get one star",  0, 5, nullptr));
+    Achievement* GET_8_STARS        = MoonAchievements::bind(new Achievement("achievement.get8Stars",  "textures/segment2/segment2.05C00.rgba16",  "You feel a strong power", "Get 8 stars",   0, 5, GET_1_STAR));
+    Achievement* GET_30_STARS       = MoonAchievements::bind(new Achievement("achievement.get30Stars",  "textures/segment2/segment2.05C00.rgba16", "TBD",                     "Get 30 stars",  0, 5, GET_8_STARS));
+    Achievement* GET_50_STARS       = MoonAchievements::bind(new Achievement("achievement.get50Stars",  "textures/segment2/segment2.05C00.rgba16", "Lucky Eight",             "Get 50 stars",  0, 5, GET_30_STARS));
+    Achievement* GET_70_STARS       = MoonAchievements::bind(new Achievement("achievement.get70Stars",  "textures/segment2/segment2.05C00.rgba16", "Halfway done!",           "Get 70 stars",  0, 5, GET_50_STARS));
+    Achievement* GET_120_STARS      = MoonAchievements::bind(new Achievement("achievement.get120Stars", "textures/segment2/segment2.05C00.rgba16", "The Completionist",       "Get 120 stars", 0, 5, GET_70_STARS));
 
     /* Cap Achievements */
     Achievement* UNLOCK_WING_CAP    = MoonAchievements::bind(new Achievement("achievement.unlockWingCap",   "textures/segment2/segment2.05C00.rgba16", "Super Man-rio",      "Unlock the wing cap",   0, 5, nullptr));

@@ -315,9 +315,11 @@ SRC_DIRS += src/moon/fs
 
 ifeq ($(DISCORDRPC),1)
   ifneq ($(TARGET_SWITCH)$(TARGET_WEB)$(TARGET_RPI),000)
-    $(error Discord RPC does not work on this target)
+    $(echo Discord RPC does not work on this target)
+    DISCORDRPC := 0
+  else
+    SRC_DIRS += src/pc/discord
   endif
-  SRC_DIRS += src/pc/discord
 endif
 
 BIN_DIRS := bin bin/$(VERSION)
