@@ -16,7 +16,7 @@ struct MWValueBind{
     void (*btn)();
 
     int   *index;
-    std::vector<std::string>* values;
+    std::vector<std::wstring>* values;
     bool valueKeys;
 
     void (*callback)();
@@ -27,7 +27,9 @@ class MWValue : public MoonWidget {
         bool titleKey;
     public:
         MWValueBind bind;
-        std::string title;
+        std::wstring title;
+        MWValue(float x, float y, std::wstring title, MWValueBind bind);
+        MWValue(float x, float y, std::wstring title, MWValueBind bind, bool titleKey);
         MWValue(float x, float y, std::string title, MWValueBind bind);
         MWValue(float x, float y, std::string title, MWValueBind bind, bool titleKey);
         void Init();

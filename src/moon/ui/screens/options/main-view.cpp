@@ -111,7 +111,7 @@ void drawButton(int x, int y, string text, string texture, int size, int offset,
 }
 
 void MoonOptMain::Draw(){
-    string curTitle = categories[categoryIndex]->titleKey ? Moon::getLanguageKey(categories[categoryIndex]->categoryName) : categories[categoryIndex]->categoryName;
+    wstring curTitle = categories[categoryIndex]->titleKey ? Moon::getLanguageKey(categories[categoryIndex]->categoryName) : categories[categoryIndex]->categoryName;
 
     float txtWidth = MoonGetTextWidth(curTitle, 1.0, true);
     MoonDrawRectangle(0, 0, GetScreenWidth(false), GetScreenHeight(), {0, 0, 0, 100}, false);

@@ -4,6 +4,7 @@
 #include "moon/texts/moon-loader.h"
 #include "moon/io/moon-io.h"
 
+#include "moon/texts/text-converter.h"
 #include "moon/utils/moon-env.h"
 #include "moon/mod-engine/engine.h"
 #include "moon/mod-engine/test.h"
@@ -41,7 +42,7 @@ void moon_environment_save(char* key, char* value){
 */
 
 u8 * moon_language_get_key( char* key ){
-    return getTranslatedText(Moon::getLanguageKey(std::string(key)).c_str());
+    return Moon::GetTranslatedText(Moon::getLanguageKey(std::string(key)));
 }
 
 /*

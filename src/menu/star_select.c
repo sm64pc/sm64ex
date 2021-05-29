@@ -247,11 +247,8 @@ void print_course_number(void) {
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
 }
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
-#define ACT_NAME_X 158
-#else
+#define TXT_SCORE_X 153
 #define ACT_NAME_X 163
-#endif
 
 /**
  * Print act selector strings, some with special checks.
@@ -280,7 +277,8 @@ void print_act_selector_strings(void) {
     gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, 255);
     // Print the "MY SCORE" text if the coin score is more than 0
     if (save_file_get_course_coin_score(gCurrSaveFileNum - 1, gCurrCourseNum - 1) != 0) {
-        print_generic_string(102, 118, get_key_string("TEXT_MY_SCORE"));
+        u8* text = get_key_string("TEXT_MY_SCORE");
+        print_generic_string(TXT_SCORE_X - moon_get_text_width(text, 1.0, FALSE), 117, text);
     }
 
     lvlNameX = get_str_x_pos_from_center(160, currLevelName + 3, 10.0f);

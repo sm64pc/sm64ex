@@ -26,9 +26,9 @@ inline std::string narrow (const std::wstring& str) {
 }
 
 struct LanguageEntry {
-    std::string name;
+    std::wstring name;
     std::string logo;
-    std::map<std::string, std::string> strings;
+    std::map<std::string, std::wstring> strings;
     std::vector<u8*> acts;
     std::vector<struct DialogEntry*> dialogs;
     std::vector<u8*> courses;
@@ -40,7 +40,8 @@ namespace Moon {
 
     void loadLanguage(std::string path);
     void setCurrentLanguage(LanguageEntry *new_language);
-    std::string getLanguageKey(std::string key);
+    std::wstring getLanguageKey(std::string key);
+    std::wstring getLanguageKey(std::wstring key);
 }
 
 namespace MoonInternal {

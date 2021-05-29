@@ -1830,17 +1830,11 @@ u8 gTextCourseArr[][7] = {
 #else
 #define CRS_NUM_X1 100
 #endif
-#ifdef VERSION_EU
-#define TXT_STAR_X 89
-#define ACT_NAME_X 107
-#define LVL_NAME_X 108
-#define MYSCORE_X  48
-#else
+
 #define TXT_STAR_X 98
 #define ACT_NAME_X 116
 #define LVL_NAME_X 117
 #define MYSCORE_X  62
-#endif
 
 void render_pause_my_score_coins(void) {
     u8 strCourseNum[4];
@@ -1851,30 +1845,11 @@ void render_pause_my_score_coins(void) {
     u8 courseIndex;
     u8 starFlags;
 
-#ifndef VERSION_EU
     courseNameTbl = segmented_to_virtual(seg2_course_name_table);
     actNameTbl = segmented_to_virtual(seg2_act_name_table);
-#endif
 
     courseIndex = gCurrCourseNum - 1;
     starFlags = save_file_get_star_flags(gCurrSaveFileNum - 1, gCurrCourseNum - 1);
-
-#ifdef VERSION_EU
-    switch (gInGameLanguage) {
-        case LANGUAGE_ENGLISH:
-            actNameTbl = segmented_to_virtual(act_name_table_eu_en);
-            courseNameTbl = segmented_to_virtual(course_name_table_eu_en);
-            break;
-        case LANGUAGE_FRENCH:
-            actNameTbl = segmented_to_virtual(act_name_table_eu_fr);
-            courseNameTbl = segmented_to_virtual(course_name_table_eu_fr);
-            break;
-        case LANGUAGE_GERMAN:
-            actNameTbl = segmented_to_virtual(act_name_table_eu_de);
-            courseNameTbl = segmented_to_virtual(course_name_table_eu_de);
-            break;
-    }
-#endif
 
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
@@ -1890,23 +1865,16 @@ void render_pause_my_score_coins(void) {
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
 
     if (courseIndex < COURSE_STAGES_COUNT && save_file_get_course_star_count(gCurrSaveFileNum - 1, courseIndex) != 0) {
-        print_generic_string(MYSCORE_X, 121, get_key_string("TEXT_MY_SCORE"));
+        u8* text = get_key_string("TEXT_MY_SCORE");
+        print_generic_string(ACT_NAME_X - moon_get_text_width(text, 1.0, FALSE), 121, text);
     }
 
     courseName = segmented_to_virtual(courseNameTbl[courseIndex]);
 
     if (courseIndex < COURSE_STAGES_COUNT) {
-#ifdef VERSION_EU
-        print_generic_string(48, 157, gTextCourseArr[gInGameLanguage]);
-#else
         print_generic_string(63, 157, get_key_string("TEXT_COURSE"));
-#endif
         int_to_str(gCurrCourseNum, strCourseNum);
-#ifdef VERSION_EU
-        print_generic_string(get_string_width(gTextCourseArr[gInGameLanguage]) + 51, 157, strCourseNum);
-#else
         print_generic_string(CRS_NUM_X1, 157, strCourseNum);
-#endif
 
         actName = segmented_to_virtual(actNameTbl[(gCurrCourseNum - 1) * 6 + gDialogCourseActNum - 1]);
 
@@ -1916,33 +1884,18 @@ void render_pause_my_score_coins(void) {
             print_generic_string(TXT_STAR_X, 140, get_key_string("TEXT_UNFILLED_STAR"));
         }
         print_generic_string(ACT_NAME_X, 140, actName);
-#ifndef VERSION_JP
         print_generic_string(LVL_NAME_X, 157, &courseName[3]);
-#endif
     }
-#ifndef VERSION_JP
     else {
-#ifdef VERSION_US
         print_generic_string(94, 157, &courseName[3]);
-#elif defined(VERSION_EU)
-        print_generic_string(get_str_x_pos_from_center(159, &courseName[3], 10.0f), 157, &courseName[3]);
-#endif
     }
-#else
     print_generic_string(117, 157, &courseName[3]);
-#endif
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 }
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
-#define TXT1_X 4
-#define TXT2_X 116
-#define Y_VAL7 0
-#else
 #define TXT1_X 3
 #define TXT2_X 119
 #define Y_VAL7 2
-#endif
 
 void render_pause_camera_options(s16 x, s16 y, s8 *index, s16 xIndex) {
     handle_menu_scrolling(MENU_SCROLL_HORIZONTAL, index, 1, 2);
@@ -1971,13 +1924,8 @@ void render_pause_camera_options(s16 x, s16 y, s8 *index, s16 xIndex) {
     }
 }
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
-#define X_VAL8 0
-#define Y_VAL8 4
-#else
 #define X_VAL8 4
 #define Y_VAL8 2
-#endif
 
 void render_pause_course_options(s16 x, s16 y, s8 *index, s16 yIndex) {
 
@@ -2282,24 +2230,12 @@ void play_star_fanfare_and_flash_hud(s32 arg, u8 starNum) {
     }
 }
 
-#ifdef VERSION_EU
-#define TXT_NAME_X1 centerX
-#define TXT_NAME_X2 centerX - 1
-#else
 #define TXT_NAME_X1 71
 #define TXT_NAME_X2 69
-#endif
-#if defined(VERSION_JP) || defined(VERSION_SH)
-#define CRS_NUM_X2 95
-#define CRS_NUM_X3 93
-#define TXT_CLEAR_X1 205
-#define TXT_CLEAR_X2 203
-#else
 #define CRS_NUM_X2 104
 #define CRS_NUM_X3 102
 #define TXT_CLEAR_X1 get_string_width(name) + 81
 #define TXT_CLEAR_X2 get_string_width(name) + 79
-#endif
 
 void render_course_complete_lvl_info_and_hud_str(void) {
     u8 textSymStar[] = { GLYPH_STAR, GLYPH_SPACE };
@@ -2333,18 +2269,11 @@ void render_course_complete_lvl_info_and_hud_str(void) {
         name = segmented_to_virtual(courseNameTbl[gLastCompletedCourseNum - 1]);
         gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
         gDPSetEnvColor(gDisplayListHead++, 0, 0, 0, gDialogTextAlpha);
-#ifdef VERSION_EU
-        centerX = get_str_x_pos_from_center(153, name, 12.0f);
-#endif
         print_generic_string(TXT_NAME_X1, 130, name);
-#ifndef VERSION_EU
         print_generic_string(TXT_CLEAR_X1, 130, get_key_string("TEXT_CLEAR"));
-#endif
         gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gDialogTextAlpha);
         print_generic_string(TXT_NAME_X2, 132, name);
-#ifndef VERSION_EU
         print_generic_string(TXT_CLEAR_X2, 132, get_key_string("TEXT_CLEAR"));
-#endif
         gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
         print_hud_course_complete_string(HUD_PRINT_CONGRATULATIONS);
         print_hud_course_complete_coins(118, 111);
@@ -2399,9 +2328,6 @@ void render_save_confirmation(s16 x, s16 y, s8 *index, s16 sp6e) {
 
 s16 render_course_complete_screen(void) {
     s16 num;
-#ifdef VERSION_EU
-    gInGameLanguage = eu_get_language();
-#endif
 
     switch (gDialogBoxState) {
         case DIALOG_STATE_OPENING:
@@ -2416,18 +2342,11 @@ s16 render_course_complete_screen(void) {
         case DIALOG_STATE_VERTICAL:
             shade_screen();
             render_course_complete_lvl_info_and_hud_str();
-#ifdef VERSION_EU
-            render_save_confirmation(86, &gDialogLineNum, 20);
-#else
             render_save_confirmation(100, 86, &gDialogLineNum, 20);
-#endif
 
             if (gCourseDoneMenuTimer > 110
                 && (gPlayer3Controller->buttonPressed & A_BUTTON
                  || gPlayer3Controller->buttonPressed & START_BUTTON
-#ifdef VERSION_EU
-                 || gPlayer3Controller->buttonPressed & Z_TRIG
-#endif
                 )) {
                 level_set_transition(0, 0);
                 play_sound(SOUND_MENU_STAR_SOUND, gGlobalSoundSource);

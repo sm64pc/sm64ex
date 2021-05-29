@@ -6,6 +6,7 @@
 #include "pc/discord/discordrpc.h"
 #endif
 
+#include "text-converter.h"
 #include <unistd.h>
 #include <stdio.h>
 #include <limits.h>
@@ -61,7 +62,7 @@ namespace Moon {
             language = new LanguageEntry();
         } else {
             isChild = false;
-            string parentName = narrow(manifest[L"langLogo"].GetString());
+            wstring parentName = manifest[L"langName"].GetString();
             for(auto &lng : languages){
                 if(lng->name == parentName){
                     language = lng;
@@ -72,7 +73,7 @@ namespace Moon {
         }
 
         if(!isChild){
-            language->name = narrow(manifest[L"langName"].GetString());
+            language->name = manifest[L"langName"].GetString();
             language->logo = narrow(manifest[L"langLogo"].GetString());
         }
 
@@ -100,7 +101,7 @@ namespace Moon {
                     lId++;
                 }
 
-                entry->str         = getTranslatedText(narrow(base).c_str());
+                entry->str         = Moon::GetTranslatedText(base);
                 language->dialogs.push_back(entry);
             }
         }
@@ -117,12 +118,12 @@ namespace Moon {
             for (WValue& course : courses.GetArray()){
 
                 if(courseId + 1 <= courses.Size() - 1) {
-                    tmpCourses[courseId] = getTranslatedText(narrow(course[L"course"].GetString()).c_str());
+                    tmpCourses[courseId] = Moon::GetTranslatedText(course[L"course"].GetString());
                     courseId++;
                 }
 
                 for (WValue& act : course[L"acts"].GetArray()){
-                    language->acts.push_back(getTranslatedText(narrow(act.GetString()).c_str()));
+                    language->acts.push_back(Moon::GetTranslatedText(act.GetString()));
                 }
             }
 
@@ -132,7 +133,7 @@ namespace Moon {
                     padding++;
                 }
 
-                tmpCourses[courseId + padding] = getTranslatedText(narrow(secret.GetString()).c_str());
+                tmpCourses[courseId + padding] = Moon::GetTranslatedText(secret.GetString());
                 courseId++;
             }
 
@@ -142,20 +143,14 @@ namespace Moon {
         if(raw.HasMember(L"options")){
             options = raw[L"options"];
             for (WValue::ConstMemberIterator option = options.MemberBegin(); option != options.MemberEnd(); ++option) {
-                language->strings.insert(pair<string, string>(
-                    narrow(option->name.GetString()),
-                    narrow(option->value.GetString())
-                ));
+                language->strings[narrow(option->name.GetString())] = option->value.GetString();
             }
         }
 
         if(raw.HasMember(L"secrets")){
             strings = raw[L"strings"];
             for (WValue::ConstMemberIterator item = strings.MemberBegin(); item != strings.MemberEnd(); ++item) {
-                language->strings.insert(pair<string, string>(
-                    narrow(item->name.GetString()),
-                    narrow(item->value.GetString())
-                ));
+                language->strings[narrow(item->name.GetString())] = item->value.GetString();
             }
         }
 
@@ -173,8 +168,12 @@ namespace Moon {
     #endif
     }
 
-    string getLanguageKey(string key){
+    wstring getLanguageKey(string key){
         return current->strings[key];
+    }
+
+    wstring getLanguageKey(wstring key){
+        return current->strings[narrow(key)];
     }
 }
 

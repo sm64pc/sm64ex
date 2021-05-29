@@ -9,10 +9,10 @@ extern "C" {
 #include "pc/configfile.h"
 }
 
-vector<string> filters = {
-    "TEXT_OPT_NEAREST",
-    "TEXT_OPT_LINEAR",
-    "TEXT_OPT_THREEPT"
+vector<wstring> filters = {
+    L"TEXT_OPT_NEAREST",
+    L"TEXT_OPT_LINEAR",
+    L"TEXT_OPT_THREEPT"
 };
 
 MVideoCategory::MVideoCategory() : MoonCategory("TEXT_OPT_VIDEO"){

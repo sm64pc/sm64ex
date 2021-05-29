@@ -11,9 +11,9 @@ extern "C" {
 #include "pc/pc_main.h"
 }
 
-vector<string> lngNames;
-vector<string> modes = {
-    "Auto", "Low", "Disabled"
+vector<wstring> lngNames;
+vector<wstring> modes = {
+    L"Auto", L"Low", L"Disabled"
 };
 
 MGameCategory::MGameCategory() : MoonCategory("TEXT_OPT_GAME"){

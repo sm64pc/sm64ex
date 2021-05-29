@@ -240,8 +240,8 @@ static void gfx_sdl_init(const char *window_title) {
 
     wnd = SDL_CreateWindow(
         window_title,
-        xpos, ypos, configWindow.w, configWindow.h,
-        SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, configWindow.w, configWindow.h,
+        SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE
     );
     ctx = SDL_GL_CreateContext(wnd);
     moon_update_window(wnd);
@@ -362,9 +362,15 @@ static inline void sync_framerate_with_timer(void) {
     last_time += frame_time;
 }
 
+int fwb = 0;
+
 static void gfx_sdl_swap_buffers_begin(void) {
     if (use_timer) sync_framerate_with_timer();
     SDL_GL_SwapWindow(wnd);
+    if(fwb == 0){
+        fwb = 1;
+        SDL_ShowWindow(wnd);
+    }
 }
 
 static void gfx_sdl_swap_buffers_end(void) {

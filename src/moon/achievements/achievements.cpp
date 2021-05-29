@@ -26,6 +26,7 @@ std::map<Achievement*, AchievementEntry*> entries;
 
 namespace AchievementList {
     /* Star achievements */
+    Achievement* STAR               = new Achievement("", "", "/", "",  0, 0, nullptr);
     Achievement* GET_1_STAR         = MoonAchievements::bind(new Achievement("achievement.get1Stars",   "textures/segment2/segment2.05C00.rgba16", "Your journey begins!",    "Get one star",  0, 5, nullptr));
     Achievement* GET_8_STARS        = MoonAchievements::bind(new Achievement("achievement.get8Stars",  "textures/segment2/segment2.05C00.rgba16",  "You feel a strong power", "Get 8 stars",   0, 5, GET_1_STAR));
     Achievement* GET_30_STARS       = MoonAchievements::bind(new Achievement("achievement.get30Stars",  "textures/segment2/segment2.05C00.rgba16", "TBD",                     "Get 30 stars",  0, 5, GET_8_STARS));
@@ -106,11 +107,11 @@ namespace MoonInternal{
                 int id = 0;
 
                 for(auto &achievement : entries){
-                    int achievementWidth = 128;
                     long long millis = moon_get_milliseconds();
                     AchievementEntry* aEntry = achievement.second;
                     if(aEntry->dead || achievement.second->launchTime >= millis) continue;
                     bool shouldClose = millis >= achievement.second->launchTime + achievement.first->duration;
+                    int achievementWidth = 31 + 5 + MoonGetTextWidth(achievement.first->description, 1.0, false);
 
                     int aX = GetScreenWidth(false) / 2 - aEntry->width / 2;
                     int aY = GetScreenHeight() - aEntry->height - 20;
@@ -120,7 +121,7 @@ namespace MoonInternal{
                         if(aEntry->width >= 32)
                             MoonDrawTexture(GFX_DIMENSIONS_FROM_LEFT_EDGE(aX), aY, 31, 31, sys_strdup(achievement.first->icon.c_str()));
                         if(aEntry->width >= achievementWidth * 0.9){
-                            MoonDrawText(aX + 32 + 5, aY + 2,      achievement.first->title,       0.8, {255,255,255,255}, true, false);
+                            MoonDrawText(aX + 32 + 5, aY + 2,  achievement.first->title,       0.8, {255,255,255,255}, true, false);
                             MoonDrawText(aX + 32 + 5, aY + 16, achievement.first->description, 0.8, {255,255,255,255}, true, false);
                         }
                     }
