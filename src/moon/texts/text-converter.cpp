@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "moon-loader.h"
 
 extern "C" {
 #include "game/segment2.h"
@@ -113,6 +114,10 @@ namespace Moon {
         std::copy(tmpAlloc.begin(), tmpAlloc.end(), dump);
 
         return dump;
+    }
+
+    uint8_t* GetTranslatedText(string in){
+        return Moon::GetTranslatedText(wide(in));
     }
 }
 

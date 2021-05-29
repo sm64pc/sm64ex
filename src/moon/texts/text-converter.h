@@ -9,5 +9,6 @@ namespace MoonInternal {
 
 namespace Moon {
     uint8_t* GetTranslatedText(std::wstring in);
+    uint8_t* GetTranslatedText(std::string in);
 }
 #endif

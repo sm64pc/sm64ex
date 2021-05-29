@@ -182,7 +182,7 @@ float GetStickValue(MoonButtons button, bool absolute){
 
 float GetScreenWidth(bool u4_3){
     int brds = GFX_DIMENSIONS_FROM_LEFT_EDGE(0);
-    return ceil(brds < 0 && !u4_3 ? SCREEN_WIDTH + abs(brds) * 2 : SCREEN_WIDTH - abs(brds) * 2);
+    return ceil(brds < 0 && !u4_3 ? (SCREEN_WIDTH + abs(brds) * 2) + 2 : SCREEN_WIDTH - abs(brds) * 2);
 }
 
 float GetScreenHeight() {

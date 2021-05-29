@@ -10,7 +10,6 @@ extern "C" {
 #include "gfx_dimensions.h"
 #include "config.h"
 #include "game/geo_misc.h"
-#include "text/txtconv.h"
 }
 
 void MoonDrawText       (float x, float y, std::wstring text, float scale, struct Color color, bool dropShadow, bool u4_3);

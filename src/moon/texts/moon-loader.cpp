@@ -129,7 +129,7 @@ namespace Moon {
 
             for (WValue& secret : secrets.GetArray()){
                 if(courseId == SECRET_NULL) {
-                    tmpCourses[courseId] = getTranslatedText(0);
+                    tmpCourses[courseId] = Moon::GetTranslatedText("");
                     padding++;
                 }
 

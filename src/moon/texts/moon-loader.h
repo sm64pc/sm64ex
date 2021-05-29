@@ -14,7 +14,6 @@
 extern "C" {
     #include "types.h"
     #include "game/ingame_menu.h"
-    #include "text/txtconv.h"
 }
 
 inline std::wstring wide (const std::string& str) {

@@ -26,7 +26,6 @@
 #include "bettercamera.h"
 #endif
 
-#include "text/txtconv.h"
 #include "text/text-loader.h"
 #include <math.h>
 #include "pc/gfx/gfx_pc.h"

@@ -46,7 +46,7 @@ void MoonDrawColoredText(float x, float y, std::wstring text, float scale, struc
 }
 
 void MoonDrawColoredText(float x, float y, std::string text, float scale, struct Color color, bool dropShadow, bool u4_3){
-    MoonDrawText(x, y, wide(text), scale, color, dropShadow, u4_3);
+    MoonDrawColoredText(x, y, wide(text), scale, color, dropShadow, u4_3);
 }
 
 void MoonDrawRectangle(float x, float y, float w, float h, struct Color c, bool u4_3){
