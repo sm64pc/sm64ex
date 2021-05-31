@@ -1048,8 +1048,7 @@ void geo_process_root(struct GraphNodeRoot *node, Vp *b, Vp *c, s32 clearColor) 
         Mtx *initialMatrix;
         Vp *viewport = alloc_display_list(sizeof(*viewport));
 
-        gDisplayListHeap = alloc_only_pool_init(main_pool_available() - sizeof(struct AllocOnlyPool),
-                                                MEMORY_POOL_LEFT);
+        gDisplayListHeap = alloc_only_pool_init();
         initialMatrix = alloc_display_list(sizeof(*initialMatrix));
         gMatStackIndex = 0;
         gCurAnimType = 0;
@@ -1077,10 +1076,6 @@ void geo_process_root(struct GraphNodeRoot *node, Vp *b, Vp *c, s32 clearColor) 
             geo_process_node_and_siblings(node->node.children);
         }
         gCurGraphNodeRoot = NULL;
-        if (gShowDebugText) {
-            print_text_fmt_int(180, 36, "MEM %d",
-                               gDisplayListHeap->totalSpace - gDisplayListHeap->usedSpace);
-        }
         main_pool_free(gDisplayListHeap);
     }
 }

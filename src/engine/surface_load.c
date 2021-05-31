@@ -27,8 +27,11 @@ SpatialPartitionCell gDynamicSurfacePartition[16][16];
 /**
  * Pools of data to contain either surface nodes or surfaces.
  */
-struct SurfaceNode *sSurfaceNodePool;
-struct Surface *sSurfacePool;
+static struct AllocOnlyPool *sStaticSurfaceNodePool;
+static struct AllocOnlyPool *sStaticSurfacePool;
+static struct AllocOnlyPool *sDynamicSurfaceNodePool;
+static struct AllocOnlyPool *sDynamicSurfacePool;
+static u8 sStaticSurfaceLoadComplete;
 
 /**
  * The size of the surface pool (2300).
@@ -41,16 +44,13 @@ u8 unused8038EEA8[0x30];
  * Allocate the part of the surface node pool to contain a surface node.
  */
 static struct SurfaceNode *alloc_surface_node(void) {
-    struct SurfaceNode *node = &sSurfaceNodePool[gSurfaceNodesAllocated];
+    struct AllocOnlyPool *pool = !sStaticSurfaceLoadComplete ?
+                                 sStaticSurfaceNodePool : sDynamicSurfaceNodePool;
+    struct SurfaceNode *node = alloc_only_pool_alloc(pool, sizeof(struct SurfaceNode));
+
     gSurfaceNodesAllocated++;
 
     node->next = NULL;
-
-    //! A bounds check! If there's more surface nodes than 7000 allowed,
-    //  we, um...
-    // Perhaps originally just debug feedback?
-    if (gSurfaceNodesAllocated >= 7000) {
-    }
 
     return node;
 }
@@ -61,14 +61,9 @@ static struct SurfaceNode *alloc_surface_node(void) {
  */
 static struct Surface *alloc_surface(void) {
 
-    struct Surface *surface = &sSurfacePool[gSurfacesAllocated];
+    struct AllocOnlyPool *pool = !sStaticSurfaceLoadComplete ? sStaticSurfacePool : sDynamicSurfacePool;
+    struct Surface *surface = alloc_only_pool_alloc(pool, sizeof(struct Surface));
     gSurfacesAllocated++;
-
-    //! A bounds check! If there's more surfaces than the 2300 allowed,
-    //  we, um...
-    // Perhaps originally just debug feedback?
-    if (gSurfacesAllocated >= sSurfacePoolSize) {
-    }
 
     surface->type = 0;
     surface->force = 0;
@@ -524,9 +519,10 @@ static void load_environmental_regions(s16 **data) {
  * Allocate some of the main pool for surfaces (2300 surf) and for surface nodes (7000 nodes).
  */
 void alloc_surface_pools(void) {
-    sSurfacePoolSize = 2300;
-    sSurfaceNodePool = main_pool_alloc(7000 * sizeof(struct SurfaceNode), MEMORY_POOL_LEFT);
-    sSurfacePool = main_pool_alloc(sSurfacePoolSize * sizeof(struct Surface), MEMORY_POOL_LEFT);
+    sStaticSurfaceNodePool = alloc_only_pool_init();
+    sStaticSurfacePool = alloc_only_pool_init();
+    sDynamicSurfaceNodePool = alloc_only_pool_init();
+    sDynamicSurfacePool = alloc_only_pool_init();
 
     gCCMEnteredSlide = 0;
     reset_red_coins_collected();
@@ -580,7 +576,6 @@ u32 get_area_terrain_size(s16 *data) {
     return data - startPos;
 }
 
-
 /**
  * Process the level file, loading in vertices, surfaces, some objects, and environmental
  * boxes (water, gas, JRB fog).
@@ -596,6 +591,15 @@ void load_area_terrain(s16 index, s16 *data, s8 *surfaceRooms, s16 *macroObjects
     gSurfaceNodesAllocated = 0;
     gSurfacesAllocated = 0;
 
+    alloc_only_pool_clear(sStaticSurfaceNodePool);
+    alloc_only_pool_clear(sStaticSurfacePool);
+    alloc_only_pool_clear(sDynamicSurfaceNodePool);
+    alloc_only_pool_clear(sDynamicSurfacePool);
+    sStaticSurfaceLoadComplete = FALSE;
+
+    // Originally they forgot to clear this matrix,
+    // results in segfaults if this is not done.
+    clear_dynamic_surfaces();
     clear_static_surfaces();
 
     // A while loop iterating through each section of the level data. Sections of data
@@ -637,6 +641,7 @@ void load_area_terrain(s16 index, s16 *data, s8 *surfaceRooms, s16 *macroObjects
 
     gNumStaticSurfaceNodes = gSurfaceNodesAllocated;
     gNumStaticSurfaces = gSurfacesAllocated;
+    sStaticSurfaceLoadComplete = TRUE;
 }
 
 /**
@@ -644,14 +649,17 @@ void load_area_terrain(s16 index, s16 *data, s8 *surfaceRooms, s16 *macroObjects
  */
 void clear_dynamic_surfaces(void) {
     if (!(gTimeStopState & TIME_STOP_ACTIVE)) {
+        if (gSurfacesAllocated > gNumStaticSurfaces) {
+            alloc_only_pool_clear(sDynamicSurfacePool);
+        }
+        if (gSurfaceNodesAllocated > gNumStaticSurfaceNodes) {
+            alloc_only_pool_clear(sDynamicSurfaceNodePool);
+        }
         gSurfacesAllocated = gNumStaticSurfaces;
         gSurfaceNodesAllocated = gNumStaticSurfaceNodes;
 
         clear_spatial_partition(&gDynamicSurfacePartition[0][0]);
     }
-}
-
-static void unused_80383604(void) {
 }
 
 /**

@@ -245,11 +245,7 @@ void spawn_special_objects(s16 areaIndex, s16 **specialObjList) {
     s16 y;
     s16 z;
     s16 extraParams[4];
-#ifdef VERSION_EU
-    s16 model;
-#else
-    u8 model;
-#endif
+    u32 model;
     u8 type;
     u8 presetID;
     u8 defaultParam;

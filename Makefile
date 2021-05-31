@@ -293,6 +293,9 @@ SRC_DIRS += src/moon/mod-engine/hooks
 # Moon64 SRC [Mod-Engine - Shaders Module]
 SRC_DIRS += src/moon/mod-engine/shaders
 
+# Moon64 SRC [Mod-Engine - Models Module]
+SRC_DIRS += src/moon/mod-engine/models
+
 # Moon64 SRC [Achievements]
 SRC_DIRS += src/moon/achievements
 

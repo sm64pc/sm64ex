@@ -26,6 +26,7 @@
 #include "rendering_graph_node.h"
 #include "spawn_object.h"
 #include "spawn_sound.h"
+#include "moon/mod-engine/models/mod-model.h"
 
 s8 D_8032F0A0[] = { 0xF8, 0x08, 0xFC, 0x04 };
 s16 D_8032F0A4[] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
@@ -478,7 +479,7 @@ struct Object *spawn_object_rel_with_rot(struct Object *parent, u32 model, const
     return newObj;
 }
 
-struct Object *spawn_obj_with_transform_flags(struct Object *sp20, s32 model, const BehaviorScript *sp28) {
+struct Object *spawn_obj_with_transform_flags(struct Object *sp20, u32 model, const BehaviorScript *sp28) {
     struct Object *sp1C = spawn_object(sp20, model, sp28);
     sp1C->oFlags |= OBJ_FLAG_0020 | OBJ_FLAG_SET_THROW_MATRIX_FROM_TRANSFORM;
     return sp1C;
@@ -534,14 +535,14 @@ struct Object *spawn_object_at_origin(struct Object *parent, UNUSED s32 unusedAr
     obj->parentObj = parent;
     obj->header.gfx.unk18 = parent->header.gfx.unk18;
     obj->header.gfx.unk19 = parent->header.gfx.unk18;
-
-    geo_obj_init((struct GraphNodeObject *) &obj->header.gfx, gLoadedGraphNodes[model], gVec3fZero,
+    printf("spawn_object_at_origin %d\n", model);
+    geo_obj_init((struct GraphNodeObject *) &obj->header.gfx, get_graph_node(model), gVec3fZero,
                  gVec3sZero);
 
     return obj;
 }
 
-struct Object *spawn_object(struct Object *parent, s32 model, const BehaviorScript *behavior) {
+struct Object *spawn_object(struct Object *parent, u32 model, const BehaviorScript *behavior) {
     struct Object *obj;
 
     obj = spawn_object_at_origin(parent, 0, model, behavior);
@@ -550,21 +551,17 @@ struct Object *spawn_object(struct Object *parent, s32 model, const BehaviorScri
     return obj;
 }
 
-struct Object *try_to_spawn_object(s16 offsetY, f32 scale, struct Object *parent, s32 model,
+struct Object *try_to_spawn_object(s16 offsetY, f32 scale, struct Object *parent, u32 model,
                                    const BehaviorScript *behavior) {
     struct Object *obj;
 
-    if (gFreeObjectList.next != NULL) {
-        obj = spawn_object(parent, model, behavior);
-        obj->oPosY += offsetY;
-        obj_scale(obj, scale);
-        return obj;
-    } else {
-        return NULL;
-    }
+    obj = spawn_object(parent, model, behavior);
+    obj->oPosY += offsetY;
+    obj_scale(obj, scale);
+    return obj;
 }
 
-struct Object *spawn_object_with_scale(struct Object *parent, s32 model, const BehaviorScript *behavior, f32 scale) {
+struct Object *spawn_object_with_scale(struct Object *parent, u32 model, const BehaviorScript *behavior, f32 scale) {
     struct Object *obj;
 
     obj = spawn_object_at_origin(parent, 0, model, behavior);
@@ -580,7 +577,7 @@ static void obj_build_relative_transform(struct Object *obj) {
 }
 
 struct Object *spawn_object_relative(s16 behaviorParam, s16 relativePosX, s16 relativePosY, s16 relativePosZ,
-                                     struct Object *parent, s32 model, const BehaviorScript *behavior) {
+                                     struct Object *parent, u32 model, const BehaviorScript *behavior) {
     struct Object *obj = spawn_object_at_origin(parent, 0, model, behavior);
 
     obj_copy_pos_and_angle(obj, parent);
@@ -595,7 +592,7 @@ struct Object *spawn_object_relative(s16 behaviorParam, s16 relativePosX, s16 re
 
 struct Object *spawn_object_relative_with_scale(s16 behaviorParam, s16 relativePosX, s16 relativePosY,
                                                 s16 relativePosZ, f32 scale, struct Object *parent,
-                                                s32 model, const BehaviorScript *behavior) {
+                                                u32 model, const BehaviorScript *behavior) {
     struct Object *obj;
 
     obj = spawn_object_relative(behaviorParam, relativePosX, relativePosY, relativePosZ, parent, model,
@@ -1124,8 +1121,9 @@ void cur_obj_get_dropped(void) {
     cur_obj_move_after_thrown_or_dropped(0.0f, 0.0f);
 }
 
-void cur_obj_set_model(s32 modelID) {
-    o->header.gfx.sharedChild = gLoadedGraphNodes[modelID];
+void cur_obj_set_model(u32 modelID) {
+    printf("cur_obj_set_model %d\n", modelID);
+    o->header.gfx.sharedChild = get_graph_node(modelID);
 }
 
 void mario_set_flag(s32 flag) {
@@ -2740,12 +2738,9 @@ s32 cur_obj_update_dialog_with_cutscene(s32 actionArg, s32 dialogFlags, s32 cuts
     return dialogResponse;
 }
 
-s32 cur_obj_has_model(u16 modelID) {
-    if (o->header.gfx.sharedChild == gLoadedGraphNodes[modelID]) {
-        return TRUE;
-    } else {
-        return FALSE;
-    }
+s32 cur_obj_has_model(u32 modelID) {
+    printf("cur_obj_has_model %d\n", modelID);
+    return o->header.gfx.sharedChild == get_graph_node(modelID);
 }
 
 void cur_obj_align_gfx_with_floor(void) {

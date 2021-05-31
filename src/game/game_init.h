@@ -9,6 +9,8 @@
 #include "types.h"
 #include "memory.h"
 
+#define GFX_POOL_SIZE 6400
+
 struct GfxPool {
     Gfx buffer[GFX_POOL_SIZE];
     struct SPTask spTask;
@@ -35,8 +37,9 @@ extern uintptr_t gPhysicalZBuffer;
 extern void *D_80339CF0;
 extern void *D_80339CF4;
 extern struct SPTask *gGfxSPTask;
-extern Gfx *gDisplayListHead;
-extern u8 *gGfxPoolEnd;
+extern struct AllocOnlyPool *gGfxAllocOnlyPool;
+extern Gfx *gDisplayListHeadInChunk;
+extern Gfx *gDisplayListEndInChunk;
 extern struct GfxPool *gGfxPool;
 extern u8 gControllerBits;
 extern s8 gEepromProbe;
@@ -70,5 +73,8 @@ void end_master_display_list(void);
 void rendering_init(void);
 void config_gfx_pool(void);
 void display_and_vsync(void);
+
+Gfx **alloc_next_dl(void);
+#define gDisplayListHead (*(gDisplayListEndInChunk - gDisplayListHeadInChunk >= 2 ? &gDisplayListHeadInChunk : alloc_next_dl()))
 
 #endif // GAME_INIT_H

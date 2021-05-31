@@ -25,7 +25,6 @@
 #include "gfx_dimensions.h"
 
 struct SpawnInfo gPlayerSpawnInfos[1];
-struct GraphNode *D_8033A160[0x100];
 struct Area gAreaData[8];
 
 struct WarpTransition gWarpTransition;
@@ -38,7 +37,6 @@ s16 gPauseScreenMode;
 s16 gSaveOptSelectIndex;
 
 struct SpawnInfo *gMarioSpawnInfo = &gPlayerSpawnInfos[0];
-struct GraphNode **gLoadedGraphNodes = D_8033A160;
 struct Area *gAreas = gAreaData;
 struct Area *gCurrentArea = NULL;
 struct CreditsEntry *gCurrCreditsEntry = NULL;
@@ -167,6 +165,10 @@ struct ObjectWarpNode *area_get_warp_node_from_params(struct Object *o) {
 void load_obj_warp_nodes(void) {
     struct ObjectWarpNode *sp24;
     struct Object *sp20 = (struct Object *) gObjParentGraphNode.children;
+
+    if (sp20 == NULL) {
+        return;
+    }
 
     do {
         struct Object *sp1C = sp20;

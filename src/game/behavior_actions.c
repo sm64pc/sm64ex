@@ -43,6 +43,7 @@
 #include "spawn_object.h"
 #include "spawn_sound.h"
 #include "thread6.h"
+#include "moon/mod-engine/models/mod-model.h"
 
 #define o gCurrentObject
 
@@ -76,7 +77,7 @@ struct Struct802C0DF0 {
     u8 unk0;
     u8 unk1;
     u8 unk2;
-    u8 model;
+    u32 model;
     const BehaviorScript *behavior;
 };
 

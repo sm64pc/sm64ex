@@ -42,7 +42,7 @@ static s8 sPieceActions14[] = { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
                                 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, -1 };
 
 struct BowserPuzzlePiece {
-    u8 model;
+    u32 model;
     s8 xOffset;
     s8 zOffset;
     s8 initialAction;

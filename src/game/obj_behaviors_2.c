@@ -44,6 +44,7 @@
 #include "save_file.h"
 #include "seq_ids.h"
 #include "spawn_sound.h"
+#include "moon/mod-engine/models/mod-model.h"
 
 #define POS_OP_SAVE_POSITION 0
 #define POS_OP_COMPUTE_VELOCITY 1

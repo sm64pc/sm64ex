@@ -31,6 +31,7 @@
 #include "save_file.h"
 #include "spawn_object.h"
 #include "spawn_sound.h"
+#include "moon/mod-engine/models/mod-model.h"
 
 /**
  * @file obj_behaviors.c

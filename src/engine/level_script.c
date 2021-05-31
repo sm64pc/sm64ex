@@ -23,6 +23,7 @@
 #include "surface_collision.h"
 #include "surface_load.h"
 #include "level_table.h"
+#include "moon/mod-engine/models/mod-model.h"
 
 #define CMD_GET(type, offset) (*(type *) (CMD_PROCESS_OFFSET(offset) + (u8 *) sCurrentCmd))
 
@@ -53,6 +54,8 @@ static uintptr_t *sStackBase = NULL;
 static s16 sScriptStatus;
 static s32 sRegister;
 static struct LevelCommand *sCurrentCmd;
+
+static struct MemoryPool *sMemPoolForGoddard;
 
 static s32 eval_script_op(s8 op, s32 arg) {
     s32 result = 0;
@@ -279,17 +282,19 @@ static void level_cmd_load_mio0(void) {
     sCurrentCmd = CMD_NEXT;
 }
 
+static void *alloc_for_goddard(u32 size) {
+    return mem_pool_alloc(sMemPoolForGoddard, size);
+}
+
+static void free_for_goddard(void *ptr) {
+    mem_pool_free(sMemPoolForGoddard, ptr);
+}
+
 static void level_cmd_load_mario_head(void) {
-    // TODO: Fix these hardcoded sizes
-    void *addr = main_pool_alloc(DOUBLE_SIZE_ON_64_BIT(0xE1000), MEMORY_POOL_LEFT);
-    if (addr != NULL) {
-        gdm_init(addr, DOUBLE_SIZE_ON_64_BIT(0xE1000));
-        gd_add_to_heap(gZBuffer, sizeof(gZBuffer)); // 0x25800
-        gd_add_to_heap(gFrameBuffer0, 3 * sizeof(gFrameBuffer0)); // 0x70800
-        gdm_setup();
-        gdm_maketestdl(CMD_GET(s16, 2));
-    } else {
-    }
+    sMemPoolForGoddard = mem_pool_init(0, 0);
+    gdm_init(alloc_for_goddard, free_for_goddard);
+    gdm_setup();
+    gdm_maketestdl(CMD_GET(s16, 2));
 
     sCurrentCmd = CMD_NEXT;
 }
@@ -319,9 +324,10 @@ static void level_cmd_clear_level(void) {
 
 static void level_cmd_alloc_level_pool(void) {
     if (sLevelPool == NULL) {
-        sLevelPool = alloc_only_pool_init(main_pool_available() - sizeof(struct AllocOnlyPool),
-                                          MEMORY_POOL_LEFT);
+        sLevelPool = alloc_only_pool_init();
     }
+
+    printf("Called alloc level pool\n");
 
     sCurrentCmd = CMD_NEXT;
 }
@@ -329,7 +335,6 @@ static void level_cmd_alloc_level_pool(void) {
 static void level_cmd_free_level_pool(void) {
     s32 i;
 
-    alloc_only_pool_resize(sLevelPool, sLevelPool->usedSpace);
     sLevelPool = NULL;
 
     for (i = 0; i < 8; i++) {
@@ -371,29 +376,19 @@ static void level_cmd_end_area(void) {
 }
 
 static void level_cmd_load_model_from_dl(void) {
-    s16 val1 = CMD_GET(s16, 2) & 0x0FFF;
-#ifdef VERSION_EU
-    s16 val2 = (CMD_GET(s16, 2) & 0xFFFF) >> 12;
-#else
-    s16 val2 = CMD_GET(u16, 2) >> 12;
-#endif
-    void *val3 = CMD_GET(void *, 4);
-
-    if (val1 < 256) {
-        gLoadedGraphNodes[val1] =
-            (struct GraphNode *) init_graph_node_display_list(sLevelPool, 0, val2, val3);
-    }
+    u32 model = CMD_GET(u32, 0xA);
+    s64 layer = CMD_GET(u16, 0x8);
+    void *dl_ptr = CMD_GET(void *, 4);
+    bind_graph_node(model, (struct GraphNode *) init_graph_node_display_list(sLevelPool, 0, layer, dl_ptr));
 
     sCurrentCmd = CMD_NEXT;
 }
 
 static void level_cmd_load_model_from_geo(void) {
-    s16 arg0 = CMD_GET(s16, 2);
+    u32 arg0 = CMD_GET(u32, 2);
     void *arg1 = CMD_GET(void *, 4);
 
-    if (arg0 < 256) {
-        gLoadedGraphNodes[arg0] = process_geo_layout(sLevelPool, arg1);
-    }
+    bind_graph_node(arg0, process_geo_layout(sLevelPool, arg1));
 
     sCurrentCmd = CMD_NEXT;
 }
@@ -404,27 +399,20 @@ static void level_cmd_23(void) {
         f32 f;
     } arg2;
 
-    s16 model = CMD_GET(s16, 2) & 0x0FFF;
-#ifdef VERSION_EU
-    s16 arg0H = (CMD_GET(s16, 2) & 0xFFFF) >> 12;
-#else
+    u32 model = CMD_GET(u32, 2) & 0x0FFF;
     s16 arg0H = CMD_GET(u16, 2) >> 12;
-#endif
     void *arg1 = CMD_GET(void *, 4);
     // load an f32, but using an integer load instruction for some reason (hence the union)
     arg2.i = CMD_GET(s32, 8);
 
-    if (model < 256) {
-        // GraphNodeScale has a GraphNode at the top. This
-        // is being stored to the array, so cast the pointer.
-        gLoadedGraphNodes[model] =
-            (struct GraphNode *) init_graph_node_scale(sLevelPool, 0, arg0H, arg1, arg2.f);
-    }
+
+    bind_graph_node(model, (struct GraphNode *) init_graph_node_scale(sLevelPool, 0, arg0H, arg1, arg2.f));
 
     sCurrentCmd = CMD_NEXT;
 }
 
 static void level_cmd_init_mario(void) {
+    u32 model = CMD_GET(u32, 0xE);
     vec3s_set(gMarioSpawnInfo->startPos, 0, 0, 0);
     vec3s_set(gMarioSpawnInfo->startAngle, 0, 0, 0);
 
@@ -432,7 +420,8 @@ static void level_cmd_init_mario(void) {
     gMarioSpawnInfo->areaIndex = 0;
     gMarioSpawnInfo->behaviorArg = CMD_GET(u32, 4);
     gMarioSpawnInfo->behaviorScript = CMD_GET(void *, 8);
-    gMarioSpawnInfo->unk18 = gLoadedGraphNodes[CMD_GET(u8, 3)];
+    gMarioSpawnInfo->unk18 = get_graph_node(model);
+    printf("level_cmd_init_mario %d\n", model);
     gMarioSpawnInfo->next = NULL;
 
     sCurrentCmd = CMD_NEXT;
@@ -440,11 +429,10 @@ static void level_cmd_init_mario(void) {
 
 static void level_cmd_place_object(void) {
     u8 val7 = 1 << (gCurrActNum - 1);
-    u16 model;
+    u32 model = CMD_GET(u32, 0x1A);
     struct SpawnInfo *spawnInfo;
-
+    printf("level_cmd_place_object %d\n", model);
     if (sCurrAreaIndex != -1 && ((CMD_GET(u8, 2) & val7) || CMD_GET(u8, 2) == 0x1F)) {
-        model = CMD_GET(u8, 3);
         spawnInfo = alloc_only_pool_alloc(sLevelPool, sizeof(struct SpawnInfo));
 
         spawnInfo->startPos[0] = CMD_GET(s16, 4);
@@ -460,7 +448,7 @@ static void level_cmd_place_object(void) {
 
         spawnInfo->behaviorArg = CMD_GET(u32, 16);
         spawnInfo->behaviorScript = CMD_GET(void *, 20);
-        spawnInfo->unk18 = gLoadedGraphNodes[model];
+        spawnInfo->unk18 = get_graph_node(model);
         spawnInfo->next = gAreas[sCurrAreaIndex].objectSpawnInfos;
 
         gAreas[sCurrAreaIndex].objectSpawnInfos = spawnInfo;

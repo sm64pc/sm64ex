@@ -13,6 +13,7 @@
 #include "game/object_list_processor.h"
 #include "graph_node.h"
 #include "surface_collision.h"
+#include "moon/mod-engine/models/mod-model.h"
 
 // Macros for retrieving arguments from behavior scripts.
 #define BHV_CMD_GET_1ST_U8(index)  (u8)((gCurBhvCommand[index] >> 24) & 0xFF) // unused
@@ -151,9 +152,9 @@ static s32 bhv_cmd_cylboard(void) {
 // Command 0x1B: Sets the current model ID of the object.
 // Usage: SET_MODEL(modelID)
 static s32 bhv_cmd_set_model(void) {
-    s32 modelID = BHV_CMD_GET_2ND_S16(0);
-
-    gCurrentObject->header.gfx.sharedChild = gLoadedGraphNodes[modelID];
+    u32 modelID = BHV_CMD_GET_U32(0);
+    gCurrentObject->header.gfx.sharedChild = get_graph_node(modelID);
+    printf("bhv_cmd_set_model %d\n", modelID);
 
     gCurBhvCommand++;
     return BHV_PROC_CONTINUE;

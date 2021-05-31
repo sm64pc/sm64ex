@@ -230,7 +230,6 @@ void *create_skybox_ortho_matrix(s8 player) {
     f32 bottom = sSkyBoxInfo[player].scaledY - SCREEN_HEIGHT;
     f32 top = sSkyBoxInfo[player].scaledY;
     Mtx *mtx = alloc_display_list(sizeof(*mtx));
-
     f32 half_width = (4.0f / 3.0f) / GFX_DIMENSIONS_ASPECT_RATIO * SCREEN_WIDTH / 2;
     f32 center = (sSkyBoxInfo[player].scaledX + SCREEN_WIDTH / 2);
     if (half_width < SCREEN_WIDTH / 2) {
@@ -241,7 +240,6 @@ void *create_skybox_ortho_matrix(s8 player) {
 
     if (mtx != NULL) {
         guOrtho(mtx, left, right, bottom, top, 0.0f, 3.0f, 1.0f);
-    } else {
     }
 
     return mtx;
@@ -251,7 +249,7 @@ void *create_skybox_ortho_matrix(s8 player) {
  * Creates the skybox's display list, then draws the 3x3 grid of tiles.
  */
 Gfx *init_skybox_display_list(s8 player, s8 background, s8 colorIndex) {
-    s32 dlCommandCount = 7 + (3 * 3) * 7; // 5 for the start and end, plus 9 skybox tiles
+    s32 dlCommandCount = 124;
     void *skybox = alloc_display_list(dlCommandCount * sizeof(Gfx));
     Gfx *dlist = skybox;
 

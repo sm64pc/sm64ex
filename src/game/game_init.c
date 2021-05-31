@@ -29,8 +29,11 @@
 // know of a good way to split them
 struct Controller gControllers[3];
 struct SPTask *gGfxSPTask;
-Gfx *gDisplayListHead;
-u8 *gGfxPoolEnd;
+
+struct AllocOnlyPool *gGfxAllocOnlyPool;
+Gfx *gDisplayListHeadInChunk;
+Gfx *gDisplayListEndInChunk;
+
 struct GfxPool *gGfxPool;
 OSContStatus gControllerStatuses[4];
 OSContPad gControllerPads[4];
@@ -259,31 +262,22 @@ void end_master_display_list(void) {
     create_task_structure();
 }
 
-//void draw_reset_bars(void) { // TARGET_64 only
-// Stubbed. Only N64 target uses this
-// }
-
-void rendering_init(void) {
-    gGfxPool = &gGfxPools[0];
-    set_segment_base_addr(1, gGfxPool->buffer);
-    gGfxSPTask = &gGfxPool->spTask;
-    gDisplayListHead = gGfxPool->buffer;
-    gGfxPoolEnd = (u8 *) (gGfxPool->buffer + GFX_POOL_SIZE);
-    init_render_image();
-    clear_frame_buffer(0);
-    end_master_display_list();
-    send_display_list(&gGfxPool->spTask);
-
-    frameBufferIndex++;
-    gGlobalTimer++;
+Gfx **alloc_next_dl(void) {
+    u32 size = 1000;
+    Gfx *new_chunk = alloc_only_pool_alloc(gGfxAllocOnlyPool, size * sizeof(Gfx));
+    gSPBranchList(gDisplayListHeadInChunk++, new_chunk);
+    gDisplayListHeadInChunk = new_chunk;
+    gDisplayListEndInChunk = new_chunk + size;
+    return &gDisplayListHeadInChunk;
 }
 
 void config_gfx_pool(void) {
     gGfxPool = &gGfxPools[gGlobalTimer % GFX_NUM_POOLS];
     set_segment_base_addr(1, gGfxPool->buffer);
     gGfxSPTask = &gGfxPool->spTask;
-    gDisplayListHead = gGfxPool->buffer;
-    gGfxPoolEnd = (u8 *) (gGfxPool->buffer + GFX_POOL_SIZE);
+    gDisplayListHeadInChunk = gGfxPool->buffer;
+    gDisplayListEndInChunk = gDisplayListHeadInChunk + 1;
+    alloc_only_pool_clear(gGfxAllocOnlyPool);
 }
 
 /** Handles vsync. */
@@ -596,11 +590,4 @@ void game_loop_one_iteration(void) {
     read_controller_inputs();
     levelCommandAddr = level_script_execute(levelCommandAddr);
     display_and_vsync();
-
-    // when debug info is enabled, print the "BUF %d" information.
-    if (gShowDebugText) {
-        // subtract the end of the gfx pool with the display list to obtain the
-        // amount of free space remaining.
-        print_text_fmt_int(180, 20, "BUF %d", gGfxPoolEnd - (u8 *) gDisplayListHead);
-    }
 }

@@ -118,9 +118,8 @@ struct WarpTransition
     /*0x04*/ struct WarpTransitionData data;
 };
 
-extern struct GraphNode **gLoadedGraphNodes;
 extern struct SpawnInfo gPlayerSpawnInfos[];
-extern struct GraphNode *D_8033A160[];
+extern struct GraphNode *gLoadedModelsPool[];
 extern struct Area gAreaData[];
 extern struct WarpTransition gWarpTransition;
 extern s16 gCurrCourseNum;

@@ -188,8 +188,8 @@ static void on_anim_frame(double time) {
 
 void main_func(char *argv[]) {
 
-    static u64 pool[0x165000/8 / 4 * sizeof(void *)];
-    main_pool_init(pool, pool + sizeof(pool) / sizeof(pool[0]));
+    main_pool_init();
+    gGfxAllocOnlyPool = alloc_only_pool_init();
     gEffectsMemoryPool = mem_pool_init(0x4000, MEMORY_POOL_LEFT);
 
     const char *gamedir = gCLIOpts.GameDir[0] ? gCLIOpts.GameDir : FS_BASEDIR;

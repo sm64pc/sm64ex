@@ -111,8 +111,6 @@ static struct ObjGadget *sTimerGadgets[GD_NUM_TIMERS]; // @ 801BAEA8
 static u32 D_801BAF28;                                 // RAM addr offset?
 static s16 D_801BAF30[13][8];                          // [[s16; 8]; 13]? vert indices?
 static u32 unref_801bb000[3];
-static u8 *sMemBlockPoolBase; // @ 801BB00C
-static u32 sAllocMemory;      // @ 801BB010; malloc-ed bytes
 static u32 unref_801bb014;
 static s32 D_801BB018;
 static s32 D_801BB01C;
@@ -179,6 +177,9 @@ static OSIoMesg D_801BE980;
 static struct ObjView *D_801BE994; // store if View flag 0x40 set
 #endif
 
+static void *(*sAllocFn)(u32 size);
+static void (*sFreeFn)(void *ptr);
+
 // data
 static u32 unref_801a8670 = 0;
 static s32 D_801A8674 = 0;
@@ -190,8 +191,6 @@ static f32 sDynamicsTime = 0.0f;      // @ 801A8688
 static f32 sDLGenTime = 0.0f;         // @ 801A868C
 static f32 sRCPTime = 0.0f;           // @ 801A8690
 static f32 sTimeScaleFactor = 1.0f;   // @ D_801A8694
-static u32 sMemBlockPoolSize = 1;     // @ 801A8698
-static s32 sMemBlockPoolUsed = 0;     // @ 801A869C
 static s32 D_801A86A0 = 0;
 static struct GdTimer *D_801A86A4 = NULL; // timer for dlgen, dynamics, or rcp
 static struct GdTimer *D_801A86A8 = NULL; // timer for dlgen, dynamics, or rcp
@@ -461,11 +460,11 @@ static Gfx gd_dl_sparkle[] = {
     gsSPClearGeometryMode(G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR),
     gsDPSetRenderMode(G_RM_AA_ZB_TEX_EDGE, G_RM_NOOP2),
     gsSPTexture(0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON),
-    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD, 
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD,
                 G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD),
     gsDPLoadSync(),
     gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 32 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
-    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, G_TX_RENDERTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD, 
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, G_TX_RENDERTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD,
                 G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD),
     gsDPSetTileSize(0, 0, 0, (32 - 1) << G_TEXTURE_IMAGE_FRAC, (32 - 1) << G_TEXTURE_IMAGE_FRAC),
     gsSPVertex(gd_vertex_sparkle, 4, 0),
@@ -642,7 +641,7 @@ static Gfx gd_dl_mario_face_shine[] = {
     gsDPSetTexturePersp(G_TP_PERSP),
     gsDPSetTextureFilter(G_TF_BILERP),
     gsDPSetCombineMode(G_CC_HILITERGBA, G_CC_HILITERGBA),
-    gsDPLoadTextureBlock(gd_texture_mario_face_shine, G_IM_FMT_IA, G_IM_SIZ_8b, 32, 32, 0, 
+    gsDPLoadTextureBlock(gd_texture_mario_face_shine, G_IM_FMT_IA, G_IM_SIZ_8b, 32, 32, 0,
                         G_TX_WRAP | G_TX_NOMIRROR, G_TX_WRAP | G_TX_NOMIRROR, 5, 5, G_TX_NOLOD, G_TX_NOLOD),
     gsDPPipeSync(),
     gsSPEndDisplayList(),
@@ -741,7 +740,7 @@ void reset_cur_dl_indices(void);
 // TODO: make a gddl_num_t?
 
 u32 get_alloc_mem_amt(void) {
-    return sAllocMemory;
+    return 0;
 }
 
 s32 gd_get_ostime(void) {
@@ -937,45 +936,12 @@ void gd_exit(UNUSED s32 code) {
 
 /* 24A1D4 -> 24A220; orig name: func_8019BA04 */
 void gd_free(void *ptr) {
-    sAllocMemory -= gd_free_mem(ptr);
-}
-
-/* 24A220 -> 24A318 */
-void *gd_allocblock(u32 size) {
-    void *block; // 1c
-
-    size = ALIGN(size, 8);
-    if ((sMemBlockPoolUsed + size) > sMemBlockPoolSize) {
-        gd_printf("gd_allocblock(): Failed request: %dk (%d bytes)\n", size / 1024, size);
-        gd_printf("gd_allocblock(): Heap usage: %dk (%d bytes) \n", sMemBlockPoolUsed / 1024,
-                  sMemBlockPoolUsed);
-        print_all_memtrackers();
-        mem_stats();
-        fatal_printf("exit");
-    }
-
-    block = sMemBlockPoolBase + sMemBlockPoolUsed;
-    sMemBlockPoolUsed += size;
-    return block;
+    sFreeFn(ptr);
 }
 
 /* 24A318 -> 24A3E8 */
 void *gd_malloc(u32 size, u8 perm) {
-    void *ptr; // 1c
-    size = ALIGN(size, 8);
-    ptr = gd_request_mem(size, perm);
-
-    if (ptr == NULL) {
-        gd_printf("gd_malloc(): Failed request: %dk (%d bytes)\n", size / 1024, size);
-        gd_printf("gd_malloc(): Heap usage: %dk (%d bytes) \n", sAllocMemory / 1024, sAllocMemory);
-        print_all_memtrackers();
-        mem_stats();
-        return NULL;
-    }
-
-    sAllocMemory += size;
-
-    return ptr;
+    return sAllocFn(size);
 }
 
 /* 24A3E8 -> 24A420; orig name: func_8019BC18 */
@@ -1100,26 +1066,10 @@ void Unknown8019C288(s32 stickX, s32 stickY) {
     ctrl->stickYf = (f32)(stickY / 2);
 }
 
-/* 24AAA8 -> 24AAE0; orig name: func_8019C2D8 */
-void gd_add_to_heap(void *addr, u32 size) {
-    // TODO: is this `1` for permanence special?
-    gd_add_mem_to_heap(size, addr, 1);
-}
-
-/* 24AAE0 -> 24AB7C */
-void gdm_init(void *blockpool, u32 size) {
-    UNUSED u32 pad;
-
+void gdm_init(void *(*allocFn)(u32 size), void (*freeFn)(void *addr)) {
     add_to_stacktrace("gdm_init");
-    // Align downwards?
-    size = (size - 8) & ~7;
-    // Align to next double word boundry?
-    blockpool = (void *) (((uintptr_t) blockpool + 8) & ~7);
-    sMemBlockPoolBase = blockpool;
-    sMemBlockPoolSize = size;
-    sMemBlockPoolUsed = 0;
-    sAllocMemory = 0;
-    init_mem_block_lists();
+    sAllocFn = allocFn;
+    sFreeFn = freeFn;
     gd_reset_sfx();
     imout();
 }
@@ -2301,7 +2251,7 @@ void parse_p1_controller(void) {
     u8 *prevGdCtrlBytes;      // 28
     f32 aspect = GFX_DIMENSIONS_ASPECT_RATIO;
     aspect *= 0.75;
-	
+
     gdctrl = &gGdCtrl;
     gdCtrlBytes = (u8 *) gdctrl;
     prevGdCtrlBytes = (u8 *) gdctrl->prevFrame;
@@ -3076,9 +3026,6 @@ void gd_init(void) {
     s8 *data; // 2c
 
     add_to_stacktrace("gd_init");
-    i = (u32)(sMemBlockPoolSize - DOUBLE_SIZE_ON_64_BIT(0x3E800));
-    data = gd_allocblock(i);
-    gd_add_mem_to_heap(i, data, 0x10);
     D_801BB184 = (u16) 0xff;
     D_801A867C = 0;
     D_801A8680 = 0;
@@ -3400,7 +3347,7 @@ void gd_put_sprite(u16 *sprite, s32 x, s32 y, s32 wx, s32 wy) {
     // Must be game screen aspect ratio, not GFX window aspect ratio
     f32 aspect = ((float) SCREEN_WIDTH) / ((float) SCREEN_HEIGHT ) * 0.75;
     x *= aspect;
-    
+
     gSPDisplayList(next_gfx(), osVirtualToPhysical(gd_dl_sprite_start_tex_block));
     for (r = 0; r < wy; r += 32) {
         for (c = 0; c < wx; c += 32) {

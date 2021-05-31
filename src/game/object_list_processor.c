@@ -64,11 +64,6 @@ s16 gDebugInfoOverwrite[16][8];
 u32 gTimeStopState;
 
 /**
- * The pool that objects are allocated from.
- */
-struct Object gObjectPool[OBJECT_POOL_CAPACITY];
-
-/**
  * A special object whose purpose is to act as a parent for macro objects.
  */
 struct Object gMacroObjectDefaultParent;
@@ -188,7 +183,7 @@ s8 sObjectListUpdateOrder[] = { OBJ_LIST_SPAWNER,
 struct ParticleProperties {
     u32 particleFlag;
     u32 activeParticleFlag;
-    u8 model;
+    u32 model;
     const BehaviorScript *behavior;
 };
 
@@ -540,16 +535,10 @@ void clear_objects(void) {
 
     debug_unknown_level_select_check();
 
-    init_free_object_list();
     clear_object_lists(gObjectListArray);
 
     stub_behavior_script_2();
     stub_obj_list_processor_1();
-
-    for (i = 0; i < OBJECT_POOL_CAPACITY; i++) {
-        gObjectPool[i].activeFlags = ACTIVE_FLAG_DEACTIVATED;
-        geo_reset_object_node(&gObjectPool[i].header.gfx);
-    }
 
     gObjectMemoryPool = mem_pool_init(0x800, MEMORY_POOL_LEFT);
     gObjectLists = gObjectListArray;
