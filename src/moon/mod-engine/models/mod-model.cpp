@@ -21,11 +21,11 @@ namespace MoonInternal {
 }
 
 extern "C"{
-void bind_graph_node(int modelId, struct GraphNode *graphNode){
+void bind_graph_node(int modelId, GraphNode *graphNode){
     MoonInternal::bindHook(SAVE_GRAPH_NODE);
     MoonInternal::initBindHook(2,
-        (struct HookParameter){.name = "modelId", .parameter = (void*) &modelId},
-        (struct HookParameter){.name = "graphNode", .parameter = (void*) &graphNode}
+        (HookParameter){.name = "modelId", .parameter = (void*) &modelId},
+        (HookParameter){.name = "graphNode", .parameter = (void*) &graphNode}
     );
     MoonInternal::callBindHook(0);
     loadedGraphNodes[modelId] = graphNode;
@@ -35,7 +35,11 @@ struct GraphNode * get_graph_node(int modelId){
     MoonInternal::initBindHook(1,
         (struct HookParameter){.name = "modelId", .parameter = (void*) &modelId}
     );
-    MoonInternal::callBindHook(0);
-    return loadedGraphNodes[modelId];
+    GraphNode* graphNode = loadedGraphNodes[modelId];
+    if(graphNode == NULL) return NULL;
+    MoonInternal::callBindHook(1,
+        (HookParameter){.name = "graphNode", .parameter = (void*) &graphNode}
+    );
+    return graphNode;
 }
 }
