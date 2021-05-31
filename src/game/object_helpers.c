@@ -535,7 +535,6 @@ struct Object *spawn_object_at_origin(struct Object *parent, UNUSED s32 unusedAr
     obj->parentObj = parent;
     obj->header.gfx.unk18 = parent->header.gfx.unk18;
     obj->header.gfx.unk19 = parent->header.gfx.unk18;
-    printf("spawn_object_at_origin %d\n", model);
     geo_obj_init((struct GraphNodeObject *) &obj->header.gfx, get_graph_node(model), gVec3fZero,
                  gVec3sZero);
 
@@ -1122,7 +1121,6 @@ void cur_obj_get_dropped(void) {
 }
 
 void cur_obj_set_model(u32 modelID) {
-    printf("cur_obj_set_model %d\n", modelID);
     o->header.gfx.sharedChild = get_graph_node(modelID);
 }
 
@@ -2739,7 +2737,6 @@ s32 cur_obj_update_dialog_with_cutscene(s32 actionArg, s32 dialogFlags, s32 cuts
 }
 
 s32 cur_obj_has_model(u32 modelID) {
-    printf("cur_obj_has_model %d\n", modelID);
     return o->header.gfx.sharedChild == get_graph_node(modelID);
 }
 

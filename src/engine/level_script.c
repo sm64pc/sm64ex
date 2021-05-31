@@ -327,8 +327,6 @@ static void level_cmd_alloc_level_pool(void) {
         sLevelPool = alloc_only_pool_init();
     }
 
-    printf("Called alloc level pool\n");
-
     sCurrentCmd = CMD_NEXT;
 }
 
@@ -376,8 +374,8 @@ static void level_cmd_end_area(void) {
 }
 
 static void level_cmd_load_model_from_dl(void) {
-    u32 model = CMD_GET(u32, 0xA);
-    s64 layer = CMD_GET(u16, 0x8);
+    u32 model = CMD_GET(u32, 0xC);
+    u32 layer = CMD_GET(u32, 0x8);
     void *dl_ptr = CMD_GET(void *, 4);
     bind_graph_node(model, (struct GraphNode *) init_graph_node_display_list(sLevelPool, 0, layer, dl_ptr));
 
@@ -385,10 +383,10 @@ static void level_cmd_load_model_from_dl(void) {
 }
 
 static void level_cmd_load_model_from_geo(void) {
-    u32 arg0 = CMD_GET(u32, 2);
-    void *arg1 = CMD_GET(void *, 4);
+    u32 model = CMD_GET(u32, 8);
+    void *geo = CMD_GET(void *, 4);
 
-    bind_graph_node(arg0, process_geo_layout(sLevelPool, arg1));
+    bind_graph_node(model, process_geo_layout(sLevelPool, geo));
 
     sCurrentCmd = CMD_NEXT;
 }
@@ -412,7 +410,7 @@ static void level_cmd_23(void) {
 }
 
 static void level_cmd_init_mario(void) {
-    u32 model = CMD_GET(u32, 0xE);
+    u32 model = CMD_GET(u32, 0xC);
     vec3s_set(gMarioSpawnInfo->startPos, 0, 0, 0);
     vec3s_set(gMarioSpawnInfo->startAngle, 0, 0, 0);
 
@@ -421,7 +419,6 @@ static void level_cmd_init_mario(void) {
     gMarioSpawnInfo->behaviorArg = CMD_GET(u32, 4);
     gMarioSpawnInfo->behaviorScript = CMD_GET(void *, 8);
     gMarioSpawnInfo->unk18 = get_graph_node(model);
-    printf("level_cmd_init_mario %d\n", model);
     gMarioSpawnInfo->next = NULL;
 
     sCurrentCmd = CMD_NEXT;
@@ -429,9 +426,8 @@ static void level_cmd_init_mario(void) {
 
 static void level_cmd_place_object(void) {
     u8 val7 = 1 << (gCurrActNum - 1);
-    u32 model = CMD_GET(u32, 0x1A);
+    u32 model = CMD_GET(u32, 0x18);
     struct SpawnInfo *spawnInfo;
-    printf("level_cmd_place_object %d\n", model);
     if (sCurrAreaIndex != -1 && ((CMD_GET(u8, 2) & val7) || CMD_GET(u8, 2) == 0x1F)) {
         spawnInfo = alloc_only_pool_alloc(sLevelPool, sizeof(struct SpawnInfo));
 
