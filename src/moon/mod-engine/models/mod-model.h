@@ -9,7 +9,7 @@ namespace Moon {
 }
 
 namespace MoonInternal {
-    void setupModuleEngine( std::string state );
+    void setupModelEngine( std::string state );
 }
 
 #else

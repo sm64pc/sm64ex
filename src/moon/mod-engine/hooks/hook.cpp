@@ -23,15 +23,64 @@ namespace MoonInternal {
     }
 }
 
+
+string hookName;
+map<string, void*> initArgs;
+map<string, void*> hookArgs;
+
+/*
+#############################
+   Module: Hook C++ Handle
+#############################
+*/
+
+namespace MoonInternal {
+    void bindHook(string name){
+        hookName = name;
+    }
+
+    void initBindHook(int length, ...){
+        if(length > 0){
+            va_list args;
+            va_start(args, length);
+            for(int i = 0; i < length; i++) {
+                HookParameter currentParam = va_arg(args, struct HookParameter);
+                initArgs[currentParam.name] = currentParam.parameter;
+            }
+            va_end(args);
+        }
+    }
+
+    bool callBindHook(int length, ...){
+        if(length > 0){
+            va_list args;
+            va_start(args, length);
+            for(int i = 0; i < length; i++) {
+                HookParameter currentParam = va_arg(args, struct HookParameter);
+                hookArgs[currentParam.name] = currentParam.parameter;
+            }
+            va_end(args);
+        }
+
+        bool cancelled = MoonInternal::handleHook({
+            .name = hookName,
+            .baseArgs = initArgs,
+            .hookedArgs = hookArgs
+        });
+
+        hookName = "";
+        initArgs.clear();
+        hookArgs.clear();
+
+        return cancelled;
+    }
+}
+
 /*
 #############################
     Module: Hook C Handle
 #############################
 */
-
-string hookName;
-map<string, void*> initArgs;
-map<string, void*> hookArgs;
 
 extern "C" {
 

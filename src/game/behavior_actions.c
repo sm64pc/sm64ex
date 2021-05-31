@@ -200,10 +200,6 @@ void spawn_sparkle_particles(s32 n, s32 a1, s32 a2, s32 r) {
                               coss(D_8035FF10 + i * separation) * a1, o, MODEL_NONE, bhvSparkleSpawn);
     }
 
-  if (1)
-  {
-  }
-
     D_8035FF10 += r * 0x100;
 }
 

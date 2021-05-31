@@ -11,6 +11,9 @@ struct HookParameter {
 #define HUD_DRAW      "HudDraw"
 #define POST_HUD_DRAW "PostHudDraw"
 
+#define SAVE_GRAPH_NODE "SaveGraphNode"
+#define LOAD_GRAPH_NODE "LoadGraphNode"
+
 #ifdef __cplusplus
 
 #include <string>
@@ -32,6 +35,12 @@ struct HookListener {
 
 namespace Moon {
     void registerHookListener(HookListener listener);
+}
+
+namespace MoonInternal {
+    void bindHook(std::string name);
+    void initBindHook(int length, ...);
+    bool callBindHook(int length, ...);
 }
 
 #else
