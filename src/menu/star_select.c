@@ -203,35 +203,13 @@ void bhv_act_selector_loop(void) {
 /**
  * Print the course number selected with the wood rgba16 course texture.
  */
-#ifdef VERSION_EU
-void print_course_number(s16 language) {
-#else
 void print_course_number(void) {
-#endif
     u8 courseNum[4];
 
     create_dl_translation_matrix(MENU_MTX_PUSH, 158.0f, 81.0f, 0.0f);
 
     // Full wood texture in JP & US, lower part of it on EU
     gSPDisplayList(gDisplayListHead++, dl_menu_rgba16_wood_course);
-
-#ifdef VERSION_EU
-    // Change upper part of the wood texture depending of the language defined
-    switch (language) {
-        case LANGUAGE_ENGLISH:
-            gSPDisplayList(gDisplayListHead++, dl_menu_texture_course_upper);
-            break;
-        case LANGUAGE_FRENCH:
-            gSPDisplayList(gDisplayListHead++, dl_menu_texture_niveau_upper);
-            break;
-        case LANGUAGE_GERMAN:
-            gSPDisplayList(gDisplayListHead++, dl_menu_texture_kurs_upper);
-            break;
-    }
-
-    gSPDisplayList(gDisplayListHead++, dl_menu_rgba16_wood_course_end);
-#endif
-
     gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);

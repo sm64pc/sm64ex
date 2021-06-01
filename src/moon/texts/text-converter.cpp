@@ -104,6 +104,8 @@ namespace Moon {
                 if(unicodeTable.find(cStr) != unicodeTable.end()){
                     for(auto &replacement : unicodeTable[cStr])
                         tmpAlloc.push_back(replacement);
+                } else {
+                    tmpAlloc.push_back(0x9e);
                 }
                 if(static_cast<unsigned char>((char)int(c)) > 127)
                     tmpAlloc.push_back(0x9e);
@@ -125,5 +127,11 @@ namespace MoonInternal {
     void setupTextConverter(string state){
         if(state == "PreStartup"){
         }
+    }
+}
+
+extern "C" {
+    u8* getTranslatedText( char* text ){
+        return Moon::GetTranslatedText(string(text));
     }
 }

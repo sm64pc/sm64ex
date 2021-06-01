@@ -10,7 +10,7 @@ const LevelScript level_script_entry[] = {
     SLEEP(/*frames*/ 2),
     BLACKOUT(/*active*/ FALSE),
     SET_REG(/*value*/ 0),
-#ifdef TOGGLE_GAME_DEBUG
+#ifdef SM64_DEBUG
     EXECUTE(/*seg*/ 0x14, /*script*/ _introSegmentRomStart, /*scriptEnd*/ _introSegmentRomEnd, /*entry*/ level_intro_entry_4),
 #else
     EXECUTE(/*seg*/ 0x14, /*script*/ _introSegmentRomStart, /*scriptEnd*/ _introSegmentRomEnd, /*entry*/ level_intro_n64),

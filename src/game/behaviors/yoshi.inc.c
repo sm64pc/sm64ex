@@ -1,3 +1,5 @@
+#include "moon/achievements/achievements.h"
+
 // yoshi.c.inc
 
 // X/Z coordinates of Yoshi's homes that he switches between.
@@ -87,6 +89,7 @@ void yoshi_talk_loop(void) {
             }
         }
     } else {
+        // show_achievement("achievement.talkWithYoshi");
         cur_obj_init_animation(1);
         play_puzzle_jingle();
         o->oMoveAngleYaw = approach_s16_symmetric(o->oMoveAngleYaw, o->oAngleToMario, 0x500);

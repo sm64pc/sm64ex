@@ -18,7 +18,7 @@ public:
         this->icon = icon;
         this->title = title;
         this->description = description;
-        this->duration = (long long)(duration * 1000LL);
+        this->duration = duration;
         this->parent = parent;
         this->points = points;
     }

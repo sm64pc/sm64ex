@@ -601,6 +601,10 @@ ifeq ($(DEBUG),1)
   CFLAGS += -DGAME_DEBUG
 endif
 
+ifeq ($(DEBUG),2)
+  CC_CHECK += -DGAME_DEBUG -DSM64_DEBUG
+  CFLAGS += -DGAME_DEBUG -DSM64_DEBUG
+endif
 ################################
 
 # Check for enhancement options

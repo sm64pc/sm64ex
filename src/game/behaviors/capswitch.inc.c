@@ -1,3 +1,5 @@
+#include "moon/achievements/achievements.h"
+
 // capswitch.c.inc
 
 void cap_switch_act_0(void) {
@@ -20,6 +22,13 @@ void cap_switch_act_1(void) {
         save_file_set_flags(D_8032F0C0[o->oBehParams2ndByte]);
         o->oAction = 2;
         cur_obj_play_sound_2(SOUND_GENERAL_ACTIVATE_CAP_SWITCH);
+        char* achievements[3] = {
+            "achievement.unlockWingCap",
+            "achievement.unlockMetalCap",
+            "achievement.unlockVanishCap"
+        };
+
+        show_achievement(achievements[o->oBehParams2ndByte]);
     }
 }
 

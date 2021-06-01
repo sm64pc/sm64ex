@@ -2,7 +2,6 @@
 #define MoonGFX
 
 #include "types.h"
-
 struct Color {
     int r;
     int g;
