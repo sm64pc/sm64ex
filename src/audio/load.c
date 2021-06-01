@@ -769,8 +769,6 @@ void audio_init() {
         return;
     }
 
-    printf("SIZE: %d\n", size);
-
     audio_dma_copy_immediate((uintptr_t) data, gAlTbl, size);
     alSeqFileNew(gAlTbl, data);
 

@@ -6,26 +6,32 @@
 #include <iostream>
 #include <vector>
 #include "moon/ui/interfaces/moon-screen.h"
+#include <algorithm>
 
 extern "C" {
 #include "pc/cheats.h"
 #include "moon/utils/moon-gfx.h"
 #include "pc/platform.h"
 #include "game/level_update.h"
+#include "audio/external.h"
+#include "audio_defines.h"
 }
 
 struct AchievementEntry {
     long long launchTime;
     bool dead = false;
     Achievement* achievement;
+    size_t entryID;
 
     int state = 0;
     int width = 0;
     int height = 32;
+    float x = 0;
+    float y = 0;
 };
 
 std::map<std::string, Achievement*> registeredAchievements;
-std::map<std::string, AchievementEntry*> entries;
+std::vector<AchievementEntry*> entries;
 
 namespace AchievementList {
     /* Star achievements */
@@ -43,7 +49,7 @@ namespace AchievementList {
 
     /* Level Achievements */
     Achievement* GET_6_LEVEL_STARS  = MoonAchievements::bind(new Achievement("achievement.get6MainStars",         "textures/segment2/segment2.05C00.rgba16", "F Rank",  "Get all 6 Main Stars in One Level",      0, 150, nullptr));
-    Achievement* GET_100_COIN_STAR  = MoonAchievements::bind(new Achievement("achievement.get100CoinStar",        "textures/segment2/segment2.05C00.rgba16", "E Rank",  "UGet a 100 Coin Star in One Level",      0, 150, nullptr));
+    Achievement* GET_100_COIN_STAR  = MoonAchievements::bind(new Achievement("achievement.get100CoinStar",        "textures/segment2/segment2.05C00.rgba16", "E Rank",  "Get a 100 Coin Star in One Level",      0, 150, nullptr));
     Achievement* GET_ALL_LVL_COINS  = MoonAchievements::bind(new Achievement("achievement.getAllCoins",           "textures/segment2/segment2.05C00.rgba16", "D Rank",  "Get all Coins in One Level",             0, 150, nullptr));
     Achievement* GET_FLOOR_0_STARS  = MoonAchievements::bind(new Achievement("achievement.getAllStarsInBasement", "textures/segment2/segment2.05C00.rgba16", "B Rank",  "Get all Main Stars in the Basement",     0, 150, nullptr));
     Achievement* GET_FLOOR_1_STARS  = MoonAchievements::bind(new Achievement("achievement.getAllStarsInFloor1",   "textures/segment2/segment2.05C00.rgba16", "C Rank",  "Get all Main Stars in the First Floor",  0, 150, nullptr));
@@ -76,8 +82,8 @@ namespace AchievementList {
 
     /* Extra Achievements */
     Achievement* RELEASE_CHAIN_CHOMP = MoonAchievements::bind(new Achievement("achievement.releaseChainChomp", "textures/segment2/segment2.05C00.rgba16", "Who Let The Dog Out?", "Get killed by a boss",       0, 150, nullptr));
-    Achievement* BEAT_EVERY_RACE     = MoonAchievements::bind(new Achievement("achievement.jump1000Times",     "textures/segment2/segment2.05C00.rgba16", "Olympic Runner",       "Beat every race",            0, 150, nullptr));
-    Achievement* JUMP_1000_TIMES     = MoonAchievements::bind(new Achievement("achievement.jump1000Times",     "textures/segment2/segment2.05C00.rgba16", "Olympic Swimmer",      "Grab every star that needs Metal Cap without it.", 0, 150, nullptr));
+    Achievement* BEAT_EVERY_RACE     = MoonAchievements::bind(new Achievement("achievement.beatEveryRace",     "textures/segment2/segment2.05C00.rgba16", "Olympic Runner",       "Beat every race",            0, 150, nullptr));
+    Achievement* JUMP_1000_TIMES     = MoonAchievements::bind(new Achievement("achievement.jump1000Times",     "textures/segment2/segment2.05C00.rgba16", "Olympic Swimmer",      "Grab every star that needs Metal Cap without it", 0, 150, nullptr));
     Achievement* TALK_25_TIMES       = MoonAchievements::bind(new Achievement("achievement.talk25Times",       "textures/segment2/segment2.05C00.rgba16", "Olympic Talker",       "Talk 25 times with npcs",    0, 150, nullptr));
     Achievement* SLIDE_20_TIMES      = MoonAchievements::bind(new Achievement("achievement.slide20Times",      "textures/segment2/segment2.05C00.rgba16", "Burned Ass",           "Go trough slides 20 times",  0, 150, nullptr));
     Achievement* WATCH_END_CREDITS   = MoonAchievements::bind(new Achievement("achievement.watchEndCredits",   "textures/segment2/segment2.05C00.rgba16", "The Cake Is A Lie?!",  "Watch the end credits",      0, 150, nullptr));
@@ -114,14 +120,25 @@ namespace MoonInternal{
         }
         if(status == "Init"){
             Moon::registerHookListener({.hookName = HUD_DRAW, .callback = [](HookCall call){
-                for (auto const& [key, aEntry] : entries) {
+                for (auto &aEntry : entries) {
                     if( !aEntry->dead ) {
-                        std::cout << key << " - " << aEntry->launchTime << std::endl;
+                        int soundID = SOUND_GENERAL_COIN;
+                        if (aEntry->launchTime == 0){
+                            // set_sound_moving_speed()
+                            play_sound(soundID, gGlobalSoundSource);
+                        }
+
+
+
                         bool shouldClose = aEntry->launchTime >= aEntry->achievement->duration;
-                        int achievementWidth = 31 + 5 + MoonGetTextWidth(aEntry->achievement->description, 1.0, false);
+
+                        float titleWidth = MoonGetTextWidth(aEntry->achievement->title, 0.8, false);
+                        float descWidth  = MoonGetTextWidth(aEntry->achievement->description, 0.8, false);
+
+                        int achievementWidth = 31 + 15 + std::max(titleWidth, descWidth);
 
                         int aX = GetScreenWidth(false) / 2 - aEntry->width / 2;
-                        int aY = GetScreenHeight() - aEntry->height - 20;
+                        int aY = GetScreenHeight() - aEntry->y;
 
                         MoonDrawRectangle(aX, aY, aEntry->width, aEntry->height, {0, 0, 0, 150}, false);
                         if(!shouldClose){
@@ -135,6 +152,9 @@ namespace MoonInternal{
 
                         aEntry->width = MathUtil::Lerp(aEntry->width, !shouldClose ? achievementWidth : 0, !shouldClose ? 0.2f : 0.35f);
                         aEntry->dead = shouldClose && aEntry->width <= 0;
+
+                        aEntry->y = MathUtil::Lerp(aEntry->y, !shouldClose ? aEntry->height + 20 : 0, !shouldClose ? 0.4f : 0.35f);
+
                         aEntry->launchTime++;
                         return;
                     }
@@ -147,9 +167,10 @@ namespace MoonInternal{
 namespace Moon {
     void showAchievement(Achievement* achievement){
         if(cheatsGotEnabled) return;
-        if(entries.find(achievement->id) != entries.end()) return;
+
+        if(std::find_if(entries.begin(), entries.end(),  [&cae = achievement] (auto &m) -> bool { return cae->id == m->achievement->id; }) != entries.end()) return;
         std::cout << "Achievement got triggered: " << achievement->title << std::endl;
-        entries.insert(std::pair<std::string, AchievementEntry*>(achievement->id, new AchievementEntry({ .launchTime = 0, .dead = false, .achievement = achievement })));
+        entries.push_back(new AchievementEntry({ .launchTime = 0, .dead = false, .achievement = achievement, .entryID = entries.size() }));
     }
 
     void showAchievementById(std::string id){

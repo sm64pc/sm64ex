@@ -6,11 +6,12 @@
 #include "shaders/mod-shaders.h"
 #include "moon/achievements/achievements.h"
 #include "models/mod-model.h"
-
+#include <iomanip>
 #include "moon/fs/moonfs.h"
 #include "moon/libs/nlohmann/json.hpp"
 using json = nlohmann::json;
 using namespace std;
+#include "moon/config/mooncfg.h"
 
 #include <iostream>
 #include <string>
@@ -64,6 +65,7 @@ namespace Moon {
                         string modName = bit->icon.substr(bit->icon.length());
                         cout << "Found animated icon texture " << modName << endl;
                         json mods = json::parse(file.read(bit->icon));
+                        int a = mods["a"];
                         for (json::iterator entry = mods.begin(); entry != mods.end(); ++entry) {
                             Moon::bindTextureModifier("mod-icons://"+bit->name, entry.key(), entry.value());
                         }

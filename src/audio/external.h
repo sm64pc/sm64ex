@@ -37,6 +37,7 @@ void set_audio_muted(u8 muted);
 void sound_init(void);
 void get_currently_playing_sound(u8 bank, u8 *numPlayingSounds, u8 *numSoundsInBank, u8 *soundId);
 void stop_sound(u32 soundBits, f32 *pos);
+void moon_stop_sound(u32 soundBits);
 void stop_sounds_from_source(f32 *pos);
 void stop_sounds_in_continuous_banks(void);
 void sound_banks_disable(u8 player, u16 bankMask);

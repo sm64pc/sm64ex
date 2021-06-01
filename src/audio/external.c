@@ -1720,6 +1720,25 @@ void stop_sound(u32 soundBits, f32 *pos) {
     }
 }
 
+void moon_stop_sound(u32 soundBits) {
+    u8 bank = (soundBits & SOUNDARGS_MASK_BANK) >> SOUNDARGS_SHIFT_BANK;
+    u8 soundIndex = sSoundBanks[bank][0].next;
+
+    while (soundIndex != 0xff) {
+        // If sound has same id and source position pointer
+        if ((u16)(soundBits >> SOUNDARGS_SHIFT_SOUNDID)
+                == (u16)(sSoundBanks[bank][soundIndex].soundBits >> SOUNDARGS_SHIFT_SOUNDID)) {
+
+            // Mark sound for deletion
+            update_background_music_after_sound(bank, soundIndex);
+            sSoundBanks[bank][soundIndex].soundBits = NO_SOUND;
+            soundIndex = 0xff; // break
+        } else {
+            soundIndex = sSoundBanks[bank][soundIndex].next;
+        }
+    }
+}
+
 /**
  * Called from threads: thread5_game_loop
  */

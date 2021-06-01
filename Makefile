@@ -299,6 +299,9 @@ SRC_DIRS += src/moon/mod-engine/models
 # Moon64 SRC [Achievements]
 SRC_DIRS += src/moon/achievements
 
+# Moon64 SRC [Config / Saves]
+SRC_DIRS += src/moon/config src/moon/config/moon src/moon/config/saves
+
 # Moon64 LIB [RapidJSON]
 SRC_DIRS += src/moon/libs/rapidjson src/moon/libs/rapidjson/error src/moon/libs/rapidjson/internal src/moon/libs/rapidjson/msinttypes
 

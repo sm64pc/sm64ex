@@ -154,8 +154,6 @@ static s32 bhv_cmd_cylboard(void) {
 static s32 bhv_cmd_set_model(void) {
     u32 modelID = BHV_CMD_GET_U32(0);
     gCurrentObject->header.gfx.sharedChild = get_graph_node(modelID);
-    printf("bhv_cmd_set_model %d\n", modelID);
-
     gCurBhvCommand++;
     return BHV_PROC_CONTINUE;
 }

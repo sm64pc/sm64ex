@@ -367,21 +367,6 @@ f32 getStringWidth(u8* txt, float scale) {
    return size;
 }
 
-#ifdef VERSION_EU
-void print_hud_char_umlaut(s16 x, s16 y, u8 chr) {
-    void **fontLUT = segmented_to_virtual(main_hud_lut);
-
-    gDPPipeSync(gDisplayListHead++);
-    gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, fontLUT[chr]);
-    gSPDisplayList(gDisplayListHead++, dl_rgba16_load_tex_block);
-    gSPTextureRectangle(gDisplayListHead++, x << 2, y << 2, (x + 16) << 2, (y + 16) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
-
-    gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, fontLUT[GLYPH_UMLAUT]);
-    gSPDisplayList(gDisplayListHead++, dl_rgba16_load_tex_block);
-    gSPTextureRectangle(gDisplayListHead++, x << 2, (y - 4) << 2, (x + 16) << 2, (y + 12) << 2, G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
-}
-#endif
-
 /**
  * Prints a hud string depending of the hud table list defined.
  */
@@ -783,36 +768,6 @@ void change_and_flash_dialog_text_color_lines(s8 colorMode, s8 lineNum) {
         }
     }
 }
-
-#ifdef VERSION_EU
-void render_generic_dialog_char_at_pos(struct DialogEntry *dialog, s16 x, s16 y, u8 c) {
-    s16 width;
-    s16 height;
-    s16 tmpX;
-    s16 tmpY;
-    s16 xCoord;
-    s16 yCoord;
-    void **fontLUT;
-    void *packedTexture;
-    void *unpackedTexture;
-
-    width = (8.0 - (gDialogBoxScale * 0.8));
-    height = (16.0 - (gDialogBoxScale * 0.8));
-    tmpX = (dialog->leftOffset + (65.0 - (65.0 / gDialogBoxScale)));
-    tmpY = ((240 - dialog->width) - ((40.0 / gDialogBoxScale) - 40));
-    xCoord = (tmpX + (x / gDialogBoxScale));
-    yCoord = (tmpY + (y / gDialogBoxScale));
-
-    fontLUT = segmented_to_virtual(main_font_lut);
-    packedTexture = segmented_to_virtual(fontLUT[c]);
-    unpackedTexture = convert_ia4_char(c, packedTexture, 8, 8);
-
-    gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_IA, G_IM_SIZ_16b, 1, VIRTUAL_TO_PHYSICAL(unpackedTexture));
-    gSPDisplayList(gDisplayListHead++, dl_ia_text_tex_settings);
-    gSPTextureRectangleFlip(gDisplayListHead++, xCoord << 2, (yCoord - height) << 2,
-                            (xCoord + width) << 2, yCoord << 2, G_TX_RENDERTILE, 8 << 6, 4 << 6, 1 << 10, 1 << 10);
-}
-#endif
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
 #define X_VAL3 5.0f
@@ -1884,11 +1839,9 @@ void render_pause_my_score_coins(void) {
         }
         print_generic_string(ACT_NAME_X, 140, actName);
         print_generic_string(LVL_NAME_X, 157, &courseName[3]);
-    }
-    else {
+    } else {
         print_generic_string(94, 157, &courseName[3]);
     }
-    print_generic_string(117, 157, &courseName[3]);
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 }
 
