@@ -103,7 +103,7 @@ static s32 write_text_save(s32 fileIndex) {
     menudata = &gSaveBuffer.menuData[0];
     fprintf(file, "\n[menu]\n");
     fprintf(file, "coin_score_age = %d\n", menudata->coinScoreAges[fileIndex]);
-    
+
     if (menudata->soundMode == 0) {
         fprintf(file, "sound_mode = %s\n", sound_modes[0]);  // stereo
     }
@@ -117,7 +117,7 @@ static s32 write_text_save(s32 fileIndex) {
         printf("Undefined sound mode!");
         return -1;
     }
-    
+
     fprintf(file, "\n[flags]\n");
     for (i = 1; i < NUM_FLAGS; i++) {
         if (strcmp(sav_flags[i], "")) {
@@ -135,7 +135,7 @@ static s32 write_text_save(s32 fileIndex) {
         coins = save_file_get_course_coin_score(fileIndex, i);
         cannonFlag = save_file_get_cannon_flags(fileIndex, i);
         starFlags = int_to_bin(stars);      // 63 -> 111111
-            
+
         fprintf(file, "%s = \"%d, %07d, %d\"\n", sav_courses[i], coins, starFlags,cannonFlag);
     }
 
@@ -196,7 +196,7 @@ static s32 write_text_save(s32 fileIndex) {
     // Backup is nessecary for saving recent progress after gameover
     bcopy(&gSaveBuffer.files[fileIndex][0], &gSaveBuffer.files[fileIndex][1],
           sizeof(gSaveBuffer.files[fileIndex][1]));
-    
+
     fclose(file);
     return 1;
 }
@@ -208,10 +208,10 @@ static s32 read_text_save(s32 fileIndex) {
     char filename[SYS_MAX_PATH] = { 0 };
     const char *value;
     ini_t *savedata;
-    
+
     u32 i, flag, coins, stars, starFlags, cannonFlag;
     u32 capArea;
-    
+
     if (snprintf(filename, sizeof(filename), FILENAME_FORMAT, fs_writepath, fileIndex) < 0)
         return -1;
 
@@ -222,9 +222,8 @@ static s32 read_text_save(s32 fileIndex) {
         printf("Loading savefile from '%s'\n", filename);
     }
 
-    ini_sget(savedata, "menu", "coin_score_age", "%d",
-                &gSaveBuffer.menuData[0].coinScoreAges[fileIndex]);
-    
+    ini_sget(savedata, "menu", "coin_score_age", "%d", &gSaveBuffer.menuData[0].coinScoreAges[fileIndex]);
+
     value = ini_get(savedata, "menu", "sound_mode");
     if (value) {
         if (strcmp(value, sound_modes[0]) == 0) {
@@ -241,7 +240,7 @@ static s32 read_text_save(s32 fileIndex) {
         printf("Invalid 'menu:sound_mode' flag!\n");
         return -1;
     }
-    
+
     for (i = 1; i < NUM_FLAGS; i++) {
         value = ini_get(savedata, "flags", sav_flags[i]);
         if (value) {
@@ -294,7 +293,7 @@ static s32 read_text_save(s32 fileIndex) {
             }
         }
     }
-    
+
     value = ini_get(savedata, "cap", "level");
     if (value) {
         if (strcmp(value, "ssl") == 0) {
@@ -311,7 +310,7 @@ static s32 read_text_save(s32 fileIndex) {
             return -1;
         }
     }
-    
+
     value = ini_get(savedata, "cap", "area");
     if (value) {
         sscanf(value, "%d", &capArea);
@@ -320,17 +319,17 @@ static s32 read_text_save(s32 fileIndex) {
             return -1;
         }
         else {
-            gSaveBuffer.files[fileIndex][0].capArea = capArea; 
+            gSaveBuffer.files[fileIndex][0].capArea = capArea;
         }
     }
-    
+
     // Good, file exists for gSaveBuffer
     gSaveBuffer.files[fileIndex][0].flags |= SAVE_FLAG_FILE_EXISTS;
 
     // Backup is nessecary for saving recent progress after gameover
     bcopy(&gSaveBuffer.files[fileIndex][0], &gSaveBuffer.files[fileIndex][1],
           sizeof(gSaveBuffer.files[fileIndex][1]));
-    
+
     ini_free(savedata);
     return 0;
 }
