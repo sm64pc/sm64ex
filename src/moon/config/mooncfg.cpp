@@ -26,7 +26,7 @@ vector<string> split (const string &s, char delim) {
     return result;
 }
 
-string formatNestedKey(string key){
+string MoonCFG::formatNestedKey(string key){
     vector<string> dots = split(key, '.');
     string tmp;
     if(dots.size() > 1)
@@ -101,7 +101,11 @@ void MoonCFG::setInt(string key, int value){
 void MoonCFG::reload(){
     if(!fs::exists(this->path) || !fs::is_regular_file(this->path)) return;
     std::ifstream ifs(this->path);
-    this->vjson = json::parse(ifs).flatten();
+    try{
+        this->vjson = json::parse(ifs).flatten();
+    } catch(...){
+        this->vjson = json::object();
+    }
 }
 
 void MoonCFG::save(){
