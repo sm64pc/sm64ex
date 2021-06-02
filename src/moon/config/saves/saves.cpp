@@ -136,7 +136,7 @@ namespace MoonInternal {
         cfg->setArray<string>("game.achievements", obtainedAchievements);
         cfg->setBool("game.updated", cheatsGotEnabled);
     #endif
-        bcopy(&gSaveBuffer.files[fileIndex][0], &gSaveBuffer.files[fileIndex][1], sizeof(gSaveBuffer.files[fileIndex][1]));
+        memcpy(&gSaveBuffer.files[fileIndex][0], &gSaveBuffer.files[fileIndex][1], sizeof(gSaveBuffer.files[fileIndex][1]));
 
         cfg->save();
     }
