@@ -286,6 +286,10 @@ ALIGNED8 static const u8 texture_font_char_cust_Z_dot                [] = "textu
 ALIGNED8 static const u8 texture_font_char_cust_z_dot                [] = "textures/special/character_017C.ia4";
 //
 ALIGNED8 static const u8 texture_font_char_cust_eszett               [] = "textures/special/character_1E9E.ia4";
+ALIGNED8 static const u8 texture_font_char_cust_plus                 [] = "textures/special/character_002B.ia4";
+
+ALIGNED8 static const u8 texture_menu_font_char_mface1               [] = "textures/special/character_263A.left.ia4";
+ALIGNED8 static const u8 texture_menu_font_char_mface2               [] = "textures/special/character_263A.right.ia4";
 
 // Main HUD print table 0x02008250-0x02008337
 const u8 *const main_hud_lut[] = {
@@ -340,7 +344,7 @@ const u8 *const main_font_lut[] = {
     texture_font_char_us_w                                   , texture_font_char_us_x                                   ,
     texture_font_char_us_y                                   , texture_font_char_us_z                                   ,
     texture_font_char_us_apostrophe                          , texture_font_char_us_period                              ,
-    0x0                               /* <Mario face left> */, 0x0                              /* <Mario face right> */,
+    texture_menu_font_char_mface1     /* <Mario face left> */, texture_menu_font_char_mface2    /* <Mario face right> */,
     texture_font_char_cust_inverted_exclamation              , texture_font_char_cust_inverted_question                 ,
     texture_font_char_cust_A_grave                           , texture_font_char_cust_A_acute                           ,
     texture_font_char_cust_A_circumflex                      , texture_font_char_cust_A_tilde                           ,
@@ -422,8 +426,8 @@ const u8 *const main_font_lut[] = {
     0x0                                                      , 0x0                                                      ,
     0x0                                 /* <digit counter> */, texture_font_char_us_open_parentheses           /* '(' */,
     texture_font_char_us_close_open_parentheses     /* ')' */, texture_font_char_us_close_parentheses         /* ')(' */,
-    texture_font_char_us_left_right_arrow           /* '+' */, texture_font_char_us_ampersand                  /* '&' */,
-    texture_font_char_us_ellipsis                   /* ':' */, 0x0                                                      ,
+    texture_font_char_us_left_right_arrow         /* '<->' */, texture_font_char_us_ampersand                  /* '&' */,
+    texture_font_char_us_ellipsis                   /* ':' */, texture_font_char_cust_plus                     /* '+' */,
     0x0                                                      , 0x0                                                      ,
     0x0                                                      , 0x0                                                      ,
     0x0                                                      , 0x0                                                      ,

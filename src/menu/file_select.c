@@ -969,9 +969,7 @@ void load_score_menu_from_submenu(s16 prevMenuButtonID, struct Object *sourceBut
     // If the previous button is in default state
     if (sMainMenuButtons[prevMenuButtonID]->oMenuButtonState == MENU_BUTTON_STATE_DEFAULT) {
         // Hide buttons of corresponding button menu groups
-        if (prevMenuButtonID == MENU_BUTTON_SCORE) //! Not possible, this is checking if the score menu
-                                                   //! was opened from the score menu!
-        {
+        if (prevMenuButtonID == MENU_BUTTON_SCORE)  {
             for (buttonID = MENU_BUTTON_SCORE_MIN; buttonID < MENU_BUTTON_SCORE_MAX; buttonID++) {
                 mark_obj_for_deletion(sMainMenuButtons[buttonID]);
             }
@@ -1156,75 +1154,60 @@ void bhv_menu_button_manager_init(void) {
  * Also play a sound and/or render buttons depending of the button ID selected.
  */
 void check_main_menu_clicked_buttons(void) {
-#ifdef VERSION_EU
-    if (sMainMenuTimer >= 5) {
-#endif
-        // Sound mode menu is handled separately because the button ID for it
-        // is not grouped with the IDs of the other submenus.
-        if (check_clicked_button(sMainMenuButtons[MENU_BUTTON_SOUND_MODE]->oPosX,
-                                sMainMenuButtons[MENU_BUTTON_SOUND_MODE]->oPosY, 200.0f) == TRUE) {
-            sMainMenuButtons[MENU_BUTTON_SOUND_MODE]->oMenuButtonState = MENU_BUTTON_STATE_GROWING;
-            sSelectedButtonID = MENU_BUTTON_SOUND_MODE;
-        } else {
-            // Main Menu buttons
-            s8 buttonID;
-            // Configure Main Menu button group
-            for (buttonID = MENU_BUTTON_MAIN_MIN; buttonID < MENU_BUTTON_MAIN_MAX; buttonID++) {
-                s16 buttonX = sMainMenuButtons[buttonID]->oPosX;
-                s16 buttonY = sMainMenuButtons[buttonID]->oPosY;
+    // Sound mode menu is handled separately because the button ID for it
+    // is not grouped with the IDs of the other submenus.
+    if (check_clicked_button(sMainMenuButtons[MENU_BUTTON_SOUND_MODE]->oPosX,
+                            sMainMenuButtons[MENU_BUTTON_SOUND_MODE]->oPosY, 200.0f) == TRUE) {
+        sMainMenuButtons[MENU_BUTTON_SOUND_MODE]->oMenuButtonState = MENU_BUTTON_STATE_GROWING;
+        sSelectedButtonID = MENU_BUTTON_SOUND_MODE;
+    } else {
+        // Main Menu buttons
+        s8 buttonID;
+        // Configure Main Menu button group
+        for (buttonID = MENU_BUTTON_MAIN_MIN; buttonID < MENU_BUTTON_MAIN_MAX; buttonID++) {
+            s16 buttonX = sMainMenuButtons[buttonID]->oPosX;
+            s16 buttonY = sMainMenuButtons[buttonID]->oPosY;
 
-                if (check_clicked_button(buttonX, buttonY, 200.0f) == TRUE) {
-                    // If menu button clicked, select it
-                    sMainMenuButtons[buttonID]->oMenuButtonState = MENU_BUTTON_STATE_GROWING;
-                    sSelectedButtonID = buttonID;
-                    break;
-                }
+            if (check_clicked_button(buttonX, buttonY, 200.0f) == TRUE) {
+                // If menu button clicked, select it
+                sMainMenuButtons[buttonID]->oMenuButtonState = MENU_BUTTON_STATE_GROWING;
+                sSelectedButtonID = buttonID;
+                break;
             }
         }
-#ifdef VERSION_EU
-        // Open Options Menu if sOpenLangSettings is TRUE (It's TRUE when there's no saves)
-        if (sOpenLangSettings == TRUE) {
-            sMainMenuButtons[MENU_BUTTON_SOUND_MODE]->oMenuButtonState = MENU_BUTTON_STATE_GROWING;
-            sSelectedButtonID = MENU_BUTTON_SOUND_MODE;
-            sOpenLangSettings = FALSE;
-        }
-#endif
-
-        // Play sound of the save file clicked
-        switch (sSelectedButtonID) {
-            case MENU_BUTTON_PLAY_FILE_A:
-                play_sound(SAVE_FILE_SOUND, gGlobalSoundSource);
-                break;
-            case MENU_BUTTON_PLAY_FILE_B:
-                play_sound(SAVE_FILE_SOUND, gGlobalSoundSource);
-                break;
-            case MENU_BUTTON_PLAY_FILE_C:
-                play_sound(SAVE_FILE_SOUND, gGlobalSoundSource);
-                break;
-            case MENU_BUTTON_PLAY_FILE_D:
-                play_sound(SAVE_FILE_SOUND, gGlobalSoundSource);
-                break;
-            // Play sound of the button clicked and render buttons of that menu.
-            case MENU_BUTTON_SCORE:
-                play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
-                render_score_menu_buttons(sMainMenuButtons[MENU_BUTTON_SCORE]);
-                break;
-            case MENU_BUTTON_COPY:
-                play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
-                render_copy_menu_buttons(sMainMenuButtons[MENU_BUTTON_COPY]);
-                break;
-            case MENU_BUTTON_ERASE:
-                play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
-                render_erase_menu_buttons(sMainMenuButtons[MENU_BUTTON_ERASE]);
-                break;
-            case MENU_BUTTON_SOUND_MODE:
-                play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
-                render_sound_mode_menu_buttons(sMainMenuButtons[MENU_BUTTON_SOUND_MODE]);
-                break;
-        }
-#ifdef VERSION_EU
     }
-#endif
+    // Play sound of the save file clicked
+    switch (sSelectedButtonID) {
+        case MENU_BUTTON_PLAY_FILE_A:
+            play_sound(SAVE_FILE_SOUND, gGlobalSoundSource);
+            break;
+        case MENU_BUTTON_PLAY_FILE_B:
+            play_sound(SAVE_FILE_SOUND, gGlobalSoundSource);
+            break;
+        case MENU_BUTTON_PLAY_FILE_C:
+            play_sound(SAVE_FILE_SOUND, gGlobalSoundSource);
+            break;
+        case MENU_BUTTON_PLAY_FILE_D:
+            play_sound(SAVE_FILE_SOUND, gGlobalSoundSource);
+            break;
+        // Play sound of the button clicked and render buttons of that menu.
+        case MENU_BUTTON_SCORE:
+            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
+            render_score_menu_buttons(sMainMenuButtons[MENU_BUTTON_SCORE]);
+            break;
+        case MENU_BUTTON_COPY:
+            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
+            render_copy_menu_buttons(sMainMenuButtons[MENU_BUTTON_COPY]);
+            break;
+        case MENU_BUTTON_ERASE:
+            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
+            render_erase_menu_buttons(sMainMenuButtons[MENU_BUTTON_ERASE]);
+            break;
+        case MENU_BUTTON_SOUND_MODE:
+            play_sound(SOUND_MENU_CAMERA_ZOOM_IN, gGlobalSoundSource);
+            render_sound_mode_menu_buttons(sMainMenuButtons[MENU_BUTTON_SOUND_MODE]);
+            break;
+    }
 }
 #undef SAVE_FILE_SOUND
 
@@ -1331,11 +1314,6 @@ void bhv_menu_button_manager_loop(void) {
 
         // STEREO, MONO and HEADSET buttons are undefined so they can be selected without
         // exiting the Options menu, as a result they added a return button
-#ifdef VERSION_EU
-        case MENU_BUTTON_LANGUAGE_RETURN:
-            return_to_main_menu(MENU_BUTTON_SOUND_MODE, sMainMenuButtons[MENU_BUTTON_LANGUAGE_RETURN]);
-            break;
-#else
         case MENU_BUTTON_STEREO:
             return_to_main_menu(MENU_BUTTON_SOUND_MODE, sMainMenuButtons[MENU_BUTTON_STEREO]);
             break;
@@ -1345,7 +1323,6 @@ void bhv_menu_button_manager_loop(void) {
         case MENU_BUTTON_HEADSET:
             return_to_main_menu(MENU_BUTTON_SOUND_MODE, sMainMenuButtons[MENU_BUTTON_HEADSET]);
             break;
-#endif
     }
 
     sClickPos[0] = -10000;
@@ -2046,7 +2023,7 @@ void print_score_file_castle_secret_stars(s8 fileIndex, s16 x, s16 y) {
  */
 void print_score_file_course_coin_score(s8 fileIndex, s16 courseIndex, s16 x, s16 y) {
     unsigned char coinScoreText[20];
-    unsigned char * fileNames[8] = {
+    unsigned char * fileNames[5] = {
         get_key_string("TEXT_4DASHES"),
         get_key_string("TEXT_SCORE_MARIO_A"),
         get_key_string("TEXT_SCORE_MARIO_B"),
@@ -2114,7 +2091,8 @@ void print_score_file_star_score(s8 fileIndex, s16 courseIndex, s16 x, s16 y) {
     u8 * o = get_key_string("TEXT_ZERO");
     u8 * textFileLetter = malloc(sizeof(o));
     memcpy(textFileLetter, o, sizeof(o));
-    void **levelNameTable = segmented_to_virtual(seg2_course_name_table);
+
+    void **levelNameTable = seg2_course_name_table;
 
     textFileLetter[0] = fileIndex + ASCII_TO_DIALOG('A'); // get letter of file selected
 
@@ -2136,7 +2114,7 @@ void print_score_file_star_score(s8 fileIndex, s16 courseIndex, s16 x, s16 y) {
     //  JP and US when the course number is only one digit.
     #define PADCHAR 1
     #define PRINT_COURSE_SCORES(courseIndex, pad)                                                               \
-    print_menu_generic_string(23 + (pad * 3), 23 + 12 * courseIndex, segmented_to_virtual(levelNameTable[courseIndex - 1]));  \
+    print_menu_generic_string(23 + (pad * 3), 23 + 12 * courseIndex, levelNameTable[courseIndex - 1]);      \
     print_score_file_star_score(fileIndex, courseIndex - 1, 171, 23 + 12 * courseIndex);                        \
     print_score_file_course_coin_score(fileIndex, courseIndex - 1, 213, 23 + 12 * courseIndex);
     // Course values are indexed, from Bob-omb Battlefield to Rainbow Ride
