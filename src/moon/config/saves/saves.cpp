@@ -124,6 +124,7 @@ namespace MoonInternal {
         if(lvl == COURSE_SSL || lvl == COURSE_SL || COURSE_TTM)
             cfg->setString("game.caps.lost", sav_courses[lvl]);
 
+    #ifndef DEBUG
         vector<string> obtainedAchievements;
 
         for( auto &rAchievements : entries ){
@@ -134,7 +135,7 @@ namespace MoonInternal {
 
         cfg->setArray<string>("game.achievements", obtainedAchievements);
         cfg->setBool("game.updated", cheatsGotEnabled);
-
+    #endif
         bcopy(&gSaveBuffer.files[fileIndex][0], &gSaveBuffer.files[fileIndex][1], sizeof(gSaveBuffer.files[fileIndex][1]));
 
         cfg->save();
@@ -182,6 +183,7 @@ namespace MoonInternal {
         if(cfg->contains("game.caps.lost"))
             gSaveBuffer.files[fileIndex][0].capArea = cfg->getInt("game.caps.lost");
 
+    #ifndef DEBUG
         cheatsGotEnabled = cfg->getBool("game.updated");
 
         vector<string> obtainedAchievements = cfg->getArray<string>("game.achievements");
@@ -194,6 +196,8 @@ namespace MoonInternal {
         }
 
         if(cheatsGotEnabled) entries.clear();
+    #endif
+
         gSaveBuffer.files[fileIndex][0].flags |= (1 << 0);
 
         // Backup is nessecary for saving recent progress after gameover
