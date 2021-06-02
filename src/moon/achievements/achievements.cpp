@@ -98,12 +98,6 @@ namespace MoonInternal{
                 cheatsGotEnabled = true;
             }
             Moon::showAchievementById("achievement.get" + std::to_string(gHudDisplay.stars) + "Stars");
-
-            if(IsBtnPressed(MoonButtons::L_BTN)){
-                auto b = registeredAchievements.begin();
-                std::advance( b, rand() % registeredAchievements.size() );
-                Moon::showAchievementById(b->second->id);
-            }
         }
         if(status == "Init"){
             Moon::registerHookListener({.hookName = HUD_DRAW, .callback = [](HookCall call){
@@ -131,7 +125,12 @@ namespace MoonInternal{
                             }
                         }
 
-                        if(gMenuMode == -1 && !gWarpTransition.isActive){
+                    #ifndef GAME_DEBUG
+                        bool shouldUpdate = gMenuMode == -1 && !gWarpTransition.isActive;
+                    #else
+                        bool shouldUpdate = !gWarpTransition.isActive;
+                    #endif
+                        if(shouldUpdate){
                             if (aEntry->launchTime == 0)
                                 play_sound(soundID, gGlobalSoundSource);
 

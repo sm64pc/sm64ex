@@ -4,6 +4,7 @@
 #ifdef __cplusplus
 #include <string>
 #include <vector>
+#include <map>
 
 class Achievement {
 public:
@@ -39,6 +40,7 @@ struct AchievementEntry {
 };
 
 extern std::vector<AchievementEntry*> entries;
+extern std::map<std::string, Achievement*> registeredAchievements;
 extern bool cheatsGotEnabled;
 
 namespace Moon {

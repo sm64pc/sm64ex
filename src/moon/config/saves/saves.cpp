@@ -124,7 +124,7 @@ namespace MoonInternal {
         if(lvl == COURSE_SSL || lvl == COURSE_SL || COURSE_TTM)
             cfg->setString("game.caps.lost", sav_courses[lvl]);
 
-    #ifndef DEBUG
+    #ifndef GAME_DEBUG
         vector<string> obtainedAchievements;
 
         for( auto &rAchievements : entries ){
@@ -183,7 +183,7 @@ namespace MoonInternal {
         if(cfg->contains("game.caps.lost"))
             gSaveBuffer.files[fileIndex][0].capArea = cfg->getInt("game.caps.lost");
 
-    #ifndef DEBUG
+    #ifndef GAME_DEBUG
         cheatsGotEnabled = cfg->getBool("game.updated");
 
         vector<string> obtainedAchievements = cfg->getArray<string>("game.achievements");

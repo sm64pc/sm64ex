@@ -13,7 +13,9 @@ extern "C" {
 
 MDebugCategory::MDebugCategory() : MoonCategory("Moon Debug"){
     this->titleKey = false;
-    this->catOptions.push_back(new MWValue(22, 57 + (0 * 17), "Trigger Notification",   { .btn = [](){
-        Moon::showAchievement(AchievementList::TRIPLE_JUMP);
+    this->catOptions.push_back(new MWValue(22, 57 + (0 * 17), "Trigger Achievement",   { .btn = [](){
+        auto b = registeredAchievements.begin();
+        std::advance( b, rand() % registeredAchievements.size() );
+        Moon::showAchievementById(b->second->id);
     }}, false));
 }
