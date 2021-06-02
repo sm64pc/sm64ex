@@ -67,8 +67,12 @@ static u32 bin_to_int(u32 n) {
 namespace MoonInternal {
     MoonCFG* getSaveFile(int fileIndex){
         if(saveCache.find(fileIndex) == saveCache.end()){
+        #ifndef TARGET_SWITCH
             string cwd = MoonInternal::getEnvironmentVar("MOON_UPATH");
             string path = cwd.substr(0, cwd.find_last_of("/\\")) + "/moon64/Moon64-Save-"+to_string(fileIndex + 1)+".dat";
+        #else
+            string path = "sdmc:/moon64/Moon64-Save-"+to_string(fileIndex + 1)+".dat";
+        #endif
             saveCache[fileIndex] = new MoonCFG(path, false);
         #ifdef GAME_DEBUG
             cout << "Loading save file: " << path << endl;
@@ -200,8 +204,12 @@ namespace MoonInternal {
     void setupSaveEngine(string state){
         if(state == "PreInit"){
             // Scan old save format
+        #ifndef TARGET_SWITCH
             string cwd = MoonInternal::getEnvironmentVar("MOON_UPATH");
             string path = cwd.substr(0, cwd.find_last_of("/\\")) + "/moon64/";
+        #else
+            string path = "sdmc:/";
+        #endif
 
             vector<string> supportedSaves = {
                 "moon64_save_file_", "sm64_save_file_",

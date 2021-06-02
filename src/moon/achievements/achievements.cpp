@@ -110,8 +110,6 @@ namespace MoonInternal{
                 for (auto &aEntry : entries) {
                     if( !aEntry->dead ) {
                         int soundID = SOUND_GENERAL_COIN;
-                        if (aEntry->launchTime == 0)
-                            play_sound(soundID, gGlobalSoundSource);
 
                         bool shouldClose = aEntry->launchTime >= aEntry->achievement->duration;
 
@@ -134,6 +132,9 @@ namespace MoonInternal{
                         }
 
                         if(gMenuMode == -1 && !gWarpTransition.isActive){
+                            if (aEntry->launchTime == 0)
+                                play_sound(soundID, gGlobalSoundSource);
+
                             aEntry->width = MathUtil::Lerp(aEntry->width, !shouldClose ? achievementWidth : 0, !shouldClose ? 0.2f : 0.35f);
                             aEntry->dead = shouldClose && aEntry->width <= 0;
 
