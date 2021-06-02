@@ -215,10 +215,11 @@ namespace MoonInternal {
                                 int i = stoi(file.substr(nameIdx + s.length(), 1));
                                 string fPath = file.substr(nameIdx);
                                 cout << "Detected old format save file: " << fPath << endl;
+                                cout << "Converting save file" << endl;
                                 read_text_save(i, const_cast<char *>( fPath.c_str()));
                                 writeSaveFile(i);
-                                fs::remove(file);
-                                cout << "Converted text file: " << fPath << endl;
+                                fs::rename(file, file+".old");
+                                cout << "Done!" << endl;
                             }
                         }
                     }

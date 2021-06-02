@@ -91,8 +91,6 @@ s32 read_text_save(s32 fileIndex, char* fileName) {
     savedata = ini_load(filename);
     if (savedata == NULL) {
         return -1;
-    } else {
-        printf("Loading savefile from '%s'\n", filename);
     }
 
     ini_sget(savedata, "menu", "coin_score_age", "%d", &gSaveBuffer.menuData[0].coinScoreAges[fileIndex]);
