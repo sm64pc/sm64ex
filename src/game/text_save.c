@@ -198,8 +198,7 @@ s32 read_text_save(s32 fileIndex, char* fileName) {
     gSaveBuffer.files[fileIndex][0].flags |= SAVE_FLAG_FILE_EXISTS;
 
     // Backup is nessecary for saving recent progress after gameover
-    bcopy(&gSaveBuffer.files[fileIndex][0], &gSaveBuffer.files[fileIndex][1],
-          sizeof(gSaveBuffer.files[fileIndex][1]));
+    memcpy(&gSaveBuffer.files[fileIndex][1], &gSaveBuffer.files[fileIndex][0], sizeof(gSaveBuffer.files[fileIndex][1]));
 
     ini_free(savedata);
     return 0;

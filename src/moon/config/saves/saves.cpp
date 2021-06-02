@@ -201,8 +201,7 @@ namespace MoonInternal {
         gSaveBuffer.files[fileIndex][0].flags |= (1 << 0);
 
         // Backup is nessecary for saving recent progress after gameover
-        bcopy(&gSaveBuffer.files[fileIndex][0], &gSaveBuffer.files[fileIndex][1],
-            sizeof(gSaveBuffer.files[fileIndex][1]));
+        memcpy(&gSaveBuffer.files[fileIndex][1], &gSaveBuffer.files[fileIndex][0], sizeof(gSaveBuffer.files[fileIndex][1]));
     }
 
     void setupSaveEngine(string state){
