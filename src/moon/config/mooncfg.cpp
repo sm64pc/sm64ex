@@ -10,9 +10,13 @@ namespace fs = std::filesystem;
 using namespace std;
 using json = nlohmann::json;
 
-MoonCFG::MoonCFG(string path){
-    string cwd = MoonInternal::getEnvironmentVar("MOON_CWD");
-    this->path = cwd.substr(0, cwd.find_last_of("/\\")) + "/" + path;
+MoonCFG::MoonCFG(string path, bool relativePath){
+    if(relativePath){
+        string cwd = MoonInternal::getEnvironmentVar("MOON_CWD");
+        this->path = cwd.substr(0, cwd.find_last_of("/\\")) + "/" + path;
+    } else {
+        this->path = path;
+    }
     this->reload();
 }
 

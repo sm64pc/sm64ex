@@ -15,8 +15,6 @@ extern "C" {
 #include "game/text_save.h"
 }
 
-#define SAVES_FOLDER "saves/"
-
 map<int, MoonCFG*> saveCache;
 
 vector<string> sav_flags = {
@@ -68,10 +66,11 @@ static u32 bin_to_int(u32 n) {
 namespace MoonInternal {
     MoonCFG* getSaveFile(int fileIndex){
         if(saveCache.find(fileIndex) == saveCache.end()){
-            string path = SAVES_FOLDER "Moon64-Save-"+to_string(fileIndex + 1)+".dat";
-            saveCache[fileIndex] = new MoonCFG(path);
+            string cwd = MoonInternal::getEnvironmentVar("MOON_UPATH");
+            string path = cwd.substr(0, cwd.find_last_of("/\\")) + "/moon64/Moon64-Save-"+to_string(fileIndex + 1)+".dat";
+            saveCache[fileIndex] = new MoonCFG(path, false);
         #ifdef GAME_DEBUG
-            cout << "Loading save file: /" << path << endl;
+            cout << "Loading save file: " << path << endl;
         #endif
         }
         return saveCache[fileIndex];

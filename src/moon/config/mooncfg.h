@@ -9,8 +9,9 @@
 class MoonCFG {
 protected:
     std::string path;
+    bool relativePath;
 public:
-    MoonCFG(std::string path);
+    MoonCFG(std::string path, bool relativePath);
 
     nlohmann::json vjson;
     nlohmann::json nested(std::string key);
