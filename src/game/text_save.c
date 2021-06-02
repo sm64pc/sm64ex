@@ -77,7 +77,7 @@ static u32 int_to_bin(u32 n) {
 /**
  * Read gSaveBuffer data from a text-based savefile
  */
-s32 read_text_save(s32 fileIndex) {
+s32 read_text_save(s32 fileIndex, char* fileName) {
     char filename[SYS_MAX_PATH] = { 0 };
     const char *value;
     ini_t *savedata;
@@ -85,7 +85,7 @@ s32 read_text_save(s32 fileIndex) {
     u32 i, flag, coins, stars, starFlags, cannonFlag;
     u32 capArea;
 
-    if (snprintf(filename, sizeof(filename), FILENAME_FORMAT, fs_writepath, fileIndex) < 0)
+    if (snprintf(filename, sizeof(filename), "%s/%s", fs_writepath, fileName) < 0)
         return -1;
 
     savedata = ini_load(filename);

@@ -13,6 +13,7 @@ extern "C" {
 #include "buffers/buffers.h"
 #include "game/save_file.h"
 #include "game/text_save.h"
+#include "pc/platform.h"
 }
 
 map<int, MoonCFG*> saveCache;
@@ -194,7 +195,7 @@ namespace MoonInternal {
     }
 
     void setupSaveEngine(string state){
-        if(state == "PreStartup"){
+        if(state == "PreInit"){
             // Scan old save format
             string cwd = MoonInternal::getEnvironmentVar("MOON_UPATH");
             string path = cwd.substr(0, cwd.find_last_of("/\\")) + "/moon64/";
@@ -211,12 +212,13 @@ namespace MoonInternal {
                         for(auto &s : supportedSaves){
                             size_t nameIdx = file.find(s);
                             if(nameIdx != std::string::npos){
-                                cout << "Detected old format save file: " << file.substr(nameIdx) << endl;
                                 int i = stoi(file.substr(nameIdx + s.length(), 1));
-                                read_text_save(i);
-                                fs::remove(file);
+                                string fPath = file.substr(nameIdx);
+                                cout << "Detected old format save file: " << fPath << endl;
+                                read_text_save(i, const_cast<char *>( fPath.c_str()));
                                 writeSaveFile(i);
-                                cout << "Converted text file: " << file.substr(nameIdx) << endl;
+                                fs::remove(file);
+                                cout << "Converted text file: " << fPath << endl;
                             }
                         }
                     }

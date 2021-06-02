@@ -195,13 +195,13 @@ void main_func(char *argv[]) {
     const char *gamedir = gCLIOpts.GameDir[0] ? gCLIOpts.GameDir : FS_BASEDIR;
     const char *userpath = gCLIOpts.SavePath[0] ? gCLIOpts.SavePath : sys_user_path();
     fs_init(sys_ropaths, gamedir, userpath);
-    configfile_load(configfile_name());
     moon_environment_save("MOON_CWD",   argv[0]);
     moon_environment_save("MOON_UPATH", userpath);
     moon_environment_save("ASSETS_DIR", gamedir);
 
     moon_setup("PreStartup");
 
+    configfile_load(configfile_name());
     if (gCLIOpts.FullScreen == 1)
         configWindow.fullscreen = true;
     else if (gCLIOpts.FullScreen == 2)
