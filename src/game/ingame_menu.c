@@ -35,10 +35,6 @@ u16 gDialogColorFadeTimer;
 s8 gLastDialogLineNum;
 s32 gDialogVariable;
 u16 gDialogTextAlpha;
-#if defined(VERSION_EU)
-s16 gDialogX; // D_8032F69A
-s16 gDialogY; // D_8032F69C
-#endif
 s16 gCutsceneMsgXOffset;
 s16 gCutsceneMsgYOffset;
 s8 gRedCoinsCollected;
@@ -65,7 +61,7 @@ u8 gDialogCharWidths[256] = { // TODO: Is there a way to auto generate this?
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
     7,  5, 10,  5,  9,  8,  4,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  5,  7,  7,  6,  6,  8,  0,  8, 10,  6,  4, 10,  0,  0
+    0,  0,  5,  7,  7,  6,  6,  8,  0,  11, 11,  6,  4, 11,  0,  0
 };
 
 s8 gDialogBoxState = DIALOG_STATE_OPENING;
@@ -160,126 +156,23 @@ void create_dl_ortho_matrix(void) {
     gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(matrix), G_MTX_PROJECTION | G_MTX_MUL | G_MTX_NOPUSH)
 }
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
-static inline void alloc_ia8_text_from_i1(u8 *out, u16 *in, s16 width, s16 height) {
-    s32 inPos;
-    u16 bitMask;
-    u16 inWord;
-    s16 outPos = 0;
-
-    for (inPos = 0; inPos < (width * height) / 16; inPos++) {
-        inWord = BE_TO_HOST16(in[inPos]);
-        bitMask = 0x8000;
-
-        while (bitMask != 0) {
-            if (inWord & bitMask) {
-                out[outPos] = 0xFF;
-            } else {
-                out[outPos] = 0x00;
-            }
-
-            bitMask /= 2;
-            outPos++;
-        }
-    }
-}
-
-static inline u8 *convert_ia8_char(u8 c, u16 *tex, s16 w, s16 h) {
-    return (u8 *)tex; // the data's just a name
-}
-#endif
-
 void render_generic_char(u8 c) {
     void **fontLUT;
     void *packedTexture;
-#if defined(VERSION_JP) || defined(VERSION_SH)
-    void *unpackedTexture;
-#endif
 
     fontLUT = segmented_to_virtual(main_font_lut);
     packedTexture = segmented_to_virtual(fontLUT[c]);
-
-#if defined(VERSION_JP) || defined(VERSION_SH)
-    unpackedTexture = convert_ia8_char(c, packedTexture, 8, 16);
-
     gDPPipeSync(gDisplayListHead++);
-    gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_IA, G_IM_SIZ_8b, 1, VIRTUAL_TO_PHYSICAL(unpackedTexture));
-#else
-#ifdef VERSION_US
-    gDPPipeSync(gDisplayListHead++);
-#endif
     gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_IA, G_IM_SIZ_16b, 1, VIRTUAL_TO_PHYSICAL(packedTexture));
-#endif
     gSPDisplayList(gDisplayListHead++, dl_ia_text_tex_settings);
-#ifdef VERSION_EU
-    gSPTextureRectangleFlip(gDisplayListHead++, gDialogX << 2, (gDialogY - 16) << 2,
-                            (gDialogX + 8) << 2, gDialogY << 2, G_TX_RENDERTILE, 8 << 6, 4 << 6, 1 << 10, 1 << 10);
-#endif
 }
-
-#ifdef VERSION_EU
-static void alloc_ia4_tex_from_i1(u8 *out, u8 *in, s16 width, s16 height) {
-    u32 size = (u32) width * (u32) height;
-    s32 inPos;
-    s16 outPos = 0;
-    u8 bitMask;
-
-    for (inPos = 0; inPos < (width * height) / 4; inPos++) {
-        bitMask = 0x80;
-        while (bitMask != 0) {
-            out[outPos] = (in[inPos] & bitMask) ? 0xF0 : 0x00;
-            bitMask /= 2;
-            out[outPos] = (in[inPos] & bitMask) ? out[outPos] + 0x0F : out[outPos];
-            bitMask /= 2;
-            outPos++;
-        }
-    }
-}
-
-static u8 *convert_ia4_char(u8 c, u8 *tex, s16 w, s16 h) {
-    return tex;
-}
-
-void render_generic_char_at_pos(s16 xPos, s16 yPos, u8 c) {
-    void **fontLUT;
-    void *packedTexture;
-    void *unpackedTexture;
-
-    fontLUT = segmented_to_virtual(main_font_lut);
-    packedTexture = segmented_to_virtual(fontLUT[c]);
-    unpackedTexture = convert_ia4_char(c, packedTexture, 8, 8);
-
-    gDPPipeSync(gDisplayListHead++);
-    gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_IA, G_IM_SIZ_16b, 1, VIRTUAL_TO_PHYSICAL(unpackedTexture));
-    gSPDisplayList(gDisplayListHead++, dl_ia_text_tex_settings);
-    gSPTextureRectangleFlip(gDisplayListHead++, xPos << 2, (yPos - 16) << 2, (xPos + 8) << 2, yPos << 2,
-                            G_TX_RENDERTILE, 8 << 6, 4 << 6, 1 << 10, 1 << 10);
-}
-
-void render_lowercase_diacritic(s16 *xPos, s16 *yPos, u8 letter, u8 diacritic) {
-    render_generic_char_at_pos(*xPos, *yPos, letter);
-    render_generic_char_at_pos(*xPos, *yPos, diacritic + 0xE7);
-    *xPos += gDialogCharWidths[letter];
-}
-
-void render_uppercase_diacritic(s16 *xPos, s16 *yPos, u8 letter, u8 diacritic) {
-    render_generic_char_at_pos(*xPos, *yPos, letter);
-    render_generic_char_at_pos(*xPos, *yPos - 4, diacritic + 0xE3);
-    *xPos += gDialogCharWidths[letter];
-}
-#endif // VERSION_EU
 
 /*
  * Place the multi-text string according to the ID passed. (US, EU)
  * 0: 'the'
  * 1: 'you'
  */
-#ifdef VERSION_US
-void render_multi_text_string(s8 multiTextID)
-#elif defined(VERSION_EU)
-void render_multi_text_string(s16 *xPos, s16 *yPos, s8 multiTextID)
-#endif
-{
+void render_multi_text_string(s8 multiTextID) {
     s8 i;
     struct MultiTextEntry textLengths[2] = {
         { 3, { TEXT_THE_RAW } },
@@ -287,13 +180,8 @@ void render_multi_text_string(s16 *xPos, s16 *yPos, s8 multiTextID)
     };
 
     for (i = 0; i < textLengths[multiTextID].length; i++) {
-#ifdef VERSION_US
         render_generic_char(textLengths[multiTextID].str[i]);
         create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[textLengths[multiTextID].str[i]]), 0.0f, 0.0f);
-#elif defined(VERSION_EU)
-        render_generic_char_at_pos(*xPos, *yPos, textLengths[multiTextID].str[i]);
-        *xPos += gDialogCharWidths[textLengths[multiTextID].str[i]];
-#endif
     }
 }
 
@@ -536,7 +424,6 @@ void handle_menu_scrolling(s8 scrollDirection, s8 *currentIndex, s8 minIndex, s8
 
 // EU has both get_str_x_pos_from_center and get_str_x_pos_from_center_scale
 // US and JP only implement one or the other
-#if defined(VERSION_US) || defined(VERSION_EU)
 s16 get_str_x_pos_from_center(s16 centerPos, u8 *str, UNUSED f32 scale) {
     s16 strPos = 0;
     f32 spacesWidth = 0.0f;
@@ -549,31 +436,7 @@ s16 get_str_x_pos_from_center(s16 centerPos, u8 *str, UNUSED f32 scale) {
     // length from the position of the provided center.
     return (s16)(centerPos - (s16)(spacesWidth / 2.0));
 }
-#endif
 
-#if defined(VERSION_JP) || defined(VERSION_EU) || defined(VERSION_SH)
-s16 get_str_x_pos_from_center_scale(s16 centerPos, u8 *str, f32 scale) {
-    s16 strPos = 0;
-    f32 charsWidth = 0.0f;
-    f32 spacesWidth = 0.0f;
-
-    while (str[strPos] != DIALOG_CHAR_TERMINATOR) {
-        //! EU checks for dakuten and handakuten despite dialog code unable to handle it
-        if (str[strPos] == DIALOG_CHAR_SPACE) {
-            spacesWidth += 1.0;
-        } else if (str[strPos] != DIALOG_CHAR_DAKUTEN
-                   && str[strPos] != DIALOG_CHAR_PERIOD_OR_HANDAKUTEN) {
-            charsWidth += 1.0;
-        }
-        strPos++;
-    }
-    // return the x position of where the string starts as half the string's
-    // length from the position of the provided center.
-    return (f32) centerPos - (scale * (charsWidth / 2.0)) - ((scale / 2.0) * (spacesWidth / 2.0));
-}
-#endif
-
-#if !defined(VERSION_JP) && !defined(VERSION_SH)
 s16 get_string_width(u8 *str) {
     s16 strPos = 0;
     s16 width = 0;
@@ -584,7 +447,6 @@ s16 get_string_width(u8 *str) {
     }
     return width;
 }
-#endif
 
 u8 gHudSymCoin[] = { GLYPH_COIN, GLYPH_SPACE };
 u8 gHudSymX[] = { GLYPH_MULTIPLY, GLYPH_SPACE };
@@ -703,15 +565,9 @@ void reset_dialog_render_state(void) {
     gDialogResponse = 0;
 }
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
-#define X_VAL1 -5.0f
-#define Y_VAL1 2.0
-#define Y_VAL2 4.0f
-#else
 #define X_VAL1 -7.0f
 #define Y_VAL1 5.0
 #define Y_VAL2 5.0f
-#endif
 
 void render_dialog_box_type(struct DialogEntry *dialog, s8 linesPerBox) {
     UNUSED s32 unused;
@@ -769,72 +625,27 @@ void change_and_flash_dialog_text_color_lines(s8 colorMode, s8 lineNum) {
     }
 }
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
-#define X_VAL3 5.0f
-#define Y_VAL3 20
-#else
 #define X_VAL3 0.0f
 #define Y_VAL3 16
-#endif
 
-#ifdef VERSION_EU
-void handle_dialog_scroll_page_state(s8 lineNum, s8 totalLines, s8 *pageState, s8 *xMatrix)
-#else
-void handle_dialog_scroll_page_state(s8 lineNum, s8 totalLines, s8 *pageState, s8 *xMatrix, s16 *linePos)
-#endif
-{
-#ifndef VERSION_EU
+void handle_dialog_scroll_page_state(s8 lineNum, s8 totalLines, s8 *pageState, s8 *xMatrix, s16 *linePos) {
     gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
-#endif
 
     if (lineNum == totalLines) {
         pageState[0] = DIALOG_PAGE_STATE_SCROLL;
         return;
     }
-#ifdef VERSION_EU
-    gDialogY += 16;
-#else
     create_dl_translation_matrix(MENU_MTX_PUSH, X_VAL3, 2 - (lineNum * Y_VAL3), 0);
 
     linePos[0] = 0;
-#endif
     xMatrix[0] = 1;
 }
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
-void adjust_pos_and_print_period_char(s8 *xMatrix, s16 *linePos) {
-    if (linePos[0] != 0) {
-        create_dl_translation_matrix(MENU_MTX_NOPUSH, xMatrix[0] * 10, 0, 0);
-    }
-
-    create_dl_translation_matrix(MENU_MTX_PUSH, -2.0f, -5.0f, 0);
-    render_generic_char(DIALOG_CHAR_PERIOD_OR_HANDAKUTEN);
-
-    gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
-
-    linePos[0]++;
-    xMatrix[0] = 1;
-}
-#endif
-
-#ifdef VERSION_EU
-void render_star_count_dialog_text(struct DialogEntry *dialog, s8 *linePos)
-#else
-void render_star_count_dialog_text(s8 *xMatrix, s16 *linePos)
-#endif
-{
+void render_star_count_dialog_text(s8 *xMatrix, s16 *linePos) {
     s8 tensDigit = gDialogVariable / 10;
     s8 onesDigit = gDialogVariable - (tensDigit * 10); // remainder
 
     if (tensDigit != 0) {
-#if defined(VERSION_JP) || defined(VERSION_SH)
-        create_dl_translation_matrix(MENU_MTX_NOPUSH, xMatrix[0] * 10, 0, 0);
-        render_generic_char(tensDigit);
-#elif defined(VERSION_EU)
-        render_generic_dialog_char_at_pos(dialog, gDialogX, gDialogY, tensDigit);
-        gDialogX += gDialogCharWidths[tensDigit];
-        linePos[0] = 1;
-#else
         if (xMatrix[0] != 1) {
             create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[DIALOG_CHAR_SPACE] * xMatrix[0]), 0, 0);
         }
@@ -843,45 +654,20 @@ void render_star_count_dialog_text(s8 *xMatrix, s16 *linePos)
         create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32) gDialogCharWidths[tensDigit], 0, 0);
         xMatrix[0] = 1;
         linePos[0]++;
-#endif
     }
-#ifndef VERSION_EU
-    else {
-#if defined(VERSION_JP) || defined(VERSION_SH)
-        xMatrix[0]++;
-#endif
-    }
-#endif
 
-#ifdef VERSION_EU
-    render_generic_dialog_char_at_pos(dialog, gDialogX, gDialogY, onesDigit);
-    gDialogX += gDialogCharWidths[onesDigit];
-    linePos[0] = 1;
-#else
-
-#if defined(VERSION_JP) || defined(VERSION_SH)
-    create_dl_translation_matrix(MENU_MTX_NOPUSH, xMatrix[0] * 10, 0, 0);
-    render_generic_char(onesDigit);
-#else
     if (xMatrix[0] != 1) {
         create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[DIALOG_CHAR_SPACE] * (xMatrix[0] - 1)), 0, 0);
     }
 
     render_generic_char(onesDigit);
     create_dl_translation_matrix(MENU_MTX_NOPUSH, (f32) gDialogCharWidths[onesDigit], 0, 0);
-#endif
 
     linePos[0]++;
     xMatrix[0] = 1;
-#endif
 }
 
-#if !defined(VERSION_JP) && !defined(VERSION_SH)
-#ifdef VERSION_EU
-void render_multi_text_string_lines(s8 multiTextId, s8 lineNum, s8 linesPerBox, UNUSED s16 linePos, s8 lowerBound, struct DialogEntry *dialog)
-#else
 void render_multi_text_string_lines(s8 multiTextId, s8 lineNum, s16 *linePos, s8 linesPerBox, s8 xMatrix, s8 lowerBound)
-#endif
 {
     s8 i;
     struct MultiTextEntry textLengths[2] = {
@@ -890,40 +676,16 @@ void render_multi_text_string_lines(s8 multiTextId, s8 lineNum, s16 *linePos, s8
     };
 
     if (lineNum >= lowerBound && lineNum <= (lowerBound + linesPerBox)) {
-#ifdef VERSION_US
         if (linePos[0] != 0 || (xMatrix != 1)) {
             create_dl_translation_matrix(MENU_MTX_NOPUSH, (gDialogCharWidths[DIALOG_CHAR_SPACE] * (xMatrix - 1)), 0, 0);
         }
-#endif
         for (i = 0; i < textLengths[multiTextId].length; i++) {
-#ifdef VERSION_EU
-            render_generic_dialog_char_at_pos(dialog, gDialogX, gDialogY, textLengths[multiTextId].str[i]);
-            gDialogX += gDialogCharWidths[textLengths[multiTextId].str[i]];
-#else
             render_generic_char(textLengths[multiTextId].str[i]);
             create_dl_translation_matrix(MENU_MTX_NOPUSH, (gDialogCharWidths[textLengths[multiTextId].str[i]]), 0, 0);
-#endif
         }
     }
-#ifdef VERSION_US
     linePos += textLengths[multiTextId].length;
-#endif
 }
-#endif
-
-#ifdef VERSION_EU
-void render_dialog_lowercase_diacritic(struct DialogEntry *dialog, u8 chr, u8 diacritic) {
-    render_generic_dialog_char_at_pos(dialog, gDialogX, gDialogY, chr);
-    render_generic_dialog_char_at_pos(dialog, gDialogX, gDialogY, diacritic + 0xE7);
-    gDialogX += gDialogCharWidths[chr];
-}
-
-void render_dialog_uppercase_diacritic(struct DialogEntry *dialog, u8 chr, u8 diacritic) {
-    render_generic_dialog_char_at_pos(dialog, gDialogX, gDialogY, chr);
-    render_generic_dialog_char_at_pos(dialog, gDialogX, gDialogY - 4, diacritic + 0xE3);
-    gDialogX += gDialogCharWidths[chr];
-}
-#endif
 
 u32 ensure_nonnegative(s16 value) {
     if (value < 0) {
@@ -933,16 +695,8 @@ u32 ensure_nonnegative(s16 value) {
     return value;
 }
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
-void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog)
-#else
-void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 lowerBound)
-#endif
-{
+void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 lowerBound) {
     UNUSED s32 pad[2];
-#ifdef VERSION_EU
-    s16 startY = 14;
-#endif
 
     u8 strChar;
 
@@ -958,9 +712,7 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
     s8 linesPerBox = dialog->linesPerBox;
 
     s16 strIdx;
-#ifndef VERSION_EU
     s16 linePos = 0;
-#endif
 
     if (gDialogBoxState == DIALOG_STATE_HORIZONTAL) {
         // If scrolling, consider the number of lines for both
@@ -972,22 +724,11 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     strIdx = gDialogTextPos;
-#ifdef VERSION_EU
-    gDialogX = 0;
-    gDialogY = startY;
-#endif
 
-    if (gDialogBoxState == DIALOG_STATE_HORIZONTAL) {
-#ifdef VERSION_EU
-        gDialogY -= gDialogScrollOffsetY;
-#else
+    if (gDialogBoxState == DIALOG_STATE_HORIZONTAL)
         create_dl_translation_matrix(MENU_MTX_NOPUSH, 0, (f32) gDialogScrollOffsetY, 0);
-#endif
-    }
 
-#ifndef VERSION_EU
     create_dl_translation_matrix(MENU_MTX_PUSH, X_VAL3, 2 - lineNum * Y_VAL3, 0);
-#endif
 
     while (pageState == DIALOG_PAGE_STATE_NONE) {
         change_and_flash_dialog_text_color_lines(colorMode, lineNum);
@@ -996,147 +737,39 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
         switch (strChar) {
             case DIALOG_CHAR_TERMINATOR:
                 pageState = DIALOG_PAGE_STATE_END;
-#ifndef VERSION_EU
                 gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
-#endif
                 break;
             case DIALOG_CHAR_NEWLINE:
                 lineNum++;
-#ifdef VERSION_EU
-                handle_dialog_scroll_page_state(lineNum, totalLines, &pageState, &xMatrix);
-                gDialogX = 0;
-#else
                 handle_dialog_scroll_page_state(lineNum, totalLines, &pageState, &xMatrix, &linePos);
-#endif
                 break;
-#ifdef VERSION_EU
-            case DIALOG_CHAR_LOWER_A_GRAVE:
-            case DIALOG_CHAR_LOWER_A_CIRCUMFLEX:
-            case DIALOG_CHAR_LOWER_A_UMLAUT:
-                render_dialog_lowercase_diacritic(dialog, ASCII_TO_DIALOG('a'), strChar & 0xF);
-                break;
-            case DIALOG_CHAR_UPPER_A_GRAVE:
-            case DIALOG_CHAR_UPPER_A_CIRCUMFLEX:
-            case DIALOG_CHAR_UPPER_A_UMLAUT:
-                render_dialog_uppercase_diacritic(dialog, ASCII_TO_DIALOG('A'), strChar & 0xF);
-                break;
-            case DIALOG_CHAR_LOWER_E_GRAVE:
-            case DIALOG_CHAR_LOWER_E_CIRCUMFLEX:
-            case DIALOG_CHAR_LOWER_E_UMLAUT:
-            case DIALOG_CHAR_LOWER_E_ACUTE:
-                render_dialog_lowercase_diacritic(dialog, ASCII_TO_DIALOG('e'), strChar & 0xF);
-                break;
-            case DIALOG_CHAR_UPPER_E_GRAVE:
-            case DIALOG_CHAR_UPPER_E_CIRCUMFLEX:
-            case DIALOG_CHAR_UPPER_E_UMLAUT:
-            case DIALOG_CHAR_UPPER_E_ACUTE:
-                render_dialog_uppercase_diacritic(dialog, ASCII_TO_DIALOG('E'), strChar & 0xF);
-                break;
-            case DIALOG_CHAR_LOWER_U_GRAVE:
-            case DIALOG_CHAR_LOWER_U_CIRCUMFLEX:
-            case DIALOG_CHAR_LOWER_U_UMLAUT:
-                render_dialog_lowercase_diacritic(dialog, ASCII_TO_DIALOG('u'), strChar & 0xF);
-                break;
-            case DIALOG_CHAR_UPPER_U_GRAVE:
-            case DIALOG_CHAR_UPPER_U_CIRCUMFLEX:
-            case DIALOG_CHAR_UPPER_U_UMLAUT:
-                render_dialog_uppercase_diacritic(dialog, ASCII_TO_DIALOG('U'), strChar & 0xF);
-                break;
-            case DIALOG_CHAR_LOWER_O_CIRCUMFLEX:
-            case DIALOG_CHAR_LOWER_O_UMLAUT:
-                render_dialog_lowercase_diacritic(dialog, ASCII_TO_DIALOG('o'), strChar & 0xF);
-                break;
-            case DIALOG_CHAR_UPPER_O_CIRCUMFLEX:
-            case DIALOG_CHAR_UPPER_O_UMLAUT:
-                render_dialog_uppercase_diacritic(dialog, ASCII_TO_DIALOG('O'), strChar & 0xF);
-                break;
-            case DIALOG_CHAR_LOWER_I_CIRCUMFLEX:
-            case DIALOG_CHAR_LOWER_I_UMLAUT:
-                render_dialog_lowercase_diacritic(dialog, DIALOG_CHAR_I_NO_DIA, strChar & 0xF);
-                break;
-#else
             case DIALOG_CHAR_DAKUTEN:
                 mark = DIALOG_MARK_DAKUTEN;
                 break;
             case DIALOG_CHAR_PERIOD_OR_HANDAKUTEN:
                 mark = DIALOG_MARK_HANDAKUTEN;
                 break;
-#endif
             case DIALOG_CHAR_SPACE:
-#ifdef VERSION_EU
-                gDialogX += gDialogCharWidths[DIALOG_CHAR_SPACE];
-#else
-#if defined(VERSION_JP) || defined(VERSION_SH)
-                if (linePos != 0) {
-#endif
-                    xMatrix++;
-#if defined(VERSION_JP) || defined(VERSION_SH)
-                }
-#endif
+                xMatrix++;
                 linePos++;
 
-#endif
                 break;
-#if defined(VERSION_JP) || defined(VERSION_SH)
-            case DIALOG_CHAR_PERIOD:
-                adjust_pos_and_print_period_char(&xMatrix, &linePos);
-                break;
-#else
             case DIALOG_CHAR_SLASH:
-#ifdef VERSION_EU
-                gDialogX += gDialogCharWidths[DIALOG_CHAR_SPACE] * 2;
-#else
                 xMatrix += 2;
                 linePos += 2;
-#endif
                 break;
             case DIALOG_CHAR_MULTI_THE:
-#ifdef VERSION_EU
-                render_multi_text_string_lines(STRING_THE, lineNum, linesPerBox, xMatrix, lowerBound, dialog);
-#else
                 render_multi_text_string_lines(STRING_THE, lineNum, &linePos, linesPerBox, xMatrix, lowerBound);
-#endif
                 xMatrix = 1;
                 break;
             case DIALOG_CHAR_MULTI_YOU:
-#ifdef VERSION_EU
-                render_multi_text_string_lines(STRING_YOU, lineNum, linesPerBox, xMatrix, lowerBound, dialog);
-#else
                 render_multi_text_string_lines(STRING_YOU, lineNum, &linePos, linesPerBox, xMatrix, lowerBound);
-#endif
                 xMatrix = 1;
                 break;
-#endif
             case DIALOG_CHAR_STAR_COUNT:
-#ifdef VERSION_EU
-                render_star_count_dialog_text(dialog, &xMatrix);
-#else
                 render_star_count_dialog_text(&xMatrix, &linePos);
-#endif
                 break;
-#ifdef VERSION_EU
-            case DIALOG_CHAR_DOUBLE_LOW_QUOTE:
-                render_generic_dialog_char_at_pos(dialog, gDialogX, gDialogY + 8, 0xF6);
-                gDialogX += gDialogCharWidths[0xF6];
-                break;
-#endif
             default: // any other character
-#if defined(VERSION_JP) || defined(VERSION_SH)
-                if (linePos != 0) {
-                    create_dl_translation_matrix(MENU_MTX_NOPUSH, xMatrix * 10, 0, 0);
-                }
-
-                render_generic_char(strChar);
-                xMatrix = 1;
-                linePos++;
-
-                if (mark != 0) {
-                    create_dl_translation_matrix(MENU_MTX_PUSH, 5.0f, 7.0f, 0);
-                    render_generic_char(mark + 0xEF);
-                    gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
-                    mark = 0;
-                }
-#elif defined(VERSION_US)
                 if (lineNum >= lowerBound && lineNum <= lowerBound + linesPerBox) {
                     if (linePos || xMatrix != 1) {
                         create_dl_translation_matrix(
@@ -1148,44 +781,10 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
                     xMatrix = 1;
                     linePos++;
                 }
-#else // VERSION_EU
-                if (lineNum >= lowerBound && lineNum <= lowerBound + linesPerBox) {
-                    render_generic_dialog_char_at_pos(dialog, gDialogX, gDialogY, strChar);
-                }
-                gDialogX += gDialogCharWidths[strChar];
-#endif
         }
-
-#if defined(VERSION_JP) || defined(VERSION_SH)
-        if (linePos == 12) {
-            if (str[strIdx + 1] == DIALOG_CHAR_PERIOD) {
-                adjust_pos_and_print_period_char(&xMatrix, &linePos);
-                strIdx++;
-            }
-
-            if (str[strIdx + 1] == DIALOG_CHAR_COMMA) {
-                create_dl_translation_matrix(MENU_MTX_NOPUSH, xMatrix * 10, 0, 0);
-                render_generic_char(DIALOG_CHAR_COMMA);
-                strIdx++;
-            }
-
-            if (str[strIdx + 1] == DIALOG_CHAR_NEWLINE) {
-                strIdx++;
-            }
-
-            if (str[strIdx + 1] == DIALOG_CHAR_TERMINATOR) {
-                pageState = DIALOG_PAGE_STATE_END;
-                gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
-                break; // exit loop
-            } else {
-                lineNum++;
-                handle_dialog_scroll_page_state(lineNum, totalLines, &pageState, &xMatrix, &linePos);
-            }
-        }
-#endif
-
         strIdx++;
     }
+
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 
     if (gDialogBoxState == DIALOG_STATE_VERTICAL) {
@@ -1199,17 +798,10 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
     gLastDialogLineNum = lineNum;
 }
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
-#define X_VAL4_1 50
-#define X_VAL4_2 25
-#define Y_VAL4_1 1
-#define Y_VAL4_2 20
-#else
 #define X_VAL4_1 56
 #define X_VAL4_2 47
 #define Y_VAL4_1 2
 #define Y_VAL4_2 16
-#endif
 
 void render_dialog_triangle_choice(void) {
     if (gDialogBoxState == DIALOG_STATE_VERTICAL) {
@@ -1309,20 +901,10 @@ s16 gCutsceneMsgTimer = 0;
 s8 gDialogCameraAngleIndex = CAM_SELECTION_MARIO;
 s8 gDialogCourseActNum = 1;
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
-#define DIAG_VAL1 20
-#define DIAG_VAL3 130
-#define DIAG_VAL4 4
-#else
 #define DIAG_VAL1 16
 #define DIAG_VAL3 132 // US & EU
 #define DIAG_VAL4 5
-#endif
-#ifdef VERSION_EU
-#define DIAG_VAL2 238
-#else
 #define DIAG_VAL2 240 // JP & US
-#endif
 
 void render_dialog_entries(void) {
 
@@ -1335,11 +917,6 @@ void render_dialog_entries(void) {
         gDialogID = -1;
         return;
     }
-
-#ifdef VERSION_EU
-    gDialogX = 0;
-    gDialogY = 0;
-#endif
 
     switch (gDialogBoxState) {
         case DIALOG_STATE_OPENING:
@@ -1360,9 +937,7 @@ void render_dialog_entries(void) {
                 gDialogBoxState = DIALOG_STATE_VERTICAL;
                 gDialogLineNum = 1;
             }
-#if !defined(VERSION_JP) && !defined(VERSION_SH)
             lowerBound = 1;
-#endif
             break;
         case DIALOG_STATE_VERTICAL:
             gDialogBoxOpenTimer = 0.0f;
@@ -1377,9 +952,7 @@ void render_dialog_entries(void) {
                     play_sound(SOUND_MENU_MESSAGE_NEXT_PAGE, gGlobalSoundSource);
                 }
             }
-#if !defined(VERSION_JP) && !defined(VERSION_SH)
             lowerBound = 1;
-#endif
             break;
         case DIALOG_STATE_HORIZONTAL:
             gDialogScrollOffsetY += dialog->linesPerBox * 2;
@@ -1389,9 +962,7 @@ void render_dialog_entries(void) {
                 gDialogBoxState = DIALOG_STATE_VERTICAL;
                 gDialogScrollOffsetY = 0;
             }
-#if !defined(VERSION_JP) && !defined(VERSION_SH)
             lowerBound = (gDialogScrollOffsetY / 16) + 1;
-#endif
             break;
         case DIALOG_STATE_CLOSING:
             if (gDialogBoxOpenTimer == 20.0f) {
@@ -1416,40 +987,23 @@ void render_dialog_entries(void) {
                 gLastDialogPageStrPos = 0;
                 gDialogResponse = 0;
             }
-#if !defined(VERSION_JP) && !defined(VERSION_SH)
             lowerBound = 1;
-#endif
             break;
     }
 
     render_dialog_box_type(dialog, dialog->linesPerBox);
 
-    gDPSetScissor(gDisplayListHead++, G_SC_NON_INTERLACE, 0, ensure_nonnegative(DIAG_VAL2 - dialog->width),
-#ifdef VERSION_EU
-                  SCREEN_WIDTH,
-                  ensure_nonnegative((240 - dialog->width) + ((dialog->linesPerBox * 80) / DIAG_VAL4) / gDialogBoxScale));
-#else
-                  SCREEN_WIDTH,
-                  ensure_nonnegative(240 + ((dialog->linesPerBox * 80) / DIAG_VAL4) - dialog->width));
-#endif
-#if defined(VERSION_JP) || defined(VERSION_SH)
-    handle_dialog_text_and_pages(0, dialog);
-#else
+    gDPSetScissor(
+        gDisplayListHead++, G_SC_NON_INTERLACE, 0, ensure_nonnegative(DIAG_VAL2 - dialog->width),
+        SCREEN_WIDTH,
+        ensure_nonnegative(240 + ((dialog->linesPerBox * 80) / DIAG_VAL4) - dialog->width)
+    );
     handle_dialog_text_and_pages(0, dialog, lowerBound);
-#endif
 
     if (gLastDialogPageStrPos == -1 && gLastDialogResponse == 1) {
         render_dialog_triangle_choice();
     }
-    #ifdef VERSION_EU
-    #undef BORDER_HEIGHT
-    #define BORDER_HEIGHT 8
-    #endif
     gDPSetScissor(gDisplayListHead++, G_SC_NON_INTERLACE, 2, 2, SCREEN_WIDTH - BORDER_HEIGHT/2, SCREEN_HEIGHT - BORDER_HEIGHT/2);
-    #ifdef VERSION_EU
-    #undef BORDER_HEIGHT
-    #define BORDER_HEIGHT 1
-    #endif
     if (gLastDialogPageStrPos != -1 && gDialogBoxState == DIALOG_STATE_VERTICAL) {
         render_dialog_string_color(dialog->linesPerBox);
     }
@@ -1562,31 +1116,9 @@ void do_cutscene_handler(void) {
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, gCutsceneMsgFade);
 
-#ifdef VERSION_EU
-    switch (eu_get_language()) {
-        case LANGUAGE_ENGLISH:
-            x = get_str_x_pos_from_center(gCutsceneMsgXOffset, gEndCutsceneStringsEn[gCutsceneMsgIndex], 10.0f);
-            print_generic_string(x, 240 - gCutsceneMsgYOffset, gEndCutsceneStringsEn[gCutsceneMsgIndex]);
-            break;
-        case LANGUAGE_FRENCH:
-            x = get_str_x_pos_from_center(gCutsceneMsgXOffset, gEndCutsceneStringsFr[gCutsceneMsgIndex], 10.0f);
-            print_generic_string(x, 240 - gCutsceneMsgYOffset, gEndCutsceneStringsFr[gCutsceneMsgIndex]);
-            break;
-        case LANGUAGE_GERMAN:
-            x = get_str_x_pos_from_center(gCutsceneMsgXOffset, gEndCutsceneStringsDe[gCutsceneMsgIndex], 10.0f);
-            print_generic_string(x, 240 - gCutsceneMsgYOffset, gEndCutsceneStringsDe[gCutsceneMsgIndex]);
-            break;
-    }
-#else
-#if defined(VERSION_SH)
-    // get the x coordinate of where the cutscene string starts.
-    x = get_str_x_pos_from_center_scale(gCutsceneMsgXOffset, gEndCutsceneStringsEn[gCutsceneMsgIndex], 10.0f);
-#else
     // get the x coordinate of where the cutscene string starts.
     x = get_str_x_pos_from_center(gCutsceneMsgXOffset, gEndCutsceneStringsEn[gCutsceneMsgIndex], 10.0f);
-#endif
     print_generic_string(x, 240 - gCutsceneMsgYOffset, gEndCutsceneStringsEn[gCutsceneMsgIndex]);
-#endif
 
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 
@@ -1618,19 +1150,9 @@ void do_cutscene_handler(void) {
     gCutsceneMsgTimer++;
 }
 
-#if defined(VERSION_JP) || defined(VERSION_SH)
-#define PEACH_MESSAGE_TIMER 170
-#else
 #define PEACH_MESSAGE_TIMER 250
-#endif
-
-#if defined(VERSION_JP) || defined(VERSION_SH)
-#define STR_X 53
-#define STR_Y 136
-#else
 #define STR_X 38
 #define STR_Y 142
-#endif
 
 // "Dear Mario" message handler
 void print_peach_letter_message(void) {
@@ -1771,20 +1293,7 @@ void render_pause_red_coins(void) {
     }
 }
 
-#ifdef VERSION_EU
-u8 gTextCourseArr[][7] = {
-    { TEXT_COURSE },
-    { TEXT_COURSE_FR },
-    { TEXT_COURSE_DE }
-};
-#endif
-
-#if defined(VERSION_JP) || defined(VERSION_SH)
-#define CRS_NUM_X1 93
-#else
 #define CRS_NUM_X1 100
-#endif
-
 #define TXT_STAR_X 98
 #define ACT_NAME_X 116
 #define LVL_NAME_X 117

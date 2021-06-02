@@ -3353,7 +3353,7 @@
         "TEXT_ZERO": "0",
         "TEXT_COIN": "$",
         "TEXT_STAR": "★",
-        "TEXT_COIN_X": "×",
+        "TEXT_COIN_X": "$×",
         "TEXT_STAR_X": "★×",
         "TEXT_VARIABLE_X": "×",
         "TEXT_UNFILLED_STAR": "☆",
