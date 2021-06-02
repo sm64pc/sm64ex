@@ -5,8 +5,9 @@
 #include "moon/utils/umath.h"
 #include <iostream>
 #include <vector>
-#include "moon/ui/interfaces/moon-screen.h"
 #include <algorithm>
+#include "moon/ui/interfaces/moon-screen.h"
+#include "moon/ui/animation/algorithms.h"
 
 extern "C" {
 #include "pc/cheats.h"
@@ -116,13 +117,10 @@ namespace MoonInternal{
                         int aY = GetScreenHeight() - aEntry->y;
 
                         MoonDrawRectangle(aX, aY, aEntry->width, aEntry->height, {0, 0, 0, 150}, false);
-                        if(!shouldClose){
-                            if(aEntry->width >= 32)
-                                MoonDrawTexture(GFX_DIMENSIONS_FROM_LEFT_EDGE(aX), aY, 31, 31, sys_strdup(aEntry->achievement->icon.c_str()));
-                            if(aEntry->width >= achievementWidth * 0.9){
-                                MoonDrawText(aX + 32 + 5, aY + 2,  aEntry->achievement->title,       0.8, {255,255,255,255}, true, false);
-                                MoonDrawText(aX + 32 + 5, aY + 16, aEntry->achievement->description, 0.8, {255,255,255,255}, true, false);
-                            }
+                        MoonDrawTexture(GFX_DIMENSIONS_FROM_LEFT_EDGE(aX), aY, std::min(31, aEntry->width - 1), 31, sys_strdup(aEntry->achievement->icon.c_str()));
+                        if(!shouldClose && aEntry->width >= achievementWidth * 0.9){
+                            MoonDrawText(aX + 32 + 5, aY + 2,  aEntry->achievement->title,       0.8, {255,255,255,255}, true, false);
+                            MoonDrawText(aX + 32 + 5, aY + 16, aEntry->achievement->description, 0.8, {255,255,255,255}, true, false);
                         }
 
                     #ifndef GAME_DEBUG
@@ -131,13 +129,17 @@ namespace MoonInternal{
                         bool shouldUpdate = !gWarpTransition.isActive;
                     #endif
                         if(shouldUpdate){
+                            int expectedY = aEntry->height + 45;
                             if (aEntry->launchTime == 0)
                                 play_sound(soundID, gGlobalSoundSource);
 
-                            aEntry->width = MathUtil::Lerp(aEntry->width, !shouldClose ? achievementWidth : 0, !shouldClose ? 0.2f : 0.35f);
-                            aEntry->dead = shouldClose && aEntry->width <= 0;
+                            aEntry->dead = aEntry->launchTime >= aEntry->achievement->duration + 35 && floor(aEntry->width) <= 0;
+                            float dT = (aEntry->launchTime + 1.0f) / ((float)aEntry->achievement->duration);
+                            if(aEntry->width <= 32 && !shouldClose)
+                                aEntry->y = MathUtil::Lerp(aEntry->y, !shouldClose ? expectedY : 0, !shouldClose ? 0.17f : 0.28f);
 
-                            aEntry->y = MathUtil::Lerp(aEntry->y, !shouldClose ? aEntry->height + 20 : 0, !shouldClose ? 0.4f : 0.35f);
+                            if(ceil(aEntry->y) >= ceil(expectedY) || shouldClose)
+                                aEntry->width = MathUtil::Lerp(aEntry->width, !shouldClose ? achievementWidth : 0, !shouldClose ? 0.2f : 0.39f);
 
                             aEntry->launchTime++;
                         }

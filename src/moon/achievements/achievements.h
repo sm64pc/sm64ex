@@ -33,7 +33,7 @@ struct AchievementEntry {
     size_t entryID;
 
     int state = 0;
-    int width = 0;
+    int width = 32;
     int height = 32;
     float x = 0;
     float y = 0;

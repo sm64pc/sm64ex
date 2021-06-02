@@ -471,12 +471,7 @@ const Gfx dl_hud_img_begin[] = {
     gsDPSetTexturePersp(G_TP_NONE),
     gsDPSetAlphaCompare(G_AC_THRESHOLD),
     gsDPSetBlendColor(255, 255, 255, 255),
-#ifdef VERSION_EU
-    gsDPSetRenderMode(G_RM_NOOP, G_RM_NOOP2),
-    gsDPSetTextureFilter(G_TF_POINT),
-#else
     gsDPSetRenderMode(G_RM_AA_XLU_SURF, G_RM_AA_XLU_SURF2),
-#endif
     gsSPEndDisplayList(),
 };
 
@@ -496,13 +491,8 @@ const Gfx dl_hud_img_end[] = {
     gsDPSetTexturePersp(G_TP_PERSP),
     gsDPSetRenderMode(G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2),
     gsDPSetAlphaCompare(G_AC_NONE),
-#ifdef VERSION_EU
-    gsDPSetTextureFilter(G_TF_BILERP),
-    gsDPSetCycleType(G_CYC_1CYCLE),
-#else
     gsDPSetCycleType(G_CYC_1CYCLE),
     gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_OFF),
-#endif
     gsSPEndDisplayList(),
 };
 
@@ -558,58 +548,14 @@ const Gfx dl_draw_text_bg_box[] = {
     gsSPEndDisplayList(),
 };
 
-#ifndef VERSION_EU
 // 0x0200EE28 - 0x0200EE68
 static const Vtx vertex_ia8_char[] = {
-#ifndef VERSION_JP
     {{{     0,      0,      0}, 0, {     0,    256}, {0xff, 0xff, 0xff, 0xff}}},
     {{{     8,      0,      0}, 0, {     0,      0}, {0xff, 0xff, 0xff, 0xff}}},
     {{{     8,     16,      0}, 0, {   480,      0}, {0xff, 0xff, 0xff, 0xff}}},
     {{{     0,     16,      0}, 0, {   480,    256}, {0xff, 0xff, 0xff, 0xff}}},
-#else
-    {{{     0,      0,      0}, 0, {     0,   1024}, {0xff, 0xff, 0xff, 0xff}}},
-    {{{     8,      0,      0}, 0, {   512,   1024}, {0xff, 0xff, 0xff, 0xff}}},
-    {{{     8,     16,      0}, 0, {   512,      0}, {0xff, 0xff, 0xff, 0xff}}},
-    {{{     0,     16,      0}, 0, {     0,      0}, {0xff, 0xff, 0xff, 0xff}}},
-#endif
-};
-// !EU
-#endif
-
-#ifdef VERSION_EU
-// 0x020073B0
-const Gfx dl_ia_text_begin[] = {
-    gsDPPipeSync(),
-    gsDPSetTexturePersp(G_TP_NONE),
-    gsDPSetCombineMode(G_CC_FADEA, G_CC_FADEA),
-    gsDPSetEnvColor(255, 255, 255, 255),
-    gsDPSetRenderMode(G_RM_XLU_SURF, G_RM_XLU_SURF2),
-    gsDPSetTextureFilter(G_TF_POINT),
-    gsSPEndDisplayList(),
 };
 
-// 0x020073E8 - 0x02007418
-const Gfx dl_ia_text_tex_settings[] = {
-    gsDPSetTile(G_IM_FMT_IA, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, G_TX_WRAP | G_TX_MIRROR, 3, G_TX_NOLOD, G_TX_WRAP | G_TX_MIRROR, 4, G_TX_NOLOD),
-    gsDPLoadSync(),
-    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, ((16 * 8 + G_IM_SIZ_4b_INCR) >> G_IM_SIZ_4b_SHIFT) - 1, CALC_DXT(16, G_IM_SIZ_4b_BYTES)),
-    gsDPSetTile(G_IM_FMT_IA, G_IM_SIZ_4b, 1, 0, G_TX_RENDERTILE, 0, G_TX_WRAP | G_TX_MIRROR, 3, G_TX_NOLOD, G_TX_WRAP | G_TX_MIRROR, 4, G_TX_NOLOD),
-    gsDPSetTileSize(0, 0, 0, (16 - 1) << G_TEXTURE_IMAGE_FRAC, (8 - 1) << G_TEXTURE_IMAGE_FRAC),
-    gsSPEndDisplayList(),
-};
-
-// 0x02007418 - 0x02007450
-const Gfx dl_ia_text_end[] = {
-    gsDPPipeSync(),
-    gsDPSetTexturePersp(G_TP_PERSP),
-    gsDPSetRenderMode(G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2),
-    gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
-    gsDPSetEnvColor(255, 255, 255, 255),
-    gsDPSetTextureFilter(G_TF_BILERP),
-    gsSPEndDisplayList(),
-};
-
-#elif defined(VERSION_US)
 const Gfx dl_ia_text_begin[] = {
     gsDPPipeSync(),
     gsSPClearGeometryMode(G_LIGHTING),
@@ -632,33 +578,6 @@ const Gfx dl_ia_text_tex_settings[] = {
     gsSPEndDisplayList(),
 };
 
-#else
-// 0x0200EE68 - 0x0200EEA8
-const Gfx dl_ia_text_begin[] = {
-    gsDPPipeSync(),
-    gsSPClearGeometryMode(G_LIGHTING),
-    gsDPSetCombineMode(G_CC_FADEA, G_CC_FADEA),
-    gsDPSetEnvColor(255, 255, 255, 255),
-    gsDPSetRenderMode(G_RM_XLU_SURF, G_RM_XLU_SURF2),
-    gsDPSetTextureFilter(G_TF_POINT),
-    gsSPTexture(0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON),
-    gsSPEndDisplayList(),
-};
-
-// 0x0200EEA8 - 0x0200EEF0
-const Gfx dl_ia_text_tex_settings[] = {
-    gsDPSetTile(G_IM_FMT_IA, G_IM_SIZ_8b, 0, 0, G_TX_LOADTILE, 0, G_TX_CLAMP, 4, G_TX_NOLOD, G_TX_CLAMP, 3, G_TX_NOLOD),
-    gsDPLoadSync(),
-    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 8 * 16 - 1, CALC_DXT(8, G_IM_SIZ_8b_BYTES)),
-    gsDPSetTile(G_IM_FMT_IA, G_IM_SIZ_8b, 1, 0, G_TX_RENDERTILE, 0, G_TX_CLAMP, 4, G_TX_NOLOD, G_TX_CLAMP, 3, G_TX_NOLOD),
-    gsDPSetTileSize(0, 0, 0, (8 - 1) << G_TEXTURE_IMAGE_FRAC, (16 - 1) << G_TEXTURE_IMAGE_FRAC),
-    gsSPVertex(vertex_ia8_char, 4, 0),
-    gsSP2Triangles( 0,  1,  2, 0x0, 0,  2,  3, 0x0),
-    gsSPEndDisplayList(),
-};
-#endif
-
-#ifndef VERSION_EU
 // 0x0200EEF0 - 0x0200EF30
 const Gfx dl_ia_text_end[] = {
     gsDPPipeSync(),
@@ -670,7 +589,6 @@ const Gfx dl_ia_text_end[] = {
     gsDPSetTextureFilter(G_TF_BILERP),
     gsSPEndDisplayList(),
 };
-#endif
 
 // 0x0200EF30 - 0x0200EF60
 static const Vtx vertex_triangle[] = {
