@@ -15,6 +15,7 @@ extern "C" {
 #include "game/level_update.h"
 #include "audio/external.h"
 #include "audio_defines.h"
+#include "game/area.h"
 }
 
 std::map<std::string, Achievement*> registeredAchievements;
@@ -132,12 +133,14 @@ namespace MoonInternal{
                             }
                         }
 
-                        aEntry->width = MathUtil::Lerp(aEntry->width, !shouldClose ? achievementWidth : 0, !shouldClose ? 0.2f : 0.35f);
-                        aEntry->dead = shouldClose && aEntry->width <= 0;
+                        if(gMenuMode == -1 && !gWarpTransition.isActive){
+                            aEntry->width = MathUtil::Lerp(aEntry->width, !shouldClose ? achievementWidth : 0, !shouldClose ? 0.2f : 0.35f);
+                            aEntry->dead = shouldClose && aEntry->width <= 0;
 
-                        aEntry->y = MathUtil::Lerp(aEntry->y, !shouldClose ? aEntry->height + 20 : 0, !shouldClose ? 0.4f : 0.35f);
+                            aEntry->y = MathUtil::Lerp(aEntry->y, !shouldClose ? aEntry->height + 20 : 0, !shouldClose ? 0.4f : 0.35f);
 
-                        aEntry->launchTime++;
+                            aEntry->launchTime++;
+                        }
                         return;
                     }
                 }

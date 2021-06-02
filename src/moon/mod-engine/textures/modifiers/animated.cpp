@@ -7,6 +7,7 @@
 
 extern "C" {
 #include "moon/utils/moon-gfx.h"
+#include "game/ingame_menu.h"
 }
 
 using json = nlohmann::json;
@@ -22,7 +23,7 @@ void AnimatedModifier::onInit(){
             AnimatedEntry* entry = textures[texName];
             Frame *frame = entry->frames[entry->lastFrame];
 
-            if(moon_get_milliseconds() >= entry->lastTime + frame->delay){
+            if(moon_get_milliseconds() >= entry->lastTime + frame->delay && gMenuMode == -1){
                 int maxFrames = entry->frames.size() - 1;
                 bool reachMax = (entry->lastFrame < maxFrames);
                 if(entry->bounce){
