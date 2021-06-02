@@ -17,21 +17,9 @@ extern "C" {
 #include "audio_defines.h"
 }
 
-struct AchievementEntry {
-    long long launchTime;
-    bool dead = false;
-    Achievement* achievement;
-    size_t entryID;
-
-    int state = 0;
-    int width = 0;
-    int height = 32;
-    float x = 0;
-    float y = 0;
-};
-
 std::map<std::string, Achievement*> registeredAchievements;
 std::vector<AchievementEntry*> entries;
+bool cheatsGotEnabled = false;
 
 namespace AchievementList {
     /* Star achievements */
@@ -100,8 +88,6 @@ namespace MoonAchievements {
     }
 }
 
-bool cheatsGotEnabled = false;
-
 namespace MoonInternal{
 
     void setupAchievementEngine(std::string status){
@@ -123,12 +109,8 @@ namespace MoonInternal{
                 for (auto &aEntry : entries) {
                     if( !aEntry->dead ) {
                         int soundID = SOUND_GENERAL_COIN;
-                        if (aEntry->launchTime == 0){
-                            // set_sound_moving_speed()
+                        if (aEntry->launchTime == 0)
                             play_sound(soundID, gGlobalSoundSource);
-                        }
-
-
 
                         bool shouldClose = aEntry->launchTime >= aEntry->achievement->duration;
 
@@ -176,6 +158,11 @@ namespace Moon {
     void showAchievementById(std::string id){
         if(registeredAchievements.find(id) == registeredAchievements.end()) return;
         Moon::showAchievement(registeredAchievements[id]);
+    }
+
+    Achievement* getAchievementById(std::string id){
+        if(registeredAchievements.find(id) == registeredAchievements.end()) return NULL;
+        return registeredAchievements[id];
     }
 }
 

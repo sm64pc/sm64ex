@@ -12,6 +12,7 @@
 #include "thread6.h"
 #include "macros.h"
 #include "pc/ini.h"
+#include "moon/config/saves/saves.h"
 
 #define MENU_DATA_MAGIC 0x4849
 #define SAVE_FILE_MAGIC 0x4441
@@ -44,8 +45,6 @@ s8 gLevelToCourseNumTable[] = {
 
 STATIC_ASSERT(ARRAY_COUNT(gLevelToCourseNumTable) == LEVEL_COUNT - 1,
               "change this array if you are adding levels");
-
-#include "text_save.inc.h"
 
 // This was probably used to set progress to 100% for debugging, but
 // it was removed from the release ROM.
@@ -343,7 +342,7 @@ void save_file_do_save(s32 fileIndex) {
 
     if (gSaveFileModified) {
         // Write to text file
-        write_text_save(fileIndex);
+        writeSaveFile(fileIndex);
         gSaveFileModified = FALSE;
         gMainMenuDataModified = FALSE;
     }
@@ -382,7 +381,7 @@ void save_file_load_all(void) {
     bzero(&gSaveBuffer, sizeof(gSaveBuffer));
 
     for (file = 0; file < NUM_SAVE_FILES; file++) {
-        read_text_save(file);
+        readSaveFile(file);
     }
     gSaveFileModified = TRUE;
     gMainMenuDataModified = TRUE;

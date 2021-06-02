@@ -19,8 +19,12 @@ public:
     float getFloat(std::string key);
     bool getBool(std::string key);
     int getInt(std::string key);
-    template< typename T > T* getArray(std::string key) {
-        return this->nested(key).get<std::vector<T>>();
+    bool contains(std::string key);
+    template< typename T > std::vector<T> getArray(std::string key) {
+        nlohmann::json tmp = this->nested(key);
+        if(tmp.is_array())
+            return tmp.get<std::vector<T>>();
+        return std::vector<std::string>();
     };
 
     void setString(std::string key, std::string value);
@@ -34,6 +38,7 @@ public:
 
     void reload();
     void save();
+    bool isNewInstance = false;
 };
 
 #endif

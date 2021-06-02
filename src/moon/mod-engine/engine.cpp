@@ -12,6 +12,7 @@
 using json = nlohmann::json;
 using namespace std;
 #include "moon/config/mooncfg.h"
+#include "moon/config/saves/saves.h"
 
 #include <iostream>
 #include <string>
@@ -155,6 +156,7 @@ namespace MoonInternal {
         MoonInternal::setupTextureEngine(state);
         MoonInternal::setupAchievementEngine(state);
         MoonInternal::setupModelEngine(state);
+        MoonInternal::setupSaveEngine(state);
 
         if(state == "PreStartup"){
             MoonInternal::scanAddonsDirectory();

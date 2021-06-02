@@ -197,6 +197,7 @@ void main_func(char *argv[]) {
     fs_init(sys_ropaths, gamedir, userpath);
     configfile_load(configfile_name());
     moon_environment_save("MOON_CWD",   argv[0]);
+    moon_environment_save("MOON_UPATH", userpath);
     moon_environment_save("ASSETS_DIR", gamedir);
 
     moon_setup("PreStartup");

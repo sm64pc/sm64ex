@@ -1,3 +1,4 @@
+#include "text_save.h"
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
@@ -5,6 +6,8 @@
 #include "pc/ini.h"
 #include "pc/platform.h"
 #include "pc/fs/fs.h"
+#include "buffers/buffers.h"
+#include "game/save_file.h"
 
 #define FILENAME_FORMAT "%s/moon64_save_file_%d.sav"
 #define NUM_COURSES 15
@@ -71,140 +74,10 @@ static u32 int_to_bin(u32 n) {
     }
     return bin;
 }
-
-/**
- * Write SaveFile and MainMenuSaveData structs to a text-based savefile
- */
-static s32 write_text_save(s32 fileIndex) {
-    FILE* file;
-    struct SaveFile *savedata;
-    struct MainMenuSaveData *menudata;
-    char filename[SYS_MAX_PATH] = { 0 };
-    char value[64];
-    u32 i, bit, flags, coins, stars, starFlags, cannonFlag;
-
-    if (snprintf(filename, sizeof(filename), FILENAME_FORMAT, fs_writepath, fileIndex) < 0)
-        return -1;
-
-    file = fopen(filename, "wt");
-    if (file == NULL) {
-        printf("Savefile '%s' not found!\n", filename);
-        return -1;
-    } else
-        printf("Saving updated progress to '%s'\n", filename);
-
-    fprintf(file, "# Super Mario 64 save file\n");
-    fprintf(file, "# Comment starts with #\n");
-    fprintf(file, "# True = 1, False = 0\n");
-
-    get_timestamp(value);
-    fprintf(file, "# %s\n", value);
-
-    menudata = &gSaveBuffer.menuData[0];
-    fprintf(file, "\n[menu]\n");
-    fprintf(file, "coin_score_age = %d\n", menudata->coinScoreAges[fileIndex]);
-
-    if (menudata->soundMode == 0) {
-        fprintf(file, "sound_mode = %s\n", sound_modes[0]);  // stereo
-    }
-    else if (menudata->soundMode == 3) {
-        fprintf(file, "sound_mode = %s\n", sound_modes[1]);  // mono
-    }
-    else if (menudata->soundMode == 1) {
-        fprintf(file, "sound_mode = %s\n", sound_modes[2]);  // headset
-    }
-    else {
-        printf("Undefined sound mode!");
-        return -1;
-    }
-
-    fprintf(file, "\n[flags]\n");
-    for (i = 1; i < NUM_FLAGS; i++) {
-        if (strcmp(sav_flags[i], "")) {
-            flags = save_file_get_flags();
-            flags = (flags & (1 << i));     // Get 'star' flag bit
-            flags = (flags) ? 1 : 0;
-
-            fprintf(file, "%s = %d\n", sav_flags[i], flags);
-        }
-    }
-
-    fprintf(file, "\n[courses]\n");
-    for (i = 0; i < NUM_COURSES; i++) {
-        stars = save_file_get_star_flags(fileIndex, i);
-        coins = save_file_get_course_coin_score(fileIndex, i);
-        cannonFlag = save_file_get_cannon_flags(fileIndex, i);
-        starFlags = int_to_bin(stars);      // 63 -> 111111
-
-        fprintf(file, "%s = \"%d, %07d, %d\"\n", sav_courses[i], coins, starFlags,cannonFlag);
-    }
-
-    fprintf(file, "\n[bonus]\n");
-    for (i = 0; i < NUM_BONUS_COURSES; i++) {
-        char *format;
-
-        if (i == NUM_BONUS_COURSES-1) {
-            // Process Castle Grounds
-            stars = save_file_get_star_flags(fileIndex, -1);
-            format = "%05d";
-        } else if (i == 3) {
-            // Process Princess's Secret Slide
-            stars = save_file_get_star_flags(fileIndex, 18);
-            format = "%02d";
-        } else {
-            // Process bonus courses
-            stars = save_file_get_star_flags(fileIndex, i+15);
-            format = "%d";
-        }
-
-        starFlags = int_to_bin(stars);
-        if (sprintf(value, format, starFlags) < 0)
-            return -1;
-        fprintf(file, "%s = %s\n", sav_bonus_courses[i], value);
-    }
-
-    fprintf(file, "\n[cap]\n");
-    for (i = 0; i < NUM_CAP_ON; i++) {
-        flags = save_file_get_flags();
-        bit = (1 << (i+16));        // Determine current flag
-        flags = (flags & bit);      // Get 'cap' flag bit
-        flags = (flags) ? 1 : 0;
-        if (flags) {
-            fprintf(file, "type = %s\n", cap_on_types[i]);
-            break;
-        }
-    }
-
-    savedata = &gSaveBuffer.files[fileIndex][0];
-    switch(savedata->capLevel) {
-        case COURSE_SSL:
-            fprintf(file, "level = %s\n", "ssl");
-            break;
-        case COURSE_SL:
-            fprintf(file, "level = %s\n", "sl");
-            break;
-        case COURSE_TTM:
-            fprintf(file, "level = %s\n", "ttm");
-            break;
-        default:
-            break;
-    }
-    if (savedata->capLevel) {
-        fprintf(file, "area = %d\n", savedata->capArea);
-    }
-
-    // Backup is nessecary for saving recent progress after gameover
-    bcopy(&gSaveBuffer.files[fileIndex][0], &gSaveBuffer.files[fileIndex][1],
-          sizeof(gSaveBuffer.files[fileIndex][1]));
-
-    fclose(file);
-    return 1;
-}
-
 /**
  * Read gSaveBuffer data from a text-based savefile
  */
-static s32 read_text_save(s32 fileIndex) {
+s32 read_text_save(s32 fileIndex) {
     char filename[SYS_MAX_PATH] = { 0 };
     const char *value;
     ini_t *savedata;

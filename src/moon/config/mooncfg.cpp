@@ -41,6 +41,8 @@ string MoonCFG::formatNestedKey(string key){
 
 json MoonCFG::nested(string key){
     vector<string> dots = split(key, '.');
+    if(!this->vjson.is_object())
+        return this->vjson;
     json gjson = this->vjson.unflatten();
 
     if(dots.size() > 1){
@@ -82,6 +84,10 @@ int MoonCFG::getInt(string key){
     return 0;
 }
 
+bool MoonCFG::contains(string key){
+    return !this->nested(key).is_null();
+}
+
 void MoonCFG::setString(string key, string value){
     this->vjson[formatNestedKey(key)] = value;
 }
@@ -99,7 +105,10 @@ void MoonCFG::setInt(string key, int value){
 }
 
 void MoonCFG::reload(){
-    if(!fs::exists(this->path) || !fs::is_regular_file(this->path)) return;
+    if(!fs::exists(this->path) || !fs::is_regular_file(this->path)){
+        this->isNewInstance = true;
+        return;
+    }
     std::ifstream ifs(this->path);
     try{
         this->vjson = json::parse(ifs).flatten();
