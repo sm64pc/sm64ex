@@ -204,6 +204,17 @@ namespace MoonInternal {
         memcpy(&gSaveBuffer.files[fileIndex][1], &gSaveBuffer.files[fileIndex][0], sizeof(gSaveBuffer.files[fileIndex][1]));
     }
 
+    void eraseSaveFile( int fileIndex ){
+    #ifndef TARGET_SWITCH
+        string cwd = MoonInternal::getEnvironmentVar("MOON_UPATH");
+        string path = cwd.substr(0, cwd.find_last_of("/\\")) + "/moon64/Moon64-Save-"+to_string(fileIndex + 1)+".dat";
+    #else
+        string path = "sdmc:/moon64/Moon64-Save-"+to_string(fileIndex + 1)+".dat";
+    #endif
+        if(fs::exists(path))
+            fs::remove(path);
+    }
+
     void setupSaveEngine(string state){
         if(state == "PreInit"){
             // Scan old save format
@@ -250,5 +261,8 @@ extern "C"{
     }
     void readSaveFile(int saveIndex){
         MoonInternal::readSaveFile(saveIndex);
+    }
+    void eraseSaveFile(int fileIndex){
+        MoonInternal::eraseSaveFile(fileIndex);
     }
 }

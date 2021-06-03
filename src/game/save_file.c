@@ -356,7 +356,8 @@ void save_file_erase(s32 fileIndex) {
     bzero(&gSaveBuffer.files[fileIndex][0], sizeof(gSaveBuffer.files[fileIndex][0]));
 
     gSaveFileModified = TRUE;
-    save_file_do_save(fileIndex);
+    eraseSaveFile(fileIndex);
+
 }
 
 //! Needs to be s32 to match on -O2, despite no return value.

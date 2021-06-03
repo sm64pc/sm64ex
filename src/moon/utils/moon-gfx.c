@@ -48,15 +48,15 @@ void moon_draw_colored_text(f32 x, f32 y, const u8 *str, float scale, struct Col
     }
 }
 
-void moon_draw_text(f32 x, f32 y, const u8 *str, float scale) {
+void moon_draw_scaled_text(f32 x, f32 y, const u8 *str, float scaleX, float scaleY) {
     UNUSED s8 mark = DIALOG_MARK_NONE;
     s32 strPos = 0;
     u8 lineNum = 1;
-    y -= 16 * scale;
+    y -= 16 * scaleY;
 
     Mtx *_Matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
     if (!_Matrix) return;
-    guScale(_Matrix, scale, scale, 1.f);
+    guScale(_Matrix, scaleX, scaleY, 1.f);
     create_dl_translation_matrix(MENU_MTX_PUSH, x, y, 0.0f);
     gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(_Matrix), G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 
@@ -94,7 +94,7 @@ void moon_draw_text(f32 x, f32 y, const u8 *str, float scale) {
                 render_generic_char(str[strPos]);
                 if (mark != DIALOG_MARK_NONE) {
                     //create_dl_translation_matrix(MENU_MTX_PUSH, 5.0f, 5.0f, 0.0f);
-                    guScale(gDisplayListHead++, scale, scale, scale);
+                    guScale(gDisplayListHead++, scaleX, scaleY, 1.f);
                     render_generic_char(mark + 0xEF);
                     gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
                     mark = DIALOG_MARK_NONE;
@@ -107,6 +107,10 @@ void moon_draw_text(f32 x, f32 y, const u8 *str, float scale) {
 
     create_dl_scale_matrix(MENU_MTX_NOPUSH, 1.0f, 1.0f, 1.0f);
     gSPPopMatrix(gDisplayListHead++, G_MTX_MODELVIEW);
+}
+
+void moon_draw_text(f32 x, f32 y, const u8 *str, float scale) {
+    moon_draw_scaled_text(x, y, str, scale, scale);
 }
 
 Vtx *make_rect_verts(float w, float h) {

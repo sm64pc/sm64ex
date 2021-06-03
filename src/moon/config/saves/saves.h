@@ -10,5 +10,6 @@ namespace MoonInternal {
 #else
 void writeSaveFile(int saveIndex);
 void readSaveFile(int saveIndex);
+void eraseSaveFile(int fileIndex);
 #endif
 #endif

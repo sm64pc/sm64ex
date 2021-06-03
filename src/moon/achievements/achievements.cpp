@@ -130,7 +130,8 @@ namespace MoonInternal{
                     #endif
                         if(shouldUpdate){
                             int expectedY = aEntry->height + 45;
-                            if (aEntry->launchTime == 0)
+
+                            if (aEntry->launchTime == 1)
                                 play_sound(soundID, gGlobalSoundSource);
 
                             aEntry->dead = aEntry->launchTime >= aEntry->achievement->duration + 35 && floor(aEntry->width) <= 0;
@@ -139,7 +140,7 @@ namespace MoonInternal{
                                 aEntry->y = MathUtil::Lerp(aEntry->y, !shouldClose ? expectedY : 0, !shouldClose ? 0.17f : 0.28f);
 
                             if(ceil(aEntry->y) >= ceil(expectedY) || shouldClose)
-                                aEntry->width = MathUtil::Lerp(aEntry->width, !shouldClose ? achievementWidth : 0, !shouldClose ? 0.2f : 0.39f);
+                                aEntry->width = MathUtil::Lerp(aEntry->width, !shouldClose ? achievementWidth : 0, !shouldClose ? 0.2f : 0.45f);
 
                             aEntry->launchTime++;
                         }

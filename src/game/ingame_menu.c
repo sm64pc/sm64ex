@@ -294,7 +294,10 @@ void print_hud_lut_string(s8 hudLUT, s16 x, s16 y, const u8 *str) {
 
 
 void print_menu_generic_string(s16 x, s16 y, const u8 *str) {
-    moon_draw_text(x, SCREEN_HEIGHT - y, str, 0.8f);
+    float scale = 0.8f;
+    // gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
+    // moon_draw_text(x + 0.2 * scale, SCREEN_HEIGHT - y, str, scale);
+    moon_draw_scaled_text(x, SCREEN_HEIGHT - y, str, scale, scale - 0.1f);
 }
 
 void print_credits_string(s16 x, s16 y, const u8 *str) {

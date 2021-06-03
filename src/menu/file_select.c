@@ -1584,9 +1584,15 @@ void score_menu_display_message(s8 messageID) {
             gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_end);
             break;
         case SCORE_MSG_NOSAVE_DATA:
-            print_generic_string_fade(NOSAVE_DATA_X1, 190, get_key_string("TEXT_NO_SAVED_DATA_EXISTS"));
+            gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
+            gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+            u8* txt = get_key_string("TEXT_NO_SAVED_DATA_EXISTS");
+            float x = moon_get_text_width(txt, 1.0, FALSE) / 2;
+            moon_draw_text(SCREEN_WIDTH / 2 - x, 205, txt, 1.0);
+            gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
             break;
     }
+
 }
 
 #define RETURN_X     44
@@ -1625,17 +1631,26 @@ void print_score_menu_strings(void) {
     // Print menu names
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
-    print_generic_string(RETURN_X, 35, get_key_string("TEXT_RETURN"));
-    print_generic_string(COPYFILE_X1, 35, get_key_string("TEXT_COPY_FILE_BUTTON"));
-    print_generic_string(ERASEFILE_X1, 35, get_key_string("TEXT_ERASE_FILE_BUTTON"));
+
+    u8* txt = get_key_string("TEXT_RETURN");
+    float x = moon_get_text_width(txt, 1.0, FALSE) / 2;
+    moon_draw_text(RETURN_X + 18.5f - x, 52, txt, 1.0);
+
+    txt = get_key_string("TEXT_COPY_FILE_BUTTON");
+    x = moon_get_text_width(txt, 1.0, FALSE) / 2;
+    moon_draw_text(COPYFILE_X1 + 26 - x, 52, txt, 1.0);
+
+    txt = get_key_string("TEXT_ERASE_FILE_BUTTON");
+    x = moon_get_text_width(txt, 1.0, FALSE) / 2;
+    moon_draw_text(ERASEFILE_X1 + 26 - x, 52, txt, 1.0);
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 
     // Print file names
     gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
-    print_menu_generic_string(89, 62, get_key_string("TEXT_FILE_MARIO_A"));
-    print_menu_generic_string(211, 62, get_key_string("TEXT_FILE_MARIO_B"));
-    print_menu_generic_string(89, 105, get_key_string("TEXT_FILE_MARIO_C"));
+    print_menu_generic_string(89, 62,   get_key_string("TEXT_FILE_MARIO_A"));
+    print_menu_generic_string(211, 62,  get_key_string("TEXT_FILE_MARIO_B"));
+    print_menu_generic_string(89, 105,  get_key_string("TEXT_FILE_MARIO_C"));
     print_menu_generic_string(211, 105, get_key_string("TEXT_FILE_MARIO_D"));
     gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_end);
 }
@@ -1652,12 +1667,14 @@ void print_score_menu_strings(void) {
  */
 void copy_menu_display_message(s8 messageID) {
     u8* txt;
+    char* key = NULL;
     float x;
     switch (messageID) {
         case COPY_MSG_MAIN_TEXT:
             if (sAllFilesExist == TRUE) {
-                print_generic_string_fade(NOFILE_COPY_X, 190, get_key_string("TEXT_NO_FILE_TO_COPY_FROM"));
+                key = "TEXT_NO_FILE_TO_COPY_FROM";
             } else {
+                key = NULL;
                 gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_begin);
                 gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
                 txt = get_key_string("TEXT_COPY_FILE");
@@ -1667,18 +1684,28 @@ void copy_menu_display_message(s8 messageID) {
             }
             break;
         case COPY_MSG_COPY_WHERE:
-            print_generic_string_fade(COPYIT_WHERE_X, 190, get_key_string("TEXT_COPY_IT_TO_WHERE"));
+            key = "TEXT_COPY_IT_TO_WHERE";
             break;
         case COPY_MSG_NOSAVE_EXISTS:
-            print_generic_string_fade(NOSAVE_DATA_X2, 190, get_key_string("TEXT_NO_SAVED_DATA_EXISTS"));
+            key = "TEXT_NO_SAVED_DATA_EXISTS";
             break;
         case COPY_MSG_COPY_COMPLETE:
-            print_generic_string_fade(COPYCOMPLETE_X, 190, get_key_string("TEXT_COPYING_COMPLETED"));
+            key = "TEXT_COPYING_COMPLETED";
             break;
         case COPY_MSG_SAVE_EXISTS:
-            print_generic_string_fade(SAVE_EXISTS_X1, 190, get_key_string("TEXT_SAVED_DATA_EXISTS"));
+            key = "TEXT_SAVED_DATA_EXISTS";
             break;
     }
+
+    if(key == NULL) return;
+
+    gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
+    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+    txt = get_key_string(key);
+    x = moon_get_text_width(txt, 1.0, FALSE) / 2;
+    moon_draw_text(SCREEN_WIDTH / 2 - x, 205, txt, 1.0);
+    gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
+
 }
 
 /**
@@ -1748,9 +1775,20 @@ void print_copy_menu_strings(void) {
     // Print menu names
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
-    print_generic_string(RETURN_X, 35, get_key_string("TEXT_RETURN"));
-    print_generic_string(VIEWSCORE_X1, 35, get_key_string("TEXT_CHECK_SCORE"));
-    print_generic_string(ERASEFILE_X2, 35, get_key_string("TEXT_ERASE_FILE_BUTTON"));
+
+    u8* txt = get_key_string("TEXT_RETURN");
+    float x = moon_get_text_width(txt, 1.0, FALSE) / 2;
+    moon_draw_text(RETURN_X + 18.5f - x, 52, txt, 1.0);
+
+    txt = get_key_string("TEXT_CHECK_SCORE");
+    x = moon_get_text_width(txt, 1.0, FALSE) / 2;
+    moon_draw_text(COPYFILE_X1 + 26 - x, 52, txt, 1.0);
+
+    txt = get_key_string("TEXT_ERASE_FILE_BUTTON");
+    x = moon_get_text_width(txt, 1.0, FALSE) / 2;
+    moon_draw_text(ERASEFILE_X1 + 28 - x, 52, txt, 1.0);
+    gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
+
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
     // Print file names
     gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_begin);
@@ -1847,11 +1885,12 @@ void print_erase_menu_prompt(s16 x, s16 y) {
  * Defines IDs for the top message of the erase menu and displays it if the ID is called in messageID.
  */
 void erase_menu_display_message(s8 messageID) {
-    u8 textMarioAJustErased[] = { get_key_string("TEXT_FILE_MARIO_A_JUST_ERASED") };
+    char* key = NULL;
     u8* txt;
     float x;
     switch (messageID) {
         case ERASE_MSG_MAIN_TEXT:
+            key = NULL;
             gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_begin);
             gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
             txt = get_key_string("TEXT_ERASE_FILE");
@@ -1860,20 +1899,30 @@ void erase_menu_display_message(s8 messageID) {
             gSPDisplayList(gDisplayListHead++, dl_menu_ia8_text_end);
             break;
         case ERASE_MSG_PROMPT:
+            key = NULL;
             print_generic_string_fade(90, 190, get_key_string("TEXT_SURE"));
             print_erase_menu_prompt(90, 190); // YES NO, has functions for it too
-            break;
+            return;
         case ERASE_MSG_NOSAVE_EXISTS:
-            print_generic_string_fade(NOSAVE_DATA_X3, 190, get_key_string("TEXT_NO_SAVED_DATA_EXISTS"));
+            key = "TEXT_NO_SAVED_DATA_EXISTS";
             break;
         case ERASE_MSG_MARIO_ERASED:
-            textMarioAJustErased[MARIO_ERASED_VAR] = sSelectedFileIndex + 10;
-            print_generic_string_fade(MARIO_ERASED_X, 190, textMarioAJustErased);
+            key = "TEXT_FILE_MARIO_A_JUST_ERASED";
             break;
         case ERASE_MSG_SAVE_EXISTS: // unused
-            print_generic_string_fade(SAVE_EXISTS_X2, 190, get_key_string("TEXT_SAVED_DATA_EXISTS"));
+            key = "TEXT_SAVED_DATA_EXISTS";
             break;
     }
+
+    if(key == NULL) return;
+
+    gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
+    gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
+    txt = get_key_string(key);
+    x = moon_get_text_width(txt, 1.0, FALSE) / 2;
+    moon_draw_text(SCREEN_WIDTH / 2 - x, 205, txt, 1.0);
+    gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
+
 }
 
 /**
@@ -1944,9 +1993,18 @@ void print_erase_menu_strings(void) {
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, sTextBaseAlpha);
 
-    print_generic_string(RETURN_X, 35, get_key_string("TEXT_RETURN"));
-    print_generic_string(VIEWSCORE_X2, 35, get_key_string("TEXT_CHECK_SCORE"));
-    print_generic_string(COPYFILE_X2, 35, get_key_string("TEXT_COPY_FILE_BUTTON"));
+    u8* txt = get_key_string("TEXT_RETURN");
+    float x = moon_get_text_width(txt, 1.0, FALSE) / 2;
+    moon_draw_text(RETURN_X + 18.5f - x, 52, txt, 1.0);
+
+    txt = get_key_string("TEXT_CHECK_SCORE");
+    x = moon_get_text_width(txt, 1.0, FALSE) / 2;
+    moon_draw_text(COPYFILE_X1 + 26 - x, 52, txt, 1.0);
+
+    txt = get_key_string("TEXT_COPY_FILE_BUTTON");
+    x = moon_get_text_width(txt, 1.0, FALSE) / 2;
+    moon_draw_text(ERASEFILE_X1 + 28 - x, 52, txt, 1.0);
+
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
 
     // Print file names
