@@ -1480,11 +1480,6 @@ void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi, co
         gfx_lookup_or_create_shader_program(precomp_shaders[i]);
 }
 
-void gfx_precache_textures(void) {
-    // preload all textures
-    fs_walk(FS_TEXTUREDIR, preload_base_texture, NULL, true);
-}
-
 struct GfxRenderingAPI *gfx_get_current_rendering_api(void) {
     return gfx_rapi;
 }

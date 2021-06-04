@@ -252,7 +252,6 @@ void main_func(char *argv[]) {
     inited = true;
 
     fflush(stdout);
-    gfx_precache_textures();
     moon_setup("PreInit");
     moon_setup("Init");
 

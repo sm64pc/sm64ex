@@ -2,44 +2,40 @@
 
 import sys
 import os
-import os.path
-import zipfile
+import json
+import os.path as path
 from shutil import copyfile
 import hashlib
 
 def md5(fname):
-    hash_md5 = hashlib.md5()
-    with open(fname, "rb") as f:
-        for chunk in iter(lambda: f.read(4096), b""):
-            hash_md5.update(chunk)
-    return hash_md5.hexdigest()
+    md5_hash = hashlib.md5()
+    a_file = open(fname, "rb")
+    content = a_file.read()
+    md5_hash.update(content)
+    return md5_hash.hexdigest()
 
-if len(sys.argv) < 4:
-    print('usage: mkzip <lstfile> <dstpath> <legacy>')
-    sys.exit(1)
+moonFolder = "addons/moon64/"
+bitProperties = {
+    "bit": {
+        "name": "Moon64",
+        "authors": [ "Nintendo" ],
+        "description": "SM64 Original Textures",
+        "version": 1.0,
+        "readOnly": True
+    }
+}
 
 lst = []
+baseAddon = path.join(sys.argv[2], moonFolder)
+
 with open(sys.argv[1], 'r') as f:
     for line in f:
-        line = line.strip()
-        if line == '' or line[0] == '#':
-            continue
-        tok = line.split()
-        lst.append((tok[0], tok[1]))
-    if not sys.argv[3] or not sys.argv[3] == "1":
-        for (fname, aname) in lst:
-            path = os.path.join(sys.argv[2], aname)
-            old_md5 = md5(fname)
-            if not os.path.exists(path) or os.path.exists(path) and old_md5 != md5(path):
-                os.makedirs(os.path.dirname(path), exist_ok=True)
-                copyfile(fname, path)
-                print("Copying: " + path)
-            else:
-                print("Skipping: " + path + " - MD5: "+md5(fname))
-    else:
-        zipPath = os.path.join(sys.argv[2], "awesome-legacy.zip")
-        print("Using Legacy System")
-        with zipfile.ZipFile(zipPath, 'w', allowZip64=False) as zipf:
-            for (fname, aname) in lst:
-                zipf.write(fname, arcname=aname)
-                print("Legacy - Copying: " + aname)
+        data = line.strip().split()
+        out = path.join(baseAddon, "assets", data[1]).replace("gfx", "graphics").replace("texts", "langs")
+        os.makedirs(path.dirname(out), exist_ok=True)
+        if((path.exists(out) and path.exists(data[0]) and md5(out) != md5(data[0])) or not path.exists(out)):
+            copyfile(data[0], out)
+            print(f"Copying: {data[0]}")
+
+with open(path.join(baseAddon, "properties.json"), 'w') as fp:
+    json.dump(bitProperties, fp, indent=4)

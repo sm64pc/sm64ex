@@ -5,6 +5,7 @@
 #include "textures/mod-texture.h"
 #include "shaders/mod-shaders.h"
 #include "moon/achievements/achievements.h"
+#include "moon/texts/moon-loader.h"
 #include "models/mod-model.h"
 #include <iomanip>
 #include "moon/fs/moonfs.h"
@@ -13,6 +14,7 @@ using json = nlohmann::json;
 using namespace std;
 #include "moon/config/mooncfg.h"
 #include "moon/config/saves/saves.h"
+#include "moon/mod-engine/audio/mod-audio.h"
 
 #include <iostream>
 #include <string>
@@ -58,7 +60,7 @@ namespace Moon {
                 if(file.exists(bit->icon)){
                     vector<string> allowedTextures = {"png", "jpg", "jpeg"};
                     if(std::count(allowedTextures.begin(), allowedTextures.end(), string(get_filename_ext(bit->icon.c_str())))){
-                        TextureFileEntry *entry = new TextureFileEntry();
+                        EntryFileData *entry = new EntryFileData();
                         file.read(bit->icon, entry);
                         Moon::saveAddonTexture(bit, "mod-icons://"+bit->name, entry);
                     }
@@ -81,7 +83,9 @@ namespace Moon {
                         };
 
                         string shadersPath = "assets/shaders/";
-                        string textsPath = "assets/texts/";
+                        string langsPath = "assets/langs/";
+                        string soundPath = "assets/sound/";
+
                         string fileExtension = string(get_filename_ext(name.c_str()));
 
                         for(auto &path : texturePaths){
@@ -90,11 +94,11 @@ namespace Moon {
                                 if(std::count(allowedTextures.begin(), allowedTextures.end(), fileExtension)){
                                     string texName = name.substr(path.length());
                                     string rawname = texName.substr(0, texName.find_last_of("."));
-                                    TextureFileEntry *entry;
+                                    EntryFileData *entry;
                                     if(configPrecacheRes)
-                                        file.read(name, entry = new TextureFileEntry());
+                                        file.read(name, entry = new EntryFileData());
                                     else
-                                        entry = new TextureFileEntry({.path = name});
+                                        entry = new EntryFileData({.path = name});
                                     Moon::saveAddonTexture(bit, rawname, entry);
                                 }
                                 if(!fileExtension.compare("json")){
@@ -117,10 +121,17 @@ namespace Moon {
                                 // Moon::saveAddonShader(bit, raw, file.read(name), !fileExtension.compare("vs") ? ShaderType::VERTEX : ShaderType::FRAGMENT);
                             }
                         }
-                        if(!name.rfind(textsPath, 0)){
+                        if(!name.rfind(langsPath, 0)){
                             if(!string(get_filename_ext(name.c_str())).compare("json")){
-                                // std::cout << name << std::endl;
+                                Moon::loadLanguage(file.readWide(name).c_str());
                             }
+                        }
+                        if(!name.rfind(soundPath, 0)){
+                            string soundName = name.substr(string("assets/").length());
+                            string rawname = soundName.substr(0, soundName.find_last_of("."));
+                            EntryFileData *entry;
+                            file.read(name, entry = new EntryFileData());
+                            Moon::saveAddonSound(bit, soundName, entry);
                         }
                     }
                 }
@@ -160,12 +171,10 @@ namespace MoonInternal {
 
         if(state == "PreStartup"){
             MoonInternal::scanAddonsDirectory();
-            return;
-        }
-        if(state == "PreInit"){
             vector<int> order;
             for(int i = 0; i < Moon::addons.size(); i++) order.push_back(i);
             MoonInternal::buildTextureCache(order);
+            MoonInternal::buildAudioCache(order);
             return;
         }
         if(state == "Exit"){

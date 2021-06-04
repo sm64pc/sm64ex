@@ -26,15 +26,15 @@ extern "C" {
 using namespace std;
 using json = nlohmann::json;
 
-std::map<std::string, TextureFileEntry*> baseGameTextures;
+std::map<std::string, EntryFileData*> baseGameTextures;
 map<string, TextureData*> textureMap;
 map<string, BitModule*> textureCache;
 
 map<string, TextureModifier*> textureMods;
 
 namespace Moon {
-    void saveAddonTexture(BitModule *addon, std::string texturePath, TextureFileEntry* data){
-        addon->textures.insert(pair<string, TextureFileEntry*>(texturePath, data));
+    void saveAddonTexture(BitModule *addon, std::string texturePath, EntryFileData* data){
+        addon->textures.insert(pair<string, EntryFileData*>(texturePath, data));
     }
 
     void bindTextureModifier(std::string texture, std::string modName, json data){
@@ -44,9 +44,9 @@ namespace Moon {
 
     void precacheBaseTexture(char* data, long size, std::string texturePath){
         if(baseGameTextures.find(texturePath) == baseGameTextures.end())
-            baseGameTextures.insert(pair<string, TextureFileEntry*>(
+            baseGameTextures.insert(pair<string, EntryFileData*>(
                 texturePath,
-                new TextureFileEntry({.path = "", .size = size, .data = data}))
+                new EntryFileData({.path = "", .size = size, .data = data}))
             );
     }
 
@@ -57,7 +57,7 @@ namespace Moon {
 
 namespace MoonInternal {
 
-    TextureFileEntry *getTextureData(const char *fullpath){
+    EntryFileData *getTextureData(const char *fullpath){
         char texname[SYS_MAX_PATH];
         strncpy(texname, fullpath, sizeof(texname));
         texname[sizeof(texname)-1] = 0;
@@ -72,17 +72,17 @@ namespace MoonInternal {
         auto cacheEntry = textureCache.find(actualname);
         BitModule *addon = cacheEntry->second;
 
-        TextureFileEntry * data = NULL;
+        EntryFileData * data = NULL;
 
         if(addon != NULL){
-            TextureFileEntry *fileEntry = addon->textures.find(actualname)->second;
+            EntryFileData *fileEntry = addon->textures.find(actualname)->second;
 
             if(fileEntry != NULL){
                 if(fileEntry->data != NULL) data = fileEntry;
                 else if(!fileEntry->path.empty()){
                     MoonFS file(addon->path);
                     file.open();
-                    TextureFileEntry *newData = new TextureFileEntry();
+                    EntryFileData *newData = new EntryFileData();
                     file.read(fileEntry->path, newData);
                     data = newData;
                 }
@@ -101,7 +101,7 @@ namespace MoonInternal {
             return;
         }
 
-        TextureFileEntry * imgdata = getTextureData(fullpath);
+        EntryFileData * imgdata = getTextureData(fullpath);
         if (imgdata) {
             u8 *data = stbi_load_from_memory(reinterpret_cast<const stbi_uc *>(imgdata->data), imgdata->size, &w, &h, NULL, 4);
             if (data) {
@@ -130,7 +130,7 @@ namespace MoonInternal {
         for(int i=0; i < order.size(); i++){
             BitModule *addon = Moon::addons[order[i]];
 
-            for (map<string, TextureFileEntry*>::iterator entry = addon->textures.begin(); entry != addon->textures.end(); ++entry) {
+            for (map<string, EntryFileData*>::iterator entry = addon->textures.begin(); entry != addon->textures.end(); ++entry) {
                 auto texIt = textureCache.find(entry->first);
                 if(texIt != textureCache.end()) textureCache.erase(texIt);
 
@@ -138,17 +138,6 @@ namespace MoonInternal {
             }
         }
         textureMap.clear();
-    }
-
-    void buildDefaultAddon(){
-        BitModule* bit = new BitModule();
-        bit->name        = "Moon64";
-        bit->description = "SM64 Original Textures";
-        bit->authors     = (vector<string>){ "Nintendo" };
-        bit->version     = 1.0f;
-        bit->readOnly    = true;
-        bit->textures    = baseGameTextures;
-        Moon::addons.push_back(bit);
     }
 
     void bindTextureModifiers(){
@@ -168,7 +157,6 @@ namespace MoonInternal {
             return;
         }
         if(state == "PreInit"){
-            MoonInternal::buildDefaultAddon();
             return;
         }
         if(state == "Exit"){

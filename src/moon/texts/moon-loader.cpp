@@ -34,15 +34,9 @@ namespace Moon {
     vector<LanguageEntry*> languages;
     LanguageEntry *current;
 
-    void loadLanguage( string path ) {
-
-        FILE* fp = fopen(path.c_str(), "r");
-        char readBuffer[65536];
-        FileReadStream is(fp, readBuffer, sizeof(readBuffer));
-        AutoUTFInputStream<unsigned, FileReadStream> eis(is);
-
+    void loadLanguage( const wchar_t* buffer ) {
         WDocument raw;
-        raw.ParseStream<0, AutoUTF<unsigned>>(eis);
+        raw.Parse(buffer);
 
         WValue manifest, dialogs, courses, secrets, options, strings;
 
@@ -178,33 +172,7 @@ namespace Moon {
 }
 
 namespace MoonInternal {
-
-    void scanLanguagesDirectory(){
-        string cwd     = MoonInternal::getEnvironmentVar("MOON_CWD");
-        string gameDir = MoonInternal::getEnvironmentVar("ASSETS_DIR");
-
-        string languagesDir = cwd.substr(0, cwd.find_last_of("/\\")) + "/" + gameDir + "/texts/";
-
-        // Scan directory for JSON files
-        DIR *dir = opendir(languagesDir.c_str());
-        if (dir) {
-            struct dirent *de;
-            while ((de = readdir(dir)) != NULL) {
-                const char *extension = get_filename_ext(de->d_name);
-                if (strcmp(extension, "json") == 0) {
-                    string file = languagesDir + de->d_name;
-                    Moon::loadLanguage( file );
-                }
-            }
-            closedir(dir);
-        }
-    }
-
     void setupLanguageEngine( string state ){
-        if(state == "PreInit"){
-            MoonInternal::scanLanguagesDirectory();
-            return;
-        }
         if(state == "Init"){
             Moon::setCurrentLanguage(Moon::languages[configLanguage]);
             return;

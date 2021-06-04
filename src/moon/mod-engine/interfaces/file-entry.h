@@ -2,7 +2,7 @@
 #define Moon64FileEntry
 #include <string>
 
-struct TextureFileEntry {
+struct EntryFileData {
     std::string path;
     long size;
     char* data;

@@ -37,7 +37,6 @@ struct GfxRenderingAPI *gfx_get_current_rendering_api(void);
 void gfx_start_frame(void);
 void gfx_run(Gfx *commands);
 void gfx_end_frame(void);
-void gfx_precache_textures(void);
 void gfx_shutdown(void);
 void overload_memory_texture(void* data, long size, const char *path);
 #ifdef __cplusplus

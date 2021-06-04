@@ -21,7 +21,8 @@ struct BitModule{
     std::string icon;
     std::string main;
     std::string path;
-    std::map<std::string, TextureFileEntry*> textures;
+    std::map<std::string, EntryFileData*> textures;
+    std::map<std::string, EntryFileData*> sounds;
     std::map<std::string, Shader*> shaders;
     bool readOnly;
     bool enabled;

@@ -55,12 +55,6 @@ AUDIO_API ?= SDL2
 CONTROLLER_API ?= SDL2
 
 ## External assets
-
-# Asset directory
-BASEDIR ?= res
-# Create zip file with legacy assets
-LEGACY_RES ?= 0
-# Copy assets to BASEDIR? (useful for iterative debugging)
 NO_COPY ?= 0
 
 ################################# OS Detection #################################
@@ -289,6 +283,9 @@ SRC_DIRS += src/moon/mod-engine src/moon/mod-engine/modules
 
 # Moon64 SRC [Mod-Engine - Texture Module]
 SRC_DIRS += src/moon/mod-engine/textures src/moon/mod-engine/textures/assets src/moon/mod-engine/textures/modifiers
+
+# Moon64 SRC [Mod-Engine - Audio Module]
+SRC_DIRS += src/moon/mod-engine/audio
 
 # Moon64 SRC [Mod-Engine - Hook Module]
 SRC_DIRS += src/moon/mod-engine/hooks
@@ -657,9 +654,6 @@ ifeq ($(LEGACY_GL),1)
   CFLAGS += -DLEGACY_GL
 endif
 
-# Load external textures
-CC_CHECK += -DFS_BASEDIR="\"$(BASEDIR)\""
-CFLAGS += -DFS_BASEDIR="\"$(BASEDIR)\""
 # tell skyconv to write names instead of actual texture data and save the split tiles so we can use them later
 SKYTILE_DIR := $(BUILD_DIR)/textures/skybox_tiles
 
@@ -720,19 +714,16 @@ endif
 
 ADDONS      := addons
 ADDONS_PATH := $(BUILD_DIR)/$(ADDONS)/
-
-BASEPACK_PATH := $(BUILD_DIR)/$(BASEDIR)/
 BASEPACK_LST := $(BUILD_DIR)/basepack.lst
 
 # depend on resources as well
-all: $(BASEPACK_PATH)
+all: $(BASEPACK_LST)
 
 # phony target for building resources
-res: $(BASEPACK_PATH)
+res: $(BASEPACK_LST)
 
 # prepares the basepack.lst
 $(BASEPACK_LST): $(EXE)
-	@mkdir -p $(BUILD_DIR)/$(BASEDIR)
 	@touch $(BASEPACK_LST)
 	@echo "$(BUILD_DIR)/sound/bank_sets sound/bank_sets" >> $(BASEPACK_LST)
 	@echo "$(BUILD_DIR)/sound/sequences.bin sound/sequences.bin" >> $(BASEPACK_LST)
@@ -743,12 +734,11 @@ $(BASEPACK_LST): $(EXE)
 	@find levels -name \*.png -exec echo "{} gfx/{}" >> $(BASEPACK_LST) \;
 	@find textures -name \*.png -exec echo "{} gfx/{}" >> $(BASEPACK_LST) \;
 	@find texts -name \*.json -exec echo "{} {}" >> $(BASEPACK_LST) \;
-	@find db -name \*.* -exec echo "{} {}" >> $(BASEPACK_LST) \;
 
 ifneq ($(NO_COPY),1)
 # prepares the resource ZIP with base data
-$(BASEPACK_PATH): $(BASEPACK_LST)
-	@$(PYTHON) $(TOOLS_DIR)/mkzip.py $(BASEPACK_LST) $(BASEPACK_PATH) $(LEGACY_RES)
+$(BASEPACK_LST): $(EXE)
+	@$(PYTHON) $(TOOLS_DIR)/mkzip.py $(BASEPACK_LST) $(BUILD_DIR)
 endif
 
 clean:

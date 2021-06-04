@@ -5,6 +5,9 @@
 #include <sys/stat.h>
 #include <algorithm>
 #include <filesystem>
+#include <sstream>
+#include <fstream>
+#include <codecvt>
 
 using namespace std;
 using namespace miniz_cpp;
@@ -75,7 +78,24 @@ string MoonFS::read(string file){
     }
 }
 
-void MoonFS::read(string file, TextureFileEntry *entry){
+wstring MoonFS::readWide(string file){
+    switch(this->type){
+        case DIRECTORY: {
+            std::wifstream in(FSUtils::joinPath(this->path, file), std::ios::in | std::ios::binary);
+            if (in){
+                in.imbue(std::locale(in.getloc(), new std::codecvt_utf8<wchar_t>));
+                std::wstringstream wss;
+                wss << in.rdbuf();
+                return wss.str();
+            }
+        }
+        case ZIP:
+            // return zipFile.read(file);
+            return L"";
+    }
+}
+
+void MoonFS::read(string file, EntryFileData *entry){
      switch(this->type){
         case DIRECTORY: {
             char *data;

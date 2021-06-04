@@ -13,7 +13,7 @@ extern "C" {
 }
 
 namespace Moon {
-    void saveAddonTexture(BitModule *addon, std::string texturePath, TextureFileEntry* data);
+    void saveAddonTexture(BitModule *addon, std::string texturePath, EntryFileData* data);
     void bindTextureModifier(std::string texture, std::string modName, nlohmann::json data);
 
     void precacheBaseTexture(char* data, long size, std::string texturePath);
@@ -21,7 +21,7 @@ namespace Moon {
 }
 
 namespace MoonInternal {
-    TextureFileEntry *getTextureData(const char *fullpath);
+    EntryFileData *getTextureData(const char *fullpath);
     void loadTexture(int tile, const char *fullpath, struct GfxRenderingAPI *gfx_rapi);
     void saveTexture(TextureData *data, std::string texturePath);
     void buildTextureCache(std::vector<int> order);

@@ -37,7 +37,7 @@ namespace Moon {
     extern std::vector<LanguageEntry*> languages;
     extern LanguageEntry *current;
 
-    void loadLanguage(std::string path);
+    void loadLanguage( const wchar_t* buffer );
     void setCurrentLanguage(LanguageEntry *new_language);
     std::wstring getLanguageKey(std::string key);
     std::wstring getLanguageKey(std::wstring key);

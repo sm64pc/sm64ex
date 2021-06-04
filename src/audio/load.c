@@ -8,6 +8,7 @@
 
 #include "pc/platform.h"
 #include "pc/fs/fs.h"
+#include "moon/mod-engine/audio/mod-audio.h"
 
 #define ALIGN16(val) (((val) + 0xF) & ~0xF)
 
@@ -677,7 +678,7 @@ void load_sequence_internal(u32 player, u32 seqId, s32 loadAsync) {
 # include <stdio.h>
 # include <stdlib.h>
 static inline void *load_sound_res(const char *path) {
-    void *data = fs_load_file(path, NULL);
+    void *data = loadSoundData(path);
     if (!data) sys_fatal("could not load sound data from '%s'", path);
     // FIXME: figure out where it is safe to free this shit
     //        can't free it immediately after in audio_init()
@@ -737,12 +738,13 @@ void audio_init() {
 
     // Load header for sequence data (assets/music_data.sbk.s)
     gSeqFileHeader = (ALSeqFile *) buf;
-    data = LOAD_DATA(gMusicData);
-    audio_dma_copy_immediate((uintptr_t) data, gSeqFileHeader, 0x10);
+    data = LOAD_DATA(gMusicData); //audio_dma_copy_immediate((uintptr_t) data, , 0x10);
+    gSeqFileHeader = data;
+
     gSequenceCount = gSeqFileHeader->seqCount;
     size = ALIGN16(gSequenceCount * sizeof(ALSeqData) + 4);
     gSeqFileHeader = soundAlloc(&gAudioInitPool, size);
-    audio_dma_copy_immediate((uintptr_t) data, gSeqFileHeader, size);
+    gSeqFileHeader = data; // audio_dma_copy_immediate((uintptr_t) data, , size);
     alSeqFileNew(gSeqFileHeader, data);
 
     // Load header for CTL (assets/sound_data.ctl.s, i.e. ADSR)
@@ -753,12 +755,12 @@ void audio_init() {
     size = ALIGN16(size);
     gCtlEntries = soundAlloc(&gAudioInitPool, gAlCtlHeader->seqCount * sizeof(struct CtlEntry));
     gAlCtlHeader = soundAlloc(&gAudioInitPool, size);
-    audio_dma_copy_immediate((uintptr_t) data, gAlCtlHeader, size);
+    gAlCtlHeader = data; // audio_dma_copy_immediate((uintptr_t) data, , size);
     alSeqFileNew(gAlCtlHeader, data);
 
     // Load header for TBL (assets/sound_data.tbl.s, i.e. raw data)
     gAlTbl = (ALSeqFile *) buf;
-    audio_dma_copy_immediate((uintptr_t) data, gAlTbl, 0x10);
+    gAlTbl = data; // audio_dma_copy_immediate((uintptr_t) data, , 0x10);
     size = gAlTbl->seqCount * sizeof(ALSeqData) + 4;
     size = ALIGN16(size);
     gAlTbl = soundAlloc(&gAudioInitPool, size);
@@ -769,13 +771,13 @@ void audio_init() {
         return;
     }
 
-    audio_dma_copy_immediate((uintptr_t) data, gAlTbl, size);
+    gAlTbl = data; // audio_dma_copy_immediate((uintptr_t) data, , size);
     alSeqFileNew(gAlTbl, data);
 
     // Load bank sets for each sequence (assets/bank_sets.s)
     data = LOAD_DATA(gBankSetsData);
     gAlBankSets = soundAlloc(&gAudioInitPool, 0x100);
-    audio_dma_copy_immediate((uintptr_t) data, gAlBankSets, 0x100);
+    gAlBankSets = data; // audio_dma_copy_immediate((uintptr_t) data, , 0x100);
 
     init_sequence_players();
     gAudioLoadLock = AUDIO_LOCK_NOT_LOADING;
