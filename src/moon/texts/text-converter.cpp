@@ -11,6 +11,15 @@ extern "C" {
 
 using namespace std;
 
+u8 COLORED_MULTIPLY[2] = { 0x31, 0xFF};
+u8 COLORED_MARIO_HEAD[2] = { 0x34, 0xFF};
+u8 COLORED_COIN[2] = { 0x32, 0xFF};
+u8 COLORED_STAR[2] = { 0x33, 0xFF};
+u8 REGULAR_COIN[2] = { 0xF9, 0xFF};
+u8 REGULAR_MARIO_HEAD [3] = { 0x40, 0x41, 0xFF};
+u8 REGULAR_STAR_FILLED[2] = { 0xFA, 0xFF};
+u8 REGULAR_STAR_HOLLOW[2] = { 0xFD, 0xFF};
+
 map<wstring, vector<int>> unicodeTable = {
     {L"0",{0x0}},       {L"０",{0x0}},            {L"1",{0x1}},         {L"１",{0x1}},
     {L"2",{0x2}},       {L"２",{0x2}},            {L"3",{0x3}},         {L"３",{0x3}},

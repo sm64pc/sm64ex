@@ -87,14 +87,14 @@ void MWValue::Draw(){
         wstring statusText = status ? Moon::getLanguageKey("TEXT_OPT_ENABLED") : Moon::getLanguageKey("TEXT_OPT_DISABLED");
 
         tmpWidth += MoonGetTextWidth(statusText, scale, false);
-        MoonDrawText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2 + titleWidth, this->y, statusText, scale, toggleColors[status ? 0 : 1] , true, true);
+        MoonDrawWideText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2 + titleWidth, this->y, statusText, scale, toggleColors[status ? 0 : 1] , true, true);
     } else if(this->bind.values != NULL && this->bind.index != NULL){
         int index = *this->bind.index;
 
         wstring text = this->bind.valueKeys ? Moon::getLanguageKey((*this->bind.values)[index]) : (*this->bind.values)[index];
 
         tmpWidth += MoonGetTextWidth(text, scale, false);
-        MoonDrawText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2 + titleWidth, this->y, text, scale, {58, 249, 252, 255}, true, true);
+        MoonDrawWideText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2 + titleWidth, this->y, text, scale, {58, 249, 252, 255}, true, true);
     } else if(isFloat || isInt){
         float value = isFloat ? *this->bind.fvar : *this->bind.ivar;
         float max   = this->bind.max;
@@ -102,13 +102,13 @@ void MWValue::Draw(){
         wstring text = to_wstring((int)(100 * (value / max))) + L"%";
 
         tmpWidth += MoonGetTextWidth(text, scale, false);
-        MoonDrawText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2 + titleWidth, this->y, text, scale, {58, 249, 252, 255}, true, true);
+        MoonDrawWideText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2 + titleWidth, this->y, text, scale, {58, 249, 252, 255}, true, true);
     }
 
     if(this->bind.btn != NULL)
         tmpWidth = titleWidth;
 
-    MoonDrawText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2, this->y, rawTitle, scale, {255, 255, 255, 255}, true, true);
+    MoonDrawWideText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2, this->y, rawTitle, scale, {255, 255, 255, 255}, true, true);
 }
 
 void MWValue::Update(){

@@ -12,41 +12,49 @@ float MoonGetTextWidth(std::string text, float scale, bool colored) {
     return (float)moon_get_text_width(Moon::GetTranslatedText(wide(text)), scale, colored);
 }
 
-void MoonDrawText(float x, float y, std::wstring text, float scale, struct Color color, bool dropShadow, bool u4_3){
+void MoonDrawRawText(float x, float y, u8* text, float scale, struct Color color, bool dropShadow, bool u4_3){
     if(!u4_3) x = GFX_DIMENSIONS_FROM_LEFT_EDGE(x);
     gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
     if(dropShadow){
         gDPSetEnvColor(gDisplayListHead++, 10, 10, 10, 255);
-        moon_draw_text(x, SCREEN_HEIGHT - y - 1 * scale, Moon::GetTranslatedText(text), scale);
+        moon_draw_text(x, SCREEN_HEIGHT - y - 1 * scale, text, scale);
         gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
     }
     gDPSetEnvColor(gDisplayListHead++, color.r, color.g, color.b, color.a);
-    moon_draw_text(x, SCREEN_HEIGHT - y, Moon::GetTranslatedText(text), scale);
+    moon_draw_text(x, SCREEN_HEIGHT - y, text, scale);
     gSPDisplayList(gDisplayListHead++, dl_ia_text_end);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
 }
 
-void MoonDrawText(float x, float y, std::string text, float scale, struct Color color, bool dropShadow, bool u4_3){
-    MoonDrawText(x, y, wide(text), scale, color, dropShadow, u4_3);
+void MoonDrawWideText(float x, float y, std::wstring text, float scale, struct Color color, bool dropShadow, bool u4_3){
+    MoonDrawRawText(x, y, Moon::GetTranslatedText(text), scale, color, dropShadow, u4_3);
 }
 
-void MoonDrawColoredText(float x, float y, std::wstring text, float scale, struct Color color, bool dropShadow, bool u4_3){
+void MoonDrawText(float x, float y, std::string text, float scale, struct Color color, bool dropShadow, bool u4_3){
+    MoonDrawWideText(x, y, wide(text), scale, color, dropShadow, u4_3);
+}
+
+void MoonDrawRawColoredText(float x, float y, u8* text, float scale, struct Color color, bool dropShadow, bool u4_3){
     if(!u4_3) x = GFX_DIMENSIONS_FROM_LEFT_EDGE(x);
 
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_begin);
-    std::transform(text.begin(), text.end(), text.begin(), ::toupper);
     if(dropShadow){
-        moon_draw_colored_text(x, y + 1, Moon::GetTranslatedText(text), scale, {10, 10, 10, 255});
+        moon_draw_colored_text(x, y + 1, text, scale, {10, 10, 10, 255});
     }
     gDPSetEnvColor(gDisplayListHead++, color.r, color.g, color.b, color.a);
     struct Color white = { 255, 255, 255, 255 };
-    moon_draw_colored_text(x, y, Moon::GetTranslatedText(text), scale, white);
+    moon_draw_colored_text(x, y, text, scale, white);
     gSPDisplayList(gDisplayListHead++, dl_rgba16_text_end);
     gDPSetEnvColor(gDisplayListHead++, 255, 255, 255, 255);
 }
 
+void MoonDrawWideColoredText(float x, float y, std::wstring text, float scale, struct Color color, bool dropShadow, bool u4_3){
+    std::transform(text.begin(), text.end(), text.begin(), ::toupper);
+    MoonDrawRawColoredText(x, y, Moon::GetTranslatedText(text), scale, color, dropShadow, u4_3);
+}
+
 void MoonDrawColoredText(float x, float y, std::string text, float scale, struct Color color, bool dropShadow, bool u4_3){
-    MoonDrawColoredText(x, y, wide(text), scale, color, dropShadow, u4_3);
+    MoonDrawWideColoredText(x, y, wide(text), scale, color, dropShadow, u4_3);
 }
 
 void MoonDrawRectangle(float x, float y, float w, float h, struct Color c, bool u4_3){
