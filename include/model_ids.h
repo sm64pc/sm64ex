@@ -385,7 +385,7 @@
 
 // group 9
 #define MODEL_BOO                         0x54        // boo_geo
-#define MODEL_BETA_BOO_KEY                   0x55        // small_key_geo
+#define MODEL_BETA_BOO_KEY                0x55        // small_key_geo
 #define MODEL_HAUNTED_CHAIR               0x56        // haunted_chair_geo
 #define MODEL_MAD_PIANO                   0x57        // mad_piano_geo
 #define MODEL_BOOKEND_PART                0x58        // bookend_part_geo

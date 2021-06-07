@@ -740,6 +740,7 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
                         sDelayedWarpOp = WARP_OP_GAME_OVER;
                     } else {
                         sSourceWarpNodeId = WARP_NODE_DEATH;
+                        show_achievement("achievement.deathByFalling");
                     }
                 }
                 sDelayedWarpTimer = 20;
@@ -750,9 +751,7 @@ s16 level_trigger_warp(struct MarioState *m, s32 warpOp) {
                 sDelayedWarpTimer = 30;
                 sSourceWarpNodeId = WARP_NODE_F2;
                 play_transition(WARP_TRANSITION_FADE_INTO_COLOR, 0x1E, 0xFF, 0xFF, 0xFF);
-#ifndef VERSION_JP
                 play_sound(SOUND_MENU_STAR_SOUND, gGlobalSoundSource);
-#endif
                 break;
 
             case WARP_OP_UNKNOWN_02: // bbh enter

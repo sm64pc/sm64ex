@@ -352,6 +352,7 @@ static void chain_chomp_released_end_cutscene(void) {
     if (cutscene_object(CUTSCENE_STAR_SPAWN, o) == -1) {
         set_mario_npc_dialog(0);
         o->oAction = CHAIN_CHOMP_ACT_UNLOAD_CHAIN;
+        show_achievement("achievement.releaseChainChomp");
     }
 }
 

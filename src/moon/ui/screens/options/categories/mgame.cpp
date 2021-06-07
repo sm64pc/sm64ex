@@ -36,5 +36,8 @@ MGameCategory::MGameCategory() : MoonCategory("TEXT_OPT_GAME"){
     this->catOptions.push_back(new MWValue(22, exitY + 17, "Texture Packs",   { .btn = [](){
         MoonChangeUI(1);
     }}, false));
-    this->catOptions.push_back(new MWValue(22, exitY + 34, "TEXT_EXIT_GAME",   { .btn = game_exit}, true));
+    this->catOptions.push_back(new MWValue(22, exitY + 34, "Achievements",   { .btn = [](){
+        MoonChangeUI(2);
+    }}, false));
+    this->catOptions.push_back(new MWValue(22, exitY + 51, "TEXT_EXIT_GAME",   { .btn = game_exit}, true));
 }

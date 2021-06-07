@@ -280,28 +280,6 @@ static bool gfx_texture_cache_lookup(int tile, struct TextureData **n, const uin
     return false;
 }
 
-static bool preload_base_texture(void* user, const char *fullpath) {
-    int w, h;
-    u64 imgsize = 0;
-
-    u8 *imgdata = fs_load_file(fullpath, &imgsize);
-    if (imgdata) {
-        char texname[SYS_MAX_PATH];
-        strncpy(texname, fullpath, sizeof(texname));
-        texname[sizeof(texname)-1] = 0;
-        char *dot = strrchr(texname, '.');
-        if (dot) *dot = 0;
-
-        char *actualname = texname;
-        if (!strncmp(FS_TEXTUREDIR "/", actualname, 4)) actualname += 4;
-        actualname = sys_strdup(actualname);
-        assert(actualname);
-
-        moon_load_base_texture(imgdata, imgsize, actualname);
-    }
-    return true;
-}
-
 static inline void load_memory_texture(void *imgdata, long size) {
     int w, h;
 
@@ -315,41 +293,6 @@ static inline void load_memory_texture(void *imgdata, long size) {
     }
 
     gfx_rapi->upload_texture(missing_texture, MISSING_W, MISSING_H);
-}
-
-
-// this is taken straight from n64graphics
-static bool texname_to_texformat(const char *name, u8 *fmt, u8 *siz) {
-    static const struct {
-        const char *name;
-        const u8 format;
-        const u8 size;
-    } fmt_table[] = {
-        { "rgba16", G_IM_FMT_RGBA, G_IM_SIZ_16b },
-        { "rgba32", G_IM_FMT_RGBA, G_IM_SIZ_32b },
-        { "ia1",    G_IM_FMT_IA,   G_IM_SIZ_8b  }, // uhh
-        { "ia4",    G_IM_FMT_IA,   G_IM_SIZ_4b  },
-        { "ia8",    G_IM_FMT_IA,   G_IM_SIZ_8b  },
-        { "ia16",   G_IM_FMT_IA,   G_IM_SIZ_16b },
-        { "i4",     G_IM_FMT_I,    G_IM_SIZ_4b  },
-        { "i8",     G_IM_FMT_I,    G_IM_SIZ_8b  },
-        { "ci8",    G_IM_FMT_I,    G_IM_SIZ_8b  },
-        { "ci16",   G_IM_FMT_I,    G_IM_SIZ_16b },
-    };
-
-    char *fstr = strrchr(name, '.');
-    if (!fstr) return false; // no format string?
-    fstr++;
-
-    for (unsigned i = 0; i < sizeof(fmt_table) / sizeof(fmt_table[0]); ++i) {
-        if (!sys_strcasecmp(fstr, fmt_table[i].name)) {
-            *fmt = fmt_table[i].format;
-            *siz = fmt_table[i].size;
-            return true;
-        }
-    }
-
-    return false;
 }
 
 static void import_texture(int tile) {

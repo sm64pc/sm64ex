@@ -3,6 +3,11 @@
 #include "gfx_dimensions.h"
 #include "moon/texts/moon-loader.h"
 #include "moon/texts/text-converter.h"
+#include "moon/ui/interfaces/moon-screen.h"
+
+extern "C"{
+#include "pc/platform.h"
+}
 
 float MoonGetTextWidth(std::wstring text, float scale, bool colored) {
     return (float)moon_get_text_width(Moon::GetTranslatedText(text), scale, colored);
@@ -73,4 +78,47 @@ void MoonDrawTexture(float x, float y, float w, float h, char* texture){
     gDPLoadBlock(gDisplayListHead++, G_TX_LOADTILE, 0, 0, w * h - 1, CALC_DXT(w, G_IM_SIZ_32b_BYTES));
     gSPTextureRectangle(gDisplayListHead++, (int) x << 2, (int) y << 2, (int)(x + w) << 2, (int)(y + h) << 2, G_TX_RENDERTILE, 0, 0, 4 << 10, 1 << 10);
     gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
+}
+
+void MoonDrawBWTexture(float x, float y, float w, float h, char* texture){
+    s32 xl = MAX(0, x);
+	s32 yl = MAX(0, y);
+	s32 xh = MAX(0, x + w - 1);
+	s32 yh = MAX(0, y + h - 1);
+	s32 s = 0;
+	s32 t = 0;
+	gDPPipeSync(gDisplayListHead++);
+	gDPSetCycleType(gDisplayListHead++, G_CYC_COPY);
+	gDPSetTexturePersp(gDisplayListHead++, G_TP_NONE);
+	gDPSetAlphaCompare(gDisplayListHead++, G_AC_THRESHOLD);
+	gDPSetBlendColor(gDisplayListHead++, 255, 255, 255, 255);
+	gDPSetRenderMode(gDisplayListHead++, G_RM_AA_XLU_SURF, G_RM_AA_XLU_SURF2);
+	gDPTileSync(gDisplayListHead++);
+	gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_I, G_IM_SIZ_8b, 32, texture);
+	gDPSetTile(gDisplayListHead++, G_IM_FMT_I, G_IM_SIZ_8b, 4, 0, 7, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 0);
+	gDPLoadSync(gDisplayListHead++);
+	gDPLoadTile(gDisplayListHead++, 7, 0, 0, 124, 124);
+	gDPPipeSync(gDisplayListHead++);
+	gDPSetTile(gDisplayListHead++, G_IM_FMT_I, G_IM_SIZ_8b, 4, 0, 0, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, 0);
+	gDPSetTileSize(gDisplayListHead++, 0, 0, 0, 124, 124);
+	gSPTextureRectangle(gDisplayListHead++, xl << 2, yl << 2, xh << 2, yh << 2, 0, s << 5, t << 5,  4096, 1024);
+	gDPPipeSync(gDisplayListHead++);
+	gDPSetCycleType(gDisplayListHead++, G_CYC_1CYCLE);
+	gSPTexture(gDisplayListHead++, 65535, 65535, 0, G_TX_RENDERTILE, G_OFF);
+	gDPSetTexturePersp(gDisplayListHead++, G_TP_PERSP);
+	gDPSetAlphaCompare(gDisplayListHead++, G_AC_NONE);
+	gDPSetRenderMode(gDisplayListHead++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
+}
+
+void MoonDrawButton(int x, int y, std::string text, std::string texture, int size, int offset, bool rtl){
+    if(!rtl){
+        MoonDrawTexture(GFX_DIMENSIONS_FROM_LEFT_EDGE(x), y - 3 + offset, size, size, sys_strdup(texture.c_str()));
+        MoonDrawText(x + 16 + 3, y, text, 0.8, {255, 255, 255, 255}, true, false);
+    } else {
+        x = GetScreenWidth(false) - x;
+        int txtWidth = MoonGetTextWidth(text, 0.8, false);
+
+        MoonDrawTexture(GFX_DIMENSIONS_FROM_LEFT_EDGE(x) - txtWidth - size - 3, y - 3 + offset, size, size, sys_strdup(texture.c_str()));
+        MoonDrawText(x - txtWidth, y, text, 0.8, {255, 255, 255, 255}, true, false);
+    }
 }

@@ -117,7 +117,7 @@ namespace Moon {
                 } else {
                     tmpAlloc.push_back(0x9e);
                 }
-                if(static_cast<unsigned char>((char)int(c)) > 127)
+                if(int(c) > 127)
                     tmpAlloc.push_back(0x9e);
             }
         }

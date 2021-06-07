@@ -272,6 +272,9 @@ SRC_DIRS += src/moon/ui src/moon/ui/interfaces src/moon/ui/screens src/moon/ui/s
 # Moon64 SRC [View - Animations]
 SRC_DIRS += src/moon/ui/animation
 
+# Moon64 SRC [View - Achievements]
+SRC_DIRS += src/moon/ui/screens/achievements
+
 # Moon64 SRC [IO]
 SRC_DIRS += src/moon/io src/moon/io/modules
 
@@ -722,6 +725,7 @@ all: $(BASEPACK_LST)
 # phony target for building resources
 res: $(BASEPACK_LST)
 
+ifneq ($(NO_COPY),1)
 # prepares the basepack.lst
 $(BASEPACK_LST): $(EXE)
 	@touch $(BASEPACK_LST)
@@ -734,10 +738,6 @@ $(BASEPACK_LST): $(EXE)
 	@find levels -name \*.png -exec echo "{} gfx/{}" >> $(BASEPACK_LST) \;
 	@find textures -name \*.png -exec echo "{} gfx/{}" >> $(BASEPACK_LST) \;
 	@find texts -name \*.json -exec echo "{} {}" >> $(BASEPACK_LST) \;
-
-ifneq ($(NO_COPY),1)
-# prepares the resource ZIP with base data
-$(BASEPACK_LST): $(EXE)
 	@$(PYTHON) $(TOOLS_DIR)/mkzip.py $(BASEPACK_LST) $(BUILD_DIR)
 endif
 

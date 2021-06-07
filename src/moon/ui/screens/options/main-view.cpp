@@ -97,19 +97,6 @@ void MoonOptMain::Update(){
     MoonScreen::Update();
 }
 
-void drawButton(int x, int y, string text, string texture, int size, int offset, bool rtl){
-    if(!rtl){
-        MoonDrawTexture(GFX_DIMENSIONS_FROM_LEFT_EDGE(x), y - 3 + offset, size, size, sys_strdup(texture.c_str()));
-        MoonDrawText(x + 16 + 3, y, text, 0.8, {255, 255, 255, 255}, true, false);
-    } else {
-        x = GetScreenWidth(false) - x;
-        int txtWidth = MoonGetTextWidth(text, 0.8, false);
-
-        MoonDrawTexture(GFX_DIMENSIONS_FROM_LEFT_EDGE(x) - txtWidth - size - 3, y - 3 + offset, size, size, sys_strdup(texture.c_str()));
-        MoonDrawText(x - txtWidth, y, text, 0.8, {255, 255, 255, 255}, true, false);
-    }
-}
-
 void MoonOptMain::Draw(){
     wstring curTitle = categories[categoryIndex]->titleKey ? Moon::getLanguageKey(categories[categoryIndex]->categoryName) : categories[categoryIndex]->categoryName;
 
@@ -118,20 +105,21 @@ void MoonOptMain::Draw(){
     MoonDrawWideColoredText(SCREEN_WIDTH / 2 - txtWidth / 2, 20, curTitle, 1.0, {255, 255, 255, 255}, true, true);
     MoonDrawRectangle(25, 50, SCREEN_WIDTH - 50, GetScreenHeight() * 0.6, {0, 0, 0, 100}, true);
 
-    string stickTexture = "textures/moon/";
+    string basePath = "textures/moon/controller/";
 
     if(this->selected == NULL){
-        stickTexture.append(stickAnim ? "stick-down.rgba16" : "stick-up.rgba16");
-        drawButton(5, GetScreenHeight() - 24, "Move", stickTexture, 16, 0, false);
+        basePath.append(stickAnim ? "stick-down.rgba16" : "stick-up.rgba16");
+        MoonDrawButton(5, GetScreenHeight() - 24, "Move", basePath, 16, 0, false);
     } else{
-        stickTexture.append(stickAnim ? "stick-left.rgba16" : "stick-right.rgba16");
-        drawButton(5, GetScreenHeight() - 24, "Change value", stickTexture, 16, 0, false);
+        basePath.append(stickAnim ? "stick-left.rgba16" : "stick-right.rgba16");
+        MoonDrawButton(5, GetScreenHeight() - 24, "Change value", basePath, 16, 0, false);
     }
 
-    drawButton(7, GetScreenHeight() - 24, this->selected == NULL ? "Select" : "Back", this->selected == NULL ? "textures/moon/a-alt-btn.rgba16" : "textures/moon/b-alt-btn.rgba16", 10, 4, true);
+    MoonDrawButton(7, GetScreenHeight() - 24, this->selected == NULL ? "Select" : "Back", this->selected == NULL ? "textures/moon/controller/a-alt-btn.rgba16" : "textures/moon/controller/b-alt-btn.rgba16", 10, 4, true);
 
     MoonScreen::Draw();
 }
+
 
 void MoonOptMain::Dispose(){
     configfile_save(configfile_name());

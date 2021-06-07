@@ -110,6 +110,7 @@ void mr_i_act_3(void) {
             if (o->oBehParams2ndByte) {
                 o->oPosY += 100.0f;
                 spawn_default_star(1370, 2000.0f, -320.0f);
+                show_achievement("achievement.beatMr.I");
                 obj_mark_for_deletion(o);
             } else
                 cur_obj_spawn_loot_blue_coin();

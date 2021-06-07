@@ -263,7 +263,7 @@ void end_master_display_list(void) {
 }
 
 Gfx **alloc_next_dl(void) {
-    u32 size = 1000;
+    u32 size = 0xFFFF;
     Gfx *new_chunk = alloc_only_pool_alloc(gGfxAllocOnlyPool, size * sizeof(Gfx));
     gSPBranchList(gDisplayListHeadInChunk++, new_chunk);
     gDisplayListHeadInChunk = new_chunk;

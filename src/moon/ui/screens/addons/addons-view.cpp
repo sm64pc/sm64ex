@@ -143,6 +143,10 @@ void MoonAddonsScreen::Update(){
         }
         MoonChangeUI(0);
     }
+
+    if(!(gGlobalTimer % 20))
+        stickAnim = !stickAnim;
+
     MoonScreen::Update();
 }
 
@@ -232,6 +236,11 @@ void MoonAddonsScreen::Draw(){
             MoonDrawRectangle(itemWidth + 16, 45 + (i * 35) + 21.7, 13, 9.3, currentSubItem == ItemButtons::TOGGLE ? focusColor : (Color){0, 0, 0, 100}, true);
             MoonDrawTexture  (itemWidth + 18, 46 + (i * 35) + 21.7, 8, 8, "textures/special/remove.rgba16");
         }
+
+        string basePath = "textures/moon/controller/";
+        basePath.append(stickAnim ? "stick-down.rgba16" : "stick-up.rgba16");
+
+        MoonDrawButton(5, GetScreenHeight() - 24, "Move", basePath, 16, 0, false);
     }
 
     MoonScreen::Draw();

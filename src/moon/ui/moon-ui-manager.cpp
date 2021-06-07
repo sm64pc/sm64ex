@@ -3,6 +3,7 @@
 #include "interfaces/moon-screen.h"
 #include "screens/options/main-view.h"
 #include "screens/addons/addons-view.h"
+#include "screens/achievements/achievements-view.h"
 
 extern "C" {
 #include "game/game_init.h"
@@ -24,6 +25,7 @@ void MoonInitUI() {
     if(screens.empty()){
         screens.push_back(new MoonOptMain());
         screens.push_back(new MoonAddonsScreen());
+        screens.push_back(new MoonAchievementsScreen());
     }
 
     screens[currentScreen]->Mount();

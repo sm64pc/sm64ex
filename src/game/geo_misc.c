@@ -196,7 +196,7 @@ Gfx *geo_exec_cake_end_screen(s32 callContext, struct GraphNode *node, UNUSED f3
     Gfx *displayListHead = NULL;
 
     if (callContext == GEO_CONTEXT_RENDER) {
-        displayList = alloc_display_list(13 * sizeof(*displayList));
+        displayList = alloc_display_list(20 * sizeof(*displayList));
         displayListHead = displayList;
 
         generatedNode->fnNode.node.flags = (generatedNode->fnNode.node.flags & 0xFF) | 0x100;
@@ -205,7 +205,7 @@ Gfx *geo_exec_cake_end_screen(s32 callContext, struct GraphNode *node, UNUSED f3
         s32 y = 0;
         u32 w = SCREEN_HEIGHT * 2560 / 1920;
         u32 h = SCREEN_HEIGHT;
-        u8 *texture = "levels/ending/cake";
+        u8 *texture = "levels/ending/cake.rgba16";
 
         gSPDisplayList(displayListHead++, dl_proj_mtx_fullscreen);
 

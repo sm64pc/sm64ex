@@ -119,6 +119,7 @@ static void eyerok_boss_act_die(void) {
     if (o->oTimer == 60) {
         if (cur_obj_update_dialog_with_cutscene(2, 0, CUTSCENE_DIALOG, DIALOG_118)) {
             spawn_default_star(0.0f, -900.0f, -3700.0f);
+            show_achievement("achievement.beatEyerok");
         } else {
             o->oTimer -= 1;
         }

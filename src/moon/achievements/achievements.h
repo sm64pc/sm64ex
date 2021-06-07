@@ -10,15 +10,20 @@ class Achievement {
 public:
     std::string id;
     std::string icon;
+    std::string lockedIcon;
     std::string title;
     std::string description;
+    bool hasProgress = false;
     Achievement* parent;
+    int sortId = 0;
     int points;
     long long duration;
-    Achievement(std::string id, std::string icon, std::string title, std::string description, int points, float duration, Achievement* parent){
+    Achievement(std::string id, std::string icon, std::string title, std::string description, bool hasProgress, int points, float duration, Achievement* parent){
         this->id = id;
         this->icon = icon;
+        this->lockedIcon = icon+".locked";
         this->title = title;
+        this->hasProgress = hasProgress;
         this->description = description;
         this->duration = duration;
         this->parent = parent;
@@ -32,6 +37,7 @@ struct AchievementEntry {
     Achievement* achievement;
     size_t entryID;
 
+    int progress = 0;
     int state = 0;
     int width = 32;
     int height = 32;

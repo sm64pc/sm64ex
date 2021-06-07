@@ -918,6 +918,7 @@ static s32 act_drowning(struct MarioState *m) {
             m->marioBodyState->eyeState = MARIO_EYES_DEAD;
             if (m->marioObj->header.gfx.unk38.animFrame == 30) {
                 level_trigger_warp(m, WARP_OP_DEATH);
+                show_achievement("achievement.deathByDrowning");
             }
             break;
     }
@@ -1081,7 +1082,7 @@ static s32 act_caught_in_whirlpool(struct MarioState *m) {
     set_mario_animation(m, MARIO_ANIM_GENERAL_FALL);
     vec3f_copy(m->marioObj->header.gfx.pos, m->pos);
     vec3s_set(m->marioObj->header.gfx.angle, 0, m->faceAngle[1], 0);
-    
+
     reset_rumble_timers();
     return FALSE;
 }

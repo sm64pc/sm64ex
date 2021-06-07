@@ -64,4 +64,6 @@ void audio_set_sound_mode(u8 arg0);
 void set_sequence_player_volume(s32 player, f32 volume);
 void audio_init(void); // in load.c
 
+u8 is_playing(u16 seqId);
+
 #endif // AUDIO_EXTERNAL_H

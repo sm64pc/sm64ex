@@ -37,7 +37,6 @@ void play_far_fall_sound(struct MarioState *m) {
     }
 }
 
-#ifndef VERSION_JP
 void play_knockback_sound(struct MarioState *m) {
     if (m->actionArg == 0 && (m->forwardVel <= -28.0f || m->forwardVel >= 28.0f)) {
         play_sound_if_no_flag(m, SOUND_MARIO_DOH, MARIO_MARIO_SOUND_PLAYED);
@@ -45,7 +44,6 @@ void play_knockback_sound(struct MarioState *m) {
         play_sound_if_no_flag(m, SOUND_MARIO_UH, MARIO_MARIO_SOUND_PLAYED);
     }
 }
-#endif
 
 s32 lava_boost_on_wall(struct MarioState *m) {
     m->faceAngle[1] = atan2s(m->wall->normal.z, m->wall->normal.x);
@@ -1544,6 +1542,7 @@ s32 act_lava_boost(struct MarioState *m) {
 
     if (m->health < 0x100) {
         level_trigger_warp(m, WARP_OP_DEATH);
+        show_achievement("achievement.deathByFire");
     }
 
     m->marioBodyState->eyeState = MARIO_EYES_DEAD;

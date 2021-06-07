@@ -32,8 +32,10 @@ void yoshi_walk_loop(void) {
     if (sp24 == 0 || sp24 == 15)
         cur_obj_play_sound_2(SOUND_GENERAL_YOSHI_WALK);
 
-    if (o->oInteractStatus == INT_STATUS_INTERACTED)
+    if (o->oInteractStatus == INT_STATUS_INTERACTED){
+        show_achievement("achievement.talkWithYoshi");
         o->oAction = YOSHI_ACT_TALK;
+    }
 
     if (o->oPosY < 2100.0f) {
         create_respawner(MODEL_YOSHI, bhvYoshi, 3000);

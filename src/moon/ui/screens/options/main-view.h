@@ -11,6 +11,7 @@ public:
     void Dispose();
 private:
     void setCategory(int index);
+    bool stickAnim = 0;
 };
 
 

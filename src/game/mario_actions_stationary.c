@@ -680,6 +680,8 @@ s32 act_hold_butt_slide_stop(struct MarioState *m) {
         return set_mario_action(m, ACT_THROWING, 0);
     }
 
+    printf("Butt sliding\n");
+
     stopping_step(m, MARIO_ANIM_STAND_UP_FROM_SLIDING_WITH_LIGHT_OBJ, ACT_HOLD_IDLE);
     return 0;
 }

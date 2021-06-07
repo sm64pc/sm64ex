@@ -1873,6 +1873,16 @@ void set_sequence_player_volume(s32 player, f32 volume) {
     gSequencePlayers[player].volumeScale = pow(volume, 2);
 }
 
+u8 is_playing(u16 seqId){
+    int i;
+    for (i = 0; i < sBackgroundMusicQueueSize; i++) {
+        if (sBackgroundMusicQueue[i].seqId == seqId) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
 /**
  * Called from threads: thread5_game_loop
  */

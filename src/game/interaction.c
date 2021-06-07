@@ -23,6 +23,7 @@
 #include "sm64.h"
 #include "sound_init.h"
 #include "thread6.h"
+#include "moon/achievements/achievements.h"
 
 #define INT_GROUND_POUND_OR_TWIRL (1 << 0) // 0x01
 #define INT_PUNCH                 (1 << 1) // 0x02
@@ -745,8 +746,9 @@ u32 interact_coin(struct MarioState *m, UNUSED u32 interactType, struct Object *
     if (COURSE_IS_MAIN_COURSE(gCurrCourseNum) && m->numCoins - o->oDamageOrCoinValue < 100
         && m->numCoins >= 100) {
         bhv_spawn_star_no_level_exit(6);
+        show_achievement("achievement.get100CoinStar");
     }
-   
+
     if (o->oDamageOrCoinValue >= 2) {
         queue_rumble_data(5, 80);
     }
@@ -1088,7 +1090,7 @@ u32 interact_tornado(struct MarioState *m, UNUSED u32 interactType, struct Objec
 
         play_sound(SOUND_MARIO_WAAAOOOW, m->marioObj->header.gfx.cameraToObject);
         queue_rumble_data(30, 60);
-        
+
         return set_mario_action(m, ACT_TORNADO_TWIRLING, m->action == ACT_TWIRLING);
     }
 
@@ -1110,7 +1112,7 @@ u32 interact_whirlpool(struct MarioState *m, UNUSED u32 interactType, struct Obj
 
         play_sound(SOUND_MARIO_WAAAOOOW, m->marioObj->header.gfx.cameraToObject);
         queue_rumble_data(30, 60);
-        
+
         return set_mario_action(m, ACT_CAUGHT_IN_WHIRLPOOL, 0);
     }
 
@@ -1145,7 +1147,7 @@ u32 interact_flame(struct MarioState *m, UNUSED u32 interactType, struct Object 
     if (!sInvulnerable && !(m->flags & MARIO_METAL_CAP) && !(m->flags & MARIO_VANISH_CAP)
         && !(o->oInteractionSubtype & INT_SUBTYPE_DELAY_INVINCIBILITY)) {
         queue_rumble_data(5, 80);
-        
+
         o->oInteractStatus = INT_STATUS_INTERACTED;
         m->interactObj = o;
 
@@ -1245,7 +1247,7 @@ u32 interact_bully(struct MarioState *m, UNUSED u32 interactType, struct Object 
         push_mario_out_of_object(m, o, 5.0f);
         drop_and_set_mario_action(m, bully_knock_back_mario(m), 0);
         queue_rumble_data(5, 80);
-        
+
         return TRUE;
     }
 

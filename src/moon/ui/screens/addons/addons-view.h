@@ -9,6 +9,7 @@ public:
     void Draw();
     void Mount();
 private:
+    bool stickAnim = 0;
     void changeScroll(int idx);
 };
 

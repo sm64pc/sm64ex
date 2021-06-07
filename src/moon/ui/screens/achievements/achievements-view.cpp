@@ -1,4 +1,4 @@
-#include "addons-view.h"
+#include "achievements-view.h"
 #include <iostream>
 #include "moon/ui/utils/moon-draw-utils.h"
 #include "moon/ui/moon-ui-manager.h"
@@ -10,29 +10,37 @@
 using namespace std;
 
 extern "C" {
+#include "pc/platform.h"
 #include "sm64.h"
 #include "gfx_dimensions.h"
 #include "pc/configfile.h"
 }
 
-int scrollModifier = 0;
-
-int focusFlag;
-int focusRange = 80;
-float focusAnim = focusRange / 2;
-
-void MoonAddonsScreen::Init(){
+void MoonAchievementsScreen::Init(){
     this->scrollIndex = 0;
     scrollModifier = 0;
 }
 
-void MoonAddonsScreen::Mount(){
+void MoonAchievementsScreen::Mount(){
 
 }
 
-bool dispatched;
 
-void MoonAddonsScreen::changeScroll(int idx){
+bool sortByNID(const string &a, const string &b) {
+    return registeredAchievements[a]->sortId < registeredAchievements[b]->sortId;
+}
+
+vector<string> getAchievementKeys(){
+    std::vector<string> keys;
+    for(auto it = registeredAchievements.begin(); it != registeredAchievements.end(); ++it)
+        if(it->first != "achievement.cheater")
+            keys.push_back(it->first);
+    sort(keys.begin(), keys.end(), sortByNID);
+    return keys;
+}
+
+void MoonAchievementsScreen::changeScroll(int idx){
+    int size = getAchievementKeys().size();
     if(idx < 0){
         if(this->scrollIndex > 0){
             if(scrollModifier > 0 && this->scrollIndex == scrollModifier)
@@ -40,11 +48,11 @@ void MoonAddonsScreen::changeScroll(int idx){
             this->scrollIndex--;
             return;
         }
-        this->scrollIndex = registeredAchievements.size() - 1;
+        this->scrollIndex = size - 1;
         scrollModifier = this->scrollIndex - 4;
         return;
     }
-    if(this->scrollIndex < registeredAchievements.size() - 1){
+    if(this->scrollIndex < size - 1){
         if(this->scrollIndex > 3 && !((this->scrollIndex - scrollModifier) % 4)) scrollModifier++;
         this->scrollIndex++;
         return;
@@ -53,44 +61,32 @@ void MoonAddonsScreen::changeScroll(int idx){
     scrollModifier = 0;
 }
 
-void MoonAddonsScreen::Update(){
+void MoonAchievementsScreen::Update(){
     float yStick = GetStickValue(MoonButtons::U_STICK, false);
     if(yStick > 0) {
         if(dispatched) return;
-        MoonAddonsScreen::changeScroll(-1);
+        MoonAchievementsScreen::changeScroll(-1);
         dispatched = true;
     }
     if(yStick < 0) {
         if(dispatched) return;
-        MoonAddonsScreen::changeScroll(1);
+        MoonAchievementsScreen::changeScroll(1);
         dispatched = true;
     }
     if(!yStick)
         dispatched = false;
 
-    if(IsBtnPressed(MoonButtons::A_BTN)) {
-
-    }
     if(IsBtnPressed(MoonButtons::B_BTN)) {
         MoonChangeUI(0);
     }
+
+    if(!(gGlobalTimer % 20))
+        stickAnim = !stickAnim;
+
     MoonScreen::Update();
 }
 
-static std::string cropTxt(string txt, int length){
-    int currLngt = min((int) txt.length(), length);
-    string desc = txt.substr(0, currLngt);
-    desc.erase(find_if(desc.rbegin(), desc.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), desc.end());
-    return currLngt >= length ? desc + " ..." : desc;
-}
-
-char *strdup(const char *src_str) noexcept {
-    char *new_str = new char[std::strlen(src_str) + 1];
-    std::strcpy(new_str, src_str);
-    return new_str;
-}
-
-void MoonAddonsScreen::Draw(){
+void MoonAchievementsScreen::Draw(){
     string curTitle = "Achievements";
     float step = 1.5;
 
@@ -112,7 +108,9 @@ void MoonAddonsScreen::Draw(){
 
     Color focusColor = {255, 255, 255, 40 + focusAnim};
 
-    int packAmount = registeredAchievements.size();
+    vector<string> achievementList = getAchievementKeys();
+
+    int packAmount = achievementList.size();
     int maxPacks = 5;
     int iMod = scrollModifier;
 
@@ -122,36 +120,35 @@ void MoonAddonsScreen::Draw(){
         if(index > packAmount - 1){
             this->scrollIndex = 0;
             scrollModifier = 0;
-            cout << "Triggered overflow, coming back to 0" << endl;
             return;
         }
 
-        auto &addon = registeredAchievements[registeredAchievements.];
+        auto &achievement = registeredAchievements[achievementList[index]];
 
-        if(addon == NULL) return;
+        if(achievement == NULL) return;
 
         bool selected = (i + iMod) == this->scrollIndex;
-        int itemWidth = boxWidth - (selected ? 15 : 0);
+        int itemWidth = boxWidth - 0;
 
-        MoonDrawRectangle(35, 45 + (i * 35), itemWidth - 20, 31, (i + iMod) == this->scrollIndex && !selected ? focusColor : (Color){0, 0, 0, 100}, true);
-        string pathPrefix = "mod-icons://";
-        string iconPath = pathPrefix.append(addon->name);
-        char* parsed = strdup(iconPath.c_str());
-        if(parsed != nullptr)
-            MoonDrawTexture(35, 45 + (i * 35), 30, 30, parsed);
-        MoonDrawText(35 + 26, 46 + (i * 35), to_string(i + iMod + 1), 0.5, {255, 255, 255, 255}, true, true);
+        MoonDrawRectangle(35, 45 + (i * 35), itemWidth - 20, 31, selected ? focusColor : (Color){0, 0, 0, 100}, true);
+        bool isUnlocked = find_if(entries.begin(), entries.end(),  [&cae = achievement] (auto &m) -> bool { return cae->id == m->achievement->id; }) != entries.end();
+        string iconPath = isUnlocked ? achievement->icon : achievement->lockedIcon;
 
-        MoonDrawText(70, 45 + (i * 35) + 3, cropTxt(addon->name, 37), 0.8, {255, 255, 255, 255}, true, true);
+        char* parsed = sys_strdup(iconPath.c_str());
+        if(parsed != nullptr){
+            MoonDrawTexture  (35, 45 + (i * 35), 30, 30, parsed);
+        }
+
+        MoonDrawText(70, 45 + (i * 35) + 3, achievement->title, 0.8, {255, 255, 255, 255}, true, true);
 
         int maxDesc = 37;
-        int currLngt = min((int) addon->description.length(), maxDesc);
-        MoonDrawText(70, 45 + (i * 35) + 16, cropTxt(addon->description, 37), 0.8, {255, 255, 255, 255}, true, true);
+        int currLngt = min((int) achievement->description.length(), maxDesc);
+        MoonDrawText(70, 45 + (i * 35) + 16, achievement->description, 0.8, {255, 255, 255, 255}, true, true);
 
-        string rawVer = to_string(addon->version);
-        string version = "v"+rawVer.substr(0, rawVer.find(".")+2);
+        string basePath = "textures/moon/controller/";
+        basePath.append(stickAnim ? "stick-down.rgba16" : "stick-up.rgba16");
 
-        MoonDrawText(itemWidth + 13 - MoonGetTextWidth(version, 0.5, false),       45 + (i * 35) + 2,      version,       0.5, {255, 255, 255, 255}, true, true);
-        MoonDrawText(itemWidth + 13 - MoonGetTextWidth(addon->authors[0], 0.5, false), 45 + (i * 35) + 22, addon->authors[0], 0.5, {255, 255, 255, 255}, true, true);
+        MoonDrawButton(5, GetScreenHeight() - 24, "Move", basePath, 16, 0, false);
     }
 
     MoonScreen::Draw();

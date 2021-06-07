@@ -91,21 +91,61 @@ namespace MoonInternal {
         return data;
     }
 
+    float randomFloat(float min, float max) {
+        assert(max > min);
+        float random = ((float) rand()) / (float) RAND_MAX;
+        float range = max - min;
+        return (random*range) + min;
+    }
+
+    void paletteSwap(u8* data, u8* cpy, int w, int h){
+        float mr = 0.07;
+        float mg = 0.72;
+        float mb = 0.21;
+
+        for(int x = 0; x < w * h * 4; x++){
+            if (x % 4 == 0 ) // R
+                data[x] = (data[x]     * mr + data[x + 1] * mg + data[x + 2] * mb);
+            if (x % 4 == 1 ) // G
+                data[x] = (data[x - 1] * mr + data[x]     * mg + data[x + 1] * mb);
+            if (x % 4 == 2 ) // B
+                data[x] = (data[x - 2] * mr + data[x - 1] * mg + data[x]     * mb);
+            if (x % 4 == 3 ) // A
+                data[x] = data[x];
+            cpy[x] = data[x];
+
+        }
+    }
+
     void loadTexture(int tile, const char *fullpath, struct GfxRenderingAPI *gfx_rapi){
 
         int w, h;
         u64 imgsize = 0;
+        string path(fullpath);
 
         if(!strcmp(fullpath, "gfx/mod-icons://Moon64.png")){
             gfx_rapi->upload_texture(moon64_logo.pixel_data, moon64_logo.width, moon64_logo.height);
             return;
         }
 
-        EntryFileData * imgdata = getTextureData(fullpath);
+        bool isLockedAchievement = path.find("achievement") != std::string::npos && path.find(".locked") != std::string::npos;
+        string fixedPath = isLockedAchievement ? path.substr(0, path.find(".locked")) + ".png" : string(fullpath);
+
+        EntryFileData * imgdata = getTextureData(fixedPath.c_str());
         if (imgdata) {
             u8 *data = stbi_load_from_memory(reinterpret_cast<const stbi_uc *>(imgdata->data), imgdata->size, &w, &h, NULL, 4);
+
             if (data) {
-                gfx_rapi->upload_texture(data, w, h);
+
+                u8 *cpy;
+
+                if (isLockedAchievement) {
+                    cpy = new u8[w * h * 4];
+                    paletteSwap(data, cpy, w, h);
+                } else
+                    cpy = data;
+
+                gfx_rapi->upload_texture(cpy, w, h);
                 stbi_image_free(data);
                 return;
             } else {

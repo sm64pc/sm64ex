@@ -30,6 +30,7 @@
 #include "thread6.h"
 #include "../../include/libc/stdlib.h"
 #include "pc/pc_main.h"
+#include "moon/achievements/achievements.h"
 
 // TODO: put this elsewhere
 enum SaveOption { SAVE_OPT_SAVE_AND_CONTINUE = 1, SAVE_OPT_SAVE_AND_QUIT, SAVE_OPT_SAVE_EXIT_GAME, SAVE_OPT_CONTINUE_DONT_SAVE };
@@ -752,6 +753,7 @@ s32 act_quicksand_death(struct MarioState *m) {
         }
         if ((m->quicksandDepth += 5.0f) >= 180.0f) {
             level_trigger_warp(m, WARP_OP_DEATH);
+            show_achievement("achievement.deathBySand");
             m->actionState = 2;
         }
     }
@@ -1171,11 +1173,7 @@ s32 act_exit_land_save_dialog(struct MarioState *m) {
 s32 act_death_exit(struct MarioState *m) {
     if (15 < m->actionTimer++
         && launch_mario_until_land(m, ACT_DEATH_EXIT_LAND, MARIO_ANIM_GENERAL_FALL, -32.0f)) {
-#ifdef VERSION_JP
-        play_sound(SOUND_MARIO_OOOF, m->marioObj->header.gfx.cameraToObject);
-#else
         play_sound(SOUND_MARIO_OOOF2, m->marioObj->header.gfx.cameraToObject);
-#endif
         queue_rumble_data(5, 80);
         m->numLives--;
         // restore 7.75 units of health
@@ -1188,11 +1186,7 @@ s32 act_death_exit(struct MarioState *m) {
 
 s32 act_unused_death_exit(struct MarioState *m) {
     if (launch_mario_until_land(m, ACT_FREEFALL_LAND_STOP, MARIO_ANIM_GENERAL_FALL, 0.0f)) {
-#ifdef VERSION_JP
-        play_sound(SOUND_MARIO_OOOF, m->marioObj->header.gfx.cameraToObject);
-#else
         play_sound(SOUND_MARIO_OOOF2, m->marioObj->header.gfx.cameraToObject);
-#endif
         m->numLives--;
         // restore 7.75 units of health
         m->healCounter = 31;
@@ -1204,11 +1198,7 @@ s32 act_unused_death_exit(struct MarioState *m) {
 
 s32 act_falling_death_exit(struct MarioState *m) {
     if (launch_mario_until_land(m, ACT_DEATH_EXIT_LAND, MARIO_ANIM_GENERAL_FALL, 0.0f)) {
-#ifdef VERSION_JP
-        play_sound(SOUND_MARIO_OOOF, m->marioObj->header.gfx.cameraToObject);
-#else
         play_sound(SOUND_MARIO_OOOF2, m->marioObj->header.gfx.cameraToObject);
-#endif
         queue_rumble_data(5, 80);
         m->numLives--;
         // restore 7.75 units of health
@@ -1533,6 +1523,7 @@ s32 act_squished(struct MarioState *m) {
             if (m->actionTimer >= 15) {
                 // 1 unit of health
                 if (m->health < 0x0100) {
+                    show_achievement("achievement.deathByCrushing");
                     level_trigger_warp(m, WARP_OP_DEATH);
                     // woosh, he's gone!
                     set_mario_action(m, ACT_DISAPPEARED, 0);

@@ -1,4 +1,5 @@
 // bowser.c.inc
+#include "game/hud.h"
 
 void bowser_tail_anchor_act_0(void) {
     struct Object *bowser = o->parentObj;
@@ -96,6 +97,9 @@ void bhv_bowser_body_anchor_loop(void) {
 }
 
 s32 bowser_spawn_shockwave(void) {
+    o->oHealth = -1;
+    o->oAction = 4;
+    return 0;
     struct Object *wave;
     if (o->oBehParams2ndByte == 2) {
         wave = spawn_object(o, MODEL_BOWSER_WAVE, bhvBowserShockWave);
@@ -202,7 +206,6 @@ void bowser_bitdw_act_controller(void) {
         o->oBowserUnk110++;
     } else {
         o->oBowserUnk110 = 0;
-#ifndef VERSION_JP
         if (!gCurrDemoInput) {
             if (rand < 0.1)
                 o->oAction = 3; // rare 1/10 chance
@@ -211,12 +214,6 @@ void bowser_bitdw_act_controller(void) {
         } else {
             o->oAction = 14; // ensure demo starts with action 14.
         }
-#else
-        if (rand < 0.1)
-            o->oAction = 3; // rare 1/10 chance
-        else
-            o->oAction = 14; // common
-#endif
     }
 }
 
@@ -763,6 +760,20 @@ void bowser_spawn_grand_star_key(void) {
         cur_obj_play_sound_2(SOUND_GENERAL2_BOWSER_KEY);
     }
     gSecondCameraFocus->oAngleVelYaw = o->oAngleVelYaw;
+    switch(o->oBehParams2ndByte){
+        case 0:
+            show_achievement("achievement.beatFirstBowser");
+            break;
+        case 1:
+            show_achievement("achievement.beatSecondBowser");
+            break;
+        case 2:
+            if(gHudDisplay.stars >= 120)
+                show_achievement("achievement.beatGame120Stars");
+            else
+                show_achievement("achievement.beatFinalBowser");
+            break;
+    }
 }
 
 void bowser_fly_back_dead(void) {

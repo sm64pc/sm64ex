@@ -29,6 +29,7 @@
 #include "engine/graph_node.h"
 #include "level_table.h"
 #include "pc/configfile.h"
+#include "moon/achievements/achievements.h"
 
 #define CBUTTON_MASK (U_CBUTTONS | D_CBUTTONS | L_CBUTTONS | R_CBUTTONS)
 
@@ -3701,18 +3702,6 @@ s32 move_point_along_spline(Vec3f p, struct CutsceneSplinePoint spline[], s16 *s
         secondSpeed = 1.0f / spline[*splineSegment + 2].speed;
     }
     progressChange = (secondSpeed - firstSpeed) * *progress + firstSpeed;
-
-#ifdef VERSION_EU
-    if (gCamera->cutscene == CUTSCENE_INTRO_PEACH) {
-        progressChange += progressChange * 0.19f;
-    }
-    if (gCamera->cutscene == CUTSCENE_CREDITS) {
-        progressChange += progressChange * 0.15f;
-    }
-    if (gCamera->cutscene == CUTSCENE_ENDING) {
-        progressChange += progressChange * 0.1f;
-    }
-#endif
 
     if (1 <= (*progress += progressChange)) {
         (*splineSegment)++;
@@ -9849,6 +9838,8 @@ BAD_RETURN(s32) cutscene_credits(struct Camera *c) {
     struct CutsceneSplinePoint *focus, *pos;
 
     cutscene_event(cutscene_credits_reset_spline, c, 0, 0);
+
+    show_achievement("achievement.watchEndCredits");
 
     switch (gCurrLevelArea) {
         case AREA_BOB:

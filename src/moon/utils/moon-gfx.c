@@ -57,6 +57,7 @@ void moon_draw_scaled_text(f32 x, f32 y, const u8 *str, float scaleX, float scal
     Mtx *_Matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
     if (!_Matrix) return;
     guScale(_Matrix, scaleX, scaleY, 1.f);
+    create_dl_ortho_matrix();
     create_dl_translation_matrix(MENU_MTX_PUSH, x, y, 0.0f);
     gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(_Matrix), G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_NOPUSH);
 
@@ -140,7 +141,22 @@ void moon_draw_texture(s32 x, s32 y, u32 w, u32 h, char *texture) {
     gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
 }
 
+void moon_draw_uv_texture(s32 x, s32 y, u32 w, u32 h, u32 tw, u32 th, s32 u, s32 v, char *texture) {
+    gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
+    gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 0, 0, G_TX_LOADTILE, 0, G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD);
+    gDPTileSync(gDisplayListHead++);
+    gDPSetTile(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 2, 0, G_TX_RENDERTILE, 0, G_TX_NOMIRROR, 3, G_TX_NOLOD, G_TX_NOMIRROR, 3, G_TX_NOLOD);
+    gDPSetTileSize(gDisplayListHead++, G_TX_RENDERTILE, 0, 0, tw << G_TEXTURE_IMAGE_FRAC, th << G_TEXTURE_IMAGE_FRAC);
+    gDPPipeSync(gDisplayListHead++);
+    gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 1, texture);
+    gDPLoadSync(gDisplayListHead++);
+    gDPLoadBlock(gDisplayListHead++, G_TX_LOADTILE, 0, 0, w * h - 1, CALC_DXT(w, G_IM_SIZ_32b_BYTES));
+    gSPTextureRectangle(gDisplayListHead++, x << 2, y << 2, (x + w) << 2, (y + h) << 2, G_TX_RENDERTILE, u, v, 4 << 10, 1 << 10);
+    gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
+}
+
 void moon_draw_rectangle(f32 x, f32 y, f32 w, f32 h, struct Color c, u8 u4_3) {
+    create_dl_ortho_matrix();
     Mtx *_Matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
     if (!_Matrix) return;
 

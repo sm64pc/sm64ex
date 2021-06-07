@@ -14,6 +14,7 @@
 #include "thread6.h"
 #include "pc/configfile.h"
 #include "pc/cheats.h"
+#include "moon/achievements/achievements.h"
 
 struct LandingAction {
     s16 numFrames;
@@ -470,7 +471,7 @@ void update_walking_speed(struct MarioState *m) {
     }
     else {
          m->faceAngle[1] = m->intendedYaw - approach_s32((s16)(m->intendedYaw - m->faceAngle[1]), 0, 0x800, 0x800);
-    }        
+    }
     apply_slope_accel(m);
 }
 
@@ -1252,7 +1253,7 @@ s32 act_riding_shell_ground(struct MarioState *m) {
     }
 
     adjust_sound_for_speed(m);
-    
+
     reset_rumble_timers();
     return FALSE;
 }
@@ -1354,6 +1355,7 @@ s32 act_burning_ground(struct MarioState *m) {
     m->health -= 10;
     if (m->health < 0x100) {
         set_mario_action(m, ACT_STANDING_DEATH, 0);
+        show_achievement("achievement.deathByFire");
     }
 
     m->marioBodyState->eyeState = MARIO_EYES_DEAD;
@@ -1853,7 +1855,7 @@ s32 act_long_jump_land(struct MarioState *m) {
         m->forwardVel = 0.0f;
     }
 #endif
-    
+
     if (!(m->input & INPUT_Z_DOWN)) {
         m->input &= ~INPUT_A_PRESSED;
     }
