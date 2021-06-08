@@ -1,4 +1,4 @@
-.0#ifdef CAPI_SDL2
+#ifdef CAPI_SDL2
 
 #include <stdio.h>
 #include <stdint.h>

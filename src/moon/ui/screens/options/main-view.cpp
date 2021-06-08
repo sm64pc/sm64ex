@@ -115,7 +115,7 @@ void MoonOptMain::Draw(){
         MoonDrawButton(5, GetScreenHeight() - 24, "Change value", basePath, 16, 0, false);
     }
 
-    MoonDrawButton(7, pGetScreenHeight() - 24, this->selected == NULL ? "Select" : "Back", this->selected == NULL ? "textures/moon/controller/a-alt-btn.rgba16" : "textures/moon/controller/b-alt-btn.rgba16", 10, 4, true);
+    MoonDrawButton(7, GetScreenHeight() - 24, this->selected == NULL ? "Select" : "Back", this->selected == NULL ? "textures/moon/controller/a-alt-btn.rgba16" : "textures/moon/controller/b-alt-btn.rgba16", 10, 4, true);
 
     MoonScreen::Draw();
 }
