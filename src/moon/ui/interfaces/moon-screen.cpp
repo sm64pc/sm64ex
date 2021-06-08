@@ -1,6 +1,7 @@
 #include "moon-screen.h"
 #include <algorithm>
 #include <iostream>
+#include <cmath>
 
 extern "C" {
 #include "engine/math_util.h"
@@ -41,25 +42,28 @@ void MoonScreen::Mount(){
 
 void MoonScreen::Draw(){
     if(this->enabledWidgets){
-        for(int i = 0; i < widgets.size(); i++)
-            widgets[i]->Draw();
-        //int widgetAmount = widgets.size();
-        //int maxWidgets = 8;
-        //int iMod = scrollWidgetModifier;
 
-        //for(int i = 0; i < min(widgetAmount, maxWidgets); i++){
-        //    int index = i + iMod;
+        int widgetsAmount = this->widgets.size();
+        int maxWidgets = 8;
+        int iMod = scrollModifier;
 
-        //    if(index > widgetAmount - 1){
-        //        this->scrollIndex = 0;
-        //        scrollWidgetModifier = 0;
-        //        return;
-        //    }
+        for(int i = 0; i < min(widgetsAmount, maxWidgets); i++){
+            int index = i + iMod;
 
-        //    widgets[index]->parent = this;
-        //    widgets[index]->Draw();
-        //    widgets[index]->mY = 15 * iMod;
-        //}
+            if(index > widgetsAmount - 1){
+                this->scrollIndex = 0;
+                scrollModifier = 0;
+                return;
+            }
+
+            auto &widget = this->widgets[index];
+
+            if(widget == NULL) return;
+
+            widget->parent = this;
+            widget->y = 57 + (i * 17);
+            widget->Draw();
+        }
     }
 }
 
@@ -67,25 +71,25 @@ bool stickExecuted;
 
 
 void MoonScreen::changeScroll(int idx){
+    int size = this->widgets.size();
     if(idx < 0){
         if(this->scrollIndex > 0){
-            if(scrollWidgetModifier > 0 && this->scrollIndex == scrollWidgetModifier)
-                scrollWidgetModifier--;
+            if(scrollModifier > 0 && this->scrollIndex == scrollModifier)
+                scrollModifier--;
             this->scrollIndex--;
             return;
         }
-        this->scrollIndex = this->widgets.size() - 1;
-        scrollWidgetModifier = this->scrollIndex - 4;
+        this->scrollIndex = size - 1;
+        scrollModifier = this->scrollIndex - min(7, size - 1);
         return;
     }
-    if(this->scrollIndex < this->widgets.size() - 1){
-        if(this->scrollIndex > 3 && !((this->scrollIndex - scrollWidgetModifier) % 4)) scrollWidgetModifier++;
+    if(this->scrollIndex < size - 1){
+        if(this->scrollIndex > 5 && !((this->scrollIndex - scrollModifier) % 7)) scrollModifier++;
         this->scrollIndex++;
         return;
     }
-
     this->scrollIndex = 0;
-    scrollWidgetModifier = 0;
+    scrollModifier = 0;
 }
 
 void MoonScreen::Update(){

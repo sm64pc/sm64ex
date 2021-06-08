@@ -18,6 +18,7 @@ class MoonScreen {
 protected:
     bool enabledWidgets = true;
     bool useMouseInstead = false; // unused
+    int scrollModifier = 0;
 public:
     std::vector<MoonWidget*> widgets;
     MoonWidget* selected;

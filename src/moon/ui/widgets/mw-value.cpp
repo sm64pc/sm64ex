@@ -11,7 +11,6 @@ bool mwvStickExecuted;
 
 MWValue::MWValue(float x, float y, std::wstring title, MWValueBind bind){
     this->x = x;
-    this->y = y;
     this->bind = bind;
     this->title = title;
     this->titleKey = false;
@@ -19,7 +18,6 @@ MWValue::MWValue(float x, float y, std::wstring title, MWValueBind bind){
 
 MWValue::MWValue(float x, float y, std::wstring title, MWValueBind bind, bool titleKey){
     this->x = x;
-    this->y = y;
     this->bind = bind;
     this->title = title;
     this->titleKey = titleKey;
@@ -27,7 +25,6 @@ MWValue::MWValue(float x, float y, std::wstring title, MWValueBind bind, bool ti
 
 MWValue::MWValue(float x, float y, std::string title, MWValueBind bind){
     this->x = x;
-    this->y = y;
     this->bind = bind;
     this->title = wide(title);
     this->titleKey = false;
@@ -35,7 +32,6 @@ MWValue::MWValue(float x, float y, std::string title, MWValueBind bind){
 
 MWValue::MWValue(float x, float y, std::string title, MWValueBind bind, bool titleKey){
     this->x = x;
-    this->y = y;
     this->bind = bind;
     this->title = wide(title);
     this->titleKey = titleKey;

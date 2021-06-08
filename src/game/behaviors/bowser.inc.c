@@ -97,9 +97,6 @@ void bhv_bowser_body_anchor_loop(void) {
 }
 
 s32 bowser_spawn_shockwave(void) {
-    o->oHealth = -1;
-    o->oAction = 4;
-    return 0;
     struct Object *wave;
     if (o->oBehParams2ndByte == 2) {
         wave = spawn_object(o, MODEL_BOWSER_WAVE, bhvBowserShockWave);
