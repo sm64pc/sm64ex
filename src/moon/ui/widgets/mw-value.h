@@ -19,6 +19,8 @@ struct MWValueBind{
     std::vector<std::wstring>* values;
     bool valueKeys;
 
+    u_int32_t* binds;
+
     void (*callback)();
 };
 

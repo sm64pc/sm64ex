@@ -72,7 +72,7 @@ void MWValue::Draw(){
     bool isFloat = this->bind.fvar != NULL;
     bool isInt   = this->bind.ivar != NULL;
 
-    MoonDrawRectangle(this->x + 10, this->y, barWidth, 16, focusColors[this->selected ? 0 : this->focused ? 1 : 2], true);
+    MoonDrawRectangle(this->x + 10, this->y, barWidth, this->height, focusColors[this->selected ? 0 : this->focused ? 1 : 2], true);
 
     if(this->bind.bvar != NULL){
         bool status = *this->bind.bvar;
@@ -116,6 +116,7 @@ void MWValue::Update(){
     bool isFloat = this->bind.fvar   != NULL;
     bool isInt   = this->bind.ivar   != NULL;
     bool isBtn   = this->bind.btn    != NULL;
+    bool isBind  = this->bind.binds  != NULL;
 
     float maxValue = isArray ? (*this->bind.values).size() - 1 : this->bind.max;
     float minValue = isArray ? 0 : this->bind.min;

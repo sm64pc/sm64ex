@@ -6,7 +6,7 @@ class MoonWidget {
 public:
     float x;
     float y;
-    float mY;
+    float height = 16;
     bool enabled = true;
     bool centered = true;
     bool selectable = true;

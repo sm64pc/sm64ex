@@ -61,7 +61,7 @@ void MoonScreen::Draw(){
             if(widget == NULL) return;
 
             widget->parent = this;
-            widget->y = 57 + (i * 17);
+            widget->y = 57 + (i * widget->height + 1);
             widget->Draw();
         }
     }
