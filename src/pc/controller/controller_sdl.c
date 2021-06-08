@@ -1,4 +1,4 @@
-#ifdef CAPI_SDL2
+.0#ifdef CAPI_SDL2
 
 #include <stdio.h>
 #include <stdint.h>
@@ -113,7 +113,7 @@ static void controller_sdl_init(void) {
         free(gcdata);
     }
     #endif
-    
+
 #ifdef BETTERCAMERA
     if (newcam_mouse == 1)
         SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -172,7 +172,7 @@ static void controller_sdl_read(OSContPad *pad) {
         SDL_SetRelativeMouseMode(SDL_TRUE);
     else
         SDL_SetRelativeMouseMode(SDL_FALSE);
-    
+
     u32 mouse = SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
 
     for (u32 i = 0; i < num_mouse_binds; ++i)
@@ -192,7 +192,7 @@ static void controller_sdl_read(OSContPad *pad) {
         sdl_cntrl = NULL;
         sdl_haptic = NULL;
     }
-    
+
     if (sdl_cntrl == NULL) {
         for (int i = 0; i < SDL_NumJoysticks(); i++) {
             if (SDL_IsGameController(i)) {
@@ -282,7 +282,7 @@ static void controller_sdl_rumble_play(f32 strength, f32 length) {
 #ifndef TARGET_SWITCH
     if (sdl_haptic)
         SDL_HapticRumblePlay(sdl_haptic, strength, (u32)(length * 1000.0f));
-#else    
+#else
     controller_nx_rumble_play(strength, length);
 #endif
 }

@@ -103,7 +103,7 @@ void MoonOptMain::Draw(){
     float txtWidth = MoonGetTextWidth(curTitle, 1.0, true);
     MoonDrawRectangle(0, 0, GetScreenWidth(false), GetScreenHeight(), {0, 0, 0, 100}, false);
     MoonDrawWideColoredText(SCREEN_WIDTH / 2 - txtWidth / 2, 20, curTitle, 1.0, {255, 255, 255, 255}, true, true);
-    MoonDrawRectangle(25, 50, SCREEN_WIDTH - 50, GetScreenHeight() * 0.6, {0, 0, 0, 100}, true);
+    MoonDrawRectangle(25, 50, SCREEN_WIDTH - 50, GetScreenHeight() * 0.6 + 5, {0, 0, 0, 100}, true);
 
     string basePath = "textures/moon/controller/";
 
@@ -115,7 +115,7 @@ void MoonOptMain::Draw(){
         MoonDrawButton(5, GetScreenHeight() - 24, "Change value", basePath, 16, 0, false);
     }
 
-    MoonDrawButton(7, GetScreenHeight() - 24, this->selected == NULL ? "Select" : "Back", this->selected == NULL ? "textures/moon/controller/a-alt-btn.rgba16" : "textures/moon/controller/b-alt-btn.rgba16", 10, 4, true);
+    MoonDrawButton(7, pGetScreenHeight() - 24, this->selected == NULL ? "Select" : "Back", this->selected == NULL ? "textures/moon/controller/a-alt-btn.rgba16" : "textures/moon/controller/b-alt-btn.rgba16", 10, 4, true);
 
     MoonScreen::Draw();
 }
