@@ -105,11 +105,11 @@ namespace MoonInternal {
 
         for(int x = 0; x < w * h * 4; x++){
             if (x % 4 == 0 ) // R
-                data[x] = (data[x]     * mr + data[x + 1] * mg + data[x + 2] * mb);
+                data[x] = (data[x + 1]);
             if (x % 4 == 1 ) // G
-                data[x] = (data[x - 1] * mr + data[x]     * mg + data[x + 1] * mb);
+                data[x] = (data[x]);
             if (x % 4 == 2 ) // B
-                data[x] = (data[x - 2] * mr + data[x - 1] * mg + data[x]     * mb);
+                data[x] = (data[x - 1]);
             if (x % 4 == 3 ) // A
                 data[x] = data[x];
             cpy[x] = data[x];
