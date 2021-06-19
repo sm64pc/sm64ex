@@ -110,10 +110,10 @@ void MoonDrawBWTexture(float x, float y, float w, float h, char* texture){
 	gDPSetRenderMode(gDisplayListHead++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
 }
 
-void MoonDrawButton(int x, int y, std::string text, std::string texture, int size, int offset, bool rtl){
+void MoonDrawButton(int x, int y, std::string text, std::string texture, int size, int offset, bool rtl, bool u4_3){
     if(!rtl){
-        MoonDrawTexture(GFX_DIMENSIONS_FROM_LEFT_EDGE(x), y - 3 + offset, size, size, sys_strdup(texture.c_str()));
-        MoonDrawText(x + 16 + 3, y, text, 0.8, {255, 255, 255, 255}, true, false);
+        MoonDrawTexture(u4_3 ? x : GFX_DIMENSIONS_FROM_LEFT_EDGE(x), y - 3 + offset, size, size, sys_strdup(texture.c_str()));
+        MoonDrawText   (x + 16 + 3, y, text, 0.8, {255, 255, 255, 255}, true, u4_3);
     } else {
         x = GetScreenWidth(false) - x;
         int txtWidth = MoonGetTextWidth(text, 0.8, false);

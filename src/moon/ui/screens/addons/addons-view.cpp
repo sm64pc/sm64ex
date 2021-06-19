@@ -164,7 +164,7 @@ char *strdup(const char *src_str) noexcept {
 }
 
 void MoonAddonsScreen::Draw(){
-    string curTitle = "Texture packs";
+    string curTitle = "Addons";
     float step = 1.5;
 
     if(focusAnim >= focusRange)
@@ -240,7 +240,7 @@ void MoonAddonsScreen::Draw(){
         string basePath = "textures/moon/controller/";
         basePath.append(stickAnim ? "stick-down.rgba16" : "stick-up.rgba16");
 
-        MoonDrawButton(5, GetScreenHeight() - 24, "Move", basePath, 16, 0, false);
+        MoonDrawButton(5, GetScreenHeight() - 24, "Move", basePath, 16, 0, false, false);
     }
 
     MoonScreen::Draw();

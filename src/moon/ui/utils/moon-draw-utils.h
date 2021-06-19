@@ -28,6 +28,6 @@ void MoonDrawWideColoredText(float x, float y, std::wstring text, float scale, s
 void MoonDrawTexture    (float x, float y, float w, float h, char* texture);
 void MoonDrawBWTexture  (float x, float y, float w, float h, char* texture);
 void MoonDrawRectangle  (float x, float y, float w, float h, struct Color c, bool u4_3);
-void MoonDrawButton     (int x, int y, std::string text, std::string texture, int size, int offset, bool rtl);
+void MoonDrawButton     (int x, int y, std::string text, std::string texture, int size, int offset, bool rtl, bool u4_3);
 
 #endif

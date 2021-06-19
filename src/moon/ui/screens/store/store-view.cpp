@@ -160,7 +160,7 @@ char *strdup(const char *src_str) noexcept {
 }
 
 void MoonStoreScreen::Draw(){
-    string curTitle = "Texture packs";
+    string curTitle = "Addons";
     float step = 1.5;
 
     if(focusAnim >= focusRange)

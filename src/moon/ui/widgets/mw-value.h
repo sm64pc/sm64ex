@@ -19,7 +19,8 @@ struct MWValueBind{
     std::vector<std::wstring>* values;
     bool valueKeys;
 
-    u_int32_t* binds;
+    u_int32_t* bindKeys;
+    std::string keyIcon;
 
     void (*callback)();
 };

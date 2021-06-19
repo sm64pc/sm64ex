@@ -336,7 +336,7 @@ namespace MoonInternal {
 
 namespace Moon {
     void showAchievement(Achievement* achievement){
-        if(cheatsGotEnabled) return;
+        if(cheatsGotEnabled || gCurrDemoInput) return;
 
         if(find_if(entries.begin(), entries.end(),  [&cae = achievement] (auto &m) -> bool { return cae->id == m->achievement->id; }) != entries.end()) return;
         cout << "Achievement got triggered: " << achievement->title << endl;

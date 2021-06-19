@@ -22,22 +22,19 @@ MGameCategory::MGameCategory() : MoonCategory("TEXT_OPT_GAME"){
     }
 
     this->catOptions.push_back(new MWValue(22, 57, "TEXT_OPT_LANGUAGE",   {.index = reinterpret_cast<int*>(&configLanguage), .values = &lngNames, .callback = [](){
-        Moon::setCurrentLanguage(Moon::languages[configLanguage]);
+        if( configLanguage > 0 && configLanguage < Moon::languages.size())
+            Moon::setCurrentLanguage(Moon::languages[configLanguage]);
     }}, true));
     this->catOptions.push_back(new MWValue(22, 74, "TEXT_OPT_PRECACHE",   {.bvar = &configPrecacheRes}, true));
-    int exitY;
 #ifdef TARGET_SWITCH
-    exitY = 108;
     this->catOptions.push_back(new MWValue(22, 91, "TEXT_OPT_SWITCH_HUD", {.bvar = &configSwitchHud}, true));
-#else
-    exitY = 91;
 #endif
-    this->catOptions.push_back(new MWValue(22, exitY, "Level of detail",  {.index = reinterpret_cast<int*>(&configLODMode), .values = &modes }, false));
-    this->catOptions.push_back(new MWValue(22, exitY + 17, "Texture Packs",   { .btn = [](){
-        MoonChangeUI(1);
-    }}, false));
-    this->catOptions.push_back(new MWValue(22, exitY + 34, "Achievements",   { .btn = [](){
+    this->catOptions.push_back(new MWValue(22, 0, "Level of detail",  {.index = reinterpret_cast<int*>(&configLODMode), .values = &modes }, false));
+    this->catOptions.push_back(new MWValue(22, 0, "Achievements",   { .btn = [](){
         MoonChangeUI(2);
     }}, false));
-    this->catOptions.push_back(new MWValue(22, exitY + 51, "TEXT_EXIT_GAME",   { .btn = game_exit}, true));
+    this->catOptions.push_back(new MWValue(22, 0, "Addons",   { .btn = [](){
+        MoonChangeUI(1);
+    }}, false));
+    this->catOptions.push_back(new MWValue(22, 0, "TEXT_EXIT_GAME",   { .btn = game_exit}, true));
 }

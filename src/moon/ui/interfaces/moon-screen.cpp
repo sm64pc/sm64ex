@@ -18,11 +18,10 @@ void MoonScreen::Init(){
     this->scrollIndex = 0;
     this->selected = NULL;
 
-    if(this->enabledWidgets)
-        for(int i = 0; i < widgets.size(); i++){
-            widgets[i]->Init();
-            widgets[i]->parent = this;
-        }
+    for(int i = 0; i < widgets.size(); i++){
+        widgets[i]->Init();
+        widgets[i]->parent = this;
+    }
 }
 
 void MoonScreen::Mount(){
@@ -30,6 +29,7 @@ void MoonScreen::Mount(){
         this->scrollIndex = 0;
         this->selected  = NULL;
         for(int i = 0; i < widgets.size(); i++) {
+            widgets[i]->Init();
             widgets[i]->selected = false;
             widgets[i]->focused = false;
             widgets[i]->parent = this;
@@ -94,26 +94,9 @@ void MoonScreen::changeScroll(int idx){
 
 void MoonScreen::Update(){
     if(this->enabledWidgets && !this->widgets.empty()) {
-        if(this->useMouseInstead){
-            // MouseIO* tmp = GetIOModule<MouseIO>();
-            // if(tmp != NULL){
-            //     int mouseX = tmp->xLocalPos;
-            //     int mouseY = tmp->yLocalPos;
-            //     int baseY = 119;
-            //     int optionSize = 16;
-            //     if(mouseX >= 22 && mouseY > baseY){
-            //         int currentId = ((mouseY - baseY) / (optionSize * 2));
-            //         if(currentId < widgets.size()){
-            //             for(int i = 0; i < widgets.size(); i++) {
-            //                 widgets[i]->selected = false;
-            //                 widgets[i]->focused = false;
-            //             }
-            //             this->widgets[currentId]->selected = false;
-            //             this->widgets[currentId]->focused = true;
-            //         }
-            //     }
-            // }
-            // return;
+        for(int i = 0; i < widgets.size(); i++){
+            widgets[i]->parent = this;
+            widgets[i]->Update();
         }
         float yStick = GetStickValue(MoonButtons::U_STICK, false);
         if(yStick > 0) {
@@ -149,10 +132,6 @@ void MoonScreen::Update(){
                 this->selected->focused = false;
                 this->selected = NULL;
             }
-        }
-        for(int i = 0; i < widgets.size(); i++){
-            widgets[i]->parent = this;
-            widgets[i]->Update();
         }
     }
 }

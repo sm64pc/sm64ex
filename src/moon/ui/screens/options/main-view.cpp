@@ -11,10 +11,12 @@
 #include "moon/ui/screens/options/categories/mvideo.h"
 #include "moon/ui/screens/options/categories/maudio.h"
 #include "moon/ui/screens/options/categories/mcheats.h"
+#include "moon/ui/screens/options/categories/mcontrols.h"
 #ifdef BETTERCAMERA
 #include "moon/ui/screens/options/categories/mcamera.h"
 #endif
 
+#include "moon/utils/umath.h"
 #include "moon/io/moon-io.h"
 #include "moon/io/modules/mouse-io.h"
 
@@ -32,6 +34,11 @@ extern "C" {
 vector<MoonCategory*> categories;
 bool cswStickExecuted;
 int categoryIndex = 0;
+
+int arrowFrameCounter = 0;
+int arrowFocusAnimRange = 10;
+float arrowFocusAnimation = arrowFocusAnimRange;
+int arrowFocusAnimationPingPong;
 
 void MoonOptMain::setCategory(int index){
     MoonCategory *cat = categories[index];
@@ -57,6 +64,7 @@ void MoonOptMain::Mount(){
     categories.push_back(new MVideoCategory());
     categories.push_back(new MAudioCategory());
     categories.push_back(new MCheatsCategory());
+    categories.push_back(new MControllerCategory());
     this->setCategory(categoryIndex);
     MoonScreen::Mount();
 }
@@ -98,6 +106,16 @@ void MoonOptMain::Update(){
 }
 
 void MoonOptMain::Draw(){
+
+    float step = 0.3;
+
+    if(arrowFocusAnimation >= arrowFocusAnimRange)
+        arrowFocusAnimationPingPong = 1;
+    else if (arrowFocusAnimation <= arrowFocusAnimRange / 2)
+        arrowFocusAnimationPingPong = 0;
+
+    arrowFocusAnimation += step * (arrowFocusAnimationPingPong ? -1 : 1);
+
     wstring curTitle = categories[categoryIndex]->titleKey ? Moon::getLanguageKey(categories[categoryIndex]->categoryName) : categories[categoryIndex]->categoryName;
 
     float txtWidth = MoonGetTextWidth(curTitle, 1.0, true);
@@ -105,17 +123,21 @@ void MoonOptMain::Draw(){
     MoonDrawWideColoredText(SCREEN_WIDTH / 2 - txtWidth / 2, 20, curTitle, 1.0, {255, 255, 255, 255}, true, true);
     MoonDrawRectangle(25, 50, SCREEN_WIDTH - 50, GetScreenHeight() * 0.6 + 5, {0, 0, 0, 100}, true);
 
+    float fixedValue = MathUtil::Lerp(fixedValue, arrowFocusAnimation, 1.f);
+
+    MoonDrawText(SCREEN_WIDTH / 2 - txtWidth / 2 - (70 - fixedValue), 20, "<", 1.0, {255, 255, 255, 255}, true, true);
+    MoonDrawText(SCREEN_WIDTH / 2 + txtWidth / 2 + (65 - fixedValue), 20, ">", 1.0, {255, 255, 255, 255}, true, true);
     string basePath = "textures/moon/controller/";
 
     if(this->selected == NULL){
         basePath.append(stickAnim ? "stick-down.rgba16" : "stick-up.rgba16");
-        MoonDrawButton(5, GetScreenHeight() - 24, "Move", basePath, 16, 0, false);
+        MoonDrawButton(5, GetScreenHeight() - 24, "Move", basePath, 16, 0, false, false);
     } else{
         basePath.append(stickAnim ? "stick-left.rgba16" : "stick-right.rgba16");
-        MoonDrawButton(5, GetScreenHeight() - 24, "Change value", basePath, 16, 0, false);
+        MoonDrawButton(5, GetScreenHeight() - 24, "Change value", basePath, 16, 0, false, false);
     }
 
-    MoonDrawButton(7, GetScreenHeight() - 24, this->selected == NULL ? "Select" : "Back", this->selected == NULL ? "textures/moon/controller/a-alt-btn.rgba16" : "textures/moon/controller/b-alt-btn.rgba16", 10, 4, true);
+    MoonDrawButton(7, GetScreenHeight() - 24, this->selected == NULL ? "Select" : "Back", this->selected == NULL ? "textures/moon/controller/a-alt-btn.rgba16" : "textures/moon/controller/b-alt-btn.rgba16", 10, 4, true, false);
 
     MoonScreen::Draw();
 }
