@@ -190,7 +190,9 @@ namespace MoonInternal {
 
         for( auto &achievement : obtainedAchievements ){
             AchievementEntry* entry = new AchievementEntry();
-            entry->achievement = Moon::getAchievementById(achievement);
+            Achievement* a = Moon::getAchievementById(achievement);
+            if(a == NULL) return;
+            entry->achievement = a;
             entry->dead = true;
             entries.push_back(entry);
         }
