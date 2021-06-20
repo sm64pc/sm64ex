@@ -109,7 +109,7 @@ static void controller_sdl_init(void) {
         if (rw) {
             int nummaps = SDL_GameControllerAddMappingsFromRW(rw, SDL_TRUE);
             if (nummaps >= 0)
-                printf("loaded %d controller mappings from 'db/gamecontrollerdb.txt'\n", nummaps);
+                printf("[Moon64 - SDL] Loaded %d controller mappings\n", nummaps);
         }
     }
     #endif
