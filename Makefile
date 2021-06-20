@@ -602,6 +602,11 @@ endif
 CXXFLAGS := -std=c++17
 LDFLAGS += -lstdc++fs
 
+ifeq ($(WINDOWS_BUILD),1)
+  CC_CHECK += -DDISABLE_CURL_SUPPORT
+  CFLAGS += -DDISABLE_CURL_SUPPORT
+endif
+
 ifeq ($(DEBUG),1)
   CC_CHECK += -DGAME_DEBUG
   CFLAGS += -DGAME_DEBUG
