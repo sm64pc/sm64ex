@@ -17,6 +17,7 @@
 #include "../configfile.h"
 #include "../platform.h"
 #include "../fs/fs.h"
+#include "moon/config/gamectrldb.h"
 
 #define AVOID_UTYPES
 #include "nx/m_controller.h"
@@ -101,8 +102,8 @@ static void controller_sdl_init(void) {
 
     #ifndef TARGET_SWITCH
     // try loading an external gamecontroller mapping file
-    uint64_t gcsize = 0;
-    void *gcdata = fs_load_file("db/gamecontrollerdb.txt", &gcsize);
+    uint64_t gcsize = GameControllerDB.size;
+    unsigned char *gcdata = GameControllerDB.file_data;
     if (gcdata && gcsize) {
         SDL_RWops *rw = SDL_RWFromConstMem(gcdata, gcsize);
         if (rw) {
@@ -110,7 +111,6 @@ static void controller_sdl_init(void) {
             if (nummaps >= 0)
                 printf("loaded %d controller mappings from 'db/gamecontrollerdb.txt'\n", nummaps);
         }
-        free(gcdata);
     }
     #endif
 
