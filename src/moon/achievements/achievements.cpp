@@ -29,7 +29,7 @@ extern "C" {
 using namespace std;
 
 map<string, Achievement*> registeredAchievements;
-vector<AchievementEntry*> entries;
+map<int, vector<AchievementEntry*>> entries;
 bool cheatsGotEnabled = false;
 
 namespace AchievementList {
@@ -284,7 +284,7 @@ namespace MoonInternal {
         }
         if(status == "Init"){
             Moon::registerHookListener({.hookName = POST_HUD_DRAW, .callback = [](HookCall call){
-                for (auto &aEntry : entries) {
+                for (auto &aEntry : entries[gCurrSaveFileNum - 1]) {
                     if( !aEntry->dead ) {
                         int soundID = SOUND_GENERAL_COIN;
 
@@ -338,9 +338,9 @@ namespace Moon {
     void showAchievement(Achievement* achievement){
         if(cheatsGotEnabled || gCurrDemoInput) return;
 
-        if(find_if(entries.begin(), entries.end(),  [&cae = achievement] (auto &m) -> bool { return cae->id == m->achievement->id; }) != entries.end()) return;
+        if(find_if(entries[gCurrSaveFileNum - 1].begin(), entries[gCurrSaveFileNum - 1].end(),  [&cae = achievement] (auto &m) -> bool { return cae->id == m->achievement->id; }) != entries[gCurrSaveFileNum - 1].end()) return;
         cout << "Achievement got triggered: " << achievement->title << endl;
-        entries.push_back(new AchievementEntry({ .launchTime = 0, .dead = false, .achievement = achievement, .entryID = entries.size() }));
+        entries[gCurrSaveFileNum - 1].push_back(new AchievementEntry({ .launchTime = 0, .dead = false, .achievement = achievement, .entryID = entries.size() }));
     }
 
     void showAchievementById(string id){

@@ -10,6 +10,7 @@
 using namespace std;
 
 extern "C" {
+#include "game/area.h"
 #include "pc/platform.h"
 #include "sm64.h"
 #include "gfx_dimensions.h"
@@ -131,7 +132,7 @@ void MoonAchievementsScreen::Draw(){
         int itemWidth = boxWidth - 0;
 
         MoonDrawRectangle(35, 45 + (i * 35), itemWidth - 20, 31, selected ? focusColor : (Color){0, 0, 0, 100}, true);
-        bool isUnlocked = find_if(entries.begin(), entries.end(),  [&cae = achievement] (auto &m) -> bool { return cae->id == m->achievement->id; }) != entries.end();
+        bool isUnlocked = find_if(entries[gCurrSaveFileNum - 1].begin(), entries[gCurrSaveFileNum - 1].end(),  [&cae = achievement] (auto &m) -> bool { return cae->id == m->achievement->id; }) != entries[gCurrSaveFileNum - 1].end();
         string iconPath = isUnlocked ? achievement->icon : achievement->lockedIcon;
 
         char* parsed = sys_strdup(iconPath.c_str());

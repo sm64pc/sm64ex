@@ -45,7 +45,7 @@ struct AchievementEntry {
     float y = 0;
 };
 
-extern std::vector<AchievementEntry*> entries;
+extern std::map<int, std::vector<AchievementEntry*>> entries;
 extern std::map<std::string, Achievement*> registeredAchievements;
 extern bool cheatsGotEnabled;
 
