@@ -184,7 +184,6 @@ namespace MoonInternal {
             gSaveBuffer.files[fileIndex][0].capArea = cfg->getInt("game.caps.lost");
 
     #ifndef GAME_DEBUG
-        entries.clear();
         cheatsGotEnabled = cfg->getBool("game.updated");
 
         vector<string> obtainedAchievements = cfg->getArray<string>("game.achievements");
@@ -198,7 +197,7 @@ namespace MoonInternal {
             entries[fileIndex].push_back(entry);
         }
 
-        if(cheatsGotEnabled) entries.clear();
+        if(cheatsGotEnabled) entries[fileIndex].clear();
     #endif
 
         gSaveBuffer.files[fileIndex][0].flags |= (1 << 0);
