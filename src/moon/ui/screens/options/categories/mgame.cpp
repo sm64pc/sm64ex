@@ -22,7 +22,7 @@ MGameCategory::MGameCategory() : MoonCategory("TEXT_OPT_GAME"){
     }
 
     this->catOptions.push_back(new MWValue(22, 57, "TEXT_OPT_LANGUAGE",   {.index = reinterpret_cast<int*>(&configLanguage), .values = &lngNames, .callback = [](){
-        if( configLanguage > 0 && configLanguage < Moon::languages.size())
+        if( configLanguage < Moon::languages.size())
             Moon::setCurrentLanguage(Moon::languages[configLanguage]);
     }}, true));
     this->catOptions.push_back(new MWValue(22, 74, "TEXT_OPT_PRECACHE",   {.bvar = &configPrecacheRes}, true));
