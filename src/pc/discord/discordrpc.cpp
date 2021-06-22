@@ -14,6 +14,13 @@
 #include "moon/texts/moon-loader.h"
 #include "moon/utils/moon-env.h"
 
+#include "moon/achievements/achievements.h"
+
+extern "C" {
+#include "pc/platform.h"
+#include "game/level_update.h"
+}
+
 #define DISCORDLIBFILE "libdiscord-rpc"
 
 // Thanks Microsoft for being non posix compliant
@@ -35,8 +42,8 @@
 #endif
 
 #define DISCORDLIB DISCORDLIBFILE DISCORDLIBEXT
-#define DISCORD_APP_ID  "709083908708237342"
-#define DISCORD_UPDATE_RATE 5
+#define DISCORD_APP_ID  "856717153431453716"
+#define DISCORD_UPDATE_RATE 3
 
 using namespace std;
 
@@ -59,6 +66,12 @@ Discord_Initialize discordInit;
 Discord_Shutdown discordShutdown;
 Discord_ClearPresence discordClearPresence;
 Discord_UpdatePresence discordUpdatePresence;
+
+static s16 lastHealth = -1;
+
+static s16 lastStarAmount = 0;
+static s16 lastAchievements = 0;
+
 
 static s16 lastCourseNum = -1;
 static s16 lastActNum = -1;
@@ -197,17 +210,53 @@ static void set_state(void) {
     }
 }
 
-void set_logo(void) {
-    if (lastCourseNum)
-        snprintf(largeImageKey, sizeof(largeImageKey), "%d", lastCourseNum);
-    else
-        strcpy(largeImageKey, "0");
+string getLevelLogo(){
+    switch(lastCourseNum){
+        case 0:
+            return "level-peach";
+        case 6:
+            return "moon64-logo";
+        case 9:
+            return "level-3";
+        case 16:
+        case 17:
+        case 18:
+            return "level-bowser";
+        default:
+            return "level-"+to_string(lastCourseNum);
+    }
+}
 
-    discordRichPresence.largeImageKey = largeImageKey;
+void set_logo(void) {
+    discordRichPresence.largeImageKey = sys_strdup(getLevelLogo().data());
 }
 
 void DiscordReloadPresence() {
     reloadRPC = true;
+}
+
+void set_health(){
+    if(gCurrCourseNum == 0) return;
+    if(lastHealth != gHudDisplay.wedges){
+        lastHealth = gHudDisplay.wedges;
+        string new_health_icon = "health-"+to_string(lastHealth);
+        string new_health_text = to_string(lastHealth) + " HP";
+        discordRichPresence.smallImageKey = sys_strdup(new_health_icon.data());
+        discordRichPresence.smallImageText = sys_strdup(new_health_text.data());
+    }
+}
+
+void set_image_key(){
+    if(gCurrCourseNum == 0) return;
+    int size = entries[gCurrSaveFileNum - 1].size();
+    if(lastAchievements != size || lastStarAmount != gHudDisplay.stars){
+        lastAchievements = size;
+        lastStarAmount = gHudDisplay.stars;
+
+        string new_text = to_string(lastStarAmount) + "/120 Stars - " + to_string(lastAchievements) + "/" + to_string(registeredAchievements.size()) + " Achievements";
+
+        discordRichPresence.largeImageText = sys_strdup(new_text.data());
+    }
 }
 
 void DiscordUpdatePresence(){
@@ -219,6 +268,8 @@ void DiscordUpdatePresence(){
     set_state();
     set_details();
     set_logo();
+    set_health();
+    set_image_key();
     discordUpdatePresence(&discordRichPresence);
     reloadRPC = false;
 }

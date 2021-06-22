@@ -51,8 +51,8 @@ namespace AchievementList {
     Achievement* GET_6_LEVEL_STARS  = MoonAchievements::bind(new Achievement("achievement.get6MainStars",         "textures/moon/achievements/ranks.f.rgba16", "F Rank",  "Get all 6 Main Stars in One Level",      false, 0, 150, nullptr));
     Achievement* GET_100_COIN_STAR  = MoonAchievements::bind(new Achievement("achievement.get100CoinStar",        "textures/moon/achievements/ranks.e.rgba16", "E Rank",  "Get a 100 Coin Star in One Level",       false, 0, 150, nullptr));
     Achievement* GET_ALL_LVL_COINS  = MoonAchievements::bind(new Achievement("achievement.getAllCoins",           "textures/moon/achievements/ranks.d.rgba16", "D Rank",  "Get all Coins in One Level",             false, 0, 150, nullptr));
-    Achievement* GET_FLOOR_0_STARS  = MoonAchievements::bind(new Achievement("achievement.getAllStarsInBasement", "textures/moon/achievements/ranks.b.rgba16", "B Rank",  "Get all Main Stars in the Basement",     false, 0, 150, nullptr));
-    Achievement* GET_FLOOR_1_STARS  = MoonAchievements::bind(new Achievement("achievement.getAllStarsInFloor1",   "textures/moon/achievements/ranks.c.rgba16", "C Rank",  "Get all Main Stars in the First Floor",  false, 0, 150, nullptr));
+    Achievement* GET_FLOOR_0_STARS  = MoonAchievements::bind(new Achievement("achievement.getAllStarsInBasement", "textures/moon/achievements/ranks.b.rgba16", "B Rank",  "Get all Main Stars in the First Floor",  false, 0, 150, nullptr));
+    Achievement* GET_FLOOR_1_STARS  = MoonAchievements::bind(new Achievement("achievement.getAllStarsInFloor1",   "textures/moon/achievements/ranks.c.rgba16", "C Rank",  "Get all Main Stars in the Basement",     false, 0, 150, nullptr));
     Achievement* GET_FLOOR_2_STARS  = MoonAchievements::bind(new Achievement("achievement.getAllStarsInFloor2",   "textures/moon/achievements/ranks.a.rgba16", "A Rank",  "Get all Main Stars in the Second Floor", false, 0, 150, nullptr));
     Achievement* GET_FLOOR_3_STARS  = MoonAchievements::bind(new Achievement("achievement.getAllStarsInFloor3",   "textures/moon/achievements/ranks.s.rgba16", "S Rank",  "Get all Main Stars in the Third Floor",  false, 0, 150, nullptr));
     Achievement* GET_CASTLE_STARS   = MoonAchievements::bind(new Achievement("achievement.getAllCastleStars",     "textures/moon/achievements/ranks.splus.rgba16", "S+ Rank", "Get all Castle Secret Stars",        false, 0, 150, nullptr));
@@ -73,7 +73,7 @@ namespace AchievementList {
     /* Death Achievements */
     Achievement* DEATH_BY_BOSS      = MoonAchievements::bind(new Achievement("achievement.deathByBoss",       "textures/moon/achievements/deaths.boss.rgba16", "Git Gud",              "Get killed by a boss",         false, 0, 150, nullptr));
     Achievement* DEATH_BY_FALLING   = MoonAchievements::bind(new Achievement("achievement.deathByFalling",    "textures/moon/achievements/deaths.falling.rgba16", "My Leg!",           "Die by falling",               false, 0, 150, nullptr));
-    Achievement* DEATH_BY_SAND      = MoonAchievements::bind(new Achievement("achievement.deathBySand",       "textures/moon/achievements/deaths.quicksand.rgba16", "Sinreked",          "Die by sinking sand",          false, 0, 150, nullptr));
+    Achievement* DEATH_BY_SAND      = MoonAchievements::bind(new Achievement("achievement.deathBySand",       "textures/moon/achievements/deaths.quicksand.rgba16", "Sinked",          "Die in the quicksand",         false, 0, 150, nullptr));
     Achievement* DEATH_BY_CRUSHING  = MoonAchievements::bind(new Achievement("achievement.deathByCrushing",   "textures/moon/achievements/deaths.crushed.rgba16", "Space Jam",         "Get crushed",                  false, 0, 150, nullptr));
     Achievement* DEATH_BY_BOWSER    = MoonAchievements::bind(new Achievement("achievement.deathByBowser",     "textures/moon/achievements/deaths.bowser.rgba16", "Bad Ending",         "Get killed by Bowser",         false, 0, 150, nullptr));
     Achievement* DEATH_BY_ENEMY     = MoonAchievements::bind(new Achievement("achievement.deathByEnemy",      "textures/moon/achievements/deaths.standard.rgba16", "Classic Way",      "Get killed by a normal enemy", false, 0, 150, nullptr));
@@ -87,7 +87,7 @@ namespace AchievementList {
     Achievement* TALK_25_TIMES       = MoonAchievements::bind(new Achievement("achievement.talk25Times",       "textures/moon/achievements/extras.talker.rgba16",      "Olympic Talker",       "Talk 25 times with npcs",    false, 0, 150, nullptr));
     Achievement* JUMP_1000_TIMES     = MoonAchievements::bind(new Achievement("achievement.jump1000Times",     "textures/moon/achievements/extras.swimmer.rgba16",     "Olympic Swimmer",      "Grab every star that needs Metal Cap without it", false, 0, 150, nullptr));
     Achievement* WATCH_END_CREDITS   = MoonAchievements::bind(new Achievement("achievement.watchEndCredits",   "textures/moon/achievements/extras.cake.rgba16",        "The Cake Is A Lie?!",  "Watch the end credits",      false, 0, 150, nullptr));
-    Achievement* RELEASE_CHAIN_CHOMP = MoonAchievements::bind(new Achievement("achievement.releaseChainChomp", "textures/moon/achievements/extras.chain-chomp.rgba16", "Who Let The Dog Out?", "Get killed by a boss",       false, 0, 150, nullptr));
+    Achievement* RELEASE_CHAIN_CHOMP = MoonAchievements::bind(new Achievement("achievement.releaseChainChomp", "textures/moon/achievements/extras.chain-chomp.rgba16", "Chain-Chomp Unleashed", "Unleash the Chain-Chomp",       false, 0, 150, nullptr));
 
     Achievement* CHEATER             = MoonAchievements::bind(new Achievement("achievement.cheater",   "mod-icons://Moon64",  "What a loser!", "You turned on cheats", false, 0, 150, nullptr));
 };
@@ -339,7 +339,9 @@ namespace Moon {
         if(cheatsGotEnabled || gCurrDemoInput) return;
 
         if(find_if(entries[gCurrSaveFileNum - 1].begin(), entries[gCurrSaveFileNum - 1].end(),  [&cae = achievement] (auto &m) -> bool { return cae->id == m->achievement->id; }) != entries[gCurrSaveFileNum - 1].end()) return;
+    #ifdef GAME_DEBUG
         cout << "Achievement got triggered: " << achievement->title << endl;
+    #endif
         entries[gCurrSaveFileNum - 1].push_back(new AchievementEntry({ .launchTime = 0, .dead = false, .achievement = achievement, .entryID = entries.size() }));
     }
 

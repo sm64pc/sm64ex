@@ -142,6 +142,20 @@ void MoonOptMain::Draw(){
     MoonScreen::Draw();
 }
 
+extern "C" {
+    void drawIngameMenuButtons(){
+
+        if(!(gGlobalTimer % 20))
+            stickAnim = !stickAnim;
+
+        string basePath = "textures/moon/controller/";
+
+        basePath.append(stickAnim ? "stick-down.rgba16" : "stick-up.rgba16");
+        MoonDrawButton(5, GetScreenHeight() - 24, "Move", basePath, 16, 0, false, false);
+
+        MoonDrawButton(7, GetScreenHeight() - 24, "Open settings", "textures/moon/controller/r-btn.rgba16", 10, 4, true, false);
+    }
+}
 
 void MoonOptMain::Dispose(){
     configfile_save(configfile_name());

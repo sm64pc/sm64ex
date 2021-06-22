@@ -118,7 +118,7 @@ void MoonDrawButton(int x, int y, std::string text, std::string texture, int siz
         x = GetScreenWidth(false) - x;
         int txtWidth = MoonGetTextWidth(text, 0.8, false);
 
-        MoonDrawTexture(GFX_DIMENSIONS_FROM_LEFT_EDGE(x) - txtWidth - size - 3, y - 3 + offset, size, size, sys_strdup(texture.c_str()));
+        MoonDrawTexture(GFX_DIMENSIONS_FROM_LEFT_EDGE(x) - txtWidth - size - 5, y - 3 + offset, size, size, sys_strdup(texture.c_str()));
         MoonDrawText(x - txtWidth, y, text, 0.8, {255, 255, 255, 255}, true, false);
     }
 }

@@ -147,6 +147,11 @@ void unselectWidget(MWValue* base){
 }
 
 void MWValue::Update(){
+    if(IsBtnPressed(MoonButtons::A_BTN) && this->bind.btn != nullptr && this->selected){
+        this->bind.btn();
+        return;
+    }
+
     if(!this->focused) return;
 
     float xStick = GetStickValue(MoonButtons::L_STICK, false);
@@ -154,8 +159,8 @@ void MWValue::Update(){
     bool isArray = this->bind.values   != NULL && this->bind.index != NULL;
     bool isFloat = this->bind.fvar     != NULL;
     bool isInt   = this->bind.ivar     != NULL;
-    bool isBtn   = this->bind.btn      != NULL;
     bool isBind  = this->bind.bindKeys != NULL;
+    bool isBtn   = this->bind.btn      != NULL;
 
     float maxValue = isArray ? (*this->bind.values).size() - 1 : this->bind.max - int(isBind);
     float minValue = isArray || isBind ? 0 : this->bind.min;
@@ -163,7 +168,6 @@ void MWValue::Update(){
 
     if(IsBtnPressed(MoonButtons::A_BTN)){
         if(isBtn){
-            unselectWidget(this);
             this->bind.btn();
             return;
         }

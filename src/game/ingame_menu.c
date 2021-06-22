@@ -30,6 +30,7 @@
 #include <math.h>
 #include "pc/gfx/gfx_pc.h"
 #include "moon/utils/moon-gfx.h"
+#include "moon/ui/screens/options/main-view.h"
 
 u16 gDialogColorFadeTimer;
 s8 gLastDialogLineNum;
@@ -1252,7 +1253,7 @@ void render_pause_red_coins(void) {
     s8 x;
 
     for (x = 0; x < gRedCoinsCollected; x++) {
-        print_animated_red_coin(GFX_DIMENSIONS_FROM_RIGHT_EDGE(30) - x * 20, 16);
+        print_animated_red_coin(GFX_DIMENSIONS_FROM_RIGHT_EDGE(12) - x * 20, 30);
     }
 }
 
@@ -1538,6 +1539,7 @@ s16 render_pause_courses_and_castle(void) {
             case DIALOG_STATE_VERTICAL:
                 shade_screen();
                 render_pause_my_score_coins();
+                drawIngameMenuButtons();
                 render_pause_red_coins();
 
                 /* Added support for the "Exit course at any time" cheat */
@@ -1563,6 +1565,7 @@ s16 render_pause_courses_and_castle(void) {
             case DIALOG_STATE_HORIZONTAL:
                 shade_screen();
                 print_hud_pause_colorful_str();
+                drawIngameMenuButtons();
                 render_pause_castle_menu_box(160, 143);
                 render_pause_castle_main_strings(104, 60);
 
