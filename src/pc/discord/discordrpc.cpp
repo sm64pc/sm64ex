@@ -240,7 +240,7 @@ void set_health(){
     if(lastHealth != gHudDisplay.wedges){
         lastHealth = gHudDisplay.wedges;
         string new_health_icon = "health-"+to_string(lastHealth);
-        string new_health_text = to_string(lastHealth) + " HP";
+        string new_health_text = to_string(gHudDisplay.lives) + " Lives";
         discordRichPresence.smallImageKey = sys_strdup(new_health_icon.data());
         discordRichPresence.smallImageText = sys_strdup(new_health_text.data());
     }
