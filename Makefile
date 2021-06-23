@@ -178,11 +178,6 @@ else
   endif
 endif
 
-# Moon64 custom flags
-
-# ifeq ($(TOGGLE_GAME_DEBUG),1)
-#  VERSION_CFLAGS += -DTOGGLE_GAME_DEBUG
-# endif
 ############################ Universal Dependencies ############################
 
 # (This is a bit hacky, but a lot of rules implicitly depend
@@ -616,6 +611,7 @@ ifeq ($(DEBUG),2)
   CC_CHECK += -DGAME_DEBUG -DSM64_DEBUG
   CFLAGS += -DGAME_DEBUG -DSM64_DEBUG
 endif
+
 ################################
 
 # Check for enhancement options

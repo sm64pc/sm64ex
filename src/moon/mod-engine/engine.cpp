@@ -45,7 +45,7 @@ namespace Moon {
             if(j.contains("bit") && j["bit"].contains("name")){
                 BitModule* bit = new BitModule({
                     .name        = j["bit"]["name"],
-                    .description = j["bit"].contains("icon") ? j["bit"]["description"] : "None",
+                    .description = j["bit"].contains("description") ? j["bit"]["description"] : "None",
                     .authors     = j["bit"]["authors"],
                     .version     = j["bit"]["version"],
                     .website     = j["bit"].contains("website") ? j["bit"]["website"]  : "None",
