@@ -13,6 +13,10 @@ extern "C" {
 #include "PR/libaudio.h"
 #include "audio/load.h"
 #include "audio/external.h"
+
+#include "game/sound_init.h"
+#include "game/level_update.h"
+#include "game/area.h"
 }
 
 #include <iostream>
@@ -77,16 +81,16 @@ namespace MoonInternal {
     void buildAudioCache(vector<int> order){
         soundCache.clear();
 
-        for(int i=0; i < order.size(); i++){
+        for(int i = 0; i < order.size(); i++)
             soundCache.push_back(Moon::addons[order[i]]);
-        }
 
         Moon::setSoundEntry(soundCache[soundCache.size() - 1]->sounds);
     }
 
-    void resetSound(){
-        backgroundQueueSize = sBackgroundMusicQueueSize;
-
+    void resetSoundSystem(){
+        sound_reset(0);
+        play_music(SEQ_PLAYER_LEVEL, gCurrentArea->musicParam2, 0);
+        lower_background_noise(1);
     }
 
     void setupSoundEngine( string state ){

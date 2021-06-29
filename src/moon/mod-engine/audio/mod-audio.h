@@ -17,6 +17,7 @@ namespace MoonInternal {
     void buildSoundCache(std::vector<int> order);
     void* loadSoundData(const char* fullpath);
     void buildAudioCache(std::vector<int> order);
+    void resetSoundSystem();
 }
 
 #endif

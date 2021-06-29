@@ -13,10 +13,6 @@ extern "C" {
 #include "sm64.h"
 #include "gfx_dimensions.h"
 #include "pc/configfile.h"
-#include "game/sound_init.h"
-#include "audio/external.h"
-#include "game/level_update.h"
-#include "game/area.h"
 }
 
 BitModule* currentPack;
@@ -61,10 +57,7 @@ void rebuildTextureCache(){
     reverse(order.begin(), order.end());
     MoonInternal::buildTextureCache(order);
     MoonInternal::buildAudioCache(order);
-
-    sound_reset(0);
-    play_music(SEQ_PLAYER_LEVEL, gCurrentArea->musicParam2, 0);
-    lower_background_noise(1);
+    MoonInternal::resetSoundSystem();
 }
 
 void MoonAddonsScreen::changeScroll(int idx){
