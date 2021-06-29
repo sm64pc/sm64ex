@@ -60,6 +60,9 @@ struct SequenceQueueItem {
 s32 gAudioErrorFlags = 0;
 s32 sGameLoopTicked = 0;
 
+u16 lastPlayedArgs = -1;
+u16 lastPlayedFade = -1;
+
 // Dialog sounds
 // The US difference is the sound for DIALOG_037 ("I win! You lose! Ha ha ha ha!
 // You're no slouch, but I'm a better sledder! Better luck next time!"), spoken
@@ -1887,6 +1890,7 @@ u8 is_playing(u16 seqId){
  * Called from threads: thread5_game_loop
  */
 void play_music(u8 player, u16 seqArgs, u16 fadeTimer) {
+
     u8 seqId = seqArgs & 0xff;
     u8 priority = seqArgs >> 8;
     u8 i;

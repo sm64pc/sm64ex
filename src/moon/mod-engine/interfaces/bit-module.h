@@ -2,6 +2,7 @@
 #define Moon64BitModule
 #include "file-entry.h"
 #include "shader-entry.h"
+#include "sound-entry.h"
 #include <map>
 #include <vector>
 #include <string>
@@ -22,8 +23,8 @@ struct BitModule{
     std::string main;
     std::string path;
     std::map<std::string, EntryFileData*> textures;
-    std::map<std::string, EntryFileData*> sounds;
     std::map<std::string, Shader*> shaders;
+    SoundEntry* sounds;
     bool readOnly;
     bool enabled;
 };

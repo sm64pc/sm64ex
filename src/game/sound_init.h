@@ -18,6 +18,9 @@
 #define SOUND_MENU_MODE_MONO         1
 #define SOUND_MENU_MODE_HEADSET      2
 
+extern u16 sCurrentMusic;
+extern s16 sCurrentFade;
+
 void reset_volume(void);
 void raise_background_noise(s32 a);
 void lower_background_noise(s32 a);

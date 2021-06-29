@@ -23,8 +23,9 @@ extern f32 gGlobalSoundSource[3];
 
 // defined in data.c, used by the game
 extern u32 gAudioRandom;
-
 extern u8 gAudioSPTaskYieldBuffer[]; // ucode yield data ptr; only used in JP
+
+extern u8 sBackgroundMusicQueueSize;
 
 struct SPTask *create_next_audio_frame_task(void);
 void play_sound(s32 soundBits, f32 *pos);

@@ -25,7 +25,8 @@ static struct VblankHandler sSoundVblankHandler;
 
 static u8 D_8032C6C0 = 0;
 static u8 D_8032C6C4 = 0;
-static u16 sCurrentMusic = MUSIC_NONE;
+u16 sCurrentMusic = MUSIC_NONE;
+s16 sCurrentFade = 0;
 static u16 sCurrentShellMusic = MUSIC_NONE;
 static u16 sCurrentCapMusic = MUSIC_NONE;
 static u8 sPlayingInfiniteStairs = FALSE;
@@ -207,6 +208,7 @@ void set_background_music(u16 a, u16 seqArgs, s16 fadeTimer) {
 
         if (!(gShouldNotPlayCastleMusic && seqArgs == SEQ_LEVEL_INSIDE_CASTLE)) {
             play_music(SEQ_PLAYER_LEVEL, seqArgs, fadeTimer);
+            sCurrentFade = fadeTimer;
             sCurrentMusic = seqArgs;
         }
     }

@@ -34,6 +34,7 @@ extern ALSeqFile *gAlCtlHeader;
 extern ALSeqFile *gAlTbl;
 extern ALSeqFile *gSeqFileHeader;
 extern u8 *gAlBankSets;
+extern u16 gSequenceCount;
 
 extern struct CtlEntry *gCtlEntries;
 extern s32 gAiFrequency;

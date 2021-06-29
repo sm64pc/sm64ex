@@ -1,0 +1,424 @@
+diff --git a/src/audio/external.c b/src/audio/external.c
+index 7644204f..0fc3256d 100644
+--- a/src/audio/external.c
++++ b/src/audio/external.c
+@@ -60,6 +60,9 @@ struct SequenceQueueItem {
+ s32 gAudioErrorFlags = 0;
+ s32 sGameLoopTicked = 0;
+ 
++u16 lastPlayedArgs = -1;
++u16 lastPlayedFade = -1;
++
+ // Dialog sounds
+ // The US difference is the sound for DIALOG_037 ("I win! You lose! Ha ha ha ha!
+ // You're no slouch, but I'm a better sledder! Better luck next time!"), spoken
+@@ -1887,6 +1890,7 @@ u8 is_playing(u16 seqId){
+  * Called from threads: thread5_game_loop
+  */
+ void play_music(u8 player, u16 seqArgs, u16 fadeTimer) {
++
+     u8 seqId = seqArgs & 0xff;
+     u8 priority = seqArgs >> 8;
+     u8 i;
+diff --git a/src/audio/external.h b/src/audio/external.h
+index 769f5739..d4237d2f 100644
+--- a/src/audio/external.h
++++ b/src/audio/external.h
+@@ -23,9 +23,10 @@ extern f32 gGlobalSoundSource[3];
+ 
+ // defined in data.c, used by the game
+ extern u32 gAudioRandom;
+-
+ extern u8 gAudioSPTaskYieldBuffer[]; // ucode yield data ptr; only used in JP
+ 
++extern u8 sBackgroundMusicQueueSize;
++
+ struct SPTask *create_next_audio_frame_task(void);
+ void play_sound(s32 soundBits, f32 *pos);
+ void audio_signal_game_loop_tick(void);
+diff --git a/src/audio/load.c b/src/audio/load.c
+index 5475c11c..21026f04 100644
+--- a/src/audio/load.c
++++ b/src/audio/load.c
+@@ -8,7 +8,6 @@
+ 
+ #include "pc/platform.h"
+ #include "pc/fs/fs.h"
+-#include "moon/mod-engine/audio/mod-audio.h"
+ 
+ #define ALIGN16(val) (((val) + 0xF) & ~0xF)
+ 
+@@ -674,17 +673,6 @@ void load_sequence_internal(u32 player, u32 seqId, s32 loadAsync) {
+     seqPlayer->scriptState.pc = sequenceData;
+ }
+ 
+-# define LOAD_DATA(x) load_sound_res((const char *)x)
+-# include <stdio.h>
+-# include <stdlib.h>
+-static inline void *load_sound_res(const char *path) {
+-    void *data = loadSoundData(path);
+-    if (!data) sys_fatal("could not load sound data from '%s'", path);
+-    // FIXME: figure out where it is safe to free this shit
+-    //        can't free it immediately after in audio_init()
+-    return data;
+-}
+-
+ void audio_init() {
+     UNUSED s8 pad[32];
+     u8 buf[0x10];
+@@ -692,7 +680,6 @@ void audio_init() {
+     s32 lim1, lim2, lim3;
+     u32 size;
+     UNUSED u64 *ptr64;
+-    void *data;
+     UNUSED s32 pad2;
+     gAudioLoadLock = AUDIO_LOCK_UNINITIALIZED;
+ 
+@@ -736,49 +723,6 @@ void audio_init() {
+     }
+     audio_reset_session(&gAudioSessionPresets[0]);
+ 
+-    // Load header for sequence data (assets/music_data.sbk.s)
+-    gSeqFileHeader = (ALSeqFile *) buf;
+-    data = LOAD_DATA(gMusicData); //audio_dma_copy_immediate((uintptr_t) data, , 0x10);
+-    gSeqFileHeader = data;
+-
+-    gSequenceCount = gSeqFileHeader->seqCount;
+-    size = ALIGN16(gSequenceCount * sizeof(ALSeqData) + 4);
+-    gSeqFileHeader = soundAlloc(&gAudioInitPool, size);
+-    gSeqFileHeader = data; // audio_dma_copy_immediate((uintptr_t) data, , size);
+-    alSeqFileNew(gSeqFileHeader, data);
+-
+-    // Load header for CTL (assets/sound_data.ctl.s, i.e. ADSR)
+-    gAlCtlHeader = (ALSeqFile *) buf;
+-    data = LOAD_DATA(gSoundDataADSR);
+-    audio_dma_copy_immediate((uintptr_t) data, gAlCtlHeader, 0x10);
+-    size = gAlCtlHeader->seqCount * sizeof(ALSeqData) + 4;
+-    size = ALIGN16(size);
+-    gCtlEntries = soundAlloc(&gAudioInitPool, gAlCtlHeader->seqCount * sizeof(struct CtlEntry));
+-    gAlCtlHeader = soundAlloc(&gAudioInitPool, size);
+-    gAlCtlHeader = data; // audio_dma_copy_immediate((uintptr_t) data, , size);
+-    alSeqFileNew(gAlCtlHeader, data);
+-
+-    // Load header for TBL (assets/sound_data.tbl.s, i.e. raw data)
+-    gAlTbl = (ALSeqFile *) buf;
+-    gAlTbl = data; // audio_dma_copy_immediate((uintptr_t) data, , 0x10);
+-    size = gAlTbl->seqCount * sizeof(ALSeqData) + 4;
+-    size = ALIGN16(size);
+-    gAlTbl = soundAlloc(&gAudioInitPool, size);
+-
+-    data = LOAD_DATA(gSoundDataRaw);
+-    if(data == NULL || gAlTbl == NULL) {
+-        printf("Unhandled exception null");
+-        return;
+-    }
+-
+-    gAlTbl = data; // audio_dma_copy_immediate((uintptr_t) data, , size);
+-    alSeqFileNew(gAlTbl, data);
+-
+-    // Load bank sets for each sequence (assets/bank_sets.s)
+-    data = LOAD_DATA(gBankSetsData);
+-    gAlBankSets = soundAlloc(&gAudioInitPool, 0x100);
+-    gAlBankSets = data; // audio_dma_copy_immediate((uintptr_t) data, , 0x100);
+-
+     init_sequence_players();
+     gAudioLoadLock = AUDIO_LOCK_NOT_LOADING;
+ }
+\ No newline at end of file
+diff --git a/src/audio/load.h b/src/audio/load.h
+index 5549f862..06b97725 100644
+--- a/src/audio/load.h
++++ b/src/audio/load.h
+@@ -34,6 +34,7 @@ extern ALSeqFile *gAlCtlHeader;
+ extern ALSeqFile *gAlTbl;
+ extern ALSeqFile *gSeqFileHeader;
+ extern u8 *gAlBankSets;
++extern u16 gSequenceCount;
+ 
+ extern struct CtlEntry *gCtlEntries;
+ extern s32 gAiFrequency;
+diff --git a/src/game/sound_init.c b/src/game/sound_init.c
+index e24bfda8..c58542d7 100644
+--- a/src/game/sound_init.c
++++ b/src/game/sound_init.c
+@@ -25,7 +25,8 @@ static struct VblankHandler sSoundVblankHandler;
+ 
+ static u8 D_8032C6C0 = 0;
+ static u8 D_8032C6C4 = 0;
+-static u16 sCurrentMusic = MUSIC_NONE;
++u16 sCurrentMusic = MUSIC_NONE;
++s16 sCurrentFade = 0;
+ static u16 sCurrentShellMusic = MUSIC_NONE;
+ static u16 sCurrentCapMusic = MUSIC_NONE;
+ static u8 sPlayingInfiniteStairs = FALSE;
+@@ -207,6 +208,7 @@ void set_background_music(u16 a, u16 seqArgs, s16 fadeTimer) {
+ 
+         if (!(gShouldNotPlayCastleMusic && seqArgs == SEQ_LEVEL_INSIDE_CASTLE)) {
+             play_music(SEQ_PLAYER_LEVEL, seqArgs, fadeTimer);
++            sCurrentFade = fadeTimer;
+             sCurrentMusic = seqArgs;
+         }
+     }
+diff --git a/src/game/sound_init.h b/src/game/sound_init.h
+index a03c5d84..d8027bad 100644
+--- a/src/game/sound_init.h
++++ b/src/game/sound_init.h
+@@ -18,6 +18,9 @@
+ #define SOUND_MENU_MODE_MONO         1
+ #define SOUND_MENU_MODE_HEADSET      2
+ 
++extern u16 sCurrentMusic;
++extern s16 sCurrentFade;
++
+ void reset_volume(void);
+ void raise_background_noise(s32 a);
+ void lower_background_noise(s32 a);
+diff --git a/src/moon/mod-engine/audio/mod-audio.cpp b/src/moon/mod-engine/audio/mod-audio.cpp
+index 472341ba..6bbaea56 100644
+--- a/src/moon/mod-engine/audio/mod-audio.cpp
++++ b/src/moon/mod-engine/audio/mod-audio.cpp
+@@ -4,11 +4,15 @@
+ #include "moon/libs/nlohmann/json.hpp"
+ #include "moon/mod-engine/engine.h"
+ #include "moon/mod-engine/hooks/hook.h"
++#include "moon/mod-engine/interfaces/sound-entry.h"
+ 
+ extern "C" {
+ #include "text/libs/io_utils.h"
+ #include "pc/platform.h"
+ #include "pc/fs/fs.h"
++#include "PR/libaudio.h"
++#include "audio/load.h"
++#include "audio/external.h"
+ }
+ 
+ #include <iostream>
+@@ -18,71 +22,78 @@ extern "C" {
+ using namespace std;
+ using json = nlohmann::json;
+ 
+-map<string, BitModule*> soundCache;
++u8 backgroundQueueSize = 0;
+ 
+-namespace Moon {
+-    void saveAddonSound(BitModule *addon, std::string soundPath, EntryFileData* data){
+-        addon->sounds.insert(pair<string, EntryFileData*>(soundPath, data));
+-    }
+-}
+ 
+-namespace MoonInternal {
++vector<BitModule*> soundCache;
+ 
+-    EntryFileData *getSoundData(const char *fullpath){
+-        char *actualname = sys_strdup(fullpath);
++namespace Moon {
++    void saveAddonSound(BitModule *addon, std::string soundPath, EntryFileData* data){
++        if(addon->sounds == nullptr)
++            addon->sounds = new SoundEntry();
+ 
+-        auto cacheEntry = soundCache.find(actualname);
++        SoundEntry* soundEntry = addon->sounds;
++        ALSeqFile* header = (ALSeqFile*) data->data;
+ 
+-        if(cacheEntry == soundCache.end()) {
+-            cout << "Failed to read sound file" << fullpath << endl;
++        if(soundPath == "sound/sequences.bin"){
++            soundEntry->seqHeader = header;
++            alSeqFileNew(soundEntry->seqHeader, (u8*) data->data);
++            soundEntry->seqCount = header->seqCount;
++            return;
+         }
++        if(soundPath == "sound/sound_data.ctl"){
++            soundEntry->ctlHeader = header;
++            alSeqFileNew(soundEntry->ctlHeader, (u8*) data->data);
++            soundEntry->ctlEntries = new CtlEntry[header->seqCount];
++            return;
++        }
++        if(soundPath == "sound/sound_data.tbl"){
++            soundEntry->tblHeader = header;
++            alSeqFileNew(soundEntry->tblHeader, (u8*) data->data);
++            return;
++        }
++        if(soundPath == "sound/bank_sets"){
++            soundEntry->bankSets = (u8*) data->data;
++            return;
++        }
++    }
++}
+ 
+-        BitModule *addon = cacheEntry->second;
+-
+-        EntryFileData * data = NULL;
++namespace Moon {
++    void setSoundEntry(SoundEntry *entry) {
++        gSeqFileHeader = entry->seqHeader;
++        gSequenceCount = entry->seqCount;
+ 
+-        if(addon != NULL){
+-            EntryFileData *fileEntry = addon->sounds.find(actualname)->second;
++        gAlCtlHeader   = entry->ctlHeader;
++        gCtlEntries    = entry->ctlEntries;
+ 
+-            if(fileEntry != NULL){
+-                if(fileEntry->data != NULL) data = fileEntry;
+-                else if(!fileEntry->path.empty()){
+-                    MoonFS file(addon->path);
+-                    file.open();
+-                    EntryFileData *newData = new EntryFileData();
+-                    file.read(fileEntry->path, newData);
+-                    data = newData;
+-                }
+-            }
+-        }
+-        return data;
++        gAlTbl         = entry->tblHeader;
++        gAlBankSets    = entry->bankSets;
+     }
++}
++
++namespace MoonInternal {
+ 
+     void buildAudioCache(vector<int> order){
+         soundCache.clear();
+ 
+         for(int i=0; i < order.size(); i++){
+-            BitModule *addon = Moon::addons[order[i]];
+-
+-            for (map<string, EntryFileData*>::iterator entry = addon->sounds.begin(); entry != addon->sounds.end(); ++entry)
+-                soundCache.insert(pair<string, BitModule*>(entry->first, addon));
++            soundCache.push_back(Moon::addons[order[i]]);
+         }
++
++        Moon::setSoundEntry(soundCache[soundCache.size() - 1]->sounds);
++    }
++
++    void resetSound(){
++        backgroundQueueSize = sBackgroundMusicQueueSize;
++
+     }
+ 
+     void setupSoundEngine( string state ){
+         if(state == "Exit"){
+             for(auto &addon : Moon::addons){
+-                addon->sounds.clear();
++                delete addon->sounds;
+             }
+         }
+     }
+-}
+-
+-extern "C" {
+-void* loadSoundData(const char* fullpath){
+-    EntryFileData *data = MoonInternal::getSoundData(fullpath);
+-    if(data != NULL)
+-        return data->data;
+-    return NULL;
+-}
+ }
+\ No newline at end of file
+diff --git a/src/moon/mod-engine/audio/mod-audio.h b/src/moon/mod-engine/audio/mod-audio.h
+index 78394524..b93d493b 100644
+--- a/src/moon/mod-engine/audio/mod-audio.h
++++ b/src/moon/mod-engine/audio/mod-audio.h
+@@ -1,6 +1,5 @@
+ #ifndef ModEngineSoundModule
+ #define ModEngineSoundModule
+-#ifdef __cplusplus
+ 
+ #include "moon/mod-engine/interfaces/file-entry.h"
+ #include "moon/mod-engine/interfaces/bit-module.h"
+@@ -20,7 +19,4 @@ namespace MoonInternal {
+     void buildAudioCache(std::vector<int> order);
+ }
+ 
+-#else
+-void* loadSoundData(const char* fullpath);
+-#endif
+ #endif
+\ No newline at end of file
+diff --git a/src/moon/mod-engine/interfaces/bit-module.h b/src/moon/mod-engine/interfaces/bit-module.h
+index d25f5671..6ff164f8 100644
+--- a/src/moon/mod-engine/interfaces/bit-module.h
++++ b/src/moon/mod-engine/interfaces/bit-module.h
+@@ -2,6 +2,7 @@
+ #define Moon64BitModule
+ #include "file-entry.h"
+ #include "shader-entry.h"
++#include "sound-entry.h"
+ #include <map>
+ #include <vector>
+ #include <string>
+@@ -22,8 +23,8 @@ struct BitModule{
+     std::string main;
+     std::string path;
+     std::map<std::string, EntryFileData*> textures;
+-    std::map<std::string, EntryFileData*> sounds;
+     std::map<std::string, Shader*> shaders;
++    SoundEntry* sounds;
+     bool readOnly;
+     bool enabled;
+ };
+diff --git a/src/moon/mod-engine/interfaces/sound-entry.h b/src/moon/mod-engine/interfaces/sound-entry.h
+new file mode 100644
+index 00000000..b5ea36c8
+--- /dev/null
++++ b/src/moon/mod-engine/interfaces/sound-entry.h
+@@ -0,0 +1,22 @@
++#ifndef Moon64AudioEntry
++#define Moon64AudioEntry
++#include <string>
++
++extern "C" {
++#include "types.h"
++#include "PR/libaudio.h"
++#include "audio/internal.h"
++}
++
++struct SoundEntry {
++    ALSeqFile* seqHeader;
++    u16        seqCount;
++
++    ALSeqFile* ctlHeader;
++    CtlEntry*  ctlEntries;
++
++    ALSeqFile* tblHeader;
++    u8*        bankSets;
++};
++
++#endif
+\ No newline at end of file
+diff --git a/src/moon/ui/screens/addons/addons-view.cpp b/src/moon/ui/screens/addons/addons-view.cpp
+index bfe08ec7..a4952daf 100644
+--- a/src/moon/ui/screens/addons/addons-view.cpp
++++ b/src/moon/ui/screens/addons/addons-view.cpp
+@@ -4,6 +4,7 @@
+ #include "moon/ui/moon-ui-manager.h"
+ #include "moon/mod-engine/engine.h"
+ #include "moon/mod-engine/textures/mod-texture.h"
++#include "moon/mod-engine/audio/mod-audio.h"
+ #include <cstring>
+ 
+ using namespace std;
+@@ -12,6 +13,10 @@ extern "C" {
+ #include "sm64.h"
+ #include "gfx_dimensions.h"
+ #include "pc/configfile.h"
++#include "game/sound_init.h"
++#include "audio/external.h"
++#include "game/level_update.h"
++#include "game/area.h"
+ }
+ 
+ BitModule* currentPack;
+@@ -55,6 +60,11 @@ void rebuildTextureCache(){
+     }
+     reverse(order.begin(), order.end());
+     MoonInternal::buildTextureCache(order);
++    MoonInternal::buildAudioCache(order);
++
++    sound_reset(0);
++    play_music(SEQ_PLAYER_LEVEL, gCurrentArea->musicParam2, 0);
++    lower_background_noise(1);
+ }
+ 
+ void MoonAddonsScreen::changeScroll(int idx){

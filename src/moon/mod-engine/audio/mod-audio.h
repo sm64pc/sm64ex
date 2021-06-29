@@ -1,6 +1,5 @@
 #ifndef ModEngineSoundModule
 #define ModEngineSoundModule
-#ifdef __cplusplus
 
 #include "moon/mod-engine/interfaces/file-entry.h"
 #include "moon/mod-engine/interfaces/bit-module.h"
@@ -20,7 +19,4 @@ namespace MoonInternal {
     void buildAudioCache(std::vector<int> order);
 }
 
-#else
-void* loadSoundData(const char* fullpath);
-#endif
 #endif
