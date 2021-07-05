@@ -26,6 +26,7 @@
 #include "gfx_dxgi.h"
 
 #include "gfx_screen_config.h"
+#include "moon/mod-engine/hooks/hook.h"
 
 #define THREE_POINT_FILTERING 0
 #define DEBUG_D3D 0
@@ -303,6 +304,10 @@ static void gfx_d3d11_init(void) {
                   gfx_dxgi_get_h_wnd(), "Failed to create per-draw constant buffer.");
 
     d3d.context->PSSetConstantBuffers(1, 1, d3d.per_draw_cb.GetAddressOf());
+
+    MoonInternal::bindHook(GFX_INIT);
+    MoonInternal::initBindHook(0);
+    MoonInternal::callBindHook(1, (struct HookParameter){.name = "d3d", .parameter = (void*) &d3d});
 }
 
 
@@ -664,9 +669,16 @@ static void gfx_d3d11_draw_triangles(float buf_vbo[], size_t buf_vbo_len, size_t
 
 static void gfx_d3d11_on_resize(void) {
     create_render_target_views(true);
+    MoonInternal::bindHook(GFX_ON_REZISE);
+    MoonInternal::initBindHook(0);
+    MoonInternal::callBindHook(1, (struct HookParameter){.name = "d3d", .parameter = (void*) &d3d});
 }
 
 static void gfx_d3d11_start_frame(void) {
+    MoonInternal::bindHook(GFX_PRE_START_FRAME);
+    MoonInternal::initBindHook(0);
+    if(MoonInternal::callBindHook(1, (struct HookParameter){.name = "d3d", .parameter = (void*) &d3d})) return;
+
     // Set render targets
 
     d3d.context->OMSetRenderTargets(1, d3d.backbuffer_view.GetAddressOf(), d3d.depth_stencil_view.Get());
@@ -693,9 +705,20 @@ static void gfx_d3d11_start_frame(void) {
     d3d.context->Map(d3d.per_frame_cb.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &ms);
     memcpy(ms.pData, &d3d.per_frame_cb_data, sizeof(PerFrameCB));
     d3d.context->Unmap(d3d.per_frame_cb.Get(), 0);
+
+    MoonInternal::bindHook(GFX_POST_START_FRAME);
+    MoonInternal::initBindHook(0);
+    MoonInternal::callBindHook(1, (struct HookParameter){.name = "d3d", .parameter = (void*) &d3d});
 }
 
 static void gfx_d3d11_end_frame(void) {
+    MoonInternal::bindHook(GFX_PRE_END_FRAME);
+    MoonInternal::initBindHook(0);
+    MoonInternal::callBindHook(1, (struct HookParameter){.name = "d3d", .parameter = (void*) &d3d});
+    
+    MoonInternal::bindHook(GFX_POST_END_FRAME);
+    MoonInternal::initBindHook(0);
+    MoonInternal::callBindHook(1, (struct HookParameter){.name = "d3d", .parameter = (void*) &d3d});
 }
 
 static void gfx_d3d11_finish_render(void) {

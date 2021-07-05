@@ -32,6 +32,7 @@
 #include "../configfile.h"
 #include "gfx_cc.h"
 #include "gfx_rendering_api.h"
+#include "moon/mod-engine/hooks/hook.h"
 
 #define TEX_CACHE_STEP 512
 
@@ -632,12 +633,26 @@ static void gfx_opengl_init(void) {
     
     glDepthFunc(GL_LEQUAL);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    moon_bind_hook(GFX_INIT);
+    moon_init_hook(0);
+    moon_call_hook(0);
 }
 
 static void gfx_opengl_on_resize(void) {
+    moon_bind_hook(GFX_ON_REZISE);
+    moon_init_hook(0);
+    moon_call_hook(0);
 }
 
 static void gfx_opengl_start_frame(void) {
+
+    moon_bind_hook(GFX_PRE_START_FRAME);
+    moon_init_hook(0);
+    if(moon_call_hook(0)){
+        return;
+    }
+
     frame_count++;
 
     glDisable(GL_SCISSOR_TEST);
@@ -645,15 +660,29 @@ static void gfx_opengl_start_frame(void) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_SCISSOR_TEST);
+    moon_bind_hook(GFX_POST_START_FRAME);
+    moon_init_hook(0);
+    moon_call_hook(0);
+
 }
 
 static void gfx_opengl_end_frame(void) {
+    moon_bind_hook(GFX_PRE_END_FRAME);
+    moon_init_hook(0);
+    moon_call_hook(0);
+
+    moon_bind_hook(GFX_POST_END_FRAME);
+    moon_init_hook(0);
+    moon_call_hook(0);
 }
 
 static void gfx_opengl_finish_render(void) {
 }
 
 static void gfx_opengl_shutdown(void) {
+    moon_bind_hook(GFX_SHUTDOWN);
+    moon_init_hook(0);
+    moon_call_hook(0);
 }
 
 struct GfxRenderingAPI gfx_opengl_api = {

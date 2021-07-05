@@ -14,6 +14,19 @@ struct HookParameter {
 #define SAVE_GRAPH_NODE "SaveGraphNode"
 #define LOAD_GRAPH_NODE "LoadGraphNode"
 
+// Graphics API Hooks
+#define GFX_PRE_START_FRAME  "GFXApiPreStartFrame"
+#define GFX_POST_START_FRAME "GFXApiPostStartFrame"
+
+#define GFX_PRE_END_FRAME  "GFXApiPreEndFrame"
+#define GFX_POST_END_FRAME "GFXApiPostEndFrame"
+
+#define GFX_ON_REZISE "GFXApiOnResize"
+#define GFX_INIT      "GFXApiInit"
+#define GFX_SHUTDOWN  "GFXApiShutdown"
+
+// End
+
 #ifdef __cplusplus
 
 #include <string>

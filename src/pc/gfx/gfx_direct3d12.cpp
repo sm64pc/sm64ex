@@ -38,6 +38,7 @@
 #include "gfx_direct3d_common.h"
 
 #include "gfx_screen_config.h"
+#include "moon/mod-engine/hooks/hook.h"
 
 #define DEBUG_D3D 0
 
@@ -582,6 +583,11 @@ static void gfx_direct3d12_draw_triangles(float buf_vbo[], size_t buf_vbo_len, s
 }
 
 static void gfx_direct3d12_start_frame(void) {
+
+    MoonInternal::bindHook(GFX_PRE_START_FRAME);
+    MoonInternal::initBindHook(0);
+    if(MoonInternal::callBindHook(1, (struct HookParameter){.name = "d3d", .parameter = (void*) &d3d})) return;
+
     ++d3d.frame_counter;
     d3d.srv_pos = 0;
     texture_uploads = 0;
@@ -614,6 +620,10 @@ static void gfx_direct3d12_start_frame(void) {
     memcpy(d3d.mapped_noise_cb_address, &d3d.noise_cb_data, sizeof(struct NoiseCB));
     
     d3d.vbuf_pos = 0;
+
+    MoonInternal::bindHook(GFX_POST_START_FRAME);
+    MoonInternal::initBindHook(0);
+    MoonInternal::callBindHook(1, (struct HookParameter){.name = "d3d", .parameter = (void*) &d3d});
 }
 
 static void create_render_target_views(void) {
@@ -675,6 +685,9 @@ static void gfx_direct3d12_on_resize(void) {
         d3d.frame_index = d3d.swap_chain->GetCurrentBackBufferIndex();
         create_render_target_views();
         create_depth_buffer();
+        MoonInternal::bindHook(GFX_ON_REZISE);
+        MoonInternal::initBindHook(0);
+        MoonInternal::callBindHook(1, (struct HookParameter){.name = "d3d", .parameter = (void*) &d3d});
     }
 }
 
@@ -866,9 +879,17 @@ static void gfx_direct3d12_init(void ) {
         CD3DX12_RANGE read_range(0, 0); // Read not possible from CPU
         ThrowIfFailed(d3d.vertex_buffer->Map(0, &read_range, &d3d.mapped_vbuf_address));
     }
+
+    MoonInternal::bindHook(GFX_INIT);
+    MoonInternal::initBindHook(0);
+    MoonInternal::callBindHook(1, (struct HookParameter){.name = "d3d", .parameter = (void*) &d3d});
 }
 
 static void gfx_direct3d12_end_frame(void) {
+    MoonInternal::bindHook(GFX_PRE_END_FRAME);
+    MoonInternal::initBindHook(0);
+    if(MoonInternal::callBindHook(1, (struct HookParameter){.name = "d3d", .parameter = (void*) &d3d})) return;
+
     if (max_texture_uploads < texture_uploads && texture_uploads != 38 && texture_uploads != 34 && texture_uploads != 29) {
         max_texture_uploads = texture_uploads;
     }
@@ -902,6 +923,9 @@ static void gfx_direct3d12_end_frame(void) {
         QueryPerformanceCounter(&t0);
         //printf("Present: %llu %u\n", (unsigned long long)(t0.QuadPart - d3d.qpc_init), d3d.length_in_vsync_frames);
     }
+    MoonInternal::bindHook(GFX_POST_END_FRAME);
+    MoonInternal::initBindHook(0);
+    MoonInternal::callBindHook(1, (struct HookParameter){.name = "d3d", .parameter = (void*) &d3d});
 }
 
 static void gfx_direct3d12_finish_render(void) {

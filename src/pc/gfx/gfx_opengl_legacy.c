@@ -42,8 +42,9 @@ static PFNMGLFOGCOORDPOINTERPROC mglFogCoordPointer = NULL;
 
 #include "../platform.h"
 #include "gfx_cc.h"
-#include "gfx_rendering_api.h"
 #include "macros.h"
+#include "gfx_rendering_api.h"
+#include "moon/mod-engine/hooks/hook.h"
 
 enum MixFlags {
     SH_MF_OVERRIDE_ALPHA = 1,
@@ -567,26 +568,53 @@ static void gfx_opengl_init(void) {
     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, c_white);
     TEXENV_COMBINE_OP(0, GL_SRC_COLOR, GL_SRC_ALPHA);
     TEXENV_COMBINE_OP(1, GL_SRC_COLOR, GL_SRC_ALPHA);
+    moon_bind_hook(GFX_INIT);
+    moon_init_hook(0);
+    moon_call_hook(0);
 }
 
 static void gfx_opengl_on_resize(void) {
+    moon_bind_hook(GFX_ON_REZISE);
+    moon_init_hook(0);
+    moon_call_hook(0);
 }
 
 static void gfx_opengl_start_frame(void) {
+
+    moon_bind_hook(GFX_PRE_START_FRAME);
+    moon_init_hook(0);
+    if(moon_call_hook(0)){
+        return;
+    }    
+
     glDisable(GL_SCISSOR_TEST);
     glDepthMask(GL_TRUE); // Must be set to clear Z-buffer
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_SCISSOR_TEST);
+    moon_bind_hook(GFX_POST_START_FRAME);
+    moon_init_hook(0);
+    moon_call_hook(0);
+
 }
 
 static void gfx_opengl_end_frame(void) {
+    moon_bind_hook(GFX_PRE_END_FRAME);
+    moon_init_hook(0);
+    moon_call_hook(0);
+
+    moon_bind_hook(GFX_POST_END_FRAME);
+    moon_init_hook(0);
+    moon_call_hook(0);
 }
 
 static void gfx_opengl_finish_render(void) {
 }
 
 static void gfx_opengl_shutdown(void) {
+    moon_bind_hook(GFX_SHUTDOWN);
+    moon_init_hook(0);
+    moon_call_hook(0);
 }
 
 struct GfxRenderingAPI gfx_opengl_api = {
