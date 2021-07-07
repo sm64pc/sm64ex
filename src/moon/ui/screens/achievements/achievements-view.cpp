@@ -64,12 +64,12 @@ void MoonAchievementsScreen::changeScroll(int idx){
 
 void MoonAchievementsScreen::Update(){
     float yStick = GetStickValue(MoonButtons::U_STICK, false);
-    if(yStick > 0) {
+    if(yStick > 5) {
         if(dispatched) return;
         MoonAchievementsScreen::changeScroll(-1);
         dispatched = true;
     }
-    if(yStick < 0) {
+    if(yStick < -5) {
         if(dispatched) return;
         MoonAchievementsScreen::changeScroll(1);
         dispatched = true;

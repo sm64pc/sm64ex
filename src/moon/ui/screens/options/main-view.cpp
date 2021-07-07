@@ -81,7 +81,7 @@ void MoonOptMain::Update(){
             isOpen = false;
         }
         float xStick = GetStickValue(MoonButtons::L_STICK, false);
-        if(xStick < 0) {
+        if(xStick < -50) {
             if(cswStickExecuted) return;
             if(categoryIndex > 0)
                 categoryIndex -= 1;
@@ -90,7 +90,7 @@ void MoonOptMain::Update(){
             this->setCategory(categoryIndex);
             cswStickExecuted = true;
         }
-        if(xStick > 0) {
+        if(xStick > 50) {
             if(cswStickExecuted) return;
             if(categoryIndex < categories.size() - 1)
                 categoryIndex += 1;

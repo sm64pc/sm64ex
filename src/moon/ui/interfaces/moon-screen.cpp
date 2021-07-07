@@ -99,7 +99,7 @@ void MoonScreen::Update(){
             widgets[i]->Update();
         }
         float yStick = GetStickValue(MoonButtons::U_STICK, false);
-        if(yStick > 0) {
+        if(yStick > 5) {
             if(stickExecuted) return;
             if(this->selected != NULL) return;
             this->widgets[this->scrollIndex]->selected = false;
@@ -109,7 +109,7 @@ void MoonScreen::Update(){
             this->widgets[this->scrollIndex]->selected = true;
             stickExecuted = true;
         }
-        if(yStick < 0) {
+        if(yStick < -5) {
             if(stickExecuted) return;
             if(this->selected != NULL) return;
             this->widgets[this->scrollIndex]->selected = false;
