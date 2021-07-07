@@ -83,7 +83,7 @@ void MoonAddonsScreen::changeScroll(int idx){
 
 void MoonAddonsScreen::Update(){
     float yStick = GetStickValue(MoonButtons::U_STICK, false);
-    if(yStick > 0) {
+    if(yStick > 5) {
         if(dispatched) return;
         if(currentPack != NULL){
             if(currentSubItem > 0)
@@ -96,7 +96,7 @@ void MoonAddonsScreen::Update(){
         MoonAddonsScreen::changeScroll(-1);
         dispatched = true;
     }
-    if(yStick < 0) {
+    if(yStick < -5) {
         if(dispatched) return;
         if(currentPack != NULL){
             if(currentSubItem < 2)
