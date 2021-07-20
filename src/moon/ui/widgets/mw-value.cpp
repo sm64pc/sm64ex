@@ -109,7 +109,7 @@ void MWValue::Draw(){
         float value = isFloat ? *this->bind.fvar : *this->bind.ivar;
         float max   = this->bind.max;
 
-        wstring text = to_wstring((int)(100 * (value / max))) + L"%";
+        wstring text = !this->bind.rawValue ? to_wstring((int)(100 * (value / max))) + L"%" : to_wstring((int)value);
 
         tmpWidth += MoonGetTextWidth(text, scale, false);
         MoonDrawWideText(this->x + ( 10 + barWidth / 2 ) - tmpWidth / 2 + titleWidth, this->y, text, scale, {58, 249, 252, 255}, true, true);

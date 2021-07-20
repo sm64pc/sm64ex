@@ -207,30 +207,13 @@ void main_func(char *argv[]) {
     else if (gCLIOpts.FullScreen == 2)
         configWindow.fullscreen = false;
 
-    #if defined(WAPI_SDL1) || defined(WAPI_SDL2)
     wm_api = &gfx_sdl;
-    #elif defined(WAPI_DXGI)
-    wm_api = &gfx_dxgi;
-    #else
-    #error No window API!
-    #endif
-
-    #if defined(RAPI_D3D11)
-    rendering_api = &gfx_direct3d11_api;
-    # define RAPI_NAME "DirectX 11"
-    #elif defined(RAPI_D3D12)
-    rendering_api = &gfx_direct3d12_api;
-    # define RAPI_NAME "DirectX 12"
-    #elif defined(RAPI_GL) || defined(RAPI_GL_LEGACY)
     rendering_api = &gfx_opengl_api;
     # ifdef USE_GLES
     #  define RAPI_NAME "OpenGL ES"
     # else
     #  define RAPI_NAME "OpenGL"
     # endif
-    #else
-    #error No rendering API!
-    #endif
 
     char window_title[96] =
     "Super Mario 64 - Moon64 (" RAPI_NAME ")";

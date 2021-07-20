@@ -26,6 +26,9 @@ MVideoCategory::MVideoCategory() : MoonCategory("TEXT_OPT_VIDEO"){
     hudY = 74;
 #endif
     this->catOptions.push_back(new MWValue(22, texY, "TEXT_OPT_TEXFILTER", {.index = (int*)&configFiltering, .values = &filters, .valueKeys = true}, true));
+    this->catOptions.push_back(new MWValue(22, texY, "Enable antialias",   {.bvar  = &configWindow.enable_antialias}, false));
+    this->catOptions.push_back(new MWValue(22, texY, "Antialias level",    {.ivar = (int*)&configWindow.antialias_level, .max = 16, .min = 2, .step = 2, .rawValue = true}, false));
+    this->catOptions.push_back(new MWValue(22, texY, "TEXT_OPT_TEXFILTER", {.index = (int*)&configFiltering, .values = &filters, .valueKeys = true}, true));
     this->catOptions.push_back(new MWValue(22, hudY, "TEXT_OPT_HUD",       {.bvar = &configHUD}, true));
 #ifndef TARGET_SWITCH
     this->catOptions.push_back(new MWValue(22, 125, "TEXT_OPT_RESETWND",  {.btn = [](){

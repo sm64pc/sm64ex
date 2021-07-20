@@ -370,7 +370,7 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
         }
     }
 
-    if (opt_alpha && opt_noise) 
+    if (opt_alpha && opt_noise)
         append_line(fs_buf, &fs_len, "texel.a *= floor(random(floor(vec3(gl_FragCoord.xy, frame_count))) + 0.5);");
 
     if (opt_alpha) {
@@ -627,9 +627,9 @@ static void gfx_opengl_init(void) {
         sys_fatal("OpenGL 2.1+ is required.\nReported version: %s%d.%d", is_es ? "ES" : "", vmajor, vminor);
 
     glGenBuffers(1, &opengl_vbo);
-    
+
     glBindBuffer(GL_ARRAY_BUFFER, opengl_vbo);
-    
+
     glDepthFunc(GL_LEQUAL);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
@@ -645,6 +645,10 @@ static void gfx_opengl_start_frame(void) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_SCISSOR_TEST);
+    if(configWindow.enable_antialias)
+        glEnable(GL_MULTISAMPLE);
+    else
+        glDisable(GL_MULTISAMPLE);
 }
 
 static void gfx_opengl_end_frame(void) {

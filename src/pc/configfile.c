@@ -48,6 +48,8 @@ ConfigWindow configWindow       = {
     .fullscreen = false,
     .exiting_fullscreen = false,
     .settings_changed = false,
+    .enable_antialias = true,
+    .antialias_level = 4
 };
 
 unsigned int configLanguage     = 0;
