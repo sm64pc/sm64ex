@@ -48,6 +48,8 @@ ConfigWindow configWindow       = {
     .fullscreen = false,
     .exiting_fullscreen = false,
     .settings_changed = false,
+    .enable_antialias = true,
+    .antialias_level = 4
 };
 
 unsigned int configLanguage     = 0;
@@ -114,6 +116,8 @@ static const struct ConfigOption options[] = {
     {.name = "window_y",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.y},
     {.name = "window_w",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.w},
     {.name = "window_h",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.h},
+    {.name = "aa_level",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.antialias_level},
+    {.name = "aa_enabled",           .type = CONFIG_TYPE_BOOL, .uintValue = &configWindow.enable_antialias},
     {.name = "vsync",                .type = CONFIG_TYPE_BOOL, .boolValue = &configWindow.vsync},
     {.name = "texture_filtering",    .type = CONFIG_TYPE_UINT, .uintValue = &configFiltering},
     {.name = "master_volume",        .type = CONFIG_TYPE_UINT, .uintValue = &configMasterVolume},

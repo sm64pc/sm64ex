@@ -15,6 +15,8 @@ typedef struct {
     bool fullscreen;
     bool exiting_fullscreen;
     bool settings_changed;
+    bool enable_antialias;
+    unsigned int antialias_level;
 } ConfigWindow;
 
 extern ConfigWindow configWindow;
