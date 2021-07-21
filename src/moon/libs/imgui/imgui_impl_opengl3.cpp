@@ -90,12 +90,24 @@
 
 #include <SDL2/SDL.h>
 
+#ifdef __MINGW32__
+# define FOR_WINDOWS 1
+#else
+# define FOR_WINDOWS 0
+#endif
+
+#if FOR_WINDOWS || defined(OSX_BUILD)
+# define GLEW_STATIC
+# include <GL/glew.h>
+#endif
+
 #define GL_GLEXT_PROTOTYPES 1
 #ifdef USE_GLES
 # include <SDL2/SDL_opengles2.h>
 #else
 # include <SDL2/SDL_opengl.h>
 #endif
+
 
 // Desktop GL 3.2+ has glDrawElementsBaseVertex() which GL ES and WebGL don't have.
 #if !defined(IMGUI_IMPL_OPENGL_ES2) && !defined(IMGUI_IMPL_OPENGL_ES3) && defined(GL_VERSION_3_2)
