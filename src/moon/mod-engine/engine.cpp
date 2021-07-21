@@ -31,6 +31,7 @@ extern "C" {
 namespace Moon {
 
     vector<BitModule*> addons;
+    map<string, EntryFileData*> fonts;
 
     void loadAddon(string addonPath){
         MoonFS file(addonPath);
@@ -85,6 +86,7 @@ namespace Moon {
                         string shadersPath = "assets/shaders/";
                         string langsPath = "assets/langs/";
                         string soundPath = "assets/sound/";
+                        string fontsPath = "assets/fonts/";
 
                         string fileExtension = string(get_filename_ext(name.c_str()));
 
@@ -132,6 +134,16 @@ namespace Moon {
                             EntryFileData *entry;
                             file.read(name, entry = new EntryFileData());
                             Moon::saveAddonSound(bit, soundName, entry);
+                        }
+                        if(!name.rfind(fontsPath, 0)){
+                            vector<string> fontExts = { "ttf", "otf" };
+                            if(std::count(fontExts.begin(), fontExts.end(), fileExtension)){
+                                string fontName = name.substr(string("assets/").length());
+                                string rawname = fontName.substr(fontName.find_last_of("/") + 1);
+                                EntryFileData *entry;
+                                file.read(name, entry = new EntryFileData());
+                                Moon::fonts[rawname] = entry;
+                            }
                         }
                     }
                 }

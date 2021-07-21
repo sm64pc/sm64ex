@@ -10,6 +10,7 @@ extern "C" {
 }
 namespace Moon {
     extern std::vector<BitModule*> addons;
+    extern std::map<std::string, EntryFileData*> fonts;
     void loadAddon(std::string addonPath);
 }
 

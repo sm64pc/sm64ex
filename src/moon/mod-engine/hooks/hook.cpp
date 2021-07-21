@@ -17,8 +17,10 @@ namespace Moon {
 
 namespace MoonInternal {
     bool handleHook(HookCall call){
-        for (auto& listener : listeners[string(call.name)])
-            (*listener)(call);
+        string hookName = string(call.name);
+        for(int l = 0; l < listeners[hookName].size(); l++){
+            (*listeners[hookName][l])(call);
+        }
         return call.cancelled;
     }
 }

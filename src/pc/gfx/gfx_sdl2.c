@@ -33,6 +33,7 @@
 #include "../configfile.h"
 #include "../cliopts.h"
 #include "moon/moon64.h"
+#include "moon/mod-engine/hooks/hook.h"
 
 #include "src/pc/controller/controller_keyboard.h"
 
@@ -212,6 +213,7 @@ static void gfx_sdl_init(const char *window_title) {
 
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    // SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
     #ifdef USE_GLES
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);  // These attributes allow for hardware acceleration on RPis.
@@ -222,7 +224,6 @@ static void gfx_sdl_init(const char *window_title) {
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, configWindow.antialias_level);
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-
     #ifdef TARGET_SWITCH
     configWindow.fullscreen = false;
     if (appletGetOperationMode() == 1) {
@@ -242,9 +243,23 @@ static void gfx_sdl_init(const char *window_title) {
     wnd = SDL_CreateWindow(
         window_title,
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, configWindow.w, configWindow.h,
-        SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE
+        SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
     );
     ctx = SDL_GL_CreateContext(wnd);
+
+    moon_bind_hook(WINDOW_API_INIT);
+    moon_init_hook(2,
+        (struct HookParameter){
+            .name = "window",
+            .parameter = wnd
+        },
+        (struct HookParameter){
+            .name = "context",
+            .parameter = ctx
+        }
+    );
+    moon_call_hook(0);
+
     moon_update_window(wnd);
 
     gfx_sdl_set_vsync(configWindow.vsync);
@@ -304,6 +319,14 @@ static void gfx_sdl_onkeyup(int scancode) {
 static void gfx_sdl_handle_events(void) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
+        moon_bind_hook(WINDOW_API_HANDLE_EVENTS);
+        moon_init_hook(1,
+            (struct HookParameter){
+                .name = "event",
+                .parameter = &event
+            }
+        );
+        moon_call_hook(0);
         switch (event.type) {
 #ifndef TARGET_WEB
             // Scancodes are broken in Emscripten SDL2: https://bugzilla.libsdl.org/show_bug.cgi?id=3259

@@ -300,6 +300,9 @@ SRC_DIRS += src/moon/achievements
 # Moon64 SRC [Config / Saves]
 SRC_DIRS += src/moon/config src/moon/config/moon src/moon/config/saves
 
+# Moon64 SRC [Renderer / ImGui]
+SRC_DIRS += src/moon/imgui
+
 # Moon64 LIB [RapidJSON]
 SRC_DIRS += src/moon/libs/rapidjson src/moon/libs/rapidjson/error src/moon/libs/rapidjson/internal src/moon/libs/rapidjson/msinttypes
 
@@ -314,6 +317,9 @@ SRC_DIRS += src/moon/libs/nlohmann
 
 # Moon64 LIB [MoonFS API]
 SRC_DIRS += src/moon/fs
+
+# Moon64 LIB [ImGui]
+SRC_DIRS += src/moon/libs/imgui
 
 ################################
 
@@ -597,6 +603,12 @@ endif
 CXXFLAGS := -std=c++17
 LDFLAGS += -lstdc++fs
 
+CC_CHECK += -DGIT_HASH=\"$(GIT_HASH)\"
+CFLAGS   += -DGIT_HASH=\"$(GIT_HASH)\"
+
+CC_CHECK += -DGIT_BRANCH=\"$(GIT_BRANCH)\"
+CFLAGS   += -DGIT_BRANCH=\"$(GIT_BRANCH)\"
+
 ifeq ($(WINDOWS_BUILD),1)
   CC_CHECK += -DDISABLE_CURL_SUPPORT
   CFLAGS += -DDISABLE_CURL_SUPPORT
@@ -739,6 +751,7 @@ $(BASEPACK_LST): $(EXE)
 	@find levels -name \*.png -exec echo "{} gfx/{}" >> $(BASEPACK_LST) \;
 	@find textures -name \*.png -exec echo "{} gfx/{}" >> $(BASEPACK_LST) \;
 	@find texts -name \*.json -exec echo "{} {}" >> $(BASEPACK_LST) \;
+	@find fonts -name \*.ttf -exec echo "{} {}" >> $(BASEPACK_LST) \;
 	@$(PYTHON) $(TOOLS_DIR)/mkzip.py $(BASEPACK_LST) $(BUILD_DIR)
 endif
 

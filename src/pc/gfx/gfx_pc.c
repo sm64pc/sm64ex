@@ -265,7 +265,7 @@ static bool gfx_texture_cache_lookup(int tile, struct TextureData **n, const uin
     } else node = moon_create_texture();
 
     if (node->texture_addr == NULL)
-        node->texture_id = gfx_rapi->new_texture();
+          node->texture_id = gfx_rapi->new_texture();
 
     gfx_rapi->select_texture(tile, node->texture_id);
     gfx_rapi->set_sampler_parameters(tile, false, 0, 0);
@@ -293,6 +293,21 @@ static inline void load_memory_texture(void *imgdata, long size) {
     }
 
     gfx_rapi->upload_texture(missing_texture, MISSING_W, MISSING_H);
+}
+
+struct TextureData * forceTextureLoad(char* path) {
+    struct TextureData *node = NULL;
+
+    if (gfx_texture_cache_lookup(0, &node, path, 0, 0)) {
+        return node;
+    }
+
+    // the "texture data" is actually a C string with the path to our texture in it
+    // load it from an external image in our data path
+    char texname[SYS_MAX_PATH];
+    snprintf(texname, sizeof(texname), FS_TEXTUREDIR "/%s.png", (const char*)path);
+    moon_load_texture(0, texname, gfx_rapi);
+    return node;
 }
 
 static void import_texture(int tile) {

@@ -39,6 +39,7 @@ void gfx_run(Gfx *commands);
 void gfx_end_frame(void);
 void gfx_shutdown(void);
 void overload_memory_texture(void* data, long size, const char *path);
+struct TextureData * forceTextureLoad(char* path);
 #ifdef __cplusplus
 }
 #endif

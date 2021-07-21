@@ -10,6 +10,8 @@
 #include "moon/mod-engine/test.h"
 #include "moon/io/moon-io.h"
 
+#include "moon/imgui/imgui_impl.h"
+
 #include <iostream>
 #include "moon/libs/nlohmann/json.hpp"
 using json = nlohmann::json;
@@ -23,6 +25,7 @@ void moon_setup(char *state){
     MoonInternal::setupModEngine(string(state));
     MoonInternal::setupLanguageEngine(string(state));
     MoonInternal::setupIOModuleEngine(string(state));
+    MoonInternal::setupImGuiModule(string(state));
 }
 
 /*

@@ -14,6 +14,9 @@ struct HookParameter {
 #define SAVE_GRAPH_NODE "SaveGraphNode"
 #define LOAD_GRAPH_NODE "LoadGraphNode"
 
+#define WINDOW_API_INIT  "WApiInit"
+#define WINDOW_API_HANDLE_EVENTS  "WApiHandleEvents"
+
 // Graphics API Hooks
 #define GFX_PRE_START_FRAME  "GFXApiPreStartFrame"
 #define GFX_POST_START_FRAME "GFXApiPostStartFrame"

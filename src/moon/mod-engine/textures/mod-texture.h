@@ -12,6 +12,8 @@ extern "C" {
 #include "pc/gfx/gfx_pc.h"
 }
 
+extern std::map<std::string, TextureData*> textureMap;
+
 namespace Moon {
     void saveAddonTexture(BitModule *addon, std::string texturePath, EntryFileData* data);
     void bindTextureModifier(std::string texture, std::string modName, nlohmann::json data);
