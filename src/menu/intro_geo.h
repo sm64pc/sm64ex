@@ -15,4 +15,5 @@ Gfx *intro_backdrop_one_image(s32 index, s8 *backgroundTable);
 Gfx *geo_intro_backdrop(s32 sp48, struct GraphNode *sp4c, UNUSED void *context);
 Gfx *geo_game_over_tile(s32 sp40, struct GraphNode *sp44, UNUSED void *context);
 
+Gfx *geo_intro_rumble_pak_graphic(s32 state, struct GraphNode *node, UNUSED void *context);
 #endif // INTRO_GEO_H

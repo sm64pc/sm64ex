@@ -53,10 +53,14 @@ namespace MoonInternal {
                     ImFontConfig font_cfg;
                     font_cfg.FontDataOwnedByAtlas = false;
                     io.Fonts->AddFontFromMemoryTTF((void*) entry->second->data, entry->second->size, 18.f, &font_cfg);
-                    cout << "Loading font: " << entry->first << endl;
                 }
                 ImGui::StyleColorsLightGreen();
                 io.ConfigWindowsMoveFromTitleBarOnly = true;
+                MoonInternal::bindHook(IMGUI_API_INIT);
+                MoonInternal::initBindHook(1,
+                    (struct HookParameter){.name = "io", .parameter = (void*) &io}
+                );
+                MoonInternal::callBindHook(0);
 
                 window = (SDL_Window*) call.baseArgs["window"];
                 ImGui_ImplSDL2_InitForOpenGL(window, call.baseArgs["context"]);
@@ -78,16 +82,18 @@ namespace MoonInternal {
                 ImGui_ImplOpenGL3_NewFrame();
                 ImGui_ImplSDL2_NewFrame(window);
                 ImGui::NewFrame();
-
-                static float f = 0.0f;
-                static int counter = 0;
+                MoonInternal::bindHook(IMGUI_API_DRAW);
+                MoonInternal::initBindHook(0);
+                MoonInternal::callBindHook(0);
 
                 if(showWindow){
-                    ImGui::Begin("Moon64 Game Stats");
+                    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
+                    ImGui::Begin("Moon64 Game Stats", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
                     ImGui::Text("Framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
                     ImGui::Text("Branch: " GIT_BRANCH);
                     ImGui::Text("Commit: " GIT_HASH);
                     ImGui::End();
+                    ImGui::PopStyleColor();
                 }
 
                 ImGui::Render();

@@ -152,7 +152,7 @@ static s32 bhv_cmd_cylboard(void) {
 // Command 0x1B: Sets the current model ID of the object.
 // Usage: SET_MODEL(modelID)
 static s32 bhv_cmd_set_model(void) {
-    u32 modelID = BHV_CMD_GET_U32(0);
+    u32 modelID = BHV_CMD_GET_2ND_S16(0);
     gCurrentObject->header.gfx.sharedChild = get_graph_node(modelID);
     gCurBhvCommand++;
     return BHV_PROC_CONTINUE;

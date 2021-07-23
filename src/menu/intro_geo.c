@@ -113,7 +113,7 @@ Gfx *geo_n64_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context) {
     displayListIter = displayList;
     scaleX = 1.0f;
     scaleY = 1.0f;
-    scaleZ = 1.0f; 
+    scaleZ = 1.0f;
     guScale(scaleMat, 0, scaleY, scaleZ);
     guRotate(scaleMat, 10, 1, 0, 0);
     guRotate(rotMat, gTitleRotationCounter, 0, 1, 0);
@@ -132,7 +132,7 @@ Gfx *geo_n64_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context) {
     int range = 80;
     float step = 1;
 
-    if(gTitlePos >= range) 
+    if(gTitlePos >= range)
         gTitlePingPong = 1;
     else if (gTitlePos <= -range)
         gTitlePingPong = 0;
@@ -239,7 +239,7 @@ Gfx *intro_backdrop_one_image(s32 index, s8 *backgroundTable) {
     f32 aspect = GFX_DIMENSIONS_ASPECT_RATIO;
 	int num_tiles_h = (((aspect*SCREEN_HEIGHT)+79)/80);
 	float x_ofs = (SCREEN_WIDTH/2)-(aspect*SCREEN_HEIGHT/2);
-	
+
     mtx = alloc_display_list(sizeof(*mtx));
     displayList = alloc_display_list(36 * sizeof(*displayList));
     displayListIter = displayList;
@@ -248,8 +248,8 @@ Gfx *intro_backdrop_one_image(s32 index, s8 *backgroundTable) {
     gSPMatrix(displayListIter++, mtx, G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_PUSH);
     gSPDisplayList(displayListIter++, &title_screen_bg_dl_0A000118);
     for (i = 0; i < 4; ++i) {
-        gDPLoadTextureBlock(displayListIter++, vIntroBgTable[i], G_IM_FMT_RGBA, G_IM_SIZ_16b, 80, 20, 0, 
-                            G_TX_CLAMP, G_TX_CLAMP, 7, 6, G_TX_NOLOD, G_TX_NOLOD)    
+        gDPLoadTextureBlock(displayListIter++, vIntroBgTable[i], G_IM_FMT_RGBA, G_IM_SIZ_16b, 80, 20, 0,
+                            G_TX_CLAMP, G_TX_CLAMP, 7, 6, G_TX_NOLOD, G_TX_NOLOD)
         gSPDisplayList(displayListIter++, introBackgroundDlRows[i]);
     }
     gSPPopMatrix(displayListIter++, G_MTX_MODELVIEW);
@@ -271,7 +271,7 @@ Gfx *geo_intro_backdrop(s32 sp48, struct GraphNode *sp4c, UNUSED void *context) 
     displayListIter = NULL;
     f32 aspect = GFX_DIMENSIONS_ASPECT_RATIO;
 	int num_tiles_h = (((aspect*SCREEN_HEIGHT)+79)/80);
-	
+
     if (sp48 == 1) {
         displayList = alloc_display_list(((num_tiles_h*3)+4) * sizeof(*displayList));
         displayListIter = displayList;
@@ -298,7 +298,7 @@ Gfx *geo_game_over_tile(s32 sp40, struct GraphNode *sp44, UNUSED void *context) 
     displayListIter = NULL;
     f32 aspect = GFX_DIMENSIONS_ASPECT_RATIO;
 	int num_tiles_h = (((aspect*SCREEN_HEIGHT)+79)/80);
-	
+
     if (sp40 != 1) {
         gGameOverFrameCounter = 0;
         gGameOverTableIndex = -2;
@@ -334,4 +334,34 @@ Gfx *geo_game_over_tile(s32 sp40, struct GraphNode *sp44, UNUSED void *context) 
         gSPEndDisplayList(displayListIter);
     }
     return displayList;
+}
+
+extern Gfx title_screen_bg_dl_0A007548_start[];
+extern Gfx title_screen_bg_dl_0A007548_end[];
+
+Gfx *geo_intro_rumble_pak_graphic(s32 state, struct GraphNode *node, UNUSED void *context) {
+    struct GraphNodeGenerated *genNode = (struct GraphNodeGenerated *)node;
+    Gfx *dlIter;
+    Gfx *dl;
+    s32 introContext;
+    s8 backgroundTileSix;
+    u16 left;
+    dl = NULL;
+    backgroundTileSix = 0;
+
+    left = GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(100);
+
+    if (state != 1) {
+        dl = NULL;
+    } else if (state == 1) {
+        dl = alloc_display_list(6 * sizeof(*dl));
+        if (dl != NULL) {
+            dlIter = dl;
+            gSPDisplayList(dlIter++, &title_screen_bg_dl_0A007548_start);
+            gSPTextureRectangle(dlIter++, left << 2, 200 << 2, (left + 79) << 2, (200 + 23) << 2, 7, 0, 0, 4 << 10, 1 << 10);
+            gSPDisplayList(dlIter++, &title_screen_bg_dl_0A007548_end);
+            gSPEndDisplayList(dlIter);
+        }
+    }
+    return dl;
 }

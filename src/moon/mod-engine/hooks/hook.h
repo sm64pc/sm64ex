@@ -14,6 +14,9 @@ struct HookParameter {
 #define SAVE_GRAPH_NODE "SaveGraphNode"
 #define LOAD_GRAPH_NODE "LoadGraphNode"
 
+#define IMGUI_API_INIT "ImGuiApiInit"
+#define IMGUI_API_DRAW "ImGuiApiDraw"
+
 #define WINDOW_API_INIT  "WApiInit"
 #define WINDOW_API_HANDLE_EVENTS  "WApiHandleEvents"
 

@@ -14,10 +14,6 @@
 #include "gfx/gfx_pc.h"
 
 #include "gfx/gfx_opengl.h"
-#include "gfx/gfx_direct3d11.h"
-#include "gfx/gfx_direct3d12.h"
-
-#include "gfx/gfx_dxgi.h"
 #include "gfx/gfx_sdl.h"
 
 #include "audio/audio_api.h"
