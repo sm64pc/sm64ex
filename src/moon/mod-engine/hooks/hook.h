@@ -19,6 +19,7 @@ struct HookParameter {
 
 #define WINDOW_API_INIT  "WApiInit"
 #define WINDOW_API_HANDLE_EVENTS  "WApiHandleEvents"
+#define WINDOW_API_START_FRAME  "WApiStartFrame"
 
 // Graphics API Hooks
 #define GFX_PRE_START_FRAME  "GFXApiPreStartFrame"

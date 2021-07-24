@@ -8,6 +8,8 @@
 #define TRUE 1
 #define FALSE 0
 
+#ifndef TARGET_SWITCH
+
 typedef signed char            s8;
 typedef unsigned char          u8;
 typedef signed short int       s16;
@@ -26,6 +28,14 @@ typedef volatile s16 vs16;
 typedef volatile s32 vs32;
 typedef volatile s64 vs64;
 
+#else
+
+#ifndef SWITCH_VARS
+#define SWITCH_VARS
+#include <switch/types.h>
+#endif
+#endif
+
 typedef float  f32;
 typedef double f64;
 
@@ -33,7 +43,7 @@ typedef double f64;
 #include <stdint.h>
 #include <sys/types.h>
 
-#if defined(__MINGW32__) 
+#if defined(__MINGW32__)
 #include <_mingw.h>
 #if !defined(__MINGW64_VERSION_MAJOR)
 typedef long ssize_t;

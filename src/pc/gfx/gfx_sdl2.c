@@ -40,7 +40,7 @@
 #ifdef TARGET_SWITCH
 // can't include <switch.h> or even <switch/services/applet.h> because
 // the basic libnx types have the same names as some of the types in this
-extern int appletGetOperationMode(void);
+#include <switch.h>
 #include "glad/glad.h"
 #endif
 
@@ -334,6 +334,15 @@ static void gfx_sdl_onkeyup(int scancode) {
 }
 
 static void gfx_sdl_handle_events(void) {
+    moon_bind_hook(WINDOW_API_START_FRAME);
+    moon_init_hook(1,
+        (struct HookParameter){
+            .name = "window",
+            .parameter = wnd
+        }
+    );
+    moon_call_hook(0);
+
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         moon_bind_hook(WINDOW_API_HANDLE_EVENTS);

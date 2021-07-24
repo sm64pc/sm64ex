@@ -1032,6 +1032,7 @@ struct IMGUI_API ImGuiInputTextState
     ImGuiInputTextFlags     Flags;                  // copy of InputText() flags
     ImGuiInputTextCallback  UserCallback;           // "
     void*                   UserCallbackData;       // "
+    char*                   OverwriteData;
 
     ImGuiInputTextState()                   { memset(this, 0, sizeof(*this)); }
     void        ClearText()                 { CurLenW = CurLenA = 0; TextW[0] = 0; TextA[0] = 0; CursorClamp(); }

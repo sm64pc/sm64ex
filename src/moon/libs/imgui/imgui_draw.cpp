@@ -250,6 +250,10 @@ void ImGui::StyleColorsDark(ImGuiStyle* dst)
 void ImGui::StyleColorsLightGreen(ImGuiStyle* dst)
 {
     ImGuiStyle* style = dst ? dst : &ImGui::GetStyle();
+#ifdef TARGET_SWITCH
+    style->ScaleAllSizes(3.0f);
+    style->TouchExtraPadding = ImVec2(5, 5);
+#endif
     ImVec4* colors = style->Colors;
 
     colors[ImGuiCol_Text]                   = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);

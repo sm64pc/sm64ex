@@ -47,10 +47,15 @@
 
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
+#include "imgui_switch_impl.h"
+
+#include <iostream>
+
+using namespace std;
 
 // SDL
-#include <SDL.h>
-#include <SDL_syswm.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_syswm.h>
 #if defined(__APPLE__)
 #include "TargetConditionals.h"
 #endif
@@ -252,13 +257,13 @@ static void ImGui_ImplSDL2_UpdateMousePosAndButtons()
         io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
 
     int mx, my;
-    Uint32 mouse_buttons = SDL_GetMouseState(&mx, &my);
+    Uint32 mouse_buttons = MoonInternal::Moon_GetMouseState(&mx, &my);
     io.MouseDown[0] = g_MousePressed[0] || (mouse_buttons & SDL_BUTTON(SDL_BUTTON_LEFT)) != 0;  // If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
     io.MouseDown[1] = g_MousePressed[1] || (mouse_buttons & SDL_BUTTON(SDL_BUTTON_RIGHT)) != 0;
     io.MouseDown[2] = g_MousePressed[2] || (mouse_buttons & SDL_BUTTON(SDL_BUTTON_MIDDLE)) != 0;
     g_MousePressed[0] = g_MousePressed[1] = g_MousePressed[2] = false;
 
-#if SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE && !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !(defined(__APPLE__) && TARGET_OS_IOS)
+#if SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE && !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !(defined(__APPLE__) && TARGET_OS_IOS) && !defined(TARGET_SWITCH)
     SDL_Window* focused_window = SDL_GetKeyboardFocus();
     if (g_Window == focused_window)
     {
@@ -281,8 +286,8 @@ static void ImGui_ImplSDL2_UpdateMousePosAndButtons()
     bool any_mouse_button_down = ImGui::IsAnyMouseDown();
     SDL_CaptureMouse(any_mouse_button_down ? SDL_TRUE : SDL_FALSE);
 #else
-    if (SDL_GetWindowFlags(g_Window) & SDL_WINDOW_INPUT_FOCUS)
-        io.MousePos = ImVec2((float)mx, (float)my);
+    io.MousePos = ImVec2((float)mx, (float)my);
+    // cout << "ImGUI MX: " << io.MousePos.x << " MY: " << io.MousePos.y << " MS: " << mouse_buttons << endl;
 #endif
 }
 

@@ -4167,6 +4167,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         const bool is_paste = ((is_shortcut_key && IsKeyPressedMap(ImGuiKey_V)) || (is_shift_key_only && IsKeyPressedMap(ImGuiKey_Insert))) && !is_readonly;
         const bool is_undo  = ((is_shortcut_key && IsKeyPressedMap(ImGuiKey_Z)) && !is_readonly && is_undoable);
         const bool is_redo  = ((is_shortcut_key && IsKeyPressedMap(ImGuiKey_Y)) || (is_osx_shift_shortcut && IsKeyPressedMap(ImGuiKey_Z))) && !is_readonly && is_undoable;
+        const bool is_overwrite = state->OverwriteData != NULL;
 
         if (IsKeyPressedMap(ImGuiKey_LeftArrow))                        { state->OnKeyPressed((is_startend_key_down ? STB_TEXTEDIT_K_LINESTART : is_wordmove_key_down ? STB_TEXTEDIT_K_WORDLEFT : STB_TEXTEDIT_K_LEFT) | k_mask); }
         else if (IsKeyPressedMap(ImGuiKey_RightArrow))                  { state->OnKeyPressed((is_startend_key_down ? STB_TEXTEDIT_K_LINEEND : is_wordmove_key_down ? STB_TEXTEDIT_K_WORDRIGHT : STB_TEXTEDIT_K_RIGHT) | k_mask); }
@@ -4237,9 +4238,9 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
                 stb_textedit_cut(state, &state->Stb);
             }
         }
-        else if (is_paste)
+        else if (is_paste || is_overwrite)
         {
-            if (const char* clipboard = GetClipboardText())
+            if (const char* clipboard = is_overwrite ? state->OverwriteData : GetClipboardText())
             {
                 // Filter pasted buffer
                 const int clipboard_len = (int)strlen(clipboard);
@@ -4261,6 +4262,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
                     stb_textedit_paste(state, &state->Stb, clipboard_filtered, clipboard_filtered_len);
                     state->CursorFollow = true;
                 }
+                if(is_overwrite) state->OverwriteData = NULL;
                 MemFree(clipboard_filtered);
             }
         }

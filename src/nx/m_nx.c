@@ -4,10 +4,12 @@
 
 #include "m_nx.h"
 
+int socketID = -1;
+
 void initNX(){
     appletInitializeGamePlayRecording();
     socketInitializeDefault();
-    nxlinkStdio();    
+    socketID = nxlinkStdio();
     appletSetGamePlayRecordingState(1);
 
     Result rc = psmInitialize();
