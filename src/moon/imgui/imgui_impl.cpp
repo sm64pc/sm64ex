@@ -62,7 +62,7 @@ extern "C" {
 using namespace std;
 
 bool showMenu = true;
-bool showWindowMoon = false;
+bool showWindowMoon = true;
 bool showWindowDemo = false;
 
 SDL_Window* window = nullptr;
@@ -166,7 +166,7 @@ namespace MoonInternal {
 
             Moon::registerHookListener({ GFX_POST_END_FRAME, [](HookCall call){
                 // recv(socketID, NULL, 1, MSG_PEEK | MSG_DONTWAIT) != 0
-                bool retval = 0;
+                // bool retval = 0;
 
                 ImGui_ImplOpenGL3_NewFrame();
                 ImGui_ImplSDL2_NewFrame(window);
@@ -194,7 +194,7 @@ namespace MoonInternal {
                         ImGui::Text("Platform: " PLATFORM " (" RAPI_NAME ")");
                         ImGui::Text("Status: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
                         ImGui::Text("Version: " GIT_BRANCH " " GIT_HASH);
-                        ImGui::Text("NXLink: %d\n", retval);
+                        ImGui::Text("Addons: %d\n", Moon::addons.size());
                         ImGui::End();
                         ImGui::PopStyleColor();
                     }

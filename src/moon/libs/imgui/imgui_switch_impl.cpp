@@ -38,7 +38,6 @@ namespace MoonInternal {
             Moon::registerHookListener({.hookName = WINDOW_API_START_FRAME, .callback = [](HookCall call){
             #ifndef TARGET_SWITCH
                 mstate = SDL_GetMouseState(&mouseX, &mouseY);
-                cout << "MouseX: " << mouseX << " MouseY: " << mouseY << " Mouse State: " << mstate << endl;
             #else
                 if (hidGetTouchScreenStates(&state, 1)) {
                     if (state.count != prev_touchcount) {
