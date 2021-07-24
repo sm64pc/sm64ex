@@ -592,7 +592,7 @@ index 7a83b536..f4acc2de 100644
  
  extern s8 gEnvFxMode;
 diff --git a/src/game/hud.c b/src/game/hud.c
-index 05bafeb6..e3f47e6f 100644
+index 86233d3e..26912f80 100644
 --- a/src/game/hud.c
 +++ b/src/game/hud.c
 @@ -82,6 +82,20 @@ void render_hud_texture(s32 x, s32 y, u32 w, u32 h, u8 *texture) {
@@ -642,10 +642,10 @@ index 05bafeb6..e3f47e6f 100644
      gSPMatrix(gDisplayListHead++, VIRTUAL_TO_PHYSICAL(mtx++),
                G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
 diff --git a/src/game/ingame_menu.c b/src/game/ingame_menu.c
-index 719bf87f..2f9d7911 100644
+index d292d807..4518271f 100644
 --- a/src/game/ingame_menu.c
 +++ b/src/game/ingame_menu.c
-@@ -77,6 +77,47 @@ s8 gLastDialogResponse = 0;
+@@ -78,6 +78,47 @@ s8 gLastDialogResponse = 0;
  u8 gMenuHoldKeyIndex = 0;
  u8 gMenuHoldKeyTimer = 0;
  s32 gDialogResponse = 0;
@@ -693,7 +693,7 @@ index 719bf87f..2f9d7911 100644
  
  void create_dl_identity_matrix(void) {
      Mtx *matrix = (Mtx *) alloc_display_list(sizeof(Mtx));
-@@ -540,6 +581,14 @@ void render_dialog_box_type(struct DialogEntry *dialog, s8 linesPerBox) {
+@@ -541,6 +582,14 @@ void render_dialog_box_type(struct DialogEntry *dialog, s8 linesPerBox) {
      switch (gDialogBoxType) {
          case DIALOG_TYPE_ROTATE: // Renders a dialog black box with zoom and rotation
              if (gDialogBoxState == DIALOG_STATE_OPENING || gDialogBoxState == DIALOG_STATE_CLOSING) {
@@ -708,7 +708,7 @@ index 719bf87f..2f9d7911 100644
                  create_dl_scale_matrix(MENU_MTX_NOPUSH, 1.0 / gDialogBoxScale, 1.0 / gDialogBoxScale, 1.0f);
                  // convert the speed into angle
                  create_dl_rotation_matrix(MENU_MTX_NOPUSH, gDialogBoxOpenTimer * 4.0f, 0, 0, 1.0f);
-@@ -548,6 +597,12 @@ void render_dialog_box_type(struct DialogEntry *dialog, s8 linesPerBox) {
+@@ -549,6 +598,12 @@ void render_dialog_box_type(struct DialogEntry *dialog, s8 linesPerBox) {
              break;
          case DIALOG_TYPE_ZOOM: // Renders a dialog white box with zoom
              if (gDialogBoxState == DIALOG_STATE_OPENING || gDialogBoxState == DIALOG_STATE_CLOSING) {
@@ -721,7 +721,7 @@ index 719bf87f..2f9d7911 100644
                  create_dl_translation_matrix(MENU_MTX_NOPUSH, 65.0 - (65.0 / gDialogBoxScale),
                                                (40.0 / gDialogBoxScale) - 40, 0);
                  create_dl_scale_matrix(MENU_MTX_NOPUSH, 1.0 / gDialogBoxScale, 1.0 / gDialogBoxScale, 1.0f);
-@@ -658,7 +713,8 @@ u32 ensure_nonnegative(s16 value) {
+@@ -659,7 +714,8 @@ u32 ensure_nonnegative(s16 value) {
      return value;
  }
  
@@ -731,7 +731,7 @@ index 719bf87f..2f9d7911 100644
      UNUSED s32 pad[2];
  
      u8 strChar;
-@@ -688,9 +744,11 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
+@@ -689,9 +745,11 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
      gSPDisplayList(gDisplayListHead++, dl_ia_text_begin);
      strIdx = gDialogTextPos;
  
@@ -745,7 +745,7 @@ index 719bf87f..2f9d7911 100644
      create_dl_translation_matrix(MENU_MTX_PUSH, X_VAL3, 2 - lineNum * Y_VAL3, 0);
  
      while (pageState == DIALOG_PAGE_STATE_NONE) {
-@@ -715,7 +773,6 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
+@@ -716,7 +774,6 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
              case DIALOG_CHAR_SPACE:
                  xMatrix++;
                  linePos++;
@@ -753,7 +753,7 @@ index 719bf87f..2f9d7911 100644
                  break;
              case DIALOG_CHAR_SLASH:
                  xMatrix += 2;
-@@ -747,7 +804,6 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
+@@ -748,7 +805,6 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
          }
          strIdx++;
      }
@@ -1841,7 +1841,7 @@ index b49ddaf5..d6656af2 100644
      switch (transType) {
          case WARP_TRANSITION_FADE_FROM_COLOR:
 diff --git a/src/menu/intro_geo.c b/src/menu/intro_geo.c
-index 57297933..ad7117d5 100644
+index 48ae8de4..19da765e 100644
 --- a/src/menu/intro_geo.c
 +++ b/src/menu/intro_geo.c
 @@ -1,5 +1,6 @@
@@ -1891,28 +1891,11 @@ index 57297933..ad7117d5 100644
          gSPMatrix(displayListIter++, scaleMat, G_MTX_MODELVIEW | G_MTX_MUL | G_MTX_PUSH);
          gSPDisplayList(displayListIter++, &intro_seg7_dl_0700B3A0);
          gSPPopMatrix(displayListIter++, G_MTX_MODELVIEW);
-diff --git a/src/pc/gfx/gfx_dxgi.cpp b/src/pc/gfx/gfx_dxgi.cpp
-index 04674952..fa4eb33c 100644
---- a/src/pc/gfx/gfx_dxgi.cpp
-+++ b/src/pc/gfx/gfx_dxgi.cpp
-@@ -36,10 +36,10 @@
- 
- #ifdef VERSION_EU
- #define FRAME_INTERVAL_US_NUMERATOR 40000
--#define FRAME_INTERVAL_US_DENOMINATOR 1
-+#define FRAME_INTERVAL_US_DENOMINATOR 2
- #else
- #define FRAME_INTERVAL_US_NUMERATOR 100000
--#define FRAME_INTERVAL_US_DENOMINATOR 3
-+#define FRAME_INTERVAL_US_DENOMINATOR 6
- #endif
- 
- using namespace Microsoft::WRL; // For ComPtr
 diff --git a/src/pc/gfx/gfx_sdl2.c b/src/pc/gfx/gfx_sdl2.c
-index db4fa8a9..3668aba7 100644
+index 464ce018..e3e98f1e 100644
 --- a/src/pc/gfx/gfx_sdl2.c
 +++ b/src/pc/gfx/gfx_sdl2.c
-@@ -60,7 +60,7 @@ static void (*kb_all_keys_up)(void) = NULL;
+@@ -62,7 +62,7 @@ static void (*kb_all_keys_up)(void) = NULL;
  // whether to use timer for frame control
  static bool use_timer = true;
  // time between consequtive game frames
@@ -1921,7 +1904,14 @@ index db4fa8a9..3668aba7 100644
  
  const SDL_Scancode windows_scancode_table[] = {
    /*  0                        1                            2                         3                            4                     5                            6                            7  */
-@@ -153,7 +153,11 @@ static inline void gfx_sdl_set_vsync(const bool enabled) {
+@@ -149,13 +149,17 @@ int test_vsync(void) {
+ 
+ static inline void gfx_sdl_set_vsync(const bool enabled) {
+ #ifdef TARGET_SWITCH
+-    SDL_GL_SetSwapInterval(2);
++    SDL_GL_SetSwapInterval(1);
+     use_timer = false;
+ #else
      if (enabled) {
          // try to detect refresh rate
          SDL_GL_SetSwapInterval(1);
@@ -1935,10 +1925,10 @@ index db4fa8a9..3668aba7 100644
              printf("determined swap interval: %d\n", vblanks);
              SDL_GL_SetSwapInterval(vblanks);
 diff --git a/src/pc/pc_main.c b/src/pc/pc_main.c
-index a87d967f..712fce4c 100644
+index e71b88b8..4c13a0b6 100644
 --- a/src/pc/pc_main.c
 +++ b/src/pc/pc_main.c
-@@ -90,6 +90,25 @@ void send_display_list(struct SPTask *spTask) {
+@@ -86,6 +86,25 @@ void send_display_list(struct SPTask *spTask) {
  #define SAMPLES_LOW 528
  #endif
  
@@ -1964,7 +1954,7 @@ index a87d967f..712fce4c 100644
  void produce_one_frame(void) {
      moon_setup("Update");
      gfx_start_frame();
-@@ -118,6 +137,11 @@ void produce_one_frame(void) {
+@@ -114,6 +133,11 @@ void produce_one_frame(void) {
      }
      //printf("Audio samples before submitting: %d\n", audio_api->buffered());
  
