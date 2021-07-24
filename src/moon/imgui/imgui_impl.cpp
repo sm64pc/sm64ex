@@ -28,8 +28,10 @@
 #define GL_GLEXT_PROTOTYPES 1
 #ifdef USE_GLES
 # include <SDL2/SDL_opengles2.h>
+# define RAPI_NAME "OpenGL ES"
 #else
 # include <SDL2/SDL_opengl.h>
+# define RAPI_NAME "OpenGL"
 #endif
 #endif
 
@@ -49,7 +51,8 @@ extern "C" {
 
 using namespace std;
 
-bool showWindow = true;
+bool showMenu = true;
+bool showWindowMoon = false;
 
 SDL_Window* window = nullptr;
 ImGuiIO io;
@@ -87,7 +90,7 @@ namespace MoonInternal {
                 switch (ev->type){
                     case SDL_KEYDOWN:
                         if(ev->key.keysym.sym == SDLK_F12)
-                            showWindow = !showWindow;
+                            showMenu = !showMenu;
                         break;
                 }
             }});
@@ -100,15 +103,21 @@ namespace MoonInternal {
                 MoonInternal::initBindHook(0);
                 MoonInternal::callBindHook(0);
 
-                if(showWindow){
-                    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
-                    ImGui::Begin("Moon64 Game Stats", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
-                    ImGui::Text("Framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-                    ImGui::Text("Platform: " PLATFORM);
-                    ImGui::Text("Branch: " GIT_BRANCH);
-                    ImGui::Text("Commit: " GIT_HASH);
-                    ImGui::End();
-                    ImGui::PopStyleColor();
+                if(showMenu){
+                    ImGui::BeginMainMenuBar();
+                    ImGui::MenuItem("Moon64", NULL, &showWindowMoon);
+                    ImGui::EndMainMenuBar();
+
+                    if (showWindowMoon){
+                        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
+                        ImGui::Begin("Moon64 Game Stats", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+                        ImGui::SetWindowPos(ImVec2(10, 35));
+                        ImGui::Text("Platform: " PLATFORM " (" RAPI_NAME ")");
+                        ImGui::Text("Status: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+                        ImGui::Text("Version: " GIT_BRANCH " " GIT_HASH);
+                        ImGui::End();
+                        ImGui::PopStyleColor();
+                    }
                 }
 
                 ImGui::Render();
