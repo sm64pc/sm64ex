@@ -56,6 +56,14 @@ namespace MoonInternal {
                     }
                 }
             #endif
+            }});
+            Moon::registerHookListener({.hookName = WINDOW_API_HANDLE_EVENTS, .callback = [](HookCall call){
+                SDL_Event* ev = (SDL_Event*) call.baseArgs["event"];
+                switch (ev->type){
+                    case SDL_FINGERUP:
+                        mstate = 0;
+                }
+            }});
         }
     }
 
