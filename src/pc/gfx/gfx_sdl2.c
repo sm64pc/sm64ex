@@ -41,6 +41,7 @@
 // can't include <switch.h> or even <switch/services/applet.h> because
 // the basic libnx types have the same names as some of the types in this
 extern int appletGetOperationMode(void);
+#include "glad/glad.h"
 #endif
 
 // TODO: figure out if this shit even works
@@ -213,18 +214,24 @@ static void gfx_sdl_init(const char *window_title) {
 
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    // SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
-    #ifdef USE_GLES
+#ifdef TARGET_SWITCH
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+#endif
+
+#ifdef USE_GLES
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);  // These attributes allow for hardware acceleration on RPis.
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-    #endif
-
+#elif !defined(TARGET_SWITCH)
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, configWindow.antialias_level);
-    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-    #ifdef TARGET_SWITCH
+#endif
+
+#ifdef TARGET_SWITCH
     configWindow.fullscreen = false;
     if (appletGetOperationMode() == 1) {
         configWindow.w = 1920;
@@ -235,17 +242,27 @@ static void gfx_sdl_init(const char *window_title) {
     }
     int xpos = 0;
     int ypos = 0;
-    #else
+#else
     int xpos = (configWindow.x == WAPI_WIN_CENTERPOS) ? SDL_WINDOWPOS_CENTERED : configWindow.x;
     int ypos = (configWindow.y == WAPI_WIN_CENTERPOS) ? SDL_WINDOWPOS_CENTERED : configWindow.y;
-    #endif
+#endif
 
     wnd = SDL_CreateWindow(
         window_title,
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, configWindow.w, configWindow.h,
         SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
     );
+    if (wnd == NULL) {
+        printf("Failed to initialize window\n");
+    }
+
     ctx = SDL_GL_CreateContext(wnd);
+
+#ifdef TARGET_SWITCH
+    if(!gladLoadGLLoader(SDL_GL_GetProcAddress)){
+        printf("Failed to initialize glad\n");
+    }
+#endif
 
     moon_bind_hook(WINDOW_API_INIT);
     moon_init_hook(2,

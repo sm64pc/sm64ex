@@ -22,11 +22,25 @@
 # include <GL/glew.h>
 #endif
 
+#ifdef TARGET_SWITCH
+#include "glad/glad.h"
+#else
 #define GL_GLEXT_PROTOTYPES 1
 #ifdef USE_GLES
 # include <SDL2/SDL_opengles2.h>
 #else
 # include <SDL2/SDL_opengl.h>
+#endif
+#endif
+
+#if FOR_WINDOWS
+#define PLATFORM "Windows"
+#elif defined(OSX_BUILD)
+#define PLATFORM "MacOS"
+#elif defined(TARGET_SWITCH)
+#define PLATFORM "Nintendo Switch"
+#else
+#define PLATFORM "Linux"
 #endif
 
 extern "C" {
@@ -90,6 +104,7 @@ namespace MoonInternal {
                     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
                     ImGui::Begin("Moon64 Game Stats", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
                     ImGui::Text("Framerate: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+                    ImGui::Text("Platform: " PLATFORM);
                     ImGui::Text("Branch: " GIT_BRANCH);
                     ImGui::Text("Commit: " GIT_HASH);
                     ImGui::End();

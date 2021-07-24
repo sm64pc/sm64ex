@@ -101,11 +101,15 @@
 # include <GL/glew.h>
 #endif
 
+#ifdef TARGET_SWITCH
+#include "glad/glad.h"
+#else
 #define GL_GLEXT_PROTOTYPES 1
 #ifdef USE_GLES
 # include <SDL2/SDL_opengles2.h>
 #else
 # include <SDL2/SDL_opengl.h>
+#endif
 #endif
 
 

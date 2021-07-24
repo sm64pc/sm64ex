@@ -21,11 +21,15 @@
 
 #include <SDL2/SDL.h>
 
+#ifdef TARGET_SWITCH
+#include "glad/glad.h"
+#else
 #define GL_GLEXT_PROTOTYPES 1
 #ifdef USE_GLES
 # include <SDL2/SDL_opengles2.h>
 #else
 # include <SDL2/SDL_opengl.h>
+#endif
 #endif
 
 #include "../platform.h"
@@ -399,27 +403,32 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
     glCompileShader(vertex_shader);
     glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
     if (!success) {
-        GLint max_length = 0;
-        glGetShaderiv(vertex_shader, GL_INFO_LOG_LENGTH, &max_length);
-        char error_log[1024];
-        fprintf(stderr, "Vertex shader compilation failed\n");
-        glGetShaderInfoLog(vertex_shader, max_length, &max_length, &error_log[0]);
-        fprintf(stderr, "%s\n", &error_log[0]);
-        sys_fatal("vertex shader compilation failed (see terminal)");
+        int length;
+        glGetShaderiv(vertex_shader, GL_INFO_LOG_LENGTH, &length);
+        char* message = (char*)malloc(length);
+        glGetShaderInfoLog(vertex_shader, length, NULL, message);
+
+        printf("[Moon64] Failed to compile vertex shader:\n%s\n", message);
+        free(message);
+
+        return 0;
     }
 
     GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment_shader, 1, &sources[1], &lengths[1]);
     glCompileShader(fragment_shader);
     glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
+
     if (!success) {
-        GLint max_length = 0;
-        glGetShaderiv(fragment_shader, GL_INFO_LOG_LENGTH, &max_length);
-        char error_log[1024];
-        fprintf(stderr, "Fragment shader compilation failed\n");
-        glGetShaderInfoLog(fragment_shader, max_length, &max_length, &error_log[0]);
-        fprintf(stderr, "%s\n", &error_log[0]);
-        sys_fatal("fragment shader compilation failed (see terminal)");
+        int length;
+        glGetShaderiv(fragment_shader, GL_INFO_LOG_LENGTH, &length);
+        char* message = (char*)malloc(length);
+        glGetShaderInfoLog(fragment_shader, length, NULL, message);
+
+        printf("[Moon64] Failed to compile fragment shader:\n%s\n", message);
+        free(message);
+
+        return 0;
     }
 
     GLuint shader_program = glCreateProgram();
@@ -639,6 +648,7 @@ static void gfx_opengl_init(void) {
     moon_call_hook(0);
 }
 
+
 static void gfx_opengl_on_resize(void) {
     moon_bind_hook(GFX_ON_REZISE);
     moon_init_hook(0);
@@ -660,11 +670,12 @@ static void gfx_opengl_start_frame(void) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_SCISSOR_TEST);
+#ifndef USE_GLES
     if(configWindow.enable_antialias)
         glEnable(GL_MULTISAMPLE);
     else
         glDisable(GL_MULTISAMPLE);
-
+#endif
     moon_bind_hook(GFX_POST_START_FRAME);
     moon_init_hook(0);
     moon_call_hook(0);
@@ -688,6 +699,7 @@ static void gfx_opengl_shutdown(void) {
     moon_init_hook(0);
     moon_call_hook(0);
 }
+
 
 struct GfxRenderingAPI gfx_opengl_api = {
     gfx_opengl_z_is_from_0_to_1,

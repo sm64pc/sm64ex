@@ -150,7 +150,7 @@ ifeq ($(TARGET_RPI),1) # Define RPi to change SDL2 title & GLES2 hints
 endif
 
 ifeq ($(TARGET_SWITCH),1)
-      VERSION_CFLAGS += -DUSE_GLES -DTARGET_SWITCH -DLUA_USE_LINUX
+      VERSION_CFLAGS += -DTARGET_SWITCH -DLUA_USE_LINUX
 endif
 ifeq ($(OSX_BUILD),1) # Modify GFX & SDL2 for OSX GL
   VERSION_CFLAGS += -DOSX_BUILD
@@ -549,7 +549,7 @@ else ifeq ($(WINDOW_API),SDL2)
   ifeq ($(WINDOWS_BUILD),1)
     BACKEND_LDFLAGS += -lglew32 -lglu32 -lopengl32
   else ifneq ($(TARGET_RPI)$(TARGET_SWITCH),00)
-    BACKEND_LDFLAGS += -lGLESv2
+    BACKEND_LDFLAGS += -lglad -lglapi -ldrm_nouveau -lm
   else ifeq ($(OSX_BUILD),1)
     BACKEND_LDFLAGS += -framework OpenGL $(shell pkg-config --libs glew)
   else
