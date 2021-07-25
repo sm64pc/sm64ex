@@ -358,7 +358,7 @@ Gfx *geo_intro_rumble_pak_graphic(s32 state, struct GraphNode *node, UNUSED void
         if (dl != NULL) {
             dlIter = dl;
             gSPDisplayList(dlIter++, &title_screen_bg_dl_0A007548_start);
-            gSPTextureRectangle(dlIter++, left << 2, 200 << 2, (left + 79) << 2, (200 + 23) << 2, 7, 0, 0, 4 << 10, 1 << 10);
+            gSPTextureRectangle(dlIter++, left << 2, 195 << 2, (left + 79) << 2, (195 + 23) << 2, 7, 0, 0, 4 << 10, 1 << 10);
             gSPDisplayList(dlIter++, &title_screen_bg_dl_0A007548_end);
             gSPEndDisplayList(dlIter);
         }

@@ -123,12 +123,8 @@ void print_intro_text(void) {
             print_text_centered(scale_x_to_correct_aspect_center(SCREEN_WIDTH / 2), 20, "NO CONTROLLER");
 #endif
         } else {
-#ifdef VERSION_EU
-            print_text(20, 20, "START");
-#else
-            print_text_centered(60, 38, "PRESS");
-            print_text_centered(60, 20, "START");
-#endif
+            print_text(GFX_DIMENSIONS_FROM_LEFT_EDGE(20), 38, "PRESS");
+            print_text(GFX_DIMENSIONS_FROM_LEFT_EDGE(20), 20, "START");
         }
     }
 }
