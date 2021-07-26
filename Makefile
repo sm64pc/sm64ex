@@ -466,24 +466,28 @@ ifeq ($(TARGET_SWITCH),1)
     $(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>/devkitpro")
   endif
   export PATH := $(DEVKITPRO)/devkitA64/bin:$(PATH)
+  include $(DEVKITPRO)/devkitA64/base_tools
+  NXPATH := $(DEVKITPRO)/portlibs/switch/bin
   PORTLIBS ?= $(DEVKITPRO)/portlibs/switch
   LIBNX ?= $(DEVKITPRO)/libnx
   CROSS ?= aarch64-none-elf-
-  SDLCROSS :=
+  SDLCROSS := $(NXPATH)/
   CC := $(CROSS)gcc
   CXX := $(CROSS)g++
   STRIP := $(CROSS)strip
-  NXARCH := -march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIC -ftls-model=local-exec
+  NXARCH	:=	-march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE
   APP_TITLE := Moon64 - [$(GIT_BRANCH)]
   APP_AUTHOR := Nintendo, n64decomp team, UnderVolt team
   APP_VERSION := $(GIT_HASH)
   APP_ICON := $(CURDIR)/textures/logo/moon64-logo.jpg
-  INCLUDE_CFLAGS += -isystem$(LIBNX)/include -I$(PORTLIBS)/include
+  INCLUDE_CFLAGS += -I$(LIBNX)/include -I$(PORTLIBS)/include
   OPT_FLAGS := -O2
+  LIBDIRS	:= $(PORTLIBS) $(LIBNX)
+  export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 endif
 
 # for some reason sdl-config in dka64 is not prefixed, while pkg-config is
-SDLCROSS ?= $(CROSS)
+SDLCROSS ?=
 
 AS := $(CROSS)as
 
@@ -694,7 +698,7 @@ else ifeq ($(OSX_BUILD),1)
   LDFLAGS := -lm $(PLATFORM_LDFLAGS) $(BACKEND_LDFLAGS) -lpthread -lcurl
 
 else ifeq ($(TARGET_SWITCH),1)
-  LDFLAGS := -specs=$(LIBNX)/switch.specs $(NXARCH) $(OPT_FLAGS) -no-pie -L$(LIBNX)/lib $(BACKEND_LDFLAGS) -lnx -lm `curl-config --libs`
+   LDFLAGS := -specs=$(LIBNX)/switch.specs $(NXARCH) $(OPT_FLAGS) -no-pie -L$(LIBNX)/lib $(BACKEND_LDFLAGS) -lnx -lm ` $(NXPATH)/curl-config --libs`
 
 else
   LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm $(BACKEND_LDFLAGS) -no-pie -lpthread -lcurl
