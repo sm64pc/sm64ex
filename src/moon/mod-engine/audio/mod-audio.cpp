@@ -5,6 +5,7 @@
 #include "moon/mod-engine/engine.h"
 #include "moon/mod-engine/hooks/hook.h"
 #include "moon/mod-engine/interfaces/sound-entry.h"
+#include "moon/mod-engine/interfaces/file-entry.h"
 
 extern "C" {
 #include "text/libs/io_utils.h"
@@ -81,8 +82,11 @@ namespace MoonInternal {
     void buildAudioCache(vector<int> order){
         soundCache.clear();
 
-        for(int i = 0; i < order.size(); i++)
-            soundCache.push_back(Moon::addons[order[i]]);
+        for(int i = 0; i < order.size(); i++){
+            BitModule* addon = Moon::addons[order[i]];
+            if(addon->sounds != nullptr)
+                soundCache.push_back(addon);
+        }
 
         Moon::setSoundEntry(soundCache[soundCache.size() - 1]->sounds);
     }
