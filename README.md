@@ -20,7 +20,7 @@ If you want to help us out then message me on discord DorfDork#4516
 
 `e.g` git clone https://github.com/pokeheadroom/RENDER96-HD-TEXTURE-PACK.git -b master
 
- 2. Extract the contents of the `gfx` folder within the texture pack into `./build/us_pc/res/gfx/`
+ 2. Copy the contents of the `gfx` folder within the texture pack into `./build/us_pc/res/gfx/`
 
 ### Check the wiki page for in depth help on compiling 
 https://github.com/Render96/Render96ex/wiki
