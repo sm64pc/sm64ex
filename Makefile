@@ -258,68 +258,8 @@ endif
 #      Moon64 Source Code      #
 ################################
 
-# Moon64 SRC [Main]
-SRC_DIRS += src/moon src/moon/texts src/moon/utils src/moon/network
-
-# Moon64 SRC [View]
-SRC_DIRS += src/moon/ui src/moon/ui/interfaces src/moon/ui/screens src/moon/ui/screens/options src/moon/ui/screens/options/categories src/moon/ui/utils src/moon/ui/widgets src/moon/ui/screens/addons
-
-# Moon64 SRC [View - Animations]
-SRC_DIRS += src/moon/ui/animation
-
-# Moon64 SRC [View - Achievements]
-SRC_DIRS += src/moon/ui/screens/achievements
-
-# Moon64 SRC [IO]
-SRC_DIRS += src/moon/io src/moon/io/modules
-
-# Moon64 SRC [Entity]
-SRC_DIRS += src/moon/entity src/moon/entity/interfaces
-
-# Moon64 SRC [Mod-Engine]
-SRC_DIRS += src/moon/mod-engine src/moon/mod-engine/modules
-
-# Moon64 SRC [Mod-Engine - Texture Module]
-SRC_DIRS += src/moon/mod-engine/textures src/moon/mod-engine/textures/assets src/moon/mod-engine/textures/modifiers
-
-# Moon64 SRC [Mod-Engine - Audio Module]
-SRC_DIRS += src/moon/mod-engine/audio
-
-# Moon64 SRC [Mod-Engine - Hook Module]
-SRC_DIRS += src/moon/mod-engine/hooks
-
-# Moon64 SRC [Mod-Engine - Shaders Module]
-SRC_DIRS += src/moon/mod-engine/shaders
-
-# Moon64 SRC [Mod-Engine - Models Module]
-SRC_DIRS += src/moon/mod-engine/models
-
-# Moon64 SRC [Achievements]
-SRC_DIRS += src/moon/achievements
-
-# Moon64 SRC [Config / Saves]
-SRC_DIRS += src/moon/config src/moon/config/moon src/moon/config/saves
-
-# Moon64 SRC [Renderer / ImGui]
-SRC_DIRS += src/moon/imgui
-
-# Moon64 LIB [RapidJSON]
-SRC_DIRS += src/moon/libs/rapidjson src/moon/libs/rapidjson/error src/moon/libs/rapidjson/internal src/moon/libs/rapidjson/msinttypes
-
-# Moon64 LIB [Lua]
-SRC_DIRS += src/moon/libs/lua
-
-# Moon64 LIB [Miniz]
-SRC_DIRS += src/moon/libs/miniz
-
-# Moon64 LIB [nlohmann json]
-SRC_DIRS += src/moon/libs/nlohmann
-
-# Moon64 LIB [MoonFS API]
-SRC_DIRS += src/moon/fs
-
-# Moon64 LIB [ImGui]
-SRC_DIRS += src/moon/libs/imgui
+MOON_SRC := $(shell find src/moon/ -type d)
+SRC_DIRS += $(MOON_SRC)
 
 ################################
 

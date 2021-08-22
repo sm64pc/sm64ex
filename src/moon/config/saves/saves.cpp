@@ -131,8 +131,6 @@ namespace MoonInternal {
             obtainedAchievements.push_back(rAchievements->achievement->id);
         }
 
-        if(cheatsGotEnabled) obtainedAchievements.clear();
-
         cfg->setArray<string>("game.achievements", obtainedAchievements);
         cfg->setBool("game.updated", cheatsGotEnabled);
     #endif
@@ -196,8 +194,6 @@ namespace MoonInternal {
             entry->dead = true;
             entries[fileIndex].push_back(entry);
         }
-
-        if(cheatsGotEnabled) entries[fileIndex].clear();
     #endif
 
         gSaveBuffer.files[fileIndex][0].flags |= (1 << 0);
