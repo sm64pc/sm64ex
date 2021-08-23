@@ -131,14 +131,13 @@ namespace MoonInternal {
         ImGuiIO& io = ImGui::GetIO();
         // for (auto entry = Moon::fonts.begin(); entry != Moon::fonts.end(); entry++){
         //     if(entry->first == FONT_ICON_FILE_NAME_FK) continue;
-//
         //     ImFontConfig font_cfg;
         //     ImFont* tmp = io.Fonts->AddFontFromMemoryTTF((void*) entry->second->data, entry->second->size, 18.f, &font_cfg);
         //     cout << "Loading font: " << entry->first << endl;
         //     fontMap[entry->first] = tmp;
         // }
-//
-        // io.FontDefault = fontMap["monogram.ttf"];
+
+        io.FontDefault = fontMap["monogram.ttf"];
 
         // Setup Material Design Icons
         static const ImWchar icons_ranges[] = { ICON_MIN_MD, ICON_MAX_MD, 0 };

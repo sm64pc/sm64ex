@@ -515,8 +515,6 @@ static void gfx_opengl_shader_get_info(struct ShaderProgram *prg, uint8_t *num_i
 static GLuint gfx_opengl_new_texture(void) {
     GLuint texture_id;
     glGenTextures(1, &texture_id);
-
-    cout << texture_id << endl;
     texture_map[texture_id] = new GLTexture();
     return texture_id;
 }
