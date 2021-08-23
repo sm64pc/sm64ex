@@ -259,13 +259,16 @@ static bool gfx_texture_cache_lookup(int tile, struct TextureData **n, const uin
     struct TextureData *node = moon_get_texture(orig_addr);
 
     if(node != NULL){
+        if(tile)
+            printf("Tile: %d\n", tile);
         gfx_rapi->select_texture(tile, node->texture_id);
+
         if(n != NULL) *n = node;
         return true;
     } else node = moon_create_texture();
 
     if (node->texture_addr == NULL)
-          node->texture_id = gfx_rapi->new_texture();
+        node->texture_id = gfx_rapi->new_texture();
 
     gfx_rapi->select_texture(tile, node->texture_id);
     gfx_rapi->set_sampler_parameters(tile, false, 0, 0);
@@ -298,15 +301,14 @@ static inline void load_memory_texture(void *imgdata, long size) {
 struct TextureData * forceTextureLoad(char* path) {
     struct TextureData *node = NULL;
 
-    if (gfx_texture_cache_lookup(0, &node, path, 0, 0)) {
+    if (gfx_texture_cache_lookup(0, &node, path, 0, 0))
         return node;
-    }
 
     // the "texture data" is actually a C string with the path to our texture in it
     // load it from an external image in our data path
     char texname[SYS_MAX_PATH];
     snprintf(texname, sizeof(texname), FS_TEXTUREDIR "/%s.png", (const char*)path);
-    moon_load_texture(0, texname, gfx_rapi);
+    moon_load_texture(0, texname, (const char*) path, gfx_rapi);
     return node;
 }
 
@@ -325,7 +327,7 @@ static void import_texture(int tile) {
     // load it from an external image in our data path
     char texname[SYS_MAX_PATH];
     snprintf(texname, sizeof(texname), FS_TEXTUREDIR "/%s.png", (const char*)rdp.loaded_texture[tile].addr);
-    moon_load_texture(tile, texname, gfx_rapi);
+    moon_load_texture(tile, texname, (const char*) rdp.loaded_texture[tile].addr, gfx_rapi);
 }
 
 static void gfx_normalize_vector(float v[3]) {

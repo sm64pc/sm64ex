@@ -1,5 +1,6 @@
 #include "imgui_impl.h"
 
+#include <map>
 #include <string>
 #include <iostream>
 
@@ -11,6 +12,9 @@
 #include "moon/mod-engine/hooks/hook.h"
 #include "moon/mod-engine/textures/mod-texture.h"
 #include "moon/mod-engine/engine.h"
+#include "icons/IconsForkAwesome.h"
+#include "icons/IconsMaterialDesign.h"
+
 #include <SDL2/SDL.h>
 
 #ifdef __MINGW32__
@@ -64,6 +68,7 @@ using namespace std;
 bool showMenu = true;
 bool showWindowMoon = true;
 bool showWindowDemo = false;
+bool showWindowDebug = false;
 
 SDL_Window* window = nullptr;
 ImGuiIO io;
@@ -120,6 +125,31 @@ namespace MoonNX {
 
 namespace MoonInternal {
 
+    map<string, ImFont*> fontMap;
+
+    void setupFonts() {
+        ImGuiIO& io = ImGui::GetIO();
+        // for (auto entry = Moon::fonts.begin(); entry != Moon::fonts.end(); entry++){
+        //     if(entry->first == FONT_ICON_FILE_NAME_FK) continue;
+//
+        //     ImFontConfig font_cfg;
+        //     ImFont* tmp = io.Fonts->AddFontFromMemoryTTF((void*) entry->second->data, entry->second->size, 18.f, &font_cfg);
+        //     cout << "Loading font: " << entry->first << endl;
+        //     fontMap[entry->first] = tmp;
+        // }
+//
+        // io.FontDefault = fontMap["monogram.ttf"];
+
+        // Setup Material Design Icons
+        static const ImWchar icons_ranges[] = { ICON_MIN_MD, ICON_MAX_MD, 0 };
+        io.Fonts->AddFontDefault();
+        ImFontConfig config;
+        config.GlyphOffset = ImVec2(0.0f, 6.0f);
+        config.MergeMode = true;
+        io.Fonts->AddFontFromMemoryTTF((void*) Moon::fonts[FONT_ICON_FILE_NAME_MD]->data, Moon::fonts[FONT_ICON_FILE_NAME_MD]->size, 20.f, &config, icons_ranges);
+        io.Fonts->Build();
+    }
+
     void setupImGuiModule(string status) {
         MoonInternal::setupWindowHook(status);
         if(status == "PreStartup"){
@@ -130,12 +160,9 @@ namespace MoonInternal {
                 io = ImGui::GetIO(); (void)io;
                 io.WantSetMousePos = false;
                 io.ConfigWindowsMoveFromTitleBarOnly = true;
-                for (auto entry = Moon::fonts.begin(); entry != Moon::fonts.end(); entry++){
-                    ImFontConfig font_cfg;
-                    font_cfg.FontDataOwnedByAtlas = false;
-                    io.Fonts->AddFontFromMemoryTTF((void*) entry->second->data, entry->second->size, 18.f, &font_cfg);
-                }
                 ImGui::StyleColorsLightGreen();
+
+                setupFonts();
 
                 MoonInternal::bindHook(IMGUI_API_INIT);
                 MoonInternal::initBindHook(1,
@@ -167,7 +194,6 @@ namespace MoonInternal {
             Moon::registerHookListener({ GFX_POST_END_FRAME, [](HookCall call){
                 // recv(socketID, NULL, 1, MSG_PEEK | MSG_DONTWAIT) != 0
                 // bool retval = 0;
-
                 ImGui_ImplOpenGL3_NewFrame();
                 ImGui_ImplSDL2_NewFrame(window);
                 ImGui::NewFrame();
@@ -185,6 +211,7 @@ namespace MoonInternal {
                     ImGui::BeginMainMenuBar();
                     ImGui::MenuItem("Moon64", NULL, &showWindowMoon);
                     ImGui::MenuItem("ImGui Demo", NULL, &showWindowDemo);
+                    ImGui::MenuItem("Texture Debug",  NULL, &showWindowDebug);
                     ImGui::EndMainMenuBar();
 
                     if (showWindowMoon){
@@ -198,6 +225,36 @@ namespace MoonInternal {
                         ImGui::End();
                         ImGui::PopStyleColor();
                     }
+                }
+
+                if(showWindowDebug) {
+                    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
+                    ImGui::Begin("Loaded textures", NULL, ImGuiWindowFlags_None);
+                    if (ImGui::BeginTable("table1", 3, ImGuiTableFlags_Borders)) {
+                        ImGui::TableSetupColumn("Image", ImGuiTableColumnFlags_WidthFixed, 64.0f);
+                        ImGui::TableSetupColumn("Path");
+                        ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 64.0f);
+                        ImGui::TableHeadersRow();
+                        for(auto &entry : textureMap){
+                            if(entry.second == nullptr) continue;
+                            ImGui::TableNextRow();
+                            ImGui::TableSetColumnIndex(0);
+                            ImGui::Image((ImTextureID) entry.second->texture_id, ImVec2(64, 64 * entry.second->height / entry.second->width));
+                            ImGui::TableSetColumnIndex(1);
+                            ImGui::Text("%s", entry.second->texture_addr);
+                            ImGui::TableSetColumnIndex(2);
+                            if(ImGui::Button(ICON_MD_EDIT, ImVec2(64, 64))){
+                                if(ImGui::BeginPopupContextWindow("options")){
+                                    if (ImGui::Selectable("Clear")) {
+                                    }
+                                    ImGui::EndPopup();
+                                }
+                            }
+                        }
+                        ImGui::EndTable();
+                    }
+                    ImGui::End();
+                    ImGui::PopStyleColor();
                 }
             #endif
                 ImGui::Render();

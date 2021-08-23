@@ -24,7 +24,7 @@ namespace Moon {
 
 namespace MoonInternal {
     EntryFileData *getTextureData(const char *fullpath);
-    void loadTexture(int tile, const char *fullpath, struct GfxRenderingAPI *gfx_rapi);
+    void loadTexture(int tile, const char *fullpath, const char *rawpath, struct GfxRenderingAPI *gfx_rapi);
     void saveTexture(TextureData *data, std::string texturePath);
     void buildTextureCache(std::vector<int> order);
     void setupTextureEngine( std::string state );

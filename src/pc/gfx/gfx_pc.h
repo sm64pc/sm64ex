@@ -24,6 +24,7 @@ struct TextureData {
     uint32_t texture_id;
     uint8_t cms, cmt;
     char linear_filter;
+    int width, height;
 };
 
 extern struct GfxDimensions gfx_current_dimensions;

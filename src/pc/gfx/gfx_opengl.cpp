@@ -38,6 +38,10 @@
 #include "gfx_rendering_api.h"
 #include "moon/mod-engine/hooks/hook.h"
 
+#include <map>
+#include <iostream>
+using namespace std;
+
 #define TEX_CACHE_STEP 512
 
 struct ShaderProgram {
@@ -63,13 +67,10 @@ static struct ShaderProgram shader_program_pool[64];
 static uint8_t shader_program_pool_size;
 static GLuint opengl_vbo;
 
-static int tex_cache_size = 0;
-static int num_textures = 0;
-static struct GLTexture *tex_cache = NULL;
-
 static struct ShaderProgram *opengl_prg = NULL;
-static struct GLTexture *opengl_tex[2];
-static int opengl_curtex = 0;
+static struct GLTexture* opengl_texture;
+
+map<GLuint, GLTexture*> texture_map;
 
 static uint32_t frame_count;
 
@@ -94,9 +95,9 @@ static inline void gfx_opengl_set_shader_uniforms(struct ShaderProgram *prg) {
 }
 
 static inline void gfx_opengl_set_texture_uniforms(struct ShaderProgram *prg, const int tile) {
-    if (prg->used_textures[tile] && opengl_tex[tile]) {
-        glUniform2f(prg->uniform_locations[tile*2 + 0], opengl_tex[tile]->size[0], opengl_tex[tile]->size[1]);
-        glUniform1i(prg->uniform_locations[tile*2 + 1], opengl_tex[tile]->filter);
+    if (prg->used_textures[tile]  && opengl_texture) {
+        glUniform2f(prg->uniform_locations[tile*2 + 0], opengl_texture->size[0], opengl_texture->size[1]);
+        glUniform1i(prg->uniform_locations[tile*2 + 1], opengl_texture->filter);
     }
 }
 
@@ -512,30 +513,32 @@ static void gfx_opengl_shader_get_info(struct ShaderProgram *prg, uint8_t *num_i
 }
 
 static GLuint gfx_opengl_new_texture(void) {
-    if (num_textures >= tex_cache_size) {
-        tex_cache_size += TEX_CACHE_STEP;
-        tex_cache = realloc(tex_cache, sizeof(struct GLTexture) * tex_cache_size);
-        if (!tex_cache) sys_fatal("out of memory allocating texture cache");
-        // invalidate these because they might be pointing to garbage now
-        opengl_tex[0] = NULL;
-        opengl_tex[1] = NULL;
-    }
-    glGenTextures(1, &tex_cache[num_textures].gltex);
-    return num_textures++;
+    GLuint texture_id;
+    glGenTextures(1, &texture_id);
+
+    cout << texture_id << endl;
+    texture_map[texture_id] = new GLTexture();
+    return texture_id;
+}
+
+static void gfx_opengl_delete_texture(GLuint texture_id) {
+    if(texture_id > 0)
+        glDeleteTextures(1, &texture_id);
 }
 
 static void gfx_opengl_select_texture(int tile, GLuint texture_id) {
-     opengl_tex[tile] = tex_cache + texture_id;
-     opengl_curtex = tile;
-     glActiveTexture(GL_TEXTURE0 + tile);
-     glBindTexture(GL_TEXTURE_2D, opengl_tex[tile]->gltex);
-     gfx_opengl_set_texture_uniforms(opengl_prg, tile);
+    opengl_texture = texture_map[texture_id];
+    opengl_texture->gltex = texture_id;
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, opengl_texture->gltex);
+    gfx_opengl_set_texture_uniforms(opengl_prg, tile);
 }
 
-static void gfx_opengl_upload_texture(uint8_t *rgba32_buf, int width, int height) {
+static void gfx_opengl_upload_texture(const unsigned char *rgba32_buf, int width, int height) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba32_buf);
-    opengl_tex[opengl_curtex]->size[0] = width;
-    opengl_tex[opengl_curtex]->size[1] = height;
+    opengl_texture->size[0] = width;
+    opengl_texture->size[1] = height;
 }
 
 static uint32_t gfx_cm_to_opengl(uint32_t val) {
@@ -552,9 +555,8 @@ static void gfx_opengl_set_sampler_parameters(int tile, bool linear_filter, uint
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, gfx_cm_to_opengl(cms));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, gfx_cm_to_opengl(cmt));
-    opengl_curtex = tile;
-    if (opengl_tex[tile]) {
-        opengl_tex[tile]->filter = linear_filter;
+    if (opengl_texture) {
+        opengl_texture->filter = linear_filter;
         gfx_opengl_set_texture_uniforms(opengl_prg, tile);
     }
 }
@@ -622,19 +624,15 @@ static void gfx_opengl_init(void) {
 #if FOR_WINDOWS || defined(OSX_BUILD)
     GLenum err;
     if ((err = glewInit()) != GLEW_OK)
-        sys_fatal("could not init GLEW:\n%s", glewGetErrorString(err));
+        printf("could not init GLEW:\n%s", glewGetErrorString(err));
 #endif
-
-    tex_cache_size = TEX_CACHE_STEP;
-    tex_cache = calloc(tex_cache_size, sizeof(struct GLTexture));
-    if (!tex_cache) sys_fatal("out of memory allocating texture cache");
 
     // check GL version
     int vmajor, vminor;
     bool is_es = false;
     gl_get_version(&vmajor, &vminor, &is_es);
     if (vmajor < 2 && vminor < 1 && !is_es)
-        sys_fatal("OpenGL 2.1+ is required.\nReported version: %s%d.%d", is_es ? "ES" : "", vmajor, vminor);
+        printf("OpenGL 2.1+ is required.\nReported version: %s%d.%d", is_es ? "ES" : "", vmajor, vminor);
 
     glGenBuffers(1, &opengl_vbo);
 
@@ -643,25 +641,23 @@ static void gfx_opengl_init(void) {
     glDepthFunc(GL_LEQUAL);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    moon_bind_hook(GFX_INIT);
-    moon_init_hook(0);
-    moon_call_hook(0);
+    MoonInternal::bindHook(GFX_INIT);
+    MoonInternal::initBindHook(0);
+    MoonInternal::callBindHook(0);
 }
 
 
 static void gfx_opengl_on_resize(void) {
-    moon_bind_hook(GFX_ON_REZISE);
-    moon_init_hook(0);
-    moon_call_hook(0);
+    MoonInternal::bindHook(GFX_ON_REZISE);
+    MoonInternal::initBindHook(0);
+    MoonInternal::callBindHook(0);
 }
 
 static void gfx_opengl_start_frame(void) {
 
-    moon_bind_hook(GFX_PRE_START_FRAME);
-    moon_init_hook(0);
-    if(moon_call_hook(0)){
-        return;
-    }
+    MoonInternal::bindHook(GFX_PRE_START_FRAME);
+    MoonInternal::initBindHook(0);
+    if(MoonInternal::callBindHook(0)) return;
 
     frame_count++;
 
@@ -676,28 +672,28 @@ static void gfx_opengl_start_frame(void) {
     else
         glDisable(GL_MULTISAMPLE);
 #endif
-    moon_bind_hook(GFX_POST_START_FRAME);
-    moon_init_hook(0);
-    moon_call_hook(0);
+    MoonInternal::bindHook(GFX_POST_START_FRAME);
+    MoonInternal::initBindHook(0);
+    MoonInternal::callBindHook(0);
 }
 
 static void gfx_opengl_end_frame(void) {
-    moon_bind_hook(GFX_PRE_END_FRAME);
-    moon_init_hook(0);
-    moon_call_hook(0);
+    MoonInternal::bindHook(GFX_PRE_END_FRAME);
+    MoonInternal::initBindHook(0);
+    MoonInternal::callBindHook(0);
 
-    moon_bind_hook(GFX_POST_END_FRAME);
-    moon_init_hook(0);
-    moon_call_hook(0);
+    MoonInternal::bindHook(GFX_POST_END_FRAME);
+    MoonInternal::initBindHook(0);
+    MoonInternal::callBindHook(0);
 }
 
 static void gfx_opengl_finish_render(void) {
 }
 
 static void gfx_opengl_shutdown(void) {
-    moon_bind_hook(GFX_SHUTDOWN);
-    moon_init_hook(0);
-    moon_call_hook(0);
+    MoonInternal::bindHook(GFX_SHUTDOWN);
+    MoonInternal::initBindHook(0);
+    MoonInternal::callBindHook(0);
 }
 
 
@@ -710,6 +706,7 @@ struct GfxRenderingAPI gfx_opengl_api = {
     gfx_opengl_shader_get_info,
     gfx_opengl_new_texture,
     gfx_opengl_select_texture,
+    gfx_opengl_delete_texture,
     gfx_opengl_upload_texture,
     gfx_opengl_set_sampler_parameters,
     gfx_opengl_set_depth_test,

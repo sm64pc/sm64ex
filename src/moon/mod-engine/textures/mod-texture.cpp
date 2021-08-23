@@ -27,10 +27,9 @@ using namespace std;
 using json = nlohmann::json;
 
 std::map<std::string, EntryFileData*> baseGameTextures;
+map<string, TextureModifier*> textureMods;
 map<string, TextureData*> textureMap;
 map<string, BitModule*> textureCache;
-
-map<string, TextureModifier*> textureMods;
 
 namespace Moon {
     void saveAddonTexture(BitModule *addon, std::string texturePath, EntryFileData* data){
@@ -117,13 +116,15 @@ namespace MoonInternal {
         }
     }
 
-    void loadTexture(int tile, const char *fullpath, struct GfxRenderingAPI *gfx_rapi){
+    void loadTexture(int tile, const char *fullpath, const char *rawpath, struct GfxRenderingAPI *gfx_rapi){
 
         int w, h;
         u64 imgsize = 0;
         string path(fullpath);
 
         if(!strcmp(fullpath, "gfx/mod-icons://Moon64.png")){
+            textureMap[string(rawpath)]->width = moon64_logo.width;
+            textureMap[string(rawpath)]->height = moon64_logo.height;
             gfx_rapi->upload_texture(moon64_logo.pixel_data, moon64_logo.width, moon64_logo.height);
             return;
         }
@@ -134,6 +135,8 @@ namespace MoonInternal {
         EntryFileData * imgdata = getTextureData(fixedPath.c_str());
         if (imgdata) {
             u8 *data = stbi_load_from_memory(reinterpret_cast<const stbi_uc *>(imgdata->data), imgdata->size, &w, &h, NULL, 4);
+            textureMap[string(rawpath)]->width = w;
+            textureMap[string(rawpath)]->height = h;
 
             if (data) {
 
@@ -177,6 +180,9 @@ namespace MoonInternal {
                 textureCache.insert(pair<string, BitModule*>(entry->first, addon));
             }
         }
+        for(auto &tex : textureMap)
+            gfx_get_current_rendering_api()->delete_texture(tex.second->texture_id);
+
         textureMap.clear();
     }
 
