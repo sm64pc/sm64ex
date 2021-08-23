@@ -229,11 +229,23 @@ namespace MoonInternal {
                 if(showWindowDebug) {
                     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
                     ImGui::Begin("Loaded textures", NULL, ImGuiWindowFlags_None);
+
+                    float value = 0.0f;
+
                     if (ImGui::BeginTable("table1", 3, ImGuiTableFlags_Borders)) {
                         ImGui::TableSetupColumn("Image", ImGuiTableColumnFlags_WidthFixed, 64.0f);
                         ImGui::TableSetupColumn("Path");
                         ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 64.0f);
                         ImGui::TableHeadersRow();
+                        if (ImGui::BeginPopupContextItem("test")) {
+                            if (ImGui::Selectable("Set to zero")) value = 0.0f;
+                            if (ImGui::Selectable("Set to PI")) value = 3.1415f;
+                            ImGui::SetNextItemWidth(-FLT_MIN);
+                            ImGui::DragFloat("##Value", &value, 0.1f, 0.0f, 0.0f);
+                            ImGui::EndPopup();
+                        }
+
+
                         for(auto &entry : textureMap){
                             if(entry.second == nullptr) continue;
                             ImGui::TableNextRow();
@@ -242,12 +254,11 @@ namespace MoonInternal {
                             ImGui::TableSetColumnIndex(1);
                             ImGui::Text("%s", entry.second->texture_addr);
                             ImGui::TableSetColumnIndex(2);
+
                             if(ImGui::Button(ICON_MD_EDIT, ImVec2(64, 64))){
-                                if(ImGui::BeginPopupContextWindow("options")){
-                                    if (ImGui::Selectable("Clear")) {
-                                    }
-                                    ImGui::EndPopup();
-                                }
+                                ImGui::OpenPopup("test");
+                                cout << entry.second->texture_addr << endl;
+                                // ImGui::OpenPopupOnItemClick("popup", ImGuiPopupFlags_MouseButtonRight);
                             }
                         }
                         ImGui::EndTable();
