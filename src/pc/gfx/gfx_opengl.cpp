@@ -37,6 +37,9 @@
 #include "gfx_cc.h"
 #include "gfx_rendering_api.h"
 #include "moon/mod-engine/hooks/hook.h"
+#include "shader.h"
+
+#include "moon/utils/moon-env.h"
 
 #include <map>
 #include <iostream>
@@ -525,6 +528,9 @@ static void gfx_opengl_delete_texture(GLuint texture_id) {
 }
 
 static void gfx_opengl_select_texture(int tile, GLuint texture_id) {
+    if(texture_map.find(texture_id) == texture_map.end())
+        texture_map[texture_id] = new GLTexture();
+
     opengl_texture = texture_map[texture_id];
     opengl_texture->gltex = texture_id;
 
@@ -618,6 +624,10 @@ static inline bool gl_get_version(int *major, int *minor, bool *is_es) {
     return (sscanf(vstr, "%d.%d", major, minor) == 2);
 }
 
+static unsigned int framebuffer;
+static unsigned int textureColorbuffer;
+static unsigned int rbo;
+
 static void gfx_opengl_init(void) {
 #if FOR_WINDOWS || defined(OSX_BUILD)
     GLenum err;
@@ -633,9 +643,15 @@ static void gfx_opengl_init(void) {
         printf("OpenGL 2.1+ is required.\nReported version: %s%d.%d", is_es ? "ES" : "", vmajor, vminor);
 
     glGenBuffers(1, &opengl_vbo);
-
     glBindBuffer(GL_ARRAY_BUFFER, opengl_vbo);
 
+    glGenFramebuffers(1, &framebuffer);
+
+    // create a color attachment texture
+    glGenTextures(1, &textureColorbuffer);
+    glGenRenderbuffers(1, &rbo);
+
+    MoonInternal::saveEnvironmentVar("framebuffer", to_string(textureColorbuffer));
     glDepthFunc(GL_LEQUAL);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -651,13 +667,30 @@ static void gfx_opengl_on_resize(void) {
     MoonInternal::callBindHook(0);
 }
 
+
 static void gfx_opengl_start_frame(void) {
+
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+    glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, configWindow.internal_w * configWindow.multiplier, configWindow.internal_h * configWindow.multiplier, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+    // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
+
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, configWindow.internal_w * configWindow.multiplier, configWindow.internal_h * configWindow.multiplier); // use a single renderbuffer object for both a depth AND stencil buffer.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // now actually attach it
+    // now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
+    // if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    //     cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << endl;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
     MoonInternal::bindHook(GFX_PRE_START_FRAME);
     MoonInternal::initBindHook(0);
     if(MoonInternal::callBindHook(0)) return;
-
-    frame_count++;
 
     glDisable(GL_SCISSOR_TEST);
     glDepthMask(GL_TRUE); // Must be set to clear Z-buffer
@@ -670,12 +703,19 @@ static void gfx_opengl_start_frame(void) {
     else
         glDisable(GL_MULTISAMPLE);
 #endif
+
+    frame_count++;
     MoonInternal::bindHook(GFX_POST_START_FRAME);
     MoonInternal::initBindHook(0);
     MoonInternal::callBindHook(0);
 }
 
 static void gfx_opengl_end_frame(void) {
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
     MoonInternal::bindHook(GFX_PRE_END_FRAME);
     MoonInternal::initBindHook(0);
     MoonInternal::callBindHook(0);

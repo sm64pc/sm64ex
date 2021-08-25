@@ -17,9 +17,17 @@ typedef struct {
     bool settings_changed;
     bool enable_antialias;
     unsigned int antialias_level;
+    float internal_w, internal_h;
+    float multiplier;
 } ConfigWindow;
 
+typedef struct {
+    bool moon64;
+    bool texture_debug;
+} ImGuiConfig;
+
 extern ConfigWindow configWindow;
+extern ImGuiConfig  configImGui;
 extern unsigned int configLanguage;
 #ifdef TARGET_SWITCH
 extern bool         configSwitchHud;

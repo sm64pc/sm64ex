@@ -219,8 +219,8 @@ static void gfx_sdl_init(const char *window_title) {
 #ifdef TARGET_SWITCH
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #endif
+SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 #ifdef USE_GLES
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);  // These attributes allow for hardware acceleration on RPis.
@@ -306,6 +306,13 @@ static void gfx_sdl_get_dimensions(uint32_t *width, uint32_t *height) {
     SDL_GetWindowSize(wnd, &w, &h);
     if (width) *width = w;
     if (height) *height = h;
+}
+
+static void gfx_sdl_set_dimensions(uint32_t width, uint32_t height) {
+    SDL_SetWindowSize(wnd, width, height);
+
+    configWindow.w = width;
+    configWindow.h = height;
 }
 
 static int translate_scancode(int scancode) {
@@ -444,6 +451,7 @@ struct GfxWindowManagerAPI gfx_sdl = {
     gfx_sdl_set_keyboard_callbacks,
     gfx_sdl_main_loop,
     gfx_sdl_get_dimensions,
+    gfx_sdl_set_dimensions,
     gfx_sdl_handle_events,
     gfx_sdl_start_frame,
     gfx_sdl_swap_buffers_begin,

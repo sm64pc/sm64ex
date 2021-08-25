@@ -5,6 +5,10 @@
 extern "C" {
 #endif
 
+#include "gfx/gfx_window_manager_api.h"
+
+extern struct GfxWindowManagerAPI *wm_api;
+
 void game_deinit(void);
 void game_exit(void);
 

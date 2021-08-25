@@ -14,6 +14,7 @@
 #include "moon/mod-engine/engine.h"
 #include "icons/IconsForkAwesome.h"
 #include "icons/IconsMaterialDesign.h"
+#include "moon/utils/moon-env.h"
 
 #include <SDL2/SDL.h>
 
@@ -61,17 +62,17 @@ extern "C" {
 
 extern "C" {
 #include "pc/gfx/gfx_pc.h"
+#include "pc/pc_main.h"
 }
+
+#include "pc/configfile.h"
+
+#define DEFAULT_FONT "monogram.ttf"
 
 using namespace std;
 
-bool showMenu = true;
-bool showWindowMoon = true;
-bool showWindowDemo = false;
-bool showWindowDebug = false;
-
 SDL_Window* window = nullptr;
-ImGuiIO io;
+ImGuiIO* io = nullptr;
 
 #ifdef TARGET_SWITCH
 namespace MoonNX {
@@ -131,19 +132,20 @@ namespace MoonInternal {
         ImGuiIO& io = ImGui::GetIO();
         // for (auto entry = Moon::fonts.begin(); entry != Moon::fonts.end(); entry++){
         //     if(entry->first == FONT_ICON_FILE_NAME_FK) continue;
-        //     ImFontConfig font_cfg;
         //     ImFont* tmp = io.Fonts->AddFontFromMemoryTTF((void*) entry->second->data, entry->second->size, 18.f, &font_cfg);
         //     cout << "Loading font: " << entry->first << endl;
         //     fontMap[entry->first] = tmp;
         // }
-
-        io.FontDefault = fontMap["monogram.ttf"];
+        // io.FontDefault = fontMap[DEFAULT_FONT];
 
         // Setup Material Design Icons
+        ImFontConfig font_cfg;
+        font_cfg.GlyphOffset = ImVec2(0.0f, -2.0f);
         static const ImWchar icons_ranges[] = { ICON_MIN_MD, ICON_MAX_MD, 0 };
-        io.Fonts->AddFontDefault();
+
+        io.FontDefault = io.Fonts->AddFontFromMemoryTTF((void*) Moon::fonts[DEFAULT_FONT]->data, Moon::fonts[DEFAULT_FONT]->size, 18.f, &font_cfg);
         ImFontConfig config;
-        config.GlyphOffset = ImVec2(0.0f, 6.0f);
+        config.GlyphOffset = ImVec2(0.0f, 2.0f);
         config.MergeMode = true;
         io.Fonts->AddFontFromMemoryTTF((void*) Moon::fonts[FONT_ICON_FILE_NAME_MD]->data, Moon::fonts[FONT_ICON_FILE_NAME_MD]->size, 20.f, &config, icons_ranges);
         io.Fonts->Build();
@@ -156,10 +158,12 @@ namespace MoonInternal {
                 const char* glsl_version = "#version 120";
                 ImGuiContext* ctx = ImGui::CreateContext();
                 ImGui::SetCurrentContext(ctx);
-                io = ImGui::GetIO(); (void)io;
-                io.WantSetMousePos = false;
-                io.ConfigWindowsMoveFromTitleBarOnly = true;
-                ImGui::StyleColorsLightGreen();
+                io = &ImGui::GetIO();
+                io->WantSetMousePos = false;
+                io->ConfigWindowsMoveFromTitleBarOnly = true;
+                io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+                ImGui::StyleColorsMoonDark();
 
                 setupFonts();
 
@@ -181,18 +185,14 @@ namespace MoonInternal {
             Moon::registerHookListener({.hookName = WINDOW_API_HANDLE_EVENTS, .callback = [](HookCall call){
                 SDL_Event* ev = (SDL_Event*) call.baseArgs["event"];
                 ImGui_ImplSDL2_ProcessEvent(ev);
-                switch (ev->type){
-                    case SDL_KEYDOWN:
-                        if(ev->key.keysym.sym == SDLK_F12)
-                            showMenu = !showMenu;
-                        break;
-                }
             }});
 
 
             Moon::registerHookListener({ GFX_POST_END_FRAME, [](HookCall call){
                 // recv(socketID, NULL, 1, MSG_PEEK | MSG_DONTWAIT) != 0
                 // bool retval = 0;
+                io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
                 ImGui_ImplOpenGL3_NewFrame();
                 ImGui_ImplSDL2_NewFrame(window);
                 ImGui::NewFrame();
@@ -202,40 +202,92 @@ namespace MoonInternal {
                 MoonInternal::bindHook(IMGUI_API_DRAW);
                 MoonInternal::initBindHook(0);
                 MoonInternal::callBindHook(0);
-            #ifdef GAME_DEBUG
-                if(showWindowDemo)
-                    ImGui::ShowDemoWindow(NULL);
 
-                if(showMenu){
-                    ImGui::BeginMainMenuBar();
-                    ImGui::MenuItem("Moon64", NULL, &showWindowMoon);
-                    ImGui::MenuItem("ImGui Demo", NULL, &showWindowDemo);
-                    ImGui::MenuItem("Texture Debug",  NULL, &showWindowDebug);
-                    ImGui::EndMainMenuBar();
+                ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_NoWindowMenuButton;
 
-                    if (showWindowMoon){
-                        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
-                        ImGui::Begin("Moon64 Game Stats", NULL, ImGuiWindowFlags_None);
-                        // ImGui::SetWindowPos(ImVec2(10, 35));
-                        ImGui::Text("Platform: " PLATFORM " (" RAPI_NAME ")");
-                        ImGui::Text("Status: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-                        ImGui::Text("Version: " GIT_BRANCH " " GIT_HASH);
-                        ImGui::Text("Addons: %d\n", Moon::addons.size());
-                        ImGui::End();
-                        ImGui::PopStyleColor();
-                    }
+                // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+                // because it would be confusing to have two docking targets within each others.
+                ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+                const ImGuiViewport* viewport = ImGui::GetMainViewport();
+                ImGui::SetNextWindowPos(viewport->WorkPos);
+                ImGui::SetNextWindowSize(viewport->WorkSize);
+                ImGui::SetNextWindowViewport(viewport->ID);
+                window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
+                window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+                ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+                ImGui::Begin("Main - Deck", nullptr, window_flags);
+                ImGui::PopStyleVar();
+                ImGuiID dockspace_id = ImGui::GetID("main_dock");
+
+                if (!ImGui::DockBuilderGetNode(dockspace_id)) {
+                    ImGui::DockBuilderRemoveNode(dockspace_id);
+                    ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_None);
+
+                    ImGui::DockBuilderDockWindow("Game", dockspace_id);
+
+                    ImGui::DockBuilderFinish(dockspace_id);
                 }
 
-                if(showWindowDebug) {
+                ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+
+                if (ImGui::BeginMenuBar()) {
+                    TextureData* tmp = forceTextureLoad("mod-icons://Moon64");
+                    if(tmp != nullptr) {
+                        ImGui::SetCursorPos(ImVec2(0, 0));
+                        ImGui::Image((ImTextureID) tmp->texture_id, ImVec2(25.0f, 25.0f));
+                        ImGui::SameLine();
+                    }
+                    ImGui::Text("Moon64");
+                    ImGui::SameLine();
+                    ImGui::Separator();
+                    if (ImGui::BeginMenu("View")) {
+                        ImGui::MenuItem("Moon64", NULL, &configImGui.moon64);
+                        ImGui::MenuItem("Textures", NULL, &configImGui.texture_debug);
+                        ImGui::EndMenu();
+                    }
+                    ImGui::EndMenuBar();
+                }
+                ImGui::End();
+
+                ImGui::SetNextWindowSize(ImVec2(configWindow.w, configWindow.h), ImGuiCond_FirstUseEver);
+                ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
+                ImGui::Begin("Game", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+                ImVec2 size = ImGui::GetContentRegionAvail();
+                configWindow.internal_w = size.x;
+                configWindow.internal_h = size.y;
+
+                int fbuf = stoi(MoonInternal::getEnvironmentVar("framebuffer"));
+                // ImGui::Image((ImTextureID) fbuf, size);
+                ImGui::ImageRotated((ImTextureID) fbuf, ImVec2(0, 0), size, 180.0f);
+                ImGui::End();
+                ImGui::PopStyleVar();
+
+                if (configImGui.moon64){
+                    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
+                    ImGui::Begin("Moon64 Game Stats", NULL, ImGuiWindowFlags_None);
+
+                    ImGui::Text("Platform: " PLATFORM " (" RAPI_NAME ")");
+                    ImGui::Text("Status: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+                    ImGui::Text("Version: " GIT_BRANCH " " GIT_HASH);
+                    ImGui::Text("Addons: %d\n", Moon::addons.size());
+                    ImGui::Text("Resolution: %.0fx%.0f\n", configWindow.w * configWindow.multiplier, configWindow.h * configWindow.multiplier);
+                    ImGui::Text("Internal Resolution:");
+                    ImGui::SliderFloat("Mul", &configWindow.multiplier, 0.0f, 10.0f);
+                    ImGui::End();
+                    ImGui::PopStyleColor();
+                }
+
+                if(configImGui.texture_debug) {
                     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
                     ImGui::Begin("Loaded textures", NULL, ImGuiWindowFlags_None);
 
                     float value = 0.0f;
 
-                    if (ImGui::BeginTable("table1", 3, ImGuiTableFlags_Borders)) {
+                    if (ImGui::BeginTable("texture_pool", 2, ImGuiTableFlags_Borders)) {
                         ImGui::TableSetupColumn("Image", ImGuiTableColumnFlags_WidthFixed, 64.0f);
                         ImGui::TableSetupColumn("Path");
-                        ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 64.0f);
+                        // ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 64.0f);
                         ImGui::TableHeadersRow();
                         if (ImGui::BeginPopupContextItem("test")) {
                             if (ImGui::Selectable("Set to zero")) value = 0.0f;
@@ -244,29 +296,29 @@ namespace MoonInternal {
                             ImGui::DragFloat("##Value", &value, 0.1f, 0.0f, 0.0f);
                             ImGui::EndPopup();
                         }
-
-
                         for(auto &entry : textureMap){
                             if(entry.second == nullptr) continue;
                             ImGui::TableNextRow();
                             ImGui::TableSetColumnIndex(0);
-                            ImGui::Image((ImTextureID) entry.second->texture_id, ImVec2(64, 64 * entry.second->height / entry.second->width));
+                            float fw = entry.second->width <= 0 ? 32.0f : entry.second->width;
+                            float fh = entry.second->height <= 0 ? 32.0f : entry.second->height;
+                            ImGui::Image((ImTextureID) entry.second->texture_id, ImVec2(64, 64 * fh / fw ));
                             ImGui::TableSetColumnIndex(1);
                             ImGui::Text("%s", entry.second->texture_addr);
-                            ImGui::TableSetColumnIndex(2);
+                            // ImGui::TableSetColumnIndex(2);
 
-                            if(ImGui::Button(ICON_MD_EDIT, ImVec2(64, 64))){
-                                ImGui::OpenPopup("test");
-                                cout << entry.second->texture_addr << endl;
-                                // ImGui::OpenPopupOnItemClick("popup", ImGuiPopupFlags_MouseButtonRight);
-                            }
+                            // if(ImGui::Button(ICON_MD_EDIT, ImVec2(64, 64))){
+                            //     ImGui::OpenPopup("test");
+                            //     cout << entry.second->texture_addr << endl;
+                            //     ImGui::OpenPopupOnItemClick("popup", ImGuiPopupFlags_MouseButtonRight);
+                            // }
                         }
                         ImGui::EndTable();
                     }
                     ImGui::End();
                     ImGui::PopStyleColor();
                 }
-            #endif
+
                 ImGui::Render();
                 GLint last_program;
                 glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);

@@ -7,7 +7,7 @@ struct GfxRenderingAPI;
 struct GfxWindowManagerAPI;
 
 struct GfxDimensions {
-    uint32_t width, height;
+    float width, height;
     float aspect_ratio;
 };
 

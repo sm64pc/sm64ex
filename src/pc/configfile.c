@@ -49,7 +49,15 @@ ConfigWindow configWindow       = {
     .exiting_fullscreen = false,
     .settings_changed = false,
     .enable_antialias = true,
-    .antialias_level = 4
+    .antialias_level = 4,
+    .internal_w = DESIRED_SCREEN_WIDTH * 1.0f,
+    .internal_h = DESIRED_SCREEN_HEIGHT * 1.0f,
+    .multiplier = 1.0f
+};
+
+ImGuiConfig configImGui = {
+    .moon64 = false,
+    .texture_debug = false
 };
 
 unsigned int configLanguage     = 0;
@@ -116,6 +124,9 @@ static const struct ConfigOption options[] = {
     {.name = "window_y",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.y},
     {.name = "window_w",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.w},
     {.name = "window_h",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.h},
+    {.name = "internal_w",           .type = CONFIG_TYPE_FLOAT, .uintValue = &configWindow.internal_w},
+    {.name = "internal_h",           .type = CONFIG_TYPE_FLOAT, .uintValue = &configWindow.internal_h},
+    {.name = "multiplier",           .type = CONFIG_TYPE_FLOAT, .uintValue = &configWindow.multiplier},
     {.name = "aa_level",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.antialias_level},
     {.name = "aa_enabled",           .type = CONFIG_TYPE_BOOL, .uintValue = &configWindow.enable_antialias},
     {.name = "vsync",                .type = CONFIG_TYPE_BOOL, .boolValue = &configWindow.vsync},
@@ -162,6 +173,9 @@ static const struct ConfigOption options[] = {
     {.name = "discordrpc_enable",    .type = CONFIG_TYPE_BOOL, .boolValue = &configDiscordRPC},
     #endif
     {.name = "lodMode",              .type = CONFIG_TYPE_UINT, .uintValue = &configLODMode},
+
+    {.name = "moon64_win",           .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.moon64},
+    {.name = "texture_debug_win",    .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.texture_debug},
 };
 
 // Reads an entire line from a file (excluding the newline character) and returns an allocated string

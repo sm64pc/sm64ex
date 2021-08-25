@@ -55,9 +55,9 @@ s32 gRumblePakPfs;
 struct RumbleData gRumbleDataQueue[3];
 struct StructSH8031D9B0 gCurrRumbleSettings;
 
-static struct AudioAPI *audio_api;
-static struct GfxWindowManagerAPI *wm_api;
-static struct GfxRenderingAPI *rendering_api;
+struct AudioAPI *audio_api;
+struct GfxWindowManagerAPI *wm_api;
+struct GfxRenderingAPI *rendering_api;
 
 extern void gfx_run(Gfx *commands);
 extern void thread5_game_loop(void *arg);
@@ -216,7 +216,6 @@ void main_func(char *argv[]) {
 
     gfx_init(wm_api, rendering_api, window_title);
     wm_api->set_keyboard_callbacks(keyboard_on_key_down, keyboard_on_key_up, keyboard_on_all_keys_up);
-
     if (audio_api == NULL && audio_sdl.init())
         audio_api = &audio_sdl;
 

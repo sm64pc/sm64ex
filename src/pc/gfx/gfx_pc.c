@@ -383,11 +383,8 @@ static void gfx_sp_matrix(uint8_t parameters, const int32_t *addr) {
 #endif
 
     if (parameters & G_MTX_PROJECTION) {
-        if (parameters & G_MTX_LOAD) {
-            memcpy(rsp.P_matrix, matrix, sizeof(matrix));
-        } else {
-            gfx_matrix_mul(rsp.P_matrix, matrix, rsp.P_matrix);
-        }
+        if (parameters & G_MTX_LOAD) memcpy(rsp.P_matrix, matrix, sizeof(matrix));
+        else gfx_matrix_mul(rsp.P_matrix, matrix, rsp.P_matrix);
     } else { // G_MTX_MODELVIEW
         if ((parameters & G_MTX_PUSH) && rsp.modelview_matrix_stack_size < 11) {
             ++rsp.modelview_matrix_stack_size;
@@ -1396,10 +1393,6 @@ static void gfx_sp_reset() {
     rsp.lights_changed = true;
 }
 
-void gfx_get_dimensions(uint32_t *width, uint32_t *height) {
-    gfx_wapi->get_dimensions(width, height);
-}
-
 void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi, const char *window_title) {
     gfx_wapi = wapi;
     gfx_rapi = rapi;
@@ -1446,12 +1439,15 @@ struct GfxRenderingAPI *gfx_get_current_rendering_api(void) {
 
 void gfx_start_frame(void) {
     gfx_wapi->handle_events();
-    gfx_wapi->get_dimensions(&gfx_current_dimensions.width, &gfx_current_dimensions.height);
+
+    gfx_current_dimensions.width  = configWindow.internal_w * configWindow.multiplier;
+    gfx_current_dimensions.height = configWindow.internal_h * configWindow.multiplier;
+
     if (gfx_current_dimensions.height == 0) {
-        // Avoid division by zero
         gfx_current_dimensions.height = 1;
     }
-    gfx_current_dimensions.aspect_ratio = (float)gfx_current_dimensions.width / (float)gfx_current_dimensions.height;
+
+    gfx_current_dimensions.aspect_ratio = gfx_current_dimensions.width / gfx_current_dimensions.height;
 }
 
 void gfx_run(Gfx *commands) {
