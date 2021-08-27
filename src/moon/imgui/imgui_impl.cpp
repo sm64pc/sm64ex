@@ -127,6 +127,8 @@ namespace MoonNX {
 }
 #endif
 
+int n64Mul = 1;
+
 namespace MoonInternal {
 
     map<string, ImFont*> fontMap;
@@ -266,7 +268,7 @@ namespace MoonInternal {
                 configWindow.internal_h = configImGui.n64Mode ? SM64_HEIGHT : size.y;
 
                 if(configImGui.n64Mode) {
-                    configWindow.multiplier = 1.0f;
+                    configWindow.multiplier = (float)n64Mul;
                     int sw = size.y * SM64_WIDTH / SM64_HEIGHT;
                     pos = ImVec2(size.x / 2 - sw / 2, 0);
                     size = ImVec2(sw,  size.y);
@@ -284,12 +286,14 @@ namespace MoonInternal {
                     ImGui::Text("Status: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
                     ImGui::Text("Version: " GIT_BRANCH " " GIT_HASH);
                     ImGui::Text("Addons: %d\n", Moon::addons.size());
+                    ImGui::Text("Resolution: %.0fx%.0f\n", configWindow.internal_w * configWindow.multiplier, configWindow.internal_h * configWindow.multiplier);
+                    ImGui::Text("Internal Resolution:");
 
-                    if(!configImGui.n64Mode){
-                        ImGui::Text("Resolution: %.0fx%.0f\n", configWindow.w * configWindow.multiplier, configWindow.h * configWindow.multiplier);
-                        ImGui::Text("Internal Resolution:");
+                    if(!configImGui.n64Mode)
                         ImGui::SliderFloat("Mul", &configWindow.multiplier, 0.0f, 4.0f);
-                    }
+                    else
+                        ImGui::SliderInt("Mul", &n64Mul, 1, 8);
+
                     ImGui::End();
                     ImGui::PopStyleColor();
                 }

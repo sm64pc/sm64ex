@@ -253,6 +253,10 @@ void ImGui::StyleColorsMoonDark(ImGuiStyle* dst)
 {
     ImGuiStyle* style = dst ? dst : &ImGui::GetStyle();
     ImVec4* colors = ImGui::GetStyle().Colors;
+#ifdef TARGET_SWITCH
+    style->ScaleAllSizes(3.0f);
+    style->TouchExtraPadding = ImVec2(5, 5);
+#endif
     colors[ImGuiCol_Text]                   = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
     colors[ImGuiCol_TextDisabled]           = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
     colors[ImGuiCol_WindowBg]               = ImVec4(0.04f, 0.04f, 0.04f, 0.94f);
