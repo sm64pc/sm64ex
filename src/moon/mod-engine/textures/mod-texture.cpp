@@ -55,7 +55,7 @@ namespace Moon {
 
         TextureData* tex = textureMap.find(texturePath) != textureMap.end() ? textureMap.find(texturePath)->second : nullptr;
         // if(tex != nullptr)
-        //     if(!strcmp( (const char*) tex->texture_addr, "actors/mario/mario_metal.rgba16") || !strcmp( (const char*) tex->texture_addr, "actors/mario_cap/mario_cap_metal.rgba16"))
+        //     if(!strcmp( (const char*) tex->texture_addr, "textures/skyboxes/water.rgba16") || !strcmp( (const char*) tex->texture_addr, "actors/mario_cap/mario_cap_metal.rgba16"))
         //         tex->texture_id = stoi(MoonInternal::getEnvironmentVar("framebuffer"));
         return tex;
     }

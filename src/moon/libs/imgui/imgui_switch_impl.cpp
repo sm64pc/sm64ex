@@ -35,7 +35,7 @@ namespace MoonInternal {
         #ifdef TARGET_SWITCH
             hidInitializeTouchScreen();
         #endif
-            Moon::registerHookListener({.hookName = WINDOW_API_START_FRAME, .callback = [](HookCall call){
+            Moon::registerHookListener({.hookName = WINDOW_API_START_FRAME, .callback = [&](HookCall call){
             #ifndef TARGET_SWITCH
                 mstate = SDL_GetMouseState(&mouseX, &mouseY);
             #else

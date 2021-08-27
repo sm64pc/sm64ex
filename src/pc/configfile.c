@@ -57,7 +57,8 @@ ConfigWindow configWindow       = {
 
 ImGuiConfig configImGui = {
     .moon64 = false,
-    .texture_debug = false
+    .texture_debug = false,
+    .n64Mode = false
 };
 
 unsigned int configLanguage     = 0;
@@ -176,6 +177,7 @@ static const struct ConfigOption options[] = {
 
     {.name = "moon64_win",           .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.moon64},
     {.name = "texture_debug_win",    .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.texture_debug},
+    {.name = "n64Mode",              .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.n64Mode}
 };
 
 // Reads an entire line from a file (excluding the newline character) and returns an allocated string

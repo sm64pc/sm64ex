@@ -36,6 +36,7 @@ struct HookParameter {
 
 #ifdef __cplusplus
 
+#include <functional>
 #include <string>
 #include <map>
 
@@ -46,10 +47,10 @@ struct HookCall {
     bool cancelled = false;
 };
 
-typedef void HookFunc(HookCall call);
+typedef std::function<void(HookCall)> HookFunc;
 struct HookListener {
     std::string hookName;
-    HookFunc *callback;
+    HookFunc callback;
     int priority = 0;
 };
 

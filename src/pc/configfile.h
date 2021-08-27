@@ -24,6 +24,7 @@ typedef struct {
 typedef struct {
     bool moon64;
     bool texture_debug;
+    bool n64Mode;
 } ImGuiConfig;
 
 extern ConfigWindow configWindow;

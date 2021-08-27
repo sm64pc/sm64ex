@@ -74,6 +74,9 @@ using namespace std;
 SDL_Window* window = nullptr;
 ImGuiIO* io = nullptr;
 
+#define SM64_WIDTH  320
+#define SM64_HEIGHT 240
+
 #ifdef TARGET_SWITCH
 namespace MoonNX {
     SwkbdConfig kbd;
@@ -210,10 +213,10 @@ namespace MoonInternal {
                 ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
                 const ImGuiViewport* viewport = ImGui::GetMainViewport();
                 ImGui::SetNextWindowPos(viewport->WorkPos);
-                ImGui::SetNextWindowSize(viewport->WorkSize);
+                ImGui::SetNextWindowSize(ImVec2(configWindow.w, configWindow.h));
                 ImGui::SetNextWindowViewport(viewport->ID);
                 window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
-                window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+                window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoResize;
 
                 ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
                 ImGui::Begin("Main - Deck", nullptr, window_flags);
@@ -244,24 +247,34 @@ namespace MoonInternal {
                     if (ImGui::BeginMenu("View")) {
                         ImGui::MenuItem("Moon64", NULL, &configImGui.moon64);
                         ImGui::MenuItem("Textures", NULL, &configImGui.texture_debug);
+                        ImGui::MenuItem("N64 Mode", NULL, &configImGui.n64Mode);
                         ImGui::EndMenu();
                     }
                     ImGui::EndMenuBar();
                 }
                 ImGui::End();
-
-                ImGui::SetNextWindowSize(ImVec2(configWindow.w, configWindow.h), ImGuiCond_FirstUseEver);
                 ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
-                ImGui::Begin("Game", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+                ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); // Set window background to red
+                ImGui::Begin("Game", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+                ImGui::PopStyleVar();
+                ImGui::PopStyleColor();
+
                 ImVec2 size = ImGui::GetContentRegionAvail();
-                configWindow.internal_w = size.x;
-                configWindow.internal_h = size.y;
+                ImVec2 pos = ImVec2(0, 0);
+
+                configWindow.internal_w = configImGui.n64Mode ? SM64_WIDTH : size.x;
+                configWindow.internal_h = configImGui.n64Mode ? SM64_HEIGHT : size.y;
+
+                if(configImGui.n64Mode) {
+                    configWindow.multiplier = 1.0f;
+                    int sw = size.y * SM64_WIDTH / SM64_HEIGHT;
+                    pos = ImVec2(size.x / 2 - sw / 2, 0);
+                    size = ImVec2(sw,  size.y);
+                }
 
                 int fbuf = stoi(MoonInternal::getEnvironmentVar("framebuffer"));
-                // ImGui::Image((ImTextureID) fbuf, size);
-                ImGui::ImageRotated((ImTextureID) fbuf, ImVec2(0, 0), size, 180.0f);
+                ImGui::ImageRotated((ImTextureID) fbuf, pos, size, 180.0f);
                 ImGui::End();
-                ImGui::PopStyleVar();
 
                 if (configImGui.moon64){
                     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
@@ -271,9 +284,12 @@ namespace MoonInternal {
                     ImGui::Text("Status: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
                     ImGui::Text("Version: " GIT_BRANCH " " GIT_HASH);
                     ImGui::Text("Addons: %d\n", Moon::addons.size());
-                    ImGui::Text("Resolution: %.0fx%.0f\n", configWindow.w * configWindow.multiplier, configWindow.h * configWindow.multiplier);
-                    ImGui::Text("Internal Resolution:");
-                    ImGui::SliderFloat("Mul", &configWindow.multiplier, 0.0f, 10.0f);
+
+                    if(!configImGui.n64Mode){
+                        ImGui::Text("Resolution: %.0fx%.0f\n", configWindow.w * configWindow.multiplier, configWindow.h * configWindow.multiplier);
+                        ImGui::Text("Internal Resolution:");
+                        ImGui::SliderFloat("Mul", &configWindow.multiplier, 0.0f, 4.0f);
+                    }
                     ImGui::End();
                     ImGui::PopStyleColor();
                 }

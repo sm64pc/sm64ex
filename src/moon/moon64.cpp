@@ -26,6 +26,8 @@ void moon_setup(char *state){
     MoonInternal::setupLanguageEngine(string(state));
     MoonInternal::setupIOModuleEngine(string(state));
     MoonInternal::setupImGuiModule(string(state));
+    // MoonRenderer::setupSkyboxRenderer(string(state));
+    // MoonInternal::setupSoundModule(string(state));
 }
 
 /*

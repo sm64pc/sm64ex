@@ -7,7 +7,7 @@
 
 using namespace std;
 
-map<string, vector<HookFunc*>> listeners;
+map<string, vector<HookFunc>> listeners;
 
 namespace Moon {
     void registerHookListener(HookListener listener){
@@ -19,7 +19,7 @@ namespace MoonInternal {
     bool handleHook(HookCall call){
         string hookName = string(call.name);
         for(int l = 0; l < listeners[hookName].size(); l++){
-            (*listeners[hookName][l])(call);
+            (listeners[hookName][l])(call);
         }
         return call.cancelled;
     }
