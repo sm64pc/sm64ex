@@ -12,6 +12,9 @@
 #include "moon/mod-engine/hooks/hook.h"
 #include "moon/mod-engine/textures/mod-texture.h"
 #include "moon/mod-engine/engine.h"
+#include "moon/saturn/saturn.h"
+#include "moon/saturn/saturn_colors.h"
+#include "moon/saturn/saturn_types.h"
 #include "icons/IconsForkAwesome.h"
 #include "icons/IconsMaterialDesign.h"
 #include "moon/utils/moon-env.h"
@@ -63,6 +66,8 @@ extern "C" {
 extern "C" {
 #include "pc/gfx/gfx_pc.h"
 #include "pc/pc_main.h"
+#include "game/camera.h"
+#include "game/mario.h"
 }
 
 #include "pc/configfile.h"
@@ -133,6 +138,26 @@ namespace MoonInternal {
 
     map<string, ImFont*> fontMap;
 
+    // Colors
+    static ImVec4 uiHatColor =              ImVec4(255.0f / 255.0f, 0.0f / 255.0f, 0.0f / 255.0f, 255.0f / 255.0f);
+    static ImVec4 uiHatShadeColor =         ImVec4(127.0f / 255.0f, 0.0f / 255.0f, 0.0f / 255.0f, 255.0f / 255.0f);
+    static ImVec4 uiOverallsColor =         ImVec4(0.0f / 255.0f, 0.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f);
+    static ImVec4 uiOverallsShadeColor =    ImVec4(0.0f / 255.0f, 0.0f / 255.0f, 127.0f / 255.0f, 255.0f / 255.0f);
+    static ImVec4 uiGlovesColor =           ImVec4(255.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f);
+    static ImVec4 uiGlovesShadeColor =      ImVec4(127.0f / 255.0f, 127.0f / 255.0f, 127.0f / 255.0f, 255.0f / 255.0f);
+    static ImVec4 uiShoesColor =            ImVec4(114.0f / 255.0f, 28.0f / 255.0f, 14.0f / 255.0f, 255.0f / 255.0f);
+    static ImVec4 uiShoesShadeColor =       ImVec4(57.0f / 255.0f, 14.0f / 255.0f, 7.0f / 255.0f, 255.0f / 255.0f);
+    static ImVec4 uiSkinColor =             ImVec4(254.0f / 255.0f, 193.0f / 255.0f, 121.0f / 255.0f, 255.0f / 255.0f);
+    static ImVec4 uiSkinShadeColor =        ImVec4(127.0f / 255.0f, 96.0f / 255.0f, 60.0f / 255.0f, 255.0f / 255.0f);
+    static ImVec4 uiHairColor =             ImVec4(115.0f / 255.0f, 6.0f / 255.0f, 0.0f / 255.0f, 255.0f / 255.0f);
+    static ImVec4 uiHairShadeColor =        ImVec4(57.0f / 255.0f, 3.0f / 255.0f, 0.0f / 255.0f, 255.0f / 255.0f);
+
+    static char bufname[128] = "Sample";
+
+    bool hasChangedFullscreen;
+    int tempXRes;
+    int tempYRes;
+
     void setupFonts() {
         ImGuiIO& io = ImGui::GetIO();
         // for (auto entry = Moon::fonts.begin(); entry != Moon::fonts.end(); entry++){
@@ -154,6 +179,45 @@ namespace MoonInternal {
         config.MergeMode = true;
         io.Fonts->AddFontFromMemoryTTF((void*) Moon::fonts[FONT_ICON_FILE_NAME_MD]->data, Moon::fonts[FONT_ICON_FILE_NAME_MD]->size, 20.f, &config, icons_ranges);
         io.Fonts->Build();
+    }
+
+    void apply_cc_from_editor() {
+        defaultColorHatRLight = (int)(uiHatColor.x * 255);
+        defaultColorHatGLight = (int)(uiHatColor.y * 255);
+        defaultColorHatBLight = (int)(uiHatColor.z * 255);
+        defaultColorHatRDark = (int)(uiHatShadeColor.x * 255);
+        defaultColorHatGDark = (int)(uiHatShadeColor.y * 255);
+        defaultColorHatBDark = (int)(uiHatShadeColor.z * 255);
+        defaultColorOverallsRLight = (int)(uiOverallsColor.x * 255);
+        defaultColorOverallsGLight = (int)(uiOverallsColor.y * 255);
+        defaultColorOverallsBLight = (int)(uiOverallsColor.z * 255);
+        defaultColorOverallsRDark = (int)(uiOverallsShadeColor.x * 255);
+        defaultColorOverallsGDark = (int)(uiOverallsShadeColor.y * 255);
+        defaultColorOverallsBDark = (int)(uiOverallsShadeColor.z * 255);
+        defaultColorGlovesRLight = (int)(uiGlovesColor.x * 255);
+        defaultColorGlovesGLight = (int)(uiGlovesColor.y * 255);
+        defaultColorGlovesBLight = (int)(uiGlovesColor.z * 255);
+        defaultColorGlovesRDark = (int)(uiGlovesShadeColor.x * 255);
+        defaultColorGlovesGDark = (int)(uiGlovesShadeColor.y * 255);
+        defaultColorGlovesBDark = (int)(uiGlovesShadeColor.z * 255);
+        defaultColorShoesRLight = (int)(uiShoesColor.x * 255);
+        defaultColorShoesGLight = (int)(uiShoesColor.y * 255);
+        defaultColorShoesBLight = (int)(uiShoesColor.z * 255);
+        defaultColorShoesRDark = (int)(uiShoesShadeColor.x * 255);
+        defaultColorShoesGDark = (int)(uiShoesShadeColor.y * 255);
+        defaultColorShoesBDark = (int)(uiShoesShadeColor.z * 255);
+        defaultColorSkinRLight = (int)(uiSkinColor.x * 255);
+        defaultColorSkinGLight = (int)(uiSkinColor.y * 255);
+        defaultColorSkinBLight = (int)(uiSkinColor.z * 255);
+        defaultColorSkinRDark = (int)(uiSkinShadeColor.x * 255);
+        defaultColorSkinGDark = (int)(uiSkinShadeColor.y * 255);
+        defaultColorSkinBDark = (int)(uiSkinShadeColor.z * 255);
+        defaultColorHairRLight = (int)(uiHairColor.x * 255);
+        defaultColorHairGLight = (int)(uiHairColor.y * 255);
+        defaultColorHairBLight = (int)(uiHairColor.z * 255);
+        defaultColorHairRDark = (int)(uiHairShadeColor.x * 255);
+        defaultColorHairGDark = (int)(uiHairShadeColor.y * 255);
+        defaultColorHairBDark = (int)(uiHairShadeColor.z * 255);
     }
 
     void setupImGuiModule(string status) {
@@ -181,6 +245,9 @@ namespace MoonInternal {
                 window = (SDL_Window*) call.baseArgs["window"];
                 ImGui_ImplSDL2_InitForOpenGL(window, call.baseArgs["context"]);
                 ImGui_ImplOpenGL3_Init(glsl_version);
+
+                tempXRes = configWindow.w;
+                tempYRes = configWindow.h;
 
             #ifdef TARGET_SWITCH
                 MoonNX::handleVirtualKeyboard("Init");
@@ -227,7 +294,7 @@ namespace MoonInternal {
 
                 if (!ImGui::DockBuilderGetNode(dockspace_id)) {
                     ImGui::DockBuilderRemoveNode(dockspace_id);
-                    ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_None);
+                    ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_NoTabBar);
 
                     ImGui::DockBuilderDockWindow("Game", dockspace_id);
 
@@ -236,24 +303,39 @@ namespace MoonInternal {
 
                 ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 
-                if (ImGui::BeginMenuBar()) {
-                    TextureData* tmp = forceTextureLoad("mod-icons://Moon64");
-                    if(tmp != nullptr) {
-                        ImGui::SetCursorPos(ImVec2(0, 0));
-                        ImGui::Image((ImTextureID) tmp->texture_id, ImVec2(25.0f, 25.0f));
+                //if (show_menu_bar) {
+                    if (ImGui::BeginMenuBar()) {
+                        /*
+                        TextureData* tmp = forceTextureLoad("mod-icons://Moon64");
+                        if(tmp != nullptr) {
+                            ImGui::SetCursorPos(ImVec2(0, 0));
+                            ImGui::Image((ImTextureID) tmp->texture_id, ImVec2(25.0f, 25.0f));
+                            ImGui::SameLine();
+                        }
+                        */
+                        ImGui::Text("Saturn");
                         ImGui::SameLine();
+                        ImGui::Separator();
+                        if (ImGui::BeginMenu("Tools")) {
+                            ImGui::MenuItem("Toggle View (F1)", NULL, &show_menu_bar);
+                            ImGui::MenuItem("N64 Mode", NULL, &configImGui.n64Mode);
+                            ImGui::EndMenu();
+                        }
+                        if (ImGui::BeginMenu("View")) {
+                            ImGui::MenuItem("Stats", NULL, &configImGui.moon64);
+                            ImGui::MenuItem("Machinima", NULL, &configImGui.s_machinima);
+                            ImGui::MenuItem("Quick Toggles", NULL, &configImGui.s_toggles);
+                            ImGui::MenuItem("CC Editor", NULL, &configImGui.s_cceditor);
+                            //ImGui::MenuItem("Debug Textures", NULL, &configImGui.texture_debug);
+                            ImGui::EndMenu();
+                        }
+                        if (ImGui::BeginMenu("Misc")) {
+                            ImGui::MenuItem("Settings", NULL, &configImGui.s_options);
+                            ImGui::EndMenu();
+                        }
+                        ImGui::EndMenuBar();
                     }
-                    ImGui::Text("Moon64");
-                    ImGui::SameLine();
-                    ImGui::Separator();
-                    if (ImGui::BeginMenu("View")) {
-                        ImGui::MenuItem("Moon64", NULL, &configImGui.moon64);
-                        ImGui::MenuItem("Textures", NULL, &configImGui.texture_debug);
-                        ImGui::MenuItem("N64 Mode", NULL, &configImGui.n64Mode);
-                        ImGui::EndMenu();
-                    }
-                    ImGui::EndMenuBar();
-                }
+                //}
                 ImGui::End();
                 ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
                 ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); // Set window background to red
@@ -263,6 +345,27 @@ namespace MoonInternal {
 
                 ImVec2 size = ImGui::GetContentRegionAvail();
                 ImVec2 pos = ImVec2(0, 0);
+
+                if (configWindow.fullscreen) {
+                    if (!hasChangedFullscreen) {
+                        std::cout << "fullscreen test" << std::endl;
+                        tempXRes = configWindow.w;
+                        tempYRes = configWindow.h;
+                        SDL_DisplayMode DM;
+                        SDL_GetCurrentDisplayMode(0, &DM);
+                        configWindow.w = DM.w;
+                        configWindow.h = DM.h;
+                        hasChangedFullscreen = true;
+                    }
+                } else {
+                    if (hasChangedFullscreen) {
+                        std::cout << "test2 fsd" << std::endl;
+                        configWindow.w = tempXRes;
+                        configWindow.h = tempYRes;
+                        SDL_SetWindowSize(window, tempXRes, tempYRes);
+                        hasChangedFullscreen = false;
+                    }
+                }
 
                 configWindow.internal_w = configImGui.n64Mode ? SM64_WIDTH : size.x;
                 configWindow.internal_h = configImGui.n64Mode ? SM64_HEIGHT : size.y;
@@ -278,27 +381,203 @@ namespace MoonInternal {
                 ImGui::ImageRotated((ImTextureID) fbuf, pos, size, 180.0f);
                 ImGui::End();
 
-                if (configImGui.moon64){
+                if (configImGui.moon64 && show_menu_bar){
                     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
-                    ImGui::Begin("Moon64 Game Stats", NULL, ImGuiWindowFlags_None);
+                    ImGui::Begin("Stats", NULL, ImGuiWindowFlags_None);
 
                     ImGui::Text("Platform: " PLATFORM " (" RAPI_NAME ")");
-                    ImGui::Text("Status: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+                    ImGui::Text("View: %.0fx%.0f (%.1f FPS)", configWindow.internal_w * configWindow.multiplier, configWindow.internal_h * configWindow.multiplier, ImGui::GetIO().Framerate);
                     ImGui::Text("Version: " GIT_BRANCH " " GIT_HASH);
-                    ImGui::Text("Addons: %d\n", Moon::addons.size());
-                    ImGui::Text("Resolution: %.0fx%.0f\n", configWindow.internal_w * configWindow.multiplier, configWindow.internal_h * configWindow.multiplier);
-                    ImGui::Text("Internal Resolution:");
 
-                    if(!configImGui.n64Mode)
-                        ImGui::SliderFloat("Mul", &configWindow.multiplier, 0.0f, 4.0f);
-                    else
-                        ImGui::SliderInt("Mul", &n64Mul, 1, 8);
+                    ImGui::End();
+                    ImGui::PopStyleColor();
+                }
+                if (configImGui.s_toggles && show_menu_bar){
+                    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
+                    ImGui::Begin("Quick Toggles", NULL, ImGuiWindowFlags_None);
+
+                    if (ImGui::BeginTable("quick_toggles", 1))
+                    {
+                        ImGui::TableNextColumn();
+                        ImGui::Checkbox("HUD", &configHUD);
+                        ImGui::TableNextColumn();
+                        ImGui::Checkbox("Head Rotations", &enable_head_rotations);
+                        ImGui::TableNextColumn();
+                        ImGui::Checkbox("Shadows", &enable_shadows);
+                        ImGui::TableNextColumn();
+                        ImGui::Checkbox("Dust Particles", &enable_dust_particles);
+                        ImGui::EndTable();
+                    }
 
                     ImGui::End();
                     ImGui::PopStyleColor();
                 }
 
-                if(configImGui.texture_debug) {
+                if (configImGui.s_machinima && show_menu_bar) {
+                    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
+                    ImGui::Begin("Machinima", NULL, ImGuiWindowFlags_None);
+
+                    ImGui::Checkbox("Machinima Camera", &camera_frozen);
+                    if (camera_frozen == true) {
+                        ImGui::SliderFloat("Speed", &camera_speed, 0.0f, 0.3f);
+                    }
+
+                    ImGui::Dummy(ImVec2(0, 10));
+
+                    ImGui::Text("Body States");
+                    const char* eyeStates[] = { "Default", "Open", "Half", "Closed", "Left", "Right", "Up", "Down", "Dead" };
+                    ImGui::Combo("Eyes", &current_eye_state, eyeStates, IM_ARRAYSIZE(eyeStates));
+                    const char* handStates[] = { "Fists", "Open", "Peace", "With Cap", "With Wing Cap", "Right Open" };
+                    ImGui::Combo("Hands", &current_hand_state, handStates, IM_ARRAYSIZE(handStates));
+                    const char* capStates[] = { "Cap On", "Cap Off", "Wing Cap" }; // unused "wing cap off" not included
+                    ImGui::Combo("Cap", &current_cap_state, capStates, IM_ARRAYSIZE(capStates));
+
+                    ImGui::Dummy(ImVec2(0, 10));
+
+                    ImGui::Text("Select Color Code");
+                    static int current_cc_id = 0;
+                    string cc_name = MoonInternal::cc_array[current_cc_id].substr(0, MoonInternal::cc_array[current_cc_id].size() - 3);
+                    if (ImGui::BeginCombo(".gs", cc_name.c_str()))
+                    {
+                        for (int n = 0; n < MoonInternal::cc_array.size(); n++)
+                        {
+                            const bool is_selected = (current_cc_id == n);
+                            cc_name = MoonInternal::cc_array[n].substr(0, MoonInternal::cc_array[n].size() - 3);
+                            if (ImGui::Selectable(cc_name.c_str(), is_selected)) {
+                                current_cc_id = n;
+                            }
+
+                            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                            if (is_selected)
+                                ImGui::SetItemDefaultFocus();
+                        }
+                        ImGui::EndCombo();
+                    }
+                    if (ImGui::Button("Load")) {
+                        load_cc_file(cc_array[current_cc_id]);
+
+                        uiHatColor = ImVec4(float(defaultColorHatRLight) / 255.0f, float(defaultColorHatGLight) / 255.0f, float(defaultColorHatBLight) / 255.0f, 255.0f / 255.0f);
+                        uiHatShadeColor = ImVec4(float(defaultColorHatRDark) / 255.0f, float(defaultColorHatGDark) / 255.0f, float(defaultColorHatBDark) / 255.0f, 255.0f / 255.0f);
+                        uiOverallsColor = ImVec4(float(defaultColorOverallsRLight) / 255.0f, float(defaultColorOverallsGLight) / 255.0f, float(defaultColorOverallsBLight) / 255.0f, 255.0f / 255.0f);
+                        uiOverallsShadeColor = ImVec4(float(defaultColorOverallsRDark) / 255.0f, float(defaultColorOverallsGDark) / 255.0f, float(defaultColorOverallsBDark) / 255.0f, 255.0f / 255.0f);
+                        uiGlovesColor = ImVec4(float(defaultColorGlovesRLight) / 255.0f, float(defaultColorGlovesGLight) / 255.0f, float(defaultColorGlovesBLight) / 255.0f, 255.0f / 255.0f);
+                        uiGlovesShadeColor = ImVec4(float(defaultColorGlovesRDark) / 255.0f, float(defaultColorGlovesGDark) / 255.0f, float(defaultColorGlovesBDark) / 255.0f, 255.0f / 255.0f);
+                        uiShoesColor = ImVec4(float(defaultColorShoesRLight) / 255.0f, float(defaultColorShoesGLight) / 255.0f, float(defaultColorShoesBLight) / 255.0f, 255.0f / 255.0f);
+                        uiShoesShadeColor = ImVec4(float(defaultColorShoesRDark) / 255.0f, float(defaultColorShoesGDark) / 255.0f, float(defaultColorShoesBDark) / 255.0f, 255.0f / 255.0f);
+                        uiSkinColor = ImVec4(float(defaultColorSkinRLight) / 255.0f, float(defaultColorSkinGLight) / 255.0f, float(defaultColorSkinBLight) / 255.0f, 255.0f / 255.0f);
+                        uiSkinShadeColor = ImVec4(float(defaultColorSkinRDark) / 255.0f, float(defaultColorSkinGDark) / 255.0f, float(defaultColorSkinBDark) / 255.0f, 255.0f / 255.0f);
+                        uiHairColor = ImVec4(float(defaultColorHairRLight) / 255.0f, float(defaultColorHairGLight) / 255.0f, float(defaultColorHairBLight) / 255.0f, 255.0f / 255.0f);
+                        uiHairShadeColor = ImVec4(float(defaultColorHairRDark) / 255.0f, float(defaultColorHairGDark) / 255.0f, float(defaultColorHairBDark) / 255.0f, 255.0f / 255.0f);
+                        
+                        // We never want to use the name "Mario" when saving/loading a CC, as it will cause file issues.
+                        if (cc_name == "Mario") {
+                            strcpy(bufname, "Sample");
+                        } else {
+                            strcpy(bufname, cc_name.c_str());
+                        }
+                    }
+
+                    ImGui::End();
+                    ImGui::PopStyleColor();
+                }
+                if (configImGui.s_cceditor && show_menu_bar) {
+                    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
+                    ImGui::Begin("CC Editor", NULL, ImGuiWindowFlags_None);
+
+                    ImGui::Text("Shirt/Cap");
+                    ImGui::ColorEdit4("Hat Main", (float*)&uiHatColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                    ImGui::ColorEdit4("Hat Shade", (float*)&uiHatShadeColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                    ImGui::Text("Overalls");
+                    ImGui::ColorEdit4("Overalls Main", (float*)&uiOverallsColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                    ImGui::ColorEdit4("Overalls Shade", (float*)&uiOverallsShadeColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                    ImGui::Text("Gloves");
+                    ImGui::ColorEdit4("Gloves Main", (float*)&uiGlovesColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                    ImGui::ColorEdit4("Gloves Shade", (float*)&uiGlovesShadeColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                    ImGui::Text("Shoes");
+                    ImGui::ColorEdit4("Shoes Main", (float*)&uiShoesColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                    ImGui::ColorEdit4("Shoes Shade", (float*)&uiShoesShadeColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                    ImGui::Text("Skin");
+                    ImGui::ColorEdit4("Skin Main", (float*)&uiSkinColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                    ImGui::ColorEdit4("Skin Shade", (float*)&uiSkinShadeColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                    ImGui::Text("Hair");
+                    ImGui::ColorEdit4("Hair Main", (float*)&uiHairColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                    ImGui::ColorEdit4("Hair Shade", (float*)&uiHairShadeColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+
+                    ImGui::Dummy(ImVec2(0, 5));
+
+                    if (ImGui::Button("Load")) {
+                        apply_cc_from_editor();
+                    }
+
+                    ImGui::Dummy(ImVec2(0, 5));
+
+                    ImGui::InputText(".gs", bufname, IM_ARRAYSIZE(bufname));
+                    if (ImGui::Button("Save")) {
+                        apply_cc_from_editor();
+
+                        std::string cc_name = bufname;
+                        // We don't want to save a CC named "Mario", as it may cause file issues.
+                        if (cc_name != "Mario") {
+                            save_cc_file(cc_name);
+                        } else {
+                            strcpy(bufname, "Sample");
+                            save_cc_file("Sample");
+                        }
+
+                        load_cc_directory();
+                    }
+
+                    ImGui::End();
+                    ImGui::PopStyleColor();
+                }
+
+                //ImGui::ShowDemoWindow();
+
+                if (configImGui.s_options && show_menu_bar) {
+                    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
+                    ImGui::Begin("Settings", NULL, ImGuiWindowFlags_None);
+
+                    if (ImGui::CollapsingHeader("Graphics")) {
+                        if (ImGui::Button("Toggle Fullscreen")) {
+                            configWindow.fullscreen = !configWindow.fullscreen;
+                            configWindow.settings_changed = true;
+                        }
+                        if (!configWindow.fullscreen) {
+                            if (ImGui::Button("Reset Window Size")) {
+                                configWindow.w = 1280;
+                                configWindow.h = 768;   // 720 + 48 for the top bar
+                                SDL_SetWindowSize(window, 1280, 768);
+                            }
+                        }
+                        ImGui::Checkbox("VSync", &configWindow.vsync);
+                        ImGui::Text("Graphics Quality");
+                        const char* lod_modes[] = { "Auto", "Low", "High" };
+                        ImGui::Combo("###lod_modes", (int*)&configLODMode, lod_modes, IM_ARRAYSIZE(lod_modes));
+                        ImGui::Text("Texture Filtering");
+                        const char* texture_filters[] = { "Nearest", "Linear", "Three-point" };
+                        ImGui::Combo("###texture_filters", (int*)&configFiltering, texture_filters, IM_ARRAYSIZE(texture_filters));
+                    }
+                    if (ImGui::CollapsingHeader("Audio")) {
+                        ImGui::Text("Volume");
+                        ImGui::SliderInt("Master", (int*)&configMasterVolume, 0, MAX_VOLUME);
+                        ImGui::SliderInt("SFX", (int*)&configSfxVolume, 0, MAX_VOLUME);
+                        ImGui::SliderInt("Music", (int*)&configMusicVolume, 0, MAX_VOLUME);
+                        ImGui::SliderInt("Environment", (int*)&configEnvVolume, 0, MAX_VOLUME);
+                    }
+                    if (ImGui::CollapsingHeader("Gameplay")) {
+                        ImGui::Text("Rumble Strength");
+                        ImGui::SliderInt("###rumble_strength", (int*)&configRumbleStrength, 0, 50);
+                        ImGui::Checkbox("Skip Intro", &configSkipIntro);
+#ifdef DISCORDRPC
+                        ImGui::Checkbox("Discord Activity Status", &configDiscordRPC);
+#endif
+                    }
+
+                    ImGui::End();
+                    ImGui::PopStyleColor();
+                }
+
+                if(configImGui.texture_debug && show_menu_bar) {
                     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
                     ImGui::Begin("Loaded textures", NULL, ImGuiWindowFlags_None);
 

@@ -58,6 +58,10 @@ ConfigWindow configWindow       = {
 ImGuiConfig configImGui = {
     .moon64 = false,
     .texture_debug = false,
+    .s_toggles = false,
+    .s_machinima = false,
+    .s_cceditor = false,
+    .s_options = false,
     .n64Mode = false
 };
 
@@ -71,7 +75,7 @@ bool configPrecacheRes = true;
 
 unsigned int configFiltering    = 1;          // 0=force nearest, 1=linear, (TODO) 2=three-point
 unsigned int configMasterVolume = MAX_VOLUME; // 0 - MAX_VOLUME
-unsigned int configMusicVolume = MAX_VOLUME;
+unsigned int configMusicVolume = 0;
 unsigned int configSfxVolume = MAX_VOLUME;
 unsigned int configEnvVolume = MAX_VOLUME;
 
@@ -105,8 +109,8 @@ bool         configEnableCamera  = false;
 bool         configCameraAnalog  = true;
 bool         configCameraMouse   = false;
 #endif
-bool         configSkipIntro     = 0;
-bool         configHUD           = true;
+bool         configSkipIntro     = 1;
+bool         configHUD           = false;
 #ifdef DISCORDRPC
 bool         configDiscordRPC    = true;
 #endif
@@ -117,7 +121,7 @@ bool         configDiscordRPC    = true;
 ################################
 */
 
-unsigned int configLODMode = 0;
+unsigned int configLODMode = 2;
 
 static const struct ConfigOption options[] = {
     {.name = "fullscreen",           .type = CONFIG_TYPE_BOOL, .boolValue = &configWindow.fullscreen},
@@ -177,6 +181,10 @@ static const struct ConfigOption options[] = {
 
     {.name = "moon64_win",           .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.moon64},
     {.name = "texture_debug_win",    .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.texture_debug},
+    {.name = "s_toggles_win",        .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_toggles},
+    {.name = "s_machinima",          .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_machinima},
+    {.name = "s_cceditor_win",     .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_cceditor},
+    {.name = "s_options_win",      .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_options},
     {.name = "n64Mode",              .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.n64Mode}
 };
 

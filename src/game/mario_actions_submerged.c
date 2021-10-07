@@ -16,6 +16,7 @@
 #include "behavior_data.h"
 #include "level_table.h"
 #include "thread6.h"
+#include "moon/saturn/saturn_types.h"
 
 #define MIN_SWIM_STRENGTH 160
 #define MIN_SWIM_SPEED 16.0f
@@ -1099,7 +1100,8 @@ static void play_metal_water_jumping_sound(struct MarioState *m, u32 landing) {
 static void play_metal_water_walking_sound(struct MarioState *m) {
     if (is_anim_past_frame(m, 10) || is_anim_past_frame(m, 49)) {
         play_sound(SOUND_ACTION_METAL_STEP_WATER, m->marioObj->header.gfx.cameraToObject);
-        m->particleFlags |= PARTICLE_DUST;
+        if (enable_dust_particles)
+            m->particleFlags |= PARTICLE_DUST;
     }
 }
 

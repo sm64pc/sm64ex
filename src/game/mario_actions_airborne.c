@@ -18,6 +18,7 @@
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif
+#include "moon/saturn/saturn_types.h"
 
 void play_flip_sounds(struct MarioState *m, s16 frame1, s16 frame2, s16 frame3) {
     s32 animFrame = m->marioObj->header.gfx.unk38.animFrame;
@@ -1707,7 +1708,8 @@ s32 act_shot_from_cannon(struct MarioState *m) {
     }
 
     if (m->vel[1] > 0.0f) {
-        m->particleFlags |= PARTICLE_DUST;
+        if (enable_dust_particles)
+            m->particleFlags |= PARTICLE_DUST;
     }
 
     reset_rumble_timers();
@@ -1867,7 +1869,8 @@ s32 act_flying(struct MarioState *m) {
     }
 
     if (m->faceAngle[0] > 0x800 && m->forwardVel >= 48.0f) {
-        m->particleFlags |= PARTICLE_DUST;
+        if (enable_dust_particles)
+            m->particleFlags |= PARTICLE_DUST;
     }
 
     if (startPitch <= 0 && m->faceAngle[0] > 0 && m->forwardVel >= 48.0f) {

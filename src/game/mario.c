@@ -1560,15 +1560,19 @@ void update_mario_info_for_cam(struct MarioState *m) {
     }
 }
 
+int current_cap_state = MARIO_HAS_DEFAULT_CAP_ON;
+int current_eye_state = MARIO_EYES_BLINK;
+int current_hand_state = MARIO_HAND_FISTS;
+
 /**
  * Resets Mario's model, done every time an action is executed.
  */
 void mario_reset_bodystate(struct MarioState *m) {
     struct MarioBodyState *bodyState = m->marioBodyState;
 
-    bodyState->capState = MARIO_HAS_DEFAULT_CAP_OFF;
-    bodyState->eyeState = MARIO_EYES_BLINK;
-    bodyState->handState = MARIO_HAND_FISTS;
+    bodyState->capState = current_cap_state;
+    bodyState->eyeState = current_eye_state;
+    bodyState->handState = current_hand_state;
     bodyState->modelState = 0;
     bodyState->wingFlutter = FALSE;
 
@@ -1669,6 +1673,8 @@ void mario_update_hitbox_and_cap_model(struct MarioState *m) {
         }
     }
 
+    /*
+
     if (flags & MARIO_CAP_IN_HAND) {
         if (flags & MARIO_WING_CAP) {
             bodyState->handState = MARIO_HAND_HOLDING_WING_CAP;
@@ -1684,6 +1690,8 @@ void mario_update_hitbox_and_cap_model(struct MarioState *m) {
             bodyState->capState = MARIO_HAS_DEFAULT_CAP_ON;
         }
     }
+
+    */
 
     // Short hitbox for crouching/crawling/etc.
     if (m->action & ACT_FLAG_SHORT_HITBOX) {

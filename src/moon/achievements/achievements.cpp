@@ -30,7 +30,7 @@ using namespace std;
 
 map<string, Achievement*> registeredAchievements;
 map<int, vector<AchievementEntry*>> entries;
-bool cheatsGotEnabled = false;
+bool cheatsGotEnabled = true;
 
 namespace AchievementList {
     /* Star achievements */

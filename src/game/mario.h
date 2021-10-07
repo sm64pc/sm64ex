@@ -51,4 +51,8 @@ s32 execute_mario_action(UNUSED struct Object *o);
 void init_mario(void);
 void init_mario_from_save_file(void);
 
+extern int current_cap_state;
+extern int current_eye_state;
+extern int current_hand_state;
+
 #endif // MARIO_H

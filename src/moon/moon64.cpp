@@ -8,6 +8,7 @@
 #include "moon/utils/moon-env.h"
 #include "moon/mod-engine/engine.h"
 #include "moon/mod-engine/test.h"
+#include "moon/saturn/saturn.h"
 #include "moon/io/moon-io.h"
 
 #include "moon/imgui/imgui_impl.h"
@@ -28,6 +29,7 @@ void moon_setup(char *state){
     MoonInternal::setupImGuiModule(string(state));
     // MoonRenderer::setupSkyboxRenderer(string(state));
     // MoonInternal::setupSoundModule(string(state));
+    MoonInternal::setupSaturnModule(string(state));
 }
 
 /*

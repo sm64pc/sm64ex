@@ -17,6 +17,7 @@
 #include "sound_init.h"
 #include "surface_terrains.h"
 #include "thread6.h"
+#include "moon/saturn/saturn_types.h"
 
 s32 check_common_idle_cancels(struct MarioState *m) {
     mario_drop_held_object(m);
@@ -133,15 +134,27 @@ s32 act_idle(struct MarioState *m) {
     } else {
         switch (m->actionState) {
             case 0:
-                set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_LEFT);
+                if (enable_head_rotations) {
+                    set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_LEFT);
+                } else {
+                    set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
+                }
                 break;
 
             case 1:
-                set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_RIGHT);
+                if (enable_head_rotations) {
+                    set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_RIGHT);
+                } else {
+                    set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
+                }
                 break;
 
             case 2:
-                set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_CENTER);
+                if (enable_head_rotations) {
+                    set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_CENTER);
+                } else {
+                    set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
+                }
                 break;
         }
 

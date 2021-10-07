@@ -42,7 +42,7 @@ extern "C" {
 #endif
 
 #define DISCORDLIB DISCORDLIBFILE DISCORDLIBEXT
-#define DISCORD_APP_ID  "856717153431453716"
+#define DISCORD_APP_ID  "895788060518793226"
 #define DISCORD_UPDATE_RATE 3
 
 using namespace std;
@@ -228,35 +228,22 @@ string getLevelLogo(){
 }
 
 void set_logo(void) {
-    discordRichPresence.largeImageKey = sys_strdup(getLevelLogo().data());
+    discordRichPresence.largeImageKey = "saturn-logo-star-bg";
+    discordRichPresence.largeImageText = "https://github.com/Llennpie/Saturn";
 }
 
 void DiscordReloadPresence() {
     reloadRPC = true;
 }
 
-void set_health(){
-    if(gCurrCourseNum == 0) return;
-    if(lastHealth != gHudDisplay.wedges){
-        lastHealth = gHudDisplay.wedges;
-        string new_health_icon = "health-"+to_string(lastHealth);
-        string new_health_text = to_string(gHudDisplay.lives) + " Lives";
-        discordRichPresence.smallImageKey = sys_strdup(new_health_icon.data());
-        discordRichPresence.smallImageText = sys_strdup(new_health_text.data());
-    }
-}
-
-void set_image_key(){
-    if(gCurrCourseNum == 0) return;
-    int size = entries[gCurrSaveFileNum - 1].size();
-    if(lastAchievements != size || lastStarAmount != gHudDisplay.stars){
-        lastAchievements = size;
-        lastStarAmount = gHudDisplay.stars;
-
-        string new_text = to_string(lastStarAmount) + "/120 Stars - " + to_string(lastAchievements) + "/" + to_string(registeredAchievements.size()) + " Achievements";
-
-        discordRichPresence.largeImageText = sys_strdup(new_text.data());
-    }
+void set_platform(){
+#ifdef __MINGW32__
+    discordRichPresence.smallImageKey = "windows";
+    discordRichPresence.smallImageText = "Windows";
+#else
+    discordRichPresence.smallImageKey = "linux";
+    discordRichPresence.smallImageText = "Linux";
+#endif
 }
 
 void DiscordUpdatePresence(){
@@ -268,8 +255,7 @@ void DiscordUpdatePresence(){
     set_state();
     set_details();
     set_logo();
-    set_health();
-    set_image_key();
+    set_platform();
     discordUpdatePresence(&discordRichPresence);
     reloadRPC = false;
 }
@@ -306,8 +292,8 @@ void discord_init(void) {
         discordUpdatePresence = (Discord_UpdatePresence) dlsym(handle, "Discord_UpdatePresence");
         init_discord();
 
-        discordRichPresence.details = stage;
-        discordRichPresence.state = act;
+        discordRichPresence.details = "Making Machinima";
+        discordRichPresence.state = stage;
 
         lastUpdatedTime = 0;
     }

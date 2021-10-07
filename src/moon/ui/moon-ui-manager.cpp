@@ -54,11 +54,13 @@ void MoonChangeUI(int index){
 }
 
 void MoonHandleToggle(){
+    /*
     if(gPlayer1Controller->buttonPressed & toggle){
         currentScreen = 0;
         isOpen = !isOpen;
         MoonUpdateStatus();
     }
+    */
 }
 
 void MoonUpdateStatus() {

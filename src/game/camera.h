@@ -657,6 +657,8 @@ struct LakituState
     /// Mario's action from the previous frame. Only used to determine if Mario just finished a dive.
     /*0xB8*/ u32 lastFrameAction;
     /*0xBC*/ s16 unused;
+
+    u32 skipCameraInterpolationTimestamp;
 };
 
 // bss order hack to not affect BSS order. if possible, remove me, but it will be hard to match otherwise
@@ -772,5 +774,8 @@ void set_fov_shake_from_point_preset(u8 preset, f32 posX, f32 posY, f32 posZ);
 void obj_rotate_towards_point(struct Object *o, Vec3f point, s16 pitchOff, s16 yawOff, s16 pitchDiv, s16 yawDiv);
 
 Gfx *geo_camera_fov(s32 callContext, struct GraphNode *g, UNUSED void *context);
+
+extern u8 machinimaMode;
+extern f32 camVelSpeed;
 
 #endif // CAMERA_H

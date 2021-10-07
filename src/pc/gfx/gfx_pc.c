@@ -24,6 +24,7 @@
 #include "../fs/fs.h"
 #include "moon/moon64.h"
 #include "moon/mod-engine/hooks/hook.h"
+#include "moon/saturn/saturn_types.h"
 
 #define SUPPORT_CHECK(x) assert(x)
 
@@ -447,6 +448,48 @@ static void gfx_sp_vertex(size_t n_vertices, size_t dest_index, const Vtx *verti
             int g = rsp.current_lights[rsp.current_num_lights - 1].col[1];
             int b = rsp.current_lights[rsp.current_num_lights - 1].col[2];
 
+            // sm64plus saves the day...
+
+            // Detect if these are one of Mario's colors
+            bool mario_hat = (r == 0x7f && g == 0x00 && b == 0x00);
+            bool mario_overalls = (r == 0x00 && g == 0x00 && b == 0x7f);
+            bool mario_gloves = (r == 0x00 && g == 0x7f && b == 0x00);
+            bool mario_shoes = (r == 0x39 && g == 0x0e && b == 0x07);
+            bool mario_skin = (r == 0x7f && g == 0x60 && b == 0x3c);
+            bool mario_hair = (r == 0x39 && g == 0x03 && b == 0x00);
+
+            // Override them lazily
+            if (mario_hat) {
+                r = defaultColorHatRDark;
+                g = defaultColorHatGDark;
+                b = defaultColorHatBDark;
+            }
+            if (mario_overalls) {
+                r = defaultColorOverallsRDark;
+                g = defaultColorOverallsGDark;
+                b = defaultColorOverallsBDark;
+            }
+            if (mario_gloves) {
+                r = defaultColorGlovesRDark;
+                g = defaultColorGlovesGDark;
+                b = defaultColorGlovesBDark;
+            }
+            if (mario_shoes) {
+                r = defaultColorShoesRDark;
+                g = defaultColorShoesGDark;
+                b = defaultColorShoesBDark;
+            }
+            if (mario_skin) {
+                r = defaultColorSkinRDark;
+                g = defaultColorSkinGDark;
+                b = defaultColorSkinBDark;
+            }
+            if (mario_hair) {
+                r = defaultColorHairRDark;
+                g = defaultColorHairGDark;
+                b = defaultColorHairBDark;
+            }
+
             for (int i = 0; i < rsp.current_num_lights - 1; i++) {
                 float intensity = 0;
                 intensity += vn->n[0] * rsp.current_lights_coeffs[i][0];
@@ -454,9 +497,47 @@ static void gfx_sp_vertex(size_t n_vertices, size_t dest_index, const Vtx *verti
                 intensity += vn->n[2] * rsp.current_lights_coeffs[i][2];
                 intensity /= 127.0f;
                 if (intensity > 0.0f) {
-                    r += intensity * rsp.current_lights[i].col[0];
-                    g += intensity * rsp.current_lights[i].col[1];
-                    b += intensity * rsp.current_lights[i].col[2];
+                    // Light colors
+                    int lightr = rsp.current_lights[i].col[0];
+                    int lightg = rsp.current_lights[i].col[1];
+                    int lightb = rsp.current_lights[i].col[2];
+
+                    // Override these too
+                    if (mario_hat) {
+                        r += intensity * defaultColorHatRLight;
+                        g += intensity * defaultColorHatGLight;
+                        b += intensity * defaultColorHatBLight;
+                    }
+                    else if (mario_overalls) {
+                        r += intensity * defaultColorOverallsRLight;
+                        g += intensity * defaultColorOverallsGLight;
+                        b += intensity * defaultColorOverallsBLight;
+                    }
+                    else if (mario_gloves) {
+                        r += intensity * defaultColorGlovesRLight;
+                        g += intensity * defaultColorGlovesGLight;
+                        b += intensity * defaultColorGlovesBLight;
+                    }
+                    else if (mario_shoes) {
+                        r += intensity * defaultColorShoesRLight;
+                        g += intensity * defaultColorShoesGLight;
+                        b += intensity * defaultColorShoesBLight;
+                    }
+                    else if (mario_skin) {
+                        r += intensity * defaultColorSkinRLight;
+                        g += intensity * defaultColorSkinGLight;
+                        b += intensity * defaultColorSkinBLight;
+                    }
+                    else if (mario_hair) {
+                        r += intensity * defaultColorHairRLight;
+                        g += intensity * defaultColorHairGLight;
+                        b += intensity * defaultColorHairBLight;
+                    }
+                    else {
+                        r += intensity * lightr;
+                        g += intensity * lightg;
+                        b += intensity * lightb;
+                    }
                 }
             }
 
