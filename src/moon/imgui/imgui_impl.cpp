@@ -464,7 +464,7 @@ namespace MoonInternal {
                             }
                             ImGui::EndCombo();
                         }
-                        if (ImGui::Button("Load")) {
+                        if (ImGui::Button("Set Eyes")) {
                             custom_eye_name = "eyes/" + eye_array[current_eye_id];
                             saturn_eye_swap();
                         }
@@ -491,7 +491,7 @@ namespace MoonInternal {
                         }
                         ImGui::EndCombo();
                     }
-                    if (ImGui::Button("Load")) {
+                    if (ImGui::Button("Load CC")) {
                         load_cc_file(cc_array[current_cc_id]);
 
                         uiHatColor = ImVec4(float(defaultColorHatRLight) / 255.0f, float(defaultColorHatGLight) / 255.0f, float(defaultColorHatBLight) / 255.0f, 255.0f / 255.0f);
@@ -543,7 +543,7 @@ namespace MoonInternal {
 
                     ImGui::Dummy(ImVec2(0, 5));
 
-                    if (ImGui::Button("Load")) {
+                    if (ImGui::Button("Apply to Game")) {
                         apply_cc_from_editor();
                     }
 
