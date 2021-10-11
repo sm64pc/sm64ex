@@ -83,9 +83,9 @@ namespace MoonInternal {
         string cwd = MoonInternal::getEnvironmentVar("MOON_CWD");
 #ifdef __MINGW32__
         // Windows moment
-        colorCodeDir = cwd.substr(0, cwd.find_last_of("/\\")) + "\\machinima\\colorcodes\\";
+        colorCodeDir = cwd.substr(0, cwd.find_last_of("/\\")) + "\\addons\\saturn\\assets\\colorcodes\\";
 #else
-        colorCodeDir = cwd.substr(0, cwd.find_last_of("/\\")) + "/machinima/colorcodes/";
+        colorCodeDir = cwd.substr(0, cwd.find_last_of("/\\")) + "/addons/saturn/assets/colorcodes/";
 #endif
 
         for (const auto & entry : fs::directory_iterator(colorCodeDir))
@@ -334,9 +334,9 @@ namespace MoonInternal {
         //std::cout << gameshark << std::endl;
 
 #ifdef __MINGW32__
-        std::ofstream file("machinima\\colorcodes\\" + name + ".gs");
+        std::ofstream file("addons\\saturn\\assets\\colorcodes\\" + name + ".gs");
 #else
-        std::ofstream file("machinima/colorcodes/" + name + ".gs");
+        std::ofstream file("addons/saturn/assets/colorcodes/" + name + ".gs");
 #endif
         file << gameshark;
     }

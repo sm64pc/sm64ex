@@ -60,7 +60,7 @@ ImGuiConfig configImGui = {
     .texture_debug = false,
     .s_toggles = false,
     .s_machinima = false,
-    .s_cceditor = false,
+    .s_appearance = false,
     .s_options = false,
     .n64Mode = false
 };
@@ -183,7 +183,7 @@ static const struct ConfigOption options[] = {
     {.name = "texture_debug_win",    .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.texture_debug},
     {.name = "s_toggles_win",        .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_toggles},
     {.name = "s_machinima",          .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_machinima},
-    {.name = "s_cceditor_win",     .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_cceditor},
+    {.name = "s_appearance_win",     .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_appearance},
     {.name = "s_options_win",      .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_options},
     {.name = "n64Mode",              .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.n64Mode}
 };

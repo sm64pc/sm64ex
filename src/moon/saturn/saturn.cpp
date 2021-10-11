@@ -6,6 +6,7 @@
 #include "pc/configfile.h"
 
 #include "saturn_colors.h"
+#include "saturn_textures.h"
 
 #include <SDL2/SDL.h>
 
@@ -33,6 +34,11 @@ bool enable_dust_particles;
 bool show_menu_bar;
 
 float camera_speed = 0.0f;
+bool enable_cap_logo;
+
+// Second Check
+
+bool has_changed_cap_logo;
 
 namespace MoonInternal {
 
@@ -59,6 +65,12 @@ namespace MoonInternal {
                 show_menu_bar = false;
 
                 MoonInternal::load_cc_directory();
+                
+                // custom textures
+                saturn_load_eye_array();
+                custom_eye_name = "eyes/" + eye_array[0];
+                saturn_eye_swap();
+                saturn_toggle_m_cap();
             }});
 
             Moon::registerHookListener({.hookName = WINDOW_API_HANDLE_EVENTS, .callback = [&](HookCall call){
@@ -69,10 +81,10 @@ namespace MoonInternal {
                             freeze_camera();
                         }
                         if(ev->key.keysym.sym == SDLK_x){
-                            cycle_eye_state(1);
+                            //cycle_eye_state(1);
                         }
                         if(ev->key.keysym.sym == SDLK_z){
-                            cycle_eye_state(-1);
+                            //cycle_eye_state(-1);
                         }
                         if(ev->key.keysym.sym == SDLK_F1){
                             show_menu_bar = !show_menu_bar;
@@ -82,10 +94,10 @@ namespace MoonInternal {
                             freeze_camera();
                         }
                         if (ev->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_RIGHT) {
-                            cycle_eye_state(1);
+                            //cycle_eye_state(1);
                         }
                         if (ev->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_LEFT) {
-                            cycle_eye_state(-1);
+                            //cycle_eye_state(-1);
                         }
                         if(ev->cbutton.button == SDL_CONTROLLER_BUTTON_BACK){
                             show_menu_bar = !show_menu_bar;
@@ -109,20 +121,15 @@ namespace MoonInternal {
                     gCameraMovementFlags &= ~CAM_MOVE_FIX_IN_PLACE;
                 }
 
-                // Body States
+                // Custom Textures
 
-                if (current_cap_state >= 3) {
-                    current_cap_state = 0;
+                if (enable_cap_logo && !has_changed_cap_logo) {
+                    saturn_toggle_m_cap();
+                    has_changed_cap_logo = true;
                 }
-
-                if (current_eye_state >= 9) {
-                    current_eye_state = 0;
-                } else if (current_eye_state <= -1) {
-                    current_eye_state = 8;
-                }
-
-                if (current_hand_state >= 6) {
-                    current_hand_state = 0;
+                if (!enable_cap_logo && has_changed_cap_logo) {
+                    saturn_toggle_m_cap();
+                    has_changed_cap_logo = false;
                 }
             }});
         }

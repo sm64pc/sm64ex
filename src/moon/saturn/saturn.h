@@ -15,5 +15,6 @@ extern bool camera_frozen;
 extern bool show_menu_bar;
 
 extern float camera_speed;
+extern bool enable_cap_logo;
 
 #endif

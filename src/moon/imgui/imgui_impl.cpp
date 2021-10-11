@@ -14,6 +14,7 @@
 #include "moon/mod-engine/engine.h"
 #include "moon/saturn/saturn.h"
 #include "moon/saturn/saturn_colors.h"
+#include "moon/saturn/saturn_textures.h"
 #include "moon/saturn/saturn_types.h"
 #include "icons/IconsForkAwesome.h"
 #include "icons/IconsMaterialDesign.h"
@@ -157,6 +158,8 @@ namespace MoonInternal {
     bool hasChangedFullscreen;
     int tempXRes;
     int tempYRes;
+
+    int selected_eye_item = 0;
 
     void setupFonts() {
         ImGuiIO& io = ImGui::GetIO();
@@ -325,7 +328,7 @@ namespace MoonInternal {
                             ImGui::MenuItem("Stats", NULL, &configImGui.moon64);
                             ImGui::MenuItem("Machinima", NULL, &configImGui.s_machinima);
                             ImGui::MenuItem("Quick Toggles", NULL, &configImGui.s_toggles);
-                            ImGui::MenuItem("CC Editor", NULL, &configImGui.s_cceditor);
+                            ImGui::MenuItem("Appearance", NULL, &configImGui.s_appearance);
                             //ImGui::MenuItem("Debug Textures", NULL, &configImGui.texture_debug);
                             ImGui::EndMenu();
                         }
@@ -401,6 +404,8 @@ namespace MoonInternal {
                         ImGui::TableNextColumn();
                         ImGui::Checkbox("HUD", &configHUD);
                         ImGui::TableNextColumn();
+                        ImGui::Checkbox("M Cap Logo", &enable_cap_logo);
+                        ImGui::TableNextColumn();
                         ImGui::Checkbox("Head Rotations", &enable_head_rotations);
                         ImGui::TableNextColumn();
                         ImGui::Checkbox("Shadows", &enable_shadows);
@@ -408,6 +413,13 @@ namespace MoonInternal {
                         ImGui::Checkbox("Dust Particles", &enable_dust_particles);
                         ImGui::EndTable();
                     }
+
+                    ImGui::Dummy(ImVec2(0, 5));
+
+                    const char* handStates[] = { "Fists", "Open", "Peace", "With Cap", "With Wing Cap", "Right Open" };
+                    ImGui::Combo("Hands", &current_hand_state, handStates, IM_ARRAYSIZE(handStates));
+                    const char* capStates[] = { "Cap On", "Cap Off", "Wing Cap" }; // unused "wing cap off" not included
+                    ImGui::Combo("Cap", &current_cap_state, capStates, IM_ARRAYSIZE(capStates));
 
                     ImGui::End();
                     ImGui::PopStyleColor();
@@ -424,13 +436,39 @@ namespace MoonInternal {
 
                     ImGui::Dummy(ImVec2(0, 10));
 
-                    ImGui::Text("Body States");
-                    const char* eyeStates[] = { "Default", "Open", "Half", "Closed", "Left", "Right", "Up", "Down", "Dead" };
-                    ImGui::Combo("Eyes", &current_eye_state, eyeStates, IM_ARRAYSIZE(eyeStates));
-                    const char* handStates[] = { "Fists", "Open", "Peace", "With Cap", "With Wing Cap", "Right Open" };
-                    ImGui::Combo("Hands", &current_hand_state, handStates, IM_ARRAYSIZE(handStates));
-                    const char* capStates[] = { "Cap On", "Cap Off", "Wing Cap" }; // unused "wing cap off" not included
-                    ImGui::Combo("Cap", &current_cap_state, capStates, IM_ARRAYSIZE(capStates));
+                    ImGui::Text("Eye State");
+                    const char* eyeStates[] = { "Default", "Open", "Half", "Closed", "Custom...", "Dead" };
+                    ImGui::Combo("Eyes", &selected_eye_item, eyeStates, IM_ARRAYSIZE(eyeStates));
+                    if (selected_eye_item == 0) current_eye_state = 0;
+                    if (selected_eye_item == 1) current_eye_state = 1;
+                    if (selected_eye_item == 2) current_eye_state = 2;
+                    if (selected_eye_item == 3) current_eye_state = 3;
+                    if (selected_eye_item == 5) current_eye_state = 8; // dead
+                    if (selected_eye_item == 4) {
+                        current_eye_state = 4;
+                        static int current_eye_id = 0;
+                        string eye_name = eye_array[current_eye_id];
+                        if (ImGui::BeginCombo(".png", eye_name.c_str()))
+                        {
+                            for (int o = 0; o < eye_array.size(); o++)
+                            {
+                                const bool is_eye_selected = (current_eye_id == o);
+                                eye_name = eye_array[o];
+                                if (ImGui::Selectable(eye_name.c_str(), is_eye_selected)) {
+                                    current_eye_id = o;
+                                }
+
+                                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                                if (is_eye_selected)
+                                    ImGui::SetItemDefaultFocus();
+                            }
+                            ImGui::EndCombo();
+                        }
+                        if (ImGui::Button("Load")) {
+                            custom_eye_name = "eyes/" + eye_array[current_eye_id];
+                            saturn_eye_swap();
+                        }
+                    }
 
                     ImGui::Dummy(ImVec2(0, 10));
 
@@ -480,9 +518,9 @@ namespace MoonInternal {
                     ImGui::End();
                     ImGui::PopStyleColor();
                 }
-                if (configImGui.s_cceditor && show_menu_bar) {
+                if (configImGui.s_appearance && show_menu_bar) {
                     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
-                    ImGui::Begin("CC Editor", NULL, ImGuiWindowFlags_None);
+                    ImGui::Begin("Appearance", NULL, ImGuiWindowFlags_None);
 
                     ImGui::Text("Shirt/Cap");
                     ImGui::ColorEdit4("Hat Main", (float*)&uiHatColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
