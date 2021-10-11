@@ -543,14 +543,14 @@ namespace MoonInternal {
 
                     ImGui::Dummy(ImVec2(0, 5));
 
-                    if (ImGui::Button("Apply to Game")) {
+                    if (ImGui::Button("Apply CC")) {
                         apply_cc_from_editor();
                     }
 
                     ImGui::Dummy(ImVec2(0, 5));
 
                     ImGui::InputText(".gs", bufname, IM_ARRAYSIZE(bufname));
-                    if (ImGui::Button("Save")) {
+                    if (ImGui::Button("Save to File")) {
                         apply_cc_from_editor();
 
                         std::string cc_name = bufname;
@@ -591,6 +591,9 @@ namespace MoonInternal {
                         ImGui::Text("Graphics Quality");
                         const char* lod_modes[] = { "Auto", "Low", "High" };
                         ImGui::Combo("###lod_modes", (int*)&configLODMode, lod_modes, IM_ARRAYSIZE(lod_modes));
+                        ImGui::Checkbox("Anti-aliasing", &configWindow.enable_antialias);
+                        if (configWindow.enable_antialias)
+                            ImGui::SliderInt("Anti-alias level", (int*)&configWindow.antialias_level, 0, 16);
                         ImGui::Text("Texture Filtering");
                         const char* texture_filters[] = { "Nearest", "Linear", "Three-point" };
                         ImGui::Combo("###texture_filters", (int*)&configFiltering, texture_filters, IM_ARRAYSIZE(texture_filters));
