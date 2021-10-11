@@ -591,9 +591,7 @@ namespace MoonInternal {
                         ImGui::Text("Graphics Quality");
                         const char* lod_modes[] = { "Auto", "Low", "High" };
                         ImGui::Combo("###lod_modes", (int*)&configLODMode, lod_modes, IM_ARRAYSIZE(lod_modes));
-                        ImGui::Checkbox("Anti-aliasing", &configWindow.enable_antialias);
-                        if (configWindow.enable_antialias)
-                            ImGui::SliderInt("Anti-alias level", (int*)&configWindow.antialias_level, 0, 16);
+                        ImGui::SliderFloat("Internal Multiplier", &configWindow.multiplier, 1.0f, 4.0f);
                         ImGui::Text("Texture Filtering");
                         const char* texture_filters[] = { "Nearest", "Linear", "Three-point" };
                         ImGui::Combo("###texture_filters", (int*)&configFiltering, texture_filters, IM_ARRAYSIZE(texture_filters));
