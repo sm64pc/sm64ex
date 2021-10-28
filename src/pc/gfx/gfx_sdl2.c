@@ -62,7 +62,7 @@ static void (*kb_all_keys_up)(void) = NULL;
 // whether to use timer for frame control
 static bool use_timer = true;
 // time between consequtive game frames
-static const int frame_time = 1000 / (2 * FRAMERATE);
+static const int frame_time = 1000 / FRAMERATE;
 
 const SDL_Scancode windows_scancode_table[] = {
   /*  0                        1                            2                         3                            4                     5                            6                            7  */
@@ -149,17 +149,13 @@ int test_vsync(void) {
 
 static inline void gfx_sdl_set_vsync(const bool enabled) {
 #ifdef TARGET_SWITCH
-    SDL_GL_SetSwapInterval(1);
+    SDL_GL_SetSwapInterval(2);
     use_timer = false;
 #else
     if (enabled) {
         // try to detect refresh rate
         SDL_GL_SetSwapInterval(1);
-        int vblanks = test_vsync();
-        if (vblanks & 1)
-            vblanks = 0; // not divisible by 60, fuck that
-        else
-            vblanks /= 2;
+        const int vblanks = test_vsync();
         if (vblanks) {
             printf("determined swap interval: %d\n", vblanks);
             SDL_GL_SetSwapInterval(vblanks);

@@ -66,3 +66,17 @@ void saturn_toggle_m_cap() {
         }
     }});
 }
+
+void saturn_toggle_m_buttons() {
+    Moon::registerHookListener({.hookName = TEXTURE_BIND, .callback = [](HookCall call) {
+        char* *hookTexture = reinterpret_cast<char**>(call.baseArgs["texture"]);
+        string texName = string(*hookTexture);
+        if(texName == "actors/mario/mario_overalls_button.rgba16") {
+            if (enable_overall_buttons) {
+                (*hookTexture) = const_cast<char*>("actors/mario/mario_overalls_button.rgba16");
+            } else {
+                (*hookTexture) = const_cast<char*>("blank");
+            }
+        }
+    }});
+}

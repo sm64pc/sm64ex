@@ -136,6 +136,8 @@ namespace MoonInternal {
         defaultColorHairGDark = 3;
         defaultColorHairBLight = 0;
         defaultColorHairBDark = 0;
+
+        enable_cap_logo = true;
     }
 
     void load_cc_file(string cc_filename) {
@@ -262,7 +264,7 @@ namespace MoonInternal {
                 defaultColorHairBDark = value1;
             }
 
-            //std::cout << address << std::endl;
+            enable_cap_logo = false;
         }
     }
 

@@ -12,6 +12,7 @@
 #include "moon/mod-engine/hooks/hook.h"
 #include "moon/mod-engine/textures/mod-texture.h"
 #include "moon/mod-engine/engine.h"
+#include "moon/texts/moon-loader.h"
 #include "moon/saturn/saturn.h"
 #include "moon/saturn/saturn_colors.h"
 #include "moon/saturn/saturn_textures.h"
@@ -399,27 +400,23 @@ namespace MoonInternal {
                     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
                     ImGui::Begin("Quick Toggles", NULL, ImGuiWindowFlags_None);
 
-                    if (ImGui::BeginTable("quick_toggles", 1))
-                    {
-                        ImGui::TableNextColumn();
-                        ImGui::Checkbox("HUD", &configHUD);
-                        ImGui::TableNextColumn();
-                        ImGui::Checkbox("M Cap Logo", &enable_cap_logo);
-                        ImGui::TableNextColumn();
+                    ImGui::Checkbox("HUD", &configHUD);
+
+                    if (ImGui::CollapsingHeader("Mario")) {
                         ImGui::Checkbox("Head Rotations", &enable_head_rotations);
-                        ImGui::TableNextColumn();
-                        ImGui::Checkbox("Shadows", &enable_shadows);
-                        ImGui::TableNextColumn();
-                        ImGui::Checkbox("Dust Particles", &enable_dust_particles);
-                        ImGui::EndTable();
+                        ImGui::Checkbox("M Cap Logo", &enable_cap_logo);
+                        ImGui::Checkbox("M Overall Buttons", &enable_overall_buttons);
+                        const char* capStates[] = { "Cap On", "Cap Off", "Wing Cap" }; // unused "wing cap off" not included
+                        ImGui::Combo("Cap", &current_cap_state, capStates, IM_ARRAYSIZE(capStates));
+                        const char* handStates[] = { "Fists", "Open", "Peace", "With Cap", "With Wing Cap", "Right Open" };
+                        ImGui::Combo("Hands", &current_hand_state, handStates, IM_ARRAYSIZE(handStates));
+                        ImGui::Dummy(ImVec2(0, 5));
                     }
 
-                    ImGui::Dummy(ImVec2(0, 5));
+                    ImGui::Checkbox("Shadows", &enable_shadows);
+                    ImGui::Checkbox("Dust Particles", &enable_dust_particles);
 
-                    const char* handStates[] = { "Fists", "Open", "Peace", "With Cap", "With Wing Cap", "Right Open" };
-                    ImGui::Combo("Hands", &current_hand_state, handStates, IM_ARRAYSIZE(handStates));
-                    const char* capStates[] = { "Cap On", "Cap Off", "Wing Cap" }; // unused "wing cap off" not included
-                    ImGui::Combo("Cap", &current_cap_state, capStates, IM_ARRAYSIZE(capStates));
+                    ImGui::Dummy(ImVec2(0, 5));
 
                     ImGui::End();
                     ImGui::PopStyleColor();
@@ -431,7 +428,7 @@ namespace MoonInternal {
 
                     ImGui::Checkbox("Machinima Camera", &camera_frozen);
                     if (camera_frozen == true) {
-                        ImGui::SliderFloat("Speed", &camera_speed, 0.0f, 0.3f);
+                        ImGui::SliderFloat("Speed", &camera_speed, 0.2f, 0.8f);
                     }
 
                     ImGui::Dummy(ImVec2(0, 10));
@@ -445,6 +442,15 @@ namespace MoonInternal {
                     if (selected_eye_item == 3) current_eye_state = 3;
                     if (selected_eye_item == 5) current_eye_state = 8; // dead
                     if (selected_eye_item == 4) {
+
+                        /*
+                        SATURN: Moon Edition uses the unused "Left" eye state for custom textures.
+
+                        If you are a model author, you must manually add the switch option to your model.
+                        You can do this in Fast64 by navigating to 000-switch.001's bone and adding a material override under Switch Option 3.
+                        Switch Option 7 is the "Dead" eye state.
+                        */
+
                         current_eye_state = 4;
                         static int current_eye_id = 0;
                         string eye_name = eye_array[current_eye_id];
@@ -591,7 +597,8 @@ namespace MoonInternal {
                         ImGui::Text("Graphics Quality");
                         const char* lod_modes[] = { "Auto", "Low", "High" };
                         ImGui::Combo("###lod_modes", (int*)&configLODMode, lod_modes, IM_ARRAYSIZE(lod_modes));
-                        ImGui::SliderFloat("Internal Multiplier", &configWindow.multiplier, 1.0f, 4.0f);
+                        ImGui::Text("Internal Multiplier");
+                        ImGui::SliderFloat("###internal_multiplier", &configWindow.multiplier, 1.0f, 4.0f);
                         ImGui::Text("Texture Filtering");
                         const char* texture_filters[] = { "Nearest", "Linear", "Three-point" };
                         ImGui::Combo("###texture_filters", (int*)&configFiltering, texture_filters, IM_ARRAYSIZE(texture_filters));
@@ -604,12 +611,40 @@ namespace MoonInternal {
                         ImGui::SliderInt("Environment", (int*)&configEnvVolume, 0, MAX_VOLUME);
                     }
                     if (ImGui::CollapsingHeader("Gameplay")) {
-                        ImGui::Text("Rumble Strength");
-                        ImGui::SliderInt("###rumble_strength", (int*)&configRumbleStrength, 0, 50);
-                        ImGui::Checkbox("Skip Intro", &configSkipIntro);
+
+                        ImGui::Text("Game Language");
+                        char *configlangName = new char[255];
+	                    sprintf(configlangName,"%ls",Moon::languages[configLanguage]->name.c_str());
+                        if (ImGui::BeginCombo("###game_language", configlangName))
+                        {
+                            for (int i = 0; i < Moon::languages.size(); i++)
+                            {
+                                bool langBoxSelected = (configLanguage == i);
+                                char *langName = new char[255];
+	                            sprintf(langName,"%ls",Moon::languages[i]->name.c_str());
+
+                                if (ImGui::Selectable(langName, langBoxSelected)) {
+                                    Moon::setCurrentLanguage(Moon::languages[i]);
+                                    configLanguage = i;
+                                    configlangName = langName;
+                                }
+
+                                if (langBoxSelected)
+                                    ImGui::SetItemDefaultFocus();
+                            }
+                            ImGui::EndCombo();
+                        }
+                        ImGui::Dummy(ImVec2(0, 5));
+
 #ifdef DISCORDRPC
                         ImGui::Checkbox("Discord Activity Status", &configDiscordRPC);
+                        ImGui::Dummy(ImVec2(0, 5));
 #endif
+
+                        ImGui::Text("Rumble Strength");
+                        ImGui::SliderInt("###rumble_strength", (int*)&configRumbleStrength, 0, 50);
+                        ImGui::Checkbox("Precache Textures", &configPrecacheRes);
+                        ImGui::Checkbox("Skip Intro", &configSkipIntro);
                     }
 
                     ImGui::End();

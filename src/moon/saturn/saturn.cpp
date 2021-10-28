@@ -33,12 +33,14 @@ bool enable_dust_particles;
 
 bool show_menu_bar;
 
-float camera_speed = 0.0f;
+float camera_speed = 0.8f;
 bool enable_cap_logo;
+bool enable_overall_buttons;
 
 // Second Check
 
 bool has_changed_cap_logo;
+bool has_changed_overall_buttons;
 
 namespace MoonInternal {
 
@@ -58,19 +60,22 @@ namespace MoonInternal {
         if(status == "PreStartup"){
 
             Moon::registerHookListener({.hookName = WINDOW_API_INIT, .callback = [&](HookCall call){
+                show_menu_bar = false;
+
                 camera_frozen = false;
                 enable_shadows = true;
-                current_eye_state = 0;
-
-                show_menu_bar = false;
+                enable_cap_logo = true;
+                enable_overall_buttons = true;
 
                 MoonInternal::load_cc_directory();
                 
                 // custom textures
+                current_eye_state = 0;
                 saturn_load_eye_array();
                 custom_eye_name = "eyes/" + eye_array[0];
                 saturn_eye_swap();
                 saturn_toggle_m_cap();
+                saturn_toggle_m_buttons();
             }});
 
             Moon::registerHookListener({.hookName = WINDOW_API_HANDLE_EVENTS, .callback = [&](HookCall call){
@@ -109,6 +114,11 @@ namespace MoonInternal {
             Moon::registerHookListener({.hookName = GFX_PRE_START_FRAME, .callback = [&](HookCall call){
                 // Machinima Camera
 
+                machinimaMode = (camera_frozen) ? 1 : 0;
+                camVelSpeed = camera_speed;
+
+                /* OLD CAMERA...
+                
                 if (camera_frozen == true) {
                     if (set_cam_angle(0) != CAM_ANGLE_MARIO) {
                         gLakituState.focVSpeed = camera_speed;
@@ -120,6 +130,7 @@ namespace MoonInternal {
                     gCamera->yaw = gCamera->nextYaw;
                     gCameraMovementFlags &= ~CAM_MOVE_FIX_IN_PLACE;
                 }
+                */
 
                 // Custom Textures
 
@@ -127,9 +138,9 @@ namespace MoonInternal {
                     saturn_toggle_m_cap();
                     has_changed_cap_logo = true;
                 }
-                if (!enable_cap_logo && has_changed_cap_logo) {
-                    saturn_toggle_m_cap();
-                    has_changed_cap_logo = false;
+                if (!enable_overall_buttons && has_changed_overall_buttons) {
+                    saturn_toggle_m_buttons();
+                    has_changed_overall_buttons = false;
                 }
             }});
         }

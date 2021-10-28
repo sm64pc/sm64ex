@@ -16,5 +16,6 @@ extern bool show_menu_bar;
 
 extern float camera_speed;
 extern bool enable_cap_logo;
+extern bool enable_overall_buttons;
 
 #endif
