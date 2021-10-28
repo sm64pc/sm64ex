@@ -7,13 +7,15 @@
 // so o->oHomeY is never updated.
 static s16 sYoshiHomeLocations[] = { 0, -5625, -1364, -5912, -1403, -4609, -1004, -5308 };
 
+u8 enableYoshi;
+
 void bhv_yoshi_init(void) {
     o->oGravity = 2.0f;
     o->oFriction = 0.9f;
     o->oBuoyancy = 1.3f;
     o->oInteractionSubtype = INT_SUBTYPE_NPC;
 
-    if (save_file_get_total_star_count(gCurrSaveFileNum - 1, 0, 24) < 120 || sYoshiDead == TRUE) {
+    if (save_file_get_total_star_count(gCurrSaveFileNum - 1, 0, 24) < 120 || sYoshiDead == TRUE || enableYoshi == 0) {
         o->activeFlags = ACTIVE_FLAG_DEACTIVATED;
     }
 }
@@ -21,6 +23,10 @@ void bhv_yoshi_init(void) {
 void yoshi_walk_loop(void) {
     UNUSED s16 sp26;
     s16 sp24 = o->header.gfx.unk38.animFrame;
+
+    if (enableYoshi == 0) {
+        o->oAction = YOSHI_ACT_WALK_JUMP_OFF_ROOF;
+    }
 
     o->oForwardVel = 10.0f;
     sp26 = object_step();
@@ -46,6 +52,10 @@ void yoshi_walk_loop(void) {
 void yoshi_idle_loop(void) {
     s16 chosenHome;
     UNUSED s16 sp1C = o->header.gfx.unk38.animFrame;
+
+    if (enableYoshi == 0) {
+        o->oAction = YOSHI_ACT_WALK_JUMP_OFF_ROOF;
+    }
 
     if (o->oTimer > 90) {
         chosenHome = random_float() * 3.99;

@@ -24,6 +24,8 @@ extern "C" {
 #include "game/level_update.h"
 #include "game/mario.h"
 #include "sm64.h"
+#include "game/behavior_actions.h"
+#include "game/behaviors/yoshi.inc.h"
 }
 
 bool camera_frozen;
@@ -36,11 +38,13 @@ bool show_menu_bar;
 float camera_speed = 0.8f;
 bool enable_cap_logo;
 bool enable_overall_buttons;
+bool enable_yoshi;
 
 // Second Check
 
 bool has_changed_cap_logo;
 bool has_changed_overall_buttons;
+bool has_changed_yoshi;
 
 namespace MoonInternal {
 
@@ -66,6 +70,7 @@ namespace MoonInternal {
                 enable_shadows = true;
                 enable_cap_logo = true;
                 enable_overall_buttons = true;
+                enable_yoshi = false;
 
                 MoonInternal::load_cc_directory();
                 
@@ -142,6 +147,10 @@ namespace MoonInternal {
                     saturn_toggle_m_buttons();
                     has_changed_overall_buttons = false;
                 }
+
+                // Yoshi
+
+                enableYoshi = (enable_yoshi) ? 1 : 0;
             }});
         }
     }

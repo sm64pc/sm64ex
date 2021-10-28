@@ -645,6 +645,7 @@ namespace MoonInternal {
                         ImGui::SliderInt("###rumble_strength", (int*)&configRumbleStrength, 0, 50);
                         ImGui::Checkbox("Precache Textures", &configPrecacheRes);
                         ImGui::Checkbox("Skip Intro", &configSkipIntro);
+                        ImGui::Checkbox("Enable Yoshi", &enable_yoshi);
                     }
 
                     ImGui::End();
