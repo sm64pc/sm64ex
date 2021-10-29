@@ -21,7 +21,7 @@ Saturn currently supports Windows ([MSYS2](https://www.msys2.org/)) and Linux.
 
 *See [here](https://github.com/sm64pc/sm64ex/wiki) for other untested build platforms. These may require source code modifications.*
 
-![Screenshot](https://media.discordapp.net/attachments/833759041096384573/895822644782448690/screenshot.png?width=960&height=599)
+![Screenshot](https://cdn.discordapp.com/attachments/863117129347891251/903456042141249566/unknown.png)
 
 *In case you feel this project deserves some extra love, I have a Ko-fi below.*
 
