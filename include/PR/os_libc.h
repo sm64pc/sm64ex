@@ -5,7 +5,7 @@
 
 // old bstring functions that aren't present on some platforms
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) || defined(__HAIKU__)
 
 // macOS libc has them
 #include <strings.h>
