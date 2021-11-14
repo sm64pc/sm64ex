@@ -640,6 +640,9 @@ else ifeq ($(TARGET_RPI),1)
 else ifeq ($(OSX_BUILD),1)
   LDFLAGS := -lm $(BACKEND_LDFLAGS) -no-pie -lpthread
 
+else ifeq ($(HOST_OS),Haiku)
+  LDFLAGS := $(BACKEND_LDFLAGS) -no-pie
+
 else
   LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm $(BACKEND_LDFLAGS) -lpthread -ldl
   ifeq ($(NO_PIE), 1)
