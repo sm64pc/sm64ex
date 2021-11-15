@@ -81,8 +81,22 @@ using namespace std;
 SDL_Window* window = nullptr;
 ImGuiIO* io = nullptr;
 
-#define SM64_WIDTH  320
-#define SM64_HEIGHT 240
+#define SM64_WIDTH  640
+#define SM64_HEIGHT 480
+
+// Helper to display a little (?) mark which shows a tooltip when hovered.
+static void HelpMarker(const char* desc)
+{
+    ImGui::TextDisabled("(?)");
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted(desc);
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+}
 
 #ifdef TARGET_SWITCH
 namespace MoonNX {
@@ -299,6 +313,7 @@ namespace MoonInternal {
                 if (!ImGui::DockBuilderGetNode(dockspace_id)) {
                     ImGui::DockBuilderRemoveNode(dockspace_id);
                     ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_NoTabBar);
+                    ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_NoDockingOverMe);
 
                     ImGui::DockBuilderDockWindow("Game", dockspace_id);
 
@@ -322,7 +337,7 @@ namespace MoonInternal {
                         ImGui::Separator();
                         if (ImGui::BeginMenu("Tools")) {
                             ImGui::MenuItem("Toggle View (F1)", NULL, &show_menu_bar);
-                            ImGui::MenuItem("N64 Mode", NULL, &configImGui.n64Mode);
+                            ImGui::MenuItem("Jabo Mode", NULL, &configImGui.n64Mode);
                             ImGui::EndMenu();
                         }
                         if (ImGui::BeginMenu("View")) {
@@ -371,15 +386,17 @@ namespace MoonInternal {
                     }
                 }
 
-                configWindow.internal_w = configImGui.n64Mode ? SM64_WIDTH : size.x;
-                configWindow.internal_h = configImGui.n64Mode ? SM64_HEIGHT : size.y;
+                configWindow.internal_w = (configImGui.n64Mode && !show_menu_bar) ? SM64_WIDTH : size.x;
+                configWindow.internal_h = (configImGui.n64Mode && !show_menu_bar) ? SM64_HEIGHT : size.y;
 
+                /*
                 if(configImGui.n64Mode) {
                     configWindow.multiplier = (float)n64Mul;
                     int sw = size.y * SM64_WIDTH / SM64_HEIGHT;
                     pos = ImVec2(size.x / 2 - sw / 2, 0);
                     size = ImVec2(sw,  size.y);
                 }
+                */
 
                 int fbuf = stoi(MoonInternal::getEnvironmentVar("framebuffer"));
                 ImGui::ImageRotated((ImTextureID) fbuf, pos, size, 180.0f);
@@ -594,11 +611,14 @@ namespace MoonInternal {
                             }
                         }
                         ImGui::Checkbox("VSync", &configWindow.vsync);
+                        ImGui::Text("Internal Multiplier");
+                        ImGui::SliderFloat("###internal_multiplier", &configWindow.multiplier, 1.0f, 4.0f);
+                        ImGui::Checkbox("Jabo Mode", &configImGui.n64Mode);
+                        ImGui::SameLine(); HelpMarker(
+                            "Mimics Project64's widescreen stretching");
                         ImGui::Text("Graphics Quality");
                         const char* lod_modes[] = { "Auto", "Low", "High" };
                         ImGui::Combo("###lod_modes", (int*)&configLODMode, lod_modes, IM_ARRAYSIZE(lod_modes));
-                        ImGui::Text("Internal Multiplier");
-                        ImGui::SliderFloat("###internal_multiplier", &configWindow.multiplier, 1.0f, 4.0f);
                         ImGui::Text("Texture Filtering");
                         const char* texture_filters[] = { "Nearest", "Linear", "Three-point" };
                         ImGui::Combo("###texture_filters", (int*)&configFiltering, texture_filters, IM_ARRAYSIZE(texture_filters));
