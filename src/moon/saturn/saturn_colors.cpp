@@ -88,10 +88,12 @@ namespace MoonInternal {
         colorCodeDir = cwd.substr(0, cwd.find_last_of("/\\")) + "/addons/saturn/assets/colorcodes/";
 #endif
 
-        for (const auto & entry : fs::directory_iterator(colorCodeDir))
-            cc_array.push_back(entry.path().filename().u8string());
-
-        //std::cout << cc_array[0] << std::endl;
+        for (const auto & entry : fs::directory_iterator(colorCodeDir)) {
+            // Only search for .gs files
+            if (entry.path().filename().u8string().find(".gs") != string::npos) {
+                cc_array.push_back(entry.path().filename().u8string());
+            }
+        }
     }
 
     void reset_cc_colors() {
@@ -140,26 +142,7 @@ namespace MoonInternal {
         enable_cap_logo = true;
     }
 
-    void load_cc_file(string cc_filename) {
-        if (cc_filename == "Mario.gs") {
-            reset_cc_colors();
-            return;
-        }
-
-        std::ifstream file(colorCodeDir + cc_filename, std::ios::in | std::ios::binary);
-
-        // If the color code was previously deleted, reload the list and cancel.
-        if (!file.good()) {
-            load_cc_directory();
-            return;
-        }
-
-        const std::size_t& size = std::filesystem::file_size(colorCodeDir + cc_filename);
-        std::string content(size, '\0');
-        file.read(content.data(), size);
-
-        file.close();
-
+    void load_cc_data(string content) {
         std::istringstream f(content);
         std::string line;
         
@@ -268,7 +251,7 @@ namespace MoonInternal {
         }
     }
 
-    void save_cc_file(std::string name) {
+    std::string global_color_to_cc() {
         std::string gameshark;
 
         char col1char[64];
@@ -332,14 +315,52 @@ namespace MoonInternal {
         gameshark += "8107ECA2 " + col11.substr(4, 2) + "00\n";
         gameshark += "8107EC98 " + col12.substr(0, 2) + col12.substr(2, 2) + "\n";
         gameshark += "8107EC9A " + col12.substr(4, 2) + "00";
-        
-        //std::cout << gameshark << std::endl;
 
+        return gameshark;
+    }
+
+    void load_cc_file(string cc_filename) {
+        if (cc_filename == "Mario.gs") {
+            reset_cc_colors();
+            return;
+        }
+
+        std::ifstream file(colorCodeDir + cc_filename, std::ios::in | std::ios::binary);
+
+        // If the color code was previously deleted, reload the list and cancel.
+        if (!file.good()) {
+            load_cc_directory();
+            return;
+        }
+
+        const std::size_t& size = std::filesystem::file_size(colorCodeDir + cc_filename);
+        std::string content(size, '\0');
+        file.read(content.data(), size);
+        file.close();
+
+        load_cc_data(content);
+    }
+
+    void save_cc_file(std::string name) {
 #ifdef __MINGW32__
         std::ofstream file("addons\\saturn\\assets\\colorcodes\\" + name + ".gs");
 #else
         std::ofstream file("addons/saturn/assets/colorcodes/" + name + ".gs");
 #endif
-        file << gameshark;
+        file << global_color_to_cc();
+    }
+
+    void delete_cc_file(std::string name) {
+        if (name == "Mario")
+            name = "Sample";
+
+#ifdef __MINGW32__
+        string cc_path = "addons\\saturn\\assets\\colorcodes\\" + name + ".gs";
+#else
+        string cc_path = "addons/saturn/assets/colorcodes/" + name + ".gs";
+#endif
+
+        remove(cc_path.c_str());
+        load_cc_directory();
     }
 }
