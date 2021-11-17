@@ -12,6 +12,7 @@
 #include "game/camera.h"
 #include "seq_ids.h"
 #include "dialog_ids.h"
+#include "pc/configfile.h"
 
 #define EU_FLOAT(x) x
 // N.B. sound banks are different from the audio banks referred to in other
@@ -565,6 +566,13 @@ void create_next_audio_buffer(s16 *samples, u32 num_samples) {
  * Called from threads: thread5_game_loop
  */
 void play_sound(s32 soundBits, f32 *pos) {
+    u8 bank;
+
+    bank = (soundBits & SOUNDARGS_MASK_BANK) >> SOUNDARGS_SHIFT_BANK;
+
+    if (bank == SOUND_BANK_VOICE && !configVoicesEnabled)
+        return;
+
     sSoundRequests[sSoundRequestCount].soundBits = soundBits;
     sSoundRequests[sSoundRequestCount].position = pos;
     sSoundRequestCount++;
@@ -1764,7 +1772,7 @@ void stop_sounds_from_source(f32 *pos) {
 /**
  * Called from threads: thread3_main, thread5_game_loop
  */
-static void stop_sounds_in_bank(u8 bank) {
+void stop_sounds_in_bank(u8 bank) {
     u8 soundIndex = sSoundBanks[bank][0].next;
 
     while (soundIndex != 0xff) {

@@ -81,8 +81,8 @@ using namespace std;
 SDL_Window* window = nullptr;
 ImGuiIO* io = nullptr;
 
-#define SM64_WIDTH  640
-#define SM64_HEIGHT 480
+#define SM64_WIDTH  1280
+#define SM64_HEIGHT 960
 
 // Helper to display a little (?) mark which shows a tooltip when hovered.
 static void HelpMarker(const char* desc)
@@ -600,8 +600,8 @@ namespace MoonInternal {
                                 strcpy(cc_gameshark, global_color_to_cc().c_str());
                             }
                         }
-                        if (ImGui::BeginTabItem("CC GameShark")) {
-                            ImGui::InputTextMultiline("###gameshark", cc_gameshark, IM_ARRAYSIZE(cc_gameshark), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 25), ImGuiInputTextFlags_CharsUppercase);
+                        if (ImGui::BeginTabItem("GameShark")) {
+                            ImGui::InputTextMultiline("###gameshark_box", cc_gameshark, IM_ARRAYSIZE(cc_gameshark), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 25), ImGuiInputTextFlags_CharsUppercase);
 
                             ImGui::Dummy(ImVec2(0, 5));
 
@@ -672,6 +672,7 @@ namespace MoonInternal {
                         ImGui::SliderInt("SFX", (int*)&configSfxVolume, 0, MAX_VOLUME);
                         ImGui::SliderInt("Music", (int*)&configMusicVolume, 0, MAX_VOLUME);
                         ImGui::SliderInt("Environment", (int*)&configEnvVolume, 0, MAX_VOLUME);
+                        ImGui::Checkbox("Enable Voices", &configVoicesEnabled);
                     }
                     if (ImGui::CollapsingHeader("Gameplay")) {
 

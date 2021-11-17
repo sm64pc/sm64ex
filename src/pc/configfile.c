@@ -78,6 +78,7 @@ unsigned int configMasterVolume = MAX_VOLUME; // 0 - MAX_VOLUME
 unsigned int configMusicVolume = 0;
 unsigned int configSfxVolume = MAX_VOLUME;
 unsigned int configEnvVolume = MAX_VOLUME;
+bool configVoicesEnabled = false;
 
 // Keyboard mappings (VK_ values, by default keyboard/gamepad/mouse)
 unsigned int configKeyA[MAX_BINDS]          = { 0x0026,   0x1000,     0x1103     };
@@ -140,6 +141,7 @@ static const struct ConfigOption options[] = {
     {.name = "music_volume",         .type = CONFIG_TYPE_UINT, .uintValue = &configMusicVolume},
     {.name = "sfx_volume",           .type = CONFIG_TYPE_UINT, .uintValue = &configSfxVolume},
     {.name = "env_volume",           .type = CONFIG_TYPE_UINT, .uintValue = &configEnvVolume},
+    {.name = "voices_enabled",       .type = CONFIG_TYPE_BOOL, .boolValue = &configVoicesEnabled},
     {.name = "key_a",                .type = CONFIG_TYPE_BIND, .uintValue = configKeyA},
     {.name = "key_b",                .type = CONFIG_TYPE_BIND, .uintValue = configKeyB},
     {.name = "key_start",            .type = CONFIG_TYPE_BIND, .uintValue = configKeyStart},
@@ -184,7 +186,7 @@ static const struct ConfigOption options[] = {
     {.name = "s_toggles_win",        .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_toggles},
     {.name = "s_machinima",          .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_machinima},
     {.name = "s_appearance_win",     .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_appearance},
-    {.name = "s_options_win",      .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_options},
+    {.name = "s_options_win",        .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_options},
     {.name = "n64Mode",              .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.n64Mode}
 };
 
