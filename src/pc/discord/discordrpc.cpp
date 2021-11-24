@@ -228,7 +228,7 @@ string getLevelLogo(){
 }
 
 void set_logo(void) {
-    discordRichPresence.largeImageKey = "saturn-logo-star-bg";
+    discordRichPresence.largeImageKey = "saturn-moon-full";
     discordRichPresence.largeImageText = "https://github.com/Llennpie/Saturn";
 }
 

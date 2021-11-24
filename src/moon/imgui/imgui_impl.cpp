@@ -176,6 +176,9 @@ namespace MoonInternal {
 
     int selected_eye_item = 0;
 
+    int selected_sky_item = 0;
+    int current_sky_item = 0;
+
     void setupFonts() {
         ImGuiIO& io = ImGui::GetIO();
         // for (auto entry = Moon::fonts.begin(); entry != Moon::fonts.end(); entry++){
@@ -338,6 +341,7 @@ namespace MoonInternal {
                         if (ImGui::BeginMenu("Tools")) {
                             ImGui::MenuItem("Toggle View (F1)", NULL, &show_menu_bar);
                             ImGui::MenuItem("Jabo Mode", NULL, &configImGui.n64Mode);
+                            ImGui::MenuItem("Night Mode", NULL, &enable_night_skybox);
                             ImGui::EndMenu();
                         }
                         if (ImGui::BeginMenu("View")) {
@@ -427,11 +431,25 @@ namespace MoonInternal {
                         ImGui::Combo("Cap", &current_cap_state, capStates, IM_ARRAYSIZE(capStates));
                         const char* handStates[] = { "Fists", "Open", "Peace", "With Cap", "With Wing Cap", "Right Open" };
                         ImGui::Combo("Hands", &current_hand_state, handStates, IM_ARRAYSIZE(handStates));
+                        ImGui::Checkbox("Dust Particles", &enable_dust_particles);
                         ImGui::Dummy(ImVec2(0, 5));
                     }
 
                     ImGui::Checkbox("Shadows", &enable_shadows);
-                    ImGui::Checkbox("Dust Particles", &enable_dust_particles);
+                    const char* skyStates[] = { "Default", "Night", "Green", "Blue", "Pink"};
+                    ImGui::Combo("Skybox", &selected_sky_item, skyStates, IM_ARRAYSIZE(skyStates));
+
+                    if (selected_sky_item != current_sky_item) {
+                        current_sky_item = selected_sky_item;
+                        if (selected_sky_item == 0) custom_sky_name = "default";
+                        if (selected_sky_item == 1) custom_sky_name = "skyboxes/night";
+                        if (selected_sky_item == 2) custom_sky_name = "skyboxes/green";
+                        if (selected_sky_item == 3) custom_sky_name = "skyboxes/blue";
+                        if (selected_sky_item == 4) custom_sky_name = "skyboxes/pink";
+                        saturn_sky_swap();
+                    }
+                    
+                    //ImGui::Checkbox("Night Mode", &enable_night_skybox);
 
                     ImGui::Dummy(ImVec2(0, 5));
 
@@ -642,10 +660,12 @@ namespace MoonInternal {
                     ImGui::Begin("Settings", NULL, ImGuiWindowFlags_None);
 
                     if (ImGui::CollapsingHeader("Graphics")) {
+                        /*
                         if (ImGui::Button("Toggle Fullscreen")) {
                             configWindow.fullscreen = !configWindow.fullscreen;
                             configWindow.settings_changed = true;
                         }
+                        */
                         if (!configWindow.fullscreen) {
                             if (ImGui::Button("Reset Window Size")) {
                                 configWindow.w = 1280;

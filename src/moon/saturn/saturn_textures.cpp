@@ -20,6 +20,7 @@ extern "C" {
 }
 
 string custom_eye_name;
+string custom_sky_name;
 
 std::vector<string> eye_array;
 string eyeDir;
@@ -80,3 +81,33 @@ void saturn_toggle_m_buttons() {
         }
     }});
 }
+
+void saturn_sky_swap() {
+    Moon::registerHookListener({.hookName = TEXTURE_BIND, .callback = [](HookCall call) {
+        char* *hookTexture = reinterpret_cast<char**>(call.baseArgs["texture"]);
+        string texName = string(*hookTexture);
+        if(texName.find("textures/skyboxes/") != string::npos) {
+            if (custom_sky_name != "default") {
+                (*hookTexture) = const_cast<char*>(custom_sky_name.c_str());
+            } else {
+                (*hookTexture) = const_cast<char*>(texName.c_str());
+            }
+        }
+    }});
+}
+
+/*
+void saturn_toggle_night_skybox() {
+    Moon::registerHookListener({.hookName = TEXTURE_BIND, .callback = [](HookCall call) {
+        char* *hookTexture = reinterpret_cast<char**>(call.baseArgs["texture"]);
+        string texName = string(*hookTexture);
+        if(texName.find("textures/skyboxes/") != string::npos) {
+            if (enable_night_skybox) {
+                (*hookTexture) = const_cast<char*>("night_skybox");
+            } else {
+                (*hookTexture) = const_cast<char*>(texName.c_str());
+            }
+        }
+    }});
+}
+*/

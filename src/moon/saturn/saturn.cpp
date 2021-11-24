@@ -38,12 +38,14 @@ bool show_menu_bar;
 float camera_speed = 0.8f;
 bool enable_cap_logo;
 bool enable_overall_buttons;
+bool enable_night_skybox;
 bool enable_yoshi;
 
 // Second Check
 
 bool has_changed_cap_logo;
 bool has_changed_overall_buttons;
+bool has_changed_night_skybox;
 bool has_changed_yoshi;
 
 namespace MoonInternal {
@@ -88,7 +90,8 @@ namespace MoonInternal {
                 switch (ev->type){
                     case SDL_KEYDOWN:
                         if(ev->key.keysym.sym == SDLK_f){
-                            freeze_camera();
+                            if (!show_menu_bar)
+                                freeze_camera();
                         }
                         if(ev->key.keysym.sym == SDLK_x){
                             //cycle_eye_state(1);
@@ -101,7 +104,8 @@ namespace MoonInternal {
                         }
                     case SDL_CONTROLLERBUTTONDOWN:
                         if (ev->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_UP) {
-                            freeze_camera();
+                            if (!show_menu_bar)
+                                freeze_camera();
                         }
                         if (ev->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_RIGHT) {
                             //cycle_eye_state(1);
@@ -147,6 +151,12 @@ namespace MoonInternal {
                     saturn_toggle_m_buttons();
                     has_changed_overall_buttons = false;
                 }
+                /*
+                if (enable_night_skybox && !has_changed_night_skybox) {
+                    saturn_toggle_night_skybox();
+                    has_changed_night_skybox = true;
+                }
+                */
 
                 // Yoshi
 
