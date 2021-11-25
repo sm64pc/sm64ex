@@ -154,14 +154,12 @@ static inline void gfx_sdl_set_vsync(const bool enabled) {
         if (vblanks) {
             printf("determined swap interval: %d\n", vblanks);
             SDL_GL_SetSwapInterval(vblanks);
-            use_timer = false;
             return;
         } else {
             printf("could not determine swap interval, falling back to timer sync\n");
         }
     }
 
-    use_timer = true;
     SDL_GL_SetSwapInterval(0);
 }
 
@@ -233,6 +231,7 @@ static void gfx_sdl_init(const char *window_title) {
     gfx_sdl_set_fullscreen();
 
     perf_freq = SDL_GetPerformanceFrequency();
+
     frame_time = perf_freq / FRAMERATE;
 
     for (size_t i = 0; i < sizeof(windows_scancode_table) / sizeof(SDL_Scancode); i++) {
@@ -362,7 +361,7 @@ static inline void sync_framerate_with_timer(void) {
 }
 
 static void gfx_sdl_swap_buffers_begin(void) {
-    if (use_timer) sync_framerate_with_timer();
+    sync_framerate_with_timer();
     SDL_GL_SwapWindow(wnd);
 }
 
