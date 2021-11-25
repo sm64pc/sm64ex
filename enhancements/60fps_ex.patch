@@ -1890,28 +1890,15 @@ index 0467495..fa4eb33 100644
  
  using namespace Microsoft::WRL; // For ComPtr
 diff --git a/src/pc/gfx/gfx_sdl2.c b/src/pc/gfx/gfx_sdl2.c
-index 0108ca9..28d56ac 100644
+index daff686..66fb346 100644
 --- a/src/pc/gfx/gfx_sdl2.c
 +++ b/src/pc/gfx/gfx_sdl2.c
-@@ -150,7 +150,11 @@ static inline void gfx_sdl_set_vsync(const bool enabled) {
-     if (enabled) {
-         // try to detect refresh rate
-         SDL_GL_SetSwapInterval(1);
--        const int vblanks = gCLIOpts.SyncFrames ? (int)gCLIOpts.SyncFrames : test_vsync();
-+        int vblanks = test_vsync();
-+        if (vblanks & 1)
-+            vblanks = 0; // not divisible by 60, fuck that
-+        else
-+            vblanks /= 2;
-         if (vblanks) {
-             printf("determined swap interval: %d\n", vblanks);
-             SDL_GL_SetSwapInterval(vblanks);
-@@ -233,7 +237,7 @@ static void gfx_sdl_init(const char *window_title) {
-     gfx_sdl_set_fullscreen();
+@@ -186,7 +186,7 @@ static void gfx_sdl_init(const char *window_title) {
  
      perf_freq = SDL_GetPerformanceFrequency();
--    frame_time = perf_freq / FRAMERATE;
-+    frame_time = perf_freq / (2 * FRAMERATE);
+ 
+-    frame_rate = perf_freq / FRAMERATE;
++    frame_rate = perf_freq / (2 * FRAMERATE);
  
      for (size_t i = 0; i < sizeof(windows_scancode_table) / sizeof(SDL_Scancode); i++) {
          inverted_scancode_table[windows_scancode_table[i]] = i;
