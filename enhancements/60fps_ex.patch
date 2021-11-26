@@ -1890,18 +1890,18 @@ index 0467495..fa4eb33 100644
  
  using namespace Microsoft::WRL; // For ComPtr
 diff --git a/src/pc/gfx/gfx_sdl2.c b/src/pc/gfx/gfx_sdl2.c
-index daff686..66fb346 100644
+index 243a704..193a245 100644
 --- a/src/pc/gfx/gfx_sdl2.c
 +++ b/src/pc/gfx/gfx_sdl2.c
-@@ -186,7 +186,7 @@ static void gfx_sdl_init(const char *window_title) {
+@@ -181,7 +181,7 @@ static void gfx_sdl_init(const char *window_title) {
  
      perf_freq = SDL_GetPerformanceFrequency();
  
 -    frame_rate = perf_freq / FRAMERATE;
 +    frame_rate = perf_freq / (2 * FRAMERATE);
+     frame_time = SDL_GetPerformanceCounter();
  
      for (size_t i = 0; i < sizeof(windows_scancode_table) / sizeof(SDL_Scancode); i++) {
-         inverted_scancode_table[windows_scancode_table[i]] = i;
 diff --git a/src/pc/pc_main.c b/src/pc/pc_main.c
 index 923e7ea..4fe6161 100644
 --- a/src/pc/pc_main.c
