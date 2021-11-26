@@ -187,6 +187,7 @@ static void gfx_sdl_init(const char *window_title) {
     perf_freq = SDL_GetPerformanceFrequency();
 
     frame_rate = perf_freq / FRAMERATE;
+    frame_time = SDL_GetPerformanceCounter();
 
     for (size_t i = 0; i < sizeof(windows_scancode_table) / sizeof(SDL_Scancode); i++) {
         inverted_scancode_table[windows_scancode_table[i]] = i;
@@ -287,19 +288,23 @@ static void gfx_sdl_set_keyboard_callbacks(kb_callback_t on_key_down, kb_callbac
 }
 
 static bool gfx_sdl_start_frame(void) {
-    frame_time = SDL_GetPerformanceCounter();
     return true;
 }
 
 static inline void sync_framerate_with_timer(void) {
     // calculate how long it took for the frame to render
-    const double frame_length = SDL_GetPerformanceCounter() - frame_time;
+    const double now = SDL_GetPerformanceCounter();
+    const double frame_length = now - frame_time;
 
     if (frame_length < frame_rate) {
         // Only sleep if we have time to spare
         const double remain = frame_rate - frame_length;
         // Sleep remaining time away
         sys_sleep(remain / perf_freq * 1000000.0);
+        // Assume we slept the required amount of time to keep the timer stable
+        frame_time = now + remain;
+    } else {
+        frame_time = now;
     }
 }
 
