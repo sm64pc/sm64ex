@@ -112,11 +112,6 @@ const SDL_Scancode scancode_rmapping_nonextended[][2] = {
 
 #define IS_FULLSCREEN() ((SDL_GetWindowFlags(wnd) & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
 
-static inline void sys_sleep(const uint64_t us) {
-    // TODO: not everything has usleep()
-    usleep(us);
-}
-
 static void gfx_sdl_set_fullscreen(void) {
     if (configWindow.reset)
         configWindow.fullscreen = false;
