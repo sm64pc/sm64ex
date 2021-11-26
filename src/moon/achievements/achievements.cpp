@@ -336,6 +336,7 @@ namespace MoonInternal {
 
 namespace Moon {
     void showAchievement(Achievement* achievement){
+        return; // here at saturn we dont show achievements
         if(cheatsGotEnabled || gCurrDemoInput) return;
 
         if(find_if(entries[gCurrSaveFileNum - 1].begin(), entries[gCurrSaveFileNum - 1].end(),  [&cae = achievement] (auto &m) -> bool { return cae->id == m->achievement->id; }) != entries[gCurrSaveFileNum - 1].end()) return;

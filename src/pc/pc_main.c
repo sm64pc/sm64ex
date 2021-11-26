@@ -211,7 +211,7 @@ void main_func(char *argv[]) {
     #  define RAPI_NAME "OpenGL"
     # endif
 
-    char window_title[96] = "Saturn";
+    char window_title[96] = "Saturn: Moon Edition";
 
     gfx_init(wm_api, rendering_api, window_title);
     wm_api->set_keyboard_callbacks(keyboard_on_key_down, keyboard_on_key_up, keyboard_on_all_keys_up);

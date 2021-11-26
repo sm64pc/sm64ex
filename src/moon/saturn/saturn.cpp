@@ -104,8 +104,7 @@ namespace MoonInternal {
                         }
                     case SDL_CONTROLLERBUTTONDOWN:
                         if (ev->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_UP) {
-                            if (!show_menu_bar)
-                                freeze_camera();
+                            freeze_camera();
                         }
                         if (ev->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_RIGHT) {
                             //cycle_eye_state(1);

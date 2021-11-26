@@ -81,8 +81,8 @@ using namespace std;
 SDL_Window* window = nullptr;
 ImGuiIO* io = nullptr;
 
-#define SM64_WIDTH  1280
-#define SM64_HEIGHT 960
+#define SM64_WIDTH  960
+#define SM64_HEIGHT 720
 
 // Helper to display a little (?) mark which shows a tooltip when hovered.
 static void HelpMarker(const char* desc)
