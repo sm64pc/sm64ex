@@ -266,7 +266,11 @@ void main_func(void) {
 #endif
 }
 
+#if defined(WAPI_SDL1) && defined(__APPLE__)
+int SDL_main(int argc, char *argv[]) {
+#else
 int main(int argc, char *argv[]) {
+#endif
     parse_cli_opts(argc, argv);
     main_func();
     return 0;

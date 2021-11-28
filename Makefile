@@ -30,6 +30,9 @@ TARGET_WEB ?= 0
 # Makeflag to enable OSX fixes
 OSX_BUILD ?= 0
 
+# Makeflag to enable OSX fixes on older versions
+LEGACY_OSX_BUILD ?= 0
+
 # Enable -no-pie linker option
 NO_PIE ?= 1
 
@@ -194,7 +197,7 @@ ifeq ($(TARGET_RPI),1) # Define RPi to change SDL2 title & GLES2 hints
       VERSION_CFLAGS += -DUSE_GLES
 endif
 
-ifeq ($(OSX_BUILD),1) # Modify GFX & SDL2 for OSX GL
+ifeq (,$(filter 1,$(OSX_BUILD)$(LEGACY_OSX_BUILD))) # Modify GFX & SDL2 for OSX GL
      VERSION_CFLAGS += -DOSX_BUILD
 endif
 
@@ -436,7 +439,7 @@ ENDIAN_BITWIDTH := $(BUILD_DIR)/endian-and-bitwidth
 
 AS := $(CROSS)as
 
-ifeq ($(OSX_BUILD),1)
+ifeq (,$(filter 1,$(OSX_BUILD)$(LEGACY_OSX_BUILD)))
 AS := i686-w64-mingw32-as
 endif
 
@@ -468,6 +471,12 @@ ifeq ($(WINDOWS_BUILD),1) # fixes compilation in MXE on Linux and WSL
   OBJDUMP := $(CROSS)objdump
 else ifeq ($(OSX_BUILD),1)
   CPP := cpp-9 -P
+  OBJDUMP := i686-w64-mingw32-objdump
+  OBJCOPY := i686-w64-mingw32-objcopy
+else ifeq ($(LEGACY_OSX_BUILD),1)
+  CC := gcc
+  LD := $(CC)
+  CPP := cpp -P
   OBJDUMP := i686-w64-mingw32-objdump
   OBJCOPY := i686-w64-mingw32-objcopy
 else # Linux & other builds
@@ -502,7 +511,7 @@ else ifeq ($(findstring SDL,$(WINDOW_API)),SDL)
     BACKEND_LDFLAGS += -lglew32 -lglu32 -lopengl32
   else ifeq ($(TARGET_RPI),1)
     BACKEND_LDFLAGS += -lGLESv2
-  else ifeq ($(OSX_BUILD),1)
+  else ifeq (,$(filter 1,$(OSX_BUILD)$(LEGACY_OSX_BUILD)))
     BACKEND_LDFLAGS += -framework OpenGL `pkg-config --libs glew`
   else
     BACKEND_LDFLAGS += -lGL
@@ -538,6 +547,10 @@ ifneq ($(SDL1_USED)$(SDL2_USED),00)
   else
     BACKEND_LDFLAGS += `$(SDLCONFIG) --libs`
   endif
+endif
+
+ifeq ($(LEGACY_OSX_BUILD),1)
+  BACKEND_CFLAGS += -I/usr/local/include
 endif
 
 ifeq ($(WINDOWS_BUILD),1)
@@ -639,6 +652,9 @@ else ifeq ($(TARGET_RPI),1)
 
 else ifeq ($(OSX_BUILD),1)
   LDFLAGS := -lm $(BACKEND_LDFLAGS) -no-pie -lpthread
+   
+else ifeq ($(LEGACY_OSX_BUILD),1)
+  LDFLAGS := -lm $(BACKEND_LDFLAGS) -fno-pie -lpthread
 
 else ifeq ($(HOST_OS),Haiku)
   LDFLAGS := $(BACKEND_LDFLAGS) -no-pie
