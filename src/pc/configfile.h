@@ -22,13 +22,13 @@ typedef struct {
 } ConfigWindow;
 
 typedef struct {
-    bool moon64;
+    bool s_stats;
     bool s_toggles;
     bool s_machinima;
     bool s_appearance;
     bool s_options;
     bool texture_debug;
-    bool n64Mode;
+    bool jaboMode;
 } ImGuiConfig;
 
 extern ConfigWindow configWindow;

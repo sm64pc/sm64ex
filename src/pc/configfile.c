@@ -56,13 +56,13 @@ ConfigWindow configWindow       = {
 };
 
 ImGuiConfig configImGui = {
-    .moon64 = false,
+    .s_stats = false,
     .texture_debug = false,
     .s_toggles = false,
     .s_machinima = false,
     .s_appearance = false,
     .s_options = false,
-    .n64Mode = false
+    .jaboMode = false
 };
 
 unsigned int configLanguage     = 0;
@@ -181,13 +181,13 @@ static const struct ConfigOption options[] = {
     #endif
     {.name = "lodMode",              .type = CONFIG_TYPE_UINT, .uintValue = &configLODMode},
 
-    {.name = "moon64_win",           .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.moon64},
+    {.name = "s_stats_win",           .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_stats},
     {.name = "texture_debug_win",    .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.texture_debug},
     {.name = "s_toggles_win",        .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_toggles},
     {.name = "s_machinima",          .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_machinima},
     {.name = "s_appearance_win",     .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_appearance},
     {.name = "s_options_win",        .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_options},
-    {.name = "n64Mode",              .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.n64Mode}
+    {.name = "jaboMode",              .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.jaboMode}
 };
 
 // Reads an entire line from a file (excluding the newline character) and returns an allocated string

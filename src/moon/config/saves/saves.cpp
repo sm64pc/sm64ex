@@ -69,9 +69,9 @@ namespace MoonInternal {
         if(saveCache.find(fileIndex) == saveCache.end()){
         #ifndef TARGET_SWITCH
             string cwd = MoonInternal::getEnvironmentVar("MOON_UPATH");
-            string path = cwd.substr(0, cwd.find_last_of("/\\")) + "/moon64/Moon64-Save-"+to_string(fileIndex + 1)+".dat";
+            string path = cwd.substr(0, cwd.find_last_of("/\\")) + "/SaturnME/Moon64-Save-"+to_string(fileIndex + 1)+".dat";
         #else
-            string path = "sdmc:/moon64/Moon64-Save-"+to_string(fileIndex + 1)+".dat";
+            string path = "sdmc:/SaturnME/Moon64-Save-"+to_string(fileIndex + 1)+".dat";
         #endif
             saveCache[fileIndex] = new MoonCFG(path, false);
         #ifdef GAME_DEBUG
@@ -205,9 +205,9 @@ namespace MoonInternal {
     void eraseSaveFile( int fileIndex ){
     #ifndef TARGET_SWITCH
         string cwd = MoonInternal::getEnvironmentVar("MOON_UPATH");
-        string path = cwd.substr(0, cwd.find_last_of("/\\")) + "/moon64/Moon64-Save-"+to_string(fileIndex + 1)+".dat";
+        string path = cwd.substr(0, cwd.find_last_of("/\\")) + "/SaturnME/Moon64-Save-"+to_string(fileIndex + 1)+".dat";
     #else
-        string path = "sdmc:/moon64/Moon64-Save-"+to_string(fileIndex + 1)+".dat";
+        string path = "sdmc:/SaturnME/Moon64-Save-"+to_string(fileIndex + 1)+".dat";
     #endif
         if(fs::exists(path))
             fs::remove(path);
@@ -218,7 +218,7 @@ namespace MoonInternal {
             // Scan old save format
         #ifndef TARGET_SWITCH
             string cwd = MoonInternal::getEnvironmentVar("MOON_UPATH");
-            string path = cwd.substr(0, cwd.find_last_of("/\\")) + "/moon64/";
+            string path = cwd.substr(0, cwd.find_last_of("/\\")) + "/SaturnME/";
         #else
             string path = "sdmc:/";
         #endif

@@ -1,0 +1,11 @@
+{
+    "bit": {
+        "name": "Saturn",
+        "authors": [
+            "Llennpie"
+        ],
+        "description": "Main module for Saturn",
+        "version": 1.0,
+        "readOnly": true
+    }
+}

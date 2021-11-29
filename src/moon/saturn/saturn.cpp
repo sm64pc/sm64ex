@@ -36,15 +36,11 @@ bool enable_dust_particles;
 bool show_menu_bar;
 
 float camera_speed = 0.8f;
-bool enable_cap_logo;
-bool enable_overall_buttons;
 bool enable_night_skybox;
 bool enable_yoshi;
 
 // Second Check
 
-bool has_changed_cap_logo;
-bool has_changed_overall_buttons;
 bool has_changed_night_skybox;
 bool has_changed_yoshi;
 
@@ -70,8 +66,6 @@ namespace MoonInternal {
 
                 camera_frozen = false;
                 enable_shadows = true;
-                enable_cap_logo = true;
-                enable_overall_buttons = true;
                 enable_yoshi = false;
 
                 MoonInternal::load_cc_directory();
@@ -79,10 +73,15 @@ namespace MoonInternal {
                 // custom textures
                 current_eye_state = 0;
                 saturn_load_eye_array();
-                custom_eye_name = "eyes/" + eye_array[0];
+                custom_eye_name = "saturn/eyes/" + eye_array[0];
                 saturn_eye_swap();
-                saturn_toggle_m_cap();
-                saturn_toggle_m_buttons();
+
+                saturn_load_emblem_array();
+                custom_emblem_name = "saturn/blank";
+                saturn_emblem_swap();
+                saturn_load_stache_array();
+                saturn_load_button_array();
+                saturn_load_sideburn_array();
             }});
 
             Moon::registerHookListener({.hookName = WINDOW_API_HANDLE_EVENTS, .callback = [&](HookCall call){
@@ -137,23 +136,6 @@ namespace MoonInternal {
                     gCamera->nextYaw = calculate_yaw(gLakituState.focus, gLakituState.pos);
                     gCamera->yaw = gCamera->nextYaw;
                     gCameraMovementFlags &= ~CAM_MOVE_FIX_IN_PLACE;
-                }
-                */
-
-                // Custom Textures
-
-                if (enable_cap_logo && !has_changed_cap_logo) {
-                    saturn_toggle_m_cap();
-                    has_changed_cap_logo = true;
-                }
-                if (!enable_overall_buttons && has_changed_overall_buttons) {
-                    saturn_toggle_m_buttons();
-                    has_changed_overall_buttons = false;
-                }
-                /*
-                if (enable_night_skybox && !has_changed_night_skybox) {
-                    saturn_toggle_night_skybox();
-                    has_changed_night_skybox = true;
                 }
                 */
 

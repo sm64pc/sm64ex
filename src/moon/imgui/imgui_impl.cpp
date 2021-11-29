@@ -176,6 +176,15 @@ namespace MoonInternal {
 
     int selected_eye_item = 0;
 
+    int selected_emblem_item = 1;
+    int current_emblem_item = 1;
+    int selected_stache_item = 0;
+    int current_stache_item = 0;
+    int selected_button_item = 0;
+    int current_button_item = 0;
+    int selected_sideburn_item = 0;
+    int current_sideburn_item = 0;
+
     int selected_sky_item = 0;
     int current_sky_item = 0;
 
@@ -273,6 +282,10 @@ namespace MoonInternal {
             #ifdef TARGET_SWITCH
                 MoonNX::handleVirtualKeyboard("Init");
             #endif
+
+                static char cc_gameshark[1024 * 16] = "";
+                apply_cc_from_editor();
+                strcpy(cc_gameshark, global_color_to_cc().c_str());
             }});
 
             Moon::registerHookListener({.hookName = WINDOW_API_HANDLE_EVENTS, .callback = [](HookCall call){
@@ -340,12 +353,12 @@ namespace MoonInternal {
                         ImGui::Separator();
                         if (ImGui::BeginMenu("Tools")) {
                             ImGui::MenuItem("Toggle View (F1)", NULL, &show_menu_bar);
-                            ImGui::MenuItem("Jabo Mode", NULL, &configImGui.n64Mode);
-                            ImGui::MenuItem("Night Mode", NULL, &enable_night_skybox);
+                            ImGui::MenuItem("Jabo Mode", NULL, &configImGui.jaboMode);
+                            //ImGui::MenuItem("Night Mode", NULL, &enable_night_skybox);
                             ImGui::EndMenu();
                         }
                         if (ImGui::BeginMenu("View")) {
-                            ImGui::MenuItem("Stats", NULL, &configImGui.moon64);
+                            ImGui::MenuItem("Stats", NULL, &configImGui.s_stats);
                             ImGui::MenuItem("Machinima", NULL, &configImGui.s_machinima);
                             ImGui::MenuItem("Quick Toggles", NULL, &configImGui.s_toggles);
                             ImGui::MenuItem("Appearance", NULL, &configImGui.s_appearance);
@@ -390,11 +403,11 @@ namespace MoonInternal {
                     }
                 }
 
-                configWindow.internal_w = (configImGui.n64Mode && !show_menu_bar) ? SM64_WIDTH : size.x;
-                configWindow.internal_h = (configImGui.n64Mode && !show_menu_bar) ? SM64_HEIGHT : size.y;
+                configWindow.internal_w = (configImGui.jaboMode && !show_menu_bar) ? SM64_WIDTH : size.x;
+                configWindow.internal_h = (configImGui.jaboMode && !show_menu_bar) ? SM64_HEIGHT : size.y;
 
                 /*
-                if(configImGui.n64Mode) {
+                if(configImGui.jaboMode) {
                     configWindow.multiplier = (float)n64Mul;
                     int sw = size.y * SM64_WIDTH / SM64_HEIGHT;
                     pos = ImVec2(size.x / 2 - sw / 2, 0);
@@ -406,7 +419,7 @@ namespace MoonInternal {
                 ImGui::ImageRotated((ImTextureID) fbuf, pos, size, 180.0f);
                 ImGui::End();
 
-                if (configImGui.moon64 && show_menu_bar){
+                if (configImGui.s_stats && show_menu_bar){
                     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
                     ImGui::Begin("Stats", NULL, ImGuiWindowFlags_None);
 
@@ -421,37 +434,37 @@ namespace MoonInternal {
                     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
                     ImGui::Begin("Quick Toggles", NULL, ImGuiWindowFlags_None);
 
+                    ImGui::Dummy(ImVec2(0, 5));
+
                     ImGui::Checkbox("HUD", &configHUD);
+                    ImGui::Checkbox("Head Rotations", &enable_head_rotations);
 
-                    if (ImGui::CollapsingHeader("Mario")) {
-                        ImGui::Checkbox("Head Rotations", &enable_head_rotations);
-                        ImGui::Checkbox("M Cap Logo", &enable_cap_logo);
-                        ImGui::Checkbox("M Overall Buttons", &enable_overall_buttons);
-                        const char* capStates[] = { "Cap On", "Cap Off", "Wing Cap" }; // unused "wing cap off" not included
-                        ImGui::Combo("Cap", &current_cap_state, capStates, IM_ARRAYSIZE(capStates));
-                        const char* handStates[] = { "Fists", "Open", "Peace", "With Cap", "With Wing Cap", "Right Open" };
-                        ImGui::Combo("Hands", &current_hand_state, handStates, IM_ARRAYSIZE(handStates));
-                        ImGui::Checkbox("Dust Particles", &enable_dust_particles);
-                        ImGui::Dummy(ImVec2(0, 5));
-                    }
+                    const char* capStates[] = { "Cap On", "Cap Off", "Wing Cap" }; // unused "wing cap off" not included
+                    ImGui::Combo("Cap", &current_cap_state, capStates, IM_ARRAYSIZE(capStates));
+                    const char* handStates[] = { "Fists", "Open", "Peace", "With Cap", "With Wing Cap", "Right Open" };
+                    ImGui::Combo("Hands", &current_hand_state, handStates, IM_ARRAYSIZE(handStates));
 
+                    ImGui::Dummy(ImVec2(0, 5));
+                    
+                    ImGui::Checkbox("Dust Particles", &enable_dust_particles);
                     ImGui::Checkbox("Shadows", &enable_shadows);
+
+                    ImGui::Dummy(ImVec2(0, 5));
+
+                    /*
                     const char* skyStates[] = { "Default", "Night", "Green", "Blue", "Pink"};
                     ImGui::Combo("Skybox", &selected_sky_item, skyStates, IM_ARRAYSIZE(skyStates));
 
                     if (selected_sky_item != current_sky_item) {
                         current_sky_item = selected_sky_item;
                         if (selected_sky_item == 0) custom_sky_name = "default";
-                        if (selected_sky_item == 1) custom_sky_name = "skyboxes/night";
-                        if (selected_sky_item == 2) custom_sky_name = "skyboxes/green";
-                        if (selected_sky_item == 3) custom_sky_name = "skyboxes/blue";
-                        if (selected_sky_item == 4) custom_sky_name = "skyboxes/pink";
+                        if (selected_sky_item == 1) custom_sky_name = "saturn/skyboxes/night";
+                        if (selected_sky_item == 2) custom_sky_name = "saturn/skyboxes/green";
+                        if (selected_sky_item == 3) custom_sky_name = "saturn/skyboxes/blue";
+                        if (selected_sky_item == 4) custom_sky_name = "saturn/skyboxes/pink";
                         saturn_sky_swap();
                     }
-                    
-                    //ImGui::Checkbox("Night Mode", &enable_night_skybox);
-
-                    ImGui::Dummy(ImVec2(0, 5));
+                    */
 
                     ImGui::End();
                     ImGui::PopStyleColor();
@@ -466,51 +479,6 @@ namespace MoonInternal {
                     ImGui::Checkbox("Machinima Camera", &camera_frozen);
                     if (camera_frozen == true) {
                         ImGui::SliderFloat("Speed", &camera_speed, 0.2f, 0.8f);
-                    }
-
-                    ImGui::Dummy(ImVec2(0, 10));
-
-                    ImGui::Text("Eye State");
-                    const char* eyeStates[] = { "Default", "Open", "Half", "Closed", "Custom...", "Dead" };
-                    ImGui::Combo("Eyes", &selected_eye_item, eyeStates, IM_ARRAYSIZE(eyeStates));
-                    if (selected_eye_item == 0) current_eye_state = 0;
-                    if (selected_eye_item == 1) current_eye_state = 1;
-                    if (selected_eye_item == 2) current_eye_state = 2;
-                    if (selected_eye_item == 3) current_eye_state = 3;
-                    if (selected_eye_item == 5) current_eye_state = 8; // dead
-                    if (selected_eye_item == 4) {
-
-                        /*
-                        SATURN: Moon Edition uses the unused "Left" eye state for custom textures.
-
-                        If you are a model author, you must manually add the switch option to your model.
-                        You can do this in Fast64 by navigating to 000-switch.001's bone and adding a material override under Switch Option 3.
-                        Switch Option 7 is the "Dead" eye state.
-                        */
-
-                        current_eye_state = 4;
-                        static int current_eye_id = 0;
-                        string eye_name = eye_array[current_eye_id];
-                        if (ImGui::BeginCombo(".png", eye_name.c_str()))
-                        {
-                            for (int o = 0; o < eye_array.size(); o++)
-                            {
-                                const bool is_eye_selected = (current_eye_id == o);
-                                eye_name = eye_array[o];
-                                if (ImGui::Selectable(eye_name.c_str(), is_eye_selected)) {
-                                    current_eye_id = o;
-                                }
-
-                                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                                if (is_eye_selected)
-                                    ImGui::SetItemDefaultFocus();
-                            }
-                            ImGui::EndCombo();
-                        }
-                        if (ImGui::Button("Set Eyes")) {
-                            custom_eye_name = "eyes/" + eye_array[current_eye_id];
-                            saturn_eye_swap();
-                        }
                     }
 
                     ImGui::Dummy(ImVec2(0, 10));
@@ -558,6 +526,235 @@ namespace MoonInternal {
                         }
 
                         strcpy(cc_gameshark, global_color_to_cc().c_str());
+                    }
+
+                    ImGui::Dummy(ImVec2(0, 10));
+
+                    ImGui::Text("Eye State");
+                    const char* eyeStates[] = { "Default", "Custom...", "Open", "Half", "Closed", "Dead" };
+                    ImGui::Combo("Eyes", &selected_eye_item, eyeStates, IM_ARRAYSIZE(eyeStates));
+                    if (selected_eye_item == 0) current_eye_state = 0;
+                    if (selected_eye_item == 1 && eye_array.size() > 0) {
+
+                        /*
+                        SATURN: Moon Edition uses the unused "Left" eye state for custom textures.
+
+                        If you are a model author, you must manually add the switch option to your model.
+                        You can do this in Fast64 by navigating to 000-switch.001's bone and adding a material override under Switch Option 3.
+                        Switch Option 7 is the "Dead" eye state.
+                        */
+
+                        current_eye_state = 4;
+                        static int current_eye_id = 0;
+                        string eye_name = eye_array[current_eye_id];
+                        if (ImGui::BeginCombo(".png ###eye", eye_name.c_str()))
+                        {
+                            for (int o = 0; o < eye_array.size(); o++)
+                            {
+                                const bool is_eye_selected = (current_eye_id == o);
+                                eye_name = eye_array[o];
+                                if (ImGui::Selectable(eye_name.c_str(), is_eye_selected)) {
+                                    current_eye_id = o;
+                                }
+
+                                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                                if (is_eye_selected)
+                                    ImGui::SetItemDefaultFocus();
+                            }
+                            ImGui::EndCombo();
+                        }
+                        if (ImGui::Button("Set Eyes")) {
+                            custom_eye_name = "saturn/eyes/" + eye_array[current_eye_id];
+                            saturn_eye_swap();
+                        }
+                    }
+                    if (selected_eye_item == 2) current_eye_state = 1;
+                    if (selected_eye_item == 3) current_eye_state = 2;
+                    if (selected_eye_item == 4) current_eye_state = 3;
+                    if (selected_eye_item == 5) current_eye_state = 8; // dead eyes
+
+                    ImGui::Dummy(ImVec2(0, 5));
+
+                    if (ImGui::CollapsingHeader("Mario")) {
+                        const char* emblemStates[] = { "Default", "None", "Custom..." };
+                        ImGui::Combo("Emblem", &selected_emblem_item, emblemStates, IM_ARRAYSIZE(emblemStates));
+                        if (selected_emblem_item == 0 && current_emblem_item != 0) {
+                            current_emblem_item = 0;
+                            custom_emblem_name = "default";
+                            saturn_emblem_swap();
+                        } else if (selected_emblem_item == 1 && current_emblem_item != 1) {
+                            current_emblem_item = 1;
+                            custom_emblem_name = "saturn/blank";
+                            saturn_emblem_swap();
+                        } 
+                        else if (selected_emblem_item == 2 && emblem_array.size() > 0) {
+                            static int current_emblem_id = 0;
+
+                            // Only do this once
+                            if (current_emblem_item != 2) {
+                                current_emblem_item = 2;
+                                custom_emblem_name = "emblems/" + emblem_array[current_emblem_id];
+                                saturn_emblem_swap();
+                            }
+
+                            string emblem_name = emblem_array[current_emblem_id];
+                            if (ImGui::BeginCombo(".png ###emblem", emblem_name.c_str()))
+                            {
+                                for (int o = 0; o < emblem_array.size(); o++)
+                                {
+                                    const bool is_emblem_selected = (current_emblem_id == o);
+                                    emblem_name = emblem_array[o];
+                                    if (ImGui::Selectable(emblem_name.c_str(), is_emblem_selected)) {
+                                        current_emblem_id = o;
+                                    }
+
+                                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                                    if (is_emblem_selected)
+                                        ImGui::SetItemDefaultFocus();
+                                }
+                                ImGui::EndCombo();
+                            }
+                            if (ImGui::Button("Set Emblem")) {
+                                custom_emblem_name = "emblems/" + emblem_array[current_emblem_id];
+                                saturn_emblem_swap();
+                            }
+                            ImGui::Dummy(ImVec2(0, 5));
+                        }
+
+                        const char* stacheStates[] = { "Default", "None", "Custom..." };
+                        ImGui::Combo("Stache", &selected_stache_item, stacheStates, IM_ARRAYSIZE(stacheStates));
+                        if (selected_stache_item == 0 && current_stache_item != 0) {
+                            current_stache_item = 0;
+                            custom_stache_name = "default";
+                            saturn_stache_swap();
+                        } else if (selected_stache_item == 1 && current_stache_item != 1) {
+                            current_stache_item = 1;
+                            custom_stache_name = "saturn/blank";
+                            saturn_stache_swap();
+                        } 
+                        else if (selected_stache_item == 2 && stache_array.size() > 0) {
+                            static int current_stache_id = 0;
+
+                            // Only do this once
+                            if (current_stache_item != 2) {
+                                current_stache_item = 2;
+                                custom_stache_name = "staches/" + stache_array[current_stache_id];
+                                saturn_stache_swap();
+                            }
+
+                            string stache_name = stache_array[current_stache_id];
+                            if (ImGui::BeginCombo(".png ###stache", stache_name.c_str()))
+                            {
+                                for (int o = 0; o < stache_array.size(); o++)
+                                {
+                                    const bool is_stache_selected = (current_stache_id == o);
+                                    stache_name = stache_array[o];
+                                    if (ImGui::Selectable(stache_name.c_str(), is_stache_selected)) {
+                                        current_stache_id = o;
+                                    }
+
+                                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                                    if (is_stache_selected)
+                                        ImGui::SetItemDefaultFocus();
+                                }
+                                ImGui::EndCombo();
+                            }
+                            if (ImGui::Button("Set Stache")) {
+                                custom_stache_name = "staches/" + stache_array[current_stache_id];
+                                saturn_stache_swap();
+                            }
+                            ImGui::Dummy(ImVec2(0, 5));
+                        }
+
+                        const char* buttonStates[] = { "Default", "None", "Custom..." };
+                        ImGui::Combo("Buttons", &selected_button_item, buttonStates, IM_ARRAYSIZE(buttonStates));
+                        if (selected_button_item == 0 && current_button_item != 0) {
+                            current_button_item = 0;
+                            custom_button_name = "default";
+                            saturn_button_swap();
+                        } else if (selected_button_item == 1 && current_button_item != 1) {
+                            current_button_item = 1;
+                            custom_button_name = "saturn/blank";
+                            saturn_button_swap();
+                        } 
+                        else if (selected_button_item == 2 && button_array.size() > 0) {
+                            static int current_button_id = 0;
+
+                            // Only do this once
+                            if (current_button_item != 2) {
+                                current_button_item = 2;
+                                custom_button_name = "buttons/" + button_array[current_button_id];
+                                saturn_button_swap();
+                            }
+
+                            string button_name = button_array[current_button_id];
+                            if (ImGui::BeginCombo(".png ###button", button_name.c_str()))
+                            {
+                                for (int o = 0; o < button_array.size(); o++)
+                                {
+                                    const bool is_button_selected = (current_button_id == o);
+                                    button_name = button_array[o];
+                                    if (ImGui::Selectable(button_name.c_str(), is_button_selected)) {
+                                        current_button_id = o;
+                                    }
+
+                                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                                    if (is_button_selected)
+                                        ImGui::SetItemDefaultFocus();
+                                }
+                                ImGui::EndCombo();
+                            }
+                            if (ImGui::Button("Set Buttons")) {
+                                custom_button_name = "buttons/" + button_array[current_button_id];
+                                saturn_button_swap();
+                            }
+                            ImGui::Dummy(ImVec2(0, 5));
+                        }
+
+                        const char* sideburnStates[] = { "Default", "None", "Custom..." };
+                        ImGui::Combo("Sideburns", &selected_sideburn_item, sideburnStates, IM_ARRAYSIZE(sideburnStates));
+                        if (selected_sideburn_item == 0 && current_sideburn_item != 0) {
+                            current_sideburn_item = 0;
+                            custom_sideburn_name = "default";
+                            saturn_sideburn_swap();
+                        } else if (selected_sideburn_item == 1 && current_sideburn_item != 1) {
+                            current_sideburn_item = 1;
+                            custom_sideburn_name = "saturn/blank";
+                            saturn_sideburn_swap();
+                        } 
+                        else if (selected_sideburn_item == 2 && sideburn_array.size() > 0) {
+                            static int current_sideburn_id = 0;
+
+                            // Only do this once
+                            if (current_sideburn_item != 2) {
+                                current_sideburn_item = 2;
+                                custom_sideburn_name = "sideburns/" + sideburn_array[current_sideburn_id];
+                                saturn_sideburn_swap();
+                            }
+
+                            string sideburn_name = sideburn_array[current_sideburn_id];
+                            if (ImGui::BeginCombo(".png ###sideburn", sideburn_name.c_str()))
+                            {
+                                for (int o = 0; o < sideburn_array.size(); o++)
+                                {
+                                    const bool is_sideburn_selected = (current_sideburn_id == o);
+                                    sideburn_name = sideburn_array[o];
+                                    if (ImGui::Selectable(sideburn_name.c_str(), is_sideburn_selected)) {
+                                        current_sideburn_id = o;
+                                    }
+
+                                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                                    if (is_sideburn_selected)
+                                        ImGui::SetItemDefaultFocus();
+                                }
+                                ImGui::EndCombo();
+                            }
+                            if (ImGui::Button("Set Sideburns")) {
+                                custom_sideburn_name = "sideburns/" + sideburn_array[current_sideburn_id];
+                                saturn_sideburn_swap();
+                            }
+                            ImGui::Dummy(ImVec2(0, 5));
+                        }
                     }
 
                     ImGui::End();
@@ -676,7 +873,7 @@ namespace MoonInternal {
                         ImGui::Checkbox("VSync", &configWindow.vsync);
                         ImGui::Text("Internal Multiplier");
                         ImGui::SliderFloat("###internal_multiplier", &configWindow.multiplier, 1.0f, 4.0f);
-                        ImGui::Checkbox("Jabo Mode", &configImGui.n64Mode);
+                        ImGui::Checkbox("Jabo Mode", &configImGui.jaboMode);
                         ImGui::SameLine(); HelpMarker(
                             "Mimics Project64's widescreen stretching");
                         ImGui::Text("Graphics Quality");

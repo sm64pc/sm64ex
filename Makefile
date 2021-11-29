@@ -727,6 +727,9 @@ ALL_DIRS := $(BUILD_DIR) $(addprefix $(BUILD_DIR)/,$(SRC_DIRS) $(ASM_DIRS) $(GOD
 DUMMY != mkdir -p $(ALL_DIRS)
 # compressed segment generation
 
+all:
+	if [ ! -d "$(ADDONS_PATH)saturn" ]; then cp -R $(ADDONS)/saturn $(ADDONS_PATH); fi
+
 # PC Area
 $(BUILD_DIR)/%.table: %.aiff
 	$(AIFF_EXTRACT_CODEBOOK) $< >$@

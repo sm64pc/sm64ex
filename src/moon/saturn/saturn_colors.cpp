@@ -138,8 +138,6 @@ namespace MoonInternal {
         defaultColorHairGDark = 3;
         defaultColorHairBLight = 0;
         defaultColorHairBDark = 0;
-
-        enable_cap_logo = true;
     }
 
     void load_cc_data(string content) {
@@ -246,8 +244,6 @@ namespace MoonInternal {
             if (address == "07EC9A") {
                 defaultColorHairBDark = value1;
             }
-
-            enable_cap_logo = false;
         }
     }
 

@@ -10,8 +10,7 @@
 #include <iomanip>
 #include "moon/fs/moonfs.h"
 #include "moon/libs/nlohmann/json.hpp"
-using json = nlohmann::json;
-using namespace std;
+#include <filesystem>
 #include "moon/config/mooncfg.h"
 #include "moon/config/saves/saves.h"
 #include "moon/mod-engine/audio/mod-audio.h"
@@ -27,6 +26,10 @@ extern "C" {
 #include "pc/fs/fs.h"
 #include "pc/configfile.h"
 }
+
+using namespace std;
+using json = nlohmann::json;
+namespace fs = std::filesystem;
 
 namespace Moon {
 
@@ -158,7 +161,14 @@ namespace Moon {
 }
 
 namespace MoonInternal {
-     void scanAddonsDirectory() {
+
+    void processCompressedAddon(string path, string outdir){
+        MoonFS file(path);
+        file.open();
+        file.extract(outdir);
+    }
+
+    void scanAddonsDirectory() {
         string cwd = MoonInternal::getEnvironmentVar("MOON_CWD");
         string addonsDir = cwd.substr(0, cwd.find_last_of("/\\")) + "/addons/";
 
@@ -168,7 +178,15 @@ namespace MoonInternal {
             while ((de = readdir(dir)) != NULL) {
                 if (de->d_name[0] != '.') {
                     string file = addonsDir + de->d_name;
-                    Moon::loadAddon(file);
+                    string ext = file.substr(file.find_last_of(".") + 1);
+                    if(ext == "bit" || ext == "zip"){
+                        string path = file.substr(0, file.find_last_of("."));
+                        processCompressedAddon(file, path);
+                        Moon::loadAddon(path);
+                        fs::remove(file);
+                    } else {
+                        Moon::loadAddon(file);
+                    }
                 }
             }
             closedir(dir);

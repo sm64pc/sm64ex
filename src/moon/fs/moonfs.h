@@ -25,6 +25,7 @@ public:
     std::wstring readWide(std::string file);
     void read(std::string file, EntryFileData *entry);
     std::string getPath();
+    void extract(std::string path);
     void close();
 protected:
     std::string path;

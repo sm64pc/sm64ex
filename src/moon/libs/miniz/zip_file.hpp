@@ -5382,6 +5382,7 @@ class zip_file
     for(auto &member : members)
     {
       extract(member, path);
+      printf(member.c_str());
     }
   }
 

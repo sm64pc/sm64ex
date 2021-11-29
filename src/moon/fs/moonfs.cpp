@@ -128,3 +128,26 @@ void MoonFS::read(string file, EntryFileData *entry){
 string MoonFS::getPath(){
     return this->path;
 }
+
+void write_binary(string file, char *data, int size){
+    std::ofstream out(file, std::ios::out | std::ios::binary);
+    if(!out) return;
+
+    out.write(data, size);
+    out.close();
+}
+
+void MoonFS::extract(string dir){
+    if(this->type) return;
+
+    for(auto &path : this->entries()){
+        string file = FSUtils::joinPath(dir, path);
+        EntryFileData *entry;
+        this->read(path, entry = new EntryFileData());
+        if(!entry->size && !fs::exists(file)){
+            fs::create_directories(file);
+        } else {
+            if(!fs::exists(file)) write_binary(file, entry->data, entry->size);
+        }
+    }
+}
