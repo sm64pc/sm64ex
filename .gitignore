@@ -78,3 +78,6 @@ sm64config.txt
 !/sound/**/*custom*/**/*.aiff
 !/assets/**/*custom*.bin
 !/assets/**/*custom*/**/*.bin
+
+# macOS bullcrap directory settings file thats autocreated
+*.DS_Store
