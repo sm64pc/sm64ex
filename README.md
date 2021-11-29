@@ -35,8 +35,8 @@
 
 To download *Moon Edition*, follow these instructions:
 - Install the latest release from the [releases](https://github.com/Llennpie/Saturn/releases) page.
-- Head to [this website](http://moon64.undervolt.io/addons) and download the *Moon64 Default Addon*. You will need a vanilla 8 MB ROM to continue (this is to avoid including any copyrighted assets).
-- Please the `moon64.bit` file into `addons/`, next to the **saturn** folder (but not in). Upon launching the game for the first time, it may take a second to extract assets.
+- Head to [this website](http://moon64.undervolt.io/addons) and download the **Moon64 Default Addon**. You will need a vanilla 8 MB ROM to continue *(this is to avoid including any copyrighted assets)*.
+- Place the `moon64.bit` file into `addons/`, next to the `saturn/` folder **(but not in)**. Upon launching the game for the first time, it may take a second to extract assets.
 
 ### Compiling
 
