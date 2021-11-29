@@ -73,7 +73,7 @@ void saturn_emblem_swap() {
             if (custom_emblem_name != "default") {
                 (*hookTexture) = const_cast<char*>(custom_emblem_name.c_str());
             } else {
-                (*hookTexture) = const_cast<char*>("actors/mario/mario_logo.rgba16");
+                (*hookTexture) = const_cast<char*>(texName.c_str());
             }
         }
     }});
@@ -104,7 +104,7 @@ void saturn_stache_swap() {
             if (custom_stache_name != "default") {
                 (*hookTexture) = const_cast<char*>(custom_stache_name.c_str());
             } else {
-                (*hookTexture) = const_cast<char*>("actors/mario/mario_mustache.rgba16");
+                (*hookTexture) = const_cast<char*>(texName.c_str());
             }
         }
     }});
@@ -135,7 +135,7 @@ void saturn_button_swap() {
             if (custom_button_name != "default") {
                 (*hookTexture) = const_cast<char*>(custom_button_name.c_str());
             } else {
-                (*hookTexture) = const_cast<char*>("actors/mario/mario_overalls_button.rgba16");
+                (*hookTexture) = const_cast<char*>(texName.c_str());
             }
         }
     }});
@@ -166,7 +166,7 @@ void saturn_sideburn_swap() {
             if (custom_sideburn_name != "default") {
                 (*hookTexture) = const_cast<char*>(custom_sideburn_name.c_str());
             } else {
-                (*hookTexture) = const_cast<char*>("actors/mario/mario_sideburn.rgba16");
+                (*hookTexture) = const_cast<char*>(texName.c_str());
             }
         }
     }});

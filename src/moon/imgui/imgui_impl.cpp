@@ -593,7 +593,7 @@ namespace MoonInternal {
                             // Only do this once
                             if (current_emblem_item != 2) {
                                 current_emblem_item = 2;
-                                custom_emblem_name = "emblems/" + emblem_array[current_emblem_id];
+                                custom_emblem_name = "saturn/emblems/" + emblem_array[current_emblem_id];
                                 saturn_emblem_swap();
                             }
 
@@ -615,7 +615,7 @@ namespace MoonInternal {
                                 ImGui::EndCombo();
                             }
                             if (ImGui::Button("Set Emblem")) {
-                                custom_emblem_name = "emblems/" + emblem_array[current_emblem_id];
+                                custom_emblem_name = "saturn/emblems/" + emblem_array[current_emblem_id];
                                 saturn_emblem_swap();
                             }
                             ImGui::Dummy(ImVec2(0, 5));
@@ -638,7 +638,7 @@ namespace MoonInternal {
                             // Only do this once
                             if (current_stache_item != 2) {
                                 current_stache_item = 2;
-                                custom_stache_name = "staches/" + stache_array[current_stache_id];
+                                custom_stache_name = "saturn/staches/" + stache_array[current_stache_id];
                                 saturn_stache_swap();
                             }
 
@@ -660,7 +660,7 @@ namespace MoonInternal {
                                 ImGui::EndCombo();
                             }
                             if (ImGui::Button("Set Stache")) {
-                                custom_stache_name = "staches/" + stache_array[current_stache_id];
+                                custom_stache_name = "saturn/staches/" + stache_array[current_stache_id];
                                 saturn_stache_swap();
                             }
                             ImGui::Dummy(ImVec2(0, 5));
@@ -683,7 +683,7 @@ namespace MoonInternal {
                             // Only do this once
                             if (current_button_item != 2) {
                                 current_button_item = 2;
-                                custom_button_name = "buttons/" + button_array[current_button_id];
+                                custom_button_name = "saturn/buttons/" + button_array[current_button_id];
                                 saturn_button_swap();
                             }
 
@@ -705,7 +705,7 @@ namespace MoonInternal {
                                 ImGui::EndCombo();
                             }
                             if (ImGui::Button("Set Buttons")) {
-                                custom_button_name = "buttons/" + button_array[current_button_id];
+                                custom_button_name = "saturn/buttons/" + button_array[current_button_id];
                                 saturn_button_swap();
                             }
                             ImGui::Dummy(ImVec2(0, 5));
@@ -728,7 +728,7 @@ namespace MoonInternal {
                             // Only do this once
                             if (current_sideburn_item != 2) {
                                 current_sideburn_item = 2;
-                                custom_sideburn_name = "sideburns/" + sideburn_array[current_sideburn_id];
+                                custom_sideburn_name = "saturn/sideburns/" + sideburn_array[current_sideburn_id];
                                 saturn_sideburn_swap();
                             }
 
@@ -750,7 +750,7 @@ namespace MoonInternal {
                                 ImGui::EndCombo();
                             }
                             if (ImGui::Button("Set Sideburns")) {
-                                custom_sideburn_name = "sideburns/" + sideburn_array[current_sideburn_id];
+                                custom_sideburn_name = "saturn/sideburns/" + sideburn_array[current_sideburn_id];
                                 saturn_sideburn_swap();
                             }
                             ImGui::Dummy(ImVec2(0, 5));
