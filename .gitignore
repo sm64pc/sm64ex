@@ -80,4 +80,4 @@ sm64config.txt
 !/assets/**/*custom*/**/*.bin
 
 # macOS bullcrap directory settings file thats autocreated
-*.DS_Store
+.DS_Store
