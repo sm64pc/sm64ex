@@ -532,7 +532,12 @@ else ifeq ($(SDL1_USED),1)
 endif
 
 ifneq ($(SDL1_USED)$(SDL2_USED),00)
-  BACKEND_CFLAGS += `$(SDLCONFIG) --cflags`
+  ifeq ($(OSX_BUILD),1)
+    MAC_PREFIX := `$(SDLCONFIG) --prefix`
+    BACKEND_CFLAGS +=-I$(MAC_PREFIX)/include `$(SDLCONFIG) --cflags` # macOS homebrew SDL2 has the config laid out differently so this makes it point to the correct folder + a failsafe for if it ever changes for some reason in the future.
+  else
+    BACKEND_CFLAGS += `$(SDLCONFIG) --cflags`
+  endif
   ifeq ($(WINDOWS_BUILD),1)
     BACKEND_LDFLAGS += `$(SDLCONFIG) --static-libs` -lsetupapi -luser32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion
   else
