@@ -109,6 +109,32 @@ ifeq ($(WINDOWS_BUILD),1)
   endif
 endif
 
+# macOS overrides
+ifeq ($(HOST_OS),Darwin)
+  OSX_BUILD := 1
+  # Using MacPorts?
+  ifeq ($(shell test -d /opt/local/lib && echo y),y)
+    OSX_GCC_VER = $(shell find /opt/local/bin/gcc* | grep -oE '[[:digit:]]+' | sort -n | uniq | tail -1)
+    CC := gcc-mp-$(OSX_GCC_VER)
+    CXX := g++-mp-$(OSX_GCC_VER)
+    CPP := cpp-mp-$(OSX_GCC_VER) -P
+    PLATFORM_CFLAGS := -I /opt/local/include
+    PLATFORM_LDFLAGS := -L /opt/local/lib
+  else
+    # Using Homebrew?
+    ifeq ($(shell which brew >/dev/null 2>&1 && echo y),y)
+      OSX_GCC_VER = $(shell find `brew --prefix`/bin/gcc* | grep -oE '[[:digit:]]+' | sort -n | uniq | tail -1)
+      CC := gcc-$(OSX_GCC_VER)
+      CXX := g++-$(OSX_GCC_VER)
+      CPP := cpp-$(OSX_GCC_VER) -P
+      PLATFORM_CFLAGS := -I /usr/local/include
+      PLATFORM_LDFLAGS := -L /usr/local/lib
+    else
+      $(error No suitable macOS toolchain found, have you installed Homebrew?)
+    endif
+  endif
+endif
+
 ifneq ($(TARGET_BITS),0)
   BITS := -m$(TARGET_BITS)
 endif
@@ -143,9 +169,8 @@ VERSION_ASFLAGS := --defsym $(VERSION_DEF)=1
 # Stuff for showing the git hash in the intro on nightly builds
 # From https://stackoverflow.com/questions/44038428/include-git-commit-hash-and-or-branch-name-in-c-c-source
 ifeq ($(shell git rev-parse --abbrev-ref HEAD),nightly)
-  GIT_HASH=`git rev-parse --short HEAD`
-  COMPILE_TIME=`date -u +'%Y-%m-%d %H:%M:%S UTC'`
-  VERSION_CFLAGS += -DNIGHTLY -DGIT_HASH="\"$(GIT_HASH)\"" -DCOMPILE_TIME="\"$(COMPILE_TIME)\""
+  GIT_HASH := $(shell git rev-parse --short HEAD)
+  VERSION_CFLAGS += -DNIGHTLY -DGIT_HASH="\"$(GIT_HASH)\""
 endif
 
 # Microcode
@@ -228,6 +253,7 @@ endif
 # in the makefile that we want should cover assets.)
 
 ifneq ($(MAKECMDGOALS),clean)
+ifneq ($(MAKECMDGOALS),cleantools)
 ifneq ($(MAKECMDGOALS),distclean)
 
 # Make sure assets exist
@@ -240,11 +266,12 @@ endif
 endif
 
 # Make tools if out of date
-DUMMY != make -C tools >&2 || echo FAIL
+DUMMY != CC=$(CC) CXX=$(CXX) $(MAKE) -C tools >&2 || echo FAIL
 ifeq ($(DUMMY),FAIL)
   $(error Failed to build tools)
 endif
 
+endif
 endif
 endif
 
@@ -467,7 +494,6 @@ ifeq ($(WINDOWS_BUILD),1) # fixes compilation in MXE on Linux and WSL
   OBJCOPY := objcopy
   OBJDUMP := $(CROSS)objdump
 else ifeq ($(OSX_BUILD),1)
-  CPP := cpp-9 -P
   OBJDUMP := i686-w64-mingw32-objdump
   OBJCOPY := i686-w64-mingw32-objcopy
 else # Linux & other builds
@@ -484,7 +510,7 @@ SDLCONFIG := $(CROSS)sdl2-config
 BACKEND_CFLAGS := -DRAPI_$(RENDER_API)=1 -DWAPI_$(WINDOW_API)=1 -DAAPI_$(AUDIO_API)=1
 # can have multiple controller APIs
 BACKEND_CFLAGS += $(foreach capi,$(CONTROLLER_API),-DCAPI_$(capi)=1)
-BACKEND_LDFLAG0S :=
+BACKEND_LDFLAGS :=
 
 SDL1_USED := 0
 SDL2_USED := 0
@@ -503,7 +529,7 @@ else ifeq ($(findstring SDL,$(WINDOW_API)),SDL)
   else ifeq ($(TARGET_RPI),1)
     BACKEND_LDFLAGS += -lGLESv2
   else ifeq ($(OSX_BUILD),1)
-    BACKEND_LDFLAGS += -framework OpenGL `pkg-config --libs glew`
+    BACKEND_LDFLAGS += -framework OpenGL $(shell pkg-config --libs glew)
   else
     BACKEND_LDFLAGS += -lGL
   endif
@@ -533,15 +559,16 @@ endif
 
 ifneq ($(SDL1_USED)$(SDL2_USED),00)
   ifeq ($(OSX_BUILD),1)
-    MAC_PREFIX := `$(SDLCONFIG) --prefix`
-    BACKEND_CFLAGS +=-I$(MAC_PREFIX)/include `$(SDLCONFIG) --cflags` # macOS homebrew SDL2 has the config laid out differently so this makes it point to the correct folder + a failsafe for if it ever changes for some reason in the future.
+    # on OSX at least the homebrew version of sdl-config gives include path as `.../include/SDL2` instead of `.../include`
+    OSX_PREFIX := $(shell $(SDLCONFIG) --prefix)
+    BACKEND_CFLAGS += -I$(OSX_PREFIX)/include $(shell $(SDLCONFIG) --cflags)
   else
-    BACKEND_CFLAGS += `$(SDLCONFIG) --cflags`
+    BACKEND_CFLAGS += $(shell $(SDLCONFIG) --cflags)
   endif
   ifeq ($(WINDOWS_BUILD),1)
-    BACKEND_LDFLAGS += `$(SDLCONFIG) --static-libs` -lsetupapi -luser32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion
+    BACKEND_LDFLAGS += $(shell $(SDLCONFIG) --static-libs) -lsetupapi -luser32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion
   else
-    BACKEND_LDFLAGS += `$(SDLCONFIG) --libs`
+    BACKEND_LDFLAGS += $(shell $(SDLCONFIG) --libs)
   endif
 endif
 
@@ -555,9 +582,8 @@ else ifeq ($(TARGET_WEB),1)
 
 # Linux / Other builds below
 else
-  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS)
-  CFLAGS := $(OPT_FLAGS) $(INCLUDE_CFLAGS) $(BACKEND_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv
-
+  CC_CHECK := $(CC) -fsyntax-only -fsigned-char $(BACKEND_CFLAGS) $(PLATFORM_CFLAGS) $(INCLUDE_CFLAGS) -Wall -Wextra -Wno-format-security $(VERSION_CFLAGS) $(GRUCODE_CFLAGS)
+  CFLAGS := $(OPT_FLAGS) $(PLATFORM_CFLAGS) $(INCLUDE_CFLAGS) $(BACKEND_CFLAGS) $(VERSION_CFLAGS) $(GRUCODE_CFLAGS) -fno-strict-aliasing -fwrapv
 endif
 
 # Check for enhancement options
@@ -643,7 +669,7 @@ else ifeq ($(TARGET_RPI),1)
   LDFLAGS := $(OPT_FLAGS) -lm $(BACKEND_LDFLAGS) -no-pie
 
 else ifeq ($(OSX_BUILD),1)
-  LDFLAGS := -lm $(BACKEND_LDFLAGS) -no-pie -lpthread
+  LDFLAGS := -lm $(PLATFORM_LDFLAGS) $(BACKEND_LDFLAGS) -lpthread
 
 else ifeq ($(HOST_OS),Haiku)
   LDFLAGS := $(BACKEND_LDFLAGS) -no-pie
@@ -712,7 +738,7 @@ res: $(BASEPACK_PATH)
 # prepares the basepack.lst
 $(BASEPACK_LST): $(EXE)
 	@mkdir -p $(BUILD_DIR)/$(BASEDIR)
-	@echo -n > $(BASEPACK_LST)
+	@touch > $(BASEPACK_LST)
 	@echo "$(BUILD_DIR)/sound/bank_sets sound/bank_sets" >> $(BASEPACK_LST)
 	@echo "$(BUILD_DIR)/sound/sequences.bin sound/sequences.bin" >> $(BASEPACK_LST)
 	@echo "$(BUILD_DIR)/sound/sound_data.ctl sound/sound_data.ctl" >> $(BASEPACK_LST)
