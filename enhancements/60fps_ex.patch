@@ -232,18 +232,19 @@ index 1da535b..49a5c03 100644
          break;
      }
 diff --git a/src/engine/surface_load.c b/src/engine/surface_load.c
-index ac2ee50..323b7d0 100644
+index ac2ee50..ce5fd37 100644
 --- a/src/engine/surface_load.c
 +++ b/src/engine/surface_load.c
-@@ -14,6 +14,7 @@
+@@ -14,6 +14,8 @@
  #include "game/mario.h"
  #include "game/object_list_processor.h"
  #include "surface_load.h"
 +#include "game/game_init.h"
++#include "math_util.h"
  
  s32 unused8038BE90;
  
-@@ -359,6 +360,11 @@ static struct Surface *read_surface_data(s16 *vertexData, s16 **vertexIndices) {
+@@ -359,6 +361,11 @@ static struct Surface *read_surface_data(s16 *vertexData, s16 **vertexIndices) {
  
      surface = alloc_surface();
  
@@ -388,10 +389,19 @@ index 173ab8a..b1abdc4 100644
  
  // bss order hack to not affect BSS order. if possible, remove me, but it will be hard to match otherwise
 diff --git a/src/game/envfx_bubbles.c b/src/game/envfx_bubbles.c
-index 16a9272..ee1b029 100644
+index 16a9272..500e796 100644
 --- a/src/game/envfx_bubbles.c
 +++ b/src/game/envfx_bubbles.c
-@@ -35,6 +35,20 @@ Vtx_t gBubbleTempVtx[3] = {
+@@ -11,6 +11,8 @@
+ #include "audio/external.h"
+ #include "textures.h"
+ 
++extern void interpolate_vectors_s16(Vec3s res, Vec3s a, Vec3s b);
++
+ /**
+  * This file implements environment effects that are not snow:
+  * Flowers (unused), lava bubbles and jet stream/whirlpool bubbles.
+@@ -35,6 +37,20 @@ Vtx_t gBubbleTempVtx[3] = {
      { { 0, 0, 0 }, 0, { -498, 964 }, { 0xFF, 0xFF, 0xFF, 0xFF } },
  };
  
@@ -412,7 +422,7 @@ index 16a9272..ee1b029 100644
  /**
   * Check whether the particle with the given index is
   * laterally within distance of point (x, z). Used to
-@@ -241,6 +255,7 @@ void envfx_update_whirlpool(void) {
+@@ -241,6 +257,7 @@ void envfx_update_whirlpool(void) {
              (gEnvFxBuffer + i)->yPos = (i + gEnvFxBuffer)->bubbleY;
              (gEnvFxBuffer + i)->unusedBubbleVar = 0;
              (gEnvFxBuffer + i)->isAlive = 1;
@@ -420,7 +430,7 @@ index 16a9272..ee1b029 100644
  
              envfx_rotate_around_whirlpool(&(gEnvFxBuffer + i)->xPos, &(gEnvFxBuffer + i)->yPos,
                                            &(gEnvFxBuffer + i)->zPos);
-@@ -299,6 +314,7 @@ void envfx_update_jetstream(void) {
+@@ -299,6 +316,7 @@ void envfx_update_jetstream(void) {
                  + coss((gEnvFxBuffer + i)->angleAndDist[0]) * (gEnvFxBuffer + i)->angleAndDist[1];
              (gEnvFxBuffer + i)->yPos =
                  gEnvFxBubbleConfig[ENVFX_STATE_SRC_Y] + (random_float() * 400.0f - 200.0f);
@@ -428,7 +438,7 @@ index 16a9272..ee1b029 100644
          } else {
              (gEnvFxBuffer + i)->angleAndDist[1] += 10;
              (gEnvFxBuffer + i)->xPos += sins((gEnvFxBuffer + i)->angleAndDist[0]) * 10.0f;
-@@ -506,6 +522,12 @@ Gfx *envfx_update_bubble_particles(s32 mode, UNUSED Vec3s marioPos, Vec3s camFro
+@@ -506,6 +524,12 @@ Gfx *envfx_update_bubble_particles(s32 mode, UNUSED Vec3s marioPos, Vec3s camFro
      Vec3s vertex1;
      Vec3s vertex2;
      Vec3s vertex3;
@@ -441,7 +451,7 @@ index 16a9272..ee1b029 100644
  
      Gfx *gfxStart;
  
-@@ -521,18 +543,52 @@ Gfx *envfx_update_bubble_particles(s32 mode, UNUSED Vec3s marioPos, Vec3s camFro
+@@ -521,18 +545,52 @@ Gfx *envfx_update_bubble_particles(s32 mode, UNUSED Vec3s marioPos, Vec3s camFro
      envfx_bubbles_update_switch(mode, camTo, vertex1, vertex2, vertex3);
      rotate_triangle_vertices(vertex1, vertex2, vertex3, pitch, yaw);
  
@@ -1821,7 +1831,7 @@ index b49ddaf..d6656af 100644
      switch (transType) {
          case WARP_TRANSITION_FADE_FROM_COLOR:
 diff --git a/src/menu/intro_geo.c b/src/menu/intro_geo.c
-index 37c6752..d823d40 100644
+index 37c6752..7499b1f 100644
 --- a/src/menu/intro_geo.c
 +++ b/src/menu/intro_geo.c
 @@ -1,5 +1,6 @@
@@ -1831,7 +1841,16 @@ index 37c6752..d823d40 100644
  #include "game/memory.h"
  #include "game/segment2.h"
  #include "game/segment7.h"
-@@ -70,6 +71,18 @@ s8 gameOverBackgroundTable[] = {
+@@ -26,6 +27,8 @@ struct GraphNodeMore {
+     /*0x18*/ u32 unk18;
+ };
+ 
++extern void interpolate_vectors(Vec3f res, Vec3f a, Vec3f b);
++
+ // intro geo bss
+ s32 gGameOverFrameCounter;
+ s32 gGameOverTableIndex;
+@@ -70,6 +73,18 @@ s8 gameOverBackgroundTable[] = {
  s8 gameOverBackgroundFlipOrder[] = { 0x00, 0x01, 0x02, 0x03, 0x07, 0x0B,
                                       0x0a, 0x09, 0x08, 0x04, 0x05, 0x06 };
  
@@ -1850,7 +1869,7 @@ index 37c6752..d823d40 100644
  Gfx *geo_title_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context) {
      struct GraphNode *graphNode; // sp4c
      Gfx *displayList;            // sp48
-@@ -80,6 +93,8 @@ Gfx *geo_title_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context) {
+@@ -80,6 +95,8 @@ Gfx *geo_title_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context) {
      f32 scaleX;                  // sp34
      f32 scaleY;                  // sp30
      f32 scaleZ;                  // sp2c
@@ -1859,7 +1878,7 @@ index 37c6752..d823d40 100644
      graphNode = sp54;
      displayList = NULL;
      displayListIter = NULL;
-@@ -110,7 +125,11 @@ Gfx *geo_title_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context) {
+@@ -110,7 +127,11 @@ Gfx *geo_title_screen(s32 sp50, struct GraphNode *sp54, UNUSED void *context) {
              scaleY = 0.0f;
              scaleZ = 0.0f;
          }
@@ -1890,31 +1909,18 @@ index 0467495..fa4eb33 100644
  
  using namespace Microsoft::WRL; // For ComPtr
 diff --git a/src/pc/gfx/gfx_sdl2.c b/src/pc/gfx/gfx_sdl2.c
-index 0108ca9..28d56ac 100644
+index 243a704..193a245 100644
 --- a/src/pc/gfx/gfx_sdl2.c
 +++ b/src/pc/gfx/gfx_sdl2.c
-@@ -150,7 +150,11 @@ static inline void gfx_sdl_set_vsync(const bool enabled) {
-     if (enabled) {
-         // try to detect refresh rate
-         SDL_GL_SetSwapInterval(1);
--        const int vblanks = gCLIOpts.SyncFrames ? (int)gCLIOpts.SyncFrames : test_vsync();
-+        int vblanks = test_vsync();
-+        if (vblanks & 1)
-+            vblanks = 0; // not divisible by 60, fuck that
-+        else
-+            vblanks /= 2;
-         if (vblanks) {
-             printf("determined swap interval: %d\n", vblanks);
-             SDL_GL_SetSwapInterval(vblanks);
-@@ -233,7 +237,7 @@ static void gfx_sdl_init(const char *window_title) {
-     gfx_sdl_set_fullscreen();
+@@ -181,7 +181,7 @@ static void gfx_sdl_init(const char *window_title) {
  
      perf_freq = SDL_GetPerformanceFrequency();
--    frame_time = perf_freq / FRAMERATE;
-+    frame_time = perf_freq / (2 * FRAMERATE);
+ 
+-    frame_rate = perf_freq / FRAMERATE;
++    frame_rate = perf_freq / (2 * FRAMERATE);
+     frame_time = SDL_GetPerformanceCounter();
  
      for (size_t i = 0; i < sizeof(windows_scancode_table) / sizeof(SDL_Scancode); i++) {
-         inverted_scancode_table[windows_scancode_table[i]] = i;
 diff --git a/src/pc/pc_main.c b/src/pc/pc_main.c
 index 923e7ea..4fe6161 100644
 --- a/src/pc/pc_main.c

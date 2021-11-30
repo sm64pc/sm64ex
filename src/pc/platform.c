@@ -4,10 +4,12 @@
 #include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
 
 #include "cliopts.h"
 #include "fs/fs.h"
 #include "configfile.h"
+#include "platform.h"
 
 /* NULL terminated list of platform specific read-only data paths */
 /* priority is top first */
@@ -64,6 +66,11 @@ const char *sys_file_name(const char *fpath) {
     const char *sep = sep1 > sep2 ? sep1 : sep2;
     if (!sep) return fpath;
     return sep + 1;
+}
+
+void sys_sleep(const uint64_t us) {
+    // TODO: figure out which of the platforms we want to support DOESN'T have usleep()
+    usleep(us);
 }
 
 /* this calls a platform-specific impl function after forming the error message */

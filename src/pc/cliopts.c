@@ -61,9 +61,6 @@ void parse_cli_opts(int argc, char* argv[]) {
         else if (strcmp(argv[i], "--poolsize") == 0) // Main pool size
             arg_uint("--poolsize", argv[++i], &gCLIOpts.PoolSize);
 
-        else if (strcmp(argv[i], "--syncframes") == 0) // VBlanks to wait
-            arg_uint("--syncframes", argv[++i], &gCLIOpts.SyncFrames);
-
         else if (strcmp(argv[i], "--configfile") == 0 && (i + 1) < argc)
             arg_string("--configfile", argv[++i], gCLIOpts.ConfigFile);
 

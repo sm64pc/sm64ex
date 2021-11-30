@@ -30,6 +30,9 @@ TARGET_WEB ?= 0
 # Makeflag to enable OSX fixes
 OSX_BUILD ?= 0
 
+# Enable -no-pie linker option
+NO_PIE ?= 1
+
 # Specify the target you are building for, TARGET_BITS=0 means native
 TARGET_ARCH ?= native
 TARGET_BITS ?= 0
@@ -555,7 +558,13 @@ else ifeq ($(SDL1_USED),1)
 endif
 
 ifneq ($(SDL1_USED)$(SDL2_USED),00)
-  BACKEND_CFLAGS += $(shell $(SDLCONFIG) --cflags)
+  ifeq ($(OSX_BUILD),1)
+    # on OSX at least the homebrew version of sdl-config gives include path as `.../include/SDL2` instead of `.../include`
+    OSX_PREFIX := $(shell $(SDLCONFIG) --prefix)
+    BACKEND_CFLAGS += -I$(OSX_PREFIX)/include $(shell $(SDLCONFIG) --cflags)
+  else
+    BACKEND_CFLAGS += $(shell $(SDLCONFIG) --cflags)
+  endif
   ifeq ($(WINDOWS_BUILD),1)
     BACKEND_LDFLAGS += $(shell $(SDLCONFIG) --static-libs) -lsetupapi -luser32 -limm32 -lole32 -loleaut32 -lshell32 -lwinmm -lversion
   else
@@ -662,10 +671,17 @@ else ifeq ($(TARGET_RPI),1)
 else ifeq ($(OSX_BUILD),1)
   LDFLAGS := -lm $(PLATFORM_LDFLAGS) $(BACKEND_LDFLAGS) -lpthread
 
+else ifeq ($(HOST_OS),Haiku)
+  LDFLAGS := $(BACKEND_LDFLAGS) -no-pie
+
 else
-  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm $(BACKEND_LDFLAGS) -no-pie -lpthread
+  LDFLAGS := $(BITS) -march=$(TARGET_ARCH) -lm $(BACKEND_LDFLAGS) -lpthread -ldl
+  ifeq ($(NO_PIE), 1)
+    LDFLAGS += -no-pie
+  endif
+
   ifeq ($(DISCORDRPC),1)
-    LDFLAGS += -ldl -Wl,-rpath .
+    LDFLAGS += -Wl,-rpath .
   endif
 
 endif # End of LDFLAGS
