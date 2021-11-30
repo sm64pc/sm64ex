@@ -26,6 +26,11 @@ typedef unsigned int u32;
 #define NORETURN __attribute__((noreturn))
 #define UNUSED __attribute__((unused))
 
+#ifdef __APPLE__
+// even with -std=gnu99 vsnprintf seems to not be defined in stdio.h, why?
+extern int vsnprintf(char * __restrict, size_t, const char * __restrict, va_list);
+#endif
+
 typedef struct
 {
     u32 start;
