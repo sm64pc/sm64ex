@@ -20,6 +20,8 @@
 #include "icons/IconsForkAwesome.h"
 #include "icons/IconsMaterialDesign.h"
 #include "moon/utils/moon-env.h"
+#include "pc/controller/controller_keyboard.h"
+#include "moon/ui/screens/addons/addons-view.h"
 
 #include <SDL2/SDL.h>
 
@@ -765,6 +767,8 @@ namespace MoonInternal {
                     ImGui::Begin("Appearance", NULL, ImGuiWindowFlags_None);
 
                     ImGui::InputText(".gs", bufname, IM_ARRAYSIZE(bufname));
+                    if (ImGui::IsItemActivated()) accept_input = false;
+                    if (ImGui::IsItemDeactivated()) accept_input = true;
                     if (ImGui::Button("Save to File")) {
                         apply_cc_from_editor();
 
@@ -790,22 +794,46 @@ namespace MoonInternal {
                         if (ImGui::BeginTabItem("CC Editor")) {
                             ImGui::Text("Shirt/Cap");
                             ImGui::ColorEdit4("Hat Main", (float*)&uiHatColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;
                             ImGui::ColorEdit4("Hat Shade", (float*)&uiHatShadeColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;                            
                             ImGui::Text("Overalls");
                             ImGui::ColorEdit4("Overalls Main", (float*)&uiOverallsColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;                                
                             ImGui::ColorEdit4("Overalls Shade", (float*)&uiOverallsShadeColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::Text("Gloves");
                             ImGui::ColorEdit4("Gloves Main", (float*)&uiGlovesColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::ColorEdit4("Gloves Shade", (float*)&uiGlovesShadeColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::Text("Shoes");
                             ImGui::ColorEdit4("Shoes Main", (float*)&uiShoesColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::ColorEdit4("Shoes Shade", (float*)&uiShoesShadeColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::Text("Skin");
                             ImGui::ColorEdit4("Skin Main", (float*)&uiSkinColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::ColorEdit4("Skin Shade", (float*)&uiSkinShadeColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::Text("Hair");
                             ImGui::ColorEdit4("Hair Main", (float*)&uiHairColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::ColorEdit4("Hair Shade", (float*)&uiHairShadeColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::EndTabItem();
 
                             ImGui::Dummy(ImVec2(0, 5));
@@ -817,7 +845,8 @@ namespace MoonInternal {
                         }
                         if (ImGui::BeginTabItem("GameShark")) {
                             ImGui::InputTextMultiline("###gameshark_box", cc_gameshark, IM_ARRAYSIZE(cc_gameshark), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 25), ImGuiInputTextFlags_CharsUppercase);
-
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::Dummy(ImVec2(0, 5));
 
                             if (ImGui::Button("Paste GS Code")) {
@@ -927,6 +956,36 @@ namespace MoonInternal {
                         ImGui::Checkbox("Precache Textures", &configPrecacheRes);
                         ImGui::Checkbox("Skip Intro", &configSkipIntro);
                         ImGui::Checkbox("Enable Yoshi", &enable_yoshi);
+                    }
+                    if (ImGui::CollapsingHeader("Addons")) {
+                        {
+                            ImGuiWindowFlags window_flags = ImGuiWindowFlags_None;
+                            ImGui::BeginChild("addon_child", ImVec2(ImGui::GetWindowContentRegionWidth(), 130), false, window_flags);
+                            for (int n = 0; n < texturePackList.size(); n++)
+                            {
+                                currentPack = texturePackList[n];
+                                ImGui::Selectable(currentPack->name.c_str());
+
+                                if (ImGui::IsItemHovered()) {
+                                    ImGui::SetMouseCursor(2);
+                                }
+
+                                if (ImGui::IsItemActive() && !ImGui::IsItemHovered())
+                                {
+                                    int n_next = n + (ImGui::GetMouseDragDelta(0).y < 0.f ? -1 : 1);
+                                    if (n_next >= 0 && n_next < texturePackList.size())
+                                    {
+                                        texturePackList[n] = texturePackList[n_next];
+                                        texturePackList[n_next] = currentPack;
+                                        ImGui::ResetMouseDragDelta();
+                                    }
+                                }
+                            }
+                            ImGui::EndChild();
+                        }
+                        if (ImGui::Button("Reload Addons")) {
+                            rebuildTextureCache();
+                        }
                     }
 
                     ImGui::End();

@@ -56,11 +56,11 @@ ConfigWindow configWindow       = {
 };
 
 ImGuiConfig configImGui = {
-    .s_stats = false,
+    .s_stats = true,
     .texture_debug = false,
-    .s_toggles = false,
-    .s_machinima = false,
-    .s_appearance = false,
+    .s_toggles = true,
+    .s_machinima = true,
+    .s_appearance = true,
     .s_options = false,
     .jaboMode = false
 };

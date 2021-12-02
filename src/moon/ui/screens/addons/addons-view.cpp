@@ -56,8 +56,8 @@ void rebuildTextureCache(){
     }
     reverse(order.begin(), order.end());
     MoonInternal::buildTextureCache(order);
-    MoonInternal::buildAudioCache(order);
-    MoonInternal::resetSoundSystem();
+    //MoonInternal::buildAudioCache(order);
+    //MoonInternal::resetSoundSystem();
 }
 
 void MoonAddonsScreen::changeScroll(int idx){

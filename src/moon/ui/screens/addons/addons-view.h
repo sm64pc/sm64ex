@@ -13,5 +13,12 @@ private:
     void changeScroll(int idx);
 };
 
+#include <vector>
+#include "moon/mod-engine/interfaces/bit-module.h"
+
+extern BitModule* currentPack;
+extern std::vector<BitModule*> texturePackList;
+
+extern void rebuildTextureCache();
 
 #endif

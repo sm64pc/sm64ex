@@ -10,6 +10,8 @@
 #include "../configfile.h"
 #include "controller_keyboard.h"
 
+bool accept_input = true;
+
 static int keyboard_buttons_down;
 
 #define MAX_KEYBINDS 64
@@ -29,6 +31,8 @@ static int keyboard_map_scancode(int scancode) {
 }
 
 bool keyboard_on_key_down(int scancode) {
+    if (!accept_input) return false;
+
     int mapped = keyboard_map_scancode(scancode);
     keyboard_buttons_down |= mapped;
     keyboard_lastkey = scancode;
@@ -36,6 +40,8 @@ bool keyboard_on_key_down(int scancode) {
 }
 
 bool keyboard_on_key_up(int scancode) {
+    if (!accept_input) return false;
+    
     int mapped = keyboard_map_scancode(scancode);
     keyboard_buttons_down &= ~mapped;
     if (keyboard_lastkey == (u32) scancode)
