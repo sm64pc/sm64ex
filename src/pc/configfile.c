@@ -73,6 +73,8 @@ bool configPrecacheRes = false;
 bool configPrecacheRes = true;
 #endif
 
+unsigned int configColorCode = 0;
+
 unsigned int configFiltering    = 1;          // 0=force nearest, 1=linear, (TODO) 2=three-point
 unsigned int configMasterVolume = MAX_VOLUME; // 0 - MAX_VOLUME
 unsigned int configMusicVolume = 0;
@@ -125,18 +127,21 @@ bool         configDiscordRPC    = true;
 unsigned int configLODMode = 2;
 
 static const struct ConfigOption options[] = {
+    {.name = "color_code",           .type = CONFIG_TYPE_UINT, .uintValue = &configColorCode},
     {.name = "fullscreen",           .type = CONFIG_TYPE_BOOL, .boolValue = &configWindow.fullscreen},
     {.name = "window_x",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.x},
     {.name = "window_y",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.y},
     {.name = "window_w",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.w},
     {.name = "window_h",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.h},
-    {.name = "internal_w",           .type = CONFIG_TYPE_FLOAT, .uintValue = &configWindow.internal_w},
-    {.name = "internal_h",           .type = CONFIG_TYPE_FLOAT, .uintValue = &configWindow.internal_h},
+    //{.name = "internal_w",           .type = CONFIG_TYPE_FLOAT, .uintValue = &configWindow.internal_w},
+    //{.name = "internal_h",           .type = CONFIG_TYPE_FLOAT, .uintValue = &configWindow.internal_h},
     {.name = "multiplier",           .type = CONFIG_TYPE_FLOAT, .uintValue = &configWindow.multiplier},
-    {.name = "aa_level",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.antialias_level},
-    {.name = "aa_enabled",           .type = CONFIG_TYPE_BOOL, .uintValue = &configWindow.enable_antialias},
+    //{.name = "aa_level",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.antialias_level},
+    //{.name = "aa_enabled",           .type = CONFIG_TYPE_BOOL, .uintValue = &configWindow.enable_antialias},
     {.name = "vsync",                .type = CONFIG_TYPE_BOOL, .boolValue = &configWindow.vsync},
     {.name = "texture_filtering",    .type = CONFIG_TYPE_UINT, .uintValue = &configFiltering},
+    {.name = "jaboMode",             .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.jaboMode},
+    {.name = "lodMode",              .type = CONFIG_TYPE_UINT, .uintValue = &configLODMode},
     {.name = "master_volume",        .type = CONFIG_TYPE_UINT, .uintValue = &configMasterVolume},
     {.name = "music_volume",         .type = CONFIG_TYPE_UINT, .uintValue = &configMusicVolume},
     {.name = "sfx_volume",           .type = CONFIG_TYPE_UINT, .uintValue = &configSfxVolume},
@@ -158,8 +163,6 @@ static const struct ConfigOption options[] = {
     {.name = "key_stickright",       .type = CONFIG_TYPE_BIND, .uintValue = configKeyStickRight},
     {.name = "stick_deadzone",       .type = CONFIG_TYPE_UINT, .uintValue = &configStickDeadzone},
     {.name = "rumble_strength",      .type = CONFIG_TYPE_UINT, .uintValue = &configRumbleStrength},
-    {.name = "precache",             .type = CONFIG_TYPE_BOOL, .boolValue = &configPrecacheRes},
-    {.name = "language",             .type = CONFIG_TYPE_UINT, .boolValue = &configLanguage},
     #ifdef TARGET_SWITCH
     {.name = "nx_hud",               .type = CONFIG_TYPE_BOOL, .boolValue = &configSwitchHud},
     #endif
@@ -176,18 +179,18 @@ static const struct ConfigOption options[] = {
     {.name = "bettercam_degrade",    .type = CONFIG_TYPE_UINT, .uintValue = &configCameraDegrade},
     #endif
     {.name = "skip_intro",           .type = CONFIG_TYPE_BOOL, .boolValue = &configSkipIntro},
+    {.name = "precache",             .type = CONFIG_TYPE_BOOL, .boolValue = &configPrecacheRes},
+    {.name = "language",             .type = CONFIG_TYPE_UINT, .boolValue = &configLanguage},
     #ifdef DISCORDRPC
     {.name = "discordrpc_enable",    .type = CONFIG_TYPE_BOOL, .boolValue = &configDiscordRPC},
     #endif
-    {.name = "lodMode",              .type = CONFIG_TYPE_UINT, .uintValue = &configLODMode},
 
     {.name = "s_stats_win",           .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_stats},
-    {.name = "texture_debug_win",    .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.texture_debug},
+    //{.name = "texture_debug_win",    .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.texture_debug},
     {.name = "s_toggles_win",        .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_toggles},
     {.name = "s_machinima",          .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_machinima},
     {.name = "s_appearance_win",     .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_appearance},
-    {.name = "s_options_win",        .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_options},
-    {.name = "jaboMode",              .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.jaboMode}
+    {.name = "s_options_win",        .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.s_options}
 };
 
 // Reads an entire line from a file (excluding the newline character) and returns an allocated string

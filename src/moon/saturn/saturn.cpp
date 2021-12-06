@@ -5,6 +5,7 @@
 #include "moon/fs/moonfs.h"
 #include "moon/ui/screens/addons/addons-view.h"
 #include "moon/mod-engine/engine.h"
+#include "moon/imgui/imgui_impl.h"
 #include "pc/configfile.h"
 #include "pc/controller/controller_keyboard.h"
 
@@ -72,6 +73,8 @@ namespace MoonInternal {
                 enable_yoshi = false;
 
                 MoonInternal::load_cc_directory();
+                MoonInternal::load_cc_file(cc_array[configColorCode]);
+                apply_editor_from_cc();
                 
                 // custom textures
                 current_eye_state = 0;
@@ -82,10 +85,12 @@ namespace MoonInternal {
                 saturn_load_emblem_array();
                 custom_emblem_name = "saturn/blank";
                 saturn_emblem_swap();
+
                 saturn_load_stache_array();
                 saturn_load_button_array();
                 saturn_load_sideburn_array();
 
+                // addons
                 if(texturePackList.empty()){
                     texturePackList.clear();
                     copy(Moon::addons.begin(), Moon::addons.end(), back_inserter(texturePackList));
