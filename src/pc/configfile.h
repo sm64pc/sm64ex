@@ -37,6 +37,7 @@ extern unsigned int configLanguage;
 #ifdef TARGET_SWITCH
 extern bool         configSwitchHud;
 #endif
+extern unsigned int configColorCode;
 extern unsigned int configFiltering;
 extern unsigned int configMasterVolume;
 extern unsigned int configMusicVolume;

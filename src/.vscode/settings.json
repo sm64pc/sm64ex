@@ -69,6 +69,7 @@
         "concepts": "cpp",
         "ranges": "cpp",
         "surface_collision.h": "c",
-        "math_util.h": "c"
+        "math_util.h": "c",
+        "controller_keyboard.h": "c"
     }
 }
