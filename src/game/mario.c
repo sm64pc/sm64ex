@@ -35,6 +35,7 @@
 #include "thread6.h"
 #include "pc/configfile.h"
 #include "pc/cheats.h"
+#include "moon/saturn/saturn_types.h"
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif
@@ -1543,6 +1544,9 @@ void update_mario_health(struct MarioState *m) {
         } else {
             gRumblePakTimer = 0;
         }
+    }
+    if (enable_god) {
+        m->health = 0x880;
     }
 }
 

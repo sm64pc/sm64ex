@@ -71,6 +71,7 @@ extern "C" {
 #include "game/camera.h"
 #include "game/mario.h"
 #include "game/level_update.h"
+#include "engine/level_script.h"
 #include "level_table.h"
 }
 
@@ -101,10 +102,11 @@ static void HelpMarker(const char* desc)
 }
 
 void warp_to(s16 destLevel, s16 destArea = 0x01, s16 destWarpNode = 0x0A) {
-    if (gCurrLevelNum == destLevel) {
+    if (gCurrLevelNum == destLevel || !mario_loaded) {
         return;
     }
 
+    mario_loaded = false;
     initiate_warp(destLevel, destArea, destWarpNode, 0);
     fade_into_special_warp(0,0);
 }
@@ -461,6 +463,10 @@ namespace MoonInternal {
                     
                     ImGui::Checkbox("Dust Particles", &enable_dust_particles);
                     ImGui::Checkbox("Shadows", &enable_shadows);
+
+                    ImGui::Dummy(ImVec2(0, 5));
+
+                    ImGui::Checkbox("God Mode", &enable_god);
 
                     ImGui::Dummy(ImVec2(0, 5));
 

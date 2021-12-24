@@ -31,6 +31,7 @@ extern "C" {
 bool camera_frozen;
 bool enable_head_rotations;
 bool enable_shadows;
+bool enable_god;
 bool enable_dust_particles;
 
 bool show_menu_bar;
@@ -66,6 +67,7 @@ namespace MoonInternal {
 
                 camera_frozen = false;
                 enable_shadows = true;
+                enable_god = false;
                 enable_yoshi = false;
 
                 MoonInternal::load_cc_directory();

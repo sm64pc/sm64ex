@@ -5,6 +5,7 @@
 
 extern bool enable_head_rotations;
 extern bool enable_shadows;
+extern bool enable_god;
 extern bool enable_dust_particles;
 
 // Color Codes
