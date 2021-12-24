@@ -72,6 +72,9 @@ extern "C" {
 #include "pc/pc_main.h"
 #include "game/camera.h"
 #include "game/mario.h"
+#include "game/level_update.h"
+#include "engine/level_script.h"
+#include "level_table.h"
 }
 
 #include "pc/configfile.h"
@@ -98,6 +101,16 @@ static void HelpMarker(const char* desc)
         ImGui::PopTextWrapPos();
         ImGui::EndTooltip();
     }
+}
+
+void warp_to(s16 destLevel, s16 destArea = 0x01, s16 destWarpNode = 0x0A) {
+    if (gCurrLevelNum == destLevel || !mario_loaded) {
+        return;
+    }
+
+    mario_loaded = false;
+    initiate_warp(destLevel, destArea, destWarpNode, 0);
+    fade_into_special_warp(0,0);
 }
 
 #ifdef TARGET_SWITCH
@@ -191,6 +204,8 @@ namespace MoonInternal {
 
     int selected_sky_item = 0;
     int current_sky_item = 0;
+
+    int current_level_sel = 0;
 
     void setupFonts() {
         ImGuiIO& io = ImGui::GetIO();
@@ -388,7 +403,7 @@ namespace MoonInternal {
                         if (ImGui::BeginMenu("View")) {
                             ImGui::MenuItem("Stats", NULL, &configImGui.s_stats);
                             ImGui::MenuItem("Machinima", NULL, &configImGui.s_machinima);
-                            ImGui::MenuItem("Quick Toggles", NULL, &configImGui.s_toggles);
+                            ImGui::MenuItem("Quick Options", NULL, &configImGui.s_toggles);
                             ImGui::MenuItem("Appearance", NULL, &configImGui.s_appearance);
                             //ImGui::MenuItem("Debug Textures", NULL, &configImGui.texture_debug);
                             ImGui::EndMenu();
@@ -460,7 +475,7 @@ namespace MoonInternal {
                 }
                 if (configImGui.s_toggles && show_menu_bar){
                     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
-                    ImGui::Begin("Quick Toggles", NULL, ImGuiWindowFlags_None);
+                    ImGui::Begin("Quick Options", NULL, ImGuiWindowFlags_None);
 
                     ImGui::Dummy(ImVec2(0, 5));
 
@@ -476,6 +491,110 @@ namespace MoonInternal {
                     
                     ImGui::Checkbox("Dust Particles", &enable_dust_particles);
                     ImGui::Checkbox("Shadows", &enable_shadows);
+
+                    ImGui::Dummy(ImVec2(0, 5));
+
+                    ImGui::Checkbox("God Mode", &enable_god);
+
+                    ImGui::Dummy(ImVec2(0, 5));
+
+                    const char* levelList[] = { 
+                        "Castle Grounds", "Castle Inside", "Bob-omb Battlefield", 
+                        "Whomp's Fortress", "Princess's Secret Slide", "Tower of the Wing Cap", 
+                        "Jolly Roger Bay", "Secret Aquarium", "Cool, Cool Mountain", 
+                        "Bowser in the Dark World", "Big Boo's Haunt", "Hazy Maze Cave", 
+                        "Cavern of the Metal Cap", "Lethal Lava Land", "Shifting Sand Land", 
+                        "Vanish Cap under the Moat", "Dire, Dire Docks", "Bowser in the Fire Sea", 
+                        "Snowman's Land", "Wet-Dry World", "Tall, Tall Mountain", "Tiny, Huge Island",
+                        "Tick Tock Clock", "Wing Mario Over the Rainbow", "Rainbow Ride", "Bowser in the Sky"
+                    };
+                    ImGui::Combo("Level", &current_level_sel, levelList, IM_ARRAYSIZE(levelList));
+
+                    if (ImGui::Button("Warp")) {
+                        switch (current_level_sel) {
+                            case 0:
+                                warp_to(LEVEL_CASTLE_GROUNDS, 0x01, 0x04);
+                                break;
+                            case 1:
+                                warp_to(LEVEL_CASTLE, 0x01, 0x01);
+                                break;
+                            case 2:
+                                warp_to(LEVEL_BOB);
+                                break;
+                            case 3:
+                                warp_to(LEVEL_WF);
+                                break;
+                            case 4:
+                                warp_to(LEVEL_PSS);
+                                break;
+                            case 5:
+                                warp_to(LEVEL_TOTWC);
+                                break;
+                            case 6:
+                                warp_to(LEVEL_JRB);
+                                break;
+                            case 7:
+                                warp_to(LEVEL_SA);
+                                break;
+                            case 8:
+                                warp_to(LEVEL_CCM);
+                                break;
+                            case 9:
+                                warp_to(LEVEL_BITDW);
+                                break;
+                            case 10:
+                                warp_to(LEVEL_BBH);
+                                break;
+                            case 11:
+                                warp_to(LEVEL_HMC);
+                                break;
+                            case 12:
+                                warp_to(LEVEL_COTMC);
+                                break;
+                            case 13:
+                                warp_to(LEVEL_LLL);
+                                break;
+                            case 14:
+                                warp_to(LEVEL_SSL);
+                                break;
+                            case 15:
+                                warp_to(LEVEL_VCUTM);
+                                break;
+                            case 16:
+                                warp_to(LEVEL_DDD);
+                                break;
+                            case 17:
+                                warp_to(LEVEL_BITFS);
+                                break;
+                            case 18:
+                                warp_to(LEVEL_SL);
+                                break;
+                            case 19:
+                                warp_to(LEVEL_WDW);
+                                break;
+                            case 20:
+                                warp_to(LEVEL_TTM);
+                                break;
+                            case 21:
+                                warp_to(LEVEL_THI);
+                                break;
+                            case 22:
+                                warp_to(LEVEL_TTC);
+                                break;
+                            case 23:
+                                warp_to(LEVEL_WMOTR);
+                                break;
+                            case 24:
+                                warp_to(LEVEL_RR);
+                                break;
+                            case 25:
+                                warp_to(LEVEL_BITS);
+                                break;
+                            default:
+                                warp_to(LEVEL_CASTLE_GROUNDS);
+                                break;
+                        }
+                    }
 
                     ImGui::Dummy(ImVec2(0, 5));
 

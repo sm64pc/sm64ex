@@ -57,6 +57,8 @@ static struct LevelCommand *sCurrentCmd;
 
 static struct MemoryPool *sMemPoolForGoddard;
 
+bool mario_loaded = false;
+
 static s32 eval_script_op(s8 op, s32 arg) {
     s32 result = 0;
 
@@ -420,6 +422,8 @@ static void level_cmd_init_mario(void) {
     gMarioSpawnInfo->behaviorScript = CMD_GET(void *, 8);
     gMarioSpawnInfo->unk18 = get_graph_node(model);
     gMarioSpawnInfo->next = NULL;
+
+    mario_loaded = true;
 
     sCurrentCmd = CMD_NEXT;
 }

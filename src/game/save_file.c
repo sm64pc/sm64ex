@@ -17,8 +17,6 @@
 #define MENU_DATA_MAGIC 0x4849
 #define SAVE_FILE_MAGIC 0x4441
 
-STATIC_ASSERT(sizeof(struct SaveBuffer) == EEPROM_SIZE, "eeprom buffer size must match");
-
 extern struct SaveBuffer gSaveBuffer;
 
 struct WarpCheckpoint gWarpCheckpoint;
@@ -45,207 +43,6 @@ s8 gLevelToCourseNumTable[] = {
 
 STATIC_ASSERT(ARRAY_COUNT(gLevelToCourseNumTable) == LEVEL_COUNT - 1,
               "change this array if you are adding levels");
-
-// This was probably used to set progress to 100% for debugging, but
-// it was removed from the release ROM.
-static void stub_save_file_1(void) {
-    UNUSED s32 pad;
-}
-
-/**
- * Byteswap all multibyte fields in a SaveBlockSignature.
- */
-static inline void bswap_signature(struct SaveBlockSignature *data) {
-    data->magic = BSWAP16(data->magic);
-    data->chksum = BSWAP16(data->chksum); // valid as long as the checksum is a literal sum
-}
-
-/**
- * Byteswap all multibyte fields in a MainMenuSaveData.
- */
-static inline void bswap_menudata(struct MainMenuSaveData *data) {
-    for (int i = 0; i < NUM_SAVE_FILES; ++i)
-        data->coinScoreAges[i] = BSWAP32(data->coinScoreAges[i]);
-    data->soundMode = BSWAP16(data->soundMode);
-#ifdef VERSION_EU
-    data->language = BSWAP16(data->language);
-#endif
-    bswap_signature(&data->signature);
-}
-
-/**
- * Byteswap all multibyte fields in a SaveFile.
- */
-static inline void bswap_savefile(struct SaveFile *data) {
-    data->capPos[0] = BSWAP16(data->capPos[0]);
-    data->capPos[1] = BSWAP16(data->capPos[1]);
-    data->capPos[2] = BSWAP16(data->capPos[2]);
-    data->flags = BSWAP32(data->flags);
-    bswap_signature(&data->signature);
-}
-
-/**
- * Read from EEPROM to a given address.
- * The EEPROM address is computed using the offset of the destination address from gSaveBuffer.
- * Try at most 4 times, and return 0 on success. On failure, return the status returned from
- * osEepromLongRead. It also returns 0 if EEPROM isn't loaded correctly in the system.
- */
-static s32 read_eeprom_data(void *buffer, s32 size) {
-    s32 status = 0;
-
-    if (gEepromProbe != 0) {
-        s32 triesLeft = 4;
-        u32 offset = (u32)((u8 *) buffer - (u8 *) &gSaveBuffer) / 8;
-
-        do {
-            block_until_rumble_pak_free();
-            triesLeft--;
-            status = osEepromLongRead(&gSIEventMesgQueue, offset, buffer, size);
-            release_rumble_pak_control();
-        } while (triesLeft > 0 && status != 0);
-    }
-
-    return status;
-}
-
-/**
- * Write data to EEPROM.
- * The EEPROM address was originally computed using the offset of the source address from gSaveBuffer.
- * Try at most 4 times, and return 0 on success. On failure, return the status returned from
- * osEepromLongWrite. Unlike read_eeprom_data, return 1 if EEPROM isn't loaded.
- */
-static s32 write_eeprom_data(void *buffer, s32 size, const uintptr_t baseofs) {
-    s32 status = 1;
-
-    if (gEepromProbe != 0) {
-        s32 triesLeft = 4;
-        u32 offset = (u32)baseofs >> 3;
-
-        do {
-            block_until_rumble_pak_free();
-            triesLeft--;
-            status = osEepromLongWrite(&gSIEventMesgQueue, offset, buffer, size);
-            release_rumble_pak_control();
-        } while (triesLeft > 0 && status != 0);
-    }
-
-    return status;
-}
-
-/**
- * Wrappers that byteswap the data on LE platforms before writing it to 'EEPROM'
- */
-
-static inline s32 write_eeprom_savefile(const u32 file, const u32 slot, const u32 num) {
-    // calculate the EEPROM address using the file number and slot
-    const uintptr_t ofs = (u8*)&gSaveBuffer.files[file][slot] - (u8*)&gSaveBuffer;
-
-#if IS_BIG_ENDIAN
-    return write_eeprom_data(&gSaveBuffer.files[file][slot], num * sizeof(struct SaveFile), ofs);
-#else
-    // byteswap the data and then write it
-    struct SaveFile sf[num];
-    bcopy(&gSaveBuffer.files[file][slot], sf, num * sizeof(sf[0]));
-    for (u32 i = 0; i < num; ++i) bswap_savefile(&sf[i]);
-    return write_eeprom_data(&sf, sizeof(sf), ofs);
-#endif
-}
-
-static inline s32 write_eeprom_menudata(const u32 slot, const u32 num) {
-    // calculate the EEPROM address using the slot
-    const uintptr_t ofs = (u8*)&gSaveBuffer.menuData[slot] - (u8*)&gSaveBuffer;
-
-#if IS_BIG_ENDIAN
-    return write_eeprom_data(&gSaveBuffer.menuData[slot], num * sizeof(struct MainMenuSaveData), ofs);
-#else
-    // byteswap the data and then write it
-    struct MainMenuSaveData md[num];
-    bcopy(&gSaveBuffer.menuData[slot], md, num * sizeof(md[0]));
-    for (u32 i = 0; i < num; ++i) bswap_menudata(&md[i]);
-    return write_eeprom_data(&md, sizeof(md), ofs);
-#endif
-}
-
-/**
- * Sum the bytes in data to data + size - 2. The last two bytes are ignored
- * because that is where the checksum is stored.
- */
-static u16 calc_checksum(u8 *data, s32 size) {
-    u16 chksum = 0;
-
-    while (size-- > 2) {
-        chksum += *data++;
-    }
-    return chksum;
-}
-
-/**
- * Verify the signature at the end of the block to check if the data is valid.
- */
-static s32 verify_save_block_signature(void *buffer, s32 size, u16 magic) {
-    struct SaveBlockSignature *sig = (struct SaveBlockSignature *) ((size - 4) + (u8 *) buffer);
-
-    if (sig->magic != magic) {
-        return FALSE;
-    }
-    if (sig->chksum != calc_checksum(buffer, size)) {
-        return FALSE;
-    }
-    return TRUE;
-}
-
-/**
- * Write a signature at the end of the block to make sure the data is valid
- */
-static void add_save_block_signature(void *buffer, s32 size, u16 magic) {
-    struct SaveBlockSignature *sig = (struct SaveBlockSignature *) ((size - 4) + (u8 *) buffer);
-
-    sig->magic = magic;
-    sig->chksum = calc_checksum(buffer, size);
-}
-
-/**
- * Copy main menu data from one backup slot to the other slot.
- */
-static void restore_main_menu_data(s32 srcSlot) {
-    s32 destSlot = srcSlot ^ 1;
-
-    // Compute checksum on source data
-    add_save_block_signature(&gSaveBuffer.menuData[srcSlot], sizeof(gSaveBuffer.menuData[srcSlot]), MENU_DATA_MAGIC);
-
-    // Copy source data to destination
-    bcopy(&gSaveBuffer.menuData[srcSlot], &gSaveBuffer.menuData[destSlot], sizeof(gSaveBuffer.menuData[destSlot]));
-
-    // Write destination data to EEPROM
-    write_eeprom_menudata(destSlot, 1);
-}
-
-static void save_main_menu_data(void) {
-    if (gMainMenuDataModified) {
-        // Compute checksum
-        add_save_block_signature(&gSaveBuffer.menuData[0], sizeof(gSaveBuffer.menuData[0]), MENU_DATA_MAGIC);
-
-        // Back up data
-        bcopy(&gSaveBuffer.menuData[0], &gSaveBuffer.menuData[1], sizeof(gSaveBuffer.menuData[1]));
-
-        // Write to EEPROM
-        write_eeprom_menudata(0, 2);
-
-        gMainMenuDataModified = FALSE;
-    }
-}
-
-static void wipe_main_menu_data(void) {
-    bzero(&gSaveBuffer.menuData[0], sizeof(gSaveBuffer.menuData[0]));
-
-    // Set score ages for all courses to 3, 2, 1, and 0, respectively.
-    gSaveBuffer.menuData[0].coinScoreAges[0] = 0x3FFFFFFF;
-    gSaveBuffer.menuData[0].coinScoreAges[1] = 0x2AAAAAAA;
-    gSaveBuffer.menuData[0].coinScoreAges[2] = 0x15555555;
-
-    gMainMenuDataModified = TRUE;
-    save_main_menu_data();
-}
 
 static s32 get_coin_score_age(s32 fileIndex, s32 courseIndex) {
     return (gSaveBuffer.menuData[0].coinScoreAges[fileIndex] >> (2 * courseIndex)) & 0x3;
@@ -287,52 +84,6 @@ static void touch_high_score_ages(s32 fileIndex) {
 
     for (i = 0; i < 15; i++) {
         touch_coin_score_age(fileIndex, i);
-    }
-}
-
-/**
- * Copy save file data from one backup slot to the other slot.
- */
-static void restore_save_file_data(s32 fileIndex, s32 srcSlot) {
-    s32 destSlot = srcSlot ^ 1;
-
-    // Compute checksum on source data
-    add_save_block_signature(&gSaveBuffer.files[fileIndex][srcSlot],
-                             sizeof(gSaveBuffer.files[fileIndex][srcSlot]), SAVE_FILE_MAGIC);
-
-    // Copy source data to destination slot
-    bcopy(&gSaveBuffer.files[fileIndex][srcSlot], &gSaveBuffer.files[fileIndex][destSlot],
-          sizeof(gSaveBuffer.files[fileIndex][destSlot]));
-
-    // Write destination data to EEPROM
-    write_eeprom_savefile(fileIndex, destSlot, 1);
-}
-
-/**
- * Check if the 'EEPROM' save has different endianness (e.g. it's from an actual N64).
- */
-static u8 save_file_need_bswap(const struct SaveBuffer *buf) {
-    // check all signatures just in case
-    for (int i = 0; i < 2; ++i) {
-        if (buf->menuData[i].signature.magic == BSWAP16(MENU_DATA_MAGIC))
-            return TRUE;
-        for (int j = 0; j < NUM_SAVE_FILES; ++j) {
-            if (buf->files[j][i].signature.magic == BSWAP16(SAVE_FILE_MAGIC))
-                return TRUE;
-        }
-    }
-    return FALSE;
-}
-
-/**
- * Byteswap all multibyte fields in a SaveBuffer.
- */
-static void save_file_bswap(struct SaveBuffer *buf) {
-    bswap_menudata(buf->menuData + 0);
-    bswap_menudata(buf->menuData + 1);
-    for (int i = 0; i < NUM_SAVE_FILES; ++i) {
-        bswap_savefile(buf->files[i] + 0);
-        bswap_savefile(buf->files[i] + 1);
     }
 }
 
@@ -386,7 +137,6 @@ void save_file_load_all(void) {
     }
     gSaveFileModified = TRUE;
     gMainMenuDataModified = TRUE;
-    stub_save_file_1();
 }
 
 /**
@@ -614,7 +364,6 @@ void save_file_set_sound_mode(u16 mode) {
     gSaveBuffer.menuData[0].soundMode = mode;
 
     gMainMenuDataModified = TRUE;
-    save_main_menu_data();
 }
 
 u16 save_file_get_sound_mode(void) {
