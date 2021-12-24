@@ -3,7 +3,11 @@
 
 #include "moon/utils/moon-env.h"
 #include "moon/fs/moonfs.h"
+#include "moon/ui/screens/addons/addons-view.h"
+#include "moon/mod-engine/engine.h"
+#include "moon/imgui/imgui_impl.h"
 #include "pc/configfile.h"
+#include "pc/controller/controller_keyboard.h"
 
 #include "saturn_colors.h"
 #include "saturn_textures.h"
@@ -71,6 +75,8 @@ namespace MoonInternal {
                 enable_yoshi = false;
 
                 MoonInternal::load_cc_directory();
+                MoonInternal::load_cc_file(cc_array[configColorCode]);
+                apply_editor_from_cc();
                 
                 // custom textures
                 current_eye_state = 0;
@@ -81,9 +87,18 @@ namespace MoonInternal {
                 saturn_load_emblem_array();
                 custom_emblem_name = "saturn/blank";
                 saturn_emblem_swap();
+
                 saturn_load_stache_array();
                 saturn_load_button_array();
                 saturn_load_sideburn_array();
+
+                // addons
+                if(texturePackList.empty()){
+                    texturePackList.clear();
+                    copy(Moon::addons.begin(), Moon::addons.end(), back_inserter(texturePackList));
+                    reverse(texturePackList.begin(), texturePackList.end());
+                }
+                currentPack = NULL;
             }});
 
             Moon::registerHookListener({.hookName = WINDOW_API_HANDLE_EVENTS, .callback = [&](HookCall call){
@@ -91,14 +106,8 @@ namespace MoonInternal {
                 switch (ev->type){
                     case SDL_KEYDOWN:
                         if(ev->key.keysym.sym == SDLK_f){
-                            if (!show_menu_bar)
+                            if (accept_input)
                                 freeze_camera();
-                        }
-                        if(ev->key.keysym.sym == SDLK_x){
-                            //cycle_eye_state(1);
-                        }
-                        if(ev->key.keysym.sym == SDLK_z){
-                            //cycle_eye_state(-1);
                         }
                         if(ev->key.keysym.sym == SDLK_F1){
                             show_menu_bar = !show_menu_bar;
@@ -106,12 +115,6 @@ namespace MoonInternal {
                     case SDL_CONTROLLERBUTTONDOWN:
                         if (ev->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_UP) {
                             freeze_camera();
-                        }
-                        if (ev->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_RIGHT) {
-                            //cycle_eye_state(1);
-                        }
-                        if (ev->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_LEFT) {
-                            //cycle_eye_state(-1);
                         }
                         if(ev->cbutton.button == SDL_CONTROLLER_BUTTON_BACK){
                             show_menu_bar = !show_menu_bar;

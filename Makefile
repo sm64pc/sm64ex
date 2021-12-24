@@ -416,10 +416,10 @@ ifeq ($(TARGET_SWITCH),1)
   CXX := $(CROSS)g++
   STRIP := $(CROSS)strip
   NXARCH	:=	-march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE
-  APP_TITLE := Moon64 - [$(GIT_BRANCH)]
-  APP_AUTHOR := Nintendo, n64decomp team, UnderVolt team
-  APP_VERSION := $(GIT_HASH)
-  APP_ICON := $(CURDIR)/textures/logo/moon64-logo.jpg
+  APP_TITLE := Saturn: Moon Edition
+  APP_AUTHOR := Llennpie
+  APP_VERSION := $(GIT_BRANCH) $(GIT_HASH)
+  APP_ICON := $(CURDIR)/textures/logo/saturn-logo.jpg
   INCLUDE_CFLAGS += -I$(LIBNX)/include -I$(PORTLIBS)/include
   OPT_FLAGS := -O2
   LIBDIRS	:= $(PORTLIBS) $(LIBNX)

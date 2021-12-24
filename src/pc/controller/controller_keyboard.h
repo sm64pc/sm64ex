@@ -16,6 +16,7 @@ void keyboard_on_all_keys_up(void);
 }
 #endif
 
+extern bool accept_input;
 extern struct ControllerAPI controller_keyboard;
 
 #endif

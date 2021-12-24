@@ -20,6 +20,8 @@
 #include "icons/IconsForkAwesome.h"
 #include "icons/IconsMaterialDesign.h"
 #include "moon/utils/moon-env.h"
+#include "pc/controller/controller_keyboard.h"
+#include "moon/ui/screens/addons/addons-view.h"
 
 #include <SDL2/SDL.h>
 
@@ -181,6 +183,8 @@ namespace MoonInternal {
     static ImVec4 uiHairColor =             ImVec4(115.0f / 255.0f, 6.0f / 255.0f, 0.0f / 255.0f, 255.0f / 255.0f);
     static ImVec4 uiHairShadeColor =        ImVec4(57.0f / 255.0f, 3.0f / 255.0f, 0.0f / 255.0f, 255.0f / 255.0f);
 
+    string cc_name;
+    static char cc_gameshark[1024 * 16] = "";
     static char bufname[128] = "Sample";
 
     bool hasChangedFullscreen;
@@ -265,6 +269,31 @@ namespace MoonInternal {
         defaultColorHairBDark = (int)(uiHairShadeColor.z * 255);
     }
 
+    void apply_editor_from_cc() {
+        uiHatColor = ImVec4(float(defaultColorHatRLight) / 255.0f, float(defaultColorHatGLight) / 255.0f, float(defaultColorHatBLight) / 255.0f, 255.0f / 255.0f);
+        uiHatShadeColor = ImVec4(float(defaultColorHatRDark) / 255.0f, float(defaultColorHatGDark) / 255.0f, float(defaultColorHatBDark) / 255.0f, 255.0f / 255.0f);
+        uiOverallsColor = ImVec4(float(defaultColorOverallsRLight) / 255.0f, float(defaultColorOverallsGLight) / 255.0f, float(defaultColorOverallsBLight) / 255.0f, 255.0f / 255.0f);
+        uiOverallsShadeColor = ImVec4(float(defaultColorOverallsRDark) / 255.0f, float(defaultColorOverallsGDark) / 255.0f, float(defaultColorOverallsBDark) / 255.0f, 255.0f / 255.0f);
+        uiGlovesColor = ImVec4(float(defaultColorGlovesRLight) / 255.0f, float(defaultColorGlovesGLight) / 255.0f, float(defaultColorGlovesBLight) / 255.0f, 255.0f / 255.0f);
+        uiGlovesShadeColor = ImVec4(float(defaultColorGlovesRDark) / 255.0f, float(defaultColorGlovesGDark) / 255.0f, float(defaultColorGlovesBDark) / 255.0f, 255.0f / 255.0f);
+        uiShoesColor = ImVec4(float(defaultColorShoesRLight) / 255.0f, float(defaultColorShoesGLight) / 255.0f, float(defaultColorShoesBLight) / 255.0f, 255.0f / 255.0f);
+        uiShoesShadeColor = ImVec4(float(defaultColorShoesRDark) / 255.0f, float(defaultColorShoesGDark) / 255.0f, float(defaultColorShoesBDark) / 255.0f, 255.0f / 255.0f);
+        uiSkinColor = ImVec4(float(defaultColorSkinRLight) / 255.0f, float(defaultColorSkinGLight) / 255.0f, float(defaultColorSkinBLight) / 255.0f, 255.0f / 255.0f);
+        uiSkinShadeColor = ImVec4(float(defaultColorSkinRDark) / 255.0f, float(defaultColorSkinGDark) / 255.0f, float(defaultColorSkinBDark) / 255.0f, 255.0f / 255.0f);
+        uiHairColor = ImVec4(float(defaultColorHairRLight) / 255.0f, float(defaultColorHairGLight) / 255.0f, float(defaultColorHairBLight) / 255.0f, 255.0f / 255.0f);
+        uiHairShadeColor = ImVec4(float(defaultColorHairRDark) / 255.0f, float(defaultColorHairGDark) / 255.0f, float(defaultColorHairBDark) / 255.0f, 255.0f / 255.0f);
+
+        cc_name = MoonInternal::cc_array[configColorCode].substr(0, MoonInternal::cc_array[configColorCode].size() - 3);
+        strcpy(cc_gameshark, global_color_to_cc().c_str());
+
+        // We never want to use the name "Mario" when saving/loading a CC, as it will cause file issues.
+        if (cc_name == "Mario") {
+            strcpy(bufname, "Sample");
+        } else {
+            strcpy(bufname, cc_name.c_str());
+        }
+    }
+
     void setupImGuiModule(string status) {
         MoonInternal::setupWindowHook(status);
         if(status == "PreStartup"){
@@ -298,7 +327,6 @@ namespace MoonInternal {
                 MoonNX::handleVirtualKeyboard("Init");
             #endif
 
-                static char cc_gameshark[1024 * 16] = "";
                 apply_cc_from_editor();
                 strcpy(cc_gameshark, global_color_to_cc().c_str());
             }});
@@ -589,7 +617,7 @@ namespace MoonInternal {
                     ImGui::PopStyleColor();
                 }
 
-                static char cc_gameshark[1024 * 16] = "";
+                //static char cc_gameshark[1024 * 16] = "";
 
                 if (configImGui.s_machinima && show_menu_bar) {
                     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
@@ -603,16 +631,16 @@ namespace MoonInternal {
                     ImGui::Dummy(ImVec2(0, 10));
 
                     ImGui::Text("Select Color Code");
-                    static int current_cc_id = 0;
-                    string cc_name = MoonInternal::cc_array[current_cc_id].substr(0, MoonInternal::cc_array[current_cc_id].size() - 3);
+                    //static int current_cc_id = 0;
+                    cc_name = MoonInternal::cc_array[configColorCode].substr(0, MoonInternal::cc_array[configColorCode].size() - 3);
                     if (ImGui::BeginCombo(".gs", cc_name.c_str()))
                     {
                         for (int n = 0; n < MoonInternal::cc_array.size(); n++)
                         {
-                            const bool is_selected = (current_cc_id == n);
+                            const bool is_selected = (configColorCode == n);
                             cc_name = MoonInternal::cc_array[n].substr(0, MoonInternal::cc_array[n].size() - 3);
                             if (ImGui::Selectable(cc_name.c_str(), is_selected)) {
-                                current_cc_id = n;
+                                configColorCode = n;
                             }
 
                             // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -622,29 +650,8 @@ namespace MoonInternal {
                         ImGui::EndCombo();
                     }
                     if (ImGui::Button("Load CC")) {
-                        load_cc_file(cc_array[current_cc_id]);
-
-                        uiHatColor = ImVec4(float(defaultColorHatRLight) / 255.0f, float(defaultColorHatGLight) / 255.0f, float(defaultColorHatBLight) / 255.0f, 255.0f / 255.0f);
-                        uiHatShadeColor = ImVec4(float(defaultColorHatRDark) / 255.0f, float(defaultColorHatGDark) / 255.0f, float(defaultColorHatBDark) / 255.0f, 255.0f / 255.0f);
-                        uiOverallsColor = ImVec4(float(defaultColorOverallsRLight) / 255.0f, float(defaultColorOverallsGLight) / 255.0f, float(defaultColorOverallsBLight) / 255.0f, 255.0f / 255.0f);
-                        uiOverallsShadeColor = ImVec4(float(defaultColorOverallsRDark) / 255.0f, float(defaultColorOverallsGDark) / 255.0f, float(defaultColorOverallsBDark) / 255.0f, 255.0f / 255.0f);
-                        uiGlovesColor = ImVec4(float(defaultColorGlovesRLight) / 255.0f, float(defaultColorGlovesGLight) / 255.0f, float(defaultColorGlovesBLight) / 255.0f, 255.0f / 255.0f);
-                        uiGlovesShadeColor = ImVec4(float(defaultColorGlovesRDark) / 255.0f, float(defaultColorGlovesGDark) / 255.0f, float(defaultColorGlovesBDark) / 255.0f, 255.0f / 255.0f);
-                        uiShoesColor = ImVec4(float(defaultColorShoesRLight) / 255.0f, float(defaultColorShoesGLight) / 255.0f, float(defaultColorShoesBLight) / 255.0f, 255.0f / 255.0f);
-                        uiShoesShadeColor = ImVec4(float(defaultColorShoesRDark) / 255.0f, float(defaultColorShoesGDark) / 255.0f, float(defaultColorShoesBDark) / 255.0f, 255.0f / 255.0f);
-                        uiSkinColor = ImVec4(float(defaultColorSkinRLight) / 255.0f, float(defaultColorSkinGLight) / 255.0f, float(defaultColorSkinBLight) / 255.0f, 255.0f / 255.0f);
-                        uiSkinShadeColor = ImVec4(float(defaultColorSkinRDark) / 255.0f, float(defaultColorSkinGDark) / 255.0f, float(defaultColorSkinBDark) / 255.0f, 255.0f / 255.0f);
-                        uiHairColor = ImVec4(float(defaultColorHairRLight) / 255.0f, float(defaultColorHairGLight) / 255.0f, float(defaultColorHairBLight) / 255.0f, 255.0f / 255.0f);
-                        uiHairShadeColor = ImVec4(float(defaultColorHairRDark) / 255.0f, float(defaultColorHairGDark) / 255.0f, float(defaultColorHairBDark) / 255.0f, 255.0f / 255.0f);
-                        
-                        // We never want to use the name "Mario" when saving/loading a CC, as it will cause file issues.
-                        if (cc_name == "Mario") {
-                            strcpy(bufname, "Sample");
-                        } else {
-                            strcpy(bufname, cc_name.c_str());
-                        }
-
-                        strcpy(cc_gameshark, global_color_to_cc().c_str());
+                        load_cc_file(cc_array[configColorCode]);
+                        apply_editor_from_cc();
                     }
 
                     ImGui::Dummy(ImVec2(0, 10));
@@ -884,6 +891,8 @@ namespace MoonInternal {
                     ImGui::Begin("Appearance", NULL, ImGuiWindowFlags_None);
 
                     ImGui::InputText(".gs", bufname, IM_ARRAYSIZE(bufname));
+                    if (ImGui::IsItemActivated()) accept_input = false;
+                    if (ImGui::IsItemDeactivated()) accept_input = true;
                     if (ImGui::Button("Save to File")) {
                         apply_cc_from_editor();
 
@@ -909,22 +918,46 @@ namespace MoonInternal {
                         if (ImGui::BeginTabItem("CC Editor")) {
                             ImGui::Text("Shirt/Cap");
                             ImGui::ColorEdit4("Hat Main", (float*)&uiHatColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;
                             ImGui::ColorEdit4("Hat Shade", (float*)&uiHatShadeColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;                            
                             ImGui::Text("Overalls");
                             ImGui::ColorEdit4("Overalls Main", (float*)&uiOverallsColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;                                
                             ImGui::ColorEdit4("Overalls Shade", (float*)&uiOverallsShadeColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::Text("Gloves");
                             ImGui::ColorEdit4("Gloves Main", (float*)&uiGlovesColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::ColorEdit4("Gloves Shade", (float*)&uiGlovesShadeColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::Text("Shoes");
                             ImGui::ColorEdit4("Shoes Main", (float*)&uiShoesColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::ColorEdit4("Shoes Shade", (float*)&uiShoesShadeColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::Text("Skin");
                             ImGui::ColorEdit4("Skin Main", (float*)&uiSkinColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::ColorEdit4("Skin Shade", (float*)&uiSkinShadeColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::Text("Hair");
                             ImGui::ColorEdit4("Hair Main", (float*)&uiHairColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::ColorEdit4("Hair Shade", (float*)&uiHairShadeColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::EndTabItem();
 
                             ImGui::Dummy(ImVec2(0, 5));
@@ -936,7 +969,8 @@ namespace MoonInternal {
                         }
                         if (ImGui::BeginTabItem("GameShark")) {
                             ImGui::InputTextMultiline("###gameshark_box", cc_gameshark, IM_ARRAYSIZE(cc_gameshark), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 25), ImGuiInputTextFlags_CharsUppercase);
-
+                            if (ImGui::IsItemActivated()) accept_input = false;
+                            if (ImGui::IsItemDeactivated()) accept_input = true;    
                             ImGui::Dummy(ImVec2(0, 5));
 
                             if (ImGui::Button("Paste GS Code")) {
@@ -1046,6 +1080,36 @@ namespace MoonInternal {
                         ImGui::Checkbox("Precache Textures", &configPrecacheRes);
                         ImGui::Checkbox("Skip Intro", &configSkipIntro);
                         ImGui::Checkbox("Enable Yoshi", &enable_yoshi);
+                    }
+                    if (ImGui::CollapsingHeader("Addons")) {
+                        {
+                            ImGuiWindowFlags window_flags = ImGuiWindowFlags_None;
+                            ImGui::BeginChild("addon_child", ImVec2(ImGui::GetWindowContentRegionWidth(), 130), false, window_flags);
+                            for (int n = 0; n < texturePackList.size(); n++)
+                            {
+                                currentPack = texturePackList[n];
+                                ImGui::Selectable(currentPack->name.c_str());
+
+                                if (ImGui::IsItemHovered()) {
+                                    ImGui::SetMouseCursor(2);
+                                }
+
+                                if (ImGui::IsItemActive() && !ImGui::IsItemHovered())
+                                {
+                                    int n_next = n + (ImGui::GetMouseDragDelta(0).y < 0.f ? -1 : 1);
+                                    if (n_next >= 0 && n_next < texturePackList.size())
+                                    {
+                                        texturePackList[n] = texturePackList[n_next];
+                                        texturePackList[n_next] = currentPack;
+                                        ImGui::ResetMouseDragDelta();
+                                    }
+                                }
+                            }
+                            ImGui::EndChild();
+                        }
+                        if (ImGui::Button("Reload Addons")) {
+                            rebuildTextureCache();
+                        }
                     }
 
                     ImGui::End();
