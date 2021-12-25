@@ -17,6 +17,6 @@ MCheatsCategory::MCheatsCategory() : MoonCategory("TEXT_OPT_CHEATS"){
     this->catOptions.push_back(new MWValue(22, 125, "TEXT_OPT_CHEAT5", {.bvar = &Cheats.SuperSpeed   }, true));
     this->catOptions.push_back(new MWValue(22, 142, "TEXT_OPT_CHEAT6", {.bvar = &Cheats.Responsive   }, true));
     this->catOptions.push_back(new MWValue(22, 159, "TEXT_OPT_CHEAT7", {.bvar = &Cheats.ExitAnywhere }, true));
-    this->catOptions.push_back(new MWValue(22, 176, "TEXT_OPT_CHEAT8", {.bvar = &Cheats.HugeMario    }, true));
-    this->catOptions.push_back(new MWValue(22, 193, "TEXT_OPT_CHEAT9", {.bvar = &Cheats.TinyMario    }, true));
+    //this->catOptions.push_back(new MWValue(22, 176, "TEXT_OPT_CHEAT8", {.bvar = &Cheats.HugeMario    }, true));
+    //this->catOptions.push_back(new MWValue(22, 193, "TEXT_OPT_CHEAT9", {.bvar = &Cheats.TinyMario    }, true));
 }

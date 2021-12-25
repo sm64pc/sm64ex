@@ -55,4 +55,6 @@ extern int current_cap_state;
 extern int current_eye_state;
 extern int current_hand_state;
 
+extern float mario_scale_size;
+
 #endif // MARIO_H

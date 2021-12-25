@@ -1210,6 +1210,8 @@ s32 set_water_plunge_action(struct MarioState *m) {
 u8 sSquishScaleOverTime[16] = { 0x46, 0x32, 0x32, 0x3C, 0x46, 0x50, 0x50, 0x3C,
                                 0x28, 0x14, 0x14, 0x1E, 0x32, 0x3C, 0x3C, 0x28 };
 
+float mario_scale_size = 2.5f;
+
 /**
  * Applies the squish to Mario's model via scaling.
  */
@@ -1219,11 +1221,8 @@ void squish_mario_model(struct MarioState *m) {
         // Also handles the Tiny Mario and Huge Mario cheats.
         if (m->squishTimer == 0) {
             if (Cheats.EnableCheats) {
-                if (Cheats.HugeMario) {
-                    vec3f_set(m->marioObj->header.gfx.scale, 2.5f, 2.5f, 2.5f);
-                }
-                else if (Cheats.TinyMario) {
-                    vec3f_set(m->marioObj->header.gfx.scale, 0.2f, 0.2f, 0.2f);
+                if (Cheats.ScaleMario) {
+                    vec3f_set(m->marioObj->header.gfx.scale, mario_scale_size, mario_scale_size, mario_scale_size);
                 }
                 else {
                     vec3f_set(m->marioObj->header.gfx.scale, 1.0f, 1.0f, 1.0f);
@@ -1757,7 +1756,7 @@ s32 execute_mario_action(UNUSED struct Object *o) {
         if (Cheats.GodMode)
             gMarioState->health = 0x880;
 
-        if (Cheats.InfiniteLives && gMarioState->numLives < 99)
+        if (Cheats.InfiniteLives && gMarioState->numLives < 4)
             gMarioState->numLives += 1;
 
         if (Cheats.SuperSpeed && gMarioState->forwardVel > 0)

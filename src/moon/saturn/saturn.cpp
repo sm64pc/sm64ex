@@ -30,6 +30,7 @@ extern "C" {
 #include "sm64.h"
 #include "game/behavior_actions.h"
 #include "game/behaviors/yoshi.inc.h"
+#include "pc/cheats.h"
 }
 
 bool camera_frozen;
@@ -71,8 +72,12 @@ namespace MoonInternal {
 
                 camera_frozen = false;
                 enable_shadows = true;
-                enable_god = false;
+                enable_god = true;
                 enable_yoshi = false;
+
+                Cheats.EnableCheats = true;
+                Cheats.InfiniteLives = true;
+                Cheats.ExitAnywhere = true;
 
                 MoonInternal::load_cc_directory();
                 MoonInternal::load_cc_file(cc_array[configColorCode]);

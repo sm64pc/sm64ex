@@ -22,6 +22,7 @@
 #include "moon/utils/moon-env.h"
 #include "pc/controller/controller_keyboard.h"
 #include "moon/ui/screens/addons/addons-view.h"
+#include "pc/cheats.h"
 
 #include <SDL2/SDL.h>
 
@@ -494,10 +495,6 @@ namespace MoonInternal {
 
                     ImGui::Dummy(ImVec2(0, 5));
 
-                    ImGui::Checkbox("God Mode", &enable_god);
-
-                    ImGui::Dummy(ImVec2(0, 5));
-
                     const char* levelList[] = { 
                         "Castle Grounds", "Castle Inside", "Bob-omb Battlefield", 
                         "Whomp's Fortress", "Princess's Secret Slide", "Tower of the Wing Cap", 
@@ -508,7 +505,8 @@ namespace MoonInternal {
                         "Snowman's Land", "Wet-Dry World", "Tall, Tall Mountain", "Tiny, Huge Island",
                         "Tick Tock Clock", "Wing Mario Over the Rainbow", "Rainbow Ride", "Bowser in the Sky"
                     };
-                    ImGui::Combo("Level", &current_level_sel, levelList, IM_ARRAYSIZE(levelList));
+                    ImGui::Text("Warp to Level");
+                    ImGui::Combo("###warp_to_level", &current_level_sel, levelList, IM_ARRAYSIZE(levelList));
 
                     if (ImGui::Button("Warp")) {
                         switch (current_level_sel) {
@@ -597,6 +595,19 @@ namespace MoonInternal {
                     }
 
                     ImGui::Dummy(ImVec2(0, 5));
+
+                    if (ImGui::CollapsingHeader("Cheats")) {
+                        ImGui::Checkbox("God Mode", &enable_god); // agent x version better!!!
+                        ImGui::Checkbox("Infinite Lives", &Cheats.InfiniteLives);
+                        ImGui::Checkbox("Moon Jump", &Cheats.MoonJump); ImGui::SameLine(); HelpMarker(
+                            "Hold L in mid-air to Moon Jump!");
+                        ImGui::Checkbox("Responsive Controls", &Cheats.Responsive);
+                        ImGui::Checkbox("Super Speed", &Cheats.SuperSpeed);
+                        ImGui::Checkbox("Custom Mario Scale", &Cheats.ScaleMario);
+                        if (Cheats.ScaleMario) {
+                            ImGui::SliderFloat("Scale ###mario_scale", &mario_scale_size, 0.2f, 5.0f);
+                        }
+                    }
 
                     /*
                     const char* skyStates[] = { "Default", "Night", "Green", "Blue", "Pink"};
