@@ -24,6 +24,7 @@
 #include "sound_init.h"
 #include "thread6.h"
 #include "moon/achievements/achievements.h"
+#include "moon/saturn/saturn_types.h"
 
 #define INT_GROUND_POUND_OR_TWIRL (1 << 0) // 0x01
 #define INT_PUNCH                 (1 << 1) // 0x02
@@ -1844,7 +1845,7 @@ void mario_handle_special_floors(struct MarioState *m) {
                 break;
         }
 
-        if (!(m->action & ACT_FLAG_AIR) && !(m->action & ACT_FLAG_SWIMMING)) {
+        if (!(m->action & ACT_FLAG_AIR) && !(m->action & ACT_FLAG_SWIMMING) && !enable_god) {
             switch (floorType) {
                 case SURFACE_BURNING:
                     check_lava_boost(m);
