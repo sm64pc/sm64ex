@@ -398,7 +398,7 @@ namespace MoonInternal {
                         if (ImGui::BeginMenu("Tools")) {
                             ImGui::MenuItem("Toggle View (F1)", NULL, &show_menu_bar);
                             ImGui::MenuItem("Jabo Mode", NULL, &configImGui.jaboMode);
-                            //ImGui::MenuItem("Night Mode", NULL, &enable_night_skybox);
+                            ImGui::MenuItem("Wireframe Mode", NULL, &configImGui.wireframeMode);
                             ImGui::EndMenu();
                         }
                         if (ImGui::BeginMenu("View")) {
@@ -601,12 +601,13 @@ namespace MoonInternal {
                         ImGui::Checkbox("Infinite Lives", &Cheats.InfiniteLives);
                         ImGui::Checkbox("Moon Jump", &Cheats.MoonJump); ImGui::SameLine(); HelpMarker(
                             "Hold L in mid-air to Moon Jump!");
-                        ImGui::Checkbox("Responsive Controls", &Cheats.Responsive);
-                        ImGui::Checkbox("Super Speed", &Cheats.SuperSpeed);
                         ImGui::Checkbox("Custom Mario Scale", &Cheats.ScaleMario);
                         if (Cheats.ScaleMario) {
                             ImGui::SliderFloat("Scale ###mario_scale", &mario_scale_size, 0.2f, 5.0f);
+                            ImGui::Dummy(ImVec2(0, 5));
                         }
+                        ImGui::Checkbox("Responsive Controls", &Cheats.Responsive);
+                        ImGui::Checkbox("Super Speed", &Cheats.SuperSpeed);
                     }
 
                     /*
@@ -663,6 +664,10 @@ namespace MoonInternal {
                     if (ImGui::Button("Load CC")) {
                         load_cc_file(cc_array[configColorCode]);
                         apply_editor_from_cc();
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button( ICON_MD_REFRESH "###refresh_cc_array")) {
+                        MoonInternal::load_cc_directory();
                     }
 
                     ImGui::Dummy(ImVec2(0, 10));
@@ -1046,6 +1051,7 @@ namespace MoonInternal {
                         ImGui::Text("Texture Filtering");
                         const char* texture_filters[] = { "Nearest", "Linear", "Three-point" };
                         ImGui::Combo("###texture_filters", (int*)&configFiltering, texture_filters, IM_ARRAYSIZE(texture_filters));
+                        ImGui::Checkbox("Wireframe Mode", &configImGui.wireframeMode);
                     }
                     if (ImGui::CollapsingHeader("Audio")) {
                         ImGui::Text("Volume");

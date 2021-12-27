@@ -29,6 +29,7 @@ typedef struct {
     bool s_options;
     bool texture_debug;
     bool jaboMode;
+    bool wireframeMode;
 } ImGuiConfig;
 
 extern ConfigWindow configWindow;

@@ -62,7 +62,8 @@ ImGuiConfig configImGui = {
     .s_machinima = true,
     .s_appearance = true,
     .s_options = false,
-    .jaboMode = false
+    .jaboMode = false,
+    .wireframeMode = false
 };
 
 unsigned int configLanguage     = 0;
@@ -141,6 +142,7 @@ static const struct ConfigOption options[] = {
     {.name = "vsync",                .type = CONFIG_TYPE_BOOL, .boolValue = &configWindow.vsync},
     {.name = "texture_filtering",    .type = CONFIG_TYPE_UINT, .uintValue = &configFiltering},
     {.name = "jaboMode",             .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.jaboMode},
+    {.name = "wireframeMode",        .type = CONFIG_TYPE_BOOL, .boolValue = &configImGui.wireframeMode},
     {.name = "lodMode",              .type = CONFIG_TYPE_UINT, .uintValue = &configLODMode},
     {.name = "master_volume",        .type = CONFIG_TYPE_UINT, .uintValue = &configMasterVolume},
     {.name = "music_volume",         .type = CONFIG_TYPE_UINT, .uintValue = &configMusicVolume},

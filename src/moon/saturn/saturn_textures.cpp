@@ -73,7 +73,11 @@ void saturn_emblem_swap() {
             if (custom_emblem_name != "default") {
                 (*hookTexture) = const_cast<char*>(custom_emblem_name.c_str());
             } else {
+#ifdef __MINGW32__
+                (*hookTexture) = const_cast<char*>("actors/mario/mario_logo.rgba16");
+#else
                 (*hookTexture) = const_cast<char*>(texName.c_str());
+#endif
             }
         }
     }});
