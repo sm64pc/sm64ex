@@ -27,10 +27,12 @@ extern "C" {
 #include "game/camera.h"
 #include "game/level_update.h"
 #include "game/mario.h"
+#include "game/area.h"
 #include "sm64.h"
 #include "game/behavior_actions.h"
 #include "game/behaviors/yoshi.inc.h"
 #include "pc/cheats.h"
+#include <mario_animation_ids.h>
 }
 
 bool camera_frozen;
@@ -45,10 +47,15 @@ float camera_speed = 0.8f;
 bool enable_night_skybox;
 bool enable_yoshi;
 
+enum MarioAnimID selected_animation = MARIO_ANIM_BREAKDANCE;
+bool is_anim_playing;
+bool loop_animation;
+
 // Second Check
 
-bool has_changed_night_skybox;
+bool has_changed_chroma_sky;
 bool has_changed_yoshi;
+int every_other;
 
 namespace MoonInternal {
 
@@ -60,6 +67,13 @@ namespace MoonInternal {
     }
     void cycle_eye_state(int cycle) {
         current_eye_state += cycle;
+    }
+
+    // Play Animation
+
+    void saturn_play_animation(MarioAnimID anim) {
+        set_mario_animation(gMarioState, anim);
+        is_anim_playing = true;
     }
 
     // Setup Module
@@ -114,6 +128,10 @@ namespace MoonInternal {
                             if (accept_input)
                                 freeze_camera();
                         }
+                        if(ev->key.keysym.sym == SDLK_g){
+                            if (accept_input)
+                                saturn_play_animation(selected_animation);
+                        }
                         if(ev->key.keysym.sym == SDLK_F1){
                             show_menu_bar = !show_menu_bar;
                         }
@@ -121,9 +139,13 @@ namespace MoonInternal {
                         if (ev->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_UP) {
                             freeze_camera();
                         }
+                        if(ev->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_LEFT){
+                            saturn_play_animation(selected_animation);
+                        }
                         if(ev->cbutton.button == SDL_CONTROLLER_BUTTON_BACK){
                             show_menu_bar = !show_menu_bar;
                         }
+
                     break;
                 }
             }});
@@ -148,6 +170,36 @@ namespace MoonInternal {
                     gCameraMovementFlags &= ~CAM_MOVE_FIX_IN_PLACE;
                 }
                 */
+
+                // Animations
+
+                if (is_anim_playing && is_anim_at_end(gMarioState)) {
+                    if (loop_animation) {
+                        gMarioState->marioObj->header.gfx.unk38.animFrame = 0;
+                    } else {
+                        is_anim_playing = false;
+                    }
+                }
+                if (is_anim_playing && selected_animation != gMarioState->marioObj->header.gfx.unk38.animID) {
+                    is_anim_playing = false;
+                }
+
+                // Chroma Key
+
+                if (gCurrLevelNum == LEVEL_SA && !has_changed_chroma_sky) {
+                    has_changed_chroma_sky = true;
+                    saturn_chroma_sky_swap();
+                    defaultColorChromaKeyR = 0;
+                    defaultColorChromaKeyG = 255;
+                    defaultColorChromaKeyB = 0;
+                }
+                if (gCurrLevelNum != LEVEL_SA && has_changed_chroma_sky) {
+                    has_changed_chroma_sky = false;
+                    saturn_chroma_sky_swap();
+                    defaultColorChromaKeyR = 255;
+                    defaultColorChromaKeyG = 255;
+                    defaultColorChromaKeyB = 255;
+                }
 
                 // Yoshi
 

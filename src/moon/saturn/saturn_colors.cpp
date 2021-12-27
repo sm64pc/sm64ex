@@ -69,6 +69,10 @@ unsigned int defaultColorHairGDark = 3;
 unsigned int defaultColorHairBLight = 0;
 unsigned int defaultColorHairBDark = 0;
 
+unsigned int defaultColorChromaKeyR = 255;
+unsigned int defaultColorChromaKeyG = 255;
+unsigned int defaultColorChromaKeyB = 255;
+
 // Color Codes
 
 namespace MoonInternal {

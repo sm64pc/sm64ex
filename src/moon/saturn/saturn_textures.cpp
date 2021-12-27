@@ -193,32 +193,16 @@ void saturn_load_sideburn_array() {
     }
 }
 
-void saturn_sky_swap() {
+void saturn_chroma_sky_swap() {
     Moon::registerHookListener({.hookName = TEXTURE_BIND, .callback = [](HookCall call) {
         char* *hookTexture = reinterpret_cast<char**>(call.baseArgs["texture"]);
         string texName = string(*hookTexture);
-        if(texName.find("textures/skyboxes/") != string::npos) {
-            if (custom_sky_name != "default") {
-                (*hookTexture) = const_cast<char*>(custom_sky_name.c_str());
+        if(texName == "textures/skyboxes/clouds.rgba16") {
+            if (has_changed_chroma_sky) {
+                (*hookTexture) = const_cast<char*>("saturn/white");
             } else {
                 (*hookTexture) = const_cast<char*>(texName.c_str());
             }
         }
     }});
 }
-
-/*
-void saturn_toggle_night_skybox() {
-    Moon::registerHookListener({.hookName = TEXTURE_BIND, .callback = [](HookCall call) {
-        char* *hookTexture = reinterpret_cast<char**>(call.baseArgs["texture"]);
-        string texName = string(*hookTexture);
-        if(texName.find("textures/skyboxes/") != string::npos) {
-            if (enable_night_skybox) {
-                (*hookTexture) = const_cast<char*>("night_skybox");
-            } else {
-                (*hookTexture) = const_cast<char*>(texName.c_str());
-            }
-        }
-    }});
-}
-*/

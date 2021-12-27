@@ -17,6 +17,7 @@
 #include "moon/saturn/saturn_colors.h"
 #include "moon/saturn/saturn_textures.h"
 #include "moon/saturn/saturn_types.h"
+#include "moon/saturn/saturn_animations.h"
 #include "icons/IconsForkAwesome.h"
 #include "icons/IconsMaterialDesign.h"
 #include "moon/utils/moon-env.h"
@@ -73,6 +74,7 @@ extern "C" {
 #include "pc/pc_main.h"
 #include "game/camera.h"
 #include "game/mario.h"
+#include "game/area.h"
 #include "game/level_update.h"
 #include "engine/level_script.h"
 #include "level_table.h"
@@ -183,6 +185,7 @@ namespace MoonInternal {
     static ImVec4 uiSkinShadeColor =        ImVec4(127.0f / 255.0f, 96.0f / 255.0f, 60.0f / 255.0f, 255.0f / 255.0f);
     static ImVec4 uiHairColor =             ImVec4(115.0f / 255.0f, 6.0f / 255.0f, 0.0f / 255.0f, 255.0f / 255.0f);
     static ImVec4 uiHairShadeColor =        ImVec4(57.0f / 255.0f, 3.0f / 255.0f, 0.0f / 255.0f, 255.0f / 255.0f);
+    static ImVec4 uiChromaKeyColor =        ImVec4(0.0f / 255.0f, 255.0f / 255.0f, 0.0f / 255.0f, 255.0f / 255.0f);
 
     string cc_name;
     static char cc_gameshark[1024 * 16] = "";
@@ -191,6 +194,8 @@ namespace MoonInternal {
     bool hasChangedFullscreen;
     int tempXRes;
     int tempYRes;
+
+    int anim_index = 113;
 
     int selected_eye_item = 0;
 
@@ -496,9 +501,9 @@ namespace MoonInternal {
                     ImGui::Dummy(ImVec2(0, 5));
 
                     const char* levelList[] = { 
-                        "Castle Grounds", "Castle Inside", "Bob-omb Battlefield", 
+                        "Castle Grounds", "Castle Inside", "Chroma Key Stage", "Bob-omb Battlefield", 
                         "Whomp's Fortress", "Princess's Secret Slide", "Tower of the Wing Cap", 
-                        "Jolly Roger Bay", "Secret Aquarium", "Cool, Cool Mountain", 
+                        "Jolly Roger Bay", "Cool, Cool Mountain",
                         "Bowser in the Dark World", "Big Boo's Haunt", "Hazy Maze Cave", 
                         "Cavern of the Metal Cap", "Lethal Lava Land", "Shifting Sand Land", 
                         "Vanish Cap under the Moat", "Dire, Dire Docks", "Bowser in the Fire Sea", 
@@ -517,22 +522,22 @@ namespace MoonInternal {
                                 warp_to(LEVEL_CASTLE, 0x01, 0x01);
                                 break;
                             case 2:
-                                warp_to(LEVEL_BOB);
+                                warp_to(LEVEL_SA);
                                 break;
                             case 3:
-                                warp_to(LEVEL_WF);
+                                warp_to(LEVEL_BOB);
                                 break;
                             case 4:
-                                warp_to(LEVEL_PSS);
+                                warp_to(LEVEL_WF);
                                 break;
                             case 5:
-                                warp_to(LEVEL_TOTWC);
+                                warp_to(LEVEL_PSS);
                                 break;
                             case 6:
-                                warp_to(LEVEL_JRB);
+                                warp_to(LEVEL_TOTWC);
                                 break;
                             case 7:
-                                warp_to(LEVEL_SA);
+                                warp_to(LEVEL_JRB);
                                 break;
                             case 8:
                                 warp_to(LEVEL_CCM);
@@ -895,9 +900,19 @@ namespace MoonInternal {
                                 custom_sideburn_name = "saturn/sideburns/" + sideburn_array[current_sideburn_id];
                                 saturn_sideburn_swap();
                             }
-                            ImGui::Dummy(ImVec2(0, 5));
                         }
                     }
+
+                    ImGui::Dummy(ImVec2(0, 10));
+
+                    ImGui::Text("Play Animation");
+                    ImGui::Combo("###animation_combo", &anim_index, saturn_animations, IM_ARRAYSIZE(saturn_animations));
+                    selected_animation = (MarioAnimID)anim_index;
+                    if (ImGui::Button("Play###play_animation_button")) {
+                        MoonInternal::saturn_play_animation(selected_animation);
+                    }
+                    ImGui::SameLine();
+                    ImGui::Checkbox("Loop###loop_animation", &loop_animation);
 
                     ImGui::End();
                     ImGui::PopStyleColor();
@@ -1133,6 +1148,26 @@ namespace MoonInternal {
                     ImGui::PopStyleColor();
                 }
 
+                if (gCurrLevelNum == LEVEL_SA && show_menu_bar) {
+                    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
+                    ImGui::Begin("Chroma Key Stage", NULL, ImGuiWindowFlags_None);
+
+                    ImGui::Text("Background Color");
+                    ImGui::ColorEdit4("Chroma Key Color", (float*)&uiChromaKeyColor, ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_InputRGB | ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_NoLabel);
+                    if (ImGui::IsItemActivated()) accept_input = false;
+                    if (ImGui::IsItemDeactivated()) accept_input = true;
+
+                    if (ImGui::Button("Set###set_background_color")) {
+                        defaultColorChromaKeyR = (int)(uiChromaKeyColor.x * 255);
+                        defaultColorChromaKeyG = (int)(uiChromaKeyColor.y * 255);
+                        defaultColorChromaKeyB = (int)(uiChromaKeyColor.z * 255);
+                    }
+
+                    ImGui::End();
+                    ImGui::PopStyleColor();
+                }
+
+                /*
                 if(configImGui.texture_debug && show_menu_bar) {
                     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
                     ImGui::Begin("Loaded textures", NULL, ImGuiWindowFlags_None);
@@ -1173,6 +1208,7 @@ namespace MoonInternal {
                     ImGui::End();
                     ImGui::PopStyleColor();
                 }
+                */
 
                 ImGui::Render();
                 GLint last_program;

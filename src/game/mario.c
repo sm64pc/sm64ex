@@ -69,6 +69,8 @@ s32 is_anim_past_end(struct MarioState *m) {
  * Sets Mario's animation without any acceleration, running at its default rate.
  */
 s16 set_mario_animation(struct MarioState *m, s32 targetAnimID) {
+    if (is_anim_playing) return;
+
     struct Object *o = m->marioObj;
     struct Animation *targetAnim = m->animation->targetAnim;
 

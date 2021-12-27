@@ -29,7 +29,7 @@ void saturn_sideburn_swap(void);
 void saturn_load_sideburn_array(void);
 void saturn_toggle_m_cap(void);
 void saturn_toggle_m_buttons(void);
-void saturn_sky_swap(void);
+void saturn_chroma_sky_swap(void);
 //void saturn_toggle_night_skybox(void);
 
 #endif

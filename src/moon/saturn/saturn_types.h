@@ -3,6 +3,9 @@
 
 #include <stdbool.h>
 
+extern bool is_anim_playing;
+extern bool loop_animation;
+
 extern bool enable_head_rotations;
 extern bool enable_shadows;
 extern bool enable_god;
@@ -51,5 +54,9 @@ extern unsigned int defaultColorHairGLight;
 extern unsigned int defaultColorHairGDark;
 extern unsigned int defaultColorHairBLight;
 extern unsigned int defaultColorHairBDark;
+
+extern unsigned int defaultColorChromaKeyR;
+extern unsigned int defaultColorChromaKeyG;
+extern unsigned int defaultColorChromaKeyB;
 
 #endif

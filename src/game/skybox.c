@@ -10,6 +10,8 @@
 #include "segment2.h"
 #include "sm64.h"
 
+#include "moon/saturn/saturn_types.h"
+
 
 /**
  * @file skybox.c
@@ -189,6 +191,16 @@ Vtx *make_skybox_rect(s32 tileIndex, s8 colorIndex) {
         tw += gapSize;
     }
     s16 ty = ((tileIndex / SKYBOX_COLS) * h) % SKYBOX_IMAGE_SIZE;
+
+    //if (gCurrLevelNum == LEVEL_SA) {
+        sSkyboxColors[colorIndex][0] = defaultColorChromaKeyR;
+        sSkyboxColors[colorIndex][1] = defaultColorChromaKeyG;
+        sSkyboxColors[colorIndex][2] = defaultColorChromaKeyB;
+    //} else {
+    //    sSkyboxColors[colorIndex][0] = 255;
+    //    sSkyboxColors[colorIndex][0] = 255;
+    //    sSkyboxColors[colorIndex][0] = 255;
+    //}
 
     if (verts != NULL) {
         make_vertex(verts, 0, x,      y, -1,                      tx << 5,       ty << 5,       sSkyboxColors[colorIndex][0], sSkyboxColors[colorIndex][1], sSkyboxColors[colorIndex][2], 255);

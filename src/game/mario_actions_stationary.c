@@ -134,26 +134,32 @@ s32 act_idle(struct MarioState *m) {
     } else {
         switch (m->actionState) {
             case 0:
-                if (enable_head_rotations) {
-                    set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_LEFT);
-                } else {
-                    set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
+                if (!is_anim_playing) {
+                    if (enable_head_rotations) {
+                        set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_LEFT);
+                    } else {
+                        set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
+                    }
                 }
                 break;
 
             case 1:
-                if (enable_head_rotations) {
-                    set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_RIGHT);
-                } else {
-                    set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
+                if (!is_anim_playing) {
+                    if (enable_head_rotations) {
+                        set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_RIGHT);
+                    } else {
+                        set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
+                    }
                 }
                 break;
 
             case 2:
-                if (enable_head_rotations) {
-                    set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_CENTER);
-                } else {
-                    set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
+                if (!is_anim_playing) {
+                    if (enable_head_rotations) {
+                        set_mario_animation(m, MARIO_ANIM_IDLE_HEAD_CENTER);
+                    } else {
+                        set_mario_animation(m, MARIO_ANIM_FIRST_PERSON);
+                    }
                 }
                 break;
         }

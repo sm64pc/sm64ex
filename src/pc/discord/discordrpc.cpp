@@ -19,6 +19,7 @@
 extern "C" {
 #include "pc/platform.h"
 #include "game/level_update.h"
+#include "game/area.h"
 }
 
 #define DISCORDLIBFILE "libdiscord-rpc"
@@ -175,6 +176,10 @@ static void set_time(void){
 }
 
 static void set_details(void) {
+    if (gCurrLevelNum == LEVEL_SA) {
+        strcpy(stage, "Chroma Keying");
+        return;
+    }
     if (lastCourseNum != gCurrCourseNum || reloadRPC) {
         // If we are in in Course 0 we are in the castle which doesn't have a string
         if (gCurrCourseNum) {
