@@ -333,6 +333,8 @@ namespace MoonInternal {
                 MoonNX::handleVirtualKeyboard("Init");
             #endif
 
+                configColorCode = 0;
+
                 apply_cc_from_editor();
                 strcpy(cc_gameshark, global_color_to_cc().c_str());
             }});
