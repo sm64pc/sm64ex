@@ -31,10 +31,10 @@ OSX_BUILD ?= 0
 # Specify the target you are building for, TARGET_BITS=0 means native
 TARGET_ARCH ?= native
 TARGET_BITS ?= 0
-# Disable better camera by default
-BETTERCAMERA ?= 0
-# Disable no drawing distance by default
-NODRAWINGDISTANCE ?= 0
+# Disable better camera
+BETTERCAMERA = 0
+# Enable no drawing distance by default
+NODRAWINGDISTANCE ?= 1
 # Disable texture fixes by default (helps with them purists)
 TEXTURE_FIX ?= 0
 # Enable Discord Rich Presence

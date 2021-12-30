@@ -177,6 +177,7 @@ static void set_time(void){
 
 static void set_details(void) {
     if (gCurrLevelNum == LEVEL_SA) {
+        lastCourseNum = gCurrCourseNum;
         strcpy(stage, "Chroma Keying");
         return;
     }
