@@ -146,6 +146,8 @@ ifeq ($(VERSION),jp)
 else
 ifeq ($(VERSION),us)
   VERSION_DEF := VERSION_US
+  OPT_FLAGS := -02
+  OPT_FLAGS := -g
 else
 ifeq ($(VERSION),eu)
   VERSION_DEF := VERSION_EU
