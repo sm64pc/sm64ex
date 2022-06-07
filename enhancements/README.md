@@ -29,3 +29,5 @@ This is the 60fps patch from [sm64-port](https://github.com/sm64-port/sm64-port/
 This is a fix to patch out parallel universes.
 
 Now you only appear at a different part of the map. Not sure if that's better or not, but it's an option.
+
+Please note that your movement can become restricted at lower speeds.
