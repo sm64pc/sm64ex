@@ -1,0 +1,56 @@
+diff --git a/src/engine/surface_collision.c b/src/engine/surface_collision.c
+index c639c354..11e16fab 100644
+--- a/src/engine/surface_collision.c
++++ b/src/engine/surface_collision.c
+@@ -348,5 +348,5 @@ static struct Surface *find_ceil_from_list(struct SurfaceNode *surfaceNode, s32
+  * Find the lowest ceiling above a given position and return the height.
+  */
+-f32 find_ceil(f32 posX, f32 posY, f32 posZ, struct Surface **pceil) {
++s16 find_ceil(s16 posX, s16 posY, s16 posZ, struct Surface **pceil) {
+     s16 cellZ, cellX;
+     struct Surface *ceil, *dynamicCeil;
+@@ -425,5 +425,5 @@ static u8 unused8038BE50[0x40];
+  * sFloorGeo.
+  */
+-f32 find_floor_height_and_data(f32 xPos, f32 yPos, f32 zPos, struct FloorGeometry **floorGeo) {
++s16 find_floor_height_and_data(s16 xPos, s16 yPos, s16 zPos, struct FloorGeometry **floorGeo) {
+     struct Surface *floor;
+     f32 floorHeight = find_floor(xPos, yPos, zPos, &floor);
+@@ -525,5 +525,5 @@ static struct Surface *find_floor_from_list(struct SurfaceNode *surfaceNode, s32
+  * Find the height of the highest floor below a point.
+  */
+-f32 find_floor_height(f32 x, f32 y, f32 z) {
++s16 find_floor_height(s16 x, s16 y, s16 z) {
+     struct Surface *floor;
+ 
+@@ -562,5 +562,5 @@ f32 unused_find_dynamic_floor(f32 xPos, f32 yPos, f32 zPos, struct Surface **pfl
+  * Find the highest floor under a given position and return the height.
+  */
+-f32 find_floor(f32 xPos, f32 yPos, f32 zPos, struct Surface **pfloor) {
++s16 find_floor(s16 xPos, s16 yPos, s16 zPos, struct Surface **pfloor) {
+     s16 cellZ, cellX;
+ 
+diff --git a/src/engine/surface_collision.h b/src/engine/surface_collision.h
+index 39c5fa24..7a267110 100644
+--- a/src/engine/surface_collision.h
++++ b/src/engine/surface_collision.h
+@@ -10,5 +10,5 @@
+ struct WallCollisionData
+ {
+-    /*0x00*/ f32 x, y, z;
++    /*0x00*/ s16 x, y, z;
+     /*0x0C*/ f32 offsetY;
+     /*0x10*/ f32 radius;
+@@ -29,8 +29,8 @@ struct FloorGeometry
+ s32 f32_find_wall_collision(f32 *xPtr, f32 *yPtr, f32 *zPtr, f32 offsetY, f32 radius);
+ s32 find_wall_collisions(struct WallCollisionData *colData);
+-f32 find_ceil(f32 posX, f32 posY, f32 posZ, struct Surface **pceil);
+-f32 find_floor_height_and_data(f32 xPos, f32 yPos, f32 zPos, struct FloorGeometry **floorGeo);
+-f32 find_floor_height(f32 x, f32 y, f32 z);
+-f32 find_floor(f32 xPos, f32 yPos, f32 zPos, struct Surface **pfloor);
++s16 find_ceil(s16 posX, s16 posY, s16 posZ, struct Surface **pceil);
++s16 find_floor_height_and_data(s16 xPos, s16 yPos, s16 zPos, struct FloorGeometry **floorGeo);
++s16 find_floor_height(s16 x, s16 y, s16 z);
++s16 find_floor(s16 xPos, s16 yPos, s16 zPos, struct Surface **pfloor);
+ f32 find_water_level(f32 x, f32 z);
+ f32 find_poison_gas_level(f32 x, f32 z);
