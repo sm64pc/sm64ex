@@ -1,0 +1,34 @@
+# Dynamic Options System aka DynOS v0.4
+# By PeachyPeach
+#
+# This is a comment
+# Here are the available commands:
+# SUBMENU [Name] [Label] [Label2]
+# TOGGLE  [Name] [Label] [ConfigName] [InitialValue]
+# SCROLL  [Name] [Label] [ConfigName] [InitialValue] [Min] [Max] [Step]
+# CHOICE  [Name] [Label] [ConfigName] [InitialValue] [ChoiceStrings...]
+# BIND    [Name] [Label] [ConfigName] [Mask] [DefaultValues]
+# BUTTON  [Name] [Label] [FuncName]
+# ENDMENU
+#
+# Valid Label characters:
+# 0-9 A-Z a-z
+# '.,-()&:!%?"~_
+#
+
+
+SUBMENU "cheater_submenu" "CHEATER" "CHEATER"
+	TOGGLE	"chaos_mode"	"CHAOS MODE"			"chaos_mode"	0
+	BIND	"time_button"	"Time Stop Button"		"time_button"	0x0080	0x0008 0x1001 0xFFFF
+	SUBMENU "che_submenu" "New Cheats!" "CHEATER"
+		TOGGLE	"no_heavy"	"No Hold Heavy"			"no_heavy"		0
+		TOGGLE	"swim_any"	"Swim Anywhere"			"swim_any"		0
+		TOGGLE	"haz_walk"	"Walk On Hazards"		"haz_walk"		0
+		TOGGLE	"coin_mag"	"Coin Magnet"			"coin_mag"		0
+		SCROLL	"spl"		"Spamba Per Level"		"spl"			0 0 7 1
+	ENDMENU
+	SUBMENU "wat_submenu" "Drain JRB?" "CHEATER"
+		TOGGLE	"wat_con"	"Water Control"			"wat_con"		0
+		SCROLL	"wat_lev"	"Water Level (9)"		"wat_lev"		0 1 20 1
+	ENDMENU
+ENDMENU
