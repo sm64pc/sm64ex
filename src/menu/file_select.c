@@ -836,7 +836,7 @@ void check_copy_menu_clicked_buttons(struct Object *copyButton) {
                 // If menu button clicked, select it
                 if (buttonID == MENU_BUTTON_COPY_RETURN || buttonID == MENU_BUTTON_COPY_CHECK_SCORE
                     || buttonID == MENU_BUTTON_COPY_ERASE_FILE) {
-                    if (copyButton->oMenuButtonActionPhase == COPY_PHASE_MAIN) {
+                    if (copyButton->oMenuButtonActionPhase == COPY_PHASE_MAIN && sMainMenuTimer >= ACTION_TIMER) {
                         play_sound(SOUND_MENU_CLICK_FILE_SELECT, gDefaultSoundArgs);
                         sMainMenuButtons[buttonID]->oMenuButtonState = MENU_BUTTON_STATE_ZOOM_IN_OUT;
                         sSelectedButtonID = buttonID;
