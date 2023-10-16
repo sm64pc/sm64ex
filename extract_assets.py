@@ -2,13 +2,12 @@
 import sys
 import os
 import json
-
+import platform
 
 def read_asset_map():
     with open("assets.json") as f:
         ret = json.load(f)
     return ret
-
 
 def read_local_asset_list(f):
     if f is None:
@@ -17,7 +16,6 @@ def read_local_asset_list(f):
     for line in f:
         ret.append(line.strip())
     return ret
-
 
 def asset_needs_update(asset, version):
     if version <= 5 and asset == "textures/spooky/bbh_textures.00800.rgba16.png":
@@ -34,7 +32,6 @@ def asset_needs_update(asset, version):
         return True
     return False
 
-
 def remove_file(fname):
     os.remove(fname)
     print("deleting", fname)
@@ -42,7 +39,6 @@ def remove_file(fname):
         os.removedirs(os.path.dirname(fname))
     except OSError:
         pass
-
 
 def clean_assets(local_asset_file):
     assets = set(read_asset_map().keys())
@@ -54,7 +50,6 @@ def clean_assets(local_asset_file):
             remove_file(fname)
         except FileNotFoundError:
             pass
-
 
 def main():
     # In case we ever need to change formats of generated files, we keep a
@@ -153,9 +148,14 @@ def main():
             sys.exit(1)
 
     # Make sure tools exist
-    subprocess.check_call(
-        ["make", "-s", "-C", "tools/", "n64graphics", "skyconv", "mio0", "aifc_decode"]
-    )
+    if platform.system() == "FreeBSD":
+        subprocess.check_call(
+            ["gmake", "-s", "-C", "tools/", "n64graphics", "skyconv", "mio0", "aifc_decode"]
+        )
+    else:
+        subprocess.check_call(
+            ["make", "-s", "-C", "tools/", "n64graphics", "skyconv", "mio0", "aifc_decode"]
+        )
 
     # Go through the assets in roughly alphabetical order (but assets in the same
     # mio0 file still go together).
@@ -282,5 +282,4 @@ def main():
     with open(".assets-local.txt", "w") as f:
         f.write(output)
 
-
-main()
+main() if __name__ == "__main__" else None
