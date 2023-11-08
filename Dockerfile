@@ -2,6 +2,7 @@ FROM ubuntu:22.04 as build
 
 RUN apt-get update && \
     apt-get install -y \
+        bsdextrautils \
         build-essential \
         git \
         libglew-dev \
