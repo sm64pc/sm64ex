@@ -738,11 +738,11 @@ res: $(BASEPACK_PATH)
 $(BASEPACK_LST): $(EXE)
 	@mkdir -p $(BUILD_DIR)/$(BASEDIR)
 	@touch $(BASEPACK_LST)
-	@echo "$(BUILD_DIR)/sound/bank_sets sound/bank_sets" >> $(BASEPACK_LST)
+	@echo "$(BUILD_DIR)/sound/bank_sets sound/bank_sets" > $(BASEPACK_LST)
 	@echo "$(BUILD_DIR)/sound/sequences.bin sound/sequences.bin" >> $(BASEPACK_LST)
 	@echo "$(BUILD_DIR)/sound/sound_data.ctl sound/sound_data.ctl" >> $(BASEPACK_LST)
 	@echo "$(BUILD_DIR)/sound/sound_data.tbl sound/sound_data.tbl" >> $(BASEPACK_LST)
-	@$(foreach f, $(wildcard $(SKYTILE_DIR)/*), echo $(f) gfx/$(f:$(BUILD_DIR)/%=%) >> $(BASEPACK_LST);)
+	@cd $(BUILD_DIR) ; find textures/skybox_tiles -name \*.png -exec echo "$(BUILD_DIR)/{} gfx/{}" >> basepack.lst \;
 	@find actors -name \*.png -exec echo "{} gfx/{}" >> $(BASEPACK_LST) \;
 	@find levels -name \*.png -exec echo "{} gfx/{}" >> $(BASEPACK_LST) \;
 	@find textures -name \*.png -exec echo "{} gfx/{}" >> $(BASEPACK_LST) \;
@@ -769,8 +769,12 @@ test: $(ROM)
 load: $(ROM)
 	$(LOADER) $(LOADER_FLAGS) $<
 
+ifneq ($(RPC_LIBS),)
+
 $(BUILD_DIR)/$(RPC_LIBS):
 	@$(CP) -f $(RPC_LIBS) $(BUILD_DIR)
+
+endif
 
 libultra: $(BUILD_DIR)/libultra.a
 
@@ -905,18 +909,18 @@ $(ENDIAN_BITWIDTH): tools/determine-endian-bitwidth.c
 	@rm $@.dummy1
 	@rm $@.dummy2
 
-$(SOUND_BIN_DIR)/sound_data.ctl: sound/sound_banks/ $(SOUND_BANK_FILES) $(SOUND_SAMPLE_AIFCS) $(ENDIAN_BITWIDTH)
-	$(PYTHON) tools/assemble_sound.py $(BUILD_DIR)/sound/samples/ sound/sound_banks/ $(SOUND_BIN_DIR)/sound_data.ctl $(SOUND_BIN_DIR)/sound_data.tbl $(VERSION_CFLAGS) $$(cat $(ENDIAN_BITWIDTH))
+$(SOUND_BIN_DIR)/sound_data.ctl: sound/sound_banks $(SOUND_BANK_FILES) $(SOUND_SAMPLE_AIFCS) $(ENDIAN_BITWIDTH)
+	$(PYTHON) tools/assemble_sound.py $(BUILD_DIR)/sound/samples sound/sound_banks $(SOUND_BIN_DIR)/sound_data.ctl $(SOUND_BIN_DIR)/sound_data.tbl $(VERSION_CFLAGS) $$(cat $(ENDIAN_BITWIDTH))
 
 $(SOUND_BIN_DIR)/sound_data.tbl: $(SOUND_BIN_DIR)/sound_data.ctl
 	@true
 
 ifeq ($(VERSION),sh)
-$(SOUND_BIN_DIR)/sequences.bin: $(SOUND_BANK_FILES) sound/sequences.json sound/sequences/ sound/sequences/jp/ $(SOUND_SEQUENCE_FILES) $(ENDIAN_BITWIDTH)
-	$(PYTHON) tools/assemble_sound.py --sequences $@ $(SOUND_BIN_DIR)/bank_sets sound/sound_banks/ sound/sequences.json $(SOUND_SEQUENCE_FILES) $(VERSION_CFLAGS) $$(cat $(ENDIAN_BITWIDTH))
+$(SOUND_BIN_DIR)/sequences.bin: $(SOUND_BANK_FILES) sound/sequences.json sound/sequences sound/sequences/jp $(SOUND_SEQUENCE_FILES) $(ENDIAN_BITWIDTH)
+	$(PYTHON) tools/assemble_sound.py --sequences $@ $(SOUND_BIN_DIR)/bank_sets sound/sound_banks sound/sequences.json $(SOUND_SEQUENCE_FILES) $(VERSION_CFLAGS) $$(cat $(ENDIAN_BITWIDTH))
 else
-$(SOUND_BIN_DIR)/sequences.bin: $(SOUND_BANK_FILES) sound/sequences.json sound/sequences/ sound/sequences/$(VERSION)/ $(SOUND_SEQUENCE_FILES) $(ENDIAN_BITWIDTH)
-	$(PYTHON) tools/assemble_sound.py --sequences $@ $(SOUND_BIN_DIR)/bank_sets sound/sound_banks/ sound/sequences.json $(SOUND_SEQUENCE_FILES) $(VERSION_CFLAGS) $$(cat $(ENDIAN_BITWIDTH))
+$(SOUND_BIN_DIR)/sequences.bin: $(SOUND_BANK_FILES) sound/sequences.json sound/sequences sound/sequences/$(VERSION) $(SOUND_SEQUENCE_FILES) $(ENDIAN_BITWIDTH)
+	$(PYTHON) tools/assemble_sound.py --sequences $@ $(SOUND_BIN_DIR)/bank_sets sound/sound_banks sound/sequences.json $(SOUND_SEQUENCE_FILES) $(VERSION_CFLAGS) $$(cat $(ENDIAN_BITWIDTH))
 endif
 
 $(SOUND_BIN_DIR)/bank_sets: $(SOUND_BIN_DIR)/sequences.bin
@@ -1026,7 +1030,7 @@ $(BUILD_DIR)/%.o: %.s
 
 
 
-$(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(BUILD_DIR)/$(RPC_LIBS)
+$(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES)
 	$(LD) -L $(BUILD_DIR) -o $@ $(O_FILES) $(SOUND_OBJ_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(LDFLAGS)
 
 .PHONY: all clean distclean default diff test load libultra res
