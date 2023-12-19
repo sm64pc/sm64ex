@@ -112,8 +112,9 @@ static void controller_sdl_init(void) {
 #ifdef BETTERCAMERA
     if (newcam_mouse == 1)
         SDL_SetRelativeMouseMode(SDL_TRUE);
-    SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
 #endif
+
+    SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
 
     controller_sdl_bind();
 
@@ -156,7 +157,8 @@ static void controller_sdl_read(OSContPad *pad) {
         SDL_SetRelativeMouseMode(SDL_TRUE);
     else
         SDL_SetRelativeMouseMode(SDL_FALSE);
-    
+#endif
+
     u32 mouse = SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
 
     for (u32 i = 0; i < num_mouse_binds; ++i)
@@ -166,7 +168,6 @@ static void controller_sdl_read(OSContPad *pad) {
     // remember buttons that changed from 0 to 1
     last_mouse = (mouse_buttons ^ mouse) & mouse;
     mouse_buttons = mouse;
-#endif
 
     SDL_GameControllerUpdate();
 

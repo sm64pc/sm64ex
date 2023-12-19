@@ -123,8 +123,9 @@ static void controller_sdl_init(void) {
 #ifdef BETTERCAMERA
     if (newcam_mouse == 1)
         SDL_WM_GrabInput(SDL_GRAB_ON);
-    SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
 #endif
+
+    SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
 
     controller_sdl_bind();
 
@@ -152,7 +153,8 @@ static void controller_sdl_read(OSContPad *pad) {
         SDL_WM_GrabInput(SDL_GRAB_ON);
     else
         SDL_WM_GrabInput(SDL_GRAB_OFF);
-    
+#endif
+
     u32 mouse = SDL_GetRelativeMouseState(&mouse_x, &mouse_y);
 
     for (u32 i = 0; i < num_mouse_binds; ++i)
@@ -162,7 +164,6 @@ static void controller_sdl_read(OSContPad *pad) {
     // remember buttons that changed from 0 to 1
     last_mouse = (mouse_buttons ^ mouse) & mouse;
     mouse_buttons = mouse;
-#endif
 
     if (!sdl_joy) return;
 
