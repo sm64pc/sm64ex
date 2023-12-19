@@ -13,6 +13,9 @@
 #include "game/object_list_processor.h"
 #include "graph_node.h"
 #include "surface_collision.h"
+#ifndef NODRAWINGDISTANCE
+#include "pc/configfile.h"
+#endif
 
 // Macros for retrieving arguments from behavior scripts.
 #define BHV_CMD_GET_1ST_U8(index)  (u8)((gCurBhvCommand[index] >> 24) & 0xFF) // unused
@@ -999,7 +1002,7 @@ void cur_obj_update(void) {
         if (!(objFlags & OBJ_FLAG_ACTIVE_FROM_AFAR)) {
             // If the object has a render distance, check if it should be shown.
 #ifndef NODRAWINGDISTANCE
-            if (distanceFromMario > gCurrentObject->oDrawingDistance) {
+            if (distanceFromMario > gCurrentObject->oDrawingDistance * configDrawDistance / 100.0f) {
                 // Out of render distance, hide the object.
                 gCurrentObject->header.gfx.node.flags &= ~GRAPH_RENDER_ACTIVE;
                 gCurrentObject->activeFlags |= ACTIVE_FLAG_FAR_AWAY;

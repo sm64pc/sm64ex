@@ -1,3 +1,7 @@
+#ifndef NODRAWINGDISTANCE
+#include "pc/configfile.h"
+#endif
+
 
 /**
  * Behavior for bhvPokey and bhvPokeyBodyPart.
@@ -152,7 +156,7 @@ static void pokey_act_uninitialized(void) {
     s16 partModel;
 
 #ifndef NODRAWINGDISTANCE
-    if (o->oDistanceToMario < 2000.0f) {
+    if (o->oDistanceToMario < 20 * configDrawDistance) {
 #endif
         partModel = MODEL_POKEY_HEAD;
 
@@ -190,7 +194,7 @@ static void pokey_act_wander(void) {
     if (o->oPokeyNumAliveBodyParts == 0) {
         obj_mark_for_deletion(o);
 #ifndef NODRAWINGDISTANCE
-    } else if (o->oDistanceToMario > 2500.0f) {
+    } else if (o->oDistanceToMario > 25 * configDrawDistance) {
         o->oAction = POKEY_ACT_UNLOAD_PARTS;
         o->oForwardVel = 0.0f;
 #endif

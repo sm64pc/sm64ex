@@ -85,6 +85,7 @@ static const u8 optsVideoStr[][32] = {
     { TEXT_OPT_AUTO },
     { TEXT_OPT_HUD },
     { TEXT_OPT_THREEPT },
+    { TEXT_OPT_DRAWDIST },
     { TEXT_OPT_APPLY },
 };
 
@@ -261,8 +262,11 @@ static struct Option optsVideo[] = {
     DEF_OPT_TOGGLE( optsVideoStr[5], &configWindow.vsync ),
     DEF_OPT_CHOICE( optsVideoStr[1], &configFiltering, filterChoices ),
     DEF_OPT_TOGGLE( optsVideoStr[7], &configHUD ),
+#ifndef NODRAWINGDISTANCE
+    DEF_OPT_SCROLL( optsVideoStr[9], &configDrawDistance, 50, 509, 10 ),
+#endif
     DEF_OPT_BUTTON( optsVideoStr[4], optvideo_reset_window ),
-    DEF_OPT_BUTTON( optsVideoStr[9], optvideo_apply ),
+    DEF_OPT_BUTTON( optsVideoStr[10], optvideo_apply ),
 };
 
 static struct Option optsAudio[] = {
