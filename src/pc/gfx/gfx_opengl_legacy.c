@@ -264,9 +264,6 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
 
     struct ShaderProgram *prg = &shader_program_pool[shader_program_pool_size++];
 
-    printf("new shader 0x%08x\n", shader_id);
-    fflush(stdout);
-
     prg->shader_id = shader_id;
     prg->cc = ccf;
     prg->num_inputs = ccf.num_inputs;
