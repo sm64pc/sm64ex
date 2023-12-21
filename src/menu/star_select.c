@@ -52,6 +52,7 @@ static s8 sSelectableStarIndex = 0;
 // Act Selector menu timer that keeps counting until you choose an act.
 static s32 sActSelectorMenuTimer = 0;
 
+
 /**
  * Act Selector Star Type Loop Action
  * Defines a select type for a star in the act selector.
@@ -397,12 +398,12 @@ s32 lvl_init_act_selector_values_and_stars(UNUSED s32 arg, UNUSED s32 unused) {
     sSelectedActIndex = 0;
     sSelectableStarIndex = 0;
     sObtainedStars = save_file_get_course_star_count(gCurrSaveFileNum - 1, gCurrCourseNum - 1);
-
+    
     // Don't count 100 coin star
     if (stars & (1 << 6)) {
         sObtainedStars--;
     }
-
+  
     //! no return value
 #ifdef AVOID_UB
     return 0;
