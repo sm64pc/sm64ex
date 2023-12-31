@@ -77,6 +77,10 @@ BASEPACK ?= base.zip
 
 WINDOWS_BUILD ?= 0
 
+# default screen size
+WINDOW_WIDTH ?= 640
+WINDOW_HEIGHT ?= 480
+
 # Attempt to detect OS
 
 ifeq ($(OS),Windows_NT)
@@ -227,6 +231,8 @@ COMPARE := 0
 
 ifeq ($(TARGET_WEB),1)
   VERSION_CFLAGS := $(VERSION_CFLAGS) -DTARGET_WEB -DUSE_GLES
+  VERSION_CFLAGS += -DWINDOW_WIDTH=$(WINDOW_WIDTH)
+  VERSION_CFLAGS += -DWINDOW_HEIGHT=$(WINDOW_HEIGHT)
 endif
 
 # Check backends
