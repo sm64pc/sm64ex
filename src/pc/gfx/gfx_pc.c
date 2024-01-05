@@ -28,7 +28,7 @@
 #include "../configfile.h"
 #include "../fs/fs.h"
 
-#define SUPPORT_CHECK(x) assert(x)
+#define SUPPORT_CHECK(x)
 
 // SCALE_M_N: upscale/downscale M-bit integer to N-bit
 #define SCALE_5_8(VAL_) (((VAL_) * 0xFF) / 0x1F)
