@@ -122,6 +122,8 @@
 #define TEXT_OPT_THREEPT   _("Three-point")
 #define TEXT_OPT_APPLY     _("Apply")
 #define TEXT_OPT_RESETWND  _("Reset Window")
+#define TEXT_OPT_BOWSERCAM _("Bowser Level 8-way Camera")
+
 
 #define TEXT_BIND_A        _("A Button")
 #define TEXT_BIND_B        _("B Button")
