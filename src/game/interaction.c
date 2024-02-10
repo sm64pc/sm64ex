@@ -23,6 +23,7 @@
 #include "sm64.h"
 #include "sound_init.h"
 #include "thread6.h"
+#include "pc/cheats.h"
 
 #define INT_GROUND_POUND_OR_TWIRL (1 << 0) // 0x01
 #define INT_PUNCH                 (1 << 1) // 0x02
@@ -893,6 +894,11 @@ u32 interact_warp_door(struct MarioState *m, UNUSED u32 interactType, struct Obj
     u32 actionArg;
 
     if (m->action == ACT_WALKING || m->action == ACT_DECELERATING) {
+        if (Cheats.EnableCheats && Cheats.UnlockDoors) {
+            /* If the unlock doors cheat is enabled, skip key checks */
+            goto postkeycheck;
+        }
+
         if (warpDoorId == 1 && !(saveFlags & SAVE_FLAG_UNLOCKED_UPSTAIRS_DOOR)) {
             if (!(saveFlags & SAVE_FLAG_HAVE_KEY_2)) {
                 if (!sDisplayingDoorText) {
@@ -922,6 +928,7 @@ u32 interact_warp_door(struct MarioState *m, UNUSED u32 interactType, struct Obj
             doorAction = ACT_UNLOCKING_KEY_DOOR;
         }
 
+postkeycheck:
         if (m->action == ACT_WALKING || m->action == ACT_DECELERATING) {
             actionArg = should_push_or_pull_door(m, o) + 0x00000004;
 
@@ -987,7 +994,27 @@ u32 interact_door(struct MarioState *m, UNUSED u32 interactType, struct Object *
     s16 numStars = save_file_get_total_star_count(gCurrSaveFileNum - 1, COURSE_MIN - 1, COURSE_MAX - 1);
 
     if (m->action == ACT_WALKING || m->action == ACT_DECELERATING) {
-        if (numStars >= requiredNumStars) {
+        if (Cheats.EnableCheats && Cheats.UnlockDoors) {
+            /* If the UnlockDoors Cheat is enabled, it's the same as the approach with >= requiredNumStars,
+             * but never use the action that 'unlocks' the door for the save file */
+            u32 actionArg = should_push_or_pull_door(m, o);
+            u32 enterDoorAction;
+
+            if (actionArg & 0x00000001) {
+                enterDoorAction = ACT_PULLING_DOOR;
+            } else {
+                enterDoorAction = ACT_PUSHING_DOOR;
+            }
+
+            m->interactObj = o;
+            m->usedObj = o;
+
+            if (o->oInteractionSubtype & INT_SUBTYPE_STAR_DOOR) {
+                enterDoorAction = ACT_ENTERING_STAR_DOOR;
+            }
+
+            return set_mario_action(m, enterDoorAction, actionArg);
+        } else if (numStars >= requiredNumStars) {
             u32 actionArg = should_push_or_pull_door(m, o);
             u32 enterDoorAction;
             u32 doorSaveFileFlag;
