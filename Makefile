@@ -489,14 +489,14 @@ else ifeq ($(WINDOWS_BUILD),1)
 endif
 
 ifeq ($(WINDOWS_BUILD),1) # fixes compilation in MXE on Linux and WSL
-  CPP := cpp -P
+  CPP ?= cpp -P
   OBJCOPY := objcopy
   OBJDUMP := $(CROSS)objdump
 else ifeq ($(OSX_BUILD),1)
   OBJDUMP := i686-w64-mingw32-objdump
   OBJCOPY := i686-w64-mingw32-objcopy
 else # Linux & other builds
-  CPP := $(CROSS)cpp -P
+  CPP ?= $(CROSS)cpp -P
   OBJCOPY := $(CROSS)objcopy
   OBJDUMP := $(CROSS)objdump
 endif
