@@ -1,0 +1,12 @@
+diff --git a/src/pc/controller/controller_sdl2.c b/src/pc/controller/controller_sdl2.c
+index 2001e7f..2098618 100644
+--- a/src/pc/controller/controller_sdl2.c
++++ b/src/pc/controller/controller_sdl2.c
+@@ -51,6 +51,7 @@ static u32 last_mouse = VK_INVALID;
+ static u32 last_joybutton = VK_INVALID;
+ 
+ static inline void controller_add_binds(const u32 mask, const u32 *btns) {
++    SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+     for (u32 i = 0; i < MAX_BINDS; ++i) {
+         if (btns[i] >= VK_BASE_SDL_GAMEPAD && btns[i] <= VK_BASE_SDL_GAMEPAD + VK_SIZE) {
+             if (btns[i] >= VK_BASE_SDL_MOUSE && num_joy_binds < MAX_JOYBINDS) {
