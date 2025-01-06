@@ -42,7 +42,7 @@
 #else
 # define FRAMERATE 30
 #endif
-
+bool focus_Lost = FALSE;
 static SDL_Window *wnd;
 static SDL_GLContext ctx = NULL;
 static int inverted_scancode_table[512];
@@ -242,11 +242,13 @@ static void gfx_sdl_handle_events(void) {
             // Scancodes are broken in Emscripten SDL2: https://bugzilla.libsdl.org/show_bug.cgi?id=3259
             case SDL_KEYDOWN:
                 gfx_sdl_onkeydown(event.key.keysym.scancode);
+                
                 break;
             case SDL_KEYUP:
                 gfx_sdl_onkeyup(event.key.keysym.scancode);
                 break;
 #endif
+            
             case SDL_WINDOWEVENT: // TODO: Check if this makes sense to be included in the Web build
                 if (!IS_FULLSCREEN()) {
                     switch (event.window.event) {
@@ -260,12 +262,16 @@ static void gfx_sdl_handle_events(void) {
                             configWindow.w = event.window.data1;
                             configWindow.h = event.window.data2;
                             break;
+                        case SDL_WINDOWEVENT_FOCUS_LOST:
+                            focus_Lost = TRUE;
+                            break;
                     }
                 }
                 break;
             case SDL_QUIT:
                 game_exit();
                 break;
+            
         }
     }
 
