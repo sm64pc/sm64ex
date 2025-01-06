@@ -90,6 +90,9 @@ bool         configCameraMouse   = false;
 #endif
 bool         configSkipIntro     = 0;
 bool         configHUD           = true;
+#ifndef NODRAWINGDISTANCE
+unsigned int configDrawDistance  = 100;
+#endif
 #ifdef DISCORDRPC
 bool         configDiscordRPC    = true;
 #endif
@@ -102,6 +105,9 @@ static const struct ConfigOption options[] = {
     {.name = "window_h",             .type = CONFIG_TYPE_UINT, .uintValue = &configWindow.h},
     {.name = "vsync",                .type = CONFIG_TYPE_BOOL, .boolValue = &configWindow.vsync},
     {.name = "texture_filtering",    .type = CONFIG_TYPE_UINT, .uintValue = &configFiltering},
+    #ifndef NODRAWINGDISTANCE
+    {.name = "drawing_distance",     .type = CONFIG_TYPE_UINT, .uintValue = &configDrawDistance},
+    #endif
     {.name = "master_volume",        .type = CONFIG_TYPE_UINT, .uintValue = &configMasterVolume},
     {.name = "music_volume",         .type = CONFIG_TYPE_UINT, .uintValue = &configMusicVolume},
     {.name = "sfx_volume",           .type = CONFIG_TYPE_UINT, .uintValue = &configSfxVolume},

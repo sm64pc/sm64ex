@@ -1,3 +1,7 @@
+#ifndef NODRAWINGDISTANCE
+#include "pc/configfile.h"
+#endif
+
 
 /**
  * Behavior for bhvChainChomp, bhvChainChompChainPart, bhvWoodenPost, and bhvChainChompGate.
@@ -54,7 +58,7 @@ static void chain_chomp_act_uninitialized(void) {
     s32 i;
 
 #ifndef NODRAWINGDISTANCE
-    if (o->oDistanceToMario < 3000.0f) {
+    if (o->oDistanceToMario < 30 * configDrawDistance) {
 #endif
         segments = mem_pool_alloc(gObjectMemoryPool, 5 * sizeof(struct ChainSegment));
         if (segments != NULL) {
@@ -364,7 +368,7 @@ static void chain_chomp_act_move(void) {
 
     // Unload chain if mario is far enough
 #ifndef NODRAWINGDISTANCE
-    if (o->oChainChompReleaseStatus == CHAIN_CHOMP_NOT_RELEASED && o->oDistanceToMario > 4000.0f) {
+    if (o->oChainChompReleaseStatus == CHAIN_CHOMP_NOT_RELEASED && o->oDistanceToMario > 40 * configDrawDistance) {
         o->oAction = CHAIN_CHOMP_ACT_UNLOAD_CHAIN;
         o->oForwardVel = o->oVelY = 0.0f;
     } else {

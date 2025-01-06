@@ -1,3 +1,7 @@
+#ifndef NODRAWINGDISTANCE
+#include "pc/configfile.h"
+#endif
+
 // sl_walking_penguin.c.inc
 
 struct SLWalkingPenguinStep {
@@ -98,7 +102,7 @@ void bhv_sl_walking_penguin_loop(void) {
     
     cur_obj_move_standard(-78);
 #ifndef NODRAWINGDISTANCE
-     if (!cur_obj_hide_if_mario_far_away_y(1000.0f))
+     if (!cur_obj_hide_if_mario_far_away_y(10 * configDrawDistance))
 #endif
         play_penguin_walking_sound(PENGUIN_WALK_BIG);
     

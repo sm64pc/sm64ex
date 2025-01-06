@@ -1,3 +1,7 @@
+#ifndef NODRAWINGDISTANCE
+#include "pc/configfile.h"
+#endif
+
 // whirlpool.c.inc
 
 static struct ObjectHitbox sWhirlpoolHitbox = {
@@ -36,7 +40,7 @@ void whirpool_orient_graph(void) {
 
 void bhv_whirlpool_loop(void) {
 #ifndef NODRAWINGDISTANCE
-    if (o->oDistanceToMario < 5000.0f) {
+    if (o->oDistanceToMario < 50 * configDrawDistance) {
 #endif
         o->header.gfx.node.flags &= ~GRAPH_RENDER_INVISIBLE;
 

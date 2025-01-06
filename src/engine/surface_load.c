@@ -14,6 +14,9 @@
 #include "game/mario.h"
 #include "game/object_list_processor.h"
 #include "surface_load.h"
+#ifndef NODRAWINGDISTANCE
+#include "pc/configfile.h"
+#endif
 
 s32 unused8038BE90;
 
@@ -786,7 +789,7 @@ void load_object_collision_model(void) {
     }
 
 #ifndef NODRAWINGDISTANCE
-    if (marioDist < gCurrentObject->oDrawingDistance) {
+    if (marioDist < gCurrentObject->oDrawingDistance * configDrawDistance / 100.0f) {
 #endif
         gCurrentObject->header.gfx.node.flags |= GRAPH_RENDER_ACTIVE;
 #ifndef NODRAWINGDISTANCE

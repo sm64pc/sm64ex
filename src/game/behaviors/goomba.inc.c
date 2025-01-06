@@ -1,3 +1,7 @@
+#ifndef NODRAWINGDISTANCE
+#include "pc/configfile.h"
+#endif
+
 
 /**
  * Behavior for bhvGoomba and bhvGoombaTripletSpawner,
@@ -79,7 +83,7 @@ void bhv_goomba_triplet_spawner_update(void) {
     // spawn them
     if (o->oAction == GOOMBA_TRIPLET_SPAWNER_ACT_UNLOADED) {
 #ifndef NODRAWINGDISTANCE
-        if (o->oDistanceToMario < 3000.0f) {
+        if (o->oDistanceToMario < 30 * configDrawDistance) {
 #endif
             // The spawner is capable of spawning more than 3 goombas, but this
             // is not used in the game
@@ -102,7 +106,7 @@ void bhv_goomba_triplet_spawner_update(void) {
             o->oAction += 1;
 #ifndef NODRAWINGDISTANCE
         }
-    } else if (o->oDistanceToMario > 4000.0f) {
+    } else if (o->oDistanceToMario > 40 * configDrawDistance) {
         // If mario is too far away, enter the unloaded action. The goombas
         // will detect this and unload themselves
         o->oAction = GOOMBA_TRIPLET_SPAWNER_ACT_UNLOADED;
