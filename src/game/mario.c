@@ -1421,6 +1421,19 @@ void update_mario_inputs(struct MarioState *m) {
     }
     /*End of moonjump cheat */
 
+    /* Level reset cheat */
+    if (Cheats.LevelReset
+                && Cheats.EnableCheats
+                && m->controller->buttonDown & L_TRIG
+                // Prevent crashing if there's no warp destination
+                && sWarpDest.areaIdx != 0) {
+        m->health = 0x880;
+        m->numCoins = 0;
+        gHudDisplay.coins = 0;
+        sWarpDest.type = 2;
+    }
+    /* End of level reset cheat */
+
     if (gCameraMovementFlags & CAM_MOVE_C_UP_MODE) {
         if (m->action & ACT_FLAG_ALLOW_FIRST_PERSON) {
             m->input |= INPUT_FIRST_PERSON;

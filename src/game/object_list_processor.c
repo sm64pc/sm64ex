@@ -19,6 +19,7 @@
 #include "platform_displacement.h"
 #include "profiler.h"
 #include "spawn_object.h"
+#include "pc/cheats.h"
 
 
 /**
@@ -408,6 +409,18 @@ s32 unload_deactivated_objects_in_list(struct ObjectNode *objList) {
 void set_object_respawn_info_bits(struct Object *obj, u8 bits) {
     u32 *info32;
     u16 *info16;
+
+    /* Level reset cheat */
+    /*
+     * Force objects to respawn on level reset
+     *
+     * NOTE: This forces objects to respawn in cases where they wouldn't with
+     * the cheat disabled. The GameShark code also has this problem.
+     */
+    if (Cheats.LevelReset && Cheats.EnableCheats) {
+        return;
+    }
+    /* End of level reset cheat */
 
     switch (obj->respawnInfoType) {
         case RESPAWN_INFO_TYPE_32:

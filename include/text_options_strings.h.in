@@ -85,6 +85,7 @@
 #define TEXT_OPT_CHEAT7    _("EXIT COURSE AT ANY TIME")
 #define TEXT_OPT_CHEAT8    _("HUGE MARIO")
 #define TEXT_OPT_CHEAT9    _("TINY MARIO")
+#define TEXT_OPT_CHEAT10   _("LEVEL RESET (PRESS L)")
 
 #else // VERSION
 
@@ -149,6 +150,7 @@
 #define TEXT_OPT_CHEAT7    _("Exit course at any time")
 #define TEXT_OPT_CHEAT8    _("Huge Mario")
 #define TEXT_OPT_CHEAT9    _("Tiny Mario")
+#define TEXT_OPT_CHEAT10   _("Level Reset (Press L)")
 
 #endif // VERSION
 
