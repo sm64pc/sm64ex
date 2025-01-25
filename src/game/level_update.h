@@ -78,7 +78,7 @@ struct WarpDest {
     u8 nodeId;
     u32 arg;
 };
-
+extern struct WarpDest storedWarpDest;
 extern struct WarpDest sWarpDest;
 
 extern s16 D_80339EE0;
@@ -97,6 +97,7 @@ struct HudDisplay {
     /*0x08*/ s16 keys;
     /*0x0A*/ s16 flags;
     /*0x0C*/ u16 timer;
+             u32 speedRunTimer;
 };
 
 extern struct HudDisplay gHudDisplay;
@@ -110,6 +111,7 @@ enum HUDDisplayFlag {
     HUD_DISPLAY_FLAG_KEYS = 0x0010,
     HUD_DISPLAY_FLAG_UNKNOWN_0020 = 0x0020,
     HUD_DISPLAY_FLAG_TIMER = 0x0040,
+    HUD_DISPLAY_FLAG_SPEED_TIMER = 0x0080,
     HUD_DISPLAY_FLAG_EMPHASIZE_POWER = 0x8000,
 
     HUD_DISPLAY_NONE = 0x0000,
@@ -126,6 +128,7 @@ void level_set_transition(s16 length, void (*updateFunction)(s16 *));
 s32 lvl_init_or_update(s16 initOrUpdate, UNUSED s32 unused);
 s32 lvl_init_from_save_file(UNUSED s16 arg0, s32 levelNum);
 s32 lvl_set_current_level(UNUSED s16 arg0, s32 levelNum);
+s32 resetLevelAct(UNUSED s16 arg0);
 s32 lvl_play_the_end_screen_sound(UNUSED s16 arg0, UNUSED s32 arg1);
 void basic_update(UNUSED s16 *arg);
 

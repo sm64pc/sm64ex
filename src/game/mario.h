@@ -50,5 +50,7 @@ s32 set_water_plunge_action(struct MarioState *m);
 s32 execute_mario_action(UNUSED struct Object *o);
 void init_mario(void);
 void init_mario_from_save_file(void);
+ extern s32 levelResetActNum;
+ extern u8 skipStarSelect;
 
 #endif // MARIO_H

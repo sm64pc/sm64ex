@@ -363,7 +363,43 @@ void render_hud_timer(void) {
     render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(46), 32, (*hudLUT)[GLYPH_DOUBLE_QUOTE]);
     gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
 }
+void render_hud_speedrunning_timer(void) {
+    u8 *(*hudLUT)[58];
+    u16 timerValFrames;
+    u16 timerMins;
+    u16 timerSecs;
+    u16 timerFracSecs;
 
+    hudLUT = segmented_to_virtual(&main_hud_lut);
+    timerValFrames = gHudDisplay.speedRunTimer;
+#ifdef VERSION_EU
+    switch (eu_get_language()) {
+        case LANGUAGE_ENGLISH:
+            print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(150), 185, "TIME");
+            break;
+        case LANGUAGE_FRENCH:
+            print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(155), 185, "TEMPS");
+            break;
+        case LANGUAGE_GERMAN:
+            print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(150), 185, "ZEIT");
+            break;
+    }
+#endif
+    timerMins = timerValFrames / (30 * 60);
+    timerSecs = (timerValFrames - (timerMins * 1800)) / 30;
+
+    timerFracSecs = ((timerValFrames - (timerMins * 1800) - (timerSecs * 30)) & 0xFFFF) ;
+#ifndef VERSION_EU
+    print_text(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(190), 167, "RUN TIME");
+#endif
+    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(91), 167, "%0d", timerMins);
+    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(71), 167, "%02d", timerSecs);
+    print_text_fmt_int(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(37), 167, "%02d", timerFracSecs);
+    gSPDisplayList(gDisplayListHead++, dl_hud_img_begin);
+    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(81), 50, (*hudLUT)[GLYPH_APOSTROPHE]);
+    render_hud_tex_lut(GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(46), 50, (*hudLUT)[GLYPH_DOUBLE_QUOTE]);
+    gSPDisplayList(gDisplayListHead++, dl_hud_img_end);
+}
 /**
  * Sets HUD status camera value depending of the actions
  * defined in update_camera_status.
@@ -476,6 +512,9 @@ void render_hud(void) {
 
         if (hudDisplayFlags & HUD_DISPLAY_FLAG_TIMER && configHUD) {
             render_hud_timer();
+        }  
+             if (hudDisplayFlags & HUD_DISPLAY_FLAG_SPEED_TIMER && configHUD) {
+            render_hud_speedrunning_timer();
         }
     }
 }

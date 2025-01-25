@@ -18,6 +18,14 @@
 #include "make_const_nonconst.h"
 #include "levels/menu/header.h"
 
+static const LevelScript script_func_local_1[] = {
+    
+    /*0*/  CALL(/*arg*/ 0, /*func*/ resetLevelAct),
+    /*35*/ GET_OR_SET(/*op*/ OP_SET, /*var*/ VAR_CURR_ACT_NUM),
+    STOP_MUSIC(/*fadeOutTime*/ 0x00BE),
+           EXIT(),
+};
+
 const LevelScript level_main_menu_entry_1[] = {
     INIT_LEVEL(),
     FIXED_LOAD(/*loadAddr*/ _goddardSegmentStart, /*romStart*/ _goddardSegmentRomStart, /*romEnd*/ _goddardSegmentRomEnd),
@@ -59,7 +67,7 @@ const LevelScript level_main_menu_entry_1[] = {
 
 const LevelScript level_main_menu_entry_2[] = {
     /*0*/ CALL(/*arg*/ 0, /*func*/ lvl_set_current_level),
-    /*2*/ JUMP_IF(/*op*/ OP_EQ, /*arg*/ 0, level_main_menu_entry_2 + 42),
+    /*2*/ JUMP_LINK_IF(/*op*/ OP_EQ, /*arg*/ 0, script_func_local_1),
     /*5*/ INIT_LEVEL(),
     /*6*/ FIXED_LOAD(/*loadAddr*/ _goddardSegmentStart, /*romStart*/ _goddardSegmentRomStart, /*romEnd*/ _goddardSegmentRomEnd),
     /*10*/ LOAD_MIO0(/*seg*/ 0x07, _menu_segment_7SegmentRomStart, _menu_segment_7SegmentRomEnd),
@@ -90,5 +98,5 @@ const LevelScript level_main_menu_entry_2[] = {
     /*40*/ CLEAR_LEVEL(),
     /*41*/ SLEEP_BEFORE_EXIT(/*frames*/ 1),
     // L1:
-    /*42*/ EXIT(),
+        /*42*/ EXIT(),
 };
