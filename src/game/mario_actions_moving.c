@@ -6,6 +6,7 @@
 #include "engine/math_util.h"
 #include "engine/surface_collision.h"
 #include "mario_step.h"
+#include "game_init.h"
 #include "area.h"
 #include "interaction.h"
 #include "mario_actions_object.h"
@@ -1853,7 +1854,14 @@ s32 act_long_jump_land(struct MarioState *m) {
         m->forwardVel = 0.0f;
     }
 #endif
-    
+
+    // BLJ anywhere cheat
+    if (Cheats.BLJAnywhere >= 7 && Cheats.EnableCheats == TRUE && m->forwardVel < 1.0f
+        && (m->controller->buttonDown & A_BUTTON)) {
+        set_jumping_action(m, ACT_LONG_JUMP, 0);
+        return FALSE;
+    }
+
     if (!(m->input & INPUT_Z_DOWN)) {
         m->input &= ~INPUT_A_PRESSED;
     }

@@ -105,6 +105,7 @@ static const u8 optsCheatsStr[][64] = {
     { TEXT_OPT_CHEAT7 },
     { TEXT_OPT_CHEAT8 },
     { TEXT_OPT_CHEAT9 },
+    { TEXT_OPT_CHEAT10 },
 };
 
 static const u8 bindStr[][32] = {
@@ -128,6 +129,22 @@ static const u8 bindStr[][32] = {
     { TEXT_OPT_RUMBLE },
 };
 
+static const u8 optsBLJCheatStr[][32] = {
+    { TEXT_OPT_BLJCHT1 },
+    { TEXT_OPT_BLJCHT2 },
+    { TEXT_OPT_BLJCHT3 },
+    { TEXT_OPT_BLJCHT4 },
+    { TEXT_OPT_BLJCHT5 },
+    { TEXT_OPT_BLJCHT6 },
+    { TEXT_OPT_BLJCHT7 },
+    { TEXT_OPT_BLJCHT8 },
+    { TEXT_OPT_BLJCHT9 },
+    { TEXT_OPT_BLJCHT10 },
+    { TEXT_OPT_BLJCHT11 },
+    { TEXT_OPT_BLJCHT12 },
+    { TEXT_OPT_BLJCHT13 },
+};
+
 static const u8 *filterChoices[] = {
     optsVideoStr[2],
     optsVideoStr[3],
@@ -138,6 +155,22 @@ static const u8 *vsyncChoices[] = {
     toggleStr[0],
     toggleStr[1],
     optsVideoStr[6],
+};
+
+static const u8 *bljCheatChoices[] = {
+    optsBLJCheatStr[0],
+    optsBLJCheatStr[1],
+    optsBLJCheatStr[2],
+    optsBLJCheatStr[3],
+    optsBLJCheatStr[4],
+    optsBLJCheatStr[5],
+    optsBLJCheatStr[6],
+    optsBLJCheatStr[7],
+    optsBLJCheatStr[8],
+    optsBLJCheatStr[9],
+    optsBLJCheatStr[10],
+    optsBLJCheatStr[11],
+    optsBLJCheatStr[12],
 };
 
 enum OptType {
@@ -282,6 +315,7 @@ static struct Option optsCheats[] = {
     DEF_OPT_TOGGLE( optsCheatsStr[6], &Cheats.ExitAnywhere ),
     DEF_OPT_TOGGLE( optsCheatsStr[7], &Cheats.HugeMario ),
     DEF_OPT_TOGGLE( optsCheatsStr[8], &Cheats.TinyMario ),
+    DEF_OPT_CHOICE( optsCheatsStr[9], &Cheats.BLJAnywhere, bljCheatChoices ),
 
 };
 
