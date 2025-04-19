@@ -1,3 +1,11 @@
+.macro i16_be a
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+    .short \a
+#else
+    .short (((\a & 0xff00) >> 8) | ((\a & 0xff) << 8))
+#endif
+.endm
+
 .include "seq_macros.inc"
 .section .rodata
 .align 0

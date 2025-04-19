@@ -153,7 +153,7 @@ if sys.argv[1] == "--emit-asm-macros":
     print("# To regenerate it, run: ./tools/seq_decoder.py --emit-asm-macros >seq_macros.inc")
     print()
     def print_hword(x):
-        print(f"    .byte {x} >> 8, {x} & 0xff")
+        print(f"    i16_be {x}")
 
     def emit_cmd(key, op, cmd):
         mn = cmd[0]
