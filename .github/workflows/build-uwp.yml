@@ -1,0 +1,92 @@
+name: Build SM64EX-Render96 UWP (sm64ex CMake branch)
+
+on:
+  push:
+    branches: [ CMake ]
+  workflow_dispatch:
+
+jobs:
+  uwp:
+    runs-on: windows-latest
+
+    steps:
+      # 1. Checkout the sm64ex CMake branch as our source
+      - name: 🛠️ Checkout sm64ex (cmake branch)
+        uses: actions/checkout@v4
+        with:
+          repository: sm64pc/sm64ex
+          ref: cmake
+          fetch-depth: 1
+          path: source
+
+      # 2. Apply Render96EX feature flags
+      - name: ✏️ Enable RENDER96, WIDESCREEN & LUIGI
+        shell: bash
+        run: |
+          sed -i 's|// #define RENDER96|#define RENDER96|' source/include/config.h
+          sed -i 's|// #define WIDESCREEN|#define WIDESCREEN|' source/include/config.h
+          sed -i 's|// #define ENABLE_LUIGI_COOP|#define ENABLE_LUIGI_COOP|' source/include/config.h
+
+      # 3. Cache & download HD texture pack
+      - name: Cache Render96 textures
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: temp
+          key: render96-pack-${{ runner.os }}
+          restore-keys: render96-pack-
+      - name: 🎨 Fetch Render96 textures
+        if: steps.cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          rm -rf temp
+          curl -L https://github.com/pokeheadroom/RENDER96-HD-TEXTURE-PACK/archive/refs/heads/master.zip \
+            -o Render96.zip
+          unzip -q -o Render96.zip -d temp
+
+      # 4. Install textures into the UWP assets
+      - name: 🚚 Install Render96 textures
+        shell: bash
+        run: |
+          mkdir -p source/platform/uwp/Assets/Render96
+          cp -r temp/*/gfx/* source/platform/uwp/Assets/Render96/
+
+      # 5. Configure CMake for UWP
+      - name: ⚙️ Configure with CMake
+        shell: bash
+        run: |
+          cmake -B build-uwp -S source/platform/uwp \
+            -G "Visual Studio 17 2022" -A x64 -T host=x64 \
+            -DCMAKE_SYSTEM_NAME=WindowsStore \
+            -DCMAKE_SYSTEM_VERSION=10.0.19041.0
+
+      # 6. Build in Release mode
+      - name: 🏗️ Build (Release)
+        shell: bash
+        run: cmake --build build-uwp --config Release --parallel 8
+
+      # 7. Package & code-sign
+      - name: 📦 Package & Sign
+        shell: powershell
+        run: |
+          # Create a dev certificate
+          $cert = New-SelfSignedCertificate `
+            -Subject "CN=SM64EX-Render96" -Type CodeSigningCert `
+            -CertStoreLocation Cert:\CurrentUser\My `
+            -NotAfter (Get-Date).AddYears(10)
+          Export-Certificate -Cert $cert -FilePath SM64EXDevCert.cer
+
+          # Zip up the AppxLayout folder
+          Compress-Archive -Path build-uwp\AppxLayout\* -DestinationPath SM64EX-Render96.appx
+
+          # Sign the package
+          SignTool.exe sign /fd SHA256 /n "SM64EX-Render96" SM64EX-Render96.appx
+
+      # 8. Upload the artifacts
+      - name: 📤 Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: uwp-build
+          path: |
+            SM64EX-Render96.appx
+            SM64EXDevCert.cer
