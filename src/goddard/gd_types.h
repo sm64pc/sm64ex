@@ -27,7 +27,11 @@ struct GdColour {
 union DynUnion {
     void *ptr;
     char *str;
+#if IS_BIG_ENDIAN && IS_64_BIT
+    s64 word;
+#else
     s32 word;
+#endif
 };
 
 struct DynList {
