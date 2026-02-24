@@ -16,6 +16,7 @@
 #include "gfx/gfx_opengl.h"
 #include "gfx/gfx_direct3d11.h"
 #include "gfx/gfx_direct3d12.h"
+#include "gfx/gfx_metal.h"
 
 #include "gfx/gfx_dxgi.h"
 #include "gfx/gfx_sdl.h"
@@ -203,6 +204,9 @@ void main_func(void) {
     #elif defined(RAPI_D3D12)
     rendering_api = &gfx_direct3d12_api;
     # define RAPI_NAME "DirectX 12"
+    #elif defined(RAPI_METAL)
+    # define RAPI_NAME "Metal"
+    rendering_api = &gfx_metal_api;
     #elif defined(RAPI_GL) || defined(RAPI_GL_LEGACY)
     rendering_api = &gfx_opengl_api;
     # ifdef USE_GLES
@@ -225,7 +229,7 @@ void main_func(void) {
     wm_api->set_keyboard_callbacks(keyboard_on_key_down, keyboard_on_key_up, keyboard_on_all_keys_up);
 
     #if defined(AAPI_SDL1) || defined(AAPI_SDL2)
-    if (audio_api == NULL && audio_sdl.init()) 
+    if (audio_api == NULL && audio_sdl.init())
         audio_api = &audio_sdl;
     #endif
 

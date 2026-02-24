@@ -116,8 +116,8 @@ ifeq ($(HOST_OS),Darwin)
   ifeq ($(shell which brew >/dev/null 2>&1 && echo y),y)
 	PLATFORM := $(shell uname -m)
 	OSX_GCC_VER = $(shell find `brew --prefix`/bin/gcc* | grep -oE '[[:digit:]]+' | sort -n | uniq | tail -1)
-	CC := gcc-$(OSX_GCC_VER)
-	CXX := g++-$(OSX_GCC_VER)
+	CC := clang
+	CXX := clang++
 	CPP := cpp-$(OSX_GCC_VER) -P
 	PLATFORM_CFLAGS := -I $(shell brew --prefix)/include
 	PLATFORM_LDFLAGS := -L $(shell brew --prefix)/lib
@@ -440,7 +440,7 @@ RPC_LIBS :=
 ifeq ($(DISCORDRPC),1)
   ifeq ($(WINDOWS_BUILD),1)
     RPC_LIBS := lib/discord/libdiscord-rpc.dll
-  else ifeq ($(OSX_BUILD),1) 
+  else ifeq ($(OSX_BUILD),1)
     # needs testing
     RPC_LIBS := lib/discord/libdiscord-rpc.dylib
   else
@@ -528,7 +528,12 @@ else ifeq ($(findstring SDL,$(WINDOW_API)),SDL)
   else ifeq ($(TARGET_RPI),1)
     BACKEND_LDFLAGS += -lGLESv2
   else ifeq ($(OSX_BUILD),1)
-    BACKEND_LDFLAGS += -framework OpenGL $(shell pkg-config --libs glew)
+    ifeq ($(RENDER_API),METAL)
+      CXXFLAGS += -Iinclude/metalsdk -std=c++20
+	  BACKEND_LDFLAGS += -framework Foundation -framework Metal -framework QuartzCore -lc++
+    else
+      BACKEND_LDFLAGS += -framework OpenGL $(shell pkg-config --libs glew)
+	endif
   else
     BACKEND_LDFLAGS += -lGL
   endif
@@ -1013,8 +1018,8 @@ $(GLOBAL_ASM_DEP).$(NON_MATCHING):
 	touch $@
 
 $(BUILD_DIR)/%.o: %.cpp
-	@$(CXX) -fsyntax-only $(CFLAGS) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
-	$(CXX) -c $(CFLAGS) -o $@ $<
+	@$(CXX) -fsyntax-only $(CFLAGS) $(CXXFLAGS) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
+	$(CXX) -c $(CFLAGS) $(CXXFLAGS) -o $@ $<
 
 $(BUILD_DIR)/%.o: %.c
 	@$(CC_CHECK) $(CC_CHECK_CFLAGS) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<

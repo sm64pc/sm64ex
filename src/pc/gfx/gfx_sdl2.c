@@ -44,7 +44,12 @@
 #endif
 
 static SDL_Window *wnd;
+#ifdef RAPI_GL
 static SDL_GLContext ctx = NULL;
+#elif defined RAPI_METAL
+static SDL_MetalView *mtl_view = NULL;
+#endif
+
 static int inverted_scancode_table[512];
 
 static kb_callback_t kb_key_down = NULL;
@@ -112,6 +117,16 @@ const SDL_Scancode scancode_rmapping_nonextended[][2] = {
 
 #define IS_FULLSCREEN() ((SDL_GetWindowFlags(wnd) & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
 
+void *gfx_sdl_get_layer()
+{
+    #ifdef RAPI_METAL
+    return SDL_Metal_GetLayer(mtl_view);
+    #else
+    // should never happen
+    return NULL;
+    #endif
+}
+
 static void gfx_sdl_set_fullscreen(void) {
     if (configWindow.reset)
         configWindow.fullscreen = false;
@@ -146,15 +161,19 @@ static void gfx_sdl_reset_dimension_and_pos(void) {
 
     SDL_SetWindowSize(wnd, configWindow.w, configWindow.h);
     SDL_SetWindowPosition(wnd, xpos, ypos);
+    #ifdef RAPI_GL
     // in case vsync changed
     SDL_GL_SetSwapInterval(configWindow.vsync);
+    #endif
 }
 
 static void gfx_sdl_init(const char *window_title) {
     SDL_Init(SDL_INIT_VIDEO);
 
+    #ifdef RAPI_GL
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    #endif
 
     #ifdef USE_GLES
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);  // These attributes allow for hardware acceleration on RPis.
@@ -171,11 +190,21 @@ static void gfx_sdl_init(const char *window_title) {
     wnd = SDL_CreateWindow(
         window_title,
         xpos, ypos, configWindow.w, configWindow.h,
-        SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
+        SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI |
+        #ifdef RAPI_METAL
+        SDL_WINDOW_METAL
+        #elif defined RAPI_GL
+        SDL_WINDOW_OPENGL
+        #endif
     );
+    #ifdef RAPI_GL
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
     ctx = SDL_GL_CreateContext(wnd);
 
     SDL_GL_SetSwapInterval(configWindow.vsync);
+    #elif defined RAPI_METAL
+    mtl_view = SDL_Metal_CreateView(wnd);
+    #endif
 
     gfx_sdl_set_fullscreen();
 
@@ -204,7 +233,7 @@ static void gfx_sdl_main_loop(void (*run_one_game_iter)(void)) {
 
 static void gfx_sdl_get_dimensions(uint32_t *width, uint32_t *height) {
     int w, h;
-    SDL_GetWindowSize(wnd, &w, &h);
+    SDL_GL_GetDrawableSize(wnd, &w, &h);
     if (width) *width = w;
     if (height) *height = h;
 }
@@ -306,7 +335,10 @@ static inline void sync_framerate_with_timer(void) {
 static void gfx_sdl_swap_buffers_begin(void) {
     // Swap after we finished rendering, only if this frame wasn't dropped.
     // This will wait for vblank if vsync is enabled and then update our window with our render.
+    #ifdef RAPI_GL
+    // only needed for gl
     SDL_GL_SwapWindow(wnd);
+    #endif
 }
 
 static void gfx_sdl_swap_buffers_end(void) {
@@ -324,7 +356,9 @@ static double gfx_sdl_get_time(void) {
 
 static void gfx_sdl_shutdown(void) {
     if (SDL_WasInit(0)) {
+        #ifdef RAPI_GL
         if (ctx) { SDL_GL_DeleteContext(ctx); ctx = NULL; }
+        #endif
         if (wnd) { SDL_DestroyWindow(wnd); wnd = NULL; }
         SDL_Quit();
     }
