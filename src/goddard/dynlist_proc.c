@@ -44,12 +44,12 @@ struct DynObjInfo {
 /// @name DynList Accessors
 /// Accessor marcos for easy interpretation of data in a `DynList` packet
 ///@{
-#define Dyn1AsInt(dyn) ((dyn)->w1.word)
+#define Dyn1AsInt(dyn) ((s32)(intptr_t)((dyn)->w1.ptr))
 #define Dyn1AsPtr(dyn) ((dyn)->w1.ptr)
 #define Dyn1AsStr(dyn) ((dyn)->w1.str)
 #define Dyn1AsID(dyn) ((DynId)((dyn)->w1.ptr))
 
-#define Dyn2AsInt(dyn) ((dyn)->w2.word)
+#define Dyn2AsInt(dyn) ((s32)(intptr_t)((dyn)->w2.ptr))
 #define Dyn2AsPtr(dyn) ((dyn)->w2.ptr)
 #define Dyn2AsStr(dyn) ((dyn)->w2.str)
 #define Dyn2AsID(dyn) ((DynId)((dyn)->w2.ptr))
