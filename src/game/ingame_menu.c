@@ -2966,7 +2966,8 @@ void render_save_confirmation(s16 x, s16 y, s8 *index, s16 sp6e)
         { TEXT_SAVE_AND_QUIT_DE }
     };
 
-    u8 textSaveExitGame[][26] = { // New function to exit game
+    // 28: fits the German "SPEICHERN & SPIEL VERLASSEN" (27 chars + terminator).
+    u8 textSaveExitGame[][28] = {
         { TEXT_SAVE_EXIT_GAME },
         { TEXT_SAVE_EXIT_GAME_FR },
         { TEXT_SAVE_EXIT_GAME_DE }

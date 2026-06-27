@@ -4,6 +4,7 @@
 #include "data.h"
 #include "seqplayer.h"
 #include "synthesis.h"
+#include "heap.h"
 
 #ifdef VERSION_EU
 
@@ -41,6 +42,9 @@ void create_next_audio_buffer(s16 *samples, u32 num_samples) {
     s32 writtenCmds;
     OSMesg msg;
     gAudioFrameCount++;
+    // Reset per-frame DMA counter (N64 did this in the stubbed audio task);
+    // otherwise it overflows gCurrAudioFrameDmaIoMesgBufs[].
+    gCurrAudioFrameDmaCount = 0;
     decrease_sample_dma_ttls();
     if (osRecvMesg(OSMesgQueues[2], &msg, 0) != -1) {
         gAudioResetPresetIdToLoad = (u8) (s32) msg;
