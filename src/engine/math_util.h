@@ -24,8 +24,10 @@ extern f32 gSineTable[];
 extern f32 gCosineTable[];
 #endif
 
-#define sins(x) gSineTable[(u16) (x) >> 4]
-#define coss(x) gCosineTable[(u16) (x) >> 4]
+// Cast through s32: converting a negative or out-of-range float straight to
+// u16 is undefined behaviour and can index outside the table.
+#define sins(x) gSineTable[(u16) (s32) (x) >> 4]
+#define coss(x) gCosineTable[(u16) (s32) (x) >> 4]
 
 #define min(a, b) ((a) <= (b) ? (a) : (b))
 #define max(a, b) ((a) > (b) ? (a) : (b))
